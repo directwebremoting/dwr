@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Configuration Manual</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h1>Configuration Manual</h1>
+
+<h2>Details to add to your web.xml</h2>
+
+<p>
+  The minimum possible additions to your web.xml, are simply those to declare
+  the DWR servlet without which none of this would work. So the least you can
+  get away with looks something like this:
+</p>
+
+<pre>
+  &lt;servlet>
+    &lt;servlet-name>dwr-invoker&lt;/servlet-name>
+    &lt;servlet-class>uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class>
+  &lt;/servlet>
+  &lt;servlet-mapping>
+    &lt;servlet-name>dwr-invoker&lt;/servlet-name>
+    &lt;url-pattern>/dwr/*&lt;/url-pattern>
+  &lt;/servlet-mapping>
+</pre>
+
+<p>
+  In addition to this there are 3 servlet parameters that are somewhere between
+  vital and vaguely useful.
+</p>
+
+<h3>Using debug/test mode</h3>
+
+<p>
+  You put DWR into debug/test mode by adding the following parameter:
+</p>
+
+<pre>
+    &lt;init-param>
+      &lt;param-name>debug&lt;/param-name>
+      &lt;param-value>true&lt;/param-value>
+      &lt;description>Do we startup in debug/test mode?&lt;/description>
+    &lt;/init-param>
+</pre>
+
+<p>
+  DWR will generate pages for each of the allowed classes (see dwr.xml below)
+  in debug mode. These can be very useful in seeing what DWR can do and how it
+  works. This mode can also alert you to problems like javascript reserved word
+  clashes or overloading problems.
+  <br/>
+  However this mode should not be used in live deployment as it could give an
+  attacker a lot of information about the services that you export. If you have
+  designed your website properly then this extra information will not help an
+  attacker exploit your website however it is generally wise not to give anyone
+  a route map to exploit any mistakes you might have made.
+  <br/>
+  DWR is provided 'as is', without any warranty, so the security of your website
+  is your responsibility. Please take care to keep it secure.
+</p>
+
+<h3>Multiple dwr.xml files and J2EE security</h3>
+
+<p>
+  Generally speaking you will only need one dwr.xml file and that will be in the
+  default position: <code>WEB-INF/dwr.xml</code>. So you can leave this paramter
+  out. If you do wish to use it then the syntax is as follows:
+</p>
+
+<pre>
+    &lt;init-param>
+      &lt;param-name>config*****&lt;/param-name>
+      &lt;param-value>WEB-INF/dwr.xml&lt;/param-value>
+      &lt;description>What config file do we use?&lt;/description>
+    &lt;/init-param>
+</pre>
+
+<p>
+  Where config***** means any param-name that begins with the string 'config'.
+  This parameter can be specified as many times as required, however the
+  <code>param-name</code> should be different for each.
+</p>
+
+<p>
+  There are 3 reasons why you
+  might wish to specify a different position for dwr.xml:
+  <ul>
+    <li>
+      You wish to keep dwr.xml with the files that it gives access to.
+      In which case the section might have a param-value something like
+      <code>&lt;param-value>WEB-INF/classes/com/yourco/dwr/dwr.xml&lt;/param-value></code>.
+    </li>
+    <li>
+      You have a large number of remoted classes and wish to keep the
+      definitions in separate files. In this case you will have the section
+      above repeated several times each with a different <code>param-name</code>
+      that begins 'config' and each with a different file.
+      DWR will read them all in turn.
+    </li>
+    <li>
+      DWR can use J2EE URL security built into the servlet spec to give
+      different groups of users access to different functions. You simply define
+      more than one dwr servlet by repeating the stanza at the top of the page
+      with different names, urls and permissions. For example:
+  </ul>
+</p>
+
+<pre>
+  &lt;servlet>
+    &lt;servlet-name>dwr-user-invoker&lt;/servlet-name>
+    &lt;servlet-class>uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class>
+    &lt;init-param>
+      &lt;param-name>config-user&lt;/param-name>
+      &lt;param-value>WEB-INF/dwr-user.xml&lt;/param-value>
+    &lt;/init-param>
+  &lt;/servlet>
+  &lt;servlet>
+    &lt;servlet-name>dwr-admin-invoker&lt;/servlet-name>
+    &lt;servlet-class>uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class>
+    &lt;init-param>
+      &lt;param-name>config-admin&lt;/param-name>
+      &lt;param-value>WEB-INF/dwr-admin.xml&lt;/param-value>
+    &lt;/init-param>
+  &lt;/servlet>
+  &lt;servlet-mapping>
+    &lt;servlet-name>dwr-admin-invoker&lt;/servlet-name>
+    &lt;url-pattern>/dwradmin/*&lt;/url-pattern>
+  &lt;/servlet-mapping>
+  &lt;servlet-mapping>
+    &lt;servlet-name>dwr-user-invoker&lt;/servlet-name>
+    &lt;url-pattern>/dwruser/*&lt;/url-pattern>
+  &lt;/servlet-mapping>
+
+  &lt;security-constraint>
+    &lt;display-name>dwr-admin&lt;/display-name>
+    &lt;web-resource-collection>
+      &lt;web-resource-name>dwr-admin-collection&lt;/web-resource-name>
+      &lt;url-pattern>/dwradmin/*&lt;/url-pattern>
+    &lt;/web-resource-collection>
+    &lt;auth-constraint>
+      &lt;role-name>admin&lt;/role-name>
+    &lt;/auth-constraint>
+  &lt;/security-constraint>
+  &lt;security-constraint>
+    &lt;display-name>dwr-user&lt;/display-name>
+    &lt;web-resource-collection>
+      &lt;web-resource-name>dwr-user-collection&lt;/web-resource-name>
+      &lt;url-pattern>/dwruser/*&lt;/url-pattern>
+    &lt;/web-resource-collection>
+    &lt;auth-constraint>
+      &lt;role-name>user&lt;/role-name>
+    &lt;/auth-constraint>
+  &lt;/security-constraint>
+</pre>
+
+<h3>Logging</h3>
+
+<p>
+  DWR works in JDK 1.3 where there is no java.util.logging and I don't wish to
+  force DWR users to include a logging jar file what you might not otherwise
+  need, so DWR does all it's logging using HttpServlet.log() methods. App.
+  servers handle this logging in various ways although not all of them allow
+  it to be configured and few finely so you can configure DWR using logging
+  levels that are familiar to log4j users.
+  <br/>
+  The following stanza controls DWR logging:
+</p>
+
+<pre>
+    &lt;init-param>
+       &lt;param-name>logLevel&lt;/param-name>
+       &lt;param-value>DEBUG&lt;/param-value>
+       &lt;description>How verbose do we want logging to be?&lt;/description>
+    &lt;/init-param>
+</pre>
+
+<p>
+  The valid values are: FATAL, ERROR, WARN (the default), INFO and DEBUG.
+</p>
+
+<h3>Overriding the default Creator and Converter Managers</h3>
+
+<p>
+  Advanced users may wish to override the default creator and converter
+  managers. This can be achieved by adding one of the following init-params:
+</p>
+
+<pre>
+    &lt;init-param>
+       &lt;param-name>converterManager&lt;/param-name>
+       &lt;param-value>your.impl.of.ConverterManager&lt;/param-value>
+    &lt;/init-param>
+    &lt;init-param>
+       &lt;param-name>creatorManager&lt;/param-name>
+       &lt;param-value>your.impl.of.CreatorManager&lt;/param-value>
+    &lt;/init-param>
+</pre>
+
+<h2>Details to add to your dwr.xml</h2>
+
+<p>
+  As noted above there can be more than one dwr.xml file, with the entries in
+  each being added together. This ability is used by DWR to load the basic
+  config file to get everyone started.
+  <br/>
+  We can get a good introduction to dwr.xml files by looking at the standard
+  config file that everyone gets for free.
+</p>
+
+<p>
+  The DWR DOCTYPE line should be included in all dwr.xml files.
+  It looks like this:
+</p>
+
+<pre>
+&lt;!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 0.4//EN"
+    "http://www.getahead.ltd.uk/dwr/dwr.dtd">
+</pre>
+
+<p>
+  The overall structure of dwr.xml is as follows:
+</p>
+
+<pre>
+&lt;dwr>
+  &lt;init>
+    &lt;creator id="..." class="..."/>
+    &lt;converter id="..." class="..."/>
+  &lt;/init>
+  &lt;allow>
+    &lt;convert .../>
+    &lt;create .../>
+  &lt;/allow>
+&lt;/dwr>
+</pre>
+
+<p>
+  One slightly tricky bit of terminology - parameters are converted, but the
+  remoted beans are created. So if you have a bean A with a method
+  <code>blah(B)</code> then you need a creator for A and a converter for B.
+</p>
+<p>
+  The optional init section declares the classes that can be used to create
+  beans to remote and the classes that can be used to convert beans in the
+  marshalling process.
+</p>
+<p>
+  Having an entry in the init section just tells DWR about the existance of the
+  class and gives it some basic detail about how it works. It does not bring it
+  into use. In this way it is a bit like an import statement in Java. Most
+  classes must be imported before use, but just having an import does not mean
+  that the class is being used. Each creator and converter has an id attribute
+  to allow it to be referred to later on.
+</p>
+<p>
+  The allow section defines which classes DWR can create and convert. For each
+  class that we allow we have a 'create' or 'convert' line. By default all of
+  the following are converted for you without further declaration:
+  <ul>
+    <li>All primitive types, boolean, int, double, etc.</li>
+    <li>The Class based versions of the these Boolean, Integer, etc.</li>
+    <li>java.lang.String</li>
+    <li>java.util.Date and the 3 SQL derivatives</li>
+    <li>arrays of the above</li>
+    <li>Collections of the above (with some limitations)</li>
+  </ul>
+</p>
+<p>
+  However nothing is added to the list of classes that can be created (i.e. put
+  up for remoting) without you declaring it.
+</p>
+
+<h3>The 'new' Creator</h3>
+<p>
+  The new creator is declared by default by DWR as follows:
+  <code>&lt;creator id="new" class="uk.ltd.getahead.dwr.create.NewCreator"/></code>
+  You don't need to add this line to your dwr.xml because it is already in the
+  DWR's internal dwr.xml file.
+</p>
+<p>
+  This creator will create an instance of a class using the default constructor.
+  The overhead of creating a new instance of your remoted object for every
+  javascript call has got much less with later VMs so this inefficiency is
+  probably not an issue for you. You can think of classes created using the
+  'new' creator like stateless session beans if you know about EJBs.
+  There are several benefits to using the 'new' creator:
+  <ul>
+    <li>
+      Security: The shorter lived the objects created by DWR the less chance
+      that they can be exploited by loading them up with invalid values in one
+      call and then the invalid values fired at something that wasn't expecting
+      it in another.
+    </li>
+    <li>
+      Low memory overhead: If you have a site with many users, then you don't
+      run the risk of running out of VM memory so much
+    </li>
+  </ul>
+</p>
+<p>
+  You allow DWR to use the new creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+  &lt;allow>
+    &lt;create creator="new" javascript="Blah" class="java.util.Date"/>
+    ... other definitions
+  &lt;/allow>
+</pre>
+<p>
+  This uses the 'new' creator defined above and gives it the Javascript name
+  <code>Blah</code> so whenever in Javascript you call <code>Blah.toString(reply)</code>
+  then a new java.util.Date will be constructed using the default constructor,
+  then the toString() method will be called, and the data returned to the
+  javascript reply function (in this case the current date in string form).
+</p>
+
+<h3>The 'session' Creator</h3>
+<p>
+  The session creator is declared by default by DWR as follows:
+  <code>&lt;creator id="session" class="uk.ltd.getahead.dwr.create.SessionCreator"/></code>
+  As with 'new' you don't need to add this line to your dwr.xml
+</p>
+<p>
+  This creator will first search in the users session for a bean by the given
+  javascript name, (creating it using the default constructor any placing it in
+  the session if it isn't there) before proceeding as the 'new' creator.
+  You can think of 'session' created beans as being like stateful session beans.
+</p>
+<p>
+  You allow DWR to use the session creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+  &lt;allow>
+    ...
+    &lt;create creator="session"
+        javascript="TestBean"
+        class="your.stateful.JavaBean"/>
+    ... other definitions
+  &lt;/allow>
+</pre>
+
+<h3>The 'spring' Creator</h3>
+<p>
+  The spring creator is declared by default by DWR as follows:
+  <code>&lt;creator id="spring" class="uk.ltd.getahead.dwr.create.SpringCreator"/></code>
+  As with 'new' you don't need to add this line to your dwr.xml
+</p>
+<p>
+  This creator will lookup beans in your spring beans.xml file and use Spring
+  to create them. This creator will be very useful to you if you already use
+  Spring and totally useless if you don't.
+</p>
+<p>
+  You allow DWR to use the spring creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+  &lt;allow>
+    ...
+    &lt;create
+        creator="spring"
+        javascript="Fred"
+        beanName="Shiela"
+        resourceName="/WEB-INF/classes/beans.xml"/>
+  &lt;/allow>
+</pre>
+<p>
+  This causes DWR to look for a bean in Spring. The resource name attribute is
+  optional and will cause DWR to create it's own Spring Bean Factory. The
+  alternative is to have your code call:
+  <code>uk.ltd.getahead.dwr.create.SpringCreator.setXmlBeanFactory(fact)</code>
+  and tell DWR about the bean factory that you've created for yourself.
+</p>
+<p>
+  DWR does not have a runtime (or compile time) dependency on Spring so if you
+  don't use Spring then you won't be affected by this.
+</p>
+<p>
+  There is no reason why we shouldn't add creator methods for other frameworks
+  like Pico, Nano, Atto et al. I've written a Spring one because I use Spring.
+</p>
+
+<h3>The 'static' Creator</h3>
+<p>
+  The static creator is declared by default by DWR as follows:
+  <code>&lt;creator id="static" class="uk.ltd.getahead.dwr.create.StaticCreator"/></code>
+</p>
+<p>
+  This creator is the simplest of all. It assumes that you will be calling
+  static methods only, so no object creation is needed.
+</p>
+<p>
+  You allow DWR to use the static creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+  &lt;allow>
+    ...
+    &lt;create creator="static"
+        javascript="Jim"
+        class="your.class.with.static.Methods"/>
+    ... other definitions
+  &lt;/allow>
+</pre>
+
+<h3>The Default Converters</h3>
+<p>
+  There are a number of converters that are defined and initialized for you.
+  They are defined as follows:
+</p>
+<pre>
+    &lt;converter id="null" class="uk.ltd.getahead.dwr.convert.NullConverter"/>
+    &lt;converter id="primitive" class="uk.ltd.getahead.dwr.convert.PrimitiveConverter"/>
+    &lt;converter id="string" class="uk.ltd.getahead.dwr.convert.StringConverter"/>
+    &lt;converter id="array" class="uk.ltd.getahead.dwr.convert.ArrayConverter"/>
+    &lt;converter id="map" class="uk.ltd.getahead.dwr.convert.MapConverter"/>
+    &lt;converter id="collection" class="uk.ltd.getahead.dwr.convert.CollectionConverter"/>
+    &lt;converter id="date" class="uk.ltd.getahead.dwr.convert.DateConverter"/>
+    &lt;converter id="bean" class="uk.ltd.getahead.dwr.convert.BeanConverter"/>
+</pre>
+<p>
+  The converters are mearly defined here and are put into use with
+  &lt;convert&nbsp;...> elements. There are 2 attributes in any convert element,
+  a reference to a converter definition and a match line that defines the
+  class(s) that it can convert.
+</p>
+<p>
+  For example the simplest converter is the null converter that converts void
+  and null values to javascript null and undefined vales.
+  This creator is the simplest of all. It assumes that you will be calling
+  static methods only, so no object creation is needed.
+</p>
+<p>
+  By default DWR marshalls Java void values into Javascript nulls using the
+  following: <code>&lt;convert converter="null" match="void"/></code>. There
+  are times when a <code>java.lang.Void</code> needs to be converted as well so
+  the same converter is used for those too:
+  <code>&lt;convert converter="null" match="java.lang.Void"/></code>.
+  There is no danger in passing nulls from Java to Javascript so these
+  definitions are made by default - you don't need to put them in the &lt;allow>
+  section yourself.
+</p>
+<p>
+  The primitive converter converts boolean, byte, char, etc as well as their
+  Class based alternatives Boolean etc. The default setup includes 16 entries
+  in the allow section for all primitive types along the following lines:
+  <code>&lt;convert converter="primitive" match="java.lang.Long"/></code> and
+  <code>&lt;convert converter="primitive" match="long"/></code>.
+</p>
+<p>
+  The string and date converters are also setup by default. We have not found
+  any way to subvert Strings, Dates or basic numeric types so they are all
+  turned on by default.
+</p>
+<p>
+  The array entries are less obvious. By default DWR marshalls arrays of all
+  primitive types as well as arrays of all marshallable objects, which by
+  default includes String and Date as noted previously.
+  <br/>
+  Advanced Java programmers will probably recognise why the match line is a
+  <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html#getName()">little strange</a>.
+</p>
+<pre>
+    &lt;convert converter="array" match="[Z"/>
+    &lt;convert converter="array" match="[B"/>
+    &lt;convert converter="array" match="[S"/>
+    &lt;convert converter="array" match="[I"/>
+    &lt;convert converter="array" match="[J"/>
+    &lt;convert converter="array" match="[F"/>
+    &lt;convert converter="array" match="[D"/>
+    &lt;convert converter="array" match="[C"/>
+    &lt;convert converter="array" match="[L*"/>
+</pre>
+<p>
+  The * is not explained by the link above - it is a wildcard that matches any
+  following string, which is how DWR can marshall arrays of any type that is
+  marshallable by other means.
+</p>
+<p>
+  The final 2 default converters are for maps and collections:
+  <code>&lt;convert converter="collection" match="java.util.Collection"/></code>
+  and <code>&lt;convert converter="map" match="java.util.Map"/></code>
+</p>
+<p>
+  There is a catch for these 2 however. While there is no special version of
+  DWR for JDK 1.5 there is no way of knowing the underlying type of the
+  collection. So the 2 converters above can convert from any collection to
+  something meaningful in Javascript, there is no way to know what sort of
+  Collection to convert <b>to</b> going the other way.
+  <br/>
+  Since we can't work it out automatically we may need to have some special
+  syntax in the dwr.xml file to allow us to hint types to the conversion process.
+</p>
+<p>
+  The one converter that is not enabled by use is the Bean converter. This will
+  convert POJOs into Javascript associative arrays and back again. This
+  converter is not enabled by default for security reasons. If you have a bean
+  that you have remoted using a &lt;create&nbsp;...> statement, where one of the
+  parameters is a bean with a setter that has some nasty side effects, then it
+  would be possible for an attacker to cause the nasty side effects to happen.
+  <br/>
+  Time will tell whether this is overly paranoid or sensible, but for the moment
+  we are leaving it out. You can enable it with one of the following:
+</p>
+<pre>
+    &lt;convert
+        converter="bean"
+        match="your.full.package.BeanName"/>
+</pre>
+<p>
+  To allow conversion of a single class. Or:
+</p>
+<pre>
+    &lt;convert
+        converter="bean"
+        match="your.full.package.*"/>
+</pre>
+<p>
+  To allow conversion of any class in the given package. Or:
+</p>
+<pre>
+    &lt;convert
+        converter="bean"
+        match="*"/>
+</pre>
+<p>
+  To enable conversion of any java classes. <b>Use at your own risk</b>.
+  Actually you use any of DWR at your own risk, but especially this as it seems
+  dangerous to the author.
+</p>
+
+</body>
+</html>
