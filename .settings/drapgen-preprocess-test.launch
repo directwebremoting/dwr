@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="com.orangevolt.xslt.launch.XSLTLaunchConfiguration">
+<stringAttribute key="com.orangevolt.xslt.launch.ANT_POST_PROCESSING_FILE" value=""/>
+<listAttribute key="com.orangevolt.xslt.launch.EMBEDDED_STYLESHEET_PI_MIMETYPES">
+<listEntry value="text/html"/>
+</listAttribute>
+<booleanAttribute key="com.orangevolt.xslt.launch.PREFER_EMBEDDED_STYLESHEET_PI" value="false"/>
+<stringAttribute key="com.orangevolt.xslt.launch.PROJECT" value="drapgen"/>
+<stringAttribute key="com.orangevolt.xslt.launch.SOURCE" value="/drapgen/etc/preprocess/Heavyweight.xml"/>
+<booleanAttribute key="com.orangevolt.xslt.launch.SPECIFY_TARGET_BASEFILENAME" value="true"/>
+<stringAttribute key="com.orangevolt.xslt.launch.STYLESHEET" value="/drapgen/etc/preprocess/default.xslt"/>
+<stringAttribute key="com.orangevolt.xslt.launch.TARGET_BASEFILENAME" value="processed.xml"/>
+<stringAttribute key="com.orangevolt.xslt.launch.TARGET_DIRECTORY" value="/drapgen/etc/preprocess"/>
+<booleanAttribute key="com.orangevolt.xslt.launch.TARGET_FILE_SUFFIX_BY_OUTPUT_FORMAT" value="false"/>
+<booleanAttribute key="com.orangevolt.xslt.launch.USE_SOURCEDIR_AS_TARGET" value="true"/>
+<stringAttribute key="org.eclipse.debug.core.ATTR_REFRESH_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;launchConfigurationWorkingSet factoryID=&quot;org.eclipse.ui.internal.WorkingSetFactory&quot; label=&quot;working set&quot; name=&quot;working set&quot;&gt;&#10;&lt;item factoryID=&quot;org.eclipse.ui.internal.model.ResourceFactory&quot; path=&quot;/drapgen/etc/preprocess&quot; type=&quot;2&quot;/&gt;&#10;&lt;/launchConfigurationWorkingSet&gt;}"/>
+<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
+</launchConfiguration>

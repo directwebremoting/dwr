@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+
+.customize #JSX .jsx30block,
+.customize #JSX div.jsx30matrixcolumn_value,
+.customize #JSX table.jsx30matrix_rowtable,
+.customize #JSX .jsx30textbox,
+.jsx30block .jsx30select_option
+{
+  font-family: 'Century Gothic',Helvetica,Arial,clean,sans-serif;
+  font-size: 98%;
+}
