@@ -131,15 +131,11 @@ public abstract class BaseScriptConduit extends ScriptConduit
     {
         out.flush();
 
-        // I'm not totally sure if this is the right thing to do.
-        // A PrintWriter that encounters an error never recovers so maybe
-        // we could be more robust by using a lower level object and
-        // working out what to do if something goes wrong. Annoyingly
-        // PrintWriter also throws the original exception away.
+        // A PrintWriter that encounters an error never recovers
         if (out.checkError())
         {
             log.debug("Error writing to stream");
-            // throw new IOException("Error writing to stream");
+            alarm.raiseAlarm();
             return false;
         }
 
