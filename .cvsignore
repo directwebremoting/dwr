@@ -1,6 +1,3 @@
 target
-dwr.iml
-dwr.ipr
-dwr.iws
-monitor
-.myumldata
+work
+.tomcatplugin
