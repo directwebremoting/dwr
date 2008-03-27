@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Simple Text Generation Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/interface/TableEdit.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='/js/generic.js'> </script>
+  <script type="text/javascript" src='index.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+<body onload="DWRUtil.useLoadingMessage();">
+<div id="page-title">[
+  <a href="http://getahead.ltd.uk/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Dynamically Editing a Table</h1>
+
+<p>This demo stores the list of people in your session, so the editing relies on
+<b>Cookies</b>. DWR can use application, session and request scope to store
+beans</p>
+
+<h2>Demo</h2>
+
+<table border="1" class="rowed">
+<thead>
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>Salary</th>
+<th colspan="2">Actions</th>
+</tr>
+
+</thead>
+  <tbody id="peoplebody">
+</tbody>
+
+</table>
+
+<h4>Edit Person</h4>
+
+<table>
+<tr>
+
+<td>ID:</td>
+<td><span id="id">-1</span></td>
+
+</tr>
+<tr>
+
+<td>Name:</td>
+<td><input id="name" type="text"/></td>
+
+</tr>
+<tr>
+
+<td>Salary:</td>
+<td><input id="salary" type="text"/></td>
+
+</tr>
+<tr>
+
+<td>Address:</td>
+<td><input type="text" id="address"/></td>
+
+</tr>
+<tr>
+
+<td colspan="2" align="right">
+<input type="button" value="Save" onclick="writePerson()"/>
+<input type="button" value="Clear" onclick="clearPerson()"/>
+</td>
+
+</tr>
+</table>
+
+<h2>How it works</h2>
+
+<p>This demo introduces form editing using DWRUtil.setValues and getValues.
+The input fields in the form above have ids that are the same as the properties
+of the Person bean, so DWRUtil.setValues and getValues can automatically
+generate a bean to post to the server.</p>
+
+<p>The Java code is fairly simple. We've seen Person on the
+<a href="/dwr/examples/form">Live Forms</a> page. The extra code in Demo looks
+like this:</p>
+
+<pre>
+public Collection getAllPeople()
+{
+    return people.values();
+}
+
+public Person getPerson(int id)
+{
+    return (Person) people.get(new Integer(id));
+}
+
+public boolean deletePerson(Person toDelete)
+{
+    return people.remove(new Integer(toDelete.getId())) != null;
+}
+
+public void addPerson(Person toAdd)
+{
+    if (toAdd.getId() == -1)
+    {
+        toAdd.setId(nextId++);
+    }
+
+    people.put(new Integer(toAdd.getId()), toAdd);
+}
+
+private static int nextId = 10;
+private Map people = new HashMap();
+</pre>
+
+<p>There is also a createPeople() function that populates the people Map.</p>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Operator Assisted Form Fill</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/CoBrowse.js'> </script>
+  <script type="text/javascript" src='index.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <style type="text/css">
+  #cobrowseUrl { width:82%; }
+  #cobrowseIframe { width:98%; height:500px; margin:10px auto; border:1px solid #000; }
+  body { height:100%; }
+  </style>
+  <script type="text/javascript">
+  function jump() {
+    // CoBrowse.jump(DWRUtil.getValue("cobrowseUrl"));
+  }
+  </script>
+</head>
+
+<body onload="/*DWREngine.setReverseAjax(true)*/">
+<div id="page-title">[
+  <a href="http://getahead.ltd.uk/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<p>
+  This example has been disabled by default, because while it's quite neat, it
+  is also one huge XSS security hole waiting to be exploited. To test it in a
+  safe environment, remove the 3 comments from this page.
+</p>
+
+<p>
+  Co-Browse URL: 
+  <input type=text" id="cobrowseUrl" onkeyup="DWRUtil.onReturn(event, jump)" value="http://"/>
+</p>
+
+<!--
+<iframe id="cobrowseIframe" src=""/>
+-->
+
+</body>
+</html>

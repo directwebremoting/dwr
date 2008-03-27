@@ -1,0 +1,43 @@
+Index: DwrUtil.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/proxy/dwrutil/DwrUtil.java,v
+retrieving revision 1.4
+diff -u -r1.4 DwrUtil.java
+--- DwrUtil.java	24 Apr 2006 08:18:54 -0000	1.4
++++ DwrUtil.java	4 Jun 2006 21:16:30 -0000
+@@ -15,6 +15,7 @@
+  */
+ package org.directwebremoting.proxy.dwrutil;
+ 
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Map;
+ 
+@@ -242,7 +243,26 @@
+      */
+     public void addRow(String elementId, Row row) throws MarshallException
+     {
++        Cell[] cells = row.getCells();
++        String[] data = new String[cells.length];
++        for(int i=0; i<cells.length ;i++) {
++            data[i] = "function(data) { return '"+cells[i].getInnerHtml()+"'; }"; //$NON-NLS-1$ //$NON-NLS-2$
++        }
+         
++        OutboundVariable elementIdOv = getWebContext().toJavascript(elementId);
++        
++
++        StringBuffer script = new StringBuffer();
++        script.append(elementIdOv.getInitCode())
++            .append("DWRUtil.addRows(") //$NON-NLS-1$
++            .append(elementIdOv.getAssignCode())
++            .append(',')
++            .append("['*']") //$NON-NLS-1$
++            .append(',')
++            .append(Arrays.asList(data))
++            .append(");"); //$NON-NLS-1$
++
++        addScript(script.toString());        
+     }
+ 
+     /**
+
