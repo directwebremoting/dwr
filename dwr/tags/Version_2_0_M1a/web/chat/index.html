@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>Simple DWR Chat Version 2.0</title>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/Chat.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type="text/javascript" src='index.js'> </script>
+</head>
+
+<body onload="startPoll()">
+
+  <div>[ <a href="../index.html">Top Level</a> ]</div>
+
+  <h1>Simple Chat</h1>
+
+  <!--
+  <p>
+    <input type="button" value="Start Poll" onclick="startPoll()"/>
+    <input type="button" value="Stop Poll" onclick="stopPoll()"/>
+  </p>
+  -->
+
+  <p>
+    Your Message:
+    <input id="text" onkeypress="DWRUtil.onReturn(event, sendMessage)"/>
+    <input type="button" value="Send" onclick="sendMessage()"/>
+  </p>
+
+  <p>Messages:</p>
+  <div id="chatlog"></div>
+
+  <!--
+  <p id="dwr-debug">debug</p>
+  <input type="button" value="Ping Me" onclick="pingMe()"/>
+  <p id="ping">ping</p>
+  -->
+
+</body>
+</html>

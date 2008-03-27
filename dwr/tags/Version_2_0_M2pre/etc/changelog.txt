@@ -1,0 +1,10 @@
+
+A number of security mechanisms send html back to the user if some security constraint times out.
+I've just added an experimental feature to do an automatic document.reload if the response content type is text/html rather than javascript.
+For the time being you enable it using:
+  DWREngine._reloadOnTextHml = true;
+Yeah - good one. So there is now:
+DWREngine.setTextHtmlHandler(function() { document.location.reload(); });
+Or you can make up your own.
+
+wget --quiet --base=./ --directory-prefix=./ --convert-links --mirror --page-requisites --exclude-directories=blog/*,dwr-demo/*,book/*  http://getahead.ltd.uk/

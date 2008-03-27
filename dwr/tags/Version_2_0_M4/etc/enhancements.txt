@@ -1,0 +1,21 @@
+
+json support
+
+onbackbutton, onforwardbutton
+
+DWRUtil.getValues should handle multiple select list
+
+Simple Date format
+	There are also notes here:
+	http://getahead.ltd.uk/dwr/server/dwrxml/converters
+	This is something that keeps on being mentioned. At some stage maybe we
+	should consider creating a simple Javascript version of SimpleDateFormat
+	that would help people get this job done more quickly.
+
+Add checks for Javascript reserved names
+	In using DWR one nasty issue I came across was that my bean had a property
+	called default - my ajax call kept failing and I couldn't figure out why
+	till I looked at the generated variables and saw that it was because the
+	generated code put in a value for default and javascript didn't like it.
+	Maybe as a warning, look at bean properties and see if there are a conflicts
+	with reserved keywords.

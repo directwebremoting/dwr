@@ -1,0 +1,228 @@
+X-Gmail-Received: dddc4928e0c98c80e8e96146c961b88315ecf87c
+Delivered-To: joseph.walker@gmail.com
+Received: by 10.35.31.13 with SMTP id i13cs4915pyj;
+        Tue, 21 Mar 2006 10:21:15 -0800 (PST)
+Received: by 10.54.89.14 with SMTP id m14mr520133wrb;
+        Tue, 21 Mar 2006 10:21:15 -0800 (PST)
+Return-Path: <users-return-2714-joseph.walker=gmail.com@dwr.dev.java.net>
+Received: from dev.java.net (s006.sfo.collab.net [64.125.133.206])
+        by mx.gmail.com with SMTP id 10si276377wrl.2006.03.21.10.21.14;
+        Tue, 21 Mar 2006 10:21:15 -0800 (PST)
+Received-SPF: neutral (gmail.com: 64.125.133.206 is neither permitted nor denied by best guess record for domain of users-return-2714-joseph.walker=gmail.com@dwr.dev.java.net)
+Received: (qmail 20190 invoked by uid 5000); 21 Mar 2006 18:17:58 -0000
+Mailing-List: contact users-help@dwr.dev.java.net; run by ezmlm
+Precedence: bulk
+X-No-Archive: yes
+list-help: <mailto:users-help@dwr.dev.java.net>
+list-unsubscribe: <mailto:users-unsubscribe@dwr.dev.java.net>
+list-post: <mailto:users@dwr.dev.java.net>
+Reply-To: users@dwr.dev.java.net
+Delivered-To: mailing list users@dwr.dev.java.net
+Received: (qmail 20179 invoked from network); 21 Mar 2006 18:17:58 -0000
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AQAAADLRH0SHdgIC
+X-IronPort-AV: i="4.03,115,1141632000"; 
+   d="scan'208"; a="12406149:sNHT30147831"
+X-IRONPORT: SCANNED
+Message-ID: <44204324.7040101@dset-solutions.com>
+Date: Tue, 21 Mar 2006 19:17:08 +0100
+From: =?ISO-8859-1?Q?=D2scar_P=E9rez?= <operez@dset-solutions.com>
+User-Agent: Mozilla Thunderbird 1.5 (X11/20051201)
+MIME-Version: 1.0
+To:  users@dwr.dev.java.net
+References: <1142962059.14000.ezmlm@dwr.dev.java.net>
+In-Reply-To: <1142962059.14000.ezmlm@dwr.dev.java.net>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+Subject: [dwr-user] Re: nested properties read/write
+
+Hi,
+I did something for mapped properties.
+The code had catalan variable names. I translated  it a bit  to english. 
+Hope it's understandable.
+
+I have a function that builds up a javascript object with all the 
+elements in the page:
+
+function buildObject()
+{
+  var obj;
+  var controls;
+  var i;
+  obj = new Object();
+ 
+  controls = document.getElementsByTagName("INPUT");
+  for (i=0;i<controls.length;i++)
+  {
+    if ((controls[i].name!=null) && (controls[i].name!=""))
+    {
+      obj[controls[i].name] = 
+(controls[i].type.toLowerCase()!="checkbox") ? controls[i].value : 
+controls[i].checked;
+    }
+  }
+  controls = document.getElementsByTagName("SELECT");
+  for (i=0;i<controls.length;i++)
+  {
+    if ((controls[i].name!=null) && (controls[i].name!=""))
+    {
+      obj[controls[i].name] = controls[i].value;
+    }
+  }
+  controls = document.getElementsByTagName("TEXTAREA");
+  for (i=0;i<controls.length;i++)
+  {
+    if ((controls[i].name!=null) && (controls[i].name!=""))
+    {
+      obj[controls[i].name] = controls[i].value;
+    }
+  }
+  return(obj);
+}
+
+
+To set a property:
+
+function setPropety(obj, propName, value)
+{
+    var nom1,nom2;
+  if (propName)
+  {
+    if (propName.indexOf("(")>=0)
+    {
+      nom1 = propName.substring(0,propName.indexOf("("));
+      nom2 =  
+propName.substring(propName.indexOf("(")+1,propName.indexOf(")"))+propNamesubstring(propName.indexOf(")")+1);
+      this.setPropietat(obj[nom1],
+                        nom2,
+                        value);
+    }
+    else
+    {
+      obj[propName] = value;
+    }
+  }
+}
+
+To get it:
+
+function getProperty(obj, propName)
+{
+  var valor;
+  var nom1;
+  var nom2;
+  valor = null;
+  if (propName)
+  {
+    if (propName.indexOf("(")>=0)
+    {
+      nom1 = propName.substring(0,propName.indexOf("("));
+      nom2 =  
+propName.substring(propName.indexOf("(")+1,propName.indexOf(")"))+propName.substring(propName.indexOf(")")+1);
+      //Let's get sure that the property exists
+      if (!obj[nom1])
+      {
+        obj[nom1] = new Object();
+      }
+      valor = this.getProperty(obj[nom1],
+                                nom2);
+    }
+    else
+    {
+      //Let's get sure that the property exists
+      if (!obj[propName])
+      {
+        obj[propName] = null;
+      }
+      valor = obj[propName];
+    }
+  }
+  return(valor);
+}
+
+
+in the html you should have:
+
+<input type="text" id="bar(bar1)" >
+
+like the struts way for map backed properties.
+
+then, in javascript:
+    obj = buildObject();
+    setProperty(obj,"bar(bar1)",value_you_want);
+    alert(getProperty(obj,"bar(bar1)"));
+
+I think it would be nice to extend the functionality to vector mapped 
+properties and subproperties and adding it to the standard dwr, isn't 
+it, Joe?
+;-)
+
+
+>
+> ------------------------------------------------------------------------
+>
+> Assumpte:
+> nested properties read/write
+> De:
+> Lovkiy Slava <lovkiys@yahoo.com>
+> Data:
+> Mon, 20 Mar 2006 07:41:27 -0800 (PST)
+> Per a:
+> users@dwr.dev.java.net
+>
+> Per a:
+> users@dwr.dev.java.net
+>
+>
+> Hi,
+>
+> Did anyone come up with good algorithm how we can use
+> DWRUtil.getValues()/setValues() to work with nested
+> properties on page? 
+>
+> Say, we have an object: 
+> ----------------------
+> var someObject = {
+>  foo : 10;
+>  bar : { 
+>           bar1 : "some value";
+>           bar2 : 123;
+>               }
+> }
+> ----------------------
+>
+>
+> and fields on form like:
+> ------------------------------
+>  <input type="text" id="foo">
+>  <input type="text" id="bar.bar1">
+>  <input type="text" id="bar.bar2">
+> ----------------------------------
+>
+> I call DWRUtils.setValues(someObject) and it should
+> automaticly populate all those nested properties
+> "bar.bar1" and "bar.bar2"
+>
+> Any Ideas? 
+>
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around 
+> http://mail.yahoo.com 
+>   
+--
+-----------------------------------------------------------------
+?scar P?rez del Campo
+-----------------------------------------------------------------
+DSET - "Embedded Solutions"
+M?dul M20. Campus de Montilivi
+Universitat de Girona
+17071 Girona (Spain)
+Tlf/Fax: 972 418 381
+e-mail: operez@dset-solutions.com
+http://www.dset-solutions.com
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: users-unsubscribe@dwr.dev.java.net
+For additional commands, e-mail: users-help@dwr.dev.java.net
+

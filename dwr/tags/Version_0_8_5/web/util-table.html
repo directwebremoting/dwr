@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Util.js</title>
+</head>
+
+<body>
+
+<h1>util.js</h1>
+
+<h2>Generating Tables</h2>
+
+<p><b>Elements</b>: table, thead, tbody, tfoot, tr, th, td
+</p>
+
+<p>
+<b>See</b>: <code>DWRUtil.drawTable(tbodyID, data, cellFuncs)</code> and
+<code>DWRUtil.clearChildNodes(tbodyID)</code>.
+</p>
+
+<p>
+Tables can be cleared as above and added to using
+<code>DWRUtil.drawTable(tbodyID, data, cellFuncs)</code>. DWRUtil.drawTable
+encourages you to use tbody elements to support people that wish to have headers
+or footers that are unchanged. Table rows can be created from arrays, but not
+from strings, objects or numbers.
+</p>
+
+<p>
+See the documentation for DWRUtil.drawTable() to see how a row is created for
+each array entry and cells within the row are created by the calling of each
+<code>cellFunc</code> using the array entry as a parameter.
+</p>
+
+<p>
+Open questions: Should we support creation of tables from objects (using a
+for/in loop?). Currently there is no plan to do this because there is no idea
+of similarity between the properties of an object, but there is some concept
+of this for an object. Similarly creation of a table from a string (via
+innerHTML) may be possible using plain strings and setValue so we will not
+attempt to support it here.
+</p>
+
+</body>
+</html>

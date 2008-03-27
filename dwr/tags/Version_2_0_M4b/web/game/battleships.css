@@ -1,0 +1,45 @@
+@CHARSET "ISO-8859-1";
+
+body { margin:00px 40px 0px 40px; color:#fff; background-color:#000;
+  font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
+}
+
+select, textarea, input[type='text'], input[type='password'] {
+  font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
+  font-size:1em; padding:0px 3px; margin:2px; border:1px solid #999;
+  background-color:#222; color:#fff;
+}
+
+select, textarea, input[type='text'], input[type='password'], input[type='button']
+{ -moz-border-radius:5px; }
+
+button, input[type='button'], input[type='submit'], input[type='cancel'] {
+  font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
+  font-size:1em; color:#fff; background-color:#000;
+}
+
+table { border-collapse:collapse; }
+
+#map { background-image:url("seamap.png"); background-position:right;
+  border:10px dashed #121; margin-top:10px;
+}
+#map td { width:60px; height:70px; border:1px solid #000;
+  background-repeat:no-repeat; background-position:center;
+}
+#map.shoot td:hover { background-image:url("crosshair.png"); }
+#map.place td:hover { background-image:url("place-ship.png"); }
+#map .home { background-image:url("boat.gif"); }
+
+#chatlog { list-style-type:none; padding:0; margin:0; }
+#chatlog .chatname { font-size:70%; }
+#chatlog .chattext { font-size:80%; }
+
+#sidebar { position:absolute; top:0; right:0; width:350px; padding:10px; border-left:1px solid #666; }
+
+#shotouter { background-color:#112; float:right; border:1px solid #334;
+  width:200px; height:24px; margin-right:80px;
+}
+
+#shotinner { width:0px; height:16px; margin:3px 6px; background-color:red;
+  color:#fff; white-space:nowrap; font-size:70%;
+}

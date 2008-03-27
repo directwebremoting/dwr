@@ -1,0 +1,57 @@
+--- util.js.orig	2005-12-28 21:52:24.000000000 -0600
++++ util.js	2006-02-02 20:09:22.000000000 -0600
+@@ -498,15 +498,21 @@
+ };
+ 
+ /**
+- * Given a map, call setValue() for all the entries in the map using the entry key as an element id
++ * Given a map, call setValue() for all the entries in the map using the entry key as an element id.
++ * @param map Map of properties to set
++ * @param prefix Optional prefix to use for element id
+  * @see http://getahead.ltd.uk/dwr/browser/util/setvalues
+  */
+ DWRUtil.setValues = function(map) {
++  var prefix = '';
++  if (arguments[1] != null) {
++    prefix = arguments[1];
++  }
+   for (var property in map) {
+     var ele = $(property);
+     if (ele != null) {
+       var value = map[property];
+-      DWRUtil.setValue(property, value);
++      DWRUtil.setValue(prefix + property, value);
+     }
+   }
+ };
+@@ -514,10 +520,16 @@
+ /**
+  * Given a map, call getValue() for all the entries in the map using the entry key as an element id.
+  * Given a string or element that refers to a form, create an object from the elements of the form.
++ * @param map Map of properties to get
++ * @param prefix Optional prefix to use for element id
+  * @see http://getahead.ltd.uk/dwr/browser/util/getvalues
+  */
+ DWRUtil.getValues = function(data) {
+   var ele;
++  var prefix = '';
++  if (arguments[1] != null) {
++    prefix = arguments[1];
++  }
+   if (typeof data == "string") ele = $(data);
+   if (DWRUtil._isHTMLElement(data)) ele = data;
+   if (ele != null) {
+@@ -537,9 +549,9 @@
+   }
+   else {
+     for (var property in data) {
+-      var ele = $(property);
++      var ele = $(prefix + property);
+       if (ele != null) {
+-        data[property] = DWRUtil.getValue(property);
++        data[property] = DWRUtil.getValue(prefix+property);
+       }
+     }
+     return data;
+
+

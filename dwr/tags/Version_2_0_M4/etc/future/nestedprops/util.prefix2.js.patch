@@ -1,0 +1,69 @@
+Hi,
+
+In certain cases my HTML form controls need to map to second level
+Java object properties. For example a form for inputing a person's
+name, position, and contact info may have HTML text boxes name,
+address and phone number, but these may map to POJO in backend as
+person.name, person.contact.address and person.contact.phone.  Ideally
+I want my HTML input controls to have ids like "name",
+"contact.address" and "contact.phone" and let DWR's getValues() method
+construct JSON object
+{
+        name : "John Smith",
+        contact {  address : "1234 Hollywood Ave" , phone "88774542" }
+}
+
+and send that to server to invoke Java method
+   createPerson(Person p)
+
+So I patched util.js to make setValues() , getValues() aware of the
+special dot notation for input ids.  Here is the diff for
+dwr-1.1.beta3 source. Please note this patch works for my app but is
+not thourought tested yet.
+
+504,507c504
+< DWRUtil.setValues = function(map, prefix) {
+<   if (prefix == null) {
+<      prefix = "";
+<   }
+---
+> DWRUtil.setValues = function(map) {
+512,517c509
+<       // for nonprimitive fields, recursively call setValues on it, assume
+<       if (typeof(value) == 'object') {
+<         DWRUtil.setValues(value, prefix + property + ".");
+<       } else {
+<         DWRUtil.setValue(prefix + property, value);
+<       }
+---
+>       DWRUtil.setValue(property, value);
+527c519
+< DWRUtil.getValues = function(data, prefix) {
+---
+> DWRUtil.getValues = function(data) {
+529,531d520
+<   if (prefix == null) {
+<      prefix = "";
+<   }
+551,567c540,542
+<       var value = data[property];
+<       if (typeof (value) == 'object' && value != null)   {
+<          // ignore arrays
+<          if (value.length == null)
+<          // recursively read from html values into subobject
+<          DWRUtil.getValues(value, property + ".");
+<       } else {
+<
+<       var fieldPath = prefix + property;
+<       var ele = $(fieldPath);
+<       var nodes = [];
+<       if (ele == null) {
+<          nodes = document.getElementsByName(fieldPath);
+<       }
+<       if (nodes.length >= 1 || ele != null) {
+<          data[property] = DWRUtil.getValue(fieldPath);
+<       }
+---
+>       var ele = $(property);
+>       if (ele != null) {
+>         data[property] = DWRUtil.getValue(property);

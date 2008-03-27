@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+  ~ Copyright 2006 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xsd:schema xmlns="http://www.directwebremoting.org/schema/spring-dwr"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      targetNamespace="http://www.directwebremoting.org/schema/spring-dwr"
+      elementFormDefault="qualified"
+      attributeFormDefault="unqualified">
+
+  <xsd:element name="configuration" type="configuration">
+    <xsd:annotation>
+      <xsd:documentation>The element that can be used to specify DWR configuration that does not relate directly to a Spring-managed bean.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="remote" type="remote">
+    <xsd:annotation>
+      <xsd:documentation>The element that can be used as an inner-tag for a bean definition in order to have DWR remote it to JavaScript.</xsd:documentation>
+    </xsd:annotation> 
+  </xsd:element>
+
+  <xsd:element name="controller" type="controller">
+    <xsd:annotation>
+      <xsd:documentation source="org.directwebremoting.spring.DwrController">The element which creates a DWR specific controller. You can use the id/name attribute to identify the controller in order to map it to a certain path. You can also use the optional debug attribute to allow access to the generated debug pages.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="configuration">
+    <xsd:sequence>
+      <xsd:element name="init" type="init" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="create" type="create" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="convert" type="convert" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="signatures" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="init">
+    <xsd:annotation>
+      <xsd:documentation source="org.directwebremoting.spring.DwrController">The optional init section declares the classes that can be used to create beans to remote and the classes that can be used to convert beans in the marshalling process.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="creator" type="creator" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="converter" type="converter" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="create">
+    <xsd:sequence>
+      <xsd:element name="param" type="config-param" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="auth" type="auth" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="convert" type="convert" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="latencyfilter" type="latencyfilter" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="type" use="required">
+    <xsd:simpleType>
+        <xsd:union >
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="new"/>
+              <xsd:enumeration value="null"/>
+              <xsd:enumeration value="scripted"/>
+              <xsd:enumeration value="spring"/>
+              <xsd:enumeration value="jsf"/>
+              <xsd:enumeration value="struts"/>
+              <xsd:enumeration value="pageflow"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:IDREF" />
+          </xsd:simpleType>
+        </xsd:union>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="javascript" type="xsd:string" use="required"/>
+    <xsd:attribute name="class" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="convert">
+    <xsd:sequence>
+      <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+    <xsd:attribute name="type" use="required"  >
+      <xsd:simpleType>
+        <xsd:union >
+          <xsd:simpleType>
+            <xsd:restriction  base="xsd:string">
+              <xsd:enumeration value="array"/>
+              <xsd:enumeration value="bean"/>
+              <xsd:enumeration value="collection"/>
+              <xsd:enumeration value="map"/>
+              <xsd:enumeration value="enum"/>
+              <xsd:enumeration value="hibernate2"/>
+              <xsd:enumeration value="hibernate3"/>
+              <xsd:enumeration value="exception"/>
+              <xsd:enumeration value="object"/>
+            </xsd:restriction>  
+          </xsd:simpleType>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:IDREF" />
+          </xsd:simpleType>
+        </xsd:union>  
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="javascript" type="xsd:string" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="signatures" mixed="true">
+    <xsd:sequence>
+      <xsd:element name="data" type="xsd:string" />
+    </xsd:sequence>
+    <xsd:attribute name="class" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="remote">
+    <xsd:sequence>
+      <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="auth" type="auth" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="convert" type="convert" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="latencyfilter" type="latencyfilter" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="javascript" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="creator">
+    <xsd:attribute name="id" type="xsd:ID" use="required"/>
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="converter">
+    <xsd:attribute name="id" type="xsd:ID" use="required"/>
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="latencyfilter">
+    <xsd:attribute name="delay" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="filter">
+    <xsd:attribute name="class" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="include">
+    <xsd:attribute name="method" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="exclude">
+    <xsd:attribute name="method" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="force">
+    <xsd:attribute name="value" type="xsd:boolean" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="auth">
+    <xsd:attribute name="method" type="xsd:string" use="required"/>
+    <xsd:attribute name="role" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="config-param">
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="value" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="controller">
+    <xsd:sequence>
+      <xsd:element name="config-param" type="config-param" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="debug" use="optional">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="true"/>
+          <xsd:enumeration value="false"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="id" type="xsd:ID"/>
+    <xsd:attribute name="name" type="xsd:Name"/>
+  </xsd:complexType>
+</xsd:schema>

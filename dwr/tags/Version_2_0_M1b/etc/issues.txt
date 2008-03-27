@@ -1,0 +1,56 @@
+
+Stuff I'm working on:
+- Serverside DWRUtil, Serverside Scriptaculous and Serverside Dojo. Create a Java API that maps through to the Javascript API
+- Accessibility. DWR should integrate with screen readers to tell them when a page has changed
+
+Stuff that would be cool:
+- Annotations based configuration
+- Using JDK5 type metadata to make <signatures> optional
+- WDDX stuff from Rob Gonda
+- Overloaded objects marshaled to correct types
+- Hierarchical DWRUtil.[g|s]etValues
+
+Audit all MarshallExceptions - they could go to the client
+
+server side dom objects that are auto-inserted – c.f. Oracle ADF. See Mats posting
+
+accessibility
+
+struts
+
+jsf
+
+make sure that the exec calls never pass back an exception. catch and emit some good javascript
+
+onbackbutton, onforwardbutton
+
+Multiple call issue
+	When calling the same function 4 times consecutively passing a different
+	paramter the same result is always returned.  While debugging on the server side
+	(jboss), I have noted that the result passed back (a collection) is different.
+	However, DWR appears to be getting confused and always returns the same result
+	for each call.
+	I have noticed that if I put each call between a begin/endbatch that the correct
+	result is returned.
+	This is only for 1.1.  1.0 does not have this issue.
+	LabBean.getMaterials(displayMaterialJewels, 1);
+	LabBean.getMaterials(displayMaterialReversedItems, 2);
+	LabBean.getMaterials(displayMaterialReversedJewels, 1);
+	LabBean.getMaterials(displayMaterialItems, 2);
+
+ie7 testing
+
+problems with oc4j??
+	This is a berif description and I will send you my code soon.
+	In my code I'm trying to call a java method from the jscript, where the java
+	method returns a vector of objects and the returned value is reterived from
+	the database, so every time the returned vector size could be changed, but
+	in my case the returned vector has the same size every time however I'm sure
+	that this vector is changed. What I could understand till now that this
+	problem still accoured even I have restarted the jDeveloper and the whole
+	windows.
+	Thank you for your interest, and I will send you the code ASAP.
+
+IFrame GET is broken with Safari
+	iframe is only really useful with IE6 (with activex turned off) so we can
+	ignore this breakage

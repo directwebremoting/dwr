@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Javascript Functions</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>Javascript Functions</h1>
+
+<p>
+  DWR includes 2 plain javascript files: <code>engine.js</code> and
+  <code>util.js</code>. <code>engine.js</code> is vital since it is used to
+  marshall calls from the dynamically generated interface javascript function,
+  so it is needed wherever DWR is used.
+  <code>util.js</code> is optional. It contains a number of useful functions for
+  dynamically editing pages. It might be sensible to take a copy of util.js and
+  place it in your webapp rather than use it directly since the functions are
+  likely to change between here and version 1.0.
+</p>
+
+<h2>The engine.js file</h2>
+<pre>
+&lt;script type='text/javascript' src='/[YOUR-WEB-APP]/dwr/engine.js'&gt;
+&lt;/script&gt;
+</pre>
+
+<p>
+  The engine script file contains some functions that help define how DWR works.
+  The util script file contains some useful stuff that could give you a good
+  kick start in creating select lists and tables using DWR. util.js is totally
+  unsupported however. If you wish to make use of it I suggest that you copy
+  it into your webapp and use it from there. It may well go away in the future.
+  The useful functions in engine.js are documented here. There is no
+  documentation other than the demo pages for util.js
+</p>
+
+<h3>DWREngine.setErrorHandler(function)</h3>
+<p>
+  Whenever there some sort of server failure DWR calls the error handler and
+  passes it the error message. The default behavior if there is no error handler
+  is to <code>alert(message);</code>.
+  <br/>
+  This method could be used to move the error messages from an alert box to the
+  status bar or to do away with them altogether.
+</p>
+
+<h3>DWREngine.setPreHook(function)</h3>
+<p>
+  If you wish to be alerted before DWR actually remotes a call you can set a
+  pre-hook function. This will be called with no parameters.
+  This hook is useful if you wish to grey out certain components to prevent them
+  being used again until the call returns.
+</p>
+
+<h3>DWREngine.setPostHook(function)</h3>
+<p>
+  Post execute hooks will usually be set in conjunction with pre-execute hooks
+  and will generally undo any changes made by the pre-hook.
+</p>
+
+
+<h3>DWREngine.setMethod(newmethod)</h3>
+<p>
+  Set the preferred remoting method. <code>setMethod()</code> does not guarantee
+  that the selected method will be used, just that we will try that method
+  first.
+  <br/>
+  <code>newmethod</code> must be one of <code>DWREngine.XMLHttpRequest</code> or
+  <code>DWREngine.IFrame</code>.
+</p>
+
+<h2>The util.js file</h2>
+<pre>
+&lt;script type='text/javascript' src='/[YOUR-WEB-APP]/dwr/util.js'&gt;
+&lt;/script&gt;
+</pre>
+
+
+<h3>DWRUtil.showById(id)</h3>
+<p>
+  Set the CSS display style to 'block'
+</p>
+
+<h3>DWRUtil.hideById(id)</h3>
+<p>
+  Set the CSS display style to 'none'
+</p>
+
+<h3>DWRUtil.toggleDisplay(id)</h3>
+<p>
+  Toggle an elements visibility
+</p>
+
+<h3>DWRUtil.setCSSClass(id, cssclass)</h3>
+<p>
+  Set the CSS class for an element
+</p>
+
+<h3>DWRUtil.clearChildNodes(id)</h3>
+<p>
+  Remove all the children of a given node.
+  Most useful for dynamic tables where you clearChildNodes() on the tbody
+  element.
+</p>
+
+<h3>DWRUtil.fillList(id, data, valueprop, textprop)</h3>
+<p>
+  Remove all the options from a select list (specified by id) and replace with
+  elements in an array of objects. The value and text of each option are taken
+  from the valueprop and textprop parameters.
+  If both are left empty then the object itself will be used.
+</p>
+
+<h3>DWRUtil.drawTable(tbodyID, dataArray, textFuncs)</h3>
+<p>
+  TODO: This should probably be renamed fillTable()
+  Under the tbody (given by id) create a row for each element in the dataArray
+  and for that row create one cell for each function in the textFuncs array
+  by passing the rows object (from the dataArray) to the given function.
+  The return from the function is used to populate the cell.
+</p>
+
+<h3>DWRUtil.setEnabled(id, state)</h3>
+<p>
+  Visually enable or diable an element.
+</p>
+
+<h3>DWRUtil.isHTMLElement(ele)</h3>
+<p>
+  Is the given node an HTML element?
+</p>
+
+<h3>DWRUtil.isHTMLInputElement(ele)</h3>
+<p>
+  Is the given node an HTML input element?
+</p>
+
+<h3>DWRUtil.isHTMLTextAreaElement(ele)</h3>
+<p>
+  Is the given node an HTML textarea element?
+</p>
+
+<h3>DWRUtil.isHTMLSelectElement(ele)</h3>
+<p>
+  Is the given node an HTML select element?
+</p>
+
+<h3>DWRUtil.setValue(id, val)</h3>
+<p>
+  Set the value for the given id to the specified val.
+  This method works for selects (where the option with a matching value and
+  not text is selected), input elements (including textareas) divs and spans.
+</p>
+
+<h3>DWRUtil.getValue(id)</h3>
+<p>
+  The counterpart to setValue() - read the current value for a given element.
+  This method works for selects (where the option with a matching value and
+  not text is selected), input elements (including textareas) divs and spans.
+</p>
+
+<h3>DWRUtil.getText(id)</h3>
+<p>
+  getText() is like getValue() with the except that it only works for selects
+  where it reads the text of an option and not it's value.
+</p>
+
+<h3>DWRUtil.setValues(map)</h3>
+<p>
+  Given a map, call setValue() for all the entries in the map using the key
+  of each entry as an id.
+</p>
+
+<h3>DWRUtil.callOnLoad(load)</h3>
+<p>
+  Ensure a function is called when the page is loaded
+</p>
+
+<h3>DWRUtil.alternateRowColors()</h3>
+<p>
+  Alter an rows in a table that have a class of zebra to have classes of either
+  oddrow or evenrow alternately.
+  This is probably not the best place for this method, but I dont want to have
+  to fight with multiple onload functions.
+</p>
+
+<h3>DWRUtil.toDescriptiveString(object)</h3>
+<p>
+  A better toString that the default for an Object
+</p>
+
+<h3>DWRUtil.detailedTypeOf(x)</h3>
+<p>
+  Like typeOf except that more information for an object is returned other
+  than "object"
+</p>
+
+<h3>DWRUtil.useLoadingMessage()</h3>
+<p>
+  Setup a GMail style loading message
+</p>
+
+</div>
+</body>
+</html>
+
+
+<!--
+Useful vi macros in converting from util.js to this html:
+To remove the method bodies:
+  /{[RET]
+  d%
+  n.n.n.n.n.n
+To swap function declaration lines for <h3> lines:
+  :%s/^function \(.*\)$/<h3>\1\<\/h3>/
+To remove comments
+  :%s/^\/\*\*/<p>/
+  :%s/^ \*\//<\/p>/
+  :%s/^ \* /  /
+We should probably work out a way to automate moving function names above the
+documentation for the function
+-->

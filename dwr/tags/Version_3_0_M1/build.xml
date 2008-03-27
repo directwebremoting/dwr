@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<project name="dwr" default="compile">
+
+  <!--=======================================================================-->
+  <!-- File that contains local settings, you may need to edit this -->
+  <property file="build.properties"/>
+  <!-- Version number information -->
+  <property file="${source.root}/java/dwr-version.properties"/>
+
+  <path id="classpath">
+    <!--
+    <pathelement path="${java.class.path}/"/>
+    <pathelement path="${additional.path}"/>
+    -->
+    <fileset dir="${source.root}/jar" includes="**/*.jar"/>
+    <pathelement location="${target.root}/classes"/>
+    <pathelement location="${target.root}/test-classes"/>
+    <pathelement location="${target.root}/demo-classes"/>
+  </path>
+
+  <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
+    <classpath>
+      <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
+    </classpath>
+  </taskdef>
+
+  <!--=======================================================================-->
+  <target name="compile" description="Compile the sources">
+    <tstamp/>
+    <mkdir dir="${target.root}/classes"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.root}/classes">
+      <exclude name="**/package.html"/>
+      <exclude name="**/package-info.java"/>
+      <src path="${source.root}/java"/>
+      <src path="${source.root}/java5"/>
+      <src path="${source.root}/generated/gi/java"/>
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="${target.root}/classes">
+      <fileset dir="${source.root}/java">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+      <fileset dir="${source.root}/generated/gi/java">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+      <fileset dir="${source.root}/java5">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+      <fileset dir="${source.root}/etc/classpath">
+        <exclude name="**/log4j.properties"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${target.root}/demo-classes"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.root}/demo-classes">
+      <src path="${source.root}/demo"/>
+      <classpath refid="classpath"/>
+    </javac>
+    <mkdir dir="${target.root}/test-classes"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.root}/test-classes">
+      <src path="${source.root}/test/java"/>
+      <src path="${source.root}/util/java"/>
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="${target.root}/test-classes">
+      <fileset dir="${source.root}/test/java">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+      <fileset dir="${source.root}/test/resources"/>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="javadoc">
+    <mkdir dir="${target.root}/javadoc"/>
+    <javadoc access="public"
+        author="true"
+        destdir="${target.root}/javadoc"
+        doctitle="DWR Version ${version}"
+        use="true"
+        splitindex="true"
+        version="true">
+      <sourcepath path="${source.root}/java"/>
+      <sourcepath path="${source.root}/java5"/>
+      <classpath refid="classpath"/>
+      <package name="org.directwebremoting.*"/>
+      <package name="uk.ltd.getahead.dwr.*"/>
+      <footer>Copyright &#168; 2005</footer>
+    </javadoc>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="dtddoc">
+    <path id="dtddocpath">
+      <fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar"/>
+    </path>
+    <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath"/>
+    <mkdir dir="${target.root}/dtddoc"/>
+    <DTDDoc showHiddenTags="false"
+        showFixmeTags="false"
+        sourceDir="${source.root}/java"
+        destDir="${target.root}/dtddoc"
+        docTitle = "DTDDoc's example">
+      <include name="**/*.dtd"/>
+      <exclude name="common/*.dtd"/>
+    </DTDDoc>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="compile" description="Create output JAR file">
+    <mkdir dir="${target.root}"/>
+    <jar destfile="${target.root}/dwr.jar" compress="true">
+      <fileset dir="${target.root}/classes"/>
+    </jar>
+    <retroweaver inputjar="${target.root}/dwr.jar" outputjar="${target.root}/dwr-jdk14.jar" target="1.4"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="war" depends="jar" description="Create output WAR file">
+    <war destfile="${target.root}/dwr.war" webxml="${source.root}/web/WEB-INF/web.xml">
+      <lib file="${target.root}/dwr.jar"/>
+      <classes dir="${target.root}/demo-classes"/>
+      <classes dir="${source.root}/demo"/>
+      <fileset dir="${source.root}/web">
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+        <exclude name="WEB-INF/web.xml"/>
+        <exclude name="WEB-INF/classes/**"/>
+      </fileset>
+    </war>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="files" depends="war, javadoc" description="Create output WAR and JAR files">
+    <zip destfile="${target.root}/dwr-${version}-src.zip">
+      <fileset dir="${source.root}">
+        <exclude name="target/**"/>
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+      </fileset>
+      <fileset dir="${target.root}">
+        <include name="dwr.jar"/>
+        <include name="dwr.war"/>
+      </fileset>
+      <!-- The DWR website extracts javadoc from here -->
+      <zipfileset dir="${target.root}/javadoc" prefix="javadoc"/>
+    </zip>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="unpack" depends="war" description="Extracts the war file, including un-jaring dwr.jar for fast update">
+    <delete dir="${target.war}"/>
+    <unwar src="${target.root}/dwr.war" dest="${target.war}"/>
+    <unjar src="${target.war}/WEB-INF/lib/dwr.jar" dest="${target.war}/WEB-INF/classes"/>
+    <delete file="${target.war}/WEB-INF/lib/dwr.jar"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="fast-unpack" depends="compile" description="Extracts the war file">
+    <copy todir="${target.war}">
+      <fileset dir="${source.root}/web">
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+        <exclude name="WEB-INF/classes/**"/>
+      </fileset>
+    </copy>
+    <copy todir="${target.war}/WEB-INF/classes">
+      <fileset dir="${target.root}/classes"/>
+      <fileset dir="${target.root}/demo-classes"/>
+      <fileset dir="${source.root}/demo"/>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="tomcat-reload" depends="fast-unpack" description="Asks tomcat to re-load a DWR context">
+    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
+      <classpath>
+        <pathelement path="${tomcat.home}/lib/catalina-ant.jar"/>
+      </classpath>
+    </taskdef>
+    <reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="${tomcat.context}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="test" depends="compile" description="Runs the test suite">
+    <mkdir dir="${target.root}/junit"/>
+    <!-- Since we're using JUnit4, we need Ant1.7 to grok the tests -->
+    <junit fork="yes" haltonfailure="yes">
+      <formatter type="xml"/>
+      <classpath refid="classpath"/>
+      <batchtest todir="${target.root}/junit">
+        <fileset dir="${source.root}/test/java">
+          <include name="**/*Test.java"/>
+          <exclude name="**/AllTests.java"/>
+          <exclude name="**/Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="hostedqa" depends="files" description="Sends the WAR to HostedQA and runs all tests">
+    <taskdef resource="hostedqatasks" classpathref="classpath"/>
+    <upload file="${target.root}/dwr.war" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}" resourceId="20"/>
+    <playsuite suiteId="18" clientConfigs="21,22,34" appConfigs="15" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean">
+    <delete dir="${target.root}"/>
+    <delete defaultexcludes="false" verbose="true" dir="${source.root}">
+      <include name="**/*.DS_Store"/>
+    </delete>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="cvsup" description="cvs update">
+    <cvs dest=".">
+      <commandline>
+        <argument value="-q"/>
+        <argument value="update"/>
+        <argument value="-d"/>
+        <argument value="-P"/>
+      </commandline>
+    </cvs>
+  </target>
+
+</project>

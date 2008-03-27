@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Reference to DWR entries in WEB-INF/web.xml</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>Reference to DWR entries in WEB-INF/web.xml</h1>
+
+<h3>Basic setup</h3>
+
+<p>
+  The minimum possible additions to your web.xml, are simply those to declare
+  the DWR servlet without which none of this would work. So the least you can
+  get away with looks something like this:
+</p>
+
+<pre>
+&lt;servlet&gt;
+  &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/dwr/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</pre>
+
+<p>
+  In addition to this there are 3 servlet parameters that are somewhere between
+  important and vaguely useful.
+</p>
+
+<h3>Using debug/test mode</h3>
+
+<p>
+  You put DWR into debug/test mode by adding the following parameter:
+</p>
+
+<pre>
+&lt;init-param&gt;
+  &lt;param-name&gt;debug&lt;/param-name&gt;
+  &lt;param-value&gt;true&lt;/param-value&gt;
+  &lt;description&gt;Do we startup in debug mode?&lt;/description&gt;
+&lt;/init-param&gt;
+</pre>
+
+<p>
+  DWR will generate test pages for each of the allowed classes (see dwr.xml below)
+  in debug mode. These can be very useful in seeing what DWR can do and how it
+  works. This mode can also alert you to problems like javascript reserved word
+  clashes or overloading problems.
+  <br/>
+  However this mode should not be used in live deployment as it could give an
+  attacker a lot of information about the services that you export. If you have
+  designed your website properly then this extra information will not help an
+  attacker exploit your website however it is generally wise not to give anyone
+  a route map to exploit any mistakes you might have made.
+  <br/>
+  DWR is provided 'as is', without any warranty, so the security of your website
+  is your responsibility. Please take care to keep it secure.
+</p>
+
+<h3>Multiple dwr.xml files and J2EE security</h3>
+
+<p>
+  Generally speaking you will only need one dwr.xml file and that will be in the
+  default position: <code>WEB-INF/dwr.xml</code>. So you can leave this paramter
+  out. If you do wish to use it then the syntax is as follows:
+</p>
+
+<pre>
+&lt;init-param&gt;
+  &lt;param-name&gt;config*****&lt;/param-name&gt;
+  &lt;param-value&gt;WEB-INF/dwr.xml&lt;/param-value&gt;
+  &lt;description&gt;What config file do we use?&lt;/description&gt;
+&lt;/init-param&gt;
+</pre>
+
+<p>
+  Where config***** means any param-name that begins with the string 'config'.
+  This parameter can be specified as many times as required, however the
+  <code>param-name</code> should be different for each.
+</p>
+
+<p>
+  There are 3 reasons why you
+  might wish to specify a different position for dwr.xml:
+</p>
+<ul>
+  <li>
+    You wish to keep dwr.xml with the files that it gives access to.
+    In which case the section might have a param-value something like
+    <code>&lt;param-value&gt;WEB-INF/classes/com/yourco/dwr/dwr.xml&lt;/param-value&gt;</code>.
+  </li>
+  <li>
+    You have a large number of remoted classes and wish to keep the
+    definitions in separate files. In this case you will have the section
+    above repeated several times each with a different <code>param-name</code>
+    that begins 'config' and each with a different file.
+    DWR will read them all in turn.
+  </li>
+  <li>
+    DWR can use J2EE URL security built into the servlet spec to give
+    different groups of users access to different functions. You simply define
+    more than one dwr servlet by repeating the stanza at the top of the page
+    with different names, urls and permissions. For example:
+  </li>
+</ul>
+
+<pre>
+&lt;servlet&gt;
+  &lt;servlet-name&gt;dwr-user-invoker&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class&gt;
+  &lt;init-param&gt;
+    &lt;param-name&gt;config-user&lt;/param-name&gt;
+    &lt;param-value&gt;WEB-INF/dwr-user.xml&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+&lt;servlet&gt;
+  &lt;servlet-name&gt;dwr-admin-invoker&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class&gt;
+  &lt;init-param&gt;
+    &lt;param-name&gt;config-admin&lt;/param-name&gt;
+    &lt;param-value&gt;WEB-INF/dwr-admin.xml&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;dwr-admin-invoker&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/dwradmin/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;dwr-user-invoker&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/dwruser/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;security-constraint&gt;
+  &lt;display-name&gt;dwr-admin&lt;/display-name&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;dwr-admin-collection&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/dwradmin/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;admin&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;
+&lt;security-constraint&gt;
+  &lt;display-name&gt;dwr-user&lt;/display-name&gt;
+  &lt;web-resource-collection&gt;
+    &lt;web-resource-name&gt;dwr-user-collection&lt;/web-resource-name&gt;
+    &lt;url-pattern&gt;/dwruser/*&lt;/url-pattern&gt;
+  &lt;/web-resource-collection&gt;
+  &lt;auth-constraint&gt;
+    &lt;role-name&gt;user&lt;/role-name&gt;
+  &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;
+</pre>
+
+<h3>Logging</h3>
+
+<p>
+  DWR works in JDK 1.3 where there is no java.util.logging and I don't wish to
+  force DWR users to include a logging jar file what you might not otherwise
+  need, so DWR does all it's logging using HttpServlet.log() methods. App.
+  servers handle this logging in various ways although not all of them allow
+  it to be configured and few finely so you can configure DWR using logging
+  levels that are familiar to log4j users.
+  <br/>
+  The following stanza controls DWR logging:
+</p>
+
+<pre>
+&lt;init-param&gt;
+ &lt;param-name&gt;logLevel&lt;/param-name&gt;
+ &lt;param-value&gt;DEBUG&lt;/param-value&gt;
+&lt;/init-param&gt;
+</pre>
+
+<p>
+  The valid values are: FATAL, ERROR, WARN (the default), INFO and DEBUG.
+</p>
+
+<h3>Overriding the default Creator and Converter Managers</h3>
+
+<p>
+  Advanced users may wish to override the default creator and converter
+  managers. This can be achieved by adding one of the following init-params:
+</p>
+
+<pre>
+&lt;init-param&gt;
+ &lt;param-name&gt;converterManager&lt;/param-name&gt;
+ &lt;param-value&gt;your.impl.of.ConverterManager&lt;/param-value&gt;
+&lt;/init-param&gt;
+&lt;init-param&gt;
+ &lt;param-name&gt;creatorManager&lt;/param-name&gt;
+ &lt;param-value&gt;your.impl.of.CreatorManager&lt;/param-value&gt;
+&lt;/init-param&gt;
+</pre>
+
+</div>
+</body>
+</html>

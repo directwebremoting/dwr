@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<project name="dwr20" default="compile">
+
+  <!--=======================================================================-->
+  <!-- File that contains local settings, you may need to edit this -->
+  <property file="build.properties"/>
+  <!-- Version number information -->
+  <property file="${source.java}/dwr-version.properties"/>
+
+  <!--=======================================================================-->
+  <target name="compile" description="Compile the sources">
+    <echo message="Building ${source.java} using ${java.13.home} on ${os.name}"/>
+    <tstamp/>
+    <mkdir dir="${target.class}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}"
+        source="1.3" target="1.3" includeantruntime="no" includejavaruntime="no">
+      <src path="${source.java}"/>
+      <src path="${source.demo}"/>
+      <bootclasspath>
+        <fileset dir="${java.13.home}" includes="**/*.jar"/>
+      </bootclasspath>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
+    </javac>
+    <echo message="Building ${source.java5} using ${java.15.home} on ${os.name}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}"
+        source="1.5" target="1.5">
+      <src path="${source.java5}"/>
+      <bootclasspath>
+        <fileset dir="${java.15.home}" includes="**/*.jar"/>
+      </bootclasspath>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
+    </javac>
+    <copy todir="${target.class}">
+      <fileset dir="${source.java}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+      <fileset dir="${source.java5}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="javadoc">
+    <mkdir dir="${target.javadoc}"/>
+    <javadoc access="public"
+        author="true"
+        destdir="${target.javadoc}"
+        doctitle="DWR Version ${version}"
+        use="true"
+        splitindex="true"
+        version="true">
+      <sourcepath path="${source.java}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
+      <package name="org.directwebremoting.*"/>
+      <package name="uk.ltd.getahead.dwr.*"/>
+      <footer>Copyright &#168; 2005</footer>
+    </javadoc>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="compile" description="Create output JAR file">
+    <mkdir dir="${target.files}"/>
+    <jar destfile="${target.files}/dwr.jar" compress="true">
+      <fileset dir="${target.class}">
+        <exclude name="**/testdwr/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="files" depends="jar, javadoc" description="Create output WAR and JAR files">
+    <war destfile="${target.files}/dwr.war" webxml="${source.web}/WEB-INF/web.xml">
+      <lib file="${target.files}/dwr.jar"/>
+      <classes dir="${target.class}">
+        <include name="**/dwrdemo/**"/>
+      </classes>
+      <classes dir="${source.demo}">
+      </classes>
+      <fileset dir="${source.web}">
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+        <exclude name="WEB-INF/web.xml"/>
+        <exclude name="WEB-INF/classes/**"/>
+      </fileset>
+    </war>
+    <zip destfile="${target.files}/dwr-${version}-src.zip">
+      <fileset dir="${source.root}">
+        <exclude name="target/**"/>
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+      </fileset>
+      <fileset dir="${target.files}">
+        <include name="dwr.jar"/>
+        <include name="dwr.war"/>
+      </fileset>
+      <!-- The DWR website extracts javadoc from here -->
+      <zipfileset dir="${target.javadoc}" prefix="javadoc"/>
+    </zip>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean">
+    <delete dir="${target.class}"/>
+    <delete dir="${target.root}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="cvsup" description="cvs update">
+    <cvs dest=".">
+      <commandline>
+        <argument value="-q"/>
+        <argument value="update"/>
+        <argument value="-d"/>
+        <argument value="-P"/>
+      </commandline>
+    </cvs>
+  </target>
+
+</project>

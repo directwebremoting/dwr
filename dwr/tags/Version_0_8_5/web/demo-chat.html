@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamic Address Entry</title>
+  <script type='text/javascript' src='/dwr/dwr/interface/Chat.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script>
+  //<![CDATA[
+  function init()
+  {
+      timeout = setTimeout("checkMessages()", 1000);
+  }
+
+  function checkMessages()
+  {
+      Chat.getMessages(gotMessages);
+  }
+
+  var seen = {};
+  var last = "";
+  var timeout;
+  var waits = [ 1000, 2000, 4000, 8000, 15000, 30000, 60000 ];
+  var waitIndex = 0;
+
+  function gotMessages(messages)
+  {
+      var chatlog = "";
+      for (var data in messages)
+      {
+          var style = "new";
+          if (seen[messages[data].id]) style = "old";
+          chatlog = "<div class='" + style + "' id='" + messages[data].id + "'>" + messages[data].text + "</div>" + chatlog;
+      }
+      // Cache the messages so we can compare against them next time to see what is new
+      seen = {};
+      for (data in messages)
+          seen[messages[data].id] = messages[data].text;
+      // Only update the UI if something has changed
+      if (chatlog != last)
+      {
+          DWRUtil.setValue("chatlog", chatlog);
+          last = chatlog;
+      }
+      waitIndex++;
+      if (waitIndex >= waits.length) waitIndex = waits.length - 1;
+      setTimeout("checkMessages()", waits[waitIndex]);
+  }
+
+  function sendMessage()
+  {
+      var text = DWRUtil.getValue("text");
+      DWRUtil.setValue("text", "");
+      Chat.addMessage(gotMessages, text);
+      if (timeout != null) clearTimeout(timeout);
+      waitIndex = 0;
+  }
+  //]]>
+  </script>
+  <style>
+  .old { background: #FEFEFE; }
+  .new { background: #FFFFE0; }
+  </style>
+</head>
+
+<body onload="init()">
+
+<h1>Simple Chat Application</h1>
+<p>
+  This demo was explained in detail at OnJava, check-out the write-up.<br/>
+  This example displays a very simple multi-user chat application. The entire
+  app is less than 50 line of server-side Java and less than 100 lines of HTML.
+</p>
+<div id="chatlog" style="border:1px solid black; padding:5px;"></div>
+<p>
+  Message:
+  <input id="text" onkeypress="DWRUtil.onReturn(event, sendMessage)"/>
+  <input type="button" value="Send" onclick="sendMessage()"/>
+</p>
+
+</body>
+</html>

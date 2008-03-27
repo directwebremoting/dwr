@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.3"/>
+	<classpathentry kind="lib" path="jar/commons-logging-1.0.4.jar" sourcepath="/library/jarlib/logging-1.0.4/commons-logging-1.0.4.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://jakarta.apache.org/commons/logging/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/servlet-api-2.4.jar" sourcepath="/library/jarlib/servlet-2.4/servlet-api-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="jar/xml-apis.jar" sourcepath="/library/jarlib/xerces-2.6.2/Xerces-J-src.2.6.2.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://xml.apache.org/xerces2-j/javadocs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/jdom-1.0.jar" sourcepath="/library/jarlib/jdom-1.0/jdom-1.0.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/dom4j-1.6.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.dom4j.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/xom-1.1.jar" sourcepath="/library/jarlib/xom-1.1/xom-1.1.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.cafeconleche.org/XOM/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/bsf-2.3.jar" sourcepath="/library/jarlib/bsf-2.3/bsf-src-2.3.0.zip"/>
+	<classpathentry kind="lib" path="jar/spring-2.0.jar" sourcepath="/eliza/jar/spring-2.0/spring-framework-2.0-m5-with-dependencies.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.springframework.org/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/struts-1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://struts.apache.org/struts-doc-1.1/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/myfaces-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/webwork-2.2.2.jar"/>
+	<classpathentry kind="lib" path="jar/xwork-1.1.1.jar"/>
+	<classpathentry kind="lib" path="jar/backport-util-concurrent.jar"/>
+	<classpathentry kind="lib" path="jar/jsp-api-2.0.jar"/>
+	<classpathentry kind="lib" path="jar/hibernate-2.1.7c.jar" sourcepath="/library/jarlib/hibernate-2.1.7c/hibernate-2.1.7c.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Share/joe/tameion/library/jarlib/hibernate-2.1.7c/hibernate-2.1.7c.zip!/hibernate-2.1/doc/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/hibernate-3.2.jar" sourcepath="/library/jarlib/hibernate-3.2/hibernate-3.2.0.ga.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Share/joe/tameion/library/jarlib/hibernate-3.2/hibernate-3.2.0.ga.zip!/hibernate-3.2/doc/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/hibernate-entitymanager-3.2.jar" sourcepath="/library/jarlib/hibernate-3.2/hibernate-entitymanager-3.2.0.GA.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Share/joe/tameion/library/jarlib/hibernate-3.2/hibernate-entitymanager-3.2.0.GA.zip!/hibernate-entitymanager-3.2.0.GA/doc/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="jar/jetty-6.1.1.jar"/>
+	<classpathentry kind="lib" path="jar/jetty-util-6.1.1.jar"/>
+	<classpathentry kind="src" path="etc/classpath"/>
+	<classpathentry kind="src" path="java"/>
+	<classpathentry kind="src" path="demo"/>
+	<classpathentry kind="output" path="web/WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Getting Started</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h2>Getting Started with DWR</h2>
+
+<h4>1. Copy the JAR file dwr.jar into the WEB-INF/lib directory of your webapp.</h4>
+<p>
+  The JAR file can be downloaded
+  <a href="https://dwr.dev.java.net/servlets/ProjectDocumentList">using the files area</a>,
+  or <a href="https://dwr.dev.java.net/source/browse/dwr/">from CVS</a>,
+  or you can build it yourself using the source from CVS.
+</p>
+
+<h4>2. Add the following lines to your WEB-INF/web.xml</h4>
+<pre>
+&lt;servlet&gt;
+  &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;
+  &lt;display-name&gt;DWR Servlet&lt;/display-name&gt;
+  &lt;description&gt;Direct Web Remoter Servlet&lt;/description&gt;
+  &lt;servlet-class&gt;uk.ltd.getahead.dwr.DWRServlet&lt;/servlet-class&gt;
+  &lt;init-param&gt;
+     &lt;param-name&gt;debug&lt;/param-name&gt;
+     &lt;param-value&gt;true&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/dwr/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</pre>
+
+<p>
+  Then create a dwr.xml file that lives in WEB-INF alongside web.xml.
+  A simple way to start is with something like this:
+</p>
+
+<pre>
+&lt;dwr&gt;
+  &lt;allow&gt;
+    &lt;create
+        creator="new"
+        javascript="JDate" class="java.util.Date"/&gt;
+    &lt;create
+        creator="session"
+        javascript="Demo" class="your.class.with.public.Constructor"/&gt;
+  &lt;/allow&gt;
+&lt;/dwr&gt;
+</pre>
+
+<p>
+  The DWR config file does 2 things. Firstly it defines what classes DWR can
+  create and remote for use by Javascript and defines the types that can be
+  marshalled as part of that remoting.
+</p>
+
+<p>
+  In the example above we are defining 2 classes that are remoted and giving
+  the classes names in Javascript so we don't have to use the full package
+  names. We also specify how the objects are to be created; "new" means that we
+  create a new object for each an every invocation. "session" stores the objects
+  in the users HTTP session.
+</p>
+
+<p>
+  Secondly dwr.xml allows you to define new ways to create and marshall objects.
+</p>
+
+<p>
+  The class attribute can contain any valid Java class so long as it satisfies
+  the following:
+</p>
+<ul>
+  <li>
+    For "new" and "session" creators, the class must have a public no-args
+    constructor like any normal Java Bean
+  </li>
+  <li>
+    Avoid reserved JavaScript words; Methods named after reserved words are
+    automatically excluded. Most JavaScript reserved words are also Java
+    reserved words, so you won't be haing a method try() anyway. However the
+    most common gotcha is "delete()", which has special meaning from JavaScript
+    but not Java.
+  </li>
+  <li>
+    Overridden methods can be involved in a bit of a lottery as to which gets
+    called, so avoid overridden methods.
+  </li>
+</ul>
+
+<h4>3. Go to the following URL</h4>
+
+<code>http://localhost:8080/[YOUR-WEBAPP]/dwr</code>
+<p>
+  You should see a page showing you the classes that you've selected in step 2.
+  Having followed a link you should see an index of all the methods all ready
+  for calling.
+</p>
+<p>Kick the tyres and have a look around.</p>
+
+<h4>4. How to make use of this from your web application</h4>
+<p>
+  Best practice is to have a class or 2 built to be called by DWR, this helps
+  to make things secure by not exposing the wrong functionality.
+</p>
+<p>
+  There are a number of examples in the sidebar that demonstrate how to
+  dynamically alter the text in web pages, update lists, manipulate forms and
+  do live table editing. Each has a description of how it works.
+</p>
+<p>
+  Another way to get started is to look at the source from the pages that you
+  just viewed:
+</p>
+<ul>
+  <li>Go to http://localhost:8080/[YOUR-WEBAPP]/dwr and click on you class</li>
+  <li>View source and find the line that executes the method that you are interested in.</li>
+  <li>Paste the text into an HTML or JSP page in your web-app.</li>
+  <li>Include links to the javascript files that make the magic happen:
+<pre>
+&lt;script src='/[YOUR-WEBAPP]/dwr/interface/[YOUR-SCRIPT-NAME].js'&gt;&lt;/script&gt;
+&lt;script src='/[YOUR-WEBAPP]/dwr/engine.js'&gt;&lt;/script&gt;
+</pre>
+</li>
+  <li>You will probably need to customize the Javascript to fit your site.</li>
+</ul>
+
+<p>
+  If you need to access the HttpServletRequest or any of the other servlet
+  classes you can do so using the ExecutionContext class. The code looks
+  something like this:
+</p>
+<pre>
+import uk.ltd.getahead.dwr.ExecutionContext;
+req = ExecutionContext.get().getHttpServletRequest();
+</pre>
+<p>
+  ExecutionContext uses a ThreadLocal variable so you can use the line above
+  anywhere in your code (so long as it has been fired off by DWR).
+</p>
+
+<h4>5. THINK ABOUT SECURITY</h4>
+<p>
+  There is a danger that you could cause all sorts of security problems using
+  this code. You need to think about security earlier rather than later.
+</p>
+<p>
+  It makes sense to write your classes with DWR in mind thinking about the
+  restrictions in step 2 above. Don't accidentally include methods that would
+  allow an attacker to do too more that you wanted.
+</p>
+<p>
+  Access to dwr can be restricted using the declaritive security built into the
+  servlet spec.
+</p>
+
+</div>
+</body>
+</html>

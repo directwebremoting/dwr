@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Top level conviguration element.
+-->
+<!ELEMENT dwr (
+    (init?), (allow?)
+)>
+
+<!--
+A list of all the classes to configure as part of dwr at startup time.
+-->
+<!ELEMENT init (
+    (creator | converter)*
+)>
+
+<!--
+Define a new method of creating objects for use by Javascript.
+We don't just allow access to any object and some may need special code to
+get a reference to them.
+-->
+<!ELEMENT creator EMPTY>
+<!ATTLIST creator
+    id ID #REQUIRED
+    class CDATA #REQUIRED
+>
+
+<!--
+Define a new way of converting between javascript objects and java objects.
+Many classes can have default conversion mechanisms but some require more
+custom conversion
+-->
+<!ELEMENT converter EMPTY>
+<!ATTLIST converter
+    id ID #REQUIRED
+    class CDATA #REQUIRED
+    priority CDATA #IMPLIED
+>
+
+<!--
+Security: we must define which classes we are allowed to access because a
+free-for-all will be very dangerous.
+-->
+<!ELEMENT allow (
+    (create | convert)*
+)>
+
+<!--
+Allow the creation of a class, and give it a name in javascript land.
+A reference to a creator is required as are some parameters specific to each
+creator that define the objects it allows creation of.
+It would be nice to make the creator and IDREF rather than a CDATA, since it
+refers to an element defined elsewhere, however we allow multiple dwr.xml
+files and we might refer to one in another file.
+-->
+<!ELEMENT create ANY>
+<!ATTLIST create
+    creator CDATA #REQUIRED
+    javascript CDATA #REQUIRED
+    class CDATA #IMPLIED
+    beanName CDATA #IMPLIED
+    resourceName CDATA #IMPLIED
+>
+
+<!--
+Allow conversion of a class between Java and Javascript.
+A convert element uses a previously defined converter and gives a class match
+pattern (which can end with *) to define the classes it allows conversion of
+It would be nice to make the converter and IDREF rather than a CDATA, since it
+refers to an element defined elsewhere, however we allow multiple dwr.xml
+files and we might refer to one in another file.
+-->
+<!ELEMENT convert EMPTY>
+<!ATTLIST convert
+    converter CDATA #REQUIRED
+    match CDATA #REQUIRED
+>

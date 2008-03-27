@@ -1,0 +1,45 @@
+
+DWRUtil.getValues should handle multiple select list
+
+onbackbutton, onforwardbutton
+
+Make ScriptSession invalidation not happen due to polling
+
+Overloaded objects marshaled to correct types
+
+Hierarchical DWRUtil.[g|s]etValues
+
+Test with Dojo and Prototype.
+
+XHR headers
+	I also read a recent posted question on setting
+	headers, and you asked why it was needed.	
+	Let me explain where I see a need.
+	At our site, we use Spring and Acegi where we have
+	written and/or use Acegi filters that look at the
+	request authentication information in the request
+	header.  Typically this is WSSE authentication
+	information.
+	As I started to look at DWR, I wanted to continue to
+	leverage this capability, but to do so, I would need
+	to set the request headers with the appropriate
+	information.  If successful the filter will just pass
+	the information to the DWR servlet for processing.
+	Can you tell me if there is a way in either version of
+	DWR to set this information? Of if you see another way
+	around this, that would be helpful.
+
+Simple Date format
+	There are also notes here:
+	http://getahead.ltd.uk/dwr/server/dwrxml/converters
+	This is something that keeps on being mentioned. At some stage maybe we
+	should consider creating a simple Javascript version of SimpleDateFormat
+	that would help people get this job done more quickly.
+
+Add checks for Javascript reserved names
+	In using DWR one nasty issue I came across was that my bean had a property
+	called default - my ajax call kept failing and I couldn't figure out why
+	till I looked at the generated variables and saw that it was because the
+	generated code put in a value for default and javascript didn't like it.
+	Maybe as a warning, look at bean properties and see if there are a conflicts
+	with reserved keywords.

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>Battleships</title>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/Battleships.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='battleships.js'> </script>
+  <link rel="stylesheet" type="text/css" href="battleships.css" />
+</head>
+
+<body onload="init();">
+
+<img src="title.png" title="Multi Player Battleships"/>
+
+<table id="map" class="shoot"></table>
+
+<div id="sidebar">
+  <p>
+    <b>Name</b>: <input id="name" type="text" size="23" onchange="setName()"/><br/>
+    <b>Position</b>:
+    Row <input id="row" type="text" size="1" onchange="move()"/>,
+    Column <input id="col" type="text" size="1" onchange="move()"/>
+    <div id="shotouter"><div id="shotinner">&nbsp;</div></div>
+    <b>Shot</b>:
+    <br/><br/>
+  </p>
+  <hr/>
+  <table style="text-align:center;">
+    <thead>
+      <tr>
+        <th>Player&nbsp;</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody id="scores">
+    </tbody>
+  </table>
+  <hr/>
+  <p>
+    <input id="text" type="text" size="25" onkeypress="DWRUtil.onReturn(event, sendMessage)"/>
+    <input type="button" value="Send" onclick="sendMessage()"/>
+  </p>
+  <ul id="chatlog"></ul>
+</div>
+
+<div id="dwr-debug" style="font-size:80%"></div>
+
+</body>
+</html>

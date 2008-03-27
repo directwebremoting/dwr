@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Unit Test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Test.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript'>
+  var failures;
+  var progress;
+  var failreport;
+  var execreport;
+  var starttime;
+  var failcount = 0;
+  var index = 0;
+  var tests = new Array();
+
+  tests.push({ code:"Test.voidParam(testResults)", expected:undefined });
+
+  tests.push({ code:"Test.booleanParam(testResults, true)", expected:true });
+  tests.push({ code:"Test.booleanParam(testResults, false)", expected:false });
+
+  tests.push({ code:"Test.byteParam(testResults, -128)", expected:-128 });
+  tests.push({ code:"Test.byteParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.byteParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.byteParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.byteParam(testResults, 127)", expected:127 });
+
+  tests.push({ code:"Test.shortParam(testResults, -32768)", expected:-32768 });
+  tests.push({ code:"Test.shortParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.shortParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.shortParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.shortParam(testResults, 32767)", expected:32767 });
+
+  tests.push({ code:"Test.intParam(testResults, -2147483648)", expected:-2147483648 });
+  tests.push({ code:"Test.intParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.intParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.intParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.intParam(testResults, 2147483647)", expected:2147483647 });
+
+  // Mozilla rounds 9223372036854775808 to 9223372036854776000 which overflows so we round down
+  tests.push({ code:"Test.longParam(testResults, -9223372036854775000)", expected:-9223372036854775000 });
+  tests.push({ code:"Test.longParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.longParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.longParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.longParam(testResults, 9223372036854775000)", expected:9223372036854775000 });
+
+  tests.push({ code:"Test.floatParam(testResults, -100000000000000000000)", expected:-100000000000000000000 });
+  tests.push({ code:"Test.floatParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.floatParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.floatParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.floatParam(testResults, 100000000000000000000)", expected:100000000000000000000 });
+
+  tests.push({ code:"Test.doubleParam(testResults, -100000000000000000000)", expected:-100000000000000000000 });
+  tests.push({ code:"Test.doubleParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.doubleParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.doubleParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.doubleParam(testResults, 100000000000000000000)", expected:100000000000000000000 });
+
+  tests.push({ code:"Test.bigDecimalParam(testResults, -100000000000000000000)", expected:-100000000000000000000 });
+  tests.push({ code:"Test.bigDecimalParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.bigDecimalParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.bigDecimalParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.bigDecimalParam(testResults, 100000000000000000000)", expected:100000000000000000000 });
+
+  tests.push({ code:"Test.bigIntegerParam(testResults, -100000000000000000000)", expected:-100000000000000000000 });
+  tests.push({ code:"Test.bigIntegerParam(testResults, -1)", expected:-1 });
+  tests.push({ code:"Test.bigIntegerParam(testResults, 0)", expected:0 });
+  tests.push({ code:"Test.bigIntegerParam(testResults, 1)", expected:1 });
+  tests.push({ code:"Test.bigIntegerParam(testResults, 100000000000000000000)", expected:100000000000000000000 });
+
+  tests.push({ code:"Test.charParam(testResults, '\\0')", expected:"\0" });
+  tests.push({ code:"Test.charParam(testResults, '\\t')", expected:"\t" });
+  tests.push({ code:"Test.charParam(testResults, '\\n')", expected:"\n" });
+  tests.push({ code:"Test.charParam(testResults, '\\v')", expected:"\v" });
+  tests.push({ code:"Test.charParam(testResults, '\\f')", expected:"\f" });
+  tests.push({ code:"Test.charParam(testResults, '\\r')", expected:"\r" });
+  tests.push({ code:"Test.charParam(testResults, '\\x07')", expected:"\x07" });
+
+  tests.push({ code:"Test.charParam(testResults, ' ')", expected:" " });
+  tests.push({ code:"Test.charParam(testResults, '!')", expected:"!" });
+  tests.push({ code:"Test.charParam(testResults, '\"')", expected:'"' });
+  tests.push({ code:"Test.charParam(testResults, '#')", expected:"#" });
+  tests.push({ code:"Test.charParam(testResults, '$')", expected:"$" });
+  tests.push({ code:"Test.charParam(testResults, '%')", expected:"%" });
+  tests.push({ code:"Test.charParam(testResults, '&')", expected:"&" });
+  tests.push({ code:"Test.charParam(testResults, '\\'')", expected:"'" }); // double escape because it is evaled twice
+  tests.push({ code:"Test.charParam(testResults, '(')", expected:"(" });
+  tests.push({ code:"Test.charParam(testResults, ')')", expected:")" });
+  tests.push({ code:"Test.charParam(testResults, '*')", expected:"*" });
+  tests.push({ code:"Test.charParam(testResults, '+')", expected:"+" });
+  tests.push({ code:"Test.charParam(testResults, ',')", expected:"," });
+  tests.push({ code:"Test.charParam(testResults, '-')", expected:"-" });
+  tests.push({ code:"Test.charParam(testResults, '.')", expected:"." });
+  tests.push({ code:"Test.charParam(testResults, '/')", expected:"/" });
+  tests.push({ code:"Test.charParam(testResults, '0')", expected:"0" });
+  tests.push({ code:"Test.charParam(testResults, '9')", expected:"9" });
+  tests.push({ code:"Test.charParam(testResults, ':')", expected:":" });
+  tests.push({ code:"Test.charParam(testResults, ';')", expected:";" });
+  tests.push({ code:"Test.charParam(testResults, '<')", expected:"<" });
+  tests.push({ code:"Test.charParam(testResults, '=')", expected:"=" });
+  tests.push({ code:"Test.charParam(testResults, '>')", expected:">" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '@')", expected:"@" });
+  tests.push({ code:"Test.charParam(testResults, 'A')", expected:"A" });
+  tests.push({ code:"Test.charParam(testResults, 'Z')", expected:"Z" });
+  tests.push({ code:"Test.charParam(testResults, '[')", expected:"[" });
+  tests.push({ code:"Test.charParam(testResults, '\\\\')", expected:"\\" }); // double escape because it is evaled twice
+  tests.push({ code:"Test.charParam(testResults, ']')", expected:"]" });
+  tests.push({ code:"Test.charParam(testResults, '^')", expected:"^" });
+  tests.push({ code:"Test.charParam(testResults, '_')", expected:"_" });
+  tests.push({ code:"Test.charParam(testResults, '`')", expected:"`" });
+  tests.push({ code:"Test.charParam(testResults, 'a')", expected:"a" });
+  tests.push({ code:"Test.charParam(testResults, 'z')", expected:"z" });
+  tests.push({ code:"Test.charParam(testResults, '{')", expected:"{" });
+  tests.push({ code:"Test.charParam(testResults, '|')", expected:"|" });
+  tests.push({ code:"Test.charParam(testResults, '}')", expected:"}" });
+  tests.push({ code:"Test.charParam(testResults, '~')", expected:"~" });
+
+  tests.push({ code:"Test.stringParam(testResults, ' ')", expected:" " });
+  tests.push({ code:"Test.stringParam(testResults, '!')", expected:"!" });
+  tests.push({ code:"Test.stringParam(testResults, '\"')", expected:'"' });
+  tests.push({ code:"Test.stringParam(testResults, '#')", expected:"#" });
+  tests.push({ code:"Test.stringParam(testResults, '$')", expected:"$" });
+  tests.push({ code:"Test.stringParam(testResults, '%')", expected:"%" });
+  tests.push({ code:"Test.stringParam(testResults, '&')", expected:"&" });
+  tests.push({ code:"Test.stringParam(testResults, '\\'')", expected:"'" }); // double escape because it is evaled twice
+  tests.push({ code:"Test.stringParam(testResults, '(')", expected:"(" });
+  tests.push({ code:"Test.stringParam(testResults, ')')", expected:")" });
+  tests.push({ code:"Test.stringParam(testResults, '*')", expected:"*" });
+  tests.push({ code:"Test.stringParam(testResults, '+')", expected:"+" });
+  tests.push({ code:"Test.stringParam(testResults, ',')", expected:"," });
+  tests.push({ code:"Test.stringParam(testResults, '-')", expected:"-" });
+  tests.push({ code:"Test.stringParam(testResults, '.')", expected:"." });
+  tests.push({ code:"Test.stringParam(testResults, '/')", expected:"/" });
+  tests.push({ code:"Test.stringParam(testResults, '0')", expected:"0" });
+  tests.push({ code:"Test.stringParam(testResults, '9')", expected:"9" });
+  tests.push({ code:"Test.stringParam(testResults, ':')", expected:":" });
+  tests.push({ code:"Test.stringParam(testResults, ';')", expected:";" });
+  tests.push({ code:"Test.stringParam(testResults, '<')", expected:"<" });
+  tests.push({ code:"Test.stringParam(testResults, '=')", expected:"=" });
+  tests.push({ code:"Test.stringParam(testResults, '>')", expected:">" });
+  tests.push({ code:"Test.stringParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.stringParam(testResults, '@')", expected:"@" });
+  tests.push({ code:"Test.stringParam(testResults, 'A')", expected:"A" });
+  tests.push({ code:"Test.stringParam(testResults, 'Z')", expected:"Z" });
+  tests.push({ code:"Test.stringParam(testResults, '[')", expected:"[" });
+  tests.push({ code:"Test.stringParam(testResults, '\\\\')", expected:"\\" }); // double escape because it is evaled twice
+  tests.push({ code:"Test.stringParam(testResults, ']')", expected:"]" });
+  tests.push({ code:"Test.stringParam(testResults, '^')", expected:"^" });
+  tests.push({ code:"Test.stringParam(testResults, '_')", expected:"_" });
+  tests.push({ code:"Test.stringParam(testResults, '`')", expected:"`" });
+  tests.push({ code:"Test.stringParam(testResults, 'a')", expected:"a" });
+  tests.push({ code:"Test.stringParam(testResults, 'z')", expected:"z" });
+  tests.push({ code:"Test.stringParam(testResults, '{')", expected:"{" });
+  tests.push({ code:"Test.stringParam(testResults, '|')", expected:"|" });
+  tests.push({ code:"Test.stringParam(testResults, '}')", expected:"}" });
+  tests.push({ code:"Test.stringParam(testResults, '~')", expected:"~" });
+
+  tests.push({ code:"Test.stringParam(testResults, '')", expected:"" });
+  tests.push({ code:"Test.stringParam(testResults, null)", expected:null });
+  tests.push({ code:"Test.stringParam(testResults, undefined)", expected:undefined });
+
+  tests.push({ code:"Test.stringParam(testResults, 'null')", expected:"null" });
+
+  tests.push({ code:"Test.stringParam(testResults, 'undefined')", expected:"undefined" });
+
+  tests.push({ code:"Test.stringParam(testResults, ' !\"#$%&\\'()*+,-/')", expected:" !\"#$%&\'()*+,-/" });
+  tests.push({ code:"Test.stringParam(testResults, '0123456789')", expected:"0123456789" });
+  tests.push({ code:"Test.stringParam(testResults, ':;<=>?@')", expected:":;<=>?@" });
+  tests.push({ code:"Test.stringParam(testResults, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')", expected:"ABCDEFGHIJKLMNOPQRSTUVWXYZ" });
+  tests.push({ code:"Test.stringParam(testResults, '[\\\\]^_`')", expected:"[\\]^_`" });
+  tests.push({ code:"Test.stringParam(testResults, 'abcdefghijklmnopqrstuvwxyz')", expected:"abcdefghijklmnopqrstuvwxyz" });
+  tests.push({ code:"Test.stringParam(testResults, '{|}~')", expected:"{|}~" });
+
+  tests.push({ code:"Test.stringParam(testResults, 'call.callback = null')", expected:"call.callback = null" });
+  tests.push({ code:"Test.stringStringParam(testResults, ' !\"#$%&\\'()*+,-/0123456789', ':;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ')", expected:"param1=' !\"#$%&\'()*+,-/0123456789' param2=':;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ'" });
+  tests.push({ code:"Test.stringStringParam(testResults, '[\\\\]^_`', 'abcdefghijklmnopqrstuvwxyz{|}~')", expected:"param1='[\\]^_`' param2='abcdefghijklmnopqrstuvwxyz{|}~'" });
+  tests.push({ code:"Test.booleanArrayParam(testResults, [ true, false, true, false ])", expected:[ true, false, true, false ] });
+  tests.push({ code:"Test.charArrayParam(testResults, [ 'a', ',', '[', ']' ])", expected:[ 'a', ',', '[', ']' ] });
+  tests.push({ code:"Test.byteArrayParam(testResults, [ -128, -128, -128, -128, -127 ])", expected:[ -128, -128, -128, -128, -127 ] });
+  tests.push({ code:"Test.byteArrayParam(testResults, [ -128, -1, 0, 1, 127 ])", expected:[ -128, -1, 0, 1, 127 ] });
+  tests.push({ code:"Test.shortArrayParam(testResults, [ -32768, -1, 0, 1, 32767 ])", expected:[ -32768, -1, 0, 1, 32767 ] });
+  tests.push({ code:"Test.intArrayParam(testResults, [ -2147483648, -1, 0, 1, 2147483647 ])", expected:[ -2147483648, -1, 0, 1, 2147483647 ] });
+  tests.push({ code:"Test.longArrayParam(testResults, [ -9223372036854775000, -1, 0, 1, 9223372036854775000 ])", expected:[ -9223372036854775000, -1, 0, 1, 9223372036854775000 ] });
+  tests.push({ code:"Test.floatArrayParam(testResults, [ -100000000000000000000, -1, 0, 1, 100000000000000000000 ])", expected:[ -100000000000000000000, -1, 0, 1, 100000000000000000000 ] });
+  tests.push({ code:"Test.doubleArrayParam(testResults, [ -100000000000000000000, -1, 0, 1, 100000000000000000000 ])", expected:[ -100000000000000000000, -1, 0, 1, 100000000000000000000 ] });
+
+  // Unicode: we could be here for some time, so I just picked some commmon ones
+  tests.push({ code:"Test.charParam(testResults, '£')", expected:"£" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '¦')", expected:"¦" });
+  tests.push({ code:"Test.charParam(testResults, '¬')", expected:"¬" });
+  tests.push({ code:"Test.charParam(testResults, '¥')", expected:"¥" });
+  tests.push({ code:"Test.charParam(testResults, '©')", expected:"©" });
+  tests.push({ code:"Test.charParam(testResults, 'Ç')", expected:"Ç" });
+  tests.push({ code:"Test.charParam(testResults, 'Æ')", expected:"Æ" });
+  tests.push({ code:"Test.charParam(testResults, 'ß')", expected:"ß" });
+  tests.push({ code:"Test.charParam(testResults, 'ÿ')", expected:"ÿ" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+  tests.push({ code:"Test.charParam(testResults, '?')", expected:"?" });
+
+  // Many of these are duplicates, maybe this tests encoding differently?
+  tests.push({ code:"Test.charParam(testResults, '\\u0080')", expected:"\u0080" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0091')", expected:"\u0091" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0092')", expected:"\u0092" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0093')", expected:"\u0093" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0094')", expected:"\u0094" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0095')", expected:"\u0095" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0098')", expected:"\u0098" });
+  tests.push({ code:"Test.charParam(testResults, '\\u0099')", expected:"\u0099" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00A0')", expected:"\u00A0" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00A3')", expected:"\u00A3" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00A5')", expected:"\u00A5" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00A6')", expected:"\u00A6" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00A9')", expected:"\u00A9" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00AC')", expected:"\u00AC" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00C7')", expected:"\u00C7" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00C6')", expected:"\u00C6" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00DF')", expected:"\u00DF" });
+  tests.push({ code:"Test.charParam(testResults, '\\u00FF')", expected:"\u00FF" });
+
+  var nested = { integer:0, string:'0123456789' };
+  nested.testBean = nested;
+
+  tests.push({ code:"Test.byteArrayParam(testResults, [ -128, -128, -128, -128, -127 ])", expected:[ -128, -128, -128, -128, -127 ] });
+
+  tests.push({ code:"Test.testBeanParam(testResults, { integer:-2147483648, string:'!\"$%^&*()', testBean:null })", expected:{ integer:-2147483648, string:'!"$%^&*()', testBean:null } });
+  tests.push({ code:"Test.testBeanParam(testResults, { integer:-1, string:'Null', testBean:null })", expected:{ integer:-1, string:'Null', testBean:null } });
+  tests.push({ code:"Test.testBeanParam(testResults, { integer:0, string:'Undefined', testBean:undefined })", expected:{ integer:0, string:'Undefined', testBean:undefined } });
+  tests.push({ code:"Test.testBeanParam(testResults, { integer:1, string:'0987654321', testBean:nested })", expected:{ integer:1, string:'0987654321', testBean:nested } });
+
+  tests.push({ code:"Test.stringCollectionParam(testResults, [ 'abcdef', 'hgijklm', 'nopqrst' ])", expected:[ 'abcdef', 'hgijklm', 'nopqrst' ]});
+  tests.push({ code:"Test.stringLinkedListParam(testResults, [ 'abcdef', 'hgijklm', 'nopqrst' ])", expected:[ 'abcdef', 'hgijklm', 'nopqrst' ]});
+  tests.push({ code:"Test.stringArrayListParam(testResults, [ 'abcdef', 'hgijklm', 'nopqrst' ])", expected:[ 'abcdef', 'hgijklm', 'nopqrst' ]});
+  tests.push({ code:"Test.stringListParam(testResults, [ 'abcdef', 'hgijklm', 'nopqrst' ])", expected:[ 'abcdef', 'hgijklm', 'nopqrst' ]});
+  // Note the next 2 are unordered so we cheat by only having 1 element
+  tests.push({ code:"Test.stringSetParam(testResults, [ 'abcdef', ])", expected:[ 'abcdef', ]});
+  tests.push({ code:"Test.stringHashSetParam(testResults, [ 'abcdef', ])", expected:[ 'abcdef', ]});
+  tests.push({ code:"Test.stringTreeSetParam(testResults, [ 'abcdef', 'hgijklm', 'nopqrst' ])", expected:[ 'abcdef', 'hgijklm', 'nopqrst' ]});
+
+  tests.push({ code:"Test.stringCollectionParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringLinkedListParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringArrayListParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringListParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringSetParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringHashSetParam(testResults, [ ])", expected:[ ]});
+  tests.push({ code:"Test.stringTreeSetParam(testResults, [ ])", expected:[ ]});
+
+  tests.push({ code:"Test.stringCollectionParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringLinkedListParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringArrayListParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringListParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringSetParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringHashSetParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+  tests.push({ code:"Test.stringTreeSetParam(testResults, [ 'abcdef' ])", expected:[ 'abcdef' ]});
+
+  tests.push({ code:"Test.stringCollectionParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringLinkedListParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringArrayListParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringListParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringSetParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringHashSetParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+  tests.push({ code:"Test.stringTreeSetParam(testResults, [ ',\\'{}[]' ])", expected:[ ",'{}[]" ]});
+
+  tests.push({ code:"Test.stringCollectionParam(testResults, [ ',\\'{}[]', 'null', ',\\'{}[]' ])", expected:[ ",'{}[]", 'null', ",'{}[]" ]});
+  tests.push({ code:"Test.stringLinkedListParam(testResults, [ ',\\'{}[]', 'null', ',\\'{}[]' ])", expected:[ ",'{}[]", 'null', ",'{}[]" ]});
+  tests.push({ code:"Test.stringArrayListParam(testResults, [ ',\\'{}[]', 'null', ',\\'{}[]' ])", expected:[ ",'{}[]", 'null', ",'{}[]" ]});
+  tests.push({ code:"Test.stringListParam(testResults, [ ',\\'{}[]', 'null', ',\\'{}[]' ])", expected:[ ",'{}[]", 'null', ",'{}[]" ]});
+
+  function startTest()
+  {
+      failures = document.getElementById("failures");
+      progress = document.getElementById("progress");
+      failreport = document.getElementById("failreport");
+      execreport = document.getElementById("execreport");
+
+      document.getElementById("start").disabled = true;
+
+      dwrSetErrorHandler(catchFailure);
+
+      failures.innerHTML = "";
+      failreport.innerHTML = "0";
+      execreport.innerHTML = "0";
+      progress.style.background = "green";
+      progress.style.width = "0%";
+
+      starttime = new Date();
+      index = 0;
+      failcount = 0;
+      executeTest();
+  }
+
+  function executeTest()
+  {
+      if (index >= tests.length)
+      {
+          document.getElementById("start").disabled = false;
+
+          var mslen = new Date().getTime() - starttime.getTime();
+          var tps = Math.round((10000 * tests.length) / mslen) / 10;
+          var totals = "Tests executed in " + (mslen / 1000) + " seconds at an average of " + tps + " tests per second.";
+          document.getElementById("totals").innerHTML = totals;
+
+          return;
+      }
+
+      var test = tests[index];
+      eval(test.code); // this results in the calling of testResults()
+  }
+
+  function testResults(data)
+  {
+      // which test have we just run?
+      var test = tests[index];
+
+      //var progress = document.getElementById("progress");
+
+      // TODO: maybe make a separate function for testing equality
+      var passed = testEquals(data, test.expected, 0);
+      if (typeof passed == "boolean" && passed)
+      {
+          //passes.innerHTML += test.code + "<br/>";
+          execreport.innerHTML = (index + 1);
+      }
+      else
+      {
+          failures.innerHTML += test.code + "<br/>&nbsp;&nbsp;" + passed + "<br/>&nbsp;&nbsp;Expected: " + test.expected + " Actual: " + data + "<br/>";
+          failcount++;
+          failreport.innerHTML = failcount;
+
+          if (failcount == 1)
+          {
+              // This is the first failure - make the bar go red
+              progress.style.background = "red";
+          }
+      }
+
+      index++;
+      var percent = Math.ceil((index / tests.length) * 100);
+      progress.style.width = percent + "%";
+
+      executeTest();
+  }
+
+  function testEquals(actual, expected, depth)
+  {
+      // Rather than failing we assume that it works!
+      if (depth > 10)
+      {
+          return true;
+      }
+
+      if (expected == null)
+      {
+          if (actual != null)
+          {
+              return "expected: null, actual non-null: " + typeof actual + ":" + actual;
+          }
+
+          return true;
+      }
+
+      if (actual == null)
+      {
+          if (expected != null)
+          {
+              return "actual: null, expected non-null: " + typeof expected + ":" + expected;
+          }
+
+          // wont get here of course ...
+          return true;
+      }
+
+      if (expected instanceof Array)
+      {
+          if (!(actual instanceof Array))
+          {
+              return "expected array, actual not an array";
+          }
+
+          if (actual.length != expected.length)
+          {
+              return "expected array length = " + expected.length + ", actual array length = " + actual.length;
+          }
+
+          for (var i = 0; i < actual.length; i++)
+          {
+              var nest = testEquals(actual[i], expected[i], depth + 1);
+              if (typeof nest != "boolean" || !nest)
+              {
+                  return "element " + i + " does not match: " + nest;
+              }
+          }
+
+          return true;
+      }
+
+      if (expected instanceof Object)
+      {
+          if (!(actual instanceof Object))
+          {
+              return "expected object, actual not an object";
+          }
+
+          var actualLength = 0;
+          for (var prop in actual)
+          {
+              var nest = testEquals(actual[prop], expected[prop], depth + 1);
+              if (typeof nest != "boolean" || !nest)
+              {
+                  return "element " + prop + " does not match: " + nest;
+              }
+
+              actualLength++;
+          }
+
+          // need to check length too
+          var expectedLength = 0;
+          for (prop in expected)
+          {
+              expectedLength++;
+          }
+
+          if (actualLength != expectedLength)
+          {
+              return "expected object size = " + expectedLength + ", actual object size = " + actualLength;
+          }
+
+          return true;
+      }
+
+      if (actual != expected)
+      {
+          return "expected = " + expected + ", actual = " + actual;
+      }
+
+      return true;
+  }
+
+  function catchFailure(data)
+  {
+      // which test have we just run?
+      var test = tests[index];
+
+      failures.innerHTML += test.code + "<br/>&nbsp;&nbsp;Error: " + data + "<br/>";
+      failcount++;
+      failreport.innerHTML = failcount;
+
+      if (failcount == 1)
+      {
+          // This is the first failure - make the bar go red
+          progress.style.background = "red";
+      }
+
+      index++;
+      executeTest();
+  }
+  
+  function nestTest()
+  {
+      Test.getNestingTest(nestReply);
+  }
+  </script>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h2>Unit Test Page</h2>
+
+<p>
+  Found <script>document.write(tests.length)</script> unit tests.<br/>
+  <input type="button" onclick="startTest();" id="start" value="Start"/>
+  <span id='totals'></span>
+</p>
+
+<p>
+  Tests Executed (<span id='execreport'>0</span>):
+  <div style="border: 1px solid black; width:90%;">
+    <div id="progress" style="width:0%; background:green;">&nbsp;</div>
+  </div>
+</p>
+
+<p>
+  Failures (<span id='failreport'>0</span>):
+  <div id="failures" style="border: 1px solid red; max-height:200px; overflow:auto; width:90%;">
+  None:
+  </div>
+</p>
+
+</body>
+</html>

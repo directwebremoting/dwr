@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" class="uk.ltd.getahead.testdwr.TestBean2Converter"/>
+  </init>
+
+  <allow>
+
+    <create creator="new" javascript="Test" scope="application">
+      <param name="class" value="uk.ltd.getahead.testdwr.Test"/>
+    </create>
+
+    <create creator="new" javascript="JDate">
+      <param name="class" value="java.util.Date"/>
+      <exclude method="getHours"/>
+      <auth method="getMinutes" role="admin"/>
+      <auth method="getMinutes" role="devel"/>
+    </create>
+
+    <convert converter="bean" match="$Proxy*"/>
+    <convert converter="testbean" match="uk.ltd.getahead.testdwr.TestBean"/>
+
+    <convert converter="bean" match="uk.ltd.getahead.testdwr.ObjB"/>
+    <convert converter="object" match="uk.ltd.getahead.testdwr.ObjA">
+      <param name="force" value="true"/>
+    </convert>
+
+  </allow>
+
+  <signatures>
+  <![CDATA[
+  import java.util.*;
+  import uk.ltd.getahead.testdwr.*;
+
+  Test.testBeanSetParam(Set<TestBean>);
+  Test.testBeanListParam(List<TestBean>);
+  Test.charTestBeanMapParam(Map<Character, TestBean>);
+
+  Test.stringStringMapParam(Map<String, String>);
+  Test.stringStringHashMapParam(HashMap<String, String>);
+  Test.stringStringTreeMapParam(TreeMap<String, String>);
+
+  Test.stringCollectionParam(Collection<String>);
+
+  Test.stringListParam(List<String>);
+  Test.stringLinkedListParam(LinkedList<String>);
+  Test.stringArrayListParam(ArrayList<String>);
+
+  Test.stringSetParam(Set<String>);
+  Test.stringHashSetParam(HashSet<String>);
+  Test.stringTreeSetParam(TreeSet<String>);
+  ]]>
+  </signatures>
+
+</dwr>

@@ -1,0 +1,471 @@
+### Eclipse Workspace Patch 1.0
+#P dwr
+Index: java/org/directwebremoting/engine.js
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/engine.js,v
+retrieving revision 1.98
+diff -u -r1.98 engine.js
+--- java/org/directwebremoting/engine.js	16 May 2007 01:58:40 -0000	1.98
++++ java/org/directwebremoting/engine.js	30 May 2007 15:31:36 -0000
+@@ -19,6 +19,7 @@
+  */
+ if (dwr == null) var dwr = {};
+ if (dwr.engine == null) dwr.engine = {};
++if (dwr.engine.batch == null) dwr.engine.batch = {};
+ if (DWREngine == null) var DWREngine = dwr.engine;
+ 
+ /**
+@@ -213,11 +214,7 @@
+  * @see getahead.org/dwr/browser/engine/batch
+  */
+ dwr.engine.beginBatch = function() {
+-  if (dwr.engine._batch) {
+-    dwr.engine._handleError(null, { name:"dwr.engine.batchBegun", message:"Batch already begun" });
+-    return;
+-  }
+-  dwr.engine._batch = dwr.engine._createBatch();
++  dwr.engine.batch.begin();
+ };
+ 
+ /**
+@@ -225,24 +222,7 @@
+  * @see getahead.org/dwr/browser/engine/batch
+  */
+ dwr.engine.endBatch = function(options) {
+-  var batch = dwr.engine._batch;
+-  if (batch == null) {
+-    dwr.engine._handleError(null, { name:"dwr.engine.batchNotBegun", message:"No batch in progress" });
+-    return;
+-  }
+-  dwr.engine._batch = null;
+-  if (batch.map.callCount == 0) return;
+-
+-  // The hooks need to be merged carefully to preserve ordering
+-  if (options) dwr.engine._mergeBatch(batch, options);
+-
+-  // In ordered mode, we don't send unless the list of sent items is empty
+-  if (dwr.engine._ordered && dwr.engine._batchesLength != 0) {
+-    dwr.engine._batchQueue[dwr.engine._batchQueue.length] = batch;
+-  }
+-  else {
+-    dwr.engine._sendData(batch);
+-  }
++  dwr.engine.batch.end(options);
+ };
+ 
+ /** @deprecated */
+@@ -292,15 +272,6 @@
+ /** A function to be called after replies are received. Can be null. */
+ dwr.engine._postHook = null;
+ 
+-/** An map of the batches that we have sent and are awaiting a reply on. */
+-dwr.engine._batches = {};
+-
+-/** A count of the number of outstanding batches. Should be == to _batches.length unless prototype has messed things up */
+-dwr.engine._batchesLength = 0;
+-
+-/** In ordered mode, the array of batches waiting to be sent */
+-dwr.engine._batchQueue = [];
+-
+ /** What is the default rpc type */
+ dwr.engine._rpcType = dwr.engine.XMLHttpRequest;
+ 
+@@ -313,9 +284,6 @@
+ /** Do we make the calls async? */
+ dwr.engine._async = true;
+ 
+-/** The current batch (if we are in batch mode) */
+-dwr.engine._batch = null;
+-
+ /** The global timeout */
+ dwr.engine._timeout = 0;
+ 
+@@ -361,9 +329,6 @@
+ dwr.engine._contentRewriteHandler = dwr.engine._defaultInterceptor;
+ dwr.engine._replyRewriteHandler = dwr.engine._defaultInterceptor;
+ 
+-/** Batch ids allow us to know which batch the server is answering */
+-dwr.engine._nextBatchId = 0;
+-
+ /** A list of the properties that need merging from calls to a batch */
+ dwr.engine._propnames = [ "rpcType", "httpMethod", "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler" ];
+ 
+@@ -412,11 +377,11 @@
+  */
+ dwr.engine._execute = function(path, scriptName, methodName, vararg_params) {
+   var singleShot = false;
+-  if (dwr.engine._batch == null) {
++  if (dwr.engine.batch._current == null) {
+     dwr.engine.beginBatch();
+     singleShot = true;
+   }
+-  var batch = dwr.engine._batch;
++  var batch = dwr.engine.batch._current;
+   // To make them easy to manipulate we copy the arguments into an args array
+   var args = [];
+   for (var i = 0; i < arguments.length - 3; i++) {
+@@ -440,7 +405,7 @@
+   else callData = args.pop();
+ 
+   // Merge from the callData into the batch
+-  dwr.engine._mergeBatch(batch, callData);
++  dwr.engine.batch._merge(batch, callData);
+   batch.handlers[batch.map.callCount] = {
+     exceptionHandler:callData.exceptionHandler,
+     callback:callData.callback
+@@ -464,7 +429,7 @@
+ dwr.engine._poll = function(overridePath) {
+   if (!dwr.engine._activeReverseAjax) return;
+ 
+-  var batch = dwr.engine._createBatch();
++  var batch = dwr.engine.batch._create();
+   batch.map.id = 0; // TODO: Do we need this??
+   batch.map.callCount = 1;
+   batch.isPoll = true;
+@@ -516,67 +481,6 @@
+   }
+ };
+ 
+-/** @private Generate a new standard batch */
+-dwr.engine._createBatch = function() {
+-  var batch = {
+-    map:{
+-      callCount:0,
+-      page:window.location.pathname + window.location.search,
+-      httpSessionId:dwr.engine._getJSessionId(),
+-      scriptSessionId:dwr.engine._getScriptSessionId()
+-    },
+-    charsProcessed:0, paramCount:0,
+-    parameters:{}, headers:{},
+-    isPoll:false, handlers:{}, preHooks:[], postHooks:[],
+-    rpcType:dwr.engine._rpcType,
+-    httpMethod:dwr.engine._httpMethod,
+-    async:dwr.engine._async,
+-    timeout:dwr.engine._timeout,
+-    errorHandler:dwr.engine._errorHandler,
+-    warningHandler:dwr.engine._warningHandler,
+-    textHtmlHandler:dwr.engine._textHtmlHandler
+-  };
+-  if (dwr.engine._preHook) batch.preHooks.push(dwr.engine._preHook);
+-  if (dwr.engine._postHook) batch.postHooks.push(dwr.engine._postHook);
+-  var propname, data;
+-  if (dwr.engine._headers) {
+-    for (propname in dwr.engine._headers) {
+-      data = dwr.engine._headers[propname];
+-      if (typeof data != "function") batch.headers[propname] = data;
+-    }
+-  }
+-  if (dwr.engine._parameters) {
+-    for (propname in dwr.engine._parameters) {
+-      data = dwr.engine._parameters[propname];
+-      if (typeof data != "function") batch.parameters[propname] = data;
+-    }
+-  }
+-  return batch;
+-};
+-
+-/** @private Take further options and merge them into */
+-dwr.engine._mergeBatch = function(batch, overrides) {
+-  var propname, data;
+-  for (var i = 0; i < dwr.engine._propnames.length; i++) {
+-    propname = dwr.engine._propnames[i];
+-    if (overrides[propname] != null) batch[propname] = overrides[propname];
+-  }
+-  if (overrides.preHook != null) batch.preHooks.unshift(overrides.preHook);
+-  if (overrides.postHook != null) batch.postHooks.push(overrides.postHook);
+-  if (overrides.headers) {
+-    for (propname in overrides.headers) {
+-      data = overrides.headers[propname];
+-      if (typeof data != "function") batch.headers[propname] = data;
+-    }
+-  }
+-  if (overrides.parameters) {
+-    for (propname in overrides.parameters) {
+-      data = overrides.parameters[propname];
+-      if (typeof data != "function") batch.map["p-" + propname] = "" + data;
+-    }
+-  }
+-};
+-
+ /** @private What is our session id? */
+ dwr.engine._getJSessionId =  function() {
+   var cookies = document.cookie.split(';');
+@@ -673,10 +577,10 @@
+ 
+ /** @private Actually send the block of data in the batch object. */
+ dwr.engine._sendData = function(batch) {
+-  batch.map.batchId = dwr.engine._nextBatchId;
+-  dwr.engine._nextBatchId++;
+-  dwr.engine._batches[batch.map.batchId] = batch;
+-  dwr.engine._batchesLength++;
++  batch.map.batchId = dwr.engine.batch._nextId;
++  dwr.engine.batch._nextId++;
++  dwr.engine.batch._outstanding[batch.map.batchId] = batch;
++  dwr.engine.batch._outstandingLength++;
+   batch.completed = false;
+ 
+   for (var i = 0; i < batch.preHooks.length; i++) {
+@@ -742,23 +646,39 @@
+     }
+   }
+   else if (batch.rpcType != dwr.engine.ScriptTag) {
+-    // Proceed using iframe
+     var idname = batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map["c0-id"];
+-    batch.div = document.createElement("div");
+-    // Add the div to the document first, otherwise IE 6 will ignore onload handler.
+-    document.body.appendChild(batch.div);
+-    batch.div.innerHTML = "<iframe src='javascript:void(0)' frameborder='0' style='width:0px;height:0px;border:0;' id='" + idname + "' name='" + idname + "' onload='dwr.engine._iframeLoadingComplete (" + batch.map.batchId + ");'></iframe>";
+-    batch.iframe = document.getElementById(idname);
++    // on IE try to use the htmlfile activex control
++    if (window.ActiveXObject) {
++      batch.htmlfile = new window.ActiveXObject("htmlfile");
++      batch.htmlfile.open();
++      batch.htmlfile.write("<html>");
++      batch.htmlfile.write("<script>document.domain='" + document.domain + "';</script>");
++      batch.htmlfile.write("<div><iframe className='wibble' src='javascript:void(0)' id='" + idname + "' name='" + idname + "' onload='dwr.engine._iframeLoadingComplete(" + batch.map.batchId + ");'></iframe></div>");
++      batch.htmlfile.write("</html>");
++      batch.htmlfile.close();
++      batch.document = batch.htmlfile;
++      batch.htmlfile.dwr = dwr;
++      batch.htmlfile.frameid = idname;
++      if (window.XMLHttpRequest) window.XMLHttpRequest.dwr = dwr;
++      if (window.ActiveXObject) window.ActiveXObject.dwr = dwr;
++    }
++    else {
++      batch.div = document.createElement("div");
++      // Add the div to the document first, otherwise IE 6 will ignore onload handler.
++      document.body.appendChild(batch.div);
++      batch.div.innerHTML = "<iframe src='javascript:void(0)' frameborder='0' style='width:0px;height:0px;border:0;' id='" + idname + "' name='" + idname + "' onload='dwr.engine._iframeLoadingComplete (" + batch.map.batchId + ");'></iframe>";
++      batch.document = document;
++    }
++    batch.iframe = batch.document.getElementById(idname);
+     batch.iframe.batch = batch;
+     batch.mode = batch.isPoll ? dwr.engine._ModeHtmlPoll : dwr.engine._ModeHtmlCall;
+     if (batch.isPoll) dwr.engine._outstandingIFrames.push(batch.iframe);
+     request = dwr.engine._constructRequest(batch);
+     if (batch.httpMethod == "GET") {
+       batch.iframe.setAttribute("src", request.url);
+-      // document.body.appendChild(batch.iframe);
+     }
+     else {
+-      batch.form = document.createElement("form");
++      batch.form = batch.document.createElement("form");
+       batch.form.setAttribute("id", "dwr-form");
+       batch.form.setAttribute("action", request.url);
+       batch.form.setAttribute("target", idname);
+@@ -767,14 +687,14 @@
+       for (prop in batch.map) {
+         var value = batch.map[prop];
+         if (typeof value != "function") {
+-          var formInput = document.createElement("input");
++          var formInput = batch.document.createElement("input");
+           formInput.setAttribute("type", "hidden");
+           formInput.setAttribute("name", prop);
+           formInput.setAttribute("value", value);
+           batch.form.appendChild(formInput);
+         }
+       }
+-      document.body.appendChild(batch.form);
++      batch.document.body.appendChild(batch.form);
+       batch.form.submit();
+     }
+   }
+@@ -949,13 +869,13 @@
+ /** @private Called from iframe onload, check batch using batch-id */
+ dwr.engine._iframeLoadingComplete = function(batchId) {
+   // dwr.engine._checkCometPoll();
+-  var batch = dwr.engine._batches[batchId];
++  var batch = dwr.engine.batch._outstanding[batchId];
+   if (batch) dwr.engine._validateBatch(batch);
+ }
+ 
+ /** @private Called by the server: Execute a callback */
+ dwr.engine._remoteHandleCallback = function(batchId, callId, reply) {
+-  var batch = dwr.engine._batches[batchId];
++  var batch = dwr.engine.batch._outstanding[batchId];
+   if (batch == null) {
+     dwr.engine._debug("Warning: batch == null in remoteHandleCallback for batchId=" + batchId, true);
+     return;
+@@ -977,7 +897,7 @@
+ 
+ /** @private Called by the server: Handle an exception for a call */
+ dwr.engine._remoteHandleException = function(batchId, callId, ex) {
+-  var batch = dwr.engine._batches[batchId];
++  var batch = dwr.engine.batch._outstanding[batchId];
+   if (batch == null) { dwr.engine._debug("Warning: null batch in remoteHandleException", true); return; }
+   var handlers = batch.handlers[callId];
+   batch.handlers[callId] = null;
+@@ -991,13 +911,13 @@
+ dwr.engine._remoteHandleBatchException = function(ex, batchId) {
+   var searchBatch = (dwr.engine._receivedBatch == null && batchId != null);
+   if (searchBatch) {
+-    dwr.engine._receivedBatch = dwr.engine._batches[batchId];
++    dwr.engine._receivedBatch = dwr.engine.batch._outstanding[batchId];
+   }
+   if (ex.message == undefined) ex.message = "";
+   dwr.engine._handleError(dwr.engine._receivedBatch, ex);
+   if (searchBatch) {
+     dwr.engine._receivedBatch = null;
+-    dwr.engine._clearUp(dwr.engine._batches[batchId]);
++    dwr.engine._clearUp(dwr.engine.batch._outstanding[batchId]);
+   }
+ };
+ 
+@@ -1006,13 +926,13 @@
+   dwr.engine.setActiveReverseAjax(false);
+   var searchBatch = (dwr.engine._receivedBatch == null && batchId != null);
+   if (searchBatch) {
+-    dwr.engine._receivedBatch = dwr.engine._batches[batchId];
++    dwr.engine._receivedBatch = dwr.engine.batch._outstanding[batchId];
+   }
+   if (ex.message == undefined) ex.message = "";
+   dwr.engine._handleError(dwr.engine._receivedBatch, ex);
+   if (searchBatch) {
+     dwr.engine._receivedBatch = null;
+-    dwr.engine._clearUp(dwr.engine._batches[batchId]);
++    dwr.engine._clearUp(dwr.engine.batch._outstanding[batchId]);
+   }
+ };
+ 
+@@ -1082,8 +1002,8 @@
+   }
+ 
+   if (batch.map && batch.map.batchId) {
+-    delete dwr.engine._batches[batch.map.batchId];
+-    dwr.engine._batchesLength--;
++    delete dwr.engine.batch._outstanding[batch.map.batchId];
++    dwr.engine.batch._outstandingLength--;
+   }
+ 
+   batch.completed = true;
+@@ -1091,8 +1011,8 @@
+   // If there is anything on the queue waiting to go out, then send it.
+   // We don't need to check for ordered mode, here because when ordered mode
+   // gets turned off, we still process *waiting* batches in an ordered way.
+-  if (dwr.engine._batchQueue.length != 0) {
+-    var sendbatch = dwr.engine._batchQueue.shift();
++  if (dwr.engine.batch._queue.length != 0) {
++    var sendbatch = dwr.engine.batch._queue.shift();
+     dwr.engine._sendData(sendbatch);
+   }
+ };
+@@ -1190,7 +1110,7 @@
+   for (element in data) {
+     if (typeof data[element] != "function") {
+       batch.paramCount++;
+-      var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
++      var childName = "c" + dwr.engine.batch._current.map.callCount + "-e" + batch.paramCount;
+       dwr.engine._serializeAll(batch, referto, data[element], childName);
+ 
+       reply += encodeURIComponent(element) + ":reference:" + childName + ", ";
+@@ -1337,3 +1257,110 @@
+     }
+   }
+ };
++
++/** @private begin a new batch */
++dwr.engine.batch.begin = function() {
++  if (dwr.engine.batch._current) {
++    dwr.engine._handleError(null, { name:"dwr.engine.batchBegun", message:"Batch already begun" });
++    return;
++  }
++  dwr.engine.batch._current = dwr.engine.batch._create();
++};
++
++/** @private end the current batch */
++dwr.engine.batch.end = function(options) {
++  var batch = dwr.engine.batch._current;
++  if (batch == null) {
++    dwr.engine._handleError(null, { name:"dwr.engine.batchNotBegun", message:"No batch in progress" });
++    return;
++  }
++  dwr.engine.batch._current = null;
++  if (batch.map.callCount == 0) return;
++
++  // The hooks need to be merged carefully to preserve ordering
++  if (options) dwr.engine.batch._merge(batch, options);
++
++  // In ordered mode, we don't send unless the list of sent items is empty
++  if (dwr.engine._ordered && dwr.engine.batch._outstandingLength != 0) {
++    dwr.engine.batch._queue[dwr.engine.batch._queue.length] = batch;
++  }
++  else {
++    dwr.engine._sendData(batch);
++  }
++};
++
++/** @private Generate a new standard batch */
++dwr.engine.batch._create = function() {
++  var batch = {
++    map:{
++      callCount:0,
++      page:window.location.pathname + window.location.search,
++      httpSessionId:dwr.engine._getJSessionId(),
++      scriptSessionId:dwr.engine._getScriptSessionId()
++    },
++    charsProcessed:0, paramCount:0,
++    parameters:{}, headers:{},
++    isPoll:false, handlers:{}, preHooks:[], postHooks:[],
++    rpcType:dwr.engine._rpcType,
++    httpMethod:dwr.engine._httpMethod,
++    async:dwr.engine._async,
++    timeout:dwr.engine._timeout,
++    errorHandler:dwr.engine._errorHandler,
++    warningHandler:dwr.engine._warningHandler,
++    textHtmlHandler:dwr.engine._textHtmlHandler
++  };
++  if (dwr.engine._preHook) batch.preHooks.push(dwr.engine._preHook);
++  if (dwr.engine._postHook) batch.postHooks.push(dwr.engine._postHook);
++  var propname, data;
++  if (dwr.engine._headers) {
++    for (propname in dwr.engine._headers) {
++      data = dwr.engine._headers[propname];
++      if (typeof data != "function") batch.headers[propname] = data;
++    }
++  }
++  if (dwr.engine._parameters) {
++    for (propname in dwr.engine._parameters) {
++      data = dwr.engine._parameters[propname];
++      if (typeof data != "function") batch.parameters[propname] = data;
++    }
++  }
++  return batch;
++};
++
++/** @private Take further options and merge them into */
++dwr.engine.batch._merge = function(batch, overrides) {
++  var propname, data;
++  for (var i = 0; i < dwr.engine._propnames.length; i++) {
++    propname = dwr.engine._propnames[i];
++    if (overrides[propname] != null) batch[propname] = overrides[propname];
++  }
++  if (overrides.preHook != null) batch.preHooks.unshift(overrides.preHook);
++  if (overrides.postHook != null) batch.postHooks.push(overrides.postHook);
++  if (overrides.headers) {
++    for (propname in overrides.headers) {
++      data = overrides.headers[propname];
++      if (typeof data != "function") batch.headers[propname] = data;
++    }
++  }
++  if (overrides.parameters) {
++    for (propname in overrides.parameters) {
++      data = overrides.parameters[propname];
++      if (typeof data != "function") batch.map["p-" + propname] = "" + data;
++    }
++  }
++};
++
++/** An map of the batches that we have sent and are awaiting a reply on. */
++dwr.engine.batch._outstanding = {};
++
++/** A count of the number of outstanding batches. Should be == to _batches.length unless prototype has messed things up */
++dwr.engine.batch._outstandingLength = 0;
++
++/** In ordered mode, the array of batches waiting to be sent */
++dwr.engine.batch._queue = [];
++
++/** The current batch (if we are in batch mode) */
++dwr.engine.batch._current = null;
++
++/** Batch ids allow us to know which batch the server is answering */
++dwr.engine.batch._nextId = 0;

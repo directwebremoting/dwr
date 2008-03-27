@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Operator Assisted Form Fill</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/Whiteboard.js'> </script>
+  <script type="text/javascript" src='index.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <style type="text/css">
+  #whiteboardUsers { width:20%; height:500px; float:right;
+    border:1px solid #000; margin:10px 0px;
+  }
+  #whiteboardSource { width:90%; height:500px; margin:10px auto; font-size:78%;
+    font-family:Anonymous, Courier, fixed; border:1px solid #000;
+  }
+  </style>
+</head>
+
+<body onload="DWREngine.setReverseAjax(true)">
+<div id="page-title">[
+  <a href="http://getahead.ltd.uk/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Shared Whiteboard</h1>
+
+<div>
+<!--
+<label for="whiteboardClaim">I feel like editing:</label>
+<input type="checkbox" id="whiteboardClaim" onchange="whiteboardClaim()"/>
+&nbsp;&nbsp;
+ -->
+I'm read to: <input type="button" onclick="whiteboardUpdate()" value="Update"/>
+</div>
+
+<!-- 
+<ul id="whiteboardUsers">
+</ul>
+ -->
+<textarea id="whiteboardSource">
+</textarea>
+
+</body>
+</html>

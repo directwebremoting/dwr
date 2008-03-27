@@ -1,0 +1,54 @@
+<div><a href="http://getahead.org">Getahead</a></div>
+
+<div class="label"><strong>User Mailing List</strong></div>
+<div class="body">
+  <div><a href="mailto:users-subscribe@dwr.dev.java.net">Subscribe</a></div>
+  <div><a href="https://dwr.dev.java.net/servlets/SummarizeList?listName=users">Archives</a></div>
+</div>
+<div class="label"><strong>Blogs</strong></div>
+<div class="body">
+  <div><a href="http://getahead.org/blog/joe">Joe Walker</a></div>
+</div>
+
+<script type="text/javascript">
+function replaceLinks() {
+    try {
+        var tools = document.getElementById("projecttools");
+        var links = tools.getElementsByTagName("a");
+        for (i=0; i < links.length; i++) {
+            if (links[i].getAttribute("href").indexOf("ProjectIssues") > -1) {
+                links[i].setAttribute("href", "http://getahead.org/bugs/browse/DWR");
+                links[i].innerHTML="Issue Tracker";
+            }
+
+            if (links[i].getAttribute("href").indexOf("ProjectForumView") > -1) {
+                links[i].parentNode.style.display = "none";
+            }
+        } 
+    }
+    catch (e) {
+    }
+}
+
+function fisheye() {
+    if (document.getElementById("projectsource") != null) {
+        var fisheyeDiv = document.createElement("div");
+        fisheyeDiv.className="app";
+        var header = document.createElement("div");
+        header.className="h3";
+        header.innerHTML = "<h3>Browse Source Code</h3>";
+        fisheyeDiv.appendChild(header);
+        var fisheye = document.createElement("iframe");
+        fisheye.setAttribute("src", "http://fisheye5.cenqua.com/viewrep/dwr");
+        fisheye.setAttribute("border", "0");
+        fisheye.style.width="99%";
+        fisheye.style.height="700px";
+        fisheye.style.border="0";
+        fisheye.style.marginTop="10px";
+        fisheye.style.marginLeft="5px";
+        fisheyeDiv.appendChild(fisheye);
+        document.getElementById("dirlist").insertBefore(fisheyeDiv, document.getElementById("browsesource"));
+    }
+}
+window.onload=function() { replaceLinks(); fisheye(); }
+</script>

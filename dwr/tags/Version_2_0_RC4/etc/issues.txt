@@ -1,0 +1,182 @@
+
+Hibernate exceptions not marshalled properly.
+	I did some work on our project's exception handling today, and discovered something strange when a Hibernate exception was sent up to the browser.
+	The exception thrown out of the called method looked like this:
+	    org.hibernate.exception.SQLGrammarException
+	        message: "invalid bla bla..."
+	        cause: ->
+	            java.sql.SQLException
+	                message: "ORA..."
+	                cause: null
+	but what came out on the other end was:
+	    {
+	        javaClassName: "org.hibernate.exception.SQLGrammarException",
+	        cause: {
+	            javaClassname: "java.sql.SQLException",
+	            message: "ORA...",
+	            cause: null
+	        }
+	    }
+	No message property on the SQLGrammarException!
+	I did a short debug session into DWR's BeanConverter and I can see that it gets the
+	    PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
+	for SQLGrammarException, then in a loop subsequently getting to the descriptor for "message", which it skips out from because of
+	    if (readRequired && descriptor.getReadMethod() == null)
+	    {
+	        continue;
+	    }
+	where getReadMethod() returns null. 
+	Strange, because as far as I can see there is a getMessage() defined on the superclass org.hibernate.exception.NestableRuntimeException, so there *is* a read method...
+	----
+	I found the reason for the missing "message" property, and I think maybe you need to take a look at the ExceptionConverter code.
+	When you ask about the properties through
+	    Introspector.getBeanInfo(SQLGrammarException.class)
+	and the introspector scans the methods of Hibernate's exception class hierarchy, it will find
+	    org.hibernate.exception.NestableRuntimeException
+	        getMessage();
+	        getMessage(int);
+	(Ie, Hibernate has added an overloaded version with an int parameter) 
+	The Introspector now creates an IndexedPropertyDescriptor (used for "array" access) instead of a normal PropertyDescriptor, and the descriptor will have no readMethod but instead an indexedReadMethod.
+	I can't say if it's Hibernate or Introspector that is at fault here, but it does cause problems in DWR when marshalling Hibernate exceptions so I think you need to provide a workaround. Maybe add code that assures that Throwable's properties "message" and "cause" (that are guranteed to always exist on any exception) are always marshalled, whatever Introspector says?
+
+It seems that when DWR needs to convert a two-dimensional int array (as a property), it hangs/never returns.....
+	When explicitely adding <convert type="array" class="[[I"/>, it works again.
+	I guess you want to handle multi-dimensional arrays for primitives or convertable types.
+	But even if not, then DWR should not hang I guess ;-)
+
+Ensure script tag remoting calls _clearUp()
+
+IE slow on opening new windows with RA turned on.
+
+dwr.util.setOptions gets the wrong order in Opera
+
+Turning RA off
+	Say I've got a page with reverse ajax turned on. I want to refresh the page
+	using a js call from the reverse ajax script conduit.  What seems to happen
+	is that the page will sometimes get stuck and won't refresh (of course this
+	an IE only issue).  Is there a way to turn off the reverse ajax on the the
+	onunload event handler to allow the refresh to happen?  Or even explicitly
+	cancel it before attempting to refresh the page?  I'm pretty sure the issue
+	is the open connection, but I didn't see an obvious 'cancelReverseAjax'
+	method.  Looking at engine.js, it appears that setting reverseAjax to false
+	will only set the variable, but won't turn off the _poll() method.
+	...
+	What's the proper way to disconnect a client with a reverse ajax connection
+	(either from javascript or from java) in an immediate fashion. I'm currently
+	grabbing a ref to the script session, then writing a script to it via the
+	DwrUtil.addScript. If the script is for a data refresh, I do the following
+	to force a reverse ajax disconnect (from my java thread):
+		scriptSession.flushConduits();
+		Object lock = scriptSession.getScriptLock();
+		synchronized(lock) {
+		    lock.notify();
+		}
+		scriptSession.invalidate();
+		scriptSession = null;
+	Is there a better way?
+
+Multiple call issue
+	When calling the same function 4 times consecutively passing a different
+	paramter the same result is always returned.  While debugging on the server side
+	(jboss), I have noted that the result passed back (a collection) is different.
+	However, DWR appears to be getting confused and always returns the same result
+	for each call.
+	I have noticed that if I put each call between a begin/endbatch that the correct
+	result is returned.
+	This is only for 1.1.  1.0 does not have this issue.
+	LabBean.getMaterials(displayMaterialJewels, 1);
+	LabBean.getMaterials(displayMaterialReversedItems, 2);
+	LabBean.getMaterials(displayMaterialReversedJewels, 1);
+	LabBean.getMaterials(displayMaterialItems, 2);
+
+-- Below the line for DWR 2.0 --------------------------------------------------
+
+Beans extending hashmap - Kristján Bjarni Guðmundsson <kristjg@hugvit.is>
+	I have a class that extends HashMap, and I define that it should be
+	converted using the bean converter, however it always get converted
+	using the map converter. Is there any way to specify that it should be
+	converted as a bean?
+	Joe: This ought to work because DWR should pick the more specific
+	declaration. I'll add it to the list of issues.
+
+IFrame GET is broken with Safari
+	iframe is only really useful with IE6 (with activex turned off) so we can
+	ignore this breakage
+
+Broken signatures
+	We are users of DWR and have been trying to pass a javascript array of
+	strings as a value in a Map from our client to our server and haven't been
+	able to achieve the desired outcome however we have discovered the
+	following.
+	The client javascript looks something like :-
+	      var refIds = new Array();
+	      var count = 10;
+	      for (var i = 0; i < count; i++) {
+	            refIds[i] = i;
+	      }
+	    var params = new Object();
+	    params.refIds = this.refIds;
+	    QueryServiceGetLocationsDWRMethod.execute(dwrResponse, this.name, "handleResponse", requestId, params);
+	The server side code looks something like :-
+	    public QueryServiceGetLocationsDWRMethod.execute(String objectRef, String methodRef, String requestId, Map args)
+	We are trying to pass the refIds array from the client to the server,
+	expecting on the server side for DWR to build a map containing key/value
+	entry of <String,String[]>
+	We have configure the signatures section of dwr.xml to :-	
+      <signatures>
+		<![CDATA[
+		import java.util.Map;
+		import au.gov.vic.doi.xfc.web.service.query.QueryServiceGetLocationsDWRMethod;
+		QueryServiceGetLocationsDWRMethod.execute(String, String, String, Map<String,[Ljava.lang.String;>);
+		]]>
+      </signatures>	
+	The POST to the server contains :-
+		callCount=1
+		c0-scriptName=QueryServiceGetLocations
+		c0-methodName=execute
+		c0-id=3063_1144372351140
+		c0-param0=string:Object1
+		c0-param1=string:handleResponse
+		c0-param2=string:reqId46
+		c0-e2=number:0
+		c0-e3=number:1
+		c0-e4=number:2
+		c0-e5=number:3
+		c0-e6=number:4
+		c0-e7=number:5
+		c0-e8=number:6
+		c0-e9=number:7
+		c0-e10=number:8
+		c0-e11=number:9
+		c0-e1=Array:[reference:c0-e2,reference:c0-e3,reference:c0-e4,reference:c0-e5,reference:c0-e6,reference:c0-e7,reference:c0-e8,reference:c0-e9,reference:c0-e10,reference:c0-e11]
+		c0-param3=Object:{refIds:reference:c0-e1}
+		xml=true	
+	Which looks correct to us.
+	As you can see we are getting a map that contains a key/value pair where
+	the value is a single string representing an array of object references
+	rather than an array of string values (10 array elements in this example).
+	In getting to the point we have, we have discovered the following :-
+	   The SignatureParser class needs to be altered to take into account the
+	   ClassLoader requires the string [Ljava.lang.String; to load the class as
+	   an array of Strings. This string includes the ";" character which the
+	   parser interprets as a line delimiter which in this case causes a
+	   failure as thetokenized incorrectly tokenizes part lines.
+	   We coded around this and the next parsing issue was that the "."
+	   [Ljava.lang.String; string where being replaced with "$", the parser was
+	   interpreting the string as representing an inner class, clearly this is
+	   not the case. We coded around this and have now got to a point where the
+	   [dwr-invoker]: Initialization successful is completing however we are
+	   back to where we started in that whilst our code changes have taken us
+	   through the parser successfully, the ArrrayConverter does not appear to
+	   be doing its job as we are getting the same result as above where the
+	   array is being constructed on the server as a single string of array
+	   references.
+	We're not able to spend more time on tracking down what's happening with
+	ArrayConverter. It appears the ArrayConverter is working for the first
+	level of indirection but not subsequent levels.
+	Our fix for the first parser problem was to remove the ";" from the
+	signatures section in the dwr.xml and if the class spec starts with an "["
+	the append a ";" before loading the class, we simlely commented out the
+	section of code that manages inner classes to get around the "$"
+	substitution problem.
+	Thanks Dan.

@@ -1,0 +1,60 @@
+
+Changes for Version 0.6
+-----------------------
+Better documentation (Joe Walker)
+Better error messages (Joe Walker)
+New ScriptedCreator (Joe Walker)
+Wider support for browsers (Brian Doyle, Joe Walker, Mark Goodwin)
+Performance fixes (Benjamin Francioni, Joe Walker)
+Fix to support Jetty (Mark Murphy)
+Better SpringCreator (Joe Walker, Bram Smeets, Marc Logemann)
+Logging via commons-logging if it is avaiable (Joe Walker)
+New ContextCreator (Frank Nestel)
+URL tweak to provide more info to web log analysers (Joe Walker)
+New converters for DOM, JDOM, XOM, DOM4J (Joe Walker)
+Chat demo (Joe Walker)
+Validation demo (Joe Walker)
+Range selection addition to DWRUtil (Mark Goodwin, Joe Walker)
+OnReturn addition to DWRUtil (Joe Walker)
+
+Google suggest demo (Mark Goodwin, Frank Nestel, Joe Walker)
+Better table formatting utility (Attila)
+Optional queuing of requests so they arrive in the correct sequence (John Kleinschmidt)
+Batching of requests so several queries can be sent at the same time
+Finer grained access control
+
+Changes for Version 0.5
+-----------------------
+Conversion from global javascript methods to static object-based methods (Joe Walker)
+Various bug fixes in utils.js (Joe Walker)
+Change license to ASL 2.0 (Joe Walker)
+Fix to support Weblogic 8.1.3 (John Christopher)
+Updated Spring creator (Marc Logemann)
+New Creator init system using a map rather than a DOM element (Joe Walker)
+
+Changes for Version 0.4
+-----------------------
+Have a way for DWR to call a JSP and return the data as a string to javascript
+Added code to support StringEscapeUtils.escapeJavaScript() from commons-lang
+Extracted Creator and Converter types along with Configurator that reads dwr.xml files
+Changed all javascript variables and functions to be prefixed dwr to avoid namespace clases
+Spring integration allowing you to get beans from spring
+Vastly improved documentation
+
+Changes for Version 0.3
+-----------------------
+Added execute using XMLHttpRequest, or a fallback to iframe. (Joe Walker)
+Changed compilations to include 1.3 VMs. Not tested on anything but 1.4/5 though (Dennis Graham)
+Tweak to make server responses clearer in demo pages (Joe Walker)
+Separated engine.js to make changing it easier (Joe Walker)
+Fixed a bug that caused the errorHandler to be called whatever (Dave Rooney)
+Fixed a bug that failed to cut up the allowed parameter properly (Daniel Wunsch)
+Added an ant build file (Joe Walker)
+Execute static methods without creating bean (suggested by Nils Kilden-Pedersen)
+I've added more documentation to the home page about ExecutionContext
+    Access to HttpServletRequest and associated classes is now possible using
+    uk.ltd.getahead.dwr.ExecutionContext. For example:
+    req = ExecutionContext.getExecutionContext().getHttpServletRequest();
+Fixed caching issues (Joe Walker)
+Broke the main servlet down a bit because it was getting too big (Joe Walker)
+New demo site (Joe Walker)

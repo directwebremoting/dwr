@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamic Address Entry</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/UrlValidator.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/interface/CreditCardValidator.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/interface/EmailValidator.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+  <script>
+  function checkURL()
+  {
+      UrlValidator.isValid(replyURL, DWRUtil.getValue("url"));
+  }
+
+  function replyURL(valid)
+  {
+      processReply(valid, "url", "url-error", "Please enter a valid URL.");
+  }
+
+  function checkCardNum()
+  {
+      CreditCardValidator.isValid(replyCardNum, DWRUtil.getValue("cardnum"));
+  }
+
+  function replyCardNum(valid)
+  {
+      processReply(valid, "cardnum", "cardnum-error", "Please enter a valid Card Number.");
+  }
+
+  function checkEMail()
+  {
+      EmailValidator.isValid(replyEMail, DWRUtil.getValue("email"));
+  }
+
+  function replyEMail(valid)
+  {
+      processReply(valid, "email", "email-error", "Please enter a valid EMail Address.");
+  }
+
+  function processReply(valid, id, errid, error)
+  {
+      if (valid)
+      {
+          DWRUtil.setValue(errid, "");
+          DWRUtil.getElementById(id).style.color = "black";
+      }
+      else
+      {
+          DWRUtil.setValue(errid, error);
+          DWRUtil.getElementById(id).style.color = "red";
+      }
+  }
+  </script>
+  <style>
+  .error { color: red; }
+  </style>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>In-Form Server-Side Validation</h1>
+
+<h2>Demo</h2>
+<p>
+  This form demonstrates 2 things; Firstly how to perform in-form validation
+  using server-side checks. The checks here could mostly be done using
+  JavaScript, however many validation tasks can only be done by using server
+  side resources.
+</p>
+<p>
+  It also demonstrates how little boiler-plate DWR requires. The Java code from
+  the examples below is taken from Jakarta commons-validator, without any
+  changes. We simply told DWR to export pre-existing Java functions
+  that were never designed for the web, and yet it all works just fine.
+</p>
+
+<table>
+  <tr>
+    <td colspan="3">Please enter a valid web page including the protocol and
+    file path (i.e. http://www.google.com/index.html)</td>
+  </tr>
+  <tr>
+    <td width="120px">URL:</td>
+    <td><input id="url" type="text" onchange="checkURL()"/></td>
+    <td><span id="url-error" class="error">  </span></td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <hr/>
+      Please enter credit card number, but make sure you don't use a real one.
+      This form performs check-sum validation, but does not check that the
+      card number is a real card number.
+    </td>
+  </tr>
+  <tr>
+    <td>Credit Card#:</td>
+    <td><input id="cardnum" type="text" onchange="checkCardNum()"/></td>
+    <td><span id="cardnum-error" class="error"></span></td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <hr/>
+      Please enter a valid e-mail address.
+    </td>
+  </tr>
+  <tr>
+    <td>E-Mail:</td>
+    <td><input id="email" type="text" onchange="checkEMail()"/></td>
+    <td><span id="email-error" class="error"></span></td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <hr/>
+      Please enter your name. (This field is here to allow the validation on
+      the e-mail field to run)
+    </td>
+  </tr>
+  <tr>
+    <td>Name:</td>
+    <td><input id="number" type="text"/></td>
+    <td><span id="number-error" class="error"></span></td>
+  </tr>
+</table>
+
+<h2>How it works</h2>
+
+<p>
+  Check-out the source of this page to see how simple the Javascript is.
+</p>
+
+</div>
+</body>
+</html>

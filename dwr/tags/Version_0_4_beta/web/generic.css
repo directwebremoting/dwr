@@ -1,0 +1,39 @@
+
+pre
+{
+    background: #f8f8f8;
+    border: 3px dashed #dddddd;
+    margin-left: 50px;
+    margin-right: 50px;
+    padding: 10px;
+}
+
+body
+{
+    font-family: Verdana, sans-serif;
+    margin-right: 170px;
+}
+
+#sidebar
+{
+    border: 0px solid;
+    border-left: 2px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 150px;
+    height: 700px;
+}
+
+body>#sidebar
+{
+    position: fixed;
+    height: 100%;
+}
+
+.sidebody
+{
+    margin: 10px 5px 20px 5px;
+    background: #eeeeee;
+}

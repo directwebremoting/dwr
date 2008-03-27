@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+  <init>
+    <creator id="jsf" class="uk.ltd.getahead.dwr.create.JsfCreator"/>
+    <creator id="none" class="uk.ltd.getahead.dwr.create.NullCreator"/>
+    <creator id="new" class="uk.ltd.getahead.dwr.create.NewCreator"/>
+    <creator id="pageflow" class="uk.ltd.getahead.dwr.create.PageFlowCreator"/>
+    <creator id="spring" class="uk.ltd.getahead.dwr.create.SpringCreator"/>
+    <creator id="script" class="uk.ltd.getahead.dwr.create.ScriptedCreator"/>
+    <creator id="struts" class="uk.ltd.getahead.dwr.create.StrutsCreator"/>
+
+    <converter id="null" class="uk.ltd.getahead.dwr.convert.NullConverter"/>
+    <converter id="enum" class="uk.ltd.getahead.dwr.convert.EnumConverter"/>
+    <converter id="primitive" class="uk.ltd.getahead.dwr.convert.PrimitiveConverter"/>
+    <converter id="bignumber" class="uk.ltd.getahead.dwr.convert.BigNumberConverter"/>
+    <converter id="string" class="uk.ltd.getahead.dwr.convert.StringConverter"/>
+    <converter id="array" class="uk.ltd.getahead.dwr.convert.ArrayConverter"/>
+    <converter id="map" class="uk.ltd.getahead.dwr.convert.MapConverter"/>
+    <converter id="collection" class="uk.ltd.getahead.dwr.convert.CollectionConverter"/>
+    <converter id="date" class="uk.ltd.getahead.dwr.convert.DateConverter"/>
+    <converter id="dom" class="uk.ltd.getahead.dwr.convert.DOMConverter"/>
+    <converter id="dom4j" class="uk.ltd.getahead.dwr.convert.DOM4JConverter"/>
+    <converter id="jdom" class="uk.ltd.getahead.dwr.convert.JDOMConverter"/>
+    <converter id="xom" class="uk.ltd.getahead.dwr.convert.XOMConverter"/>
+    <converter id="servlet" class="uk.ltd.getahead.dwr.convert.ServletConverter"/>
+    <converter id="bean" class="uk.ltd.getahead.dwr.convert.BeanConverter"/>
+    <converter id="object" class="uk.ltd.getahead.dwr.convert.ObjectConverter"/>
+    <converter id="hibernate" class="uk.ltd.getahead.dwr.convert.HibernateBeanConverter"/>
+  </init>
+
+  <allow>
+    <convert converter="null" match="void"/>
+    <convert converter="null" match="java.lang.Void"/>
+
+    <convert converter="primitive" match="boolean"/>
+    <convert converter="primitive" match="byte"/>
+    <convert converter="primitive" match="short"/>
+    <convert converter="primitive" match="int"/>
+    <convert converter="primitive" match="long"/>
+    <convert converter="primitive" match="float"/>
+    <convert converter="primitive" match="double"/>
+    <convert converter="primitive" match="char"/>
+    <convert converter="primitive" match="java.lang.Boolean"/>
+    <convert converter="primitive" match="java.lang.Byte"/>
+    <convert converter="primitive" match="java.lang.Short"/>
+    <convert converter="primitive" match="java.lang.Integer"/>
+    <convert converter="primitive" match="java.lang.Long"/>
+    <convert converter="primitive" match="java.lang.Float"/>
+    <convert converter="primitive" match="java.lang.Double"/>
+    <convert converter="primitive" match="java.lang.Character"/>
+
+    <convert converter="bignumber" match="java.math.BigInteger"/>
+    <convert converter="bignumber" match="java.math.BigDecimal"/>
+
+    <convert converter="string" match="java.lang.String"/>
+    <convert converter="date" match="java.util.Date"/>
+
+    <convert converter="array" match="[Z"/>
+    <convert converter="array" match="[B"/>
+    <convert converter="array" match="[S"/>
+    <convert converter="array" match="[I"/>
+    <convert converter="array" match="[J"/>
+    <convert converter="array" match="[F"/>
+    <convert converter="array" match="[D"/>
+    <convert converter="array" match="[C"/>
+    <convert converter="array" match="[L*"/>
+
+    <!--
+    The catch for the next 2 is that we really mean java.util.Collection<String>
+    and java.util.Map<String, String> but we need to do more work before this
+    syntax is enabled
+    -->
+    <convert converter="collection" match="java.util.Collection"/>
+    <convert converter="map" match="java.util.Map"/>
+
+    <convert converter="dom" match="org.w3c.dom.Node"/>
+    <convert converter="dom" match="org.w3c.dom.Element"/>
+    <convert converter="dom" match="org.w3c.dom.Document"/>
+    <convert converter="dom4j" match="org.dom4j.Document"/>
+    <convert converter="dom4j" match="org.dom4j.Element"/>
+    <convert converter="dom4j" match="org.dom4j.Node"/>
+    <convert converter="jdom" match="org.jdom.Document"/>
+    <convert converter="jdom" match="org.jdom.Element"/>
+    <convert converter="xom" match="nu.xom.Document"/>
+    <convert converter="xom" match="nu.xom.Element"/>
+    <convert converter="xom" match="nu.xom.Node"/>
+
+    <convert converter="servlet" match="javax.servlet.ServletConfig"/>
+    <convert converter="servlet" match="javax.servlet.ServletContext"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpServletRequest"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpServletResponse"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpSession"/>
+
+  </allow>
+
+</dwr>

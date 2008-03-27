@@ -1,0 +1,71 @@
+--- dwr-src/java/uk/ltd/getahead/dwr/util.js	Sun Aug 07 22:51:45 2005
++++ dwr-src-orig/java/uk/ltd/getahead/dwr/util.js	Sun Jul 10 02:20:44 2005
+@@ -815,9 +815,8 @@
+  * @param data Array containing one entry for each row in the updated table
+  * @param cellFuncs An array of functions (one per column) for extracting cell
+  *    data from the passed row data
+- * @param rowCallback optional callback which is executed each time a row is added.
+  */
+-DWRUtil.addRows = function(ele, data, cellFuncs, rowCallback)
++DWRUtil.addRows = function(ele, data, cellFuncs)
+ {
+     var orig = ele;
+     ele = $(ele);
+@@ -837,11 +836,11 @@
+     // letting window show cleared table
+     if (navigator.product && navigator.product == "Gecko")
+     {
+-        setTimeout(function() { DWRUtil._addRowsInner(ele, data, cellFuncs, rowCallback); }, 0);
++        setTimeout(function() { DWRUtil._addRowsInner(ele, data, cellFuncs); }, 0);
+     }
+     else
+     {
+-        DWRUtil._addRowsInner(ele, data, cellFuncs, rowCallback);
++        DWRUtil._addRowsInner(ele, data, cellFuncs);
+     }
+ };
+ 
+@@ -850,7 +849,7 @@
+  * @see DWRUtil.addRows(ele, data, cellFuncs)
+  * @private
+  */
+-DWRUtil._addRowsInner = function(ele, data, cellFuncs, rowCallback)
++DWRUtil._addRowsInner = function(ele, data, cellFuncs)
+ {
+     var frag = document.createDocumentFragment();
+ 
+@@ -859,14 +858,14 @@
+         // loop through data source
+         for (var i = 0; i < data.length; i++)
+         {
+-            DWRUtil._addRowInner(frag, data[i], cellFuncs, rowCallback);
++            DWRUtil._addRowInner(frag, data[i], cellFuncs);
+         }
+     }
+     else if (typeof data == "object")
+     {
+         for (var row in data)
+         {
+-            DWRUtil._addRowInner(frag, row, cellFuncs, rowCallback);
++            DWRUtil._addRowInner(frag, row, cellFuncs);
+         }
+     }
+ 
+@@ -877,7 +876,7 @@
+  * Iternal function to draw a single row of a table.
+  * @private
+  */
+-DWRUtil._addRowInner = function(frag, row, cellFuncs, rowCallback)
++DWRUtil._addRowInner = function(frag, row, cellFuncs)
+ {
+     var tr = document.createElement("tr");
+ 
+@@ -919,7 +918,6 @@
+     }
+ 
+     frag.appendChild(tr);
+-    if (rowCallback) rowCallback(tr);
+ };
+ 
+ /**
+

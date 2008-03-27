@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Javascript Functions</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h1>Javascript Functions</h1>
+
+<p>
+  DWR includes 2 javascript files:
+</p>
+<pre>
+  &lt;script type='text/javascript' src='/[YOUR-WEB-APP]/dwr/engine.js'>&lt;/script>
+  &lt;script type='text/javascript' src='/[YOUR-WEB-APP]/dwr/util.js'>&lt;/script>
+</pre>
+<p>
+  The engine script file contains some functions that help define how DWR works.
+  The util script file contains some useful stuff that could give you a good
+  kick start in creating select lists and tables using DWR. util.js is totally
+  unsupported however. If you wish to make use of it I suggest that you copy
+  it into your webapp and use it from there. It may well go away in the future.
+  The useful functions in engine.js are documented here. There is no
+  documentation other than the demo pages for util.js
+</p>
+
+<h2>dwrSetErrorHandler</h2>
+<p>
+  Whenever there some sort of server failure DWR calls the error handler and
+  passes it the error message. The default behavior if there is no error handler
+  is to <code>alert(message);</code>.
+  <br/>
+  This method could be used to move the error messages from an alert box to the
+  status bar or to do away with them altogether.
+</p>
+
+<h2>dwrSetPreHook</h2>
+<p>
+  If you wish to be alerted before DWR actually remotes a call you can set a
+  pre-hook function. This will be called with no parameters.
+  This hook is useful if you wish to grey out certain components to prevent them
+  being used again until the call returns.
+</p>
+
+<h2>dwrSetPostHook</h2>
+<p>
+  Post execute hooks will usually be set in conjunction with pre-execute hooks
+  and will generally undo any changes made by the pre-hook.
+</p>
+
+</body>
+</html>

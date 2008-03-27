@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Reference to dwr.xml</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>Reference to dwr.xml</h1>
+
+<p>
+  There can be more than one dwr.xml file (see <a href="ref-webxml.html">the
+  web.xml documentation</a> for more details). The entries in each are added
+  together. This ability is used by DWR to load the basic config file to get
+  everyone started.
+  <br/>
+  We can get a good introduction to dwr.xml files by looking at the standard
+  config file that everyone gets for free.
+</p>
+
+<p>
+  The DWR DOCTYPE line should be included in all dwr.xml files.
+  It looks like this:
+</p>
+
+<pre>
+&lt;!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 0.4//EN"
+    "http://www.getahead.ltd.uk/dwr/dwr.dtd"&gt;
+</pre>
+
+<p>
+  We hope to release version 1.0 before too long, and about the time of the
+  release candidates we will be getting rid of the 0.4 and putting 1.0 in both
+  the public id and the system id.
+</p>
+
+<p>
+  The overall structure of dwr.xml is as follows:
+</p>
+
+<pre>
+&lt;dwr&gt;
+  &lt;init&gt;
+    &lt;creator id="..." class="..."/&gt;
+    &lt;converter id="..." class="..."/&gt;
+  &lt;/init&gt;
+  &lt;allow&gt;
+    &lt;convert .../&gt;
+    &lt;create .../&gt;
+  &lt;/allow&gt;
+&lt;/dwr&gt;
+</pre>
+
+<p>
+  Some terminology worth understanding - parameters are <i>converted</i>, but
+  the remoted beans are <i>created</i>. So if you have a bean A with a method
+  <code>A.blah(B)</code> then you need a <i>creator</i> for A and a
+  <i>converter</i> for B.
+</p>
+<p>
+  The optional init section declares the classes that can be used to create
+  beans to remote and the classes that can be used to convert beans in the
+  marshalling process. For most cases you will not need to use it.
+</p>
+<p>
+  Having an entry in the init section just tells DWR about the existance of the
+  class and gives it some basic detail about how it works. It does not bring it
+  into use. In this way it is a bit like an import statement in Java. Most
+  classes must be imported before use, but just having an import does not mean
+  that the class is being used. Each creator and converter has an id attribute
+  to allow it to be referred to later on.
+</p>
+<p>
+  The allow section defines which classes DWR can create and convert. For each
+  class that we allow we have a 'create' or 'convert' line. By default all of
+  the following are converted for you without further declaration:
+</p>
+<ul>
+  <li>All primitive types, boolean, int, double, etc.</li>
+  <li>The Class based versions of the these Boolean, Integer, etc.</li>
+  <li>java.lang.String</li>
+  <li>java.util.Date and the 3 SQL derivatives</li>
+  <li>arrays of the above</li>
+  <li>Collections of the above (with some limitations)</li>
+</ul>
+<p>
+  However nothing is added to the list of classes that can be created (i.e. put
+  up for remoting) without you declaring it.
+</p>
+
+<h3>The 'new' Creator</h3>
+<p>
+  The new creator is declared by default by DWR as follows:
+  <code>&lt;creator id="new" class="uk.ltd.getahead.dwr.create.NewCreator"/&gt;</code>
+  You don't need to add this line to your dwr.xml because it is already in the
+  DWR's internal dwr.xml file.
+</p>
+<p>
+  This creator will create an instance of a class using the default constructor.
+  The overhead of creating a new instance of your remoted object for every
+  javascript call has got much less with later VMs so this inefficiency is
+  probably not an issue for you. You can think of classes created using the
+  'new' creator like stateless session beans if you know about EJBs.
+  There are several benefits to using the 'new' creator:
+</p>
+<ul>
+  <li>
+    Security: The shorter lived the objects created by DWR the less chance
+    that they can be exploited by loading them up with invalid values in one
+    call and then the invalid values fired at something that wasn't expecting
+    it in another.
+  </li>
+  <li>
+    Low memory overhead: If you have a site with many users, then you don't
+    run the risk of running out of VM memory so much
+  </li>
+</ul>
+<p>
+  You allow DWR to use the new creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+&lt;allow&gt;
+  &lt;create creator="new" javascript="Blah"&gt;
+    &lt;param name="class" value="java.util.Date"/&gt;
+  &lt;/create&gt;
+  ... other definitions
+&lt;/allow&gt;
+</pre>
+<p>
+  This uses the 'new' creator defined above and gives it the Javascript name
+  <code>Blah</code> so whenever in Javascript you call <code>Blah.toString(reply)</code>
+  then a new java.util.Date will be constructed using the default constructor,
+  then the toString() method will be called, and the data returned to the
+  javascript reply function (in this case the current date in string form).
+</p>
+
+<h3>The 'session' Creator</h3>
+<p>
+  The session creator is declared by default by DWR as follows:
+  <code>&lt;creator id="session" class="uk.ltd.getahead.dwr.create.SessionCreator"/&gt;</code>
+  As with 'new' you don't need to add this line to your dwr.xml
+</p>
+<p>
+  This creator will first search in the users session for a bean by the given
+  javascript name, (creating it using the default constructor any placing it in
+  the session if it isn't there) before proceeding as the 'new' creator.
+  You can think of 'session' created beans as being like stateful session beans.
+</p>
+<p>
+  You allow DWR to use the session creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+&lt;allow&gt;
+  ...
+  &lt;create creator="session" javascript="TestBean"&gt;
+    &lt;param name="class" value="your.stateful.JavaBean"/&gt;
+  &lt;/create&gt;
+  ... other definitions
+&lt;/allow&gt;
+</pre>
+
+<h3>The 'spring' Creator</h3>
+<p>
+  There is a page dedicated to getting DWR working with Spring. The action of
+  the spring creator is discussed <a href="spring.html">there</a>.
+</p>
+
+<h3>The 'static' Creator</h3>
+<p>
+  The static creator is declared by default by DWR as follows:
+  <code>&lt;creator id="static" class="uk.ltd.getahead.dwr.create.StaticCreator"/&gt;</code>
+</p>
+<p>
+  This creator is the simplest of all. It assumes that you will be calling
+  static methods only, so no object creation is needed.
+</p>
+<p>
+  You allow DWR to use the static creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+&lt;allow&gt;
+  ...
+  &lt;create creator="static"
+      javascript="Jim"
+      class="your.class.with.static.Methods"/&gt;
+  ... other definitions
+&lt;/allow&gt;
+</pre>
+
+<h3>The Default Converters</h3>
+<p>
+  There are a number of converters that are defined and initialized for you.
+  They are defined as follows:
+</p>
+<pre>
+&lt;converter id="null"
+    class="uk.ltd.getahead.dwr.convert.NullConverter"/&gt;
+&lt;converter id="primitive"
+    class="uk.ltd.getahead.dwr.convert.PrimitiveConverter"/&gt;
+&lt;converter id="string"
+    class="uk.ltd.getahead.dwr.convert.StringConverter"/&gt;
+&lt;converter id="array"
+    class="uk.ltd.getahead.dwr.convert.ArrayConverter"/&gt;
+&lt;converter id="map"
+    class="uk.ltd.getahead.dwr.convert.MapConverter"/&gt;
+&lt;converter id="collection"
+    class="uk.ltd.getahead.dwr.convert.CollectionConverter"/&gt;
+&lt;converter id="date"
+    class="uk.ltd.getahead.dwr.convert.DateConverter"/&gt;
+&lt;converter id="bean"
+    class="uk.ltd.getahead.dwr.convert.BeanConverter"/&gt;
+</pre>
+<p>
+  The converters are mearly defined here and are put into use with
+  &lt;convert&nbsp;...&gt; elements. There are 2 attributes in any convert element,
+  a reference to a converter definition and a match line that defines the
+  class(s) that it can convert.
+</p>
+<p>
+  For example the simplest converter is the null converter that converts void
+  and null values to javascript null and undefined vales.
+  This creator is the simplest of all. It assumes that you will be calling
+  static methods only, so no object creation is needed.
+</p>
+<p>
+  By default DWR marshalls Java void values into Javascript nulls using the
+  following: <code>&lt;convert converter="null" match="void"/&gt;</code>. There
+  are times when a <code>java.lang.Void</code> needs to be converted as well so
+  the same converter is used for those too:
+  <code>&lt;convert converter="null" match="java.lang.Void"/&gt;</code>.
+  There is no danger in passing nulls from Java to Javascript so these
+  definitions are made by default - you don't need to put them in the &lt;allow&gt;
+  section yourself.
+</p>
+<p>
+  The primitive converter converts boolean, byte, char, etc as well as their
+  Class based alternatives Boolean etc. The default setup includes 16 entries
+  in the allow section for all primitive types along the following lines:
+  <code>&lt;convert converter="primitive" match="java.lang.Long"/&gt;</code> and
+  <code>&lt;convert converter="primitive" match="long"/&gt;</code>.
+</p>
+<p>
+  The string and date converters are also setup by default. We have not found
+  any way to subvert Strings, Dates or basic numeric types so they are all
+  turned on by default.
+</p>
+<p>
+  The array entries are less obvious. By default DWR marshalls arrays of all
+  primitive types as well as arrays of all marshallable objects, which by
+  default includes String and Date as noted previously.
+  <br/>
+  Advanced Java programmers will probably recognise why the match line is a
+  <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Class.html#getName()">little strange</a>.
+</p>
+<pre>
+&lt;convert converter="array" match="[Z"/&gt;
+&lt;convert converter="array" match="[B"/&gt;
+&lt;convert converter="array" match="[S"/&gt;
+&lt;convert converter="array" match="[I"/&gt;
+&lt;convert converter="array" match="[J"/&gt;
+&lt;convert converter="array" match="[F"/&gt;
+&lt;convert converter="array" match="[D"/&gt;
+&lt;convert converter="array" match="[C"/&gt;
+&lt;convert converter="array" match="[L*"/&gt;
+</pre>
+<p>
+  The * is not explained by the link above - it is a wildcard that matches any
+  following string, which is how DWR can marshall arrays of any type that is
+  marshallable by other means.
+</p>
+<p>
+  The final 2 default converters are for maps and collections:
+  <code>&lt;convert converter="collection" match="java.util.Collection"/&gt;</code>
+  and <code>&lt;convert converter="map" match="java.util.Map"/&gt;</code>
+</p>
+<p>
+  There is a catch for these 2 however. While there is no special version of
+  DWR for JDK 1.5 there is no way of knowing the underlying type of the
+  collection. So the 2 converters above can convert from any collection to
+  something meaningful in Javascript, there is no way to know what sort of
+  Collection to convert <b>to</b> going the other way.
+  <br/>
+  Since we can't work it out automatically we may need to have some special
+  syntax in the dwr.xml file to allow us to hint types to the conversion process.
+</p>
+<p>
+  The one converter that is not enabled by use is the Bean converter. This will
+  convert POJOs into Javascript associative arrays and back again. This
+  converter is not enabled by default for security reasons. If you have a bean
+  that you have remoted using a &lt;create&nbsp;...&gt; statement, where one of the
+  parameters is a bean with a setter that has some nasty side effects, then it
+  would be possible for an attacker to cause the nasty side effects to happen.
+  <br/>
+  Time will tell whether this is overly paranoid or sensible, but for the moment
+  we are leaving it out. You can enable it with one of the following:
+</p>
+<pre>
+&lt;convert
+    converter="bean"
+    match="your.full.package.BeanName"/&gt;
+</pre>
+<p>
+  To allow conversion of a single class. Or:
+</p>
+<pre>
+&lt;convert
+    converter="bean"
+    match="your.full.package.*"/&gt;
+</pre>
+<p>
+  To allow conversion of any class in the given package. Or:
+</p>
+<pre>
+&lt;convert
+    converter="bean"
+    match="*"/&gt;
+</pre>
+<p>
+  To enable conversion of any java classes. <b>Use at your own risk</b>.
+  Actually you use any of DWR at your own risk, but especially this as it seems
+  dangerous to the author.
+</p>
+
+</div>
+</body>
+</html>

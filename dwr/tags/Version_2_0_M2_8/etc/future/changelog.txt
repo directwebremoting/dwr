@@ -1,0 +1,2 @@
+
+wget --quiet --base=./ --directory-prefix=./ --convert-links --mirror --page-requisites --exclude-directories=blog/*,dwr-demo/*,book/*  http://getahead.ltd.uk/

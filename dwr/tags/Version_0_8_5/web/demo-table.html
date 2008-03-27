@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamically Editing a Table</title>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script>
+  //<![CDATA[
+  function init()
+  {
+      DWRUtil.useLoadingMessage();
+      update();
+  }
+
+  function update()
+  {
+      Demo.getAllPeople(fillTable);
+  }
+
+  var getName = function(person) { return person.name };
+  var getDoB = function(person) { return person.dateOfBirth }; // if we return to using dates, add .toLocaleDateString()
+  var getSalary = function(person) { return person.salary };
+  var getEdit = function(person)
+  {
+      return "<input type=\"button\" value=\"Edit\" onclick=\"readPerson('" + person.id + "')\"/>";
+  };
+  var getDelete = function(person)
+  {
+      return "<input type=\"button\" value=\"Delete\" onclick=\"deletePerson('" + person.id + "', '" + person.name + "')\"/>";
+  };
+  function fillTable(people)
+  {
+      DWRUtil.clearChildNodes("peoplebody");
+      DWRUtil.drawTable("peoplebody", people, [ getName, getDoB, getSalary, getEdit, getDelete ])
+  }
+
+  function readPerson(id)
+  {
+      Demo.getPerson(fillForm, id);
+  }
+
+  function deletePerson(personid, name)
+  {
+      if (confirm("Are you sure you want to delete " + name + "?"))
+      {
+          var person = { id:personid };
+          Demo.deletePerson(update, person);
+      }
+  }
+
+  function writePerson()
+  {
+      // if we return to using dates, use new Date() for the dateOfBirth
+      var person =
+      {
+          id:DWRUtil.getValue("id"),
+          name:DWRUtil.getValue("name"),
+          dateOfBirth:DWRUtil.getValue("dateOfBirth"),
+          salary:DWRUtil.getValue("salary")
+      };
+      Demo.addPerson(update, person);
+  }
+
+  function clearPerson()
+  {
+      DWRUtil.setValue("id", "-1");
+      DWRUtil.setValue("name", "");
+      DWRUtil.setValue("dateOfBirth", "");
+      DWRUtil.setValue("salary", "");
+  }
+
+  function fillForm(person)
+  {
+      DWRUtil.setValue("id", person.id);
+      DWRUtil.setValue("name", person.name);
+      DWRUtil.setValue("dateOfBirth", person.dateOfBirth);
+      DWRUtil.setValue("salary", person.salary);
+  }
+  //]]>
+  </script>
+</head>
+
+<body onload="init()">
+
+<h1>Dynamically Editing a Table</h1>
+
+<h2>Demo</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date of Birth</th>
+      <th>Salary</th>
+      <th colspan="2">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="peoplebody">
+  </tbody>
+</table>
+
+<p>
+Edit Person
+</p>
+
+<table>
+  <tr>
+    <td>ID:</td>
+    <td><span id="id">-1</span></td>
+  </tr>
+  <tr>
+    <td>Name:</td>
+    <td><input id="name" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Salary:</td>
+    <td><input id="salary" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Date of Birth:</td>
+    <td><input type="text" id="dateOfBirth"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="right">
+      <input type="button" value="Save" onclick="writePerson()"/>
+      <input type="button" value="Clear" onclick="clearPerson()"/>
+    </td>
+  </tr>
+</table>
+
+<h2>How it works</h2>
+
+<p>
+  There is more Javascript on this page than others and most of it is
+  documented on other demo pages; This demo just brings it all together a bit.
+  So I'm not going to do a step-by-step on it, the source is commented so
+  "view source" should give you all you need.
+  <br/>
+  The Java code isn't so easy to look at so I'll include the relevant parts
+  here. We've seen Person on the <a href="demo-form.html">Live Forms</a> page.
+  The extra code in Demo looks like this:
+</p>
+
+<pre>
+public Collection getAllPeople()
+{
+    return people.values();
+}
+
+public Person getPerson(int id)
+{
+    return (Person) people.get(new Integer(id));
+}
+
+public boolean deletePerson(Person toDelete)
+{
+    return people.remove(new Integer(toDelete.getId())) != null;
+}
+
+public void addPerson(Person toAdd)
+{
+    if (toAdd.getId() == -1)
+    {
+        toAdd.setId(nextId++);
+    }
+
+    people.put(new Integer(toAdd.getId()), toAdd);
+}
+
+private static int nextId = 10;
+private Map people = new HashMap();
+</pre>
+
+<p>
+  There is also a createPeople() function that populates the people Map.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Ajax and XMLHttpRequest made easy</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>DWR - Hints and Tips</h1>
+
+<h2>DWR and Spring</h2>
+
+<p>
+  A quick check-list of things to do to get DWR working with Spring:
+</p>
+
+<ol>
+  <li>
+    Make sure you are on the latest DWR.
+    You can tell which version of DWR this site is using by clicking on the
+    query server button on the <a href="demo-text.html">dynamic text demo</a>.
+    Recent versions of DWR have make error reporting much better so an upgrade
+    is often worth it.
+  </li>
+  <li>
+    Make sure you are happy with everything on the
+    <a href="intro.html">introduction</a> page.
+  </li>
+  <li>
+    Make sure your Spring beans work properly outside of DWR.
+  </li>
+  <li>
+    Configure DWR to work with Spring. See the section on the spring creator
+    (towards the bottom) of the <a href="config-howto.html">configuration</a>
+    page.
+  </li>
+  <li>
+    Look at the demo pages: http://localhost:8080/[YOUR-WEBAPP]/dwr to check
+    that your spring beans appear.
+  </li>
+</ol>
+
+<p>
+  Bram Smeets has written up <a href="http://bram.jteam.nl/?p=2">an interesting
+  blog</a> on now to configure DWR using beans.xml in place of WEB-INF/web.xml.
+</p>
+
+<p>
+  I would be interested in working out how to specify dwr.xml in beans.xml as
+  well, although this will take a fair bit of Spring-fu to do. Does anyone
+  know much about how to make this happen? If so please join one of the
+  <a href="https://dwr.dev.java.net/servlets/ProjectMailingListList">mailing lists</a>
+  and tell me about it.
+</p>
+
+</div>
+</body>
+</html>

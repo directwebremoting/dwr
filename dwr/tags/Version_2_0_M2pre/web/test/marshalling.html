@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/Test.js'></script>
+  <script type='text/javascript' src='../dwr/util.js'></script>
+  <script type='text/javascript' src='../generic.js'></script>
+  <script type='text/javascript' src='marshalling.js'></script>
+  <link type="text/css" href="../generic.css" rel="stylesheet" />
+  <title>DWR - Marshalling Tests</title>
+</head>
+
+<body onload="init()">
+
+<div>[ <a href="../index.html">Top Level</a> ]</div>
+
+<h2>Unit Test Settings</h2>
+
+<div style="margin-bottom:5px">
+  Style:
+  <select id="method">
+    <option value="iframe">IFRAME</option>
+    <option value="xhr" selected="selected">XMLHttpRequest</option>
+  </select>
+  &nbsp;
+  Verb:
+  <select id="verb">
+    <option>GET</option>
+    <option selected="selected">POST</option>
+  </select>
+  &nbsp;
+  Asynchronous:
+  <select id="async">
+    <option value="async" selected="selected">Asynchronous</option>
+    <option value="sync">Synchronous</option>
+  </select>
+</div>
+<div>
+  Delay:
+  <select id="rate">
+    <option value="0">0ms</option>
+    <option value="5">5ms</option>
+    <option value="10">10ms</option>
+    <option value="15" selected="selected">15ms</option>
+    <option value="20">20ms</option>
+    <option value="25">25ms</option>
+    <option value="30">30ms</option>
+    <option value="40">40ms</option>
+    <option value="50">50ms</option>
+    <option value="100">100ms</option>
+  </select>
+  &nbsp;
+  Batch size:
+  <select id="size">
+    <option value="0" selected="selected">None</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="6">6</option>
+    <option value="12">12</option>
+    <option value="25">25</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+    <option value="200">200</option>
+    <option value="400">400</option>
+  </select>
+  &nbsp;
+  Ordered:
+  <select id="ordered">
+    <option>Yes</option>
+    <option selected="selected">No</option>
+  </select>
+  &nbsp;
+  Timeout:
+  <select id="timeout">
+    <option value="0" selected="selected">None</option>
+    <option value="1000">1sec</option>
+    <option value="2000">2sec</option>
+    <option value="3000">3sec</option>
+    <option value="4000">4sec</option>
+    <option value="5000">5sec</option>
+    <option value="6000">6sec</option>
+  </select>
+</div>
+
+<h2>Marshalling Tests</h2>
+
+<table class="showborder" id="testSummary">
+  <tr>
+    <th>Number of Tests:</th>
+    <td><script>document.write(tests.length)</script></td>
+  </tr>
+  <tr>
+    <th>Tests Dispatched:</th>
+    <td><span id="testsDispatched">0</span></td>
+  </tr>
+  <tr>
+    <th>Tests Returned:</th>
+    <td><span id='execreport'>0</span></td>
+  </tr>
+  <tr>
+    <th>Tests Failed:</th>
+    <td><span id='failreport'>0</span></td>
+  </tr>
+  <tr>
+    <th>Errors:</th>
+    <td><div id="failures"></div></td>
+  </tr>
+  <tr>
+    <th>Tests per second:</th>
+    <td><span id='timePerTest'></span></td>
+  </tr>
+  <tr>
+    <th>Action:</th>
+    <td><input type="button" onclick="startTest();" id="start" value="Start"/></td>
+  </tr>
+</table>
+
+<p></p>
+
+  <table class="showborder">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Function</th>
+        <th>Data</th>
+        <th>Action</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="chart">
+    </tbody>
+  </table>
+
+</body>
+</html>

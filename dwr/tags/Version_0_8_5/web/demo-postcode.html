@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamic Address Entry</title>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script>
+  //<![CDATA[
+  function init()
+  {
+      DWRUtil.useLoadingMessage();
+  }
+
+  function fillAddress()
+  {
+      var postcode = DWRUtil.getValue("postcode");
+      Demo.fillAddress(fillForm, postcode);
+  }
+
+  function fillForm(address)
+  {
+      DWRUtil.setValue("line2", address.line2);
+      DWRUtil.setValue("line3", address.line3);
+      DWRUtil.setValue("line4", address.line4);
+      DWRUtil.setValue("warning", "Please check the address details above.");
+  }
+  //]]>
+  </script>
+</head>
+
+<body onload="init()">
+
+<h1>Dynamic Address Entry</h1>
+
+<h2>Demo</h2>
+<p>
+  This is a practical example of the sort of thing that is possible with DWR.
+  The fully functional version of this example was written for a client of mine
+  that has full access to UK postcode data. This site does not so this demo
+  is restricted to the following postcodes:
+  <ul>
+    <li>LE16 7TR</li>
+    <li>NR14 7SL</li>
+    <li>B92 7TT</li>
+    <li>E17 8YT</li>
+    <li>SN4 8QS</li>
+    <li>NN5 7HT</li>
+  </ul>
+</p>
+
+<table>
+  <tr>
+    <td>Zipcode/Postcode:</td>
+    <td><input id="postcode" type="text" onchange="fillAddress()"/></td>
+  </tr>
+  <tr>
+    <td>House name/number:</td>
+    <td><input id="house" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Line 2:</td>
+    <td><input id="line2" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Line 3:</td>
+    <td><input id="line3" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Line 4:</td>
+    <td><input id="line4" type="text"/></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <span id="warning"></span>
+    </td>
+  </tr>
+</table>
+
+<h2>How it works</h2>
+
+<p>
+  The explanation in the other examples should give the detail about what is
+  going on, particularly the <a href="demo-form.html">live forms</a> example.
+  "View Source" is also a good guide; this page is under 100 lines long.
+</p>
+
+</body>
+</html>

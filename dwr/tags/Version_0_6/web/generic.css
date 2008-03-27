@@ -1,0 +1,179 @@
+
+pre
+{
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    padding: 5px;
+    font-size: 85%;
+}
+
+body
+{
+    font-family: verdana, arial, sans-serif;
+    color: #666;
+    background: #EEEEEE;
+    margin: 0px;
+}
+
+.snip-content
+{
+    clear: left;
+    border: 0;
+    display: block;
+    font-family: verdana, arial, sans-serif;
+    color: #666;
+    font-size: 90%;
+    line-height: 120%;
+    font-weight: normal;
+    background: #FFFFFF;
+}
+
+#page-content
+{
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: 50px;
+    margin-right: 180px;
+    background: #FFFFFF;
+    border: 1px #CCCCCC solid;
+}
+
+#page-portlet-1
+{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-bottom: 15px;
+    margin-top: 120px;
+    margin-bottom: 15px;
+    background: #DDDDDD;
+    font-family: verdana, arial, sans-serif;
+    color: #666;
+    /*font-size: 11px;*/
+    font-weight: normal;
+    line-height: 130%;
+    border: 1px solid #AAAAAA;
+
+    width: 150px;
+    height: 700px;
+    overflow: hidden;
+}
+
+.sidebody
+{
+    margin: 10px 5px 20px 5px;
+    background: #DDDDDD;
+    font-size: 90%;
+}
+
+.sidebody h2
+{
+    font-size: 100%;
+}
+
+.sidebody h3
+{
+    font-size: 95%;
+    margin-bottom: 0;
+}
+
+a
+{
+    color: #9A1414;
+    font-family: verdana, arial, sans-serif;
+    text-decoration: none;
+}
+
+a:link
+{
+    color: #9A1414;
+    text-decoration: none;
+}
+
+a:visited
+{
+    color: #9A1414;
+    text-decoration: none;
+}
+
+a:active
+{
+    color: #FFCC66;
+}
+
+a:hover
+{
+    color: #FFCC66;
+}
+
+h1
+{
+    color: #000000;
+    background-color: inherit;
+    font-weight: bold;
+    font-size: 120%;
+    font-variant: uppercase;
+}
+
+h2
+{
+    color: #000000;
+    background-color: inherit;
+    font-size: 110%;
+    font-variant: uppercase;
+}
+
+h3
+{
+    color: #000000;
+    background-color: inherit;
+    font-size: 100%;
+    font-variant: uppercase;
+}
+
+h4
+{
+    color: #000000;
+    background-color: inherit;
+    font-size: 90%;
+    font-variant: uppercase;
+}
+
+#page-logo
+{
+    color: #FFFFFF;
+    background-color: #5a5a8d;
+    background-image: url(http://www.getahead.ltd.uk/images/head-back.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    border: 1px solid #000000;
+    font-family: Arial Black;
+    font-size: 24pt;
+    letter-spacing: 5px;
+    padding-top: 0.20em;
+    padding-bottom: 0.20em;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#page-title
+{
+    background-color: #7272a2;
+    border: 1px solid #000000;
+    border-top: 0px;
+    font-family: verdana, arial, sans-serif;
+    padding: 5px;
+    text-align: right;
+    color: #000000;
+    font-size: 8pt;
+}
+
+#page-title a
+{
+    color: #333333;
+    font-weight: normal;
+    font-size: 8pt;
+}

@@ -1,0 +1,63 @@
+BODY {background:#ffffff;color:#000000;font-family:Arial,Helvetica,serif;}
+P,A,BR,UL,OL,TD,TH,LI,SMALL,BLOCKQUOTE,H1,H2,H3 {font-family:Arial,Helvetica,serif;}
+UL LI {list-style:disc;}
+UL UL LI {list-style:circle;}
+UL UL UL LI {list-style:square;}
+OL LI {list-style:decimal;}
+PRE,CODE {font-family:monospace;}
+XMP {margin-left:48px;}
+EM {font-weight:bold;font-style:italic;}
+BLOCKQUOTE {color:#336600;}
+HR {color:#ffffff;}
+.highlight {font-weight:bold;color:white;font-size:large;}
+H1,H2,H3,EM {color:#990000;}
+.center {text-align:center;}
+.highlight,.bbg {background:#ff9900;}
+.code {background:#ffcc99;}
+.h-home,.h-article,.h-faq,.h-xref,.h-new,.h-game,.h-software,.h-news,.h-dictionary,.h-book,.h-bbs,.h-download,.h-search,.h-about,.h-beta,.h-resource,.h-sitemap {font-size:15pt;font-weight:900;text-decoration:none;color:#aaaaff;}
+.h-article {color:#99cc99;}
+.h-faq {color:#ff9900;}
+.h-game {color:#ff9999;}
+.h-software {color:#cc99cc;}
+.h-book {color:#ffcc99;}
+.h-download {color:#cccccc;}
+.h-about {color:#cccc66;}
+.h-beta {color:#cc9900;}
+.h-resource {color:#ffcc00;}
+
+#code[] {
+	overflow: auto; /* needed for Mozilla */
+}
+
+table.code {
+	min-width: 100%; /* needed for Mozilla */
+}
+
+table.code tr td pre {
+	overflow: auto; /* needed for Mozilla */
+//	overflow-x: auto; /* needed for Explorer */
+//  overflow-y: visible; /* needed for Explorer */
+	width:expression( document.body.clientWidth - 160 );
+//	padding-bottom: 1em; /* needed for Explorer */
+}
+
+/* the following is for the new HTML */
+
+pre.code {
+	width:100%;
+	overflow: auto; /* needed for Mozilla */
+//	overflow-x: auto; /* needed for Explorer */
+//  overflow-y: visible; /* needed for Explorer */
+	width:expression( document.body.clientWidth - 140 );
+//	padding-bottom: 1em; /* needed for Explorer */
+}
+
+.tower_ad {
+    float: left;
+    margin: 0px 10px 0px 10px;
+}
+
+.tower_content {
+//    float: left;
+    width: 100%;
+}

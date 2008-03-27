@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId">
+<wb-module deploy-name="dwr">
+<module-type module-type-id="jst.web">
+<version>2.4</version>
+<property name="context-root" value="dwr"/>
+<property name="java-output-path" value="/target/eclipse/classes/"/>
+</module-type>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/java"/>
+<wb-resource deploy-path="/" source-path="/web"/>
+</wb-module>
+</project-modules>

@@ -1,0 +1,15 @@
+@CHARSET "ISO-8859-1";
+
+.xmlReply { background:#f8eeff; padding:4px; margin:4px; }
+
+.small { font-size:80%; }
+.testblock { margin:10px; background-color:#fff8dd; padding:10px }
+
+.showborder td, .showborder th { border: 1px solid #999999; padding: 2px 5px 2px 5px; }
+.showborder { border-collapse: collapse; }
+#chart { font-size: 70%; }
+
+#progressOuter { border: 1px solid black; width:90%; }
+#progress { width:0%; background:green; position:relative; top:0; left:0; }
+#failures { color: red; min-width:300px; max-height:200px; overflow:auto; }
+#testSummary th { text-align:right; }

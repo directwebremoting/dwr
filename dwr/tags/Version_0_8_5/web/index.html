@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Ajax and XMLHttpRequest made easy</title>
+</head>
+
+<body>
+
+<h1>DWR - Direct Web Remoting</h1>
+
+<p>
+  DWR is AJAX and XMLHttpRequest made easy.
+  It makes it simple to call Java on the server directly from Javascript in
+  the browser marshalling all the parameters and return values.
+</p>
+
+<p>
+  It gets rid of almost all the boiler plate code between the web browser
+  and your Java code.
+</p>
+
+<div style="text-align:center">
+    <img src="howitworks.png" alt="interaction diagram"/>
+</div>
+
+<p>
+  DWR helps you in producing highly interactive web-sites by providing some
+  Javascript libraries to help with DHTML and by giving you a set of examples
+  to copy from.
+</p>
+
+<p>
+  DWR fits in with your current servlet framework, it does not take over.
+  It comes with Spring beans integration allowing you to remote your spring
+  beans to Javascript, and it is being used in the next version of Webwork.
+</p>
+
+<p>
+  DWR is open source, licensed under the
+  <a href="http://www.apache.org/licenses/LICENSE-2.0.html">ASL version 2.0</a>,
+  with full intention that it be GPL compatible.
+</p>
+
+<h2>Examples</h2>
+<p>
+  We have 6 tutorials/demos of using DWR to create:
+</p>
+<ul>
+  <li><a href="demo-text.html">Dynamic Text</a></li>
+  <li><a href="demo-list.html">Selection Lists</a></li>
+  <li><a href="demo-table.html">Live Tables</a></li>
+  <li><a href="demo-form.html">Live Forms</a></li>
+  <li><a href="demo-validate.html">Dynamic Validation</a></li>
+  <li><a href="demo-postcode.html">Address Entry</a></li>
+</ul>
+<p>
+  It is also worth checking out <a href="http://raibledesigns.com/page/rd?anchor=using_dwr_with_spring_and">Matt
+  Raible's blog</a> where he has an
+  <a href="http://static.raibledesigns.com/repository/media/dwr.mov">excellent movie</a>
+  demonstrating advanced use of DWR.
+</p>
+
+<h2>Finding out more ...</h2>
+<p>
+  <a href="https://dwr.dev.java.net/source/browse/dwr/">CVS</a>,
+  <a href="https://dwr.dev.java.net/servlets/ProjectIssues">Issuezilla</a> and the
+  <a href="https://dwr.dev.java.net/servlets/ProjectMailingListList">mailing lists</a> are hosted by Sun at
+  <a href="https://dwr.dev.java.net">Java.net</a> which is also the best place for 
+  <a href="https://dwr.dev.java.net/servlets/ProjectDocumentList">downloads</a>.
+</p>
+
+<p>
+  To help get started there is an <a href="intro.html">introduction</a> on how
+  to add the jar file to your webapp, and then details on how to configure your
+  <a href="ref-webxml.html">WEB-INF/web.xml</a> and
+  <a href="ref-dwrxml.html">dwr.xml</a> files.
+  There is also a reference to the  
+  <a href="ref-dwrdtd.html">dwr.xml DTD</a>.
+</p>
+
+<p>
+  There are 2 fairly static Javascript files in addition to the files that are
+  generated dynamically from your Java classes. engine.js and util.js are
+  <a href="js_docs_out/">documented</a>.
+</p>
+
+<h2>Related Projects</h2>
+<p>
+  <a href="http://sourceforge.net/projects/sarissa">Sarissa</a> is a
+  cross-browser Javascript XML library. It contains better versions of some of
+  the XML utilities in util.js. Don't look to Sarissa for remoting, but do look
+  to it for better XML functions. Sarissa is GPL/LGPL.
+</p>
+<p>
+  Both <a href="http://cross-browser.com/toys/">cross-browser.com</a> and
+  <a href="http://www.quirksmode.org/">quirksmode.org</a> contain useful
+  cross-browser script libraries.
+</p>
+<p>
+  <a href="http://oss.metaparadigm.com/jsonrpc/">JSON-RPC-Java</a> does a
+  similar job to DWR. The main difference between JSON-RPC-Java and DWR is that
+  JSON focuses on a standardized wire protocol so you can re-write your back
+  end server and leave the browser as it is. DWR focuses on making remoting easy
+  for both ends of the spectrum, Java and JavaScript.
+</p>
+<p>
+  <a href="http://www.indiankey.com/cfajax/">CFAjax</a> is a port of DWR to
+  ColdFusion.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - XML Config File Reference</title>
+</head>
+
+<body>
+
+<h2>XML Config File Reference</h2>
+
+<h2>Element Index</h2>
+<ul><li><tt><a href="#allow">allow</a></tt></li>
+<li><tt><a href="#convert">convert</a></tt></li>
+<li><tt><a href="#converter">converter</a></tt></li>
+<li><tt><a href="#create">create</a></tt></li>
+<li><tt><a href="#creator">creator</a></tt></li>
+<li><tt><a href="#dwr">dwr</a></tt></li>
+<li><tt><a href="#init">init</a></tt></li>
+</ul>
+
+<hr />
+<h2>Element Details</h2>
+
+<hr />
+<h2><a name="dwr"></a>dwr</h2>
+
+<p><b>Element Content Model</b></p>
+<p><tt>(<a href="#init">init?</a>), <a href="#allow">allow</a></tt></p>
+<p><b>Description</b></p>
+<p>Top level conviguration element. Each dwr.xml file should use this as the top
+level element.</p>
+
+<hr />
+<h2><a name="init"></a>init</h2>
+
+<p><b>Element Content Model</b></p>
+<p><tt>((<a href="#creator">creator</a>&nbsp;| <a href="#converter">converter</a>)*)</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#dwr">dwr</a></tt></p>
+<p><b>Description</b></p>
+<p>A list of all the classes to configure as part of dwr at startup time.</p>
+
+<hr />
+<h2><a name="creator"></a>creator</h2>
+
+<p><b>Declared Attributes</b></p>
+<ul><li><tt>#REQUIRED ID id</tt></li>
+<li><tt>#REQUIRED CDATA class</tt></li>
+</ul>
+<p><b>Element Content Model</b></p>
+<p><tt>EMPTY</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#init">init</a></tt></p>
+<p><b>Description</b></p>
+<p>Define a new method of creating objects for use by Javascript.
+We don't just allow access to any object and some may need special code to
+get a reference to them.
+</p>
+
+<hr />
+<h2><a name="converter"></a>converter</h2>
+
+<p><b>Declared Attributes</b></p>
+<ul><li><tt>#REQUIRED ID id</tt></li>
+<li><tt>#REQUIRED CDATA class</tt></li>
+<li><tt>#IMPLIED CDATA priority</tt></li>
+</ul>
+<p><b>Element Content Model</b></p>
+<p><tt>EMPTY</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#init">init</a></tt></p>
+<p><b>Description</b></p>
+<p>Define a new way of converting between javascript objects and java objects.
+Many classes can have default conversion mechanisms but some require more
+custom conversion
+</p>
+
+<hr />
+<h2><a name="allow"></a>allow</h2>
+
+<p><b>Element Content Model</b></p>
+<p><tt>((<a href="#create">create</a>&nbsp;| <a href="#convert">convert</a>)*)</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#dwr">dwr</a></tt></p>
+<p><b>Description</b></p>
+<p>Security: we must define which classes we are allowed to access because a
+free-for-all will be very dangerous.
+</p>
+
+<hr />
+<h2><a name="create"></a>create</h2>
+
+<p><b>Declared Attributes</b></p>
+<ul><li><tt>#REQUIRED CDATA creator</tt></li>
+<li><tt>#REQUIRED CDATA javascript</tt></li>
+<li><tt>#IMPLIED CDATA class</tt></li>
+<li><tt>#IMPLIED CDATA beanName</tt></li>
+</ul>
+<p><b>Element Content Model</b></p>
+<p><tt>ANY</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#allow">allow</a></tt></p>
+<p><b>Description</b></p>
+<p>Allow the creation of a class, and give it a name in javascript land.
+A reference to a creator is required as are some parameters specific to each
+creator that define the objects it allows creation of.
+It would be nice to make the creator and IDREF rather than a CDATA, since it
+refers to an element defined elsewhere, however we allow multiple dwr.xml
+files and we might refer to one in another file.</p>
+
+<hr />
+<h2><a name="convert"></a>convert</h2>
+
+<p><b>Declared Attributes</b></p>
+<ul><li><tt>#REQUIRED CDATA converter</tt></li>
+<li><tt>#REQUIRED CDATA match</tt></li>
+</ul>
+<p><b>Element Content Model</b></p>
+<p><tt>EMPTY</tt></p>
+<p><b>Referenced by</b></p>
+<p><tt><a href="#allow">allow</a></tt></p>
+<p><b>Description</b></p>
+<p>Allow conversion of a class between Java and Javascript.
+A convert element uses a previously defined converter and gives a class match
+pattern (which can end with *) to define the classes it allows conversion of
+It would be nice to make the converter and IDREF rather than a CDATA, since it
+refers to an element defined elsewhere, however we allow multiple dwr.xml
+files and we might refer to one in another file.</p>
+
+</body>
+</html>

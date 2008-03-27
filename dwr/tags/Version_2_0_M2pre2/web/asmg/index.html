@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Anti-spam mailto: Link Creator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/Generator.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/EmailValidator.js'> </script>
+  <script type="text/javascript" src='index.js'> </script>
+</head>
+
+<body>
+
+  <div>[ <a href="../index.html">Top Level</a> ]</div>
+
+  <h1>Anti-spam mailto: Link Creator.</h1>
+
+  <p>
+    You can put mailto: links in HTML to allow people to send you email with a
+    simple click. In practice this allows spammers to harvest addresses easily.
+    The solution is to use a simple script to generate mailto: links.
+  </p>
+
+  <p>
+    The following paragraph is an example:
+  </p>
+
+  <p style="padding:2px 20px;">
+    Contact the helpdesk using: <span id="asmgLink"></span>
+    <script type='text/javascript'>
+    var before = 'support';
+    var after = 'example.com';
+    var link = "<a href='mail" + "to:" + before + '@' + after + "'>" + before + '@' + after + "</a>";
+    document.getElementById("asmgLink").innerHTML = link;
+    </script>
+    <noscript>[support at example.com]</noscript>
+  </p>
+
+  <p>
+    If you check the source, you'll see that the address is hidden well
+    enough that an address harvesting robot will miss it.
+  </p>
+
+  <h2>Create Your Own</h2>
+
+  <table>
+    <tr>
+      <td>EMail Address:</td>
+      <td><input type=text" id="address" onkeypress="DWRUtil.onReturn(event, process)" onblur="verifyAddress()"/></td>
+      <td><span class="error" id="addressError"></span></td>
+    </tr>
+    <tr>
+      <td>Name:</td>
+      <td><input type=text" id="name" onkeypress="DWRUtil.onReturn(event, process)" onblur="verifyName()"/></td>
+      <td><span class="error" id="nameError"></span></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td><input id="submit" type="submit" value="Submit Query" onclick="process()"/></td>
+    </tr>
+  </table>
+
+  <div id="output" style="display:none;">
+    <h2>Generated Links</h2>
+    <textarea id="outputFull" rows="9" cols="70">
+    </textarea>
+  </div>
+
+</body>
+</html>
