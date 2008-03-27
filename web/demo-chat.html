@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamic Address Entry</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Chat.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+  <script>
+  function init()
+  {
+      timeout = setTimeout("checkMessages()", 1000);
+  }
+
+  function checkMessages()
+  {
+      Chat.getMessages(gotMessages);
+  }
+
+  var seen = {};
+  var last = "";
+  var timeout;
+  var waits = [ 1000, 2000, 4000, 8000, 15000, 30000, 60000 ];
+  var waitIndex = 0;
+
+  function gotMessages(messages)
+  {
+      var chatlog = "";
+      for (var data in messages)
+      {
+          var style = "new";
+          if (seen[messages[data].id]) style = "old";
+          chatlog += "<div class='" + style + "' id='" + messages[data].id + "'>" + messages[data].message + "</div>";
+      }
+      // Cache the messages so we can compare against them next time to see what is new
+      seen = {};
+      for (var data in messages)
+          seen[messages[data].id] = messages[data].message;
+      // Only update the UI if something has changed
+      if (chatlog != last)
+      {
+          DWRUtil.setValue("chatlog", chatlog);
+          last = chatlog;
+      }
+      waitIndex++;
+      if (waitIndex >= waits.length) waitIndex = waits.length - 1;
+      setTimeout("checkMessages()", waits[waitIndex]);
+  }
+
+  function checkSubmit(event)
+  {
+      if (!event) event = window.event;
+      if (event && event.keyCode && event.keyCode == 13) sendMessage();
+  }
+
+  function sendMessage()
+  {
+      var line = DWRUtil.getValue("message");
+      DWRUtil.setValue("message", "");
+      Chat.addMessage(gotMessages, line);
+      if (timeout != null) clearTimeout(timeout);
+      waitIndex = 0;
+  }
+  </script>
+  <style>
+  .old { background: #FEFEFE; }
+  .new { background: #FFFFE0; }
+  </style>
+</head>
+
+<body onload="init()">
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+<div id="page-content">
+
+<h1>Simple Chat Application</h1>
+<h2>Demo</h2>
+<p>
+  This example displays a very simple multi-user chat application. The entire
+  app is less than 50 line of server-side Java and less than 100 lines of HTML.
+</p>
+<div id="chatlog" style="border:1px solid black; padding:5px;"></div>
+<p>
+  Message:
+  <input id="message" onkeypress="checkSubmit(event)"/>
+  <input type="button" value="Send" onclick="sendMessage()"/>
+</p>
+<h2>How it works</h2>
+<p>Check-out the source to this page to see how simple the Javascript is.</p>
+</div>
+</body>
+</html>

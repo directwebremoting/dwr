@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamic Form Editing</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+  <script>
+  function readPerson()
+  {
+      Demo.getExamplePerson(fillForm);
+  }
+
+  function writePerson()
+  {
+      var id = DWRUtil.getValue("id");
+      var name = DWRUtil.getValue("name");
+      var dateOfBirth = DWRUtil.getValue("dateOfBirth");
+      var salary = DWRUtil.getValue("salary");
+      var person = { id:id, name:name, dateOfBirth:dateOfBirth, salary:salary };
+
+      Demo.setExamplePerson(null, person);
+  }
+
+  function clearPerson()
+  {
+      DWRUtil.setValue("id", "");
+      DWRUtil.setValue("name", "");
+      DWRUtil.setValue("dateOfBirth", "");
+      DWRUtil.setValue("salary", "");
+  }
+
+  function fillForm(person)
+  {
+      DWRUtil.setValue("id", person.id);
+      DWRUtil.setValue("name", person.name);
+      DWRUtil.setValue("dateOfBirth", person.dateOfBirth);
+      DWRUtil.setValue("salary", person.salary);
+  }
+  </script>
+</head>
+
+<body onload="readPerson()">
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>Dynamic Form Editing</h1>
+
+<h2>Demo</h2>
+<table>
+  <tr>
+    <td>Name:</td>
+    <td><input id="name" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Salary:</td>
+    <td><input id="salary" type="text"/></td>
+  </tr>
+  <tr>
+    <td>ID:</td>
+    <td><input id="id" type="text"/></td>
+  </tr>
+  <tr>
+    <td>Date of Birth:</td>
+    <td><input type="text" id="dateOfBirth"/></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="right">
+      <input type="button" value="Clear" onclick="clearPerson()"/>
+      <input type="button" value="Read" onclick="readPerson()"/>
+      <input type="button" value="Write" onclick="writePerson()"/>
+    </td>
+  </tr>
+</table>
+
+<h2>How it works</h2>
+
+<p>
+  When the page loads and when you click on the "Load" button the
+  <code>readPerson()</code> function gets called.<br/>
+  It looks like this:
+</p>
+
+<pre>
+function readPerson()
+{
+    Demo.getExamplePerson(fillForm);
+}
+</pre>
+
+<p>
+  We'll see the <code>fillForm</code> callback function in a bit,
+  but first the Java side.
+  When the Javascript above gets executed DWR calls the Java code
+  <code>Demo.getExamplePerson()</code> which returns a Person POJO.
+  It is defined along with a setter (which we'll come to in a bit)
+  and the Person POJO, like this:
+</p>
+
+<pre>
+public class Person
+{
+    /* Getters and setters go here */
+    private String name;
+    private Date dateOfBirth;
+    private float salary;
+    private int id;
+}
+
+public class Demo
+{
+    public Person getExamplePerson()
+    {
+        return person;
+    }
+
+    public void setExamplePerson(Person person)
+    {
+        this.person = person;
+    }
+
+    // ...
+}
+</pre>
+
+<p>
+  When <code>getExamplePerson()</code> returns, DWR calls <code>fillList()</code>
+  as requested, this then fills out the form using the setValue method from
+  <code>util.js</code>:
+</p>
+
+<pre>
+function fillForm(person)
+{
+    DWRUtil.setValue("id", person.id);
+    DWRUtil.setValue("name", person.name);
+    DWRUtil.setValue("dateOfBirth", person.dateOfBirth);
+    DWRUtil.setValue("salary", person.salary);
+}
+</pre>
+
+<p>
+  See the source for more information on the <code>setValue</code> method.
+  The 'Write' button simply causes the following Javascript to be executed:
+</p>
+
+<pre>
+function writePerson()
+{
+    var id = DWRUtil.getValue("id");
+    var name = DWRUtil.getValue("name");
+    var dateOfBirth = DWRUtil.getValue("dateOfBirth");
+    var salary = DWRUtil.getValue("salary");
+    var person = { id:id, name:name, dateOfBirth:dateOfBirth, salary:salary };
+
+    Demo.setExamplePerson(null, person);
+}
+</pre>
+
+<p>
+  This is an example of a null callback method - we are saying we don't care
+  what happens to the data (we can handle the errors using dwrSetErrorHandler).
+  since this method is a setter, this makes sense anyway.
+</p>
+
+</div>
+</body>
+</html>

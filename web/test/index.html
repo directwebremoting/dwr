@@ -1,0 +1,55 @@
+<html>
+<head>
+<script>
+
+function createDocument()
+{
+    if (document.implementation.createDocument)
+    {
+        return document.implementation.createDocument("", "", null);
+    }
+    else if (window.ActiveXObject)
+    {
+        return new ActiveXObject("Microsoft.XMLDOM");
+    }
+    else
+    {
+        throw "XML Document manipulation not supported";
+    }
+}
+
+function initXML()
+{
+    var xmlDoc = createDocument();
+    xmlDoc.async = false;
+    xmlDoc.load("data.xml")
+
+    var xslDoc = createDocument();
+    xslDoc.async = false;
+    xslDoc.load("style.xsl")
+
+    if (window.ActiveXObject)
+    {
+        xmlDoc.transformNode(xslDoc);
+    }
+    else
+    {
+        var processor = new XSLTProcessor();
+        processor.importStylesheet(xslDoc);
+        xmlDoc = processor.transformToDocument(xmlDoc);
+    }
+
+    var ele = document.getElementById("dest");
+    ele.append(xmlDoc.firstChild);
+}
+</script>
+</head>
+
+<body onload="initXML()">
+
+<div id="dest">
+before
+</div>
+
+</body>
+</html>

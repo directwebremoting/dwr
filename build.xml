@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<project name="dwr" default="war">
+
+  <!--=======================================================================-->
+  <property name="source.root" value="."/>
+  <property name="source.java" value="${source.root}/java"/>
+  <property name="source.test" value="${source.root}/test"/>
+  <property name="source.jar" value="${source.root}/jar"/>
+  <property name="source.lib" value="${source.root}/web/WEB-INF/lib"/>
+  <property name="source.etc" value="${source.root}/etc"/>
+  <property name="source.web" value="${source.root}/web"/>
+  <property name="target.class" value="${source.web}/WEB-INF/classes"/>
+  <property name="target.war" value="${source.root}/target/ant/war"/>
+  <property name="target.jsdoc" value="${source.root}/target/ant/war"/>
+
+  <!--=======================================================================-->
+  <target name="war" description="Create a WAR directory">
+    <echo message="Building on ${os.name}"/>
+    <tstamp/>
+    <mkdir dir="${target.class}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}" source="1.3">
+      <src path="${source.java}"/>
+      <src path="${source.test}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <fileset dir="${source.lib}" includes="**/*.jar"/>
+      </classpath>
+    </javac>
+    <copy todir="${target.class}">
+      <fileset dir="${source.java}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="war" description="Create a JAR file">
+    <jar destfile="dwr.jar" compress="true" >
+      <fileset dir="${target.class}">
+        <exclude name="**/test/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jsdoc" description="Document the JavaScript">
+    <exec executable="/opt/jsdoc/jsdoc.pl" dir="${target.jsdoc}">
+      <arg file="${source.java}/uk/ltd/getahead/dwr/engine.js"/>
+      <arg file="${source.java}/uk/ltd/getahead/dwr/util.js"/>
+    </exec>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="targetwar" depends="war" description="Create a separate WAR directory">
+    <copy todir="${target.war}">
+      <fileset dir="${source.web}"/>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean">
+    <delete dir="${target.class}"/>
+    <delete dir="${target.war}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="cvsup" description="cvs update">
+    <cvs dest=".">
+      <commandline>
+        <argument value="-q"/>
+        <argument value="update"/>
+        <argument value="-d"/>
+        <argument value="-P"/>
+      </commandline>
+    </cvs>
+  </target>
+
+</project>
