@@ -1,0 +1,80 @@
+This README file is a short introduction to WebWork action invocation through DWR.
+
+== SETUP ==
+There are a couple of things that you must do in order to be able to use WW actions through DWR.
+
+1. Configure dwr.xml
+
+You must include in the dwr configuration file:
+
+<create creator="none" javascript="DWRAction">
+	<param name="class" value="org.directwebremoting.webwork.DWRAction" />
+	<include method="execute" />
+</create>
+
+<convert converter="bean" match="org.directwebremoting.webwork.ActionDefinition">
+	<param name="include" value="namespace,action,method,executeResult" />
+</convert>
+
+<convert converter="bean" match="org.directwebremoting.webwork.AjaxResult" />
+
+In case your AJAX WebWork action invocations return must return action instances (and not pure text), than you must include
+converter definitions for your action objects (package level or for individual actions).
+
+<convert converter="bean" match="<your_action_package>.*" />
+
+2. Import scripts in your JSP files
+
+Follow the rules to enable DWR in your JSP actions. Also include the DWRActionUtil.js script (place it in your scripts
+web directory).
+
+== USAGE ==
+
+Invoking an action from JS is done using the following:
+
+DWRActionUtil.execute(actionUri | actionDefinitionObject, emptyParams | fieldId | formId, callbackFunction | callbackObject [, displayMessage]);
+
+where
+actionUri: is the action URI to be called (WITHOUT .action).
+Example:
+	DWRActionUtil.execute('/ajax/TestFM', 'myform', 'doOnTextResult');
+
+actionDefinitionObject: is a JS object defining the action to be invoked. The object uses the following fields:
+	namespace: the action namespace according to xwork.xml
+	action: the action name according to xwork.xml
+	executeResult: true|false (execute the result of the action, or if false return the action instance)
+	
+Example:
+	DWRActionUtil.execute({namespace: '/ajax', action: 'TestJS', executeResult: 'true'}, 'data', doOnJSResult, "stream...");
+
+emptyParams: do not pass parameters to action invocation
+
+Example:
+	DWRActionUtil.execute({namespace: '/ajax', action: 'TestJS', executeResult: 'true'}, {}, doOnJSResult, "stream...");
+
+fieldId: the id of a field whose value will be transmitted as action invocation parameter
+
+Example:
+	<input id="mytext" name="mytext" value="some value" type="text" />
+	
+	DWRActionUtil.execute({namespace: '/ajax', action: 'TestJS', executeResult: 'true'}, 'mytext', doOnJSResult, "stream...");
+
+formId: the id of a form. All input values will be transmitted as action invocation parameters.
+
+Note:
+	if your action configuration in xwork.xml uses the parameters interceptor than your action will be initialized correctly 
+	with the parameters values. For more documentation, please consult WebWork available documentation.
+	
+callbackFunction: as in DWR, the function to be invoked upon request completion
+
+callbackObject: as in DWR, the callback object (see more details in DWR documentation)
+
+displayMessage: (optional) a message to be displayed till request completion (see DWR documentation)
+
+
+== ADVANCED ==
+
+You can declare a pre/post action processor by providing in web.xml through a context-wide initialization parameter 
+(dwrActionProcessor). The processor must implement org.directwebremoting.webwork.IDWRActionProcessor interface. 
+The processor will be invoked before and after the action has been invoked, so that you can prepare the initial
+invocation or change the result.
