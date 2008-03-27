@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>DWR - Test Home</title>
+  <script type='text/javascript' src='dwr/interface/Test.js'></script>
+  <script type='text/javascript' src='dwr/engine.js'></script>
+  <script type='text/javascript' src='dwr/util.js'></script>
+  <script>
+    function init() {
+      // This turns off the no-javascript message
+      document.getElementById("start").style.display = "none";
+      // This checks for file: URLs and loading problems
+      if (window.DWREngine == null || window.DWRUtil == null) {
+        document.getElementById("file").style.display = "block";
+        return;
+      }
+      // Turn warnings on
+      DWREngine.setWarningHandler(DWREngine.defaultMessageHandler);
+      DWRUtil.useLoadingMessage();
+      // Turn on the generic error div
+      $("error").style.display = "block";
+      // Load a message from the server
+      Test.getInsert(load);
+    }
+
+    function load(data) {
+      $("error").style.display = "none";
+      DWRUtil.setValue("reply", data);
+      $("reply").style.display = "block";
+    }
+  </script>
+  <link rel="stylesheet" type="text/css" href="generic.css" />
+</head>
+
+<body onload="init()">
+
+<div id="page-title">[
+  <a href="http://getahead.ltd.uk/dwr/">DWR Website</a>
+]</div>
+
+<div style="float:right;"><a href="http://getahead.ltd.uk/dwr/"><img border="0" src="logo.gif"/></a></div>
+
+<h1>Welcome to DWR</h1>
+
+<p>For general information about DWR see:</p>
+
+<ul>
+  <li>The <a href="http://getahead.ltd.uk/dwr/">main DWR website</a>.</li>
+  <li><a href="http://getahead.ltd.uk/blog/joe/">Joe Walker's blog</a>.</li>
+</ul>
+
+<p>Tutorial style examples in this WAR file:</p>
+<ul>
+  <li>
+    <a href="simpletext/index.html">Dynamic Text</a>:
+    A very simple documented example that updates a page with some text.
+  </li>
+  <li>
+    <a href="simpletext/resource.html">Resource Forwarding</a>:
+    How to dynamically include the contents of one page in another.
+  </li>
+  <li>
+    <a href="tableedit/index.html">Editable Table</a>:
+    Another simple documented example that allows the user to edit a table of data.
+  </li>
+  <li>
+    <a href="address/index.html">Fast Address Entry</a>:
+    A form fill example that helps users enter addresses.
+  </li>
+</ul>
+
+<p>Other examples in this WAR file:</p>
+<ul>
+  <li>
+    <a href="asmg">Anti-Spam mailto: Generator</a>:
+    Generate clickable mailto: links without attracting spam.
+  </li>
+  <li>
+    <a href="livehelp/index.html">Live Help</a>:
+    Use multiple-browsers to update a single form.
+  </li>
+  <li>
+    <a href="clock/index.html">Server-Side Clock</a>:
+    A clock that is updated by the server using ReverseAjax. Demonstrates access
+    from a non-http thread.
+  </li>
+  <li>
+    <a href="chat/javascript-chat.html">Javascript Chat</a>:
+    A simple chat application using DWR with conventional Javascript/DWRUtil
+  </li>
+  <li>
+    <a href="chat/java-chat.html">Java Chat</a>:
+    As above except with much reduced Javascript, preferring Java/DwrUtil
+  </li>
+</ul>
+
+<p>Current Configuration:</p>
+
+<ul>
+  <li>The generated <a href='dwr/'>configuration/test pages</a>.</li>
+</ul>
+
+<p>Self test pages:</p>
+
+<ul>
+  <!--
+  <li>
+    <a href="test/integrationTest.html">Integration Test</a>
+    (Pages that test DWR can work with Spring, Struts, XOM, JDOM, DOM4J, DOM, Hibernate)
+  </li>
+  -->
+  <li>
+    <a href="test/marshalling.html">Marshalling Test</a>
+    (Can DWR marshall all parameters, can they be done under load)
+  </li>
+  <li>
+    <a href="test/dhtml.html">DHTML Test</a>
+    (Can DWRUtil manipulate the DOM properly)
+  </li>
+</ul>
+
+<hr/>
+
+<div id="start">
+  <p><strong>DWR is testing installation ...</strong></p>
+  <p>
+    DWR uses Javascript to make some initial checks. If you can see this message
+    then either you are a very fast reader, or Javascript is not working
+    properly in your browser.
+  </p>
+  <p>
+    Since AJAX requires Javascript, you will need to enable Javascript in your
+    browser before you can test DWR. Some very old browsers like IE 4.0 have
+    very out of date support for Javascript and are currently unsupported.
+    Please upgrade your browser.
+  </p>
+</div>
+
+<div id="reply" style="display:none;">
+  <p><strong>DWR is partially working</strong></p>
+  <p>
+    DWR has received test data from the server, however for some reason this
+    data was mangled. Please report this error to the
+    <a href="http://getahead.ltd.uk/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the Javascript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+<div id="file" style="display:none;">
+  <p><strong>Missing DWR Javascript Functions</strong></p>
+  <p>
+    This is a fairly advanced page that tests DWR to check that everything is
+    setup properly for you.
+  </p>
+  <p>
+    It appears that you may be attempting to run DWR outside a servlet container
+    (possibly using a file: URL). We think this because this page has missing
+    Javascript functions that should have been produced by DWR. To fix the
+    problem please use DWR from within a servlet container.
+  </p>
+  <p>
+    Also there could be an issue with your browser. Try viewing this page in a
+    different browser, particularly try a browser with a Javascript console.
+    Errors reported in the Javascript console could help diagnose the problem.
+  </p>
+  <p>
+    If this is not the cause of the problem, please report it to the
+    <a href="http://getahead.ltd.uk/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the Javascript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+<div id="error" style="display:none;">
+  <p><strong>DWR is testing installation ...</strong></p>
+  <p>
+    This is a fairly advanced page that tests DWR. If you can see this message
+    for a prolonged period of time then you should check the following:
+  </p>
+  <ul>
+    <li>
+      Can you see the <a href="dwr/">test pages</a>?<br/>
+      If not it is likely that DWR has not deployed in your web server properly;
+      Check the web server console and log files for error messages.
+    </li>
+    <li>
+      If you can see the <a href="dwr/">test pages</a> then DWR is loaded but is
+      something is preventing DWR working. Check your browser Javascript console
+      for error messages, or see the <a href="http://getahead.ltd.uk">main
+      DWR website</a> for more information.
+    </li>
+  </ul>
+  <p>
+    If none of these steps fixes the error, please report it to the
+    <a href="http://getahead.ltd.uk/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the Javascript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+</body>
+</html>

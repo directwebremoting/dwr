@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.ltd.uk/dwr/dwr20.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" class="uk.ltd.getahead.dwrdemo.test.TestBean2Converter"/>
+  </init>
+
+  <allow>
+
+    <!--
+    <filter class="uk.ltd.getahead.dwrdemo.filter.ExtraLatencyAjaxFilter">
+      <param name="delay" value="200"/>
+    </filter>
+    -->
+
+    <create creator="new" javascript="Demo">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.simpletext.Demo"/>
+    </create>
+
+    <create creator="new" javascript="AddressLookup">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.address.AddressLookup"/>
+    </create>
+
+    <create creator="new" javascript="People" scope="script">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.people.People"/>
+    </create>
+    <convert match="uk.ltd.getahead.dwrdemo.people.Person" javascript="Person" converter="bean"/>
+
+    <create creator="new" javascript="Clock" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.clock.Clock"/>
+    </create>
+
+    <create creator="new" javascript="LiveHelp" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.livehelp.LiveHelp"/>
+    </create>
+
+    <create creator="new" javascript="Test" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.test.Test"/>
+    </create>
+
+    <create creator="new" javascript="Generator" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.asmg.Generator"/>
+    </create>
+
+    <create creator="new" javascript="JDate" scope="session">
+      <param name="class" value="java.util.Date"/>
+      <exclude method="getHours"/>
+      <auth method="getMinutes" role="admin"/>
+      <auth method="getMinutes" role="devel"/>
+      <filter class="uk.ltd.getahead.dwrdemo.filter.Logging1AjaxFilter"/>
+      <filter class="uk.ltd.getahead.dwrdemo.filter.Logging2AjaxFilter"/>
+      <filter class="uk.ltd.getahead.dwrdemo.filter.RandomSecurityAjaxFilter"/>
+    </create>
+
+    <convert converter="bean" match="$Proxy*"/>
+    <convert converter="testbean" match="uk.ltd.getahead.dwrdemo.test.TestBean"/>
+
+    <convert converter="bean" javascript="ObjB" match="uk.ltd.getahead.dwrdemo.test.ObjB"/>
+    <convert converter="object" javascript="ObjA" match="uk.ltd.getahead.dwrdemo.test.ObjA">
+      <param name="force" value="true"/>
+    </convert>
+
+    <create creator="new" javascript="JavascriptChat" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.chat.JavascriptChat"/>
+    </create>
+    <create creator="new" javascript="JavaChat" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.chat.JavaChat"/>
+    </create>
+    <convert converter="bean" match="uk.ltd.getahead.dwrdemo.chat.Message"/>
+
+    <create creator="new" javascript="CoBrowse">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.cobrowse.CoBrowse"/>
+    </create>
+
+    <create creator="new" javascript="Whiteboard">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.whiteboard.Whiteboard"/>
+    </create>
+
+    <create creator="script" javascript="EmailValidator" scope="application">
+      <param name="language" value="beanshell"/>
+      <param name="script">
+        import org.apache.commons.validator.EmailValidator;
+        return EmailValidator.getInstance();
+      </param>
+    </create>
+
+    <create creator="new" javascript="Battleships" scope="application">
+      <param name="class" value="uk.ltd.getahead.dwrdemo.game.Battleships"/>
+    </create>
+    <convert converter="bean" match="uk.ltd.getahead.dwrdemo.game.Message"/>
+    <convert converter="bean" match="uk.ltd.getahead.dwrdemo.game.Person"/>
+    <convert converter="bean" match="uk.ltd.getahead.dwrdemo.game.Position"/>
+
+  </allow>
+
+  <signatures>
+  <![CDATA[
+  import java.util.*;
+  import uk.ltd.getahead.dwrdemo.test.*;
+
+  Test.testBeanSetParam(Set<TestBean>);
+  Test.testBeanListParam(List<TestBean>);
+  Test.charTestBeanMapParam(Map<Character, TestBean>);
+
+  Test.stringStringMapParam(Map<String, String>);
+  Test.stringStringHashMapParam(HashMap<String, String>);
+  Test.stringStringTreeMapParam(TreeMap<String, String>);
+
+  Test.stringCollectionParam(Collection<String>);
+
+  Test.stringListParam(List<String>);
+  Test.stringLinkedListParam(LinkedList<String>);
+  Test.stringArrayListParam(ArrayList<String>);
+
+  Test.stringSetParam(Set<String>);
+  Test.stringHashSetParam(HashSet<String>);
+  Test.stringTreeSetParam(TreeSet<String>);
+  ]]>
+  </signatures>
+
+</dwr>
