@@ -1,0 +1,82 @@
+<html><head><title>Fire Vox Tutorial: To begin automatically reading this page, press Ctrl + Shift + A.</title></head><body>
+
+<h1>Getting Additional Information</h1>
+<br>
+<h2> Querying for Additional Information on a Particular Item</h2>
+<p>
+Fire Vox makes getting additional information about a particular item
+easy. Depending on what that particular item is and what attributes it
+has, Fire Vox will present additional information about it. Immediately
+after reading an item, you can Query it for more information. You can
+then query it for more information again to get additional information
+about its parent element. The default is Ctrl + Shift + Q. You can make
+Fire Vox stop at any time by using the Stop Speaking command.
+</p>
+<h3>Example: Querying a link for more information
+</h3>
+<p>Fire Vox will say the title attribute of the link if it has one
+followed by the destination of that link. Try it on this following
+link: <a href="http://clc-4-tts.cjb.net/" title="The CLC-4-TTS home page">This is a link to my page.</a>
+</p>
+
+<h3>Example: Querying a cell in a table for more information
+</h3>
+<p>
+Fire Vox will say the column and row headings. It will also say the column and row numbers. Try it on this following table:
+</p>
+<table summary="An example calendar" border="1">
+<caption>My Schedule</caption>
+<tbody>
+<tr>
+<th scope="col">Date</th>
+<th scope="col">Task</th>
+</tr>
+<tr>
+<th scope="row">Jan 1</th>
+<td>Celebrate the New Year</td>
+</tr>
+<tr>
+<th scope="row">Jan 2</th>
+<td>Work on Fire Vox</td>
+</tr>
+<tr>
+<th scope="row">Jan 3</th>
+<td>Work on Fire Vox some more</td>
+</tr>
+</tbody>
+</table>
+
+<br>
+<h2>Getting Context Information on a Particular Item</h2>
+<p>
+Sometimes, it may be necessary to get additional context information on
+a particular item. Fire Vox can go up one level in the DOM hierarchy
+and read the contents of the parent element of the current element. The
+default is Ctrl + Shift + U. </p>
+<p></p>
+
+
+<h3>Example: Reading the parent of a set of links
+</h3>
+<p>One instance of needing to read the parent might be when you are
+trying to find out what an HTML, PDF, or TXT link refers to on a page
+full of research articles. On such sites, a common practice is to have
+the title of the paper followed by links to that paper in different
+formats. Usually, these links are only denoted by their format name and
+the title of the paper is not part of the link text. Reading the parent
+element can sometimes clarify what these links are pointing to. Try
+reading the parent text of the link in this example:
+</p>
+<p>
+<span>"Why Fire Vox is so Awesome: An In-Depth Report." <a href="http://clc-4-tts.cjb.net/">HTML</a>  <a href="http://clc-4-tts.cjb.net/">PDF</a>  <a href="http://clc-4-tts.cjb.net/">TXT</a></span>
+</p>
+
+<br>
+<br>
+
+<p>
+<a href="http://firevox.clcworld.net/tut3.html">Click here to move on to the next tutorial: Working With Forms</a>
+</p>
+
+
+</body></html>
