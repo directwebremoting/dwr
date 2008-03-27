@@ -1,0 +1,50 @@
+<div>
+
+<h2>Fixing Issues</h2>
+
+<h3><a name="missingConverter">Warning: No Converter for XXX.</a></h3>
+<p>
+  dwr.xml does not have an allow entry that enables conversion of this type to
+  Javascript. The most common cause of this problem is that XXX is a java bean
+  and bean marshalling has not been enabled. Bean marshalling is disabled by
+  default for security reasons.
+</p>
+<p>
+  To enable marshalling for a given bean add the following line to the allow
+  section of your dwr.xml file:
+</p>
+<pre>
+&lt;convert converter="bean" match="XXX"/&gt;
+</pre>
+<p>
+  It is also possible to enable marshalling for an entire package or hierachy
+  of packages using the following:
+</p>
+<pre>
+&lt;convert converter="bean" match="package.name.*"/&gt;
+</pre>
+
+<h3><a name="overloadedMethod">Warning: overloaded methods are not recommended</a></h3>
+<p>
+  Javascript does not support overloaded methods, so the javascript file
+  generated from this class will contain two methods the second of which will
+  replace the first. This is probably not what you wanted.
+</p>
+<p>
+  It is best to avoid overloaded methods when using DWR.
+</p>
+<p>
+  Java 5 presents an interesting challenge for finding overloaded methods and
+  an issue to be aware of when using generics. From Java 5 on, co-variant
+  return types are allowed, but the Class.getMethods() function will return
+  2 methods, if you are making use of this feature, which can lead to false
+  positives when detecting overloaded methods.
+</p>
+<p>
+  It will be obvious to you if you really do have overloaded methods, but it is
+  worth being aware of this small limitation in DWR 1.1 with Java 5. Calling
+  the method will work just fine, but this page may incorrectly report an
+  overloaded method.
+</p>
+
+</div>
