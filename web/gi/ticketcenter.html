@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Ticket Center Demo Application</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/gi.js'> </script>
+  <script type="text/javascript" src="../dwr/interface/CallCenter.js"> </script>
+  <script type="text/javascript" src='ticketcenter.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <link rel="stylesheet" type="text/css" href="customize.css" />
+</head>
+<body onload="Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Ticket Center Demo Application</h1>
+
+<p>This is a simple demonstration of integrating a GI user interface with
+Reverse Ajax. Data from DWR is published into GI with DWR's GI integration.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+</ul>
+
+<div id="tabContents">
+<div id="demoDiv">
+
+  <div style="width:800px; height:350px;" id="gidemo" class="customize">
+    <script
+        type="text/javascript"
+        src="JSX/js/JSX30.js"
+        jsxapppath="JSXAPPS/ticketcenter"
+        jsxlt="true"> </script>
+  </div>
+
+</div>
+<div id="explainDiv">
+  <h2>Creating the table</h2>
+  <p>As is usual for General Interface the UI is loaded through a simple div
+  that points to the UI XMl file:</p>
+<pre>
+  &lt;div style="width:800px; height:350px;" id="gidemo" class="customize"&gt;
+    &lt;script
+        type="text/javascript"
+        src="JSX/js/JSX30.js"
+        jsxapppath="JSXAPPS/ticketcenter"
+        jsxlt="true"> &lt;/script&gt;
+  &lt;/div&gt;
+</pre>
+  <p>This starts the UI widgets loading, meanwhile on the server there is a
+  loop running that simulates the running of a call-center, with calls being
+  setup and closed down. The CallCenter class simulates this using a simple
+  Call JavaBean to record the state of each call:</p>
+<pre>
+public class Call {
+  private Date callStarted = new Date();
+  private String notes = "";
+  private boolean supervisorAlert = false;
+  private boolean isHandled = false;
+  private String name;
+  private String address;
+  private String phoneNumber;
+  private int id;
+  // Insert getters, setters, equals, etc.
+}
+</pre>
+  <p>The majority of the calls to the server are very simple - there are 4
+  basic business methods:</p>
+<pre>
+public String beginHandling(int callId)
+public String cancelHandling(int callId)
+public String completeHandling(int callId, Call call)
+public String alertSupervisor(int callId, Call call)
+</pre>
+  <p>Each of these methods does some simple checking and alters a list of
+  current outstanding calls. Whenever a change happens, the we update the
+  browsers with the list of outstanding calls:</p>
+<pre>
+Collection&lt;ScriptSession&gt; sessions = serverContext.getScriptSessionsByPage("/gi/ticketcenter.html");
+ScriptProxy proxy = new ScriptProxy(sessions);
+proxy.addFunctionCall("updateCallers", calls, new Date());
+</pre>
+  <p>Or in other words, tell everyone connected to "/gi/ticketcenter.html" to
+  call the <code>updateCallers</code> function passing it an array of callers
+  and the server's current time (so the clients can work out how long each call
+  has been waiting.</p>
+  <p>Finally the updateCallers routine in the browsers looks like this. We loop
+  over all the calls adding some hints to the GI matrix component and checking
+  that if we are handling a call that has hung-up we tell the user about it.</p>
+<pre>
+function updateCallers(callers, now) {
+  // Some tweaks so GI redraws everything without needing further explanation
+  // We copy the id to jsxid, and ensure that the fields for the checkboxes are
+  // 0 or 1 rather than true or false. We also check that any handled caller
+  // is still around and has not hung up
+  var caller;
+  var handlingIdFound = false;
+  for (var i = 0; i &lt; callers.length; i++) {
+    caller = callers[i];
+    caller.timePlain = now - caller.callStarted;
+    caller.time = 10000 * Math.round(caller.timePlain / 10000);
+    caller.jsxid = caller.id;
+    caller.handled = caller.handled ? "JSXAPPS/ticketcenter/images/configure.png" : "";
+    caller.supervisorAlert = caller.supervisorAlert ? "JSXAPPS/ticketcenter/images/irkickflash.png" : "";
+    callerCache[caller.id] = caller;
+    if (!caller.name) caller.name = "?";
+    if (caller.id == handlingId) {
+      caller.handled = "JSXAPPS/ticketcenter/images/next.png";
+      handlingIdFound = true;
+    }
+  }
+
+  // Convert the data into a CDF document and post to GI
+  var cdf = dwr.gi.toCdfDocument(callers, "jsxroot");
+  ticketcenter.getCache().setDocument("callers", cdf);
+  ticketcenter.getJSXByName('listCallers').repaint();
+
+  // Work out what to do if the caller we're working on has hung up
+  if (!handlingIdFound && handlingId != null) {
+    alert("It appears that this caller has hung up. Please select another.");
+    deselect();
+  }
+}
+</pre>
+</div>
+
+</body>
+</html>

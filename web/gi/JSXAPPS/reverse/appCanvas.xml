@@ -1,0 +1,177 @@
+<serialization xmlns="urn:tibco.com/v3.0" jsxversion="3.5">
+  <name/>
+  <icon/>
+  <description/>
+  <onBeforeDeserialize/>
+  <onAfterDeserialize/>
+  <object type="jsx3.gui.Block">
+    <variants jsxoverflow="1"/>
+    <strings jsxname="blockTop" jsxwidth="100%" jsxheight="100%"/>
+    <object type="jsx3.gui.LayoutGrid">
+      <variants jsxrelativeposition="1" jsxleft="0" jsxtop="0" jsxoverflow="2"/>
+      <strings jsxname="layoutTop" jsxrows="30,30,30,30,30,*" jsxwidth="100%" jsxheight="100%"/>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockButton" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelButton" jsxtext="Button:" jsxtextalign="right" jsxmargin="2" jsxpadding="2"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="200"/>
+          <strings jsxname="button" jsxtext="Don't Click Me" jsxmargin="2" jsxpadding="2" jsxtextalign="center"/>
+          <events jsxexecute="alert('I said don\'t click me');"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonButtonEnable" jsxtext="Enable" jsxmargin="2" jsxpadding="2" jsxtextalign="center"/>
+          <events jsxexecute="Reverse.buttonEnable();"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonButtonDisable" jsxtext="Disable" jsxmargin="2" jsxpadding="2" jsxtextalign="center"/>
+          <events jsxexecute="Reverse.buttonDisable();"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockSelect" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelSelect" jsxtext="Selection List:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.Select">
+          <variants jsxwidth="200" jsxheight="22" jsxxmlasync="1"/>
+          <strings jsxname="select" jsxxmlurl="eventList.xml" jsxmargin="2" jsxpadding="2"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="70"/>
+          <strings jsxname="buttonSelect1" jsxtext="Select #1" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.select('e1');"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="70"/>
+          <strings jsxname="buttonSelect2" jsxtext="Select #2" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.select('e2');"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockSlider" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelSlider" jsxtext="Slider:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.Slider">
+          <variants jsxvalue="0" jsxrelativeposition="1" jsxorientation="0" jsxpainttrack="1" jsxtrackclick="1"/>
+          <strings jsxname="slider" jsxlength="200"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="70"/>
+          <strings jsxname="buttonSlide0" jsxtext="Slide 0" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.slide(0);"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="70"/>
+          <strings jsxname="buttonSlide100" jsxtext="Slide 100" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.slide(100);"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockTextbox" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelTextbox" jsxtext="Text box:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.TextBox">
+          <variants jsxheight="22" jsxwidth="200"/>
+          <strings jsxname="textbox" jsxmargin="2" jsxpadding="2"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonTextClear" jsxtext="Clear" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.text(&quot;&quot;);"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonTextHello" jsxtext="Hello" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.text(&quot;Hello&quot;);"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonTextEnable" jsxtext="Enable" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.textEnable();"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonTextDisable" jsxtext="Disable" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.textDisable();"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockDatePicker" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelDatePicker" jsxtext="Date Picker:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.DatePicker">
+          <variants jsxwidth="200" jsxrelativeposition="1" jsxheight="22" jsxyear="2008" jsxmonth="0" jsxdate="1" jsxfirstweekday="1"/>
+          <strings jsxname="datePicker" jsxmargin="2"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonDateToday" jsxtext="Today" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.dateToday();"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonDateEpoch" jsxtext="Epoch" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.dateEpoch();"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockCreate" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelCreate" jsxtext="Create:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonCreate" jsxtext="New Button" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.create();"/>
+        </object>
+      </object>
+      <object type="jsx3.gui.Block">
+        <variants jsxoverflow="1"/>
+        <strings jsxname="blockColorPicker" jsxwidth="100%" jsxheight="100%" jsxrelativeposition="1"/>
+        <object type="jsx3.gui.Block">
+          <variants jsxrelativeposition="1" jsxoverflow="3" jsxwidth="100" jsxheight="22"/>
+          <strings jsxname="labelColorPicker" jsxtext="Color Picker:" jsxpadding="2" jsxmargin="2" jsxtextalign="right"/>
+        </object>
+        <object type="jsx3.gui.ColorPicker">
+          <variants jsxrgb="11495271" jsxheight="180" jsxwidth="200"/>
+          <strings jsxname="colorPicker"/>
+          <dynamics jsxborder="@Outset"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonColorRed" jsxtext="Red" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.color('FF0000');"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonColorWhite" jsxtext="White" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.color('#FFFFFF');"/>
+        </object>
+        <object type="jsx3.gui.Button">
+          <variants jsxindex="0" jsxheight="22" jsxwidth="60"/>
+          <strings jsxname="buttonColorMud" jsxtext="Mud" jsxmargin="2" jsxpadding="2"/>
+          <events jsxexecute="Reverse.color('#664433');"/>
+        </object>
+      </object>
+    </object>
+  </object>
+</serialization>
