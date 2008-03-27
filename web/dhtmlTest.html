@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <script type='text/javascript' src='./dwr/util.js'> </script>
+  <script type='text/javascript' src='dhtmlTest.js'> </script>
+  <script type='text/javascript' src='generic.js'> </script>
+  <link type="text/css" href="generic.css" rel="stylesheet" />
+<title>DWR - DHTML Tests</title>
+</head>
+
+<body>
+<div>
+[ <a href="index.html">Top Level</a>
+| DHTML Tests
+| <a href="integrationTest.html">Integration Tests</a>
+| <a href="marshallingTest.html">Marshalling Tests</a> ]
+</div>
+
+<h1>Tests</h1>
+
+<p>
+  <input type="button" onclick="runTests();" value="Run Tests"/>
+</p>
+
+<p>
+  <input type="text" onkeydown="DWRUtil.onReturn(event, submitFunction)"/>
+  <input type="button" onclick="submitFunction()" value="GO"/>
+  <span id="alert" style="display:none; background:#FFFFDD; font-weight:bold;">submitFunction called</span>
+</p>
+
+<hr/><!--====================================================================-->
+
+<div> selectRangeBasic: <input id="selectRangeBasic" type="text" value="01234567890123456789"/> (5678901234 should be selected)</div>
+
+<hr/><!--====================================================================-->
+
+<div>
+  removeOptions:
+  <select id="removeOptions">
+    <option value="v1">One</option>
+    <option value="v2">Two</option>
+    <option value="v3">Three</option>
+    <option value="v4">Four</option>
+    <option value="v5">Five</option>
+  </select>
+  (These options should disappear)
+</div>
+
+<div>addOptionsBasic:   <select id="addOptionsBasic"> </select> (Options One-Five should appear)</div>
+<div>addOptionsObject1: <select id="addOptionsObject1"> </select> (Options One-Five should appear)</div>
+<div>addOptionsObject2: <select id="addOptionsObject2"> </select> (Options 1-5 should appear)</div>
+<div>addOptionsObject3: <select id="addOptionsObject3"> </select> (Options 1-5 should appear)</div>
+<div>addOptionsObject4: <select id="addOptionsObject4"> </select> (Options One-Five should appear)</div>
+<div>addOptionsMap1: <select id="addOptionsMap1"> </select> (Options 1-5 should appear)</div>
+<div>addOptionsMap2: <select id="addOptionsMap2"> </select> (Options one-five should appear)</div>
+
+<hr/><!--====================================================================-->
+
+<div>
+  removeItems:
+  <ul id="removeItems">
+    <li>One</li><li>Two</li><li>Three</li><li>Four</li><li>Five</li>
+  </ul>
+  (These items should disappear)
+</div>
+
+<div>addItemsBasic: <ul id="addItemsBasic"> </ul> (Items One-Five should appear)</div>
+<div>addItemsObject1: <ul id="addItemsObject1"> </ul> (Items One-Five should appear)</div>
+<div>addItemsObject2: <ul id="addItemsObject2"> </ul> (Items 1-5 should appear)</div>
+<div>addItemsObject3: <ul id="addItemsObject3"> </ul> (Items 1-5 should appear)</div>
+<div>addItemsObject4: <ul id="addItemsObject4"> </ul> (Items One-Five should appear)</div>
+
+<hr/><!--====================================================================-->
+
+<div>addRowsBasic:
+  <table border="1">
+    <thead><tr><th>Unaltered</th><th>Altered</th><th>DOM Button</th><th>InnerHTML Button</th></tr></thead>
+    <tbody id="addRowsBasic"> </tbody>
+  </table>
+</div>
+
+<hr/><!--====================================================================-->
+
+<div>setValuesDiv: <input id="setValuesDiv" value="" /> (Should become 'setValuesDiv')</div>
+<div>setValuesSpan: <input id="setValuesSpan" value="" /> (Should become 'setValuesSpan')</div>
+
+<div>
+  setValuesSelect:
+  <select id="select">
+    <option selected="selected" value="one">text one</option>
+    <option value="two">text two</option>
+    <option value="three">text three</option>
+  </select>
+  (Should become 'text two')
+</div>
+
+<div>setValuesText: <input id="setValuesText" value="" /> (Should become 'setValuesPassword')</div>
+<div>setValuesPassword: <input id="setValuesPassword" type="password" /> (Should have 2 chars)</div>
+<div>setValuesTextarea: <textarea id="setValuesTextarea"></textarea> (Should become 'setValuesTextarea')</div>
+
+<div>setValuesButton1: <input id="setValuesButton1" value="One" type="button" /> (Should become 'B1-Two')</div>
+<div>setValuesButton2: <button id="setValuesButton2">One</button> (Should become 'B2-Two')</div>
+
+<div>setValuesRadio1: <input id="setValuesRadio1" value="one" type="radio"/> (Should become checked)</div>
+<div>setValuesRadio2: <input id="setValuesRadio2" value="one" type="radio" checked="checked"/> (Should become unchecked)</div>
+
+<div>
+  setValuesRadio3:
+  <input name="setValuesRadio3" value="one" type="radio"/>
+  <input name="setValuesRadio3" value="two" type="radio" checked="checked"/>
+  (Should become YN)
+</div>
+
+<div>
+  setValuesRadio4:
+  <input name="setValuesRadio4" value="one" type="radio" checked="checked"/>
+  <input name="setValuesRadio4" value="two" type="radio"/>
+  (Should become NY)
+</div>
+
+<div>setValuesCheckbox1: <input id="setValuesCheckbox1" type="checkbox" /> (Should become checked)</div>
+<div>setValuesCheckbox2: <input id="setValuesCheckbox2" type="checkbox" checked="checked" /> (Should become unchecked)</div>
+
+</body>
+</html>
+
+

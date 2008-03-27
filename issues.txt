@@ -1,0 +1,62 @@
+
+safari bug
+	More info:
+	Safari 417 (the current version on 10.4.3) is still a broken version, but
+	engine.js set the broken flag is the version is < 417.
+	When the isBrokenSafari2 parameter is set, it goes at the end of the
+	request, so the request contains a single parameter named callCount, with
+	value: (e.g)
+	'1
+	c0-scriptName=DraftAjax
+	c0-methodName=getDraftSaveInterval
+	c0-id=345_1136951956888
+	xml=true
+	isBrokenSafari2=true'
+
+	Remember that currently we can remove: batch.map.isBrokenSafari2 = "true";
+	from engine.js
+
+Breaking changes:
+	DWRUtil.getValue uses innerText in place of innerHTML for divs for consistency
+		Actually is this a good thing?
+	Changes to Converter API
+
+Removal of string in place of function option in DWRUtil.addRows
+
+-- Low Priority ----------------------------------------------------------------
+
+url re-writing not supported
+	I ended up having to extract DWREngine._sendData into a jsp and changing the
+	call to be thus:
+		batch.req.open("POST", batch.path + "/exec/" + statsInfo + "<html:rewrite href=''/>", true);
+	so that the <html:rewrite would add the jsessionid
+
+-- Ignore ----------------------------------------------------------------------
+
+iframe when activex is off
+	auto-fallback from xhr to iframe
+		DWR works fine unless security is really crazy
+
+problems with oc4j??
+	This is a berif description and I will send you my code soon.
+	In my code I'm trying to call a java method from the jscript, where the java
+	method returns a vector of objects and the returned value is reterived from
+	the database, so every time the returned vector size could be changed, but
+	in my case the returned vector has the same size every time however I'm sure
+	that this vector is changed. What I could understand till now that this
+	problem still accoured even I have restarted the jDeveloper and the whole
+	windows.
+	Thank you for your interest, and I will send you the code ASAP.
+
+IFrame GET is broken with Safari
+	iframe is only really useful with IE6 (with activex turned off) so we can
+	ignore this breakage
+
+everything.js
+	A script that gets all the bits in one lump
+	Do we need a dojo.require thing?
+
+-- Fixed -----------------------------------------------------------------------
+
+call level metadata isn't merged into batch properly
+
