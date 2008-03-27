@@ -1,0 +1,45 @@
+<div>
+
+<h2>Fixing Issues</h2>
+
+<a name="paramNotMarshallable">
+<h3>Warning: XXX param not marshallable</h3></a>
+<p>
+  dwr.xml does not have an allow entry that enables conversion of this type to
+  Javascript. The most common cause of this problem is that XXX is a java bean
+  and bean marshalling has not been enabled. Bean marshalling is disabled by
+  default for security reasons.
+  <br/>
+  To enable marshalling for a given bean add the following line to the allow
+  section of your dwr.xml file:
+</p>
+<pre>
+&lt;convert converter="bean" match="XXX"/>
+</pre>
+<p>
+  It is also possible to enable marshalling for an entire package or hierachy
+  of packages using the following:
+</p>
+<pre>
+&lt;convert converter="bean" match="package.name.*"/>
+</pre>
+
+<a name="returnNotMarshallable">
+<h3>Warning: XXX return type not marshallable</h3></a>
+<p>
+  This error is related to the "Warning: XXX param not marshallable" error.
+  See <a href="#paramNotMarshallable">the solution</a> to that error for more
+  details.
+</p>
+
+<a name="overriddenMethod">
+<h3>Warning: overridden methods are not recommended</h3></a>
+<p>
+  Javascript does not support overridden methods, so the javascript file
+  generated from this class will contain to methods the second of which will
+  overwrite the first. This is probably not what you wanted.
+  <br/>
+  It is best to avoid overridden methods when using DWR.
+</p>
+
+</div>
