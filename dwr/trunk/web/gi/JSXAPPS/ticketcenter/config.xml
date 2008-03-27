@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <record jsxid="version" type="string">1.0</record>
+  <record jsxid="jsxversion" type="string">3.2</record>
+  <record jsxid="caption" type="string">Ticket Center</record>
+  <record jsxid="mode" type="boolean">true</record>
+  <record jsxid="namespace" type="string">ticketcenter</record>
+  <record jsxid="cancelerror" type="boolean">true</record>
+  <record jsxid="cancelrightclick" type="boolean">true</record>
+  <record jsxid="left" type="number">0</record>
+  <record jsxid="top" type="number">0</record>
+  <record jsxid="width" type="string">100%</record>
+  <record jsxid="height" type="string">100%</record>
+  <record jsxid="position" type="number">0</record>
+  <record jsxid="overflow" type="string">3</record>
+  <record jsxid="eventsvers" type="number">3.1</record>
+  <record jsxid="objectseturl" type="string">main.xml</record>
+  <record jsxid="includes" type="array">
+    <record jsxid="0" type="map">
+      <record jsxid="id" type="string">appCanvas_component</record>
+      <record jsxid="type" type="string">component</record>
+      <record jsxid="src" type="string">main.xml</record>
+    </record>
+    <record jsxid="1" type="map">
+      <record jsxid="id" type="string">eventList_xml</record>
+      <record jsxid="type" type="string">xml</record>
+      <record jsxid="load" type="number">0</record>
+      <record jsxid="src" type="string">eventList.xml</record>
+    </record>
+    <record jsxid="2" type="map">
+      <record jsxid="id" type="string">paymentTypes_xml</record>
+      <record jsxid="type" type="string">xml</record>
+      <record jsxid="load" type="number">0</record>
+      <record jsxid="src" type="string">paymentTypes.xml</record>
+    </record>
+  </record>
+  <record jsxid="bodyhotkeys" type="boolean">false</record>
+  <record jsxid="default_locale" type="string"/>
+  <record jsxid="onload" type="string">dwr.engine.setActiveReverseAjax(true);CallCenter.load();</record>
+  <record jsxid="onunload" type="string">CallCenter.cancelHandling();</record>
+</data>
