@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Upgrading to DWR 0.4</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h2>Upgrading to DWR 0.5</h2>
+<p>
+  All the functions in util.js and engine.js are now 'static class' functions.
+  The old versions are deprecated, and you will get a warning to move over as
+  an alert box. The new versions should have less chance of name clashes.
+</p>
+
+<p>
+  The Spring Creator has been given an overhall. The resourceName parameter is
+  deprecated, and will be removed soon. It is probably best to look at the
+  <a href="config-howto.html">configration documentation</a> to see how the new
+  version works.
+</p>
+
+<h2>Upgrading to DWR 0.4</h2>
+<p>
+  web/WEB-INF/web.xml has a fully fleshed out example of the options for dwr.
+  2 parameters (config and logLevel) you can safely ignore.
+  The 3rd, debug, you should leave as true if you want the test/debug setup to
+  work (this is what you are using below)
+  I would suggest turning this off in live.
+</p>
+
+<p>
+  Secondly you will need a dwr.xml file that does the job of the old allow
+  parameter. By default it lives in WEB-INF/dwr.xml (there is an example in the
+  web folder of this too)
+  <br/>
+  I suggest starting with the example in the web/WEB-INF folder and removing
+  the &lt;init> section and for each allow have a
+  &lt;create creator="new" javascript="Test" class="full.java.pkg.Test"/> tag.
+  <br/>
+  The different type of creators allow us to have different sources for the
+  beans. <code>new</code> was all that existed in dwr 0.3. <code>session</code>
+  gets the bean from the session (creating it if it does not exist).
+  <code>spring</code> uses the spring framework and <code>static</code> works on
+  static methods only.
+  <br/>
+  You can remove all the converter options in the allow section.
+  By default all primitive types, arrays and Strings get converted without need
+  for declaration. The system dwr file in <code>java/uk/ltd/getahead/dwr</code>
+  might help you see what is going on a bit.
+</p>
+
+<p>
+  There is one other breaking change, where in your html you were doing:
+</p>
+<pre>
+&lt;script type='text/javascript' src='/XXX/dwr/interface/full.java.pkg.Test.js'></script>
+</pre>
+<p>
+  You would need to do:
+</p>
+<pre>
+&lt;script type='text/javascript' src='/XXX/dwr/interface/Test.js'></script>
+</pre>
+<p>
+  Where Test is the value you specify in the javascript attribute in your create tag (see above).
+</p>
+
+</div>
+</body>
+</html>

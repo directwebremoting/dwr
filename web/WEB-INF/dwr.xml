@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 0.4//EN"
+    "http://www.getahead.ltd.uk/dwr/dwr.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" priority="1" class="uk.ltd.getahead.dwr.test.TestBean2Converter"/>
+  </init>
+
+  <allow>
+
+    <create creator="new" javascript="Test" class="uk.ltd.getahead.dwr.test.Test"/>
+    <create creator="new" javascript="JDate" class="java.util.Date"/>
+
+    <create creator="session" javascript="TestBean" class="uk.ltd.getahead.dwr.test.TestBean"/>
+    <create creator="session" javascript="Demo" class="uk.ltd.getahead.dwr.test.Demo"/>
+
+    <create creator="new" javascript="Chat" class="uk.ltd.getahead.dwr.test.Chat"/>
+
+    <!--
+    <create creator="spring" javascript="SpringBean" beanName="SpringBean"/>
+    -->
+
+    <create creator="new" javascript="UrlValidator" class="org.apache.commons.validator.UrlValidator"/>
+    <create creator="new" javascript="CreditCardValidator" class="org.apache.commons.validator.CreditCardValidator"/>
+
+    <create creator="script" javascript="EmailValidator">
+      <param name="language" value="beanshell"/>
+      <param name="script">
+        import org.apache.commons.validator.EmailValidator;
+        return EmailValidator.getInstance();
+      </param>
+    </create>
+
+    <convert converter="bean" match="uk.ltd.getahead.dwr.test.*"/>
+    <convert converter="testbean" match="uk.ltd.getahead.dwr.test.TestBean2"/>
+  </allow>
+
+</dwr>
