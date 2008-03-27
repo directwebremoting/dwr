@@ -1,0 +1,112 @@
+
+-- To Check --------------------------------------------------------------------
+
+Changes to Converter API
+
+Removal of string in place of function option in DWRUtil.addRows
+
+-- Low Priority ----------------------------------------------------------------
+
+url re-writing not supported
+	I ended up having to extract DWREngine._sendData into a jsp and changing the
+	call to be thus:
+		batch.req.open("POST", batch.path + "/exec/" + statsInfo + "<html:rewrite href=''/>", true);
+	so that the <html:rewrite would add the jsessionid
+
+InboundVariable issue: http://ribak.blogspot.com/2006/02/dwr-frameworkperformance-test.html
+	"Found reference to variable named 'XXX', but no variable of that name could
+	be found."
+	They are all related to requests, which use references to variables. The
+	corresponding Java code seems to have inconsistent error handling:
+	uk.ltd.getahead.dwr.InboundVariable
+	InboundVariable cd = …
+	if (cd == null)
+	{
+	   log.error(…);
+	   break;
+	}
+	It logs an error, but than, instead of throwing an exception, it continues
+	normal execution.
+
+-- Ignore ----------------------------------------------------------------------
+
+everything.js
+	A script that gets all the bits in one lump
+	Do we need a dojo.require thing?
+
+Multiple call issue
+	When calling the same function 4 times consecutively passing a different
+	paramter the same result is always returned.  While debugging on the server side
+	(jboss), I have noted that the result passed back (a collection) is different.
+	However, DWR appears to be getting confused and always returns the same result
+	for each call.
+	I have noticed that if I put each call between a begin/endbatch that the correct
+	result is returned.
+	This is only for 1.1.  1.0 does not have this issue.
+	LabBean.getMaterials(displayMaterialJewels, 1);
+	LabBean.getMaterials(displayMaterialReversedItems, 2);
+	LabBean.getMaterials(displayMaterialReversedJewels, 1);
+	LabBean.getMaterials(displayMaterialItems, 2);
+
+ie7 testing
+
+iframe when activex is off
+	auto-fallback from xhr to iframe
+		DWR works fine unless security is really crazy
+
+problems with oc4j??
+	This is a berif description and I will send you my code soon.
+	In my code I'm trying to call a java method from the jscript, where the java
+	method returns a vector of objects and the returned value is reterived from
+	the database, so every time the returned vector size could be changed, but
+	in my case the returned vector has the same size every time however I'm sure
+	that this vector is changed. What I could understand till now that this
+	problem still accoured even I have restarted the jDeveloper and the whole
+	windows.
+	Thank you for your interest, and I will send you the code ASAP.
+
+IFrame GET is broken with Safari
+	iframe is only really useful with IE6 (with activex turned off) so we can
+	ignore this breakage
+
+-- Fixed -----------------------------------------------------------------------
+
+radio-buttons
+	For the radio button issue, I believe this is a minor but high-severity bug
+	for IE6, because the same code works perfectly with FireFox 1.5. I have such HTML:
+	<input type=radio name=color value='r'> Red
+	<input type=radio name=color value='g'> Green
+	<input type=radio name=color value='b'> Blue
+	The JavaScript code is:
+	    var c = DWRUtil.getValue('color');
+	    DWRUtil.setValue('color', c);
+	This works perfectly with Firefox 1.5; in IE6, you can still read (i.e.
+	getValue() works) but setValue() doesn't do anything to the radio buttons.
+	I feel my expectation is quite natural. Radio controls should use name
+	rather than id because they are grouped, so individual radio id ain't that
+	useful.
+	Again, I can write my own code to cope with that, but since these are both
+	so basic, it makes sense to have the base libraries handle them.
+
+Breaking changes:
+	DWRUtil.getValue uses innerText in place of innerHTML for divs for consistency
+		Actually is this a good thing?
+
+call level metadata isn't merged into batch properly
+
+safari bug
+	More info:
+	Safari 417 (the current version on 10.4.3) is still a broken version, but
+	engine.js set the broken flag is the version is < 417.
+	When the isBrokenSafari2 parameter is set, it goes at the end of the
+	request, so the request contains a single parameter named callCount, with
+	value: (e.g)
+	'1
+	c0-scriptName=DraftAjax
+	c0-methodName=getDraftSaveInterval
+	c0-id=345_1136951956888
+	xml=true
+	isBrokenSafari2=true'
+
+	Remember that currently we can remove: batch.map.isBrokenSafari2 = "true";
+	from engine.js
