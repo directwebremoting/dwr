@@ -17,8 +17,6 @@ package org.directwebremoting.create;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
@@ -32,7 +30,7 @@ public abstract class AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#setProperties(java.util.Map)
      */
-    public void setProperties(Map<String, String> params) throws IllegalArgumentException
+    public void setProperties(Map params) throws IllegalArgumentException
     {
         // The default is to use getters and setters
     }
@@ -50,12 +48,6 @@ public abstract class AbstractCreator implements Creator
      */
     public void setJavascript(String javascript)
     {
-        if (!LocalUtil.isJavaIdentifier(javascript))
-        {
-            log.error("Illegal identifier: '" + javascript + "'");
-            throw new IllegalArgumentException("Illegal identifier");
-        }
-
         this.javascript = javascript;
     }
 
@@ -77,7 +69,7 @@ public abstract class AbstractCreator implements Creator
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Creator#isCacheable()
+     * @see org.directwebremoting.Creator#isCacheable()
      */
     public boolean isCacheable()
     {
@@ -86,28 +78,10 @@ public abstract class AbstractCreator implements Creator
 
     /**
      * @param cacheable Whether or not to cache the script.
-     * @see org.directwebremoting.extend.Creator#isCacheable()
      */
     public void setCacheable(boolean cacheable)
     {
         this.cacheable = cacheable;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Creator#isHidden()
-     */
-    public boolean isHidden()
-    {
-        return hidden;
-    }
-
-    /**
-     * @param hidden the new hidden status.
-     * @see #isHidden()
-     */
-    public void setHidden(boolean hidden)
-    {
-        this.hidden = hidden;
     }
 
     /**
@@ -125,16 +99,10 @@ public abstract class AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
-        return getClass().getSimpleName() + "[" + getJavascript() + "]";
+        return LocalUtil.getShortClassName(getClass()) + "[" + getJavascript() + "]";
     }
-
-    /**
-     * Do we attempt to deny the existence of classes created by this creator
-     */
-    private boolean hidden = false;
 
     /**
      * Do the methods on the Creator change over time?
@@ -150,9 +118,4 @@ public abstract class AbstractCreator implements Creator
      * The scope of the objects created by this creator
      */
     private String scope = PAGE;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(AbstractCreator.class);
 }

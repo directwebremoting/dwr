@@ -49,7 +49,6 @@ public interface DebugPageGenerator
      * @return A URL that points at the given scriptName
      * @deprecated Please tell the DWR users mailing list users@dwr.dev.java.net if you use this
      */
-    @Deprecated
     String generateInterfaceUrl(String root, String scriptName);
 
     /**
@@ -58,7 +57,6 @@ public interface DebugPageGenerator
      * @return A URL that points at the central engine Javascript file
      * @deprecated Please tell the DWR users mailing list users@dwr.dev.java.net if you use this
      */
-    @Deprecated
     String generateEngineUrl(String root);
 
     /**
@@ -68,13 +66,11 @@ public interface DebugPageGenerator
      * @return A URL that points at the given library
      * @deprecated Please tell the DWR users mailing list users@dwr.dev.java.net if you use this
      */
-    @Deprecated
     String generateLibraryUrl(String root, String library);
 
     /**
      * @return A list of the available libraries.
      * @deprecated Please tell the DWR users mailing list users@dwr.dev.java.net if you use this
      */
-    @Deprecated
-    Collection<String> getAvailableLibraries();
+    Collection getAvailableLibraries();
 }

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.util.MimeConstants;
@@ -43,17 +44,16 @@ public class HtmlScriptConduit extends BaseScriptConduit
      * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
+     * @throws IOException If stream ops fail
      */
-    public HtmlScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager) throws IOException
     {
-        super(response, batchId, converterManager, jsonOutput);
+        super(response, batchId, converterManager);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
+     * @see org.directwebremoting.dwrp.BaseCallMarshaller#getOutboundMimeType()
      */
-    @Override
     protected String getOutboundMimeType()
     {
         return MimeConstants.MIME_HTML;
@@ -62,7 +62,6 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
      */
-    @Override
     public void beginStream()
     {
         synchronized (out)
@@ -77,7 +76,6 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#endStream()
      */
-    @Override
     public void endStream()
     {
         synchronized (out)
@@ -92,10 +90,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
-    @Override
     public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, MarshallException
     {
-        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
+        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager);
 
         synchronized (out)
         {

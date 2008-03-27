@@ -15,13 +15,14 @@
  */
 package org.directwebremoting.impl;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.InitializingBean;
 
 /**
  * An implementation of some of the simpler methods from {@link Container}
- * This class has nothing whatsoever to do with
- * {@link org.directwebremoting.extend.ContainerAbstraction}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class AbstractContainer implements Container
@@ -32,8 +33,10 @@ public abstract class AbstractContainer implements Container
      */
     protected void callInitializingBeans()
     {
-        for (String name : getBeanNames())
+        Collection beanNames = getBeanNames();
+        for (Iterator it = beanNames.iterator(); it.hasNext();)
         {
+            String name = (String) it.next();
             Object bean = getBean(name);
 
             if (bean instanceof InitializingBean)
@@ -42,13 +45,5 @@ public abstract class AbstractContainer implements Container
                 startMeUp.afterContainerSetup(this);
             }
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.Container#getBean(java.lang.Class)
-     */
-    public <T> T getBean(Class<T> type)
-    {
-        return type.cast(getBean(type.getName()));
     }
 }

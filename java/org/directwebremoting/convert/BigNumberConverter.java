@@ -18,11 +18,11 @@ package org.directwebremoting.convert;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.Messages;
@@ -36,9 +36,9 @@ public class BigNumberConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String value = data.getValue();
+        String value = iv.getValue();
 
         if (value == null || value.length() == 0)
         {
@@ -68,13 +68,13 @@ public class BigNumberConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
+    public OutboundVariable convertOutbound(Object object, OutboundContext outctx)
     {
-        if (data == null)
+        if (object == null)
         {
-            return new NonNestedOutboundVariable("null");
+            return new SimpleOutboundVariable("null", outctx, true);
         }
 
-        return new NonNestedOutboundVariable(data.toString());
+        return new SimpleOutboundVariable(object.toString(), outctx, true);
     }
 }

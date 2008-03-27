@@ -1,29 +1,14 @@
-/*
- * Copyright 2005 Joe Walker
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.getahead.dwrdemo.chat;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.util.Logger;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -47,18 +32,27 @@ public class JavascriptChat
         WebContext wctx = WebContextFactory.get();
         String currentPage = wctx.getCurrentPage();
 
-        Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(currentPage);
-        ScriptProxy s = new ScriptProxy(sessions);
-        s.addFunctionCall("receiveMessages", messages);
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendScript("receiveMessages(")
+              .appendData(messages)
+              .appendScript(");");
+
+        // Loop over all the users on the current page
+        Collection pages = wctx.getScriptSessionsByPage(currentPage);
+        for (Iterator it = pages.iterator(); it.hasNext();)
+        {
+            ScriptSession otherSession = (ScriptSession) it.next();
+            otherSession.addScript(script);
+        }
     }
 
     /**
      * The current set of messages
      */
-    private LinkedList<Message> messages = new LinkedList<Message>();
+    private LinkedList messages = new LinkedList();
 
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(JavascriptChat.class);
+    protected static final Logger log = Logger.getLogger(JavascriptChat.class);
 }

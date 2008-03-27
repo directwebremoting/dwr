@@ -22,12 +22,11 @@ import javax.servlet.ServletContext;
 
 import org.apache.bsf.BSFException;
 import org.apache.bsf.BSFManager;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -163,7 +162,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
 
     /**
      * @return Returns the script.
-     * @throws InstantiationException If we can't read from the requested script
+     * @throws InstantiationException
      */
     public String getScript() throws InstantiationException
     {
@@ -197,7 +196,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
             // used here.
             scriptModified = scriptFile.lastModified();
             in = new RandomAccessFile(scriptFile, "r");
-            byte[] bytes = new byte[(int) in.length()];
+            byte bytes[] = new byte[(int) in.length()];
             in.readFully(bytes);
             cachedScript = new String(bytes);
 
@@ -251,7 +250,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         if (clazz == null || (reloadable && scriptUpdated()))
         {
@@ -297,19 +296,20 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         }
         catch (Exception ex)
         {
-            throw new InstantiationException(Messages.getString("ScriptedCreator.IllegalAccess", ex.getMessage()));
+            log.error("Error executing script", ex);
+            throw new InstantiationException(Messages.getString("Creator.IllegalAccess"));
         }
     }
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(ScriptedCreator.class);
+    private static final Logger log = Logger.getLogger(ScriptedCreator.class);
 
     /**
      * The cached type of object that we are creating.
      */
-    private Class<?> clazz = null;
+    private Class clazz = null;
 
     /**
      * The language that we are scripting in. Passed to BSF.

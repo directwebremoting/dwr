@@ -22,9 +22,9 @@ import java.lang.annotation.Target;
 import com.google.inject.ScopeAnnotation;
 
 /**
- * Marks classes for which there should be one instance per web application
+ * Marks classes for which there should be one instance per web application 
  * (i.e., per servlet context) and these instances should be created eagerly
- * at servlet {@code init()} and closed (when they implement {@code Closeable})
+ * at servlet {@code init()} and closed (when they implement {@code Closeable}) 
  * at servlet {@code destroy()}.
  * @author Tim Peierls [tim at peierls dot net]
  */

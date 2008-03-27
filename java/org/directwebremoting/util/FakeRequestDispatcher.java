@@ -20,9 +20,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
  * Mock implementation of the RequestDispatcher interface.
  * @author Rod Johnson
@@ -55,11 +52,11 @@ public class FakeRequestDispatcher implements RequestDispatcher
             throw new IllegalArgumentException("FakeRequestDispatcher requires FakeHttpServletResponse");
         }
 
-        ((FakeHttpServletResponse) response).setForwardedUrl(url);
+        ((FakeHttpServletResponse) response).setForwardedUrl(this.url);
 
         if (log.isDebugEnabled())
         {
-            log.debug("FakeRequestDispatcher: forwarding to URL [" + url + "]");
+            log.debug("FakeRequestDispatcher: forwarding to URL [" + this.url + "]");
         }
     }
 
@@ -73,11 +70,11 @@ public class FakeRequestDispatcher implements RequestDispatcher
             throw new IllegalArgumentException("FakeRequestDispatcher requires FakeHttpServletResponse");
         }
 
-        ((FakeHttpServletResponse) response).setIncludedUrl(url);
+        ((FakeHttpServletResponse) response).setIncludedUrl(this.url);
 
         if (log.isDebugEnabled())
         {
-            log.debug("FakeRequestDispatcher: including URL [" + url + "]");
+            log.debug("FakeRequestDispatcher: including URL [" + this.url + "]");
         }
     }
 
@@ -86,5 +83,5 @@ public class FakeRequestDispatcher implements RequestDispatcher
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FakeRequestDispatcher.class);
+    private static final Logger log = Logger.getLogger(FakeRequestDispatcher.class);
 }

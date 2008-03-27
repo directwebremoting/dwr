@@ -18,17 +18,16 @@ package org.directwebremoting.servlet;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InitializingBean;
+import org.directwebremoting.util.Logger;
 
 /**
  * This is the main servlet that handles all the requests to DWR.
@@ -54,17 +53,17 @@ public class UrlProcessor implements Handler, InitializingBean
      */
     public void afterContainerSetup(Container container)
     {
-        Collection<String> beanNames = container.getBeanNames();
-        for (String name : beanNames)
+        Collection beanNames = container.getBeanNames();
+        for (Iterator it = beanNames.iterator(); it.hasNext();)
         {
-            if (name.startsWith(PathConstants.PATH_PREFIX))
+            String name = (String) it.next();
+            if (name.startsWith(PathConstants.URL_PREFIX))
             {
                 Object bean = container.getBean(name);
 
                 if (bean instanceof Handler)
                 {
-                    Handler handler = (Handler) bean;
-                    urlMapping.put(name.substring(PathConstants.PATH_PREFIX.length()), handler);
+                    urlMapping.put(name.substring(PathConstants.URL_PREFIX.length()), bean);
                 }
                 else
                 {
@@ -82,23 +81,23 @@ public class UrlProcessor implements Handler, InitializingBean
         try
         {
             String pathInfo = request.getPathInfo();
-            contextPath = request.getContextPath();
 
-            if (pathInfo == null || pathInfo.length() == 0 || "/".equals(pathInfo))
+            if (pathInfo == null || pathInfo.length() == 0 || pathInfo.equals("/"))
             {
-                response.sendRedirect(contextPath + request.getServletPath() + indexHandlerUrl);
+                response.sendRedirect(request.getContextPath() + request.getServletPath() + indexHandlerUrl);
             }
             else
             {
                 // Loop through all the known URLs
-                for (Entry<String, Handler> entry : urlMapping.entrySet())
+                for (Iterator it = urlMapping.entrySet().iterator(); it.hasNext();)
                 {
-                    String url = entry.getKey();
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String url = (String) entry.getKey();
 
                     // If this URL matches, call the handler
                     if (pathInfo.startsWith(url))
                     {
-                        Handler handler = entry.getValue();
+                        Handler handler = (Handler) entry.getValue();
                         handler.handle(request, response);
                         return;
                     }
@@ -115,15 +114,6 @@ public class UrlProcessor implements Handler, InitializingBean
     }
 
     /**
-     * The contextPath cached from the last HTTP servlet request
-     * @return the contextPath
-     */
-    public String getContextPath()
-    {
-        return contextPath;
-    }
-
-    /**
      * The URL for the {@link IndexHandler}
      * @param indexHandlerUrl the indexHandlerUrl to set
      */
@@ -135,30 +125,25 @@ public class UrlProcessor implements Handler, InitializingBean
     /**
      * The URL for the {@link IndexHandler}
      */
-    protected String indexHandlerUrl;
+    private String indexHandlerUrl;
 
     /**
      * The mapping of URLs to {@link Handler}s
      */
-    protected Map<String, Handler> urlMapping = new HashMap<String, Handler>();
+    private Map urlMapping = new HashMap();
 
     /**
      * The default if we have no other action (HTTP-404)
      */
-    protected Handler notFoundHandler = new NotFoundHandler();
+    private Handler notFoundHandler = new NotFoundHandler();
 
     /**
      * If execution fails, we do this (HTTP-501)
      */
-    protected ExceptionHandler exceptionHandler = new ExceptionHandler();
-
-    /**
-     * The contextPath cached from the last HTTP servlet request
-     */
-    protected String contextPath = null;
+    private ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(UrlProcessor.class);
+    private static final Logger log = Logger.getLogger(UrlProcessor.class);
 }

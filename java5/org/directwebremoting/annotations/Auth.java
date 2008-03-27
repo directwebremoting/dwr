@@ -33,5 +33,5 @@ public @interface Auth
     /**
      * Name of the J2EE role to restrict access to.
      */
-    String[] role();
+    String role();
 }

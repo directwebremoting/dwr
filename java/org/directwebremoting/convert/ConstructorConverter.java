@@ -17,29 +17,30 @@ package org.directwebremoting.convert;
 
 import java.lang.reflect.Constructor;
 
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
 
 /**
  * An implementation of Converter for anything with a string constructor.
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Joe Walker [joe at eireneh dot com]
+ * @version $Id: ConstructorConverter.java,v 1.2 2004/11/04 15:54:07 joe_walker Exp $
  */
 public class ConstructorConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx)
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx)
     {
         try
         {
-            Constructor<?> converter = paramType.getConstructor(String.class);
-            return converter.newInstance(data.getValue());
+            Constructor converter = paramType.getConstructor(new Class[] { String.class });
+            return converter.newInstance(new Object[] { iv.getValue() });
         }
         catch (Exception ex)
         {
@@ -52,6 +53,6 @@ public class ConstructorConverter extends BaseV20Converter implements Converter
      */
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
     {
-        return new NonNestedOutboundVariable('\'' + JavascriptUtil.escapeJavaScript(data.toString()) + '\'');
+        return new SimpleOutboundVariable('\'' + JavascriptUtil.escapeJavaScript(data.toString()) + '\'', outctx, true);
     }
 }

@@ -16,12 +16,12 @@
 package org.directwebremoting.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.WaitController;
+import org.directwebremoting.util.Logger;
 
 /**
  * A base implementation of {@link ServerLoadMonitor} that implements waiting
@@ -61,9 +61,10 @@ public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
     {
         synchronized (waitControllers)
         {
-            for (int i = 0; i < count && !waitControllers.isEmpty(); i++)
+            for (int i = 0; i < count && waitControllers.size() > 0; i++)
             {
-                waitControllers.get(0).shutdown();
+                WaitController controller = (WaitController) waitControllers.get(0);
+                controller.shutdown();
             }
         }
     }
@@ -80,14 +81,15 @@ public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
 
         synchronized (waitControllers)
         {
-            List<WaitController> copy = new ArrayList<WaitController>();
+            List copy = new ArrayList();
             copy.addAll(waitControllers);
-
-            for (WaitController controller : copy)
+    
+            for (Iterator it = copy.iterator(); it.hasNext();)
             {
+                WaitController controller = (WaitController) it.next();
                 controller.shutdown();
             }
-
+    
             log.debug(" - shutdown on: " + this);
             shutdownCalled = true;
         }
@@ -101,10 +103,10 @@ public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
     /**
      * The known wait controllers
      */
-    protected final List<WaitController> waitControllers = new ArrayList<WaitController>();
+    protected List waitControllers = new ArrayList();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(AbstractServerLoadMonitor.class);
+    private static final Logger log = Logger.getLogger(AbstractServerLoadMonitor.class);
 }

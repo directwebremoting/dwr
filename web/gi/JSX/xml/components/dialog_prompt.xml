@@ -6,8 +6,7 @@
   <icon/>
   <description/>
   <onBeforeDeserialize/>
-  <onAfterDeserialize><![CDATA[objJSX.setMessage=function(a){this.getDescendantOfName("message").setText(a,true);};objJSX.doCancel=function(c){this.getDescendantOfName("cancel").doExecute(c);};objJSX.setValidationRegex=function(s){this.getDescendantOfName("value")._jsxregex=s;};objJSX.getDescendantOfName("value").checkInput=function(n){if(this._jsxregex!=null)if(n&&!n.match(this._jsxregex)){this.beep();return false;}return true;};objJSX.onEnter=function(b){var
-Jb=this.getDescendantOfName("ok");if(Jb)Jb.doExecute(b);};objJSX.registerHotKey("onEnter",13,false,false,false);objJSX.registerHotKey("doCancel",".",false,true,false);]]></onAfterDeserialize>
+  <onAfterDeserialize><![CDATA[objJSX.setMessage=function(a){this.getDescendantOfName("message").setText(a,true);};objJSX.doCancel=function(c){this.getDescendantOfName("cancel").doExecute(c);};objJSX.setValidationRegex=function(s){this.getDescendantOfName("value")._jsxregex=s;};objJSX.getDescendantOfName("value").checkInput=function(n){if(this._jsxregex!=null){if(n&&!n.match(this._jsxregex)){this.beep();return false;}}return true;};objJSX.onEnter=function(b){var Jc=this.getDescendantOfName("ok");if(Jc)Jc.doExecute(b);};objJSX.registerHotKey("onEnter",13,false,false,false);objJSX.registerHotKey("doCancel",".",false,true,false);]]></onAfterDeserialize>
     <object type="jsx3.gui.Dialog">
       <dynamics jsxbgcolor="@Solid Disabled"/>
       <variants jsxheight="145" jsxmodal="1" jsxoverflow="2" jsxresize="0" jsxwidth="300"/>
@@ -19,8 +18,8 @@ Jb=this.getDescendantOfName("ok");if(Jb)Jb.doExecute(b);};objJSX.registerHotKey(
         <object type="jsx3.gui.LayoutGrid">
           <!-- dynamics jsxbgcolor="@Solid Disabled" / -->
           <!-- size array should be 20px, not sure what the rendering error is -->
-          <variants/>
-          <strings jsxname="layout_horiz" jsxrows="*,22,28"/>
+          <variants jsxsizearray="['*','22','28']"/>
+          <strings jsxname="layout_horiz"/>
             <object type="jsx3.gui.Block">
               <dynamics/>
               <variants jsxoverflow="1"/>

@@ -41,10 +41,11 @@ public class SingletonCreator extends AbstractCreator implements Creator
         try
         {
             clazz = LocalUtil.classForName(classname);
+            System.out.println(clazz.getName());
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname));
+            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname)); //$NON-NLS-1$
         }
     }
 
@@ -55,8 +56,8 @@ public class SingletonCreator extends AbstractCreator implements Creator
     {
         try
         {
-            Method method = clazz.getMethod(factoryMethod);
-            return method.invoke(new SingletonCreator());
+            Method method = clazz.getMethod(factoryMethod, null);
+            return method.invoke(new SingletonCreator(), null);
         }
         catch (Exception ex)
         {
@@ -68,7 +69,7 @@ public class SingletonCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         return clazz;
     }
@@ -99,5 +100,5 @@ public class SingletonCreator extends AbstractCreator implements Creator
     /**
      * The type of the object that we create
      */
-    private Class<?> clazz;
+    private Class clazz;
 }

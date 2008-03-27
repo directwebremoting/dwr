@@ -19,21 +19,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
- * A class to manage the types of creators and the instantiated creators.
+ * A class to manage the types of creators and the instansiated creators.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class DefaultCreatorManager implements CreatorManager
@@ -66,7 +65,7 @@ public class DefaultCreatorManager implements CreatorManager
             return;
         }
 
-        Class<? extends Creator> clazz = LocalUtil.classForName(typeName, className, Creator.class);
+        Class clazz = LocalUtil.classForName(typeName, className, Creator.class);
         if (clazz != null)
         {
             log.debug("- adding creator type: " + typeName + " = " + clazz);
@@ -77,22 +76,28 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#addCreator(java.lang.String, java.lang.String, java.util.Map)
      */
-    public void addCreator(String scriptName, String creatorName, Map<String, String> params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
+    public void addCreator(String scriptName, String typeName, Map params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
     {
-        Class<? extends Creator> clazz = creatorTypes.get(creatorName);
-        if (clazz == null)
+        if (!LocalUtil.isJavaIdentifier(scriptName))
         {
-            log.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
+            log.error("Illegal identifier: '" + scriptName + "'");
             return;
         }
 
-        Creator creator = clazz.newInstance();
+        Class clazz = (Class) creatorTypes.get(typeName);
+        if (clazz == null)
+        {
+            log.error("Missing creator: " + typeName + " (while initializing creator for: " + scriptName + ".js)");
+            return;
+        }
+
+        Creator creator = (Creator) clazz.newInstance();
 
         LocalUtil.setParams(creator, params, ignore);
         creator.setProperties(params);
 
         // add the creator for the script name
-        addCreator(creator.getJavascript(), creator);
+        addCreator(scriptName, creator);
     }
 
     /* (non-Javadoc)
@@ -101,7 +106,7 @@ public class DefaultCreatorManager implements CreatorManager
     public void addCreator(String scriptName, Creator creator) throws IllegalArgumentException
     {
         // Check that we don't have this one already
-        Creator other = creators.get(scriptName);
+        Creator other = (Creator) creators.get(scriptName);
         if (other != null)
         {
             throw new IllegalArgumentException(Messages.getString("DefaultCreatorManager.DuplicateName", scriptName, other.getType().getName(), creator));
@@ -110,14 +115,14 @@ public class DefaultCreatorManager implements CreatorManager
         // Check that it can at least tell us what type of thing we will be getting
         try
         {
-            Class<?> test = creator.getType();
+            Class test = creator.getType();
             if (test == null)
             {
                 log.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
             }
             else
             {
-                log.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
+                log.debug("- adding creator: " + LocalUtil.getShortClassName(creator.getClass()) + " for " + scriptName);
                 creators.put(scriptName, creator);
             }
         }
@@ -154,39 +159,14 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreatorNames()
      */
-    public Collection<String> getCreatorNames() throws SecurityException
-    {
-        return getCreatorNames(false);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.CreatorManager#getCreatorNames(boolean)
-     */
-    public Collection<String> getCreatorNames(boolean includeHidden) throws SecurityException
+    public Collection getCreatorNames() throws SecurityException
     {
         if (!debug)
         {
             throw new SecurityException();
         }
 
-        if (includeHidden)
-        {
-            return Collections.unmodifiableSet(creators.keySet());
-        }
-        else
-        {
-            Collection<String> noHidden = new HashSet<String>();
-            for (Map.Entry<String, Creator> entry : creators.entrySet())
-            {
-                Creator creator = entry.getValue();
-                if (!creator.isHidden())
-                {
-                    noHidden.add(entry.getKey());
-                }
-            }
-
-            return noHidden;
-        }
+        return Collections.unmodifiableSet(creators.keySet());
     }
 
     /* (non-Javadoc)
@@ -194,32 +174,18 @@ public class DefaultCreatorManager implements CreatorManager
      */
     public Creator getCreator(String scriptName) throws SecurityException
     {
-        return getCreator(scriptName, false);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.CreatorManager#getCreator(java.lang.String, boolean)
-     */
-    public Creator getCreator(String scriptName, boolean includeHidden) throws SecurityException
-    {
-        Creator creator = creators.get(scriptName);
-
+        Creator creator = (Creator) creators.get(scriptName);
         if (creator == null)
         {
             StringBuffer buffer = new StringBuffer("Names of known classes are: ");
-            for (String key : creators.keySet())
+            for (Iterator it = creators.keySet().iterator(); it.hasNext();)
             {
+                String key = (String) it.next();
                 buffer.append(key);
                 buffer.append(' ');
             }
 
             log.warn(buffer.toString());
-            throw new SecurityException(Messages.getString("DefaultCreatorManager.MissingName", scriptName));
-        }
-
-        if (creator.isHidden() && !includeHidden)
-        {
-            log.warn("Attempt made to get hidden class with name: " + scriptName + " while includeHidden=false");
             throw new SecurityException(Messages.getString("DefaultCreatorManager.MissingName", scriptName));
         }
 
@@ -229,10 +195,41 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#setCreators(java.util.Map)
      */
-    public void setCreators(Map<String, Creator> creators)
+    public void setCreators(Map creators)
     {
         this.creators = creators;
     }
+
+    /**
+     * The log stream
+     */
+    private static final Logger log = Logger.getLogger(DefaultCreatorManager.class);
+
+    /**
+     * The list of the available creators
+     */
+    private Map creatorTypes = new HashMap();
+
+    /**
+     * The list of the configured creators
+     */
+    private Map creators = new HashMap();
+
+    /**
+     * Are we in debug mode?
+     */
+    private boolean debug = false;
+
+    /**
+     * Do we do full-create on startup?
+     */
+    private boolean initApplicationScopeCreatorsAtStartup = false;
+
+    /**
+     * The properties that we don't warn about if they don't exist.
+     * @see DefaultCreatorManager#addCreator(String, String, Map)
+     */
+    private static List ignore = Arrays.asList(new String[] { "creator", "class" });
 
     /**
      * Do we do full-create on startup?
@@ -251,35 +248,4 @@ public class DefaultCreatorManager implements CreatorManager
     {
         this.initApplicationScopeCreatorsAtStartup = initApplicationScopeCreatorsAtStartup;
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DefaultCreatorManager.class);
-
-    /**
-     * The list of the available creators
-     */
-    protected Map<String, Class<? extends Creator>> creatorTypes = new HashMap<String, Class<? extends Creator>>();
-
-    /**
-     * The list of the configured creators
-     */
-    protected Map<String, Creator> creators = new HashMap<String, Creator>();
-
-    /**
-     * Are we in debug mode?
-     */
-    protected boolean debug = false;
-
-    /**
-     * Do we do full-create on startup?
-     */
-    protected boolean initApplicationScopeCreatorsAtStartup = false;
-
-    /**
-     * The properties that we don't warn about if they don't exist.
-     * @see DefaultCreatorManager#addCreator(String, String, Map)
-     */
-    protected static List<String> ignore = Arrays.asList("creator", "class");
 }

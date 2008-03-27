@@ -16,16 +16,15 @@
       }
       dwr.util.useLoadingMessage();
       // Turn on the generic error div
-      dwr.util.byId("error").style.display = "block";
+      $("error").style.display = "block";
       // Load a message from the server
       Intro.getInsert(load);
     }
 
     function load(data) {
-      dwr.util.byId("error").style.display = "none";
-      dwr.util.setValue("reply", data[0], { escapeHtml:false });
-      dwr.util.setValue("version", "(Version " + data[1] + ")");
-      dwr.util.byId("reply").style.display = "block";
+      $("error").style.display = "none";
+      dwr.util.setValue("reply", data, { escapeHtml:false });
+      $("reply").style.display = "block";
     }
   </script>
   <link rel="stylesheet" type="text/css" href="generic.css" />
@@ -39,87 +38,101 @@
 
 <div style="float:right;"><a href="http://getahead.org/dwr/"><img src="logo.gif"/></a></div>
 
-<h1>Welcome to DWR <small id="version"></small></h1>
+<h1>Welcome to DWR</h1>
 
 <p>DWR is an Ajax remoting framework for Java to make it easy for web pages to
 interact with Java classes.</p>
 
-<p>DWR development is sponsored by <a href="http://www.tibco.com/">TIBCO</a> -
-Working to enhance <a href="http://www.tibco.com/mk/gi/?CID=DWR">Ajax in the enterprise</a>.</p>
+<p>DWR development is sponsored by <a href="http://www.tibco.com/">TIBCO</a>. We are working to enhance Ajax in the
+enterprise, and to integrate DWR with JBI and JMS.</p>
 
-<div id="sidebar">
-  <h2>Internet Links</h2>
-  <ul>
-    <li>The main <a href="http://getahead.org/dwr"><strong>DWR</strong> website</a>:</li>
-    <ul>
-      <li><a href="http://getahead.org/dwr/overview/dwr">Overview</a></li>
-      <li><a href="http://getahead.org/dwr/documentation">Documentation</a></li>
-      <li><a href="http://getahead.org/dwr/download">Download</a></li>
-      <li><a href="http://getahead.org/dwr/support">Support / Mailing lists</a></li>
-      <li><a href="http://getahead.org/dwr/support">DWR Development</a></li>
-      <li><a href="http://getahead.org/dwr/server">Javadoc / Generated Docs</a></li>
-    </ul>
-    <li><strong>Widgets</strong> - TIBCO <a href="http://www.tibco.com/mk/gi/?CID=DWR">General
-    Interface</a> goes beyond dwr.util in providing a long list of widgets.</li>
-    <ul>
-      <li>Open Source <a href="http://www.tibco.com/devnet/gi/product_resources35.jsp?tab=downloads#">Download</a></li>
-      <li><a href="http://tibco.xignite.com/">X-Ignite</a> sample application.</li>
-    </ul>
-    <li><strong>Blogs</strong> with regular DWR posts:</li>
-    <ul>
-      <li><a href="http://getahead.org/blog/joe/">Joe Walker</a> (DWR lead)</li>
-      <li><a href="http://tembrel.blogspot.com/">Tim Perlis</a> (Guice/DWR lead)</li>
-      <li><a href="http://internna.blogspot.com/">Jose Noheda</a> blogs about integrating DWR with other projects</li>
-    </ul>
-  </ul>
-</div>
+<ul>
+  <li>If you are looking for a User Interface library for DWR that goes beyond
+  dwr.util, then check-out <a href="http://www.tibco.com/mk/gi/?CID=DWR">General
+  Interface</a> - an extremely versatile open source UI toolkit.</li>
+  <li>For an example of what is possible with GI, check out the
+  <a href="http://tibco.xignite.com/">X-Ignite</a> sample application.</li>
+</ul>
 
-<div id="body">
-  <h2>Inside this Demo</h2>
-  <p>The generated <a href='dwr/'>configuration / test pages</a> show how DWR is setup.</p>
-  <p>Documented examples of how DWR works:</p>
-  <ul>
-    <li><strong>Getting Started</strong> with DWR:</li>
-    <ul>
-      <li><a href="simpletext/index.html">Dynamic Text</a>: A very simple example that updates a page with some text.</li>
-      <li><a href="simpletext/resource.html">Resource Forwarding</a>: How to dynamically include the contents of one page in another.</li>
-      <li><a href="people/index.html">Editable Table</a>: Allowing the user to edit a table of data.</li>
-      <li><a href="address/index.html">Fast Address Entry</a>: A real-world form fill example that helps users enter addresses.</li>
-    </ul>
-    <li>Using <strong>Reverse Ajax</strong> to broadcast data:</li>
-    <ul>
-      <li><a href="clock/index.html">Server-Side Clock</a>: A clock that is updated by the server using ReverseAjax. Demonstrates access from a non-http thread.</li>
-      <li>Chat examples, one with the logic in <a href="chat/javascript-chat.html">JavaScript</a>, and the other with logic in <a href="chat/java-chat.html">Java</a>.</li>
-    </ul>
-    <li>Integration with <strong>General Interface</strong>:</li>
-    <ul>
-      <li>A simple static <a href="gi/dwr-gi.html">GI matrix</a> loaded with data from DWR</li>
-      <li>A reverse ajax example using <a href="gi/dwr-oa-gi.html">the OpenAjax Hub</a></li>
-      <li>A <a href="gi/ticketcenter.html">call center demo</a> that keeps agents up to date</li>
-      <li>A <a href="gi/reverse.html">component example</a> manipulated with the GI Reverse Ajax API</li>
-    </ul>
-    <li><strong>Binary</strong> file handling:</li>
-    <ul>
-      <li><a href="files/upload.html">File upload</a> is easy - this example shows image manipulation</li>
-      <li><a href="files/download.html">Download</a> is just as easy - this time with custom PDF generation</li>
-    </ul>
-  </ul>
-</div>
+<h2>Getting started with DWR</h2>
 
+<p>For general information about DWR see:</p>
 
-<div id="check"> </div>
+<ul>
+  <li>The <a href="http://getahead.org/dwr/">main DWR website</a>.</li>
+  <li><a href="http://getahead.org/blog/joe/">Joe Walker's blog</a>.</li>
+</ul>
+
+<p>Tutorial style examples in this WAR file:</p>
+<ul>
+  <li>
+    <a href="simpletext/index.html">Dynamic Text</a>:
+    A very simple documented example that updates a page with some text.
+  </li>
+  <li>
+    <a href="simpletext/resource.html">Resource Forwarding</a>:
+    How to dynamically include the contents of one page in another.
+  </li>
+  <li>
+    <a href="people/index.html">Editable Table</a>:
+    Another simple documented example that allows the user to edit a table of data.
+  </li>
+  <li>
+    <a href="address/index.html">Fast Address Entry</a>:
+    A form fill example that helps users enter addresses.
+  </li>
+  <li>
+    <a href="gi/index.html">General Interface</a>:
+    An example of a TIBCO GI matrix component fed by DWR's Reverse Ajax.
+  </li>
+</ul>
+
+<p>Other examples in this WAR file:</p>
+<ul>
+  <li>
+    <a href="asmg/index.html">Anti-Spam mailto: Generator</a>:
+    Generate clickable mailto: links without attracting spam.
+  </li>
+  <!--
+  <li>
+    <a href="livehelp/index.html">Live Help</a>:
+    Use multiple-browsers to update a single form.
+  </li>
+  -->
+  <li>
+    <a href="clock/index.html">Server-Side Clock</a>:
+    A clock that is updated by the server using ReverseAjax. Demonstrates access
+    from a non-http thread.
+  </li>
+  <li>
+    <a href="chat/javascript-chat.html">Javascript Chat</a>:
+    A simple chat application using DWR with conventional Javascript
+  </li>
+  <li>
+    <a href="chat/java-chat.html">Java Chat</a>:
+    As above except with much reduced Javascript, using server-side script proxies
+  </li>
+</ul>
+
+<p>Current Configuration:</p>
+
+<ul>
+  <li>The generated <a href='dwr/'>configuration/test pages</a>.</li>
+</ul>
+
+<hr/>
 
 <div id="start">
   <p><strong>DWR is testing installation ...</strong></p>
   <p>
-    DWR uses JavaScript to make some initial checks. If you can see this message
-    then either you are a very fast reader, or JavaScript is not working
+    DWR uses Javascript to make some initial checks. If you can see this message
+    then either you are a very fast reader, or Javascript is not working
     properly in your browser.
   </p>
   <p>
-    Since AJAX requires JavaScript, you will need to enable JavaScript in your
+    Since AJAX requires Javascript, you will need to enable Javascript in your
     browser before you can test DWR. Some very old browsers like IE 4.0 have
-    very out of date support for JavaScript and are currently unsupported.
+    very out of date support for Javascript and are currently unsupported.
     Please upgrade your browser.
   </p>
 </div>
@@ -131,13 +144,13 @@ Working to enhance <a href="http://www.tibco.com/mk/gi/?CID=DWR">Ajax in the ent
     data was mangled. Please report this error to the
     <a href="http://getahead.org/dwr/support">DWR mailing list</a>, including
     your browser, server, OS configuration and any error messages that appeared
-    either in the browser (including the JavaScript console if one exists) and
+    either in the browser (including the Javascript console if one exists) and
     the server console log.
   </p>
 </div>
 
 <div id="file" style="display:none;">
-  <p><strong>Missing DWR JavaScript Functions</strong></p>
+  <p><strong>Missing DWR Javascript Functions</strong></p>
   <p>
     This is a fairly advanced page that tests DWR to check that everything is
     setup properly for you.
@@ -155,14 +168,14 @@ Working to enhance <a href="http://www.tibco.com/mk/gi/?CID=DWR">Ajax in the ent
   </p>
   <p>
     Also there could be an issue with your browser. Try viewing this page in a
-    different browser, particularly try a browser with a JavaScript console.
-    Errors reported in the JavaScript console could help diagnose the problem.
+    different browser, particularly try a browser with a Javascript console.
+    Errors reported in the Javascript console could help diagnose the problem.
   </p>
   <p>
     If this is not the cause of the problem, please report it to the
     <a href="http://getahead.org/dwr/support">DWR mailing list</a>, including
     your browser, server, OS configuration and any error messages that appeared
-    either in the browser (including the JavaScript console if one exists) and
+    either in the browser (including the Javascript console if one exists) and
     the server console log.
   </p>
 </div>
@@ -181,7 +194,7 @@ Working to enhance <a href="http://www.tibco.com/mk/gi/?CID=DWR">Ajax in the ent
     </li>
     <li>
       If you can see the <a href="dwr/">test pages</a> then DWR is loaded but is
-      something is preventing DWR working. Check your browser JavaScript console
+      something is preventing DWR working. Check your browser Javascript console
       for error messages, or see the <a href="http://getahead.org">main
       DWR website</a> for more information.
     </li>
@@ -190,7 +203,7 @@ Working to enhance <a href="http://www.tibco.com/mk/gi/?CID=DWR">Ajax in the ent
     If none of these steps fixes the error, please report it to the
     <a href="http://getahead.org/dwr/support">DWR mailing list</a>, including
     your browser, server, OS configuration and any error messages that appeared
-    either in the browser (including the JavaScript console if one exists) and
+    either in the browser (including the Javascript console if one exists) and
     the server console log.
   </p>
 </div>

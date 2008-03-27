@@ -27,7 +27,7 @@ public class MarshallException extends Exception
      * Default ctor
      * @param paramType The type we were trying to marshall
      */
-    public MarshallException(Class<?> paramType)
+    public MarshallException(Class paramType)
     {
         super(Messages.getString("MarshallException.SimpleFailure", paramType.getName()));
         this.paramType = paramType;
@@ -38,11 +38,12 @@ public class MarshallException extends Exception
      * @param paramType The type we were trying to marshall
      * @param ex error stack trace
      */
-    public MarshallException(Class<?> paramType, Throwable ex)
+    public MarshallException(Class paramType, Throwable ex)
     {
-        super(Messages.getString("MarshallException.FailureWithCause", paramType.getName(), ex.getMessage()), ex);
+        super(Messages.getString("MarshallException.FailureWithCause", paramType.getName(), ex.getMessage()));
 
         this.paramType = paramType;
+        this.ex = ex;
     }
 
     /**
@@ -50,17 +51,26 @@ public class MarshallException extends Exception
      * @param paramType The type we were trying to marshall
      * @param message error description
      */
-    public MarshallException(Class<?> paramType, String message)
+    public MarshallException(Class paramType, String message)
     {
         super(Messages.getString("MarshallException.FailureWithCause", paramType.getName(), message));
 
         this.paramType = paramType;
     }
+
+    /**
+     * @return The cause of this exception (if any)
+     */
+    public Throwable getCause()
+    {
+        return ex;
+    }
+
     /**
      * Accessor for the type we are converting to/from
      * @return The type we are converting to/from
      */
-    public Class<?> getConversionType()
+    public Class getConversionType()
     {
         return paramType;
     }
@@ -68,5 +78,10 @@ public class MarshallException extends Exception
     /**
      * The type we are converting to/from
      */
-    private Class<?> paramType;
+    private Class paramType;
+
+    /**
+     * Stored exception cause
+     */
+    private Throwable ex = null;
 }

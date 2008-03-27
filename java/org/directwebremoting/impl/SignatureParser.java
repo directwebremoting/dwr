@@ -18,18 +18,18 @@ package org.directwebremoting.impl;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * A parser for type info in a dwr.xml signature.
@@ -60,8 +60,8 @@ public class SignatureParser
         {
             log.debug("Parsing extra type info: ");
 
-            String reply = LegacyCompressor.stripMultiLineComments(sigtext);
-            reply = LegacyCompressor.stripSingleLineComments(reply);
+            String reply = JavascriptUtil.stripMultiLineComments(sigtext);
+            reply = JavascriptUtil.stripSingleLineComments(reply);
             String process = reply;
 
             process = process.replace('\n', ' ');
@@ -180,7 +180,7 @@ public class SignatureParser
             for (int j = 0; j < genericList.length; j++)
             {
                 String type = genericList[j].trim();
-                Class<?> clazz = findClass(type);
+                Class clazz = findClass(type);
 
                 if (clazz != null)
                 {
@@ -201,11 +201,11 @@ public class SignatureParser
     }
 
     /**
-     * Lookup a class according to the import rules
+     * Lookup a class acording to the import rules
      * @param type The name of the class to find
      * @return The found class, or null if it does not exist
      */
-    private Class<?> findClass(String type)
+    private Class findClass(String type)
     {
         String itype = type;
 
@@ -218,7 +218,7 @@ public class SignatureParser
 
         try
         {
-            String full = classImports.get(itype);
+            String full = (String) classImports.get(itype);
             if (full == null)
             {
                 full = itype;
@@ -231,8 +231,9 @@ public class SignatureParser
             // log.debug("Trying to find class in package imports");
         }
 
-        for (String pkg : packageImports)
+        for (Iterator it = packageImports.iterator(); it.hasNext();)
         {
+            String pkg = (String) it.next();
             String lookup = pkg + '.' + itype;
 
             try
@@ -248,7 +249,7 @@ public class SignatureParser
         // So we've failed to find a Java class name. We can also lookup by
         // Javascript name to help the situation where there is a dynamic proxy
         // in the way.
-        Creator creator = creatorManager.getCreator(type, false);
+        Creator creator = creatorManager.getCreator(type);
         if (creator != null)
         {
             return creator.getType();
@@ -256,14 +257,15 @@ public class SignatureParser
 
         log.error("Failed to find class: '" + itype + "' from <signature> block.");
         log.info("- Looked in the following class imports:");
-        for (Entry<String, String> entry : classImports.entrySet())
+        for (Iterator it = classImports.entrySet().iterator(); it.hasNext();)
         {
+            Map.Entry entry = (Map.Entry) it.next();
             log.info("  - " + entry.getKey() + " -> " + entry.getValue());
         }
         log.info("- Looked in the following package imports:");
-        for (String pkg : packageImports)
+        for (Iterator it = packageImports.iterator(); it.hasNext();)
         {
-            log.info("  - " + pkg);
+            log.info("  - " + it.next());
         }
 
         return null;
@@ -275,7 +277,7 @@ public class SignatureParser
      * @param paramName The parameter declaration string
      * @return The array of generic types as strings
      */
-    private static String[] getGenericParameterTypeList(String paramName)
+    private String[] getGenericParameterTypeList(String paramName)
     {
         int openGeneric = paramName.indexOf('<');
         if (openGeneric == -1)
@@ -297,8 +299,7 @@ public class SignatureParser
         int i = 0;
         while (st.hasMoreTokens())
         {
-            types[i] = st.nextToken();
-            i++;
+            types[i++] = st.nextToken();
         }
 
         return types;
@@ -331,7 +332,7 @@ public class SignatureParser
         String className = classMethodChop.substring(0, lastDot).trim();
         String methodName = classMethodChop.substring(lastDot + 1).trim();
 
-        Class<?> clazz = findClass(className);
+        Class clazz = findClass(className);
         if (clazz == null)
         {
             // Debug is done by findClass()
@@ -340,8 +341,9 @@ public class SignatureParser
 
         Method method = null;
         Method[] methods = clazz.getMethods();
-        for (Method test : methods)
+        for (int j = 0; j < methods.length; j++)
         {
+            Method test = methods[j];
             if (test.getName().equals(methodName))
             {
                 if (method == null)
@@ -368,9 +370,9 @@ public class SignatureParser
      * @param paramDecl The full set of parameter declarations
      * @return An array of found parameters
      */
-    private static String[] split(String paramDecl)
+    private String[] split(String paramDecl)
     {
-        List<String> params = new ArrayList<String>();
+        List params = new ArrayList();
 
         boolean inGeneric = false;
         int start = 0;
@@ -412,18 +414,18 @@ public class SignatureParser
         String param = paramDecl.substring(start, paramDecl.length());
         params.add(param);
 
-        return params.toArray(new String[params.size()]);
+        return (String[]) params.toArray(new String[params.size()]);
     }
 
     /**
      * The map of specific class imports that we have parsed.
      */
-    private Map<String, String> classImports = new HashMap<String, String>();
+    private Map classImports = new HashMap();
 
     /**
      * The map of package imports that we have parsed.
      */
-    private List<String> packageImports = new ArrayList<String>();
+    private List packageImports = new ArrayList();
 
     /**
      * Having understood the extra type info we add it in here.
@@ -438,5 +440,5 @@ public class SignatureParser
     /**
      * The log stream
      */
-    public static final Log log = LogFactory.getLog(SignatureParser.class);
+    public static final Logger log = Logger.getLogger(SignatureParser.class);
 }

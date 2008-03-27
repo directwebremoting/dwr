@@ -18,9 +18,6 @@ package org.directwebremoting;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.directwebremoting.io.StringWrapper;
-import org.directwebremoting.proxy.ScriptProxy;
-
 /**
  * A ScriptBuffer is like a StringBuffer except that it is used to create
  * Javascript commands. There are 2 version of the <code>append()</code> method:
@@ -51,22 +48,8 @@ public class ScriptBuffer
     }
 
     /**
-     * @param buffer The ScriptBuffer to merge into this script
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see java.lang.StringBuffer#append(java.lang.String)
-     */
-    public ScriptBuffer appendAll(ScriptBuffer buffer)
-    {
-        for (Object part : buffer.parts)
-        {
-            parts.add(part);
-        }
-        return this;
-    }
-
-    /**
      * @param str The String to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(java.lang.String)
      */
     public ScriptBuffer appendScript(String str)
@@ -77,7 +60,7 @@ public class ScriptBuffer
 
     /**
      * @param b The boolean to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(boolean)
      */
     public ScriptBuffer appendData(boolean b)
@@ -89,62 +72,62 @@ public class ScriptBuffer
 
     /**
      * @param c The char to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(char)
      */
     public ScriptBuffer appendData(char c)
     {
-        parts.add(c);
+        parts.add(new Character(c));
         return this;
     }
 
     /**
      * @param d The double to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(double)
      */
     public ScriptBuffer appendData(double d)
     {
-        parts.add(d);
+        parts.add(new Double(d));
         return this;
     }
 
     /**
      * @param f The float to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(float)
      */
     public ScriptBuffer appendData(float f)
     {
-        parts.add(f);
+        parts.add(new Float(f));
         return this;
     }
 
     /**
      * @param i The int to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(int)
      */
     public ScriptBuffer appendData(int i)
     {
-        parts.add(i);
+        parts.add(new Integer(i));
         return this;
     }
 
     /**
      * @param l The long to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(long)
      */
     public ScriptBuffer appendData(long l)
     {
-        parts.add(l);
+        parts.add(new Long(l));
         return this;
     }
 
     /**
      * @param obj The Object to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(java.lang.Object)
      */
     public ScriptBuffer appendData(Object obj)
@@ -155,7 +138,7 @@ public class ScriptBuffer
 
     /**
      * @param str The String to add to the script
-     * @return this. To allow buffer.append(x).append(y).append(z);
+     * @return this. To allow sv.append(x).append(y).append(z);
      * @see java.lang.StringBuffer#append(java.lang.String)
      */
     public ScriptBuffer appendData(String str)
@@ -164,312 +147,9 @@ public class ScriptBuffer
         return this;
     }
 
-    /**
-     * Call a named function with no parameters.
-     * @param funcName The name of the function to call
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String)
-     */
-    public ScriptBuffer appendCall(String funcName)
-    {
-        appendScript(funcName);
-        appendScript("();");
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(");");
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(");");
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(");");
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(");");
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        appendScript(",");
-        appendData(param6);
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        appendScript(",");
-        appendData(param6);
-        appendScript(",");
-        appendData(param7);
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     * @param param8 The eighth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7, Object param8)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        appendScript(",");
-        appendData(param6);
-        appendScript(",");
-        appendData(param7);
-        appendScript(",");
-        appendData(param8);
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     * @param param8 The eighth parameter to the above function
-     * @param param9 The ninth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7, Object param8, Object param9)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        appendScript(",");
-        appendData(param6);
-        appendScript(",");
-        appendData(param7);
-        appendScript(",");
-        appendData(param8);
-        appendScript(",");
-        appendData(param9);
-        return this;
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     * @param param8 The eighth parameter to the above function
-     * @param param9 The ninth parameter to the above function
-     * @param param10 The tenth parameter to the above function
-     * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object, Object, Object, Object, Object, Object)
-     */
-    public ScriptBuffer appendCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7, Object param8, Object param9, Object param10)
-    {
-        appendScript(funcName);
-        appendScript("(");
-        appendData(param1);
-        appendScript(",");
-        appendData(param2);
-        appendScript(",");
-        appendData(param3);
-        appendScript(",");
-        appendData(param4);
-        appendScript(",");
-        appendData(param5);
-        appendScript(",");
-        appendData(param6);
-        appendScript(",");
-        appendData(param7);
-        appendScript(",");
-        appendData(param8);
-        appendScript(",");
-        appendData(param9);
-        appendScript(",");
-        appendData(param10);
-        return this;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
         return parts.toString();
@@ -480,13 +160,35 @@ public class ScriptBuffer
      * Do not use it without understanding the implications for future proofing.
      * @return The list of parts of the final output script
      */
-    public List<? extends Object> getParts()
+    public List getParts()
     {
         return parts;
     }
 
     /**
+     * A wrapper around a string to distinguish a string entered into this
+     * buffer as code and a string entered as data
+     */
+    public class StringWrapper
+    {
+        StringWrapper(String data)
+        {
+            this.data = data;
+        }
+
+        String data;
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+        public String toString()
+        {
+            return data;
+        }
+    }
+
+    /**
      * This is where we store all the script components waiting to be serialized
      */
-    private final List<Object> parts = new ArrayList<Object>();
+    private List parts = new ArrayList();
 }

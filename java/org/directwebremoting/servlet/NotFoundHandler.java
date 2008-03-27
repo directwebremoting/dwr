@@ -20,9 +20,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.util.Logger;
 
 /**
  * Display a 404 "not found" message
@@ -44,5 +43,5 @@ public class NotFoundHandler implements Handler
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(NotFoundHandler.class);
+    private static final Logger log = Logger.getLogger(NotFoundHandler.class);
 }

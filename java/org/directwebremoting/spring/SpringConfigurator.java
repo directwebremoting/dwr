@@ -16,10 +16,10 @@
 
 package org.directwebremoting.spring;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
@@ -44,18 +44,19 @@ public class SpringConfigurator implements Configurator
      */
     public void configure(Container container)
     {
-        AccessControl accessControl = container.getBean(AccessControl.class);
-        AjaxFilterManager ajaxFilterManager = container.getBean(AjaxFilterManager.class);
-        ConverterManager converterManager = container.getBean(ConverterManager.class);
-        CreatorManager creatorManager = container.getBean(CreatorManager.class);
+        AccessControl accessControl = (AccessControl) container.getBean(AccessControl.class.getName());
+        AjaxFilterManager ajaxFilterManager = (AjaxFilterManager) container.getBean(AjaxFilterManager.class.getName());
+        ConverterManager converterManager = (ConverterManager) container.getBean(ConverterManager.class.getName());
+        CreatorManager creatorManager = (CreatorManager) container.getBean(CreatorManager.class.getName());
 
         // Configure the creator types
         if (creatorTypes != null)
         {
-            for (Entry<String, String> entry : creatorTypes.entrySet())
+            for (Iterator it = creatorTypes.entrySet().iterator(); it.hasNext();)
             {
-                String typeName = entry.getKey();
-                String className = entry.getValue();
+                Map.Entry entry = (Map.Entry) it.next();
+                String typeName = (String) entry.getKey();
+                String className = (String) entry.getValue();
 
                 creatorManager.addCreatorType(typeName, className);
             }
@@ -64,10 +65,11 @@ public class SpringConfigurator implements Configurator
         // Configure the converter types
         if (converterTypes != null)
         {
-            for (Entry<String, String> entry : converterTypes.entrySet())
+            for (Iterator it = converterTypes.entrySet().iterator(); it.hasNext();)
             {
-                String typeName = entry.getKey();
-                String className = entry.getValue();
+                Map.Entry entry = (Map.Entry) it.next();
+                String typeName = (String) entry.getKey();
+                String className = (String) entry.getValue();
 
                 converterManager.addConverterType(typeName, className);
             }
@@ -78,10 +80,11 @@ public class SpringConfigurator implements Configurator
         {
             try
             {
-                for (Entry<String, CreatorConfig> entry : creators.entrySet())
+                for (Iterator it = creators.entrySet().iterator(); it.hasNext();)
                 {
-                    String scriptName = entry.getKey();
-                    CreatorConfig creatorConfig = entry.getValue();
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String scriptName = (String) entry.getKey();
+                    CreatorConfig creatorConfig = (CreatorConfig) entry.getValue();
 
                     if (creatorConfig.getCreator() != null)
                     {
@@ -91,36 +94,42 @@ public class SpringConfigurator implements Configurator
                     else
                     {
                         String creatorName = creatorConfig.getCreatorType();
-                        Map<String, String> params = creatorConfig.getParams();
+                        Map params = creatorConfig.getParams();
                         creatorManager.addCreator(scriptName, creatorName, params);
                     }
 
-                    for (String exclude : creatorConfig.getExcludes())
+                    List excludes = creatorConfig.getExcludes();
+                    for (Iterator eit = excludes.iterator(); eit.hasNext();)
                     {
+                        String exclude = (String) eit.next();
                         accessControl.addExcludeRule(scriptName, exclude);
                     }
 
-                    for (String include : creatorConfig.getIncludes())
+                    List includes = creatorConfig.getIncludes();
+                    for (Iterator iit = includes.iterator(); iit.hasNext();)
                     {
+                        String include = (String) iit.next();
                         accessControl.addIncludeRule(scriptName, include);
                     }
 
                     Properties auth = creatorConfig.getAuth();
-                    for (Entry<Object, Object> aentry : auth.entrySet())
+                    for (Iterator ait = auth.entrySet().iterator(); ait.hasNext();)
                     {
+                        Map.Entry aentry = (Map.Entry) ait.next();
                         String methodName = (String) aentry.getKey();
                         String role = (String) aentry.getValue();
                         accessControl.addRoleRestriction(scriptName, methodName, role);
                     }
 
-                    List<?> filters = creatorConfig.getFilters();
-                    for (Object obj : filters)
+                    List filters = creatorConfig.getFilters();
+                    for (Iterator fit = filters.iterator(); fit.hasNext();)
                     {
+                        Object obj = fit.next();
                         if (obj instanceof String)
                         {
                             String filterName = (String) obj;
 
-                            AjaxFilter filter = LocalUtil.classNewInstance(filterName, filterName, AjaxFilter.class);
+                            AjaxFilter filter = (AjaxFilter) LocalUtil.classNewInstance(filterName, filterName, AjaxFilter.class);
                             if (filter != null)
                             {
                                 ajaxFilterManager.addAjaxFilter(filter, scriptName);
@@ -140,7 +149,8 @@ public class SpringConfigurator implements Configurator
             }
             catch (Exception ex)
             {
-                throw new IllegalArgumentException(ex);
+                ex.printStackTrace();
+                throw new IllegalArgumentException(ex.toString());
             }
         }
 
@@ -149,25 +159,26 @@ public class SpringConfigurator implements Configurator
         {
             try
             {
-                for (Entry<String, ConverterConfig> entry : converters.entrySet())
+                for (Iterator it = converters.entrySet().iterator(); it.hasNext();)
                 {
-                    String match = entry.getKey();
-                    ConverterConfig converterConfig = entry.getValue();
-
-                    Map<String, String> params = converterConfig.getParams();
-                    if (!converterConfig.getIncludes().isEmpty())
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String match = (String) entry.getKey();
+                    ConverterConfig converterConfig = (ConverterConfig) entry.getValue();
+                    Map params = converterConfig.getParams();
+                    if (converterConfig.getIncludes().size() > 0)
                     {
-                        params.put("include", StringUtils.collectionToCommaDelimitedString(converterConfig.getIncludes()));
+                        params.put("include", StringUtils.collectionToCommaDelimitedString(
+                                converterConfig.getIncludes()));
                     }
 
-                    if (!converterConfig.getExcludes().isEmpty())
+                    if (converterConfig.getExcludes().size() > 0)
                     {
-                        params.put("exclude", StringUtils.collectionToCommaDelimitedString(converterConfig.getExcludes()));
+                        params.put("exclude", StringUtils.collectionToCommaDelimitedString(
+                                converterConfig.getExcludes()));
                     }
 
                     // params.put("force", Boolean.valueOf(converterConfig.isForce()));
-                    if (StringUtils.hasText(converterConfig.getJavascriptClassName()))
-                    {
+                    if (StringUtils.hasText(converterConfig.getJavascriptClassName())) {
                         params.put("javascript", converterConfig.getJavascriptClassName());
                     }
                     converterManager.addConverter(match, converterConfig.getType(), params);
@@ -190,7 +201,7 @@ public class SpringConfigurator implements Configurator
      * Setter for the map of Creator types
      * @param creatorTypes The new creator types map
      */
-    public void setCreatorTypes(Map<String, String> creatorTypes)
+    public void setCreatorTypes(Map creatorTypes)
     {
         this.creatorTypes = creatorTypes;
     }
@@ -199,7 +210,7 @@ public class SpringConfigurator implements Configurator
      * Setter for the map of Converter types
      * @param converterTypes The new creator types map
      */
-    public void setConverterTypes(Map<String, String> converterTypes)
+    public void setConverterTypes(Map converterTypes)
     {
         this.converterTypes = converterTypes;
     }
@@ -208,7 +219,7 @@ public class SpringConfigurator implements Configurator
      * Setter for the map of real Creators
      * @param creators The new creator map
      */
-    public void setCreators(Map<String, CreatorConfig> creators)
+    public void setCreators(Map creators)
     {
         this.creators = creators;
     }
@@ -217,7 +228,7 @@ public class SpringConfigurator implements Configurator
      * Setter for the map of real Converter
      * @param converters The new creator map
      */
-    public void setConverters(Map<String, ConverterConfig> converters)
+    public void setConverters(Map converters)
     {
         this.converters = converters;
     }
@@ -241,22 +252,22 @@ public class SpringConfigurator implements Configurator
     /**
      * The map of Converter types
      */
-    private Map<String, String> creatorTypes;
+    private Map creatorTypes;
 
     /**
      * The map of Converter types
      */
-    private Map<String, String> converterTypes;
+    private Map converterTypes;
 
     /**
      * The map of real Creators
      */
-    private Map<String, CreatorConfig> creators;
+    private Map creators;
 
     /**
      * The map of real Converter
      */
-    private Map<String, ConverterConfig> converters;
+    private Map converters;
 
     /**
      * The string of Signatures

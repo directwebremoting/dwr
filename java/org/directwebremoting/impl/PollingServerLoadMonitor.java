@@ -54,11 +54,10 @@ public class PollingServerLoadMonitor extends AbstractServerLoadMonitor implemen
      * @param disconnectedTime How long should clients spend disconnected
      * @deprecated Use {@link #setDisconnectedTime(int)} instead
      */
-    @Deprecated
     public void setTimeToNextPoll(int disconnectedTime)
     {
         log.warn("timeToNextPoll is deprecated. Please use disconnectedTime");
-        setDisconnectedTime(disconnectedTime);
+        this.disconnectedTime = disconnectedTime;
     }
 
     /**
@@ -67,12 +66,6 @@ public class PollingServerLoadMonitor extends AbstractServerLoadMonitor implemen
      */
     public void setDisconnectedTime(int disconnectedTime)
     {
-        if (disconnectedTime < 500)
-        {
-            log.warn("Small values of disconnectedTime could heavy server load. Using disconnectedTime=500");
-            disconnectedTime = 500;
-        }
-
         this.disconnectedTime = disconnectedTime;
     }
 

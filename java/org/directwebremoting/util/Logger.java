@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.util;
 
-import java.lang.reflect.Constructor;
-
 /**
  * A very quick and dirty logging implementation.
  * <code>java.util.logging</code> is out because we work with JDK 1.3 and we
@@ -30,75 +28,53 @@ public final class Logger
      * @param base The class to log against
      * @return A new logger
      */
-    public static Logger getLogger(Class<?> base)
+    public static Logger getLogger(Class base)
     {
         return new Logger(base);
     }
 
     /**
-     * @param defaultImplementation the defaultImplementation to set
-     */
-    public static void setDefaultImplementation(Class<? extends LoggingOutput> defaultImplementation)
-    {
-        Logger.defaultImplementation = defaultImplementation;
-    }
-
-    /**
-     * Prevent instantiation
+     * Prevent instansiation
      * @param base The class to log against
      */
-    @SuppressWarnings("unchecked")
-    private Logger(Class<?> base)
+    private Logger(Class base)
     {
-        if (!defaultTried)
+        if (!commonsLoggingTried)
         {
             try
             {
-                constructor = defaultImplementation.getConstructor(Class.class);
-                LoggingOutput internal = constructor.newInstance(Logger.class);
-                internal.debug("Logging using " + defaultImplementation.getSimpleName());
-                defaultAvailable = true;
+                LoggingOutput internal = new CommonsLoggingOutput(Logger.class);
+                internal.debug("Logging using commons-logging.");
+                commonsLoggingAvailable = true;
             }
-            catch (Throwable ex)
+            catch (NoClassDefFoundError ex)
             {
-                LoggingOutput internal = new ServletLoggingOutput(base);
+                LoggingOutput internal = new ServletLoggingOutput();
                 internal.debug("Logging using servlet.log.");
-                defaultAvailable = false;
+                commonsLoggingAvailable = false;
             }
 
-            defaultTried = true;
+            commonsLoggingTried = true;
         }
 
-        if (defaultAvailable)
+        if (commonsLoggingAvailable)
         {
-            try
-            {
-                output = constructor.newInstance(base);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-                output = new ServletLoggingOutput(base);
-            }
+            output = new CommonsLoggingOutput(base);
         }
         else
         {
-            output = new ServletLoggingOutput(base);
+            output = new ServletLoggingOutput();
         }
     }
-
-    private static Class<? extends LoggingOutput> defaultImplementation = CommonsLoggingOutput.class;
-
-    private static Constructor<? extends LoggingOutput> constructor;
-
-    private static boolean defaultTried = false;
-
-    private static boolean defaultAvailable = false;
 
     /**
      * The logging implementation
      */
     private LoggingOutput output;
+
+    private static boolean commonsLoggingTried = false;
+
+    private static boolean commonsLoggingAvailable = false;
 
     /**
      * Logger a debug message

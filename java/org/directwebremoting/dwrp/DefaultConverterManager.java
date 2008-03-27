@@ -19,26 +19,25 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NamedConverter;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
- * A class to manage the converter types and the instantiated class name matches.
+ * A class to manage the converter types and the instansiated class name matches.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class DefaultConverterManager implements ConverterManager
@@ -54,7 +53,7 @@ public class DefaultConverterManager implements ConverterManager
             return;
         }
 
-        Class<? extends Converter> clazz = LocalUtil.classForName(id, className, Converter.class);
+        Class clazz = LocalUtil.classForName(id, className, Converter.class);
         if (clazz != null)
         {
             log.debug("- adding converter type: " + id + " = " + clazz.getName());
@@ -65,9 +64,9 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#addConverter(java.lang.String, java.lang.String, java.util.Map)
      */
-    public void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException
+    public void addConverter(String match, String type, Map params) throws IllegalArgumentException, InstantiationException, IllegalAccessException
     {
-        Class<?> clazz = converterTypes.get(type);
+        Class clazz = (Class) converterTypes.get(type);
         if (clazz == null)
         {
             log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
@@ -75,6 +74,8 @@ public class DefaultConverterManager implements ConverterManager
         }
 
         Converter converter = (Converter) clazz.newInstance();
+        converter.setConverterManager(this);
+
         LocalUtil.setParams(converter, params, ignore);
 
         // add the converter for the specified match
@@ -87,22 +88,20 @@ public class DefaultConverterManager implements ConverterManager
     public void addConverter(String match, Converter converter) throws IllegalArgumentException
     {
         // Check that we don't have this one already
-        Converter other = converters.get(match);
+        Converter other = (Converter) converters.get(match);
         if (other != null)
         {
             log.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
         }
 
-        log.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
-
-        converter.setConverterManager(this);
+        log.debug("- adding converter: " + LocalUtil.getShortClassName(converter.getClass()) + " for " + match);
         converters.put(match, converter);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getConverterMatchStrings()
      */
-    public Collection<String> getConverterMatchStrings()
+    public Collection getConverterMatchStrings()
     {
         return Collections.unmodifiableSet(converters.keySet());
     }
@@ -112,13 +111,13 @@ public class DefaultConverterManager implements ConverterManager
      */
     public Converter getConverterByMatchString(String match)
     {
-        return converters.get(match);
+        return (Converter) converters.get(match);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#isConvertable(java.lang.Class)
      */
-    public boolean isConvertable(Class<?> paramType)
+    public boolean isConvertable(Class paramType)
     {
         return getConverter(paramType) != null;
     }
@@ -126,21 +125,15 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws MarshallException
     {
-        Object converted = inctx.getConverted(data, paramType);
+        Object converted = inctx.getConverted(iv, paramType);
         if (converted == null)
         {
-            Converter converter = null;
-
             // Was the inbound variable marshalled as an Object in the client
             // (could mean that this is an instance of one of our generated
             // JavaScript classes)
-            String type = data.getNamedObjectType();
-            if (type != null)
-            {
-                converter = getNamedConverter(paramType, type);
-            }
+            Converter converter = getNamedConverter(paramType, iv.getType());
 
             // Fall back to the standard way of locating a converter if we
             // didn't find anything above
@@ -157,13 +150,13 @@ public class DefaultConverterManager implements ConverterManager
             // We only think about doing a null conversion ourselves once we are
             // sure that there is a converter available. This prevents hackers
             // from passing null to things they are not allowed to convert
-            if (data.isNull())
+            if (iv.isNull())
             {
                 return null;
             }
 
             inctx.pushContext(incc);
-            converted = converter.convertInbound(paramType, data, inctx);
+            converted = converter.convertInbound(paramType, iv, inctx);
             inctx.popContext();
         }
 
@@ -173,15 +166,15 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext converted) throws MarshallException
+    public OutboundVariable convertOutbound(Object object, OutboundContext outctx) throws MarshallException
     {
-        if (data == null)
+        if (object == null)
         {
-            return new NonNestedOutboundVariable("null");
+            return new SimpleOutboundVariable("null", outctx, true);
         }
 
         // Check to see if we have done this one already
-        OutboundVariable ov = converted.get(data);
+        OutboundVariable ov = outctx.get(object);
         if (ov != null)
         {
             // So the object as been converted already, we just need to refer to it.
@@ -189,21 +182,20 @@ public class DefaultConverterManager implements ConverterManager
         }
 
         // So we will have to do the conversion
-        Converter converter = getConverter(data);
+        Converter converter = getConverter(object);
         if (converter == null)
         {
-            String message = Messages.getString("DefaultConverterManager.MissingConverter", data.getClass().getName());
-            log.error(message);
-            return new ErrorOutboundVariable(message);
+            log.error(Messages.getString("DefaultConverterManager.MissingConverter", object.getClass().getName()));
+            return new SimpleOutboundVariable("null", outctx, true);
         }
 
-        return converter.convertOutbound(data, converted);
+        return converter.convertOutbound(object, outctx);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#setExtraTypeInfo(org.directwebremoting.TypeHintContext, java.lang.Class)
      */
-    public void setExtraTypeInfo(TypeHintContext thc, Class<?> type)
+    public void setExtraTypeInfo(TypeHintContext thc, Class type)
     {
         extraTypeInfoMap.put(thc, type);
     }
@@ -211,15 +203,16 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getExtraTypeInfo(org.directwebremoting.TypeHintContext)
      */
-    public Class<?> getExtraTypeInfo(TypeHintContext thc)
+    public Class getExtraTypeInfo(TypeHintContext thc)
     {
-        return extraTypeInfoMap.get(thc);
+        Class type = (Class) extraTypeInfoMap.get(thc);
+        return type;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#setConverters(java.util.Map)
      */
-    public void setConverters(Map<String, Converter> converters)
+    public void setConverters(Map converters)
     {
         this.converters = converters;
     }
@@ -245,42 +238,52 @@ public class DefaultConverterManager implements ConverterManager
      * When we are using typed Javascript names we sometimes want to get a
      * specially named converter
      * @param paramType The class that we are converting to
-     * @param javascriptClassName The type name as passed in from the client
+     * @param type The type name as passed in from the client
      * @return The Converter that matches this request (if any)
-     * @throws MarshallException IF marshalling fails
+     * @throws MarshallException
      */
-    protected Converter getNamedConverter(Class<?> paramType, String javascriptClassName) throws MarshallException
+    protected Converter getNamedConverter(Class paramType, String type) throws MarshallException
     {
-        // Locate a converter for this JavaScript classname
-        for (Map.Entry<String, Converter> entry : converters.entrySet())
+        if (type.startsWith("Object_"))
         {
-            String match = entry.getKey();
-            Converter conv = entry.getValue();
+            // Extract the JavaScript classname from the inbound type
+            String javascriptClassName = type.substring("Object_".length());
 
-            // JavaScript mapping is only applicable for compound converters
-            if (conv instanceof NamedConverter)
+            // Locate a converter for this JavaScript classname
+            Iterator it = converters.entrySet().iterator();
+            while (it.hasNext())
             {
-                NamedConverter boConv = (NamedConverter) conv;
-                if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
+                Map.Entry entry = (Map.Entry) it.next();
+                String match = (String) entry.getKey();
+                Converter conv = (Converter) entry.getValue();
+
+                // JavaScript mapping is only applicable for compound converters
+                if (conv instanceof NamedConverter)
                 {
-                    // We found a potential converter! But is the converter's
-                    // Java class compatible with the parameter type?
-                    try
+                    NamedConverter boConv = (NamedConverter) conv;
+                    if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
                     {
-                        Class<?> inboundClass = LocalUtil.classForName(match);
-                        if (paramType.isAssignableFrom(inboundClass))
+                        // We found a potential converter! But is the
+                        // converter's Java class compatible with the
+                        // parameter type?
+                        try
                         {
-                            // Hack: We also want to make sure that the
-                            // converter creates its object based on the inbound
-                            // class instead of the parameter type, and we have
-                            // to use the other reference for this:
-                            boConv.setInstanceType(inboundClass);
-                            return boConv;
+                            Class inboundClass = LocalUtil.classForName(match);
+                            if (paramType.isAssignableFrom(inboundClass))
+                            {
+                                // Hack: We also want to make sure that the
+                                // converter creates its object based on the
+                                // inbound class instead of the parameter
+                                // type, and we have to use the other ref
+                                // for this:
+                                boConv.setInstanceType(inboundClass);
+                                return boConv;
+                            }
                         }
-                    }
-                    catch (ClassNotFoundException ex)
-                    {
-                        throw new MarshallException(paramType, ex);
+                        catch (ClassNotFoundException ex)
+                        {
+                            throw new MarshallException(paramType, ex);
+                        }
                     }
                 }
             }
@@ -293,7 +296,7 @@ public class DefaultConverterManager implements ConverterManager
      * @param paramType The type to find a converter for
      * @return The converter for the given type, or null if one can't be found
      */
-    private Converter getConverter(Class<?> paramType)
+    private Converter getConverter(Class paramType)
     {
         // Can we find a converter assignable to paramType in the HashMap?
         Converter converter = getConverterAssignableFrom(paramType);
@@ -308,7 +311,7 @@ public class DefaultConverterManager implements ConverterManager
         // dynamic proxies
         if (lookup.startsWith("$Proxy"))
         {
-            converter = converters.get("$Proxy*");
+            converter = (Converter) converters.get("$Proxy*");
             if (converter != null)
             {
                 return converter;
@@ -318,14 +321,14 @@ public class DefaultConverterManager implements ConverterManager
         while (true)
         {
             // Can we find a converter using wildcards?
-            converter = converters.get(lookup + ".*");
+            converter = (Converter) converters.get(lookup + ".*");
             if (converter != null)
             {
                 return converter;
             }
 
             // Arrays can have wildcards like [L* so we don't require a '.'
-            converter = converters.get(lookup + '*');
+            converter = (Converter) converters.get(lookup + '*');
             if (converter != null)
             {
                 return converter;
@@ -362,7 +365,7 @@ public class DefaultConverterManager implements ConverterManager
                 lookup = lookup.substring(arrayMarkers - 1, arrayMarkers + 1);
 
                 // Now can we find it?
-                converter = converters.get(lookup);
+                converter = (Converter) converters.get(lookup);
                 if (converter != null)
                 {
                     return converter;
@@ -377,7 +380,7 @@ public class DefaultConverterManager implements ConverterManager
      * @param paramType The type to find a converter for
      * @return The converter assignable for the given type, or null if one can't be found
      */
-    private Converter getConverterAssignableFrom(Class<?> paramType)
+    private Converter getConverterAssignableFrom(Class paramType)
     {
         if (paramType == null)
         {
@@ -387,16 +390,17 @@ public class DefaultConverterManager implements ConverterManager
         String lookup = paramType.getName();
 
         // Can we find the converter for paramType in the converters HashMap?
-        Converter converter = converters.get(lookup);
+        Converter converter = (Converter) converters.get(lookup);
         if (converter != null)
         {
             return converter;
         }
 
         // Lookup all of the interfaces of this class for a match
-        for (Class<?> anInterface : paramType.getInterfaces())
+        Class[] interfaces = paramType.getInterfaces();
+        for (int i = 0; i < interfaces.length; i++)
         {
-            converter = getConverterAssignableFrom(anInterface);
+            converter = getConverterAssignableFrom(interfaces[i]);
             if (converter != null)
             {
                 converters.put(lookup, converter);
@@ -417,26 +421,26 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * Where we store real type information behind generic types
      */
-    protected Map<TypeHintContext, Class<?>> extraTypeInfoMap = new HashMap<TypeHintContext, Class<?>>();
+    private Map extraTypeInfoMap = new HashMap();
+
+    /**
+     * The log stream
+     */
+    private static final Logger log = Logger.getLogger(DefaultConverterManager.class);
 
     /**
      * The list of the available converters
      */
-    protected Map<String, Class<?>> converterTypes = new HashMap<String, Class<?>>();
+    private Map converterTypes = new HashMap();
 
     /**
      * The list of the configured converters
      */
-    protected Map<String, Converter> converters = new HashMap<String, Converter>();
+    private Map converters = new HashMap();
 
     /**
      * The properties that we don't warn about if they don't exist.
      * @see DefaultConverterManager#addConverter(String, String, Map)
      */
-    private static List<String> ignore = Arrays.asList("converter", "match");
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DefaultConverterManager.class);
+    private static List ignore = Arrays.asList(new String[] { "converter", "match" });
 }

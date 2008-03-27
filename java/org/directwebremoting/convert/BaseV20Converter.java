@@ -28,7 +28,7 @@ public abstract class BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#setConverterManager(org.directwebremoting.ConverterManager)
      */
-    public void setConverterManager(ConverterManager converterManager)
+    public void setConverterManager(ConverterManager config)
     {
     }
 }

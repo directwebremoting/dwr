@@ -16,18 +16,18 @@
 package org.directwebremoting.spring;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.create.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -75,16 +75,15 @@ public class SpringCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.create.Creator#init(org.w3c.dom.Element)
      */
-    @Override
-    public void setProperties(Map<String, String> params) throws IllegalArgumentException
+    public void setProperties(Map params) throws IllegalArgumentException
     {
-        List<String> locValues = new ArrayList<String>();
+        List locValues = new ArrayList();
 
-        for (Map.Entry<String, String> entry : params.entrySet())
+        for (Iterator it = params.entrySet().iterator(); it.hasNext();)
         {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
+            Map.Entry entry = (Map.Entry) it.next();
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
             if (key.startsWith("location"))
             {
                 log.debug("Adding configLocation: " + value + " from parameter: " + key);
@@ -92,13 +91,13 @@ public class SpringCreator extends AbstractCreator implements Creator
             }
         }
 
-        configLocation = locValues.toArray(new String[locValues.size()]);
+        configLocation = (String[]) locValues.toArray(new String[locValues.size()]);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         if (clazz == null)
         {
@@ -187,7 +186,6 @@ public class SpringCreator extends AbstractCreator implements Creator
      * @param factory The factory to set.
      * @deprecated This method is misnamed use setOverrideBeanFactory
      */
-    @Deprecated
     public static void setXmlBeanFactory(BeanFactory factory)
     {
         SpringCreator.overrideFactory = factory;
@@ -210,7 +208,7 @@ public class SpringCreator extends AbstractCreator implements Creator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(SpringCreator.class);
+    private static final Logger log = Logger.getLogger(SpringCreator.class);
 
     /**
      * The Spring beans factory from which we get our beans.
@@ -226,7 +224,7 @@ public class SpringCreator extends AbstractCreator implements Creator
     /**
      * The cached type of bean that we are creating
      */
-    private Class<?> clazz = null;
+    private Class clazz = null;
 
     /**
      * An array of locations to search through for a beans.xml file

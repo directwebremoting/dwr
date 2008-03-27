@@ -35,7 +35,6 @@ import org.directwebremoting.WebContextFactory;
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @deprecated Use WebContext / WebContextFactory for better results
  */
-@Deprecated
 public class ExecutionContext implements WebContext
 {
     /**
@@ -123,7 +122,7 @@ public class ExecutionContext implements WebContext
     /* (non-Javadoc)
      * @see uk.ltd.getahead.dwr.WebContext#getAllScriptSessions()
      */
-    public Collection<ScriptSession> getAllScriptSessions()
+    public Collection getAllScriptSessions()
     {
         throw new UnsupportedOperationException("Use WebContextFactory.get().getAllScriptSessions()");
     }
@@ -131,17 +130,9 @@ public class ExecutionContext implements WebContext
     /* (non-Javadoc)
      * @see uk.ltd.getahead.dwr.WebContext#getScriptSessionsByPage(java.lang.String)
      */
-    public Collection<ScriptSession> getScriptSessionsByPage(String page)
+    public Collection getScriptSessionsByPage(String page)
     {
         throw new UnsupportedOperationException("Use WebContextFactory.get().getScriptSessionsByPage()");
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getScriptSessionById(java.lang.String)
-     */
-    public ScriptSession getScriptSessionById(String sessionId)
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getScriptSessionById()");
     }
 
     /* (non-Javadoc)
@@ -153,17 +144,17 @@ public class ExecutionContext implements WebContext
     }
 
     /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getCurrentPage()
+     * @see uk.ltd.getahead.dwr.WebContext#setScriptSessionId(java.lang.String)
      */
-    public String getCurrentPage()
+    public void setCurrentPageInformation(String page, String scriptSessionId)
     {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().toJavascript()");
+        throw new UnsupportedOperationException("Use WebContextFactory.get().setPageAndSessionIds()");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getContextPath()
+     * @see uk.ltd.getahead.dwr.WebContext#getCurrentPage()
      */
-    public String getContextPath()
+    public String getCurrentPage()
     {
         throw new UnsupportedOperationException("Use WebContextFactory.get().toJavascript()");
     }
@@ -174,7 +165,6 @@ public class ExecutionContext implements WebContext
      * not started by DWR.
      * @deprecated Use WebContextFactory.get() for better results
      */
-    @Deprecated
     public static ExecutionContext get()
     {
         WebContext context = WebContextFactory.get();

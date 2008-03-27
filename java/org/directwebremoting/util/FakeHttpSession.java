@@ -23,9 +23,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * For the benefit of anyone that wants to create a fake HttpSession
  * that doesn't do anything other than not be null.
@@ -109,8 +106,6 @@ public class FakeHttpSession implements HttpSession
      * @see javax.servlet.http.HttpSession#getSessionContext()
      * @deprecated
      */
-    @SuppressWarnings({"UnnecessaryFullyQualifiedName"})
-    @Deprecated
     public javax.servlet.http.HttpSessionContext getSessionContext()
     {
         return null;
@@ -127,7 +122,6 @@ public class FakeHttpSession implements HttpSession
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpSession#getValue(java.lang.String)
      */
-    @Deprecated
     public Object getValue(String name)
     {
         return attributes.get(name);
@@ -136,7 +130,7 @@ public class FakeHttpSession implements HttpSession
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpSession#getAttributeNames()
      */
-    public Enumeration<String> getAttributeNames()
+    public Enumeration getAttributeNames()
     {
         return Collections.enumeration(attributes.keySet());
     }
@@ -144,10 +138,9 @@ public class FakeHttpSession implements HttpSession
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpSession#getValueNames()
      */
-    @Deprecated
     public String[] getValueNames()
     {
-        return attributes.keySet().toArray(new String[attributes.keySet().size()]);
+        return (String[]) attributes.keySet().toArray(new String[attributes.keySet().size()]);
     }
 
     /* (non-Javadoc)
@@ -161,7 +154,6 @@ public class FakeHttpSession implements HttpSession
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpSession#putValue(java.lang.String, java.lang.Object)
      */
-    @Deprecated
     public void putValue(String name, Object value)
     {
         attributes.put(name, value);
@@ -178,7 +170,6 @@ public class FakeHttpSession implements HttpSession
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpSession#removeValue(java.lang.String)
      */
-    @Deprecated
     public void removeValue(String name)
     {
         attributes.remove(name);
@@ -207,7 +198,7 @@ public class FakeHttpSession implements HttpSession
     /**
      * The list of attributes
      */
-    private Map<String, Object> attributes = new HashMap<String, Object>();
+    private Map attributes = new HashMap();
 
     /**
      * When were we created
@@ -222,5 +213,5 @@ public class FakeHttpSession implements HttpSession
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FakeHttpSession.class);
+    private static final Logger log = Logger.getLogger(FakeHttpSession.class);
 }

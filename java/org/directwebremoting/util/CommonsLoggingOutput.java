@@ -30,7 +30,7 @@ public class CommonsLoggingOutput implements LoggingOutput
      * Create a logger specific to commons-logging
      * @param base The class to log against.
      */
-    public CommonsLoggingOutput(Class<?> base)
+    public CommonsLoggingOutput(Class base)
     {
         log = LogFactory.getLog(base);
     }

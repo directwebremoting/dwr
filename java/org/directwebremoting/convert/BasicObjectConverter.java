@@ -22,19 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.dwrp.MapOutboundVariable;
-import org.directwebremoting.dwrp.ObjectJsonOutboundVariable;
-import org.directwebremoting.dwrp.ObjectNonJsonOutboundVariable;
 import org.directwebremoting.dwrp.ParseUtil;
 import org.directwebremoting.dwrp.ProtocolConstants;
+import org.directwebremoting.dwrp.ObjectOutboundVariable;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.JsonModeMarshallException;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.OutboundContext;
@@ -42,6 +36,7 @@ import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -55,9 +50,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String value = data.getValue();
+        String value = iv.getValue();
 
         // If the text is null then the whole bean is null
         if (value.trim().equals(ProtocolConstants.INBOUND_NULL))
@@ -93,23 +88,24 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             // is referenced later nested down in the conversion process.
             if (instanceType != null)
             {
-                inctx.addConverted(data, instanceType, bean);
+                inctx.addConverted(iv, instanceType, bean);
             }
             else
             {
-                inctx.addConverted(data, paramType, bean);
+                inctx.addConverted(iv, paramType, bean);
             }
 
-            Map<String, Property> properties = getPropertyMapFromObject(bean, false, true);
+            Map properties = getPropertyMapFromObject(bean, false, true);
 
             // Loop through the properties passed in
-            Map<String, String> tokens = extractInboundTokens(paramType, value);
-            for (Entry<String, String> entry : tokens.entrySet())
+            Map tokens = extractInboundTokens(paramType, value);
+            for (Iterator it = tokens.entrySet().iterator(); it.hasNext();)
             {
-                String key = entry.getKey();
-                String val = entry.getValue();
+                Map.Entry entry = (Map.Entry) it.next();
+                String key = (String) entry.getKey();
+                String val = (String) entry.getValue();
 
-                Property property = properties.get(key);
+                Property property = (Property) properties.get(key);
                 if (property == null)
                 {
                     log.warn("Missing java bean property to match javascript property: " + key + ". For causes see debug level logs:");
@@ -119,7 +115,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
                     log.debug("- The property may be excluded using include or exclude rules.");
 
                     StringBuffer all = new StringBuffer();
-                    for (Iterator<String> pit = properties.keySet().iterator(); pit.hasNext();)
+                    for (Iterator pit = properties.keySet().iterator(); pit.hasNext();)
                     {
                         all.append(pit.next());
                         if (pit.hasNext())
@@ -131,14 +127,13 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
                     continue;
                 }
 
-                Class<?> propType = property.getPropertyType();
+                Class propType = property.getPropertyType();
 
                 String[] split = ParseUtil.splitInbound(val);
                 String splitValue = split[LocalUtil.INBOUND_INDEX_VALUE];
                 String splitType = split[LocalUtil.INBOUND_INDEX_TYPE];
 
-                InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
-                nested.dereference();
+                InboundVariable nested = new InboundVariable(iv.getLookup(), null, splitType, splitValue);
                 TypeHintContext incc = createTypeHintContext(inctx, property);
 
                 Object output = converterManager.convertInbound(propType, nested, inctx, incc);
@@ -175,32 +170,20 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
     {
         // Where we collect out converted children
-        Map<String, OutboundVariable> ovs = new TreeMap<String, OutboundVariable>();
+        Map ovs = new TreeMap();
 
-        // We need to do this before collecting the children to save recursion
-        MapOutboundVariable ov;
-        if (outctx.isJsonMode())
-        {
-            if (javascript != null)
-            {
-                throw new JsonModeMarshallException(data.getClass(), "Can't used named Javascript objects in JSON mode");
-            }
-
-            ov = new ObjectJsonOutboundVariable();
-        }
-        else
-        {
-            ov = new ObjectNonJsonOutboundVariable(outctx, getJavascript());
-        }
+        // We need to do this before collecing the children to save recurrsion
+        ObjectOutboundVariable ov = new ObjectOutboundVariable(outctx);
         outctx.put(data, ov);
 
         try
         {
-            Map<String, Property> properties = getPropertyMapFromObject(data, true, false);
-            for (Entry<String, Property> entry : properties.entrySet())
+            Map properties = getPropertyMapFromObject(data, true, false);
+            for (Iterator it = properties.entrySet().iterator(); it.hasNext();)
             {
-                String name = entry.getKey();
-                Property property = entry.getValue();
+                Map.Entry entry = (Map.Entry) it.next();
+                String name = (String) entry.getKey();
+                Property property = (Property) entry.getValue();
 
                 Object value = property.getValue(data);
                 OutboundVariable nested = getConverterManager().convertOutbound(value, outctx);
@@ -217,7 +200,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             throw new MarshallException(data.getClass(), ex);
         }
 
-        ov.setChildren(ovs);
+        ov.init(ovs, getJavascript());
 
         return ov;
     }
@@ -233,9 +216,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             throw new IllegalArgumentException(Messages.getString("BeanConverter.OnlyIncludeOrExclude"));
         }
 
-        exclusions = new ArrayList<String>();
+        exclusions = new ArrayList();
 
-        String toSplit = excludes.replace(",", " ");
+        String toSplit = LocalUtil.replace(excludes, ",", " ");
         StringTokenizer st = new StringTokenizer(toSplit);
         while (st.hasMoreTokens())
         {
@@ -260,9 +243,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             throw new IllegalArgumentException(Messages.getString("BeanConverter.OnlyIncludeOrExclude"));
         }
 
-        inclusions = new ArrayList<String>();
+        inclusions = new ArrayList();
 
-        String toSplit = includes.replace(",", " ");
+        String toSplit = LocalUtil.replace(includes, ",", " ");
         StringTokenizer st = new StringTokenizer(toSplit);
         while (st.hasMoreTokens())
         {
@@ -288,7 +271,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.NamedConverter#getInstanceType()
      */
-    public Class<?> getInstanceType()
+    public Class getInstanceType()
     {
         return instanceType;
     }
@@ -296,7 +279,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.NamedConverter#setInstanceType(java.lang.Class)
      */
-    public void setInstanceType(Class<?> instanceType)
+    public void setInstanceType(Class instanceType)
     {
         this.instanceType = instanceType;
     }
@@ -304,7 +287,6 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.ConverterManager)
      */
-    @Override
     public void setConverterManager(ConverterManager converterManager)
     {
         this.converterManager = converterManager;
@@ -329,9 +311,10 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
         if (exclusions != null)
         {
             // Check each exclusions and return false if we get a match
-            for (String exclusion : exclusions)
+            for (Iterator it = exclusions.iterator(); it.hasNext();)
             {
-                if (property.equals(exclusion))
+                String test = (String) it.next();
+                if (property.equals(test))
                 {
                     return false;
                 }
@@ -346,9 +329,10 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
         if (inclusions != null)
         {
             // Check each inclusion and return true if we get a match
-            for (String inclusion : inclusions)
+            for (Iterator it = inclusions.iterator(); it.hasNext();)
             {
-                if (property.equals(inclusion))
+                String test = (String) it.next();
+                if (property.equals(test))
                 {
                     return true;
                 }
@@ -370,9 +354,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
      * @return A Map of the tokens in the string
      * @throws MarshallException If the marshalling fails
      */
-    protected static Map<String, String> extractInboundTokens(Class<?> paramType, String value) throws MarshallException
+    protected Map extractInboundTokens(Class paramType, String value) throws MarshallException
     {
-        Map<String, String> tokens = new HashMap<String, String>();
+        Map tokens = new HashMap();
         StringTokenizer st = new StringTokenizer(value, ProtocolConstants.INBOUND_MAP_SEPARATOR);
         int size = st.countTokens();
 
@@ -417,22 +401,22 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /**
      * The javascript class name for the converted objects
      */
-    protected String javascript = null;
+    protected String javascript;
 
     /**
      * The list of excluded properties
      */
-    protected List<String> exclusions = null;
+    protected List exclusions = null;
 
     /**
      * The list of included properties
      */
-    protected List<String> inclusions = null;
+    protected List inclusions = null;
 
     /**
      * A type that allows us to fulfill an interface or subtype requirement
      */
-    protected Class<?> instanceType = null;
+    protected Class instanceType = null;
 
     /**
      * To forward marshalling requests
@@ -442,5 +426,5 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(BasicObjectConverter.class);
+    private static final Logger log = Logger.getLogger(BasicObjectConverter.class);
 }

@@ -15,11 +15,11 @@
  */
 package org.directwebremoting.convert;
 
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
@@ -35,9 +35,10 @@ public class PrimitiveConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String value = data.getValue().trim();
+        String value = iv.getValue();
+        value = LocalUtil.decode(value.trim());
 
         try
         {
@@ -56,27 +57,27 @@ public class PrimitiveConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
+    public OutboundVariable convertOutbound(Object object, OutboundContext outctx)
     {
-        Class<?> paramType = data.getClass();
+        Class paramType = object.getClass();
 
-        if (data.equals(Boolean.TRUE))
+        if (object.equals(Boolean.TRUE))
         {
-            return new NonNestedOutboundVariable("true");
+            return new SimpleOutboundVariable("true", outctx, true);
         }
-        else if (data.equals(Boolean.FALSE))
+        else if (object.equals(Boolean.FALSE))
         {
-            return new NonNestedOutboundVariable("false");
+            return new SimpleOutboundVariable("false", outctx, true);
         }
         else if (paramType == Character.class)
         {
             // Treat characters as strings
-            return new NonNestedOutboundVariable('\"' + JavascriptUtil.escapeJavaScript(data.toString()) + '\"');
+            return new SimpleOutboundVariable('\"' + JavascriptUtil.escapeJavaScript(object.toString()) + '\"', outctx, true);
         }
         else
         {
             // We just use the default toString for all numbers
-            return new NonNestedOutboundVariable(data.toString());
+            return new SimpleOutboundVariable(object.toString(), outctx, true);
         }
     }
 }

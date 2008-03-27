@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * While a Marshaller is processing a request it can register a ScriptConduit
@@ -28,18 +29,15 @@ import org.directwebremoting.ScriptBuffer;
  * This interface allows this to happen.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class ScriptConduit implements Comparable<ScriptConduit>
+public abstract class ScriptConduit implements Comparable
 {
     /**
      * All ScriptConduit need a rank
      * @param rank How does this ScriptConduit sort
-     * @param holdingConnectionToBrowser Is this conduit a fake one for tracking
-     * things, or does it represent a real long term open connection?
      */
-    public ScriptConduit(int rank, boolean holdingConnectionToBrowser)
+    public ScriptConduit(int rank)
     {
         this.rank = rank;
-        this.holdingConnectionToBrowser = holdingConnectionToBrowser;
     }
 
     /**
@@ -81,7 +79,7 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
      * <p>It is not an error to refuse to handle the script and return false, it
      * just indicates that this ScriptConduit did not accept the script.
      * If the ScriptConduit can no longer function then it should throw an
-     * exception and it will be assumed to be no longer useful.
+     * exception and it will be asumed to be no longer useful.
      * If you want to implement this method then you will probably be doing
      * something like calling {@link ServletOutputStream#print(String)} and
      * passing in the results of calling ScriptBufferUtil.createOutput().
@@ -92,26 +90,13 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
      */
     public abstract boolean addScript(ScriptBuffer script) throws IOException, MarshallException;
 
-    /**
-     * Is this conduit a fake one for tracking things, or does it represent a
-     * real long term open connection?
-     */
-    public boolean isHoldingConnectionToBrowser()
-    {
-        return holdingConnectionToBrowser;
-    }
-
-    /**
-     * @see #isHoldingConnectionToBrowser()
-     */
-    private boolean holdingConnectionToBrowser;
-
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    @SuppressWarnings({"SubtractionInCompareTo", "NumericCastThatLosesPrecision"})
-    public int compareTo(ScriptConduit that)
+    public int compareTo(Object obj)
     {
+        ScriptConduit that = (ScriptConduit) obj;
+
         int rankdiff = that.getRank() - this.getRank();
         if (rankdiff != 0)
         {
@@ -124,7 +109,6 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    @Override
     public boolean equals(Object obj)
     {
         if (obj == null)
@@ -149,8 +133,6 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    @Override
     public int hashCode()
     {
         return 17 + (int) id;
@@ -159,10 +141,9 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
-        return getClass().getSimpleName() + "[id=" + id + "]";
+        return LocalUtil.getShortClassName(getClass()) + "[id=" + id + "]";
     }
 
     /**
@@ -181,8 +162,7 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
      */
     private static synchronized long getNextId()
     {
-        nextId++;
-        return nextId;
+        return nextId++;
     }
 
     /**

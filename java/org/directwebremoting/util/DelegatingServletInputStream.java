@@ -56,7 +56,6 @@ public class DelegatingServletInputStream extends ServletInputStream
     /* (non-Javadoc)
      * @see java.io.InputStream#read()
      */
-    @Override
     public int read() throws IOException
     {
         return proxy.read();
@@ -65,7 +64,6 @@ public class DelegatingServletInputStream extends ServletInputStream
     /* (non-Javadoc)
      * @see java.io.InputStream#close()
      */
-    @Override
     public void close() throws IOException
     {
         super.close();

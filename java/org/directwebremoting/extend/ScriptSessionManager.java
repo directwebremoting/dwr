@@ -17,9 +17,6 @@ package org.directwebremoting.extend;
 
 import java.util.Collection;
 
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.event.ScriptSessionListener;
-
 /**
  * A ScriptSessionManager looks after a number of sessions (keyed using a
  * Javascript variable)
@@ -35,7 +32,7 @@ public interface ScriptSessionManager
      * something non null.
      * @return An iterator over the currently known sessions, by id
      */
-    Collection<ScriptSession> getAllScriptSessions();
+    Collection getAllScriptSessions();
 
     /**
      * For a given script session id, either create a new ScriptSession object
@@ -43,55 +40,39 @@ public interface ScriptSessionManager
      * @param url The URL including 'http://', up to (but not including) '?' or '#'
      * @return A ScriptSession.
      */
-    Collection<ScriptSession> getScriptSessionsByPage(String url);
+    Collection getScriptSessionsByPage(String url);
 
     /**
-     * Lookup all the windows associated with a given browser
-     * @param httpSessionId The browser id to lookup
-     * @return A list of script sessions for each open window
-     */
-    Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId);
-
-    /**
-      * For a given script session id, return the related ScriptSession object
-     * or null if the id is not known.
+     * For a given script session id, either create a new ScriptSession object
+     * or retrieve an existing one if one exists.
      * @param id The id to get a ScriptSession object for
-     * @param url The URL including 'http://', up to (but not including) '?' or '#' (or null if not known)
-     * @param httpSessionId The session ID (or null if not known)
-     * @return A ScriptSession to match the ID, or null if a match is not found.
+     * @return A ScriptSession.
      */
-    RealScriptSession getScriptSession(String id, String url, String httpSessionId);
+    RealScriptSession getScriptSession(String id);
 
     /**
-     * When a new client page-loads, we create a script session.
+     * Locate the given script session on a page
+     * @param scriptSession The session to locate on a page
      * @param url The URL including 'http://', up to (but not including) '?' or '#'
-     * @param httpSessionId The session ID (or null if not known)
-     * @return The new script session id
      */
-    RealScriptSession createScriptSession(String url, String httpSessionId);
+    void setPageForScriptSession(RealScriptSession scriptSession, String url);
 
     /**
      * Accessor for the time (in milliseconds) when unused ScriptSessions will expire
      * @return the scriptSessionTimeout
      */
-    long getScriptSessionTimeout();
+    public long getScriptSessionTimeout();
 
     /**
-     * Maintain the list of {@link ScriptSessionListener}s
-     * @param li the ScriptSessionListener to add
+     * Accessor for the time (in milliseconds) when unused ScriptSessions will expire
+     * @param scriptSessionTimeout the timeout to set
      */
-    public void addScriptSessionListener(ScriptSessionListener li);
-
-    /**
-     * Maintain the list of {@link ScriptSessionListener}s
-     * @param li the ScriptSessionListener to remove
-     */
-    public void removeScriptSessionListener(ScriptSessionListener li);
+    public void setScriptSessionTimeout(long scriptSessionTimeout);
 
     /**
      * The default length of time a session can go unused before it
      * automatically becomes invalid and is recycled.
      * The default is 5mins
      */
-    static final long DEFAULT_TIMEOUT_MILLIS = 5 * 60 * 1000;
+    public static final long DEFAULT_TIMEOUT_MILLIS = 300000;
 }

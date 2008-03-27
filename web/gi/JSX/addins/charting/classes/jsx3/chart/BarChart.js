@@ -2,44 +2,4 @@
  * Copyright (c) 2001-2007, TIBCO Software Inc.
  * Use, modification, and distribution subject to terms of license.
  */
-jsx3.require("jsx3.chart.CartesianChart","jsx3.chart.BarSeries");jsx3.Class.defineClass("jsx3.chart.BCChart",jsx3.chart.CartesianChart,null,function(d,k){var
-ub={d:"type",i:"bad parallel axis type: ",a:"clustered",h:"zi",c:"stacked100",f:"getMinValue",g:"unsupported Bar/Column Chart type: ",b:"stacked",e:"Mg"};d.TYPE_CLUSTERED=ub.a;d.TYPE_STACKED=ub.b;d.TYPE_STACKED100=ub.c;d.nT={clustered:1,stacked:1,stacked100:1};k.init=function(f,j,m,l,n){this.jsxsuper(f,j,m,l,n);this.type=ub.a;this.seriesOverlap=0;this.categoryCoverage=0.65;};k.getType=function(){return this.type;};k.setType=function(j){if(d.nT[j])this.type=j;else throw new
-jsx3.IllegalArgumentException(ub.d,j);};k.getSeriesOverlap=function(){return !isNaN(this.seriesOverlap)?this.seriesOverlap:0;};k.setSeriesOverlap=function(f){this.seriesOverlap=f;};k.getCategoryCoverage=function(){return !isNaN(this.categoryCoverage)?this.categoryCoverage:1;};k.setCategoryCoverage=function(g){this.categoryCoverage=g;};k.RE=jsx3.Method.newAbstract();k.tY=jsx3.Method.newAbstract();k.VT=function(h,g,j,l,f,m){if(this.type==ub.b||this.type==ub.c){j=0;l=1;}var
-ka=g-h;var
-Eb=ka*m;var
-aa=(h+g)/2;var
-Nb=Eb/(l-l*f+f);var
-rb=Nb*(j-(l-1)/2)*(1-f);var
-L=null;if(j>0&&f==0){var
-vb=Nb*(j-1-(l-1)/2)*(1-f);L=Math.round(aa+vb+Nb/2);}else L=Math.round(aa+rb-Nb/2);var
-u=Math.round(aa+rb+Nb/2)-1;return [L,u];};k.oX=function(a){if(this.type==ub.a){var
-Qa=this.getRangeForField(a,ub.e);var
-Wa=this.getRangeForField(a,ub.f);return this.getCombinedRange([Qa,Wa]);}else if(this.type==ub.b){return this.getStackedRangeForField(a,ub.e);}else if(this.type==ub.c){return this.getStacked100RangeForField(a,ub.e);}else{jsx3.chart.LOG.error(ub.g+this.type);return null;}};k.j9=function(r){return this.getRangeForField(r,ub.h);};k.createVector=function(){this.jsxsuper();this._drawSeries();};k._drawSeries=function(){var
-rb=this.wf();var
-na=this.Cl();var
-la=na.length;if(la==0)return;var
-Ua=this.bh();var
-u=this.RE();var
-kb=this.tY();if(Ua==null||u==null||kb==null)return;if(!jsx3.chart.isValueAxis(u)){jsx3.chart.LOG.error(ub.i+u.getClass());return;}var
-U=this.getSeriesOverlap();var
-K=this.getCategoryCoverage();var
-ka=null;if(this.type==ub.c)ka=this.bg(na,ub.e);var
-xa=null,ea=null;if(this.type==ub.b||this.type==ub.c){xa=new
-Array(Ua.length);ea=new
-Array(Ua.length);for(var
-bb=0;bb<Ua.length;bb++)xa[bb]=ea[bb]=0;}for(var
-bb=0;bb<la;bb++){var
-La=na[bb];La.De();for(var
-ca=0;ca<Ua.length;ca++){var
-Ja=Ua[ca];var
-fa=null,X=null;if(jsx3.chart.isValueAxis(u)){var
-Eb=La.Mg(Ja);if(this.type==ub.a){fa=La.getMinValue(Ja);if(fa==null)fa=0;X=Eb;if(X==null)continue;}else if(this.type==ub.b||this.type==ub.c){var
-Nb=this.type==ub.b?Eb:100*(Eb/ka[ca]);if(Nb>=0){fa=xa[ca];X=xa[ca]+Nb;xa[ca]=X;}else{fa=ea[ca]+Nb;X=ea[ca];ea[ca]=fa;}}}var
-jb=u.getCoordinateForNoClip(fa);if(fa!=0)jb=jb+(u.getHorizontal()?1:-1);var
-Ha=u.getCoordinateForNoClip(X);var
-I=null,Qa=null;if(jsx3.chart.isValueAxis(kb)){var
-aa=La.zi(Ja);if(aa==null)continue;var
-za=kb.getCoordinateForNoClip(aa);var
-mb=La.qk();I=za-Math.ceil(mb/2);Qa=za+Math.floor(mb/2);}else if(jsx3.chart.isCategoryAxis(kb)){var
-Aa=kb.getRangeForCategory(ca);var
-wa=this.VT(Aa[0],Aa[1],bb,la,U,K);I=wa[0];Qa=wa[1];}La.an(Ja,ca,jb,I,Ha,Qa);}La.updateView();rb.appendChild(La.getCanvas());}};d.getVersion=function(){return jsx3.chart.si;};});jsx3.Class.defineClass("jsx3.chart.BarChart",jsx3.chart.BCChart,null,function(e,n){n.init=function(l,p,s,d,a){this.jsxsuper(l,p,s,d,a);};n.rl=function(h){return h instanceof jsx3.chart.BarSeries;};n.getXRange=function(o){return this.oX(o);};n.getYRange=function(i){return this.j9(i);};n.RE=function(){return this.getPrimaryXAxis();};n.tY=function(){return this.getPrimaryYAxis();};});jsx3.Class.defineClass("jsx3.chart.ColumnChart",jsx3.chart.BCChart,null,function(d,a){a.init=function(c,g,j,m,k){this.jsxsuper(c,g,j,m,k);};a.rl=function(q){return q instanceof jsx3.chart.ColumnSeries;};a.getXRange=function(j){return this.j9(j);};a.getYRange=function(c){return this.oX(c);};a.RE=function(){return this.getPrimaryYAxis();};a.tY=function(){return this.getPrimaryXAxis();};});
+jsx3.require("jsx3.chart.CartesianChart","jsx3.chart.BarSeries");jsx3.Class.defineClass("jsx3.chart.BCChart",jsx3.chart.CartesianChart,null,function(q,e){q.TYPE_CLUSTERED="clustered";q.TYPE_STACKED="stacked";q.TYPE_STACKED100="stacked100";q.jv={clustered:1,stacked:1,stacked100:1};e.init=function(c,g,j,m,k){this.jsxsuper(c,g,j,m,k);this.type=q.TYPE_CLUSTERED;this.seriesOverlap=0;this.categoryCoverage=0.65;};e.getType=function(){return this.type;};e.setType=function(r){if(q.jv[r])this.type=r;else throw new jsx3.IllegalArgumentException("type",r);};e.getSeriesOverlap=function(){return !isNaN(this.seriesOverlap)?this.seriesOverlap:0;};e.setSeriesOverlap=function(h){this.seriesOverlap=h;};e.getCategoryCoverage=function(){return !isNaN(this.categoryCoverage)?this.categoryCoverage:1;};e.setCategoryCoverage=function(m){this.categoryCoverage=m;};e.pC=jsx3.Method.newAbstract();e.Wh=jsx3.Method.newAbstract();e.Td=function(b,a,p,r,l,m){if(this.type==q.TYPE_STACKED||this.type==q.TYPE_STACKED100){p=0;r=1;}var Dc=a-b;var lb=Dc*m;var ic=(b+a)/2;var Wb=lb/(r-r*l+l);var nc=Wb*(p-(r-1)/2)*(1-l);var Mc=null;if(p>0&&l==0){var cb=Wb*(p-1-(r-1)/2)*(1-l);Mc=Math.round(ic+cb+Wb/2);}else{Mc=Math.round(ic+nc-Wb/2);}var U=Math.round(ic+nc+Wb/2)-1;return [Mc,U];};e.Ns=function(a){if(this.type==q.TYPE_CLUSTERED){var ec=this.getRangeForField(a,"getParallelValue");var J=this.getRangeForField(a,"getMinValue");return this.getCombinedRange([ec,J]);}else{if(this.type==q.TYPE_STACKED){return this.getStackedRangeForField(a,"getParallelValue");}else{if(this.type==q.TYPE_STACKED100){return this.getStacked100RangeForField(a,"getParallelValue");}else{jsx3.chart.LOG.error("unsupported Bar/Column Chart type: "+this.type);return null;}}}};e.We=function(p){return this.getRangeForField(p,"getNormalValue");};e.updateView=function(){this.jsxsuper();this.JJ();};e.JJ=function(){var J=this.M4();var pb=this.aO();var nc=pb.length;if(nc==0)return;var vc=this.gH();var yc=this.pC();var nb=this.Wh();if(vc==null||yc==null||nb==null)return;if(!jsx3.chart.isValueAxis(yc)){jsx3.chart.LOG.error("bad parallel axis type: "+yc.getClass());return;}var W=this.getSeriesOverlap();var _=this.getCategoryCoverage();var Bb=null;if(this.type==q.TYPE_STACKED100)Bb=this.Z6(pb,"getParallelValue");var xb=null,A=null;if(this.type==q.TYPE_STACKED||this.type==q.TYPE_STACKED100){xb=new Array(vc.length);A=new Array(vc.length);for(var Fc=0;Fc<vc.length;Fc++){xb[Fc]=A[Fc]=0;}}for(var Fc=0;Fc<nc;Fc++){var jc=pb[Fc];jc.MY();for(var Qb=0;Qb<vc.length;Qb++){var H=vc[Qb];var ab=null,hc=null;if(jsx3.chart.isValueAxis(yc)){var db=jc.getParallelValue(H);if(this.type==q.TYPE_CLUSTERED){ab=jc.getMinValue(H);if(ab==null)ab=0;hc=db;if(hc==null){continue;}}else{if(this.type==q.TYPE_STACKED||this.type==q.TYPE_STACKED100){var rb=this.type==q.TYPE_STACKED?db:100*(db/Bb[Qb]);if(rb>=0){ab=xb[Qb];hc=xb[Qb]+rb;xb[Qb]=hc;}else{ab=A[Qb]+rb;hc=A[Qb];A[Qb]=ab;}}}}var Jc=yc.getCoordinateForNoClip(ab);if(ab!=0)Jc=Jc+(yc.getHorizontal()?1:-1);var w=yc.getCoordinateForNoClip(hc);var cb=null,wc=null;if(jsx3.chart.isValueAxis(nb)){var _b=jc.getNormalValue(H);if(_b==null)continue;var xc=nb.getCoordinateForNoClip(_b);var L=jc.getNormalWidth();cb=xc-Math.ceil(L/2);wc=xc+Math.floor(L/2);}else{if(jsx3.chart.isCategoryAxis(nb)){var Q=nb.getRangeForCategory(Qb);var Ec=this.Td(Q[0],Q[1],Fc,nc,W,_);cb=Ec[0];wc=Ec[1];}}jc.ZW(H,Qb,Jc,cb,w,wc);}jc.updateView();J.appendChild(jc.l5());}};q.getVersion=function(){return jsx3.chart.q2;};});jsx3.Class.defineClass("jsx3.chart.BarChart",jsx3.chart.BCChart,null,function(f,m){m.init=function(e,i,l,k,g){this.jsxsuper(e,i,l,k,g);};m.wH=function(k){return k instanceof jsx3.chart.BarSeries;};m.getXRange=function(h){return this.Ns(h);};m.getYRange=function(o){return this.We(o);};m.pC=function(){return this.getPrimaryXAxis();};m.Wh=function(){return this.getPrimaryYAxis();};m.toString=function(){return "[BarChart '"+this.getName()+"']";};});jsx3.Class.defineClass("jsx3.chart.ColumnChart",jsx3.chart.BCChart,null,function(s,e){e.init=function(r,c,f,q,g){this.jsxsuper(r,c,f,q,g);};e.wH=function(i){return i instanceof jsx3.chart.ColumnSeries;};e.getXRange=function(o){return this.We(o);};e.getYRange=function(b){return this.Ns(b);};e.pC=function(){return this.getPrimaryYAxis();};e.Wh=function(){return this.getPrimaryXAxis();};e.toString=function(){return "[ColumnChart '"+this.getName()+"']";};});

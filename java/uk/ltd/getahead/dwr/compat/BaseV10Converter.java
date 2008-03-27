@@ -36,7 +36,7 @@ public abstract class BaseV10Converter implements Converter
     {
         // We'll implement this properly if someone needs it
         /*
-        OutboundVariable ov = new JsonIllegalNonRecursveOutboundVariable();
+        OutboundVariable ov = new SimpleOutboundVariable();
         outctx.put(data, ov);
 
         String assignCode = outctx.getNextVariableName();

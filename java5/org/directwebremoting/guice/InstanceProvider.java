@@ -17,6 +17,10 @@ package org.directwebremoting.guice;
 
 import com.google.inject.Provider;
 
+import java.util.concurrent.Future;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+
 /**
  * Marker interface for {@link ContextRegistry} implementations to recognize
  * registered instance providers.

@@ -15,7 +15,7 @@
  */
 package org.directwebremoting.extend;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.directwebremoting.AjaxFilter;
 
@@ -28,15 +28,10 @@ public interface AjaxFilterManager
 {
     /**
      * Retrieve the global and class-based AjaxFilters for a given class.
-     * In versions prior to 3.0 this method returned an Iterator AND which
-     * included an ExecuteAjaxFilter (in last place). In version 3 this method
-     * should return an unmodifiable list which does not contain any execute
-     * functionality.
-     * @param scriptName The script name to use to filter the class-based filters
+     * @param scriptname The scriptname to use to filter the class-based filters
      * @return An iterator over the available filters.
-     * @since 3.0
      */
-    List<AjaxFilter> getAjaxFilters(String scriptName);
+    Iterator getAjaxFilters(String scriptname);
 
     /**
      * Add a global AjaxFilter
@@ -47,7 +42,7 @@ public interface AjaxFilterManager
     /**
      * Add a class based AjaxFilter
      * @param filter The new AjaxFilter
-     * @param scriptName The script name to filter against
+     * @param scriptname The scriptname to filter against
      */
-    void addAjaxFilter(AjaxFilter filter, String scriptName);
+    void addAjaxFilter(AjaxFilter filter, String scriptname);
 }

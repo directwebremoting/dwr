@@ -32,8 +32,8 @@ import org.springframework.util.Assert;
  * @see CreatorConfig
  * @author Bram Smeets
  */
-public class BeanCreator extends AbstractCreator implements BeanFactoryAware, InitializingBean
-{
+public class BeanCreator extends AbstractCreator implements BeanFactoryAware, InitializingBean {
+
     /**
      * Is called by the Spring container after all properties have been set. <br>
      * It is implemented in order to initialize the beanClass field correctly and to make sure
@@ -43,22 +43,17 @@ public class BeanCreator extends AbstractCreator implements BeanFactoryAware, In
     public void afterPropertiesSet()
     {
         // make sure that either the bean or the beanId have been set correctly
-        if (bean != null)
-        {
+        if (bean != null) {
             this.beanClass = bean.getClass();
-        }
-        else if (beanId != null)
-        {
+        } else if (beanId != null) {
             this.beanClass = beanFactory.getType(beanId);
-        }
-        else
-        {
-            throw new FatalBeanException("You should either set the bean property directly or set the beanId property");
+        } else {
+            throw new FatalBeanException(
+                    "You should either set the bean property directly or set the beanId property");
         }
 
         // make sure to handle cglib proxies correctly
-        if (AopUtils.isCglibProxyClass(this.beanClass))
-        {
+        if(AopUtils.isCglibProxyClass(this.beanClass)) {
             this.beanClass = this.beanClass.getSuperclass();
         }
     }
@@ -70,7 +65,7 @@ public class BeanCreator extends AbstractCreator implements BeanFactoryAware, In
      * class of the specified bean.
      * @return the type of this allowed class
      */
-    public Class<?> getType()
+    public Class getType()
     {
         return beanClass;
     }
@@ -82,10 +77,8 @@ public class BeanCreator extends AbstractCreator implements BeanFactoryAware, In
      */
     public Object getInstance()
     {
-        synchronized (monitor)
-        {
-            if (bean == null)
-            {
+        synchronized(monitor) {
+            if (bean == null) {
                 Assert.notNull(beanId, "The bean id needs to be specified");
                 bean = beanFactory.getBean(beanId);
             }
@@ -110,7 +103,7 @@ public class BeanCreator extends AbstractCreator implements BeanFactoryAware, In
      * and we want to expose the interface.
      * @param beanClass the class of the bean to remote
      */
-    public void setBeanClass(Class<?> beanClass)
+    public void setBeanClass(Class beanClass)
     {
         this.beanClass = beanClass;
     }
@@ -167,7 +160,7 @@ public class BeanCreator extends AbstractCreator implements BeanFactoryAware, In
     /**
      * The optional bean class for this creator.
      */
-    private Class<?> beanClass;
+    private Class beanClass;
 
     /**
      * The optional bean name.

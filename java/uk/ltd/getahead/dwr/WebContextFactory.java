@@ -33,7 +33,6 @@ import org.directwebremoting.ScriptSession;
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @deprecated Use org.directwebremoting.WebContextFactory
  */
-@Deprecated
 public class WebContextFactory
 {
     /**
@@ -42,7 +41,6 @@ public class WebContextFactory
      * started by DWR.
      * @deprecated Use org.directwebremoting.WebContextFactory.get()
      */
-    @Deprecated
     public static WebContext get()
     {
         org.directwebremoting.WebContext wctx = org.directwebremoting.WebContextFactory.get();
@@ -54,10 +52,10 @@ public class WebContextFactory
      * have an <code>org.directwebremoting.WebContext</code>.
      * @author Joe Walker [joe at getahead dot ltd dot uk]
      */
-    private static final class ProxyWebContext implements WebContext
+    private static final class ProxyWebContext implements uk.ltd.getahead.dwr.WebContext
     {
         /**
-         * @param proxy The real WebContext that we proxy to
+         * @param proxy
          */
         public ProxyWebContext(org.directwebremoting.WebContext proxy)
         {
@@ -75,7 +73,7 @@ public class WebContextFactory
         /* (non-Javadoc)
          * @see org.directwebremoting.WebContext#getAllScriptSessions()
          */
-        public Collection<ScriptSession> getAllScriptSessions()
+        public Collection getAllScriptSessions()
         {
             return proxy.getAllScriptSessions();
         }
@@ -123,17 +121,9 @@ public class WebContextFactory
         /* (non-Javadoc)
          * @see org.directwebremoting.WebContext#getScriptSessionsByPage(java.lang.String)
          */
-        public Collection<ScriptSession> getScriptSessionsByPage(String url)
+        public Collection getScriptSessionsByPage(String url)
         {
             return proxy.getScriptSessionsByPage(url);
-        }
-
-        /* (non-Javadoc)
-         * @see org.directwebremoting.ServerContext#getScriptSessionById(java.lang.String)
-         */
-        public ScriptSession getScriptSessionById(String sessionId)
-        {
-            return proxy.getScriptSessionById(sessionId);
         }
 
         /* (non-Javadoc)
@@ -177,11 +167,11 @@ public class WebContextFactory
         }
 
         /* (non-Javadoc)
-         * @see org.directwebremoting.ServerContext#getContextPath()
+         * @see org.directwebremoting.WebContext#setCurrentPageInformation(java.lang.String, java.lang.String)
          */
-        public String getContextPath()
+        public void setCurrentPageInformation(String page, String scriptSessionId)
         {
-            return proxy.getContextPath();
+            proxy.setCurrentPageInformation(page, scriptSessionId);
         }
 
         /**

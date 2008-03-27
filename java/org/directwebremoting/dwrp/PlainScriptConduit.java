@@ -45,17 +45,16 @@ public class PlainScriptConduit extends BaseScriptConduit
      * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
+     * @throws IOException If stream ops fail
      */
-    public PlainScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public PlainScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager) throws IOException
     {
-        super(response, batchId, converterManager, jsonOutput);
+        super(response, batchId, converterManager);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#preStreamSetup()
      */
-    @Override
     protected String getOutboundMimeType()
     {
         return MimeConstants.MIME_JS;
@@ -64,7 +63,6 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
      */
-    @Override
     public void beginStream()
     {
     }
@@ -72,7 +70,6 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#endStream()
      */
-    @Override
     public void endStream()
     {
     }
@@ -80,10 +77,9 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
-    @Override
     public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, MarshallException
     {
-        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
+        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager);
 
         synchronized (out)
         {

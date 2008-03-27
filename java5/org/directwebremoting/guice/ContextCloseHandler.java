@@ -20,12 +20,12 @@ package org.directwebremoting.guice;
  * @author Tim Peierls [tim at peierls dot net]
  */
 public interface ContextCloseHandler<T>
-{
+{   
     /**
      * Action to take when the context containing {@code object} is closed.
      */
     void close(T object) throws Exception;
-
+    
     /**
      * The type of objects handled by this handler.
      */

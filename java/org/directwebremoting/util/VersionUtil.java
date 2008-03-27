@@ -15,25 +15,11 @@
  */
 package org.directwebremoting.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Interface to the system version info file.
- * DWR version numbers are of the form "Version 1.2.3.3128[.beta]", where:
- * <ul>
- * <li>1 is the major release number. Changes in major version number indicate
- * significant enhancements in functionality</li>
- * <li>2 is the minor release number. Changes in minor version number indicate
- * less significant changes in functionality</li>
- * <li>3 is the revision release number. Changes here typically indicate bug
- * fixes only</li>
- * <li>3128 is the build number. This number increments for each build</li>
- * <li>.beta is a release title that is generally only used for non production
- * releases to indicate the purpose/quality of the release</li>
- * <li>The label is these strings concatenated</li>
- * </ul>
+ * Interface to the system version info file
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class VersionUtil
@@ -44,132 +30,68 @@ public class VersionUtil
      */
     public static String getSourceControlInfo()
     {
-        loadProperties();
-        return sccInfo;
+        synchronized (propLock)
+        {
+            if (props == null)
+            {
+                loadProperties();
+            }
+
+            return props.getProperty(KEY_SCCINFO);
+        }
     }
 
     /**
      * Fish the version number out of the dwr.properties file.
      * @return The current version number.
-     * @deprecated Use {@link #getLabel()}
      */
-    @Deprecated
     public static String getVersion()
     {
-        return getLabel();
-    }
+        synchronized (propLock)
+        {
+            if (props == null)
+            {
+                loadProperties();
+            }
 
-    /**
-     * @return The major version number of this release
-     */
-    public static int getMajor()
-    {
-        return major;
-    }
-
-    /**
-     * @return The minor version number of this release
-     */
-    public static int getMinor()
-    {
-        return minor;
-    }
-
-    /**
-     * @return The revision version number of this release
-     */
-    public static int getRevision()
-    {
-        return revision;
-    }
-
-    /**
-     * @return The build number of this release
-     */
-    public static int getBuild()
-    {
-        return build;
-    }
-
-    /**
-     * @return The optional title of this release
-     */
-    public static String getTitle()
-    {
-        loadProperties();
-        return title;
-    }
-
-    /**
-     * @return The full version string
-     */
-    public static String getLabel()
-    {
-        loadProperties();
-        return label;
+            return props.getProperty(KEY_VERSION);
+        }
     }
 
     /**
      * Load the properties from the internal properties file.
      */
-    private static synchronized void loadProperties()
+    private static void loadProperties()
     {
-        if (loaded)
+        synchronized (propLock)
         {
-            return;
-        }
+            props = new Properties();
 
-        try
-        {
-            InputStream in = VersionUtil.class.getResourceAsStream(FILENAME_VERSION);
-            Properties props = new Properties();
-            props.load(in);
-
-            sccInfo = props.getProperty(KEY_SCC_INFO);
-            major = Integer.parseInt(props.getProperty(KEY_MAJOR));
-            minor = Integer.parseInt(props.getProperty(KEY_MINOR));
-            revision = Integer.parseInt(props.getProperty(KEY_REVISION));
-            build = Integer.parseInt(props.getProperty(KEY_BUILD));
-            title = props.getProperty(KEY_TITLE);
-
-            if (title.length() == 0)
+            try
             {
-                label = major + "." + minor + "." + revision;
+                InputStream in = VersionUtil.class.getResourceAsStream(FILENAME_VERSION);
+                props.load(in);
             }
-            else
+            catch (Exception ex)
             {
-                label = major + "." + minor + "." + revision + "." + build + "." + title;
+                props.put(KEY_VERSION, VALUE_UNKNOWN);
+                props.put(KEY_SCCINFO, VALUE_UNKNOWN);
+                props.put(KEY_ERROR, ex.toString());
             }
-
-            loaded = true;
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
         }
     }
 
-    private static boolean loaded = false;
+    private static Properties props = null;
+
+    private static final Object propLock = new Object();
 
     private static final String FILENAME_VERSION = "/dwr-version.properties";
 
-    private static final String KEY_MAJOR = "major";
-    private static int major;
+    private static final String KEY_VERSION = "version";
 
-    private static final String KEY_MINOR = "minor";
-    private static int minor;
+    private static final String KEY_SCCINFO = "scc-info";
 
-    private static final String KEY_REVISION = "revision";
-    private static int revision;
+    private static final String KEY_ERROR = "error";
 
-    private static final String KEY_BUILD = "build";
-    private static int build;
-
-    private static final String KEY_TITLE = "title";
-    private static String title;
-
-    private static String label;
-
-    private static final String KEY_SCC_INFO = "scc-info";
-    private static String sccInfo;
+    private static final String VALUE_UNKNOWN = "unknown";
 }

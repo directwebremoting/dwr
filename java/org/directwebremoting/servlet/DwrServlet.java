@@ -24,13 +24,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.impl.ContainerUtil;
+import org.directwebremoting.impl.DefaultContainer;
 import org.directwebremoting.impl.StartupUtil;
+import org.directwebremoting.util.Logger;
+import org.directwebremoting.util.ServletLoggingOutput;
 
 /**
  * This is the main servlet that handles all the requests to DWR.
@@ -55,7 +56,6 @@ public class DwrServlet extends HttpServlet
     /* (non-Javadoc)
      * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
      */
-    @Override
     public void init(ServletConfig servletConfig) throws ServletException
     {
         super.init(servletConfig);
@@ -65,17 +65,19 @@ public class DwrServlet extends HttpServlet
         {
             // setupLogging() only needed for servlet logging if commons-logging is unavailable
             // logStartup() just outputs some version numbers
+            StartupUtil.setupLogging(servletConfig, this);
             StartupUtil.logStartup(servletConfig);
 
             // create and setup a DefaultContainer
-            container = ContainerUtil.createAndSetupDefaultContainer(servletConfig);
+            container = ContainerUtil.createDefaultContainer(servletConfig);
+            ContainerUtil.setupDefaultContainer(container, servletConfig);
 
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
-            webContextBuilder = container.getBean(WebContextBuilder.class);
+            webContextBuilder = StartupUtil.initWebContext(servletConfig, servletContext, container);
+            StartupUtil.initServerContext(servletConfig, servletContext, container);
 
             ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
-            ContainerUtil.publishContainer(container, servletConfig);
             ContainerUtil.configureContainerFully(container, servletConfig);
+            ContainerUtil.publishContainer(container, servletConfig);
         }
         catch (ExceptionInInitializerError ex)
         {
@@ -93,13 +95,14 @@ public class DwrServlet extends HttpServlet
             {
                 webContextBuilder.unset();
             }
+
+            ServletLoggingOutput.unsetExecutionContext();
         }
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.GenericServlet#destroy()
      */
-    @Override
     public void destroy()
     {
         shutdown();
@@ -117,14 +120,13 @@ public class DwrServlet extends HttpServlet
      */
     public void shutdown()
     {
-        ServerLoadMonitor monitor = container.getBean(ServerLoadMonitor.class);
+        ServerLoadMonitor monitor = (ServerLoadMonitor) container.getBean(ServerLoadMonitor.class.getName());
         monitor.shutdown();
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
         doPost(req, resp);
@@ -133,19 +135,20 @@ public class DwrServlet extends HttpServlet
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
         try
         {
             webContextBuilder.set(request, response, getServletConfig(), getServletContext(), container);
+            ServletLoggingOutput.setExecutionContext(this);
 
-            UrlProcessor processor = container.getBean(UrlProcessor.class);
+            UrlProcessor processor = (UrlProcessor) container.getBean(UrlProcessor.class.getName());
             processor.handle(request, response);
         }
         finally
         {
             webContextBuilder.unset();
+            ServletLoggingOutput.unsetExecutionContext();
         }
     }
 
@@ -161,15 +164,15 @@ public class DwrServlet extends HttpServlet
     /**
      * Our IoC container
      */
-    private Container container = null;
+    private DefaultContainer container;
 
     /**
      * The WebContext that keeps http objects local to a thread
      */
-    private WebContextBuilder webContextBuilder = null;
+    private WebContextBuilder webContextBuilder;
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DwrServlet.class);
+    public static final Logger log = Logger.getLogger(DwrServlet.class);
 }

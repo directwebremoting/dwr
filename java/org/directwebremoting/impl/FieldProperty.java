@@ -46,7 +46,7 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    public Class<?> getPropertyType()
+    public Class getPropertyType()
     {
         return field.getType();
     }

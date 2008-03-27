@@ -56,7 +56,7 @@ class DwrGuiceUtil
             return servletContexts.get().getFirst();
         }
     }
-
+    
     /**
      * Thread-locally pushes a servlet context. Call {@link #popServletContext}
      * in a finally block when calling this method.
@@ -65,7 +65,7 @@ class DwrGuiceUtil
     {
         servletContexts.get().addFirst(context);
     }
-
+    
     /**
      * Pops a thread-locally stashed servlet context. Call this in
      * a finally block when {@link #pushServletContext} is called.
@@ -74,11 +74,10 @@ class DwrGuiceUtil
     {
         servletContexts.get().removeFirst();
     }
-
-    private static final ThreadLocal<LinkedList<ServletContext>> servletContexts =
+    
+    private static final ThreadLocal<LinkedList<ServletContext>> servletContexts = 
         new ThreadLocal<LinkedList<ServletContext>>()
         {
-            @Override
             protected LinkedList<ServletContext> initialValue()
             {
                 return new LinkedList<ServletContext>();

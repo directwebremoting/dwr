@@ -17,8 +17,6 @@
 package org.directwebremoting.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,15 +24,12 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 /**
  * Fake implementation of the ServletContext interface.
@@ -119,7 +114,7 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getResourcePaths(java.lang.String)
      */
-    public Set<String> getResourcePaths(String path)
+    public Set getResourcePaths(String path)
     {
         throw new UnsupportedOperationException();
     }
@@ -137,14 +132,7 @@ public class FakeServletContext implements ServletContext
      */
     public InputStream getResourceAsStream(String path)
     {
-        try
-        {
-            return new FileInputStream(resourceBasePath + path);
-        }
-        catch (FileNotFoundException ex)
-        {
-            return null;
-        }
+        throw new UnsupportedOperationException();
     }
 
     /* (non-Javadoc)
@@ -170,7 +158,6 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getServlet(java.lang.String)
      */
-    @Deprecated
     public Servlet getServlet(String name)
     {
         throw new UnsupportedOperationException("getServlet");
@@ -179,8 +166,7 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getServlets()
      */
-    @Deprecated
-    public Enumeration<HttpServlet> getServlets()
+    public Enumeration getServlets()
     {
         throw new UnsupportedOperationException("getServlets");
     }
@@ -188,8 +174,7 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getServletNames()
      */
-    @Deprecated
-    public Enumeration<String> getServletNames()
+    public Enumeration getServletNames()
     {
         throw new UnsupportedOperationException("getServletNames");
     }
@@ -205,7 +190,6 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#log(java.lang.Exception, java.lang.String)
      */
-    @Deprecated
     public void log(Exception ex, String message)
     {
         log.warn(message, ex);
@@ -240,7 +224,7 @@ public class FakeServletContext implements ServletContext
      */
     public String getInitParameter(String name)
     {
-        return initParameters.get(name);
+        return initParameters.getProperty(name);
     }
 
     /**
@@ -250,15 +234,15 @@ public class FakeServletContext implements ServletContext
      */
     public void addInitParameter(String name, String value)
     {
-        initParameters.put(name, value);
+        initParameters.setProperty(name, value);
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getInitParameterNames()
      */
-    public Enumeration<String> getInitParameterNames()
+    public Enumeration getInitParameterNames()
     {
-        return Collections.enumeration(initParameters.keySet());
+        return initParameters.keys();
     }
 
     /* (non-Javadoc)
@@ -272,7 +256,7 @@ public class FakeServletContext implements ServletContext
     /* (non-Javadoc)
      * @see javax.servlet.ServletContext#getAttributeNames()
      */
-    public Enumeration<String> getAttributeNames()
+    public Enumeration getAttributeNames()
     {
         return Collections.enumeration(attributes.keySet());
     }
@@ -330,22 +314,22 @@ public class FakeServletContext implements ServletContext
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FakeServletContext.class);
+    private static final Logger log = Logger.getLogger(FakeServletContext.class);
 
     /**
-     * The resource path to allow us to fetch resources from the disk
+     *
      */
     private final String resourceBasePath;
 
     /**
      * The init parameters to this servlet
      */
-    private final Map<String, String> initParameters = new HashMap<String, String>();
+    private final Properties initParameters = new Properties();
 
     /**
      * The servlet level attributes
      */
-    private final Map<String, Object> attributes = new HashMap<String, Object>();
+    private final Map attributes = new HashMap();
 
     /**
      * The servlet context name

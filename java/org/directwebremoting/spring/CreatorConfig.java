@@ -95,7 +95,7 @@ public class CreatorConfig extends AbstractConfig
 
     /**
      * Sets the authentication parameters for this creator.
-     * @param auth the map containing the method name and the corresponding required role
+     * @param auth the map containing the method name and the corrosponding required role
      * @see org.directwebremoting.extend.AccessControl#addRoleRestriction(String, String, String)
      */
     public void setAuth(Properties auth)
@@ -109,7 +109,7 @@ public class CreatorConfig extends AbstractConfig
      * @see org.directwebremoting.AjaxFilter
      * @see org.directwebremoting.extend.AjaxFilterManager#addAjaxFilter(org.directwebremoting.AjaxFilter, String)
      */
-    public List<?> getFilters()
+    public List getFilters()
     {
         return filters;
     }
@@ -120,7 +120,7 @@ public class CreatorConfig extends AbstractConfig
      * @see org.directwebremoting.AjaxFilter
      * @see org.directwebremoting.extend.AjaxFilterManager#addAjaxFilter(org.directwebremoting.AjaxFilter, String)
      */
-    public void setFilters(List<Object> filters)
+    public void setFilters(List filters)
     {
         this.filters = filters;
     }
@@ -157,12 +157,12 @@ public class CreatorConfig extends AbstractConfig
     private Creator creator;
 
     /**
-     * The properties containing the method name and the corresponding required role.
+     * The properties containing the method name and the corrosponding required role.
      */
     private Properties auth = new Properties();
 
     /**
      * The list of filter objects for this creator.
      */
-    private List<Object> filters = new ArrayList<Object>();
+    private List filters = new ArrayList();
 }

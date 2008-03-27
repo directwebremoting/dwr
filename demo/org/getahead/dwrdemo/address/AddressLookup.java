@@ -18,6 +18,8 @@ package org.getahead.dwrdemo.address;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.directwebremoting.util.LocalUtil;
+
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
@@ -34,42 +36,42 @@ public class AddressLookup
      * @param origpostcode the code to lookup
      * @return a map of postcode data
      */
-    public Map<String, String> fillAddress(String origpostcode)
+    public Map fillAddress(String origpostcode)
     {
-        Map<String, String> reply = new HashMap<String, String>();
-        String postcode = origpostcode.replace(" ", "");
+        Map reply = new HashMap();
+        String postcode = LocalUtil.replace(origpostcode, " ", "");
 
-        if ("LE167TR".equalsIgnoreCase(postcode))
+        if (postcode.equalsIgnoreCase("LE167TR"))
         {
             reply.put(LINE2, "Church Lane");
             reply.put(LINE3, "Thorpe Langton");
             reply.put(LINE4, "MARKET HARBOROUGH");
         }
-        else if ("NR147SL".equalsIgnoreCase(postcode))
+        else if (postcode.equalsIgnoreCase("NR147SL"))
         {
             reply.put(LINE2, "Rectory Lane");
             reply.put(LINE3, "Poringland");
             reply.put(LINE4, "NORWICH");
         }
-        else if ("B927TT".equalsIgnoreCase(postcode))
+        else if (postcode.equalsIgnoreCase("B927TT"))
         {
             reply.put(LINE2, "Olton Mere");
             reply.put(LINE3, "Warwick Road");
             reply.put(LINE4, "SOLIHULL");
         }
-        else if ("E178YT".equalsIgnoreCase(postcode))
+        else if (postcode.equalsIgnoreCase("E178YT"))
         {
             reply.put(LINE2, "");
             reply.put(LINE3, "PO Box 43108 ");
             reply.put(LINE4, "LONDON");
         }
-        else if ("SN48QS".equalsIgnoreCase(postcode))
+        else if (postcode.equalsIgnoreCase("SN48QS"))
         {
             reply.put(LINE2, "Binknoll");
             reply.put(LINE3, "Wootton Bassett");
             reply.put(LINE4, "SWINDON");
         }
-        else if ("NN57HT".equalsIgnoreCase(postcode))
+        else if (postcode.equalsIgnoreCase("NN57HT"))
         {
             reply.put(LINE2, "Heathville");
             reply.put(LINE3, "");

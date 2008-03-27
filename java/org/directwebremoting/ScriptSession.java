@@ -79,7 +79,7 @@ public interface ScriptSession
      *     names of all the objects bound to this session
      * @throws IllegalStateException if the page has been invalidated
      */
-    Iterator<String> getAttributeNames();
+    Iterator getAttributeNames();
 
     /**
      * Invalidates this session then unbinds any objects bound to it.
@@ -126,21 +126,11 @@ public interface ScriptSession
     /**
      * Returns the last time the client sent a request associated with this
      * session, as the number of milliseconds since 1/1/1970 GMT, and marked by
-     * the time the container received the request.
+     * the time the container recieved the request.
      * <p>Actions that your application takes, such as getting or setting a
      * value associated with the session, do not affect the access time.
      * @return when was this page last accessed, in milliseconds since 1/1/1970 GMT
      * @throws IllegalStateException if the page has been invalidated
      */
     long getLastAccessedTime();
-
-    /**
-     * What page is this script session attached to?
-     * The page does not include server information, but does include everything
-     * from the host/port onwards, including the query parameters depending on
-     * the configured {@link org.directwebremoting.extend.PageNormalizer}, which
-     * by default removes them.
-     * @return The page that this script session is viewing
-     */
-    String getPage();
 }

@@ -15,11 +15,11 @@
  */
 package org.directwebremoting.convert;
 
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
@@ -27,24 +27,17 @@ import org.directwebremoting.util.LocalUtil;
 
 /**
  * An implementation of Converter for Strings.
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Joe Walker [joe at eireneh dot com]
+ * @version $Id: StringConverter.java,v 1.2 2004/11/04 15:54:07 joe_walker Exp $
  */
 public class StringConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        if (data.getFormField().isFile())
-        {
-            // Data from file uploads is not URL encoded
-            return data.getValue();
-        }
-        else
-        {
-            return LocalUtil.decode(data.getValue());
-        }
+        return LocalUtil.decode(iv.getValue());
     }
 
     /* (non-Javadoc)
@@ -53,6 +46,6 @@ public class StringConverter extends BaseV20Converter implements Converter
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
     {
         String escaped = JavascriptUtil.escapeJavaScript(data.toString());
-        return new NonNestedOutboundVariable('\"' + escaped + '\"');
+        return new SimpleOutboundVariable('\"' + escaped + '\"', outctx, true);
     }
 }

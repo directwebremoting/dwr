@@ -24,13 +24,6 @@ import javax.servlet.http.HttpServlet;
  */
 public class ServletLoggingOutput implements LoggingOutput
 {
-    /**
-     * @param base All LoggingOutput must have a constructor like this
-     */
-    public ServletLoggingOutput(Class<?> base)
-    {
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.util.LoggingOutput#debug(java.lang.String)
      */
@@ -105,7 +98,7 @@ public class ServletLoggingOutput implements LoggingOutput
     {
         if (loglevel >= level)
         {
-            HttpServlet servlet = servlets.get();
+            HttpServlet servlet = (HttpServlet) servlets.get();
             if (servlet != null)
             {
                 // Tomcat 4 NPEs is th is null
@@ -156,23 +149,23 @@ public class ServletLoggingOutput implements LoggingOutput
      */
     public static void setLevel(String logLevel)
     {
-        if ("FATAL".equalsIgnoreCase(logLevel))
+        if (logLevel.equalsIgnoreCase("FATAL"))
         {
             setLevel(LEVEL_FATAL);
         }
-        else if ("ERROR".equalsIgnoreCase(logLevel))
+        else if (logLevel.equalsIgnoreCase("ERROR"))
         {
             setLevel(LEVEL_ERROR);
         }
-        else if ("WARN".equalsIgnoreCase(logLevel))
+        else if (logLevel.equalsIgnoreCase("WARN"))
         {
             setLevel(LEVEL_WARN);
         }
-        else if ("INFO".equalsIgnoreCase(logLevel))
+        else if (logLevel.equalsIgnoreCase("INFO"))
         {
             setLevel(LEVEL_INFO);
         }
-        else if ("DEBUG".equalsIgnoreCase(logLevel))
+        else if (logLevel.equalsIgnoreCase("DEBUG"))
         {
             setLevel(LEVEL_DEBUG);
         }
@@ -209,7 +202,7 @@ public class ServletLoggingOutput implements LoggingOutput
     /**
      * The container for all known threads
      */
-    private static final ThreadLocal<HttpServlet> servlets = new ThreadLocal<HttpServlet>();
+    private static final ThreadLocal servlets = new ThreadLocal();
 
     /**
      * What is the current debug level?

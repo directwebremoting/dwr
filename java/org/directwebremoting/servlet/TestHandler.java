@@ -38,8 +38,8 @@ public class TestHandler implements Handler
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
         String scriptName = request.getPathInfo();
-        scriptName = scriptName.replace(testHandlerUrl, "");
-        scriptName = scriptName.replace("/", "");
+        scriptName = LocalUtil.replace(scriptName, testHandlerUrl, "");
+        scriptName = LocalUtil.replace(scriptName, "/", "");
         if (!LocalUtil.isJavaIdentifier(scriptName))
         {
             throw new SecurityException("Script names may only contain Java Identifiers");
@@ -54,7 +54,7 @@ public class TestHandler implements Handler
 
     /**
      * Setter for the debug page generator
-     * @param debugPageGenerator The new debug page generator
+     * @param debugPageGenerator
      */
     public void setDebugPageGenerator(DebugPageGenerator debugPageGenerator)
     {

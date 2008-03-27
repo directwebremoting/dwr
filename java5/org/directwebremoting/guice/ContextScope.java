@@ -27,10 +27,10 @@ import java.util.List;
  * provider for the context.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public interface ContextScope<C> extends Scope, Provider<C>
-{
+public interface ContextScope<C> extends Scope, Provider<C> 
+{    
     /**
-     * Returns a provider that finds the instance registry corresponding
+     * Returns a provider that finds the instance registry corresponding 
      * to the current context and returns the object registered with
      * the given key, creating it if it doesn't exist in the registry.
      */
@@ -41,28 +41,28 @@ public interface ContextScope<C> extends Scope, Provider<C>
      * The value returned is a function of the current context.
      */
     C get();
-
+    
     /**
      * The type of object used as a context identifier.
      */
     Class<C> type();
-
+    
     /**
      * The keys bound in this scope.
      */
     List<Key<?>> getKeysInScope();
-
+    
     /**
      * The context identifiers of all open contexts that this
      * scope knows about.
      */
     Collection<C> getOpenContexts();
-
+    
     /**
      * Closes the given context.
      */
     void close(C context, ContextCloseHandler<?>... closeHandlers);
-
+    
     /**
      * Closes all open contexts.
      */

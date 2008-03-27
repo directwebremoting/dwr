@@ -20,11 +20,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
+import org.directwebremoting.util.Logger;
 
 /**
  * A WebContextBuilder that creates DefaultWebContexts.
@@ -53,7 +52,7 @@ public class DefaultWebContextBuilder implements WebContextBuilder
      */
     public WebContext get()
     {
-        return user.get();
+        return (WebContext) user.get();
     }
 
     /* (non-Javadoc)
@@ -67,10 +66,10 @@ public class DefaultWebContextBuilder implements WebContextBuilder
     /**
      * The storage of thread based data
      */
-    private static ThreadLocal<WebContext> user = new ThreadLocal<WebContext>();
+    private static ThreadLocal user = new ThreadLocal();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultWebContextBuilder.class);
+    private static final Logger log = Logger.getLogger(DefaultWebContextBuilder.class);
 }

@@ -18,14 +18,13 @@ package org.directwebremoting.annotations;
 import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.convert.BeanConverter;
@@ -38,6 +37,7 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * A Configurator that works off Annotations.
@@ -51,62 +51,41 @@ public class AnnotationsConfigurator implements Configurator
      */
     public void configure(Container container)
     {
-        for (Class<?> clazz : getClasses(container))
-        {
-            try
-            {
-                processClass(clazz, container);
-            }
-            catch (Exception ex)
-            {
-                log.error("Failed to process class: " + clazz.getName(), ex);
-            }
-        }
-    }
-
-    /**
-     * Allow subclasses to override the default way we find out which classes
-     * have DWR annotations for us to work with
-     * @param container Commonly we get configuration information from here
-     * @return A set of classes with DWR annotations
-     */
-    protected Set<Class<?>> getClasses(Container container)
-    {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-
         Object data = container.getBean("classes");
-        if (data != null)
+        if (data == null)
         {
-            if (data instanceof String)
+            return;
+        }
+
+        if (data instanceof String)
+        {
+            String classesStr = (String) data;
+            String[] classNames = classesStr.split(",");
+            for (int i = 0; i < classNames.length; i++)
             {
-                String classesStr = (String) data;
-                for (String element : classesStr.split(","))
-                {
-                    try
-                    {
-                        Class<?> clazz = LocalUtil.classForName(element.trim());
-                        classes.add(clazz);
-                    }
-                    catch (Exception ex)
-                    {
-                        log.error("Failed to process class: " + element, ex);
-                    }
-                }
-            }
-            else
-            {
+                String className = classNames[i].trim();
                 try
                 {
-                    classes.add(data.getClass());
+                    Class<?> clazz = LocalUtil.classForName(className);
+                    processClass(clazz, container);
                 }
                 catch (Exception ex)
                 {
-                    log.error("Failed to process class: " + data.getClass().getName(), ex);
+                    log.error("Failed to process class: " + className, ex);
                 }
             }
         }
-
-        return classes;
+        else
+        {
+            try
+            {
+                processClass(data.getClass(), container);
+            }
+            catch (Exception ex)
+            {
+                log.error("Failed to process class: " + data.getClass().getName(), ex);
+            }
+        }
     }
 
     /**
@@ -116,7 +95,7 @@ public class AnnotationsConfigurator implements Configurator
      * @throws IllegalAccessException If annotation processing fails
      * @throws InstantiationException If annotation processing fails
      */
-    protected void processClass(Class<?> clazz, Container container) throws InstantiationException, IllegalAccessException
+    private void processClass(Class<?> clazz, Container container) throws InstantiationException, IllegalAccessException
     {
         RemoteProxy createAnn = clazz.getAnnotation(RemoteProxy.class);
         if (createAnn != null)
@@ -138,20 +117,20 @@ public class AnnotationsConfigurator implements Configurator
     }
 
     /**
-     * Process the @RemoteProxy annotation on a given class
+     * Process the @RemoteProxy annotaion on a given class
      * @param clazz The class annotated with @RemoteProxy
      * @param createAnn The annotation
      * @param container The IoC container to configure
      */
-    protected void processCreate(Class<?> clazz, RemoteProxy createAnn, Container container)
+    private void processCreate(Class<?> clazz, RemoteProxy createAnn, Container container)
     {
         Class<? extends Creator> creator = createAnn.creator();
         String creatorClass = creator.getName();
         Map<String, String> creatorParams = getParamsMap(createAnn.creatorParams());
         ScriptScope scope = createAnn.scope();
 
-        CreatorManager creatorManager = container.getBean(CreatorManager.class);
-        String creatorName = creatorClass.replace(".", "_");
+        CreatorManager creatorManager = (CreatorManager) container.getBean(CreatorManager.class.getName());
+        String creatorName = LocalUtil.replace(creatorClass, ".", "_");
         creatorManager.addCreatorType(creatorName, creatorClass);
 
         Map<String, String> params = new HashMap<String, String>();
@@ -165,7 +144,7 @@ public class AnnotationsConfigurator implements Configurator
         String name = createAnn.name();
         if (name == null || name.length() == 0)
         {
-            name = clazz.getSimpleName();
+            name = LocalUtil.getShortClassName(clazz);
         }
 
         try
@@ -178,20 +157,18 @@ public class AnnotationsConfigurator implements Configurator
             log.error("Failed to add class as Creator: " + clazz.getName(), ex);
         }
 
-        AccessControl accessControl = container.getBean(AccessControl.class);
-        for (Method method : clazz.getMethods())
+        AccessControl accessControl = (AccessControl) container.getBean(AccessControl.class.getName());
+        Method[] methods = clazz.getMethods();
+        for (int i = 0; i < methods.length; i++)
         {
-            if (method.getAnnotation(RemoteMethod.class) != null)
+            if (methods[i].getAnnotation(RemoteMethod.class) != null)
             {
-                accessControl.addIncludeRule(name, method.getName());
+                accessControl.addIncludeRule(name, methods[i].getName());
 
-                Auth authAnn = method.getAnnotation(Auth.class);
+                Auth authAnn = methods[i].getAnnotation(Auth.class);
                 if (authAnn != null)
                 {
-                    for (String role : authAnn.role())
-                    {
-                        accessControl.addRoleRestriction(name, method.getName(), role);
-                    }
+                    accessControl.addRoleRestriction(name, methods[i].getName(), authAnn.role());
                 }
             }
         }
@@ -200,9 +177,9 @@ public class AnnotationsConfigurator implements Configurator
         if (filtersAnn != null)
         {
             Filter[] fs = filtersAnn.value();
-            for (Filter filter : fs)
+            for (int i = 0; i < fs.length; i++)
             {
-                processFilter(filter, name, container);
+                processFilter(fs[i], name, container);
             }
         }
         // process single filter for convenience
@@ -217,39 +194,39 @@ public class AnnotationsConfigurator implements Configurator
     }
 
     /**
-     * Process the @Filter annotation
+     * Process the @Filter annotaion
      * @param filterAnn The filter annotation
      * @param name The Javascript name of the class to filter 
      * @param container The IoC container to configure
      */
-    protected void processFilter(Filter filterAnn, String name, Container container)
+    private void processFilter(Filter filterAnn, String name, Container container)
     {
         Map<String, String> filterParams = getParamsMap(filterAnn.params());
-        AjaxFilter filter = LocalUtil.classNewInstance(name, filterAnn.type().getName(), AjaxFilter.class);
+        AjaxFilter filter = (AjaxFilter) LocalUtil.classNewInstance(name, filterAnn.type().getName(), AjaxFilter.class);
         if (filter != null)
         {
             LocalUtil.setParams(filter, filterParams, null);
-            AjaxFilterManager filterManager = container.getBean(AjaxFilterManager.class);
+            AjaxFilterManager filterManager = (AjaxFilterManager) container.getBean(AjaxFilterManager.class.getName());
             filterManager.addAjaxFilter(filter, name);
         }
     }
 
     /**
-     * Process the @DataTransferObject annotation on a given class
+     * Process the @DataTransferObject annotaion on a given class
      * @param clazz The class annotated with @DataTransferObject
      * @param convertAnn The annotation
      * @param container The IoC container to configure
-     * @throws InstantiationException If there are problems instantiating the Converter
-     * @throws IllegalAccessException If there are problems instantiating the Converter
+     * @throws InstantiationException
+     * @throws IllegalAccessException
      */
-    protected void processConvert(Class<?> clazz, DataTransferObject convertAnn, Container container) throws InstantiationException, IllegalAccessException
+    private void processConvert(Class<?> clazz, DataTransferObject convertAnn, Container container) throws InstantiationException, IllegalAccessException
     {
         Class<? extends Converter> converter = convertAnn.converter();
         String converterClass = converter.getName();
         Map<String, String> params = getParamsMap(convertAnn.params());
 
-        ConverterManager converterManager = container.getBean(ConverterManager.class);
-        String converterName = converterClass.replace(".", "_");
+        ConverterManager converterManager = (ConverterManager) container.getBean(ConverterManager.class.getName());
+        String converterName = LocalUtil.replace(converterClass, ".", "_");
         converterManager.addConverterType(converterName, converterClass);
 
         if (BeanConverter.class.isAssignableFrom(converter))
@@ -266,11 +243,12 @@ public class AnnotationsConfigurator implements Configurator
                 }
             }
 
-            for (Method method : clazz.getMethods())
+            Method[] methods = clazz.getMethods();
+            for (int i = 0; i < methods.length; i++)
             {
-                if (method.getAnnotation(RemoteProperty.class) != null)
+                if (methods[i].getAnnotation(RemoteProperty.class) != null)
                 {
-                    String name = method.getName();
+                    String name = methods[i].getName();
                     if (name.startsWith(METHOD_PREFIX_GET) || name.startsWith(METHOD_PREFIX_IS))
                     {
                         if (name.startsWith(METHOD_PREFIX_GET))
@@ -286,7 +264,6 @@ public class AnnotationsConfigurator implements Configurator
                     }
                 }
             }
-
             if (properties.length() > 0)
             {
                 properties.deleteCharAt(0);
@@ -305,7 +282,7 @@ public class AnnotationsConfigurator implements Configurator
      * @throws InstantiationException In case we can't create the given clazz
      * @throws IllegalAccessException In case we can't create the given clazz
      */
-    protected void processGlobalFilter(Class<?> clazz, GlobalFilter globalFilterAnn, Container container) throws InstantiationException, IllegalAccessException
+    private void processGlobalFilter(Class<?> clazz, GlobalFilter globalFilterAnn, Container container) throws InstantiationException, IllegalAccessException
     {
         if (!AjaxFilter.class.isAssignableFrom(clazz))
         {
@@ -317,25 +294,26 @@ public class AnnotationsConfigurator implements Configurator
         if (filter != null)
         {
             LocalUtil.setParams(filter, filterParams, null);
-            AjaxFilterManager filterManager = container.getBean(AjaxFilterManager.class);
+            AjaxFilterManager filterManager = (AjaxFilterManager) container.getBean(AjaxFilterManager.class.getName());
             filterManager.addAjaxFilter(filter);
         }
     }
 
     /**
      * Utility to turn a Param array into a Map<String, String>.
+     * TODO: Should we move this code into Param? Is that even possible? 
      * @param params The params array from annotations
      * @return A Map<String, String>
      */
-    protected Map<String, String> getParamsMap(Param[] params)
+    private Map<String, String> getParamsMap(Param[] params)
     {
-        // TODO: Should we move this code into Param? Is that even possible?
         Map<String, String> result = new HashMap<String, String>();
         if (params != null)
         {
-            for (Param param : params)
+            for (int i = 0; i < params.length; i++)
             {
-                result.put(param.name(), param.value());
+                Param p = params[i];
+                result.put(p.name(), p.value());
             }
         }
         return result;
@@ -354,5 +332,5 @@ public class AnnotationsConfigurator implements Configurator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(AnnotationsConfigurator.class);
+    private static final Logger log = Logger.getLogger(AnnotationsConfigurator.class);
 }

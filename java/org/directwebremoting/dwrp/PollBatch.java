@@ -19,7 +19,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.directwebremoting.extend.FormField;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.extend.PageNormalizer;
+import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.util.Messages;
 
@@ -30,31 +33,39 @@ import org.directwebremoting.util.Messages;
 public class PollBatch
 {
     /**
-     * @param request The request to parse to fill out this batch
-     * @throws ServerException
+     * @param request
+     * @param pageNormalizer 
+     * @throws ServerException 
      */
-    public PollBatch(HttpServletRequest request) throws ServerException
+    public PollBatch(HttpServletRequest request, PageNormalizer pageNormalizer) throws ServerException
     {
         debug = request.getHeader("User-Agent");
+
         get = "GET".equals(request.getMethod());
+        Map parameters = null;
+        if (get)
+        {
+            parameters = ParseUtil.parseGet(request);
+        }
+        else
+        {
+            parameters = ParseUtil.parsePost(request);
+        }
 
-        ParseUtil parseUtil = new ParseUtil();
-        allParameters = parseUtil.parseRequest(request);
-
-        parseParameters();
-    }
-
-    /**
-     * Fish out the important parameters
-     */
-    protected void parseParameters()
-    {
-        batchId = extractParameter(allParameters, ProtocolConstants.INBOUND_KEY_BATCHID);
-        scriptSessionId = extractParameter(allParameters, ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
-        page = extractParameter(allParameters, ProtocolConstants.INBOUND_KEY_PAGE);
-        windowName = extractParameter(allParameters, ProtocolConstants.INBOUND_KEY_WINDOWNAME);
-        String prString = extractParameter(allParameters, ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE);
+        batchId = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_BATCHID);
+        scriptId = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
+        String page = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_PAGE);
+        String prString = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE);
         partialResponse = PartialResponse.fromOrdinal(prString);
+
+        // We must parse the parameters before we setup the conduit because it's
+        // only after doing this that we know the scriptSessionId
+        WebContext webContext = WebContextFactory.get();
+        // Various bits of parseResponse need to be stashed away places
+        String normalizedPage = pageNormalizer.normalizePage(page);
+        webContext.setCurrentPageInformation(normalizedPage, scriptId);
+
+        scriptSession = (RealScriptSession) webContext.getScriptSession();
     }
 
     /**
@@ -65,15 +76,15 @@ public class PollBatch
      * @param paramName The name of the parameter sent
      * @return The found value
      */
-    protected String extractParameter(Map<String, FormField> parameters, String paramName)
+    protected String extractParameter(Map parameters, String paramName)
     {
-        FormField formField = parameters.remove(paramName);
-        if (formField == null)
+        String id = (String) parameters.remove(paramName);
+        if (id == null)
         {
             throw new IllegalArgumentException(Messages.getString("PollHandler.MissingParameter", paramName));
         }
 
-        return formField.getString();
+        return id;
     }
 
     /**
@@ -85,50 +96,40 @@ public class PollBatch
     }
 
     /**
+     * @return the scriptId
+     */
+    public String getScriptId()
+    {
+        return scriptId;
+    }
+
+    /**
      * @return the partialResponse
      */
-    public PartialResponse getPartialResponse()
+    public int getPartialResponse()
     {
         return partialResponse;
     }
 
     /**
-     * @return the scriptSessionId
-     */
-    public String getScriptSessionId()
-    {
-        return scriptSessionId;
-    }
-
-    /**
-     * @return the page
-     */
-    public String getPage()
-    {
-        return page;
-    }
-
-    /**
-     * @return the window name
-     */
-    public String getWindowName()
-    {
-        return windowName;
-    }
-
-    /**
-     * Is this request from a GET?
-     * @return true if the request is a GET request
+     * @return the get
      */
     public boolean isGet()
     {
         return get;
     }
 
+    /**
+     * @return the scriptSession
+     */
+    public RealScriptSession getScriptSession()
+    {
+        return scriptSession;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
         return "PollBatch[partResp=" + partialResponse + ",debug=" + debug + "]";
@@ -140,29 +141,14 @@ public class PollBatch
     private String batchId;
 
     /**
+     * The id of the page
+     */
+    private String scriptId;
+
+    /**
      * Does the browser want partial responses?
      */
-    private PartialResponse partialResponse;
-
-    /**
-     * A quick string for debug purposes
-     */
-    private String debug;
-
-    /**
-     * The page that the request was sent from
-     */
-    private String page;
-
-    /**
-     * Window name is used by reverse ajax to get around the 2 connection limit
-     */
-    private String windowName;
-
-    /**
-     * The unique ID sent to the current page
-     */
-    private String scriptSessionId;
+    private int partialResponse;
 
     /**
      * Is it a GET request?
@@ -170,7 +156,42 @@ public class PollBatch
     private boolean get;
 
     /**
-     * All the parameters sent by the browser
+     * A quick string for debug purposes
      */
-    private Map<String, FormField> allParameters;
+    private String debug;
+
+    /**
+     * The script session backing the script id
+     */
+    private RealScriptSession scriptSession;
+
+    /**
+     * How we stash away the results of the request parse
+     */
+    public static final String ATTRIBUTE_PARAMETERS = "org.directwebremoting.dwrp.parameters";
+
+    /**
+     * How we stash away the results of the request parse
+     */
+    public static final String ATTRIBUTE_CALL_ID = "org.directwebremoting.dwrp.callId";
+
+    /**
+     * How we stash away the results of the request parse
+     */
+    public static final String ATTRIBUTE_SESSION_ID = "org.directwebremoting.dwrp.sessionId";
+
+    /**
+     * How we stash away the results of the request parse
+     */
+    public static final String ATTRIBUTE_PAGE = "org.directwebremoting.dwrp.page";
+
+    /**
+     * How we stash away the results of the request parse
+     */
+    public static final String ATTRIBUTE_PARTIAL_RESPONSE = "org.directwebremoting.dwrp.partialResponse";
+
+    /**
+     * We remember the notify conduit so we can reuse it
+     */
+    public static final String ATTRIBUTE_NOTIFY_CONDUIT = "org.directwebremoting.dwrp.notifyConduit";
 }

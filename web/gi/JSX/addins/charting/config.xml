@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright (c) 2001-2007, TIBCO Software Inc.
   ~ Use, modification, and distribution subject to terms of license.
@@ -13,21 +13,7 @@
   <record jsxid="jsxversion" type="string">3.2</record>
   <record jsxid="classpath" type="string">classes/:jsx3.chart.*</record>
 
-	<record jsxid="includes" type="array">
-    <record type="map">
-      <record jsxid="id" type="string">vml.js</record>
-      <record jsxid="type" type="string">script</record>
-      <record jsxid="load" type="number">1</record>
-      <record jsxid="browser" type="string">VML</record>
-      <record jsxid="src" type="string">classes/vml.js</record>
-    </record>
-    <record type="map">
-      <record jsxid="id" type="string">svg.js</record>
-      <record jsxid="type" type="string">script</record>
-      <record jsxid="load" type="number">1</record>
-      <record jsxid="browser" type="string">SVG</record>
-      <record jsxid="src" type="string">classes/svg.js</record>
-    </record>		
+	<record jsxid="includes" type="array">		
 		<record jsxid="0" type="map">
 			<record jsxid="load" type="number">1</record>
 			<record jsxid="type" type="string">jss</record>
@@ -57,93 +43,31 @@
 		
 		
 		
-
-    
-
+		
     
 		
 		
 		
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/GridLines.js</record>
-		</record>
-		
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/LinearAxis.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/LogarithmicAxis.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/CategoryAxis.js</record>
-		</record>
 		
 		
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/BarSeries.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/PointSeries.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/LineSeries.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/AreaSeries.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/PieSeries.js</record>
-		</record>
 		
 		
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/BarChart.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/PlotChart.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/LineChart.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/AreaChart.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/RadialChart.js</record>
-		</record>
-		<record jsxid="0" type="map">
-      <record jsxid="load" type="number">2</record>
-			<record jsxid="type" type="string">script</record>
-			<record jsxid="src" type="string">classes/jsx3/chart/PieChart.js</record>
-		</record>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
     <record jsxid="0" type="map">
       <record jsxid="load" type="number">0</record>
@@ -156,5 +80,29 @@
       <record jsxid="src" type="string">classes/jsx3/chart/ColumnSeries.js</record>
     </record>
 		
-	</record>
+	<record jsxid="0" type="map">
+      <record jsxid="load" type="number">2</record>
+      <record jsxid="type" type="string">script</record>
+      <record jsxid="src" type="string">classes/jsx3/chart/package_vml_full.js</record>
+    <record jsxid="browser" type="string">VML</record>
+</record>
+<record jsxid="0" type="map">
+      <record jsxid="load" type="number">3</record>
+      <record jsxid="type" type="string">script</record>
+      <record jsxid="src" type="string">classes/jsx3/chart/package_vml.js</record>
+    <record jsxid="browser" type="string">VML</record>
+</record>
+<record jsxid="0" type="map">
+      <record jsxid="load" type="number">2</record>
+      <record jsxid="type" type="string">script</record>
+      <record jsxid="src" type="string">classes/jsx3/chart/package_svg_full.js</record>
+    <record jsxid="browser" type="string">SVG</record>
+</record>
+<record jsxid="0" type="map">
+      <record jsxid="load" type="number">3</record>
+      <record jsxid="type" type="string">script</record>
+      <record jsxid="src" type="string">classes/jsx3/chart/package_svg.js</record>
+    <record jsxid="browser" type="string">SVG</record>
+</record>
+</record>
 </data>

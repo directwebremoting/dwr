@@ -38,7 +38,7 @@ public interface NamedConverter extends Converter
      * @see #getPropertyMapFromClass(Class, boolean, boolean)
      * @throws MarshallException If the introspection fails
      */
-    Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException;
+    Map getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException;
 
     /**
      * Get a map of property names to implementations of {@link Property}.
@@ -55,17 +55,17 @@ public interface NamedConverter extends Converter
      * @see #getPropertyMapFromObject(Object, boolean, boolean)
      * @throws MarshallException If the introspection fails
      */
-    Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired) throws MarshallException;
+    Map getPropertyMapFromClass(Class type, boolean readRequired, boolean writeRequired) throws MarshallException;
 
     /**
      * @return Returns the instanceType.
      */
-    Class<?> getInstanceType();
+    Class getInstanceType();
 
     /**
      * @param instanceType The instanceType to set.
      */
-    void setInstanceType(Class<?> instanceType);
+    void setInstanceType(Class instanceType);
 
     /**
      * Accessor for the javascript class name for the converted objects.

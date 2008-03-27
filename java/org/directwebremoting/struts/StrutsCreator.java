@@ -20,8 +20,6 @@ import java.lang.reflect.Method;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
@@ -31,6 +29,7 @@ import org.directwebremoting.create.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -47,15 +46,16 @@ public class StrutsCreator extends AbstractCreator implements Creator
     {
         try
         {
-            Class<?> moduleUtilsClass = LocalUtil.classForName("org.apache.struts.util.ModuleUtils");
-            getInstanceMethod = moduleUtilsClass.getMethod("getInstance");
-            getModuleNameMethod = moduleUtilsClass.getMethod("getModuleName", String.class, ServletContext.class);
-            getModuleConfigMethod = moduleUtilsClass.getMethod("getModuleConfig", String.class, ServletContext.class);
+            moduleUtilsClass = LocalUtil.classForName("org.apache.struts.util.ModuleUtils");
+            getInstanceMethod = moduleUtilsClass.getMethod("getInstance", new Class[0]);
+            getModuleNameMethod = moduleUtilsClass.getMethod("getModuleName", new Class[] { String.class, ServletContext.class });
+            getModuleConfigMethod = moduleUtilsClass.getMethod("getModuleConfig", new Class[] { String.class, ServletContext.class });
 
             log.debug("Using Struts 1.2 based ModuleUtils code");
         }
         catch (Exception ex)
         {
+            moduleUtilsClass = null;
             getInstanceMethod = null;
             getModuleNameMethod = null;
             getModuleConfigMethod = null;
@@ -76,7 +76,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         synchronized (this)
         {
@@ -89,13 +89,13 @@ public class StrutsCreator extends AbstractCreator implements Creator
                     try
                     {
                         // ModuleUtils utils = ModuleUtils.getInstance();
-                        Object utils = getInstanceMethod.invoke(null);
+                        Object utils = getInstanceMethod.invoke(null, new Object[0]);
 
                         // String moduleName = utils.getModuleName("/", wc.getServletContext());
-                        String moduleName = (String) getModuleNameMethod.invoke(utils, "/", wc.getServletContext());
+                        String moduleName = (String) getModuleNameMethod.invoke(utils, new Object[] { "/", wc.getServletContext() });
 
                         // moduleConfig = utils.getModuleConfig(moduleName, wc.getServletContext());
-                        moduleConfig = (ModuleConfig) getModuleConfigMethod.invoke(utils, moduleName, wc.getServletContext());
+                        moduleConfig = (ModuleConfig) getModuleConfigMethod.invoke(utils, new Object[] { moduleName, wc.getServletContext() });
                     }
                     catch (Exception ex)
                     {
@@ -144,12 +144,17 @@ public class StrutsCreator extends AbstractCreator implements Creator
     /**
      * The FormBean that we lookup to call methods on
      */
-    private String formBean = null;
+    private String formBean;
 
     /**
      * moduleConfig allows us to do the lookup
      */
-    private ModuleConfig moduleConfig = null;
+    private ModuleConfig moduleConfig;
+
+    /**
+     * Reflection access to 1.2 code for compatibility with 1.1
+     */
+    private Class moduleUtilsClass;
 
     /**
      * Reflection access to 1.2 code for compatibility with 1.1
@@ -169,5 +174,5 @@ public class StrutsCreator extends AbstractCreator implements Creator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(StrutsCreator.class);
+    private static final Logger log = Logger.getLogger(StrutsCreator.class);
 }

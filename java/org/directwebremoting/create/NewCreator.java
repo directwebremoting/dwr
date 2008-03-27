@@ -15,10 +15,9 @@
  */
 package org.directwebremoting.create;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -36,10 +35,6 @@ public class NewCreator extends AbstractCreator implements Creator
         try
         {
             clazz = LocalUtil.classForName(classname);
-            if (getJavascript() == null)
-            {
-                setJavascript(clazz.getSimpleName());
-            }
         }
         catch (ExceptionInInitializerError ex)
         {
@@ -55,7 +50,7 @@ public class NewCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         return clazz;
     }
@@ -97,10 +92,10 @@ public class NewCreator extends AbstractCreator implements Creator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(NewCreator.class);
+    private static final Logger log = Logger.getLogger(NewCreator.class);
 
     /**
      * The type of the class that we are creating
      */
-    private Class<?> clazz;
+    private Class clazz;
 }

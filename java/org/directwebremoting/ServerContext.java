@@ -34,20 +34,7 @@ public interface ServerContext
      * @param url The URL including 'http://', up to (but not including) '?' or '#'
      * @return A collection of all the ScriptSessions.
      */
-    Collection<ScriptSession> getScriptSessionsByPage(String url);
-
-    /**
-     * You can request access to a specific {@link ScriptSession} if you know
-     * it's ID.
-     * <p>Take care with this method because it allows actions from one browser
-     * to affect another which could be a bad thing. It is certainly a VERY BAD
-     * idea to let session id's from one browser escape into another.
-     * <p>Consider that it is entirely possible that the ScriptSession may
-     * timeout while you are holding a reference to it.
-     * @param sessionId The script session ID to lookup
-     * @return The ScriptSession for the given ID, or null if it does not exist
-     */
-    ScriptSession getScriptSessionById(String sessionId);
+    Collection getScriptSessionsByPage(String url);
 
     /**
      * Get a list of all the ScriptSessions known to this server at the given
@@ -58,7 +45,7 @@ public interface ServerContext
      * something non null.
      * @return A collection of all the ScriptSessions.
      */
-    Collection<ScriptSession> getAllScriptSessions();
+    Collection getAllScriptSessions();
 
     /**
      * Accessor for the servlet config.
@@ -71,24 +58,6 @@ public interface ServerContext
      * @return The servlet context information.
      */
     ServletContext getServletContext();
-
-    /**
-     * Returns the portion of the request URI that indicates the context
-     * of the request.
-     * <p>Annoyingly you can't get to this from the {@link ServletContext} so
-     * you need to cache the value from a recent HttpServletRequest.
-     * <p>The context path always comes first in a request URI.  The path starts
-     * with a "/" character but does not end with a "/" character.
-     * For servlets in the default (root) context, this method returns "".
-     * The container does not decode this string.
-     * <p>WARNING: This method may return null if DWR has not received any
-     * requests. If this method is called from outside of DWR, as the servlet
-     * environment is starting up you should check for a null reply and try
-     * again later.
-     * @return The portion of the request URI that indicates the context or null
-     * if DWR has not received and requests so far
-     */
-    String getContextPath();
 
     /**
      * Accessor for the IoC container.

@@ -20,9 +20,6 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
  * A wrapper around Jetty Ajax Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -35,19 +32,7 @@ public class Continuation
      */
     public Continuation(HttpServletRequest request)
     {
-        proxy = request.getAttribute(ATTRIBUTE_JETTY_CONTINUATION);
-        if (proxy == null && isGrizzly())
-        {
-            try
-            {
-                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
-                Method gMethod = gContinuation.getMethod("getContinuation");
-                proxy = gMethod.invoke((Object[])null,(Object[])null);
-            }
-            catch (Throwable ex)
-            {
-            }
-        }
+        this.proxy = request.getAttribute(ATTRIBUTE_JETTY_CONTINUATION);
     }
 
     /**
@@ -69,7 +54,7 @@ public class Continuation
     {
         try
         {
-            suspendMethod.invoke(proxy, sleepTime);
+            suspendMethod.invoke(proxy, new Object[] { new Long(sleepTime) });
         }
         catch (InvocationTargetException ex)
         {
@@ -87,7 +72,7 @@ public class Continuation
     {
         try
         {
-            resumeMethod.invoke(proxy);
+            resumeMethod.invoke(proxy, new Object[0]);
         }
         catch (InvocationTargetException ex)
         {
@@ -104,7 +89,7 @@ public class Continuation
     {
         try
         {
-            return getObject.invoke(proxy);
+            return getObject.invoke(proxy, new Object[0]);
         }
         catch (InvocationTargetException ex)
         {
@@ -121,7 +106,7 @@ public class Continuation
     {
         try
         {
-            setObject.invoke(proxy, object);
+            setObject.invoke(proxy, new Object[] { object });
         }
         catch (InvocationTargetException ex)
         {
@@ -179,7 +164,7 @@ public class Continuation
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(Continuation.class);
+    private static final Logger log = Logger.getLogger(Continuation.class);
 
     /**
      * The attribute under which Jetty stores it's Contuniations.
@@ -190,37 +175,32 @@ public class Continuation
     /**
      * Jetty code used by reflection to allow it to run outside of Jetty
      */
-    protected static Class<?> continuationClass = null;
+    protected static Class continuationClass;
 
     /**
      * How we suspend the continuation
      */
-    protected static Method suspendMethod = null;
+    protected static Method suspendMethod;
 
     /**
      * How we resume the continuation
      */
-    protected static Method resumeMethod = null;
+    protected static Method resumeMethod;
 
     /**
      * How we get the associated continuation object
      */
-    protected static Method getObject = null;
+    protected static Method getObject;
 
     /**
      * How we set the associated continuation object
      */
-    protected static Method setObject = null;
+    protected static Method setObject;
 
     /**
      * Are we using Jetty at all?
      */
-    protected static boolean isJetty = false;
-    
-    /**
-     * Are we using Grizzly at all?
-     */
-    protected static boolean isGrizzly = false;
+    protected static boolean isJetty;
 
     /**
      * Can we use Jetty?
@@ -229,44 +209,25 @@ public class Continuation
     {
         try
         {
-            try
-            {
-                continuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
-                isJetty = true;
-            } 
-            catch (Exception ex) 
-            {
-                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
-                Method gMethod = gContinuation.getMethod("getContinuation");
-                continuationClass = gMethod.invoke(gMethod).getClass();
-                isGrizzly = true;
-            }
-
-            suspendMethod = continuationClass.getMethod("suspend", Long.TYPE);
-            resumeMethod = continuationClass.getMethod("resume");
-            getObject = continuationClass.getMethod("getObject");
-            setObject = continuationClass.getMethod("setObject", Object.class);
+            continuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
+            suspendMethod = continuationClass.getMethod("suspend", new Class[] { Long.TYPE });
+            resumeMethod = continuationClass.getMethod("resume", new Class[] {});
+            getObject = continuationClass.getMethod("getObject", new Class[] {});
+            setObject = continuationClass.getMethod("setObject", new Class[] { Object.class });
+            isJetty = true;
         }
         catch (Exception ex)
         {
             isJetty = false;
-            log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
+            log.debug("No Jetty ContuniationSupport class, using standard Servlet API");
         }
     }
 
     /**
-     * @return True if we have detected Jetty classes
+     * @return True if we have detected Continuation classes
      */
     public static boolean isJetty()
     {
         return isJetty;
     }
-    
-    /**
-     * @return True if we have detected Grizzly classes
-     */
-    public static boolean isGrizzly()
-    {
-        return isGrizzly;
-    }    
 }

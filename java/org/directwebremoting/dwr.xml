@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE dwr PUBLIC
-    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
-    "http://getahead.org/dwr/dwr30.dtd">
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.org/dwr/dwr20.dtd">
 
 <dwr>
 
@@ -36,13 +36,6 @@
     <converter id="url" class="org.directwebremoting.convert.URLConverter"/>
     <converter id="exception" class="org.directwebremoting.convert.ExceptionConverter"/>
     <converter id="miniException" class="org.directwebremoting.convert.MinimalistExceptionConverter"/>
-    <converter id="file" class="org.directwebremoting.convert.FileConverter"/>
-    <converter id="context" class="org.directwebremoting.convert.ContextConverter"/>
-    <converter id="stringWrapper" class="org.directwebremoting.convert.StringWrapperConverter"/>
-    <converter id="raw" class="org.directwebremoting.convert.RawConverter"/>
-
-    <converter id="jsx3uri" class="jsx3.net.URIResolverConverter"/>
-    <converter id="jsx3doc" class="jsx3.xml.CdfDocumentConverter"/>
   </init>
 
   <allow>
@@ -89,10 +82,6 @@
     <convert converter="array" match="[C"/>
     <convert converter="array" match="[L*"/>
 
-    <convert converter="context" match="org.directwebremoting.proxy.io.Context"/>
-    <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
-    <convert converter="raw" match="org.directwebremoting.io.RawData"/>
-
     <!--
     The catch for the next 2 is that we really mean java.util.Collection<String>
     and java.util.Map<String, String> but we need to do more work before this
@@ -118,18 +107,6 @@
     <convert converter="servlet" match="javax.servlet.http.HttpServletRequest"/>
     <convert converter="servlet" match="javax.servlet.http.HttpServletResponse"/>
     <convert converter="servlet" match="javax.servlet.http.HttpSession"/>
-
-    <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
-    <convert converter="file" match="java.io.InputStream"/>
-    <convert converter="file" match="java.awt.image.BufferedImage"/>
-
-    <convert converter="jsx3uri" match="jsx3.net.URIResolver"/>
-    <convert converter="jsx3doc" match="jsx3.xml.CdfDocument"/>
-
-    <create creator="new" javascript="__System" scope="application">
-      <param name="class" value="org.directwebremoting.export.System"/>
-      <param name="hidden" value="true"/>
-    </create>
 
   </allow>
 

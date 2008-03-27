@@ -17,45 +17,31 @@ package org.getahead.dwrdemo.clock;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import org.directwebremoting.ScriptSession;
+import javax.servlet.ServletContext;
+
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.proxy.dwr.Util;
-import org.directwebremoting.util.SharedObjects;
+import org.directwebremoting.util.Logger;
 
 /**
- * A server-side clock that broadcasts the server time to any browsers that will
- * listen.
- * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Clock implements Runnable
 {
     /**
-     * Create a schedule to update the clock every second.
+     *
      */
     public Clock()
     {
-        ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
-        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
-     */
-    public void run()
-    {
-        if (active)
-        {
-            setClockDisplay(new Date().toString());
-        }
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        sctx = ServerContextFactory.get(servletContext);
     }
 
     /**
-     * Called from the client to turn the clock on/off
+     *
      */
     public synchronized void toggle()
     {
@@ -63,32 +49,53 @@ public class Clock implements Runnable
 
         if (active)
         {
-            setClockDisplay("Started");
+            new Thread(this).start();
         }
-        else
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    public void run()
+    {
+        try
         {
-            setClockDisplay("Stopped");
+            log.debug("CLOCK: Starting server-side thread");
+
+            while (active)
+            {
+                Collection sessions = sctx.getScriptSessionsByPage("/dwr/clock/index.html");
+                Util pages = new Util(sessions);
+                pages.setValue("clockDisplay", new Date().toString());
+
+                log.debug("Sent message");
+                Thread.sleep(1000);
+            }
+
+            Collection sessions = sctx.getScriptSessionsByPage("/dwr/clock/index.html");
+            Util pages = new Util(sessions);
+            pages.setValue("clockDisplay", "");
+
+            log.debug("CLOCK: Stopping server-side thread");
+        }
+        catch (InterruptedException ex)
+        {
+            ex.printStackTrace();
         }
     }
 
     /**
-     * Actually alter the clients.
-     * In DWR 2.x you had to know the ServletContext in order to be able to get
-     * a ServerContext. With DWR 3.0 this restriction has been removed.
-     * This method is public so you can call this from the dwr auto-generated
-     * pages to demo altering one page from another
-     * @param output The string to display.
+     * Our key to get hold of ServerContexts
      */
-    public void setClockDisplay(String output)
-    {
-        ServerContext sctx = ServerContextFactory.get();
-        Collection<ScriptSession> sessions = sctx.getScriptSessionsByPage(sctx.getContextPath() + "/clock/index.html");
-        Util pages = new Util(sessions);
-        pages.setValue("clockDisplay", output);
-    }
+    private ServerContext sctx;
 
     /**
      * Are we updating the clocks on all the pages?
      */
-    protected transient boolean active = false;
+    private transient boolean active = false;
+
+    /**
+     * The log stream
+     */
+    private static final Logger log = Logger.getLogger(Clock.class);
 }

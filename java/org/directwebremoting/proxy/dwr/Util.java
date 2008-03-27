@@ -49,6 +49,7 @@ public class Util extends ScriptProxy
      */
     public Util()
     {
+        super();
     }
 
     /**
@@ -64,7 +65,7 @@ public class Util extends ScriptProxy
      * Http thread constructor that alters a number of browsers
      * @param scriptSessions A collection of ScriptSessions that we should act on.
      */
-    public Util(Collection<ScriptSession> scriptSessions)
+    public Util(Collection scriptSessions)
     {
         super(scriptSessions);
     }
@@ -99,7 +100,7 @@ public class Util extends ScriptProxy
      * @param values The map of elementIds to values to alter
      * @param escapeHtml Should we escape HTML characters?
      */
-    public void setValues(Map<?, ?> values, boolean escapeHtml)
+    public void setValues(Map values, boolean escapeHtml)
     {
         addFunctionCall("dwr.util.setValues", values, getEscapeOptions(escapeHtml));
     }
@@ -122,7 +123,7 @@ public class Util extends ScriptProxy
      * @param array And array of objects from which to create options
      * @param property The object property to use for the option value and text
      */
-    public void addOptions(String elementId, Collection<?> array, String property)
+    public void addOptions(String elementId, Collection array, String property)
     {
         addFunctionCall("dwr.util.addOptions", elementId, array, property);
     }
@@ -135,7 +136,7 @@ public class Util extends ScriptProxy
      * @param valueProperty The object property to use for the option value
      * @param textProperty The object property to use for the option text
      */
-    public void addOptions(String elementId, Collection<?> array, String valueProperty, String textProperty)
+    public void addOptions(String elementId, Collection array, String valueProperty, String textProperty)
     {
         addFunctionCall("dwr.util.addOptions", elementId, array, valueProperty, textProperty);
     }
@@ -164,11 +165,8 @@ public class Util extends ScriptProxy
             StringBuffer functions = new StringBuffer();
             for (int i = 0; i < data[0].length; i++)
             {
-                functions.append("function(data) { return data[")
-                         .append(i)
-                         .append("]},");
+                functions.append("function(data) { return data[" + i + "]},");
             }
-
             functions.deleteCharAt(functions.length() - 1);
 
             ScriptBuffer script = new ScriptBuffer();
@@ -208,7 +206,7 @@ public class Util extends ScriptProxy
 
     /**
      * Clone a given node.
-     * <p><a href="http://getahead.org/dwr/browser/clonenode">More</a>.
+     * <p><a href="http://getahead.org/dwr/browser/TODO">More</a>.
      * @param elementId The HTML element to update (by id)
      */
     public void cloneNode(String elementId)
@@ -218,7 +216,7 @@ public class Util extends ScriptProxy
 
     /**
      * Clone a given node.
-     * <p><a href="http://getahead.org/dwr/browser/clonenode">More</a>.
+     * <p><a href="http://getahead.org/dwr/browser/TODO">More</a>.
      * @param elementId The HTML element to update (by id)
      * @param idPrefix How do we prefix ids in the cloned version of the node tree
      * @param idSuffix How do we suffix ids in the cloned version of the node tree
@@ -315,10 +313,10 @@ public class Util extends ScriptProxy
      * @param escapeHtml Do we want the client to escape HTML?
      * @return An options object containing the setting.
      */
-    private Map<String, Boolean> getEscapeOptions(boolean escapeHtml)
+    private Map getEscapeOptions(boolean escapeHtml)
     {
-        Map<String, Boolean> options = new HashMap<String, Boolean>();
-        options.put("escapeHtml", escapeHtml);
+        Map options = new HashMap();
+        options.put("escapeHtml", new Boolean(escapeHtml));
         return options;
     }
 }

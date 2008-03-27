@@ -33,11 +33,6 @@ public interface ProtocolConstants
     public static final String TYPE_STRING = "string";
 
     /**
-     * The name for file types from javascript
-     */
-    public static final String TYPE_FILE = "file";
-    
-    /**
      * How many calls are there in this request?
      */
     public static final String INBOUND_CALL_COUNT = "callCount";
@@ -89,22 +84,17 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_METHODNAME = "methodName";
 
     /**
-     * Window name is used by reverse ajax to get around the 2 connection limit
-     */
-    public static final String INBOUND_KEY_WINDOWNAME = "windowName";
-
-    /**
-     * What prefix do we put to the input parameters
+     * What prefix do we put to the input paramters
      */
     public static final String INBOUND_KEY_PARAM = "param";
 
     /**
-     * What prefix do we put to the environment parameters
+     * What prefix do we put to the environment paramters
      */
     public static final String INBOUND_KEY_ENV = "e";
 
     /**
-     * What prefix do we put to the meta-data parameters
+     * What prefix do we put to the meta-data paramters
      */
     public static final String INBOUND_KEY_METADATA = "p-";
 
@@ -176,12 +166,12 @@ public interface ProtocolConstants
     public static final String SCRIPT_CALL_REPLY = "//#DWR-REPLY";
 
     /**
-     * The marker to indicate the start of a 'eval'able script block
+     * The marker to indicate the start of a evalable script block
      */
     public static final String SCRIPT_START_MARKER = "//#DWR-START#";
 
     /**
-     * The marker to indicate the end of a 'eval'able script block
+     * The marker to indicate the end of a evalable script block
      */
     public static final String SCRIPT_END_MARKER = "//#DWR-END#";
 }

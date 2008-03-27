@@ -54,7 +54,6 @@ public class ThreadDroppingServerLoadMonitor extends AbstractServerLoadMonitor i
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.AbstractServerLoadMonitor#threadWaitStarting(org.directwebremoting.extend.WaitController)
      */
-    @Override
     public void threadWaitStarting(WaitController controller)
     {
         hitMonitor.recordHit();
@@ -66,7 +65,6 @@ public class ThreadDroppingServerLoadMonitor extends AbstractServerLoadMonitor i
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.AbstractServerLoadMonitor#threadWaitEnding(org.directwebremoting.extend.WaitController)
      */
-    @Override
     public void threadWaitEnding(WaitController controller)
     {
         super.threadWaitEnding(controller);

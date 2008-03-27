@@ -19,9 +19,6 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
  * Internationalization for DWR
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -106,7 +103,7 @@ public class Messages
     /**
      * Internationalize a parameterized string
      * @param key The lookup key
-     * @param params The parameters to fill in the string
+     * @param params
      * @return The internationalized version of the key
      */
     public static String getString(String key, Object[] params)
@@ -139,7 +136,7 @@ public class Messages
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(Messages.class);
+    private static final Logger log = Logger.getLogger(Messages.class);
 
     /**
      * The lookup bundle

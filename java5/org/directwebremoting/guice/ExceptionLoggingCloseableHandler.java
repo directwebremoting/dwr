@@ -26,8 +26,7 @@ class ExceptionLoggingCloseableHandler extends AbstractContextCloseHandler<Close
         super(Closeable.class);
         this.exceptions = exceptions;
     }
-
-    @Override
+    
     public void close(Closeable closeable) throws IOException
     {
         try
@@ -40,6 +39,6 @@ class ExceptionLoggingCloseableHandler extends AbstractContextCloseHandler<Close
             throw e;
         }
     }
-
+    
     private final List<Exception> exceptions;
 }

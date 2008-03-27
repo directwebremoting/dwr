@@ -20,38 +20,24 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.dwrp.ProtocolConstants;
+import org.directwebremoting.util.Logger;
 
 /**
  * InboundContext is the context for set of inbound conversions.
- * Since a data set may be recursive parts of some data members may refer to
+ * Since a data set may be recurrsive parts of some data members may refer to
  * others so we need to keep track of who is converted for what.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public final class InboundContext
 {
     /**
-     * When we are sure we have finished parsing the input, we can begin to
-     * fix all cross-references.
-     * @throws MarshallException If cross-references don't add up
-     */
-    public void dereference() throws MarshallException
-    {
-        for (InboundVariable variable : variables.values())
-        {
-            variable.dereference();
-        }
-    }
-
-    /**
      * Someone wants to tell us about a new conversion context.
      * @param context The current conversion context
      */
     public void pushContext(TypeHintContext context)
     {
-        typeHintStack.addFirst(context);
+        contexts.addFirst(context);
     }
 
     /**
@@ -59,7 +45,7 @@ public final class InboundContext
      */
     public void popContext()
     {
-        typeHintStack.removeFirst();
+        contexts.removeFirst();
     }
 
     /**
@@ -67,7 +53,7 @@ public final class InboundContext
      */
     public TypeHintContext getCurrentTypeHintContext()
     {
-        return typeHintStack.getFirst();
+        return (TypeHintContext) contexts.getFirst();
     }
 
     /**
@@ -83,35 +69,8 @@ public final class InboundContext
     public void createInboundVariable(int callNum, String key, String type, String value)
     {
         InboundVariable cte = new InboundVariable(this, key, type, value);
-        checkInboundVariable(callNum, key, cte);
-    }
-    
-    /**
-     * Create an inbound file variable.
-     * Usually called by a query parser to setup a list of known variables.
-     * This method also checks to see if the new variable is a parameter and if
-     * it is it updates the count of parameters
-     * @param callNum The call number to work on
-     * @param key The name of the variable
-     * @param type The javascript type of the variable
-     * @param value The value of the file
-     */
-    public void createInboundVariable(int callNum, String key, String type, FormField value)
-    {
-        InboundVariable iv = new InboundVariable(this, key, type, value);
-        checkInboundVariable(callNum, key, iv);
-    }
 
-    /**
-     * Internal method to check the variable we just created does not already
-     * exist, and to ensure that our count of inbound parameters is up to date
-     * @param callNum The number of this call
-     * @param key The name of the variable
-     * @param iv The value to check
-     */
-    private void checkInboundVariable(int callNum, String key, InboundVariable iv)
-    {
-        Object old = variables.put(key, iv);
+        Object old = variables.put(key, cte);
         if (old != null)
         {
             log.warn("Duplicate variable called: " + key);
@@ -138,7 +97,7 @@ public final class InboundContext
      */
     public InboundVariable getInboundVariable(String name)
     {
-        return variables.get(name);
+        return (InboundVariable) variables.get(name);
     }
 
     /**
@@ -158,7 +117,7 @@ public final class InboundContext
      * @param type The type that we converted the object to
      * @param bean The converted version
      */
-    public void addConverted(InboundVariable iv, Class<?> type, Object bean)
+    public void addConverted(InboundVariable iv, Class type, Object bean)
     {
         Conversion conversion = new Conversion(iv, type);
         Object old = converted.put(conversion, bean);
@@ -174,7 +133,7 @@ public final class InboundContext
      * @param type The type that we want the object converted to
      * @return The converted data or null if it has not been converted
      */
-    public Object getConverted(InboundVariable iv, Class<?> type)
+    public Object getConverted(InboundVariable iv, Class type)
     {
         Conversion conversion = new Conversion(iv, type);
         return converted.get(conversion);
@@ -199,8 +158,9 @@ public final class InboundContext
     {
         int count = 0;
         String prefix = ProtocolConstants.INBOUND_CALLNUM_PREFIX + callNum + ProtocolConstants.INBOUND_CALLNUM_SUFFIX + ProtocolConstants.INBOUND_KEY_PARAM;
-        for (String key : variables.keySet())
+        for (Iterator it = variables.keySet().iterator(); it.hasNext();)
         {
+            String key = (String) it.next();
             if (key.startsWith(prefix))
             {
                 count++;
@@ -221,40 +181,29 @@ public final class InboundContext
                      ProtocolConstants.INBOUND_CALLNUM_SUFFIX +
                      ProtocolConstants.INBOUND_KEY_PARAM + index;
 
-        return variables.get(key);
+        return (InboundVariable) variables.get(key);
     }
 
     /**
      * A debug method so people can get a list of all the variable names
      * @return an iterator over the known variable names
      */
-    public Iterator<String> getInboundVariableNames()
+    public Iterator getInboundVariableNames()
     {
         return variables.keySet().iterator();
     }
 
     /**
-     * A Class to use as a key in a map for conversion purposes.
-     * A collection of an InboundVariable and a type
+     * A Class to use as a key in a map for conversion purposes
      */
     protected static class Conversion
     {
         /**
-         * @param inboundVariable The new inboundVariable
-         * @param type The new type
+         * @param inboundVariable
+         * @param type
          */
-        Conversion(InboundVariable inboundVariable, Class<?> type)
+        Conversion(InboundVariable inboundVariable, Class type)
         {
-            if (inboundVariable == null)
-            {
-                throw new NullPointerException("InboundVariable");
-            }
-
-            if (type == null)
-            {
-                throw new NullPointerException("Class type");
-            }
-
             this.inboundVariable = inboundVariable;
             this.type = type;
         }
@@ -262,7 +211,6 @@ public final class InboundContext
         /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        @Override
         public boolean equals(Object obj)
         {
             if (!(obj instanceof Conversion))
@@ -272,13 +220,17 @@ public final class InboundContext
 
             Conversion that = (Conversion) obj;
 
-            return this.type.equals(that.type) && this.inboundVariable.equals(that.inboundVariable);
+            if (!this.type.equals(that.type))
+            {
+                return false;
+            }
+
+            return this.inboundVariable.equals(that.inboundVariable);
         }
 
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
-        @Override
         public int hashCode()
         {
             return inboundVariable.hashCode() + type.hashCode();
@@ -287,27 +239,26 @@ public final class InboundContext
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
-        @Override
         public String toString()
         {
             return "Conversion[" + inboundVariable + "," + type.getName() + "]";
         }
 
-        private final InboundVariable inboundVariable;
+        private InboundVariable inboundVariable;
 
-        private final Class<?> type;
+        private Class type;
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
         buffer.append("InboundContext[");
-        for (Map.Entry<String, InboundVariable> entry : variables.entrySet())
+        for (Iterator it = variables.entrySet().iterator(); it.hasNext();)
         {
+            Map.Entry entry = (Map.Entry) it.next();
             buffer.append(entry.getKey());
             buffer.append('=');
             buffer.append(entry.getValue());
@@ -321,7 +272,7 @@ public final class InboundContext
      * The stack of pushed conversion contexts.
      * i.e. What is the context of this type conversion.
      */
-    private LinkedList<TypeHintContext> typeHintStack = new LinkedList<TypeHintContext>();
+    private LinkedList contexts = new LinkedList();
 
     /**
      * How many params are there?.
@@ -333,15 +284,15 @@ public final class InboundContext
     /**
      * A map of all the inbound variables
      */
-    private final Map<String, InboundVariable> variables = new HashMap<String, InboundVariable>();
+    private final Map variables = new HashMap();
 
     /**
      * A map of all the variables converted.
      */
-    private Map<Conversion, Object> converted = new HashMap<Conversion, Object>();
+    private final Map converted = new HashMap();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(InboundContext.class);
+    private static final Logger log = Logger.getLogger(InboundContext.class);
 }

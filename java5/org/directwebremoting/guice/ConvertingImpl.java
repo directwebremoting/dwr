@@ -18,9 +18,9 @@ package org.directwebremoting.guice;
 import java.lang.annotation.Annotation;
 
 
-class ConvertingImpl implements Converting
+class ConvertingImpl implements Converting 
 {
-    public ConvertingImpl(String match)
+    public ConvertingImpl(String match) 
     {
         if (match == null)
         {
@@ -31,7 +31,7 @@ class ConvertingImpl implements Converting
         this.impl = Void.class;
     }
 
-    public ConvertingImpl(Class<?> type)
+    public ConvertingImpl(Class type) 
     {
         if (type == null)
         {
@@ -42,7 +42,7 @@ class ConvertingImpl implements Converting
         this.impl = Void.class;
     }
 
-    public ConvertingImpl(Class<?> type, Class<?> impl)
+    public ConvertingImpl(Class type, Class impl) 
     {
         if (type == null)
         {
@@ -57,42 +57,40 @@ class ConvertingImpl implements Converting
         this.impl = impl;
     }
 
-    public String match()
+    public String match() 
     {
         return this.match;
     }
-
-    public Class<?> type()
+    
+    public Class type()
     {
         return this.type;
     }
-
-    public Class<?> impl()
+    
+    public Class impl()
     {
         return this.impl;
     }
 
-    public Class<? extends Annotation> annotationType()
+    public Class<? extends Annotation> annotationType() 
     {
         return Converting.class;
     }
 
-    @Override
-    public boolean equals(Object t)
+    public boolean equals(Object t) 
     {
-        if (!(t instanceof Converting))
+        if (!(t instanceof Converting)) 
         {
             return false;
         }
 
         Converting that = (Converting) t;
-        return this.match.equals(that.match())
+        return this.match.equals(that.match()) 
             && this.type.equals(that.type())
             && this.impl.equals(that.impl());
     }
 
-    @Override
-    public int hashCode()
+    public int hashCode() 
     {
         // Annotation spec sez:
         return (127 * "match".hashCode() ^ match.hashCode())
@@ -100,17 +98,16 @@ class ConvertingImpl implements Converting
              + (127 * "impl".hashCode() ^ impl.hashCode());
     }
 
-    @Override
-    public String toString()
+    public String toString() 
     {
-        return "@" + Converting.class.getName() +
-               "(match=" + match +
-               ",type=" + type.getName() +
-               ",impl=" + impl.getName() +
+        return "@" + Converting.class.getName() + 
+               "(match=" + match + 
+               ",type=" + type.getName() + 
+               ",impl=" + impl.getName() + 
                ")";
     }
 
     private final String match;
-    private final Class<?> type;
-    private final Class<?> impl;
+    private final Class type;
+    private final Class impl;
 }

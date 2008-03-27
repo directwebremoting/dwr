@@ -34,7 +34,7 @@ public interface IDWRActionProcessor
      * @param actionResponse
      * @param invocationParameters
      */
-    void preProcess(HttpServletRequest request, HttpServletResponse originalResponse, HttpServletResponse actionResponse, Map<String, String> invocationParameters);
+    void preProcess(HttpServletRequest request, HttpServletResponse originalResponse, HttpServletResponse actionResponse, Map invocationParameters);
 
     /**
      *

@@ -23,23 +23,24 @@ import javax.servlet.http.HttpSession;
 
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 
 /**
  * A converter that magics up HTTP objects
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Joe Walker [joe at eireneh dot com]
+ * @version $Id: StringConverter.java,v 1.2 2004/11/04 15:54:07 joe_walker Exp $
  */
 public class ServletConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx)
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx)
     {
         WebContext webcx = WebContextFactory.get();
 
@@ -76,6 +77,6 @@ public class ServletConverter extends BaseV20Converter implements Converter
      */
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
     {
-        return new NonNestedOutboundVariable("null");
+        return new SimpleOutboundVariable("null", outctx, true);
     }
 }

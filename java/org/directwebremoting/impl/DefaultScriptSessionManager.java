@@ -19,28 +19,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import javax.swing.event.EventListenerList;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
-import org.directwebremoting.event.ScriptSessionEvent;
-import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.util.IdGenerator;
-import org.directwebremoting.util.SharedObjects;
+import org.directwebremoting.util.Logger;
 
 /**
- * A default implementation of ScriptSessionManager.
+ * A default implmentation of ScriptSessionManager.
  * <p>There are synchronization constraints on this class that could be broken
  * by subclasses. Specifically anyone accessing either <code>sessionMap</code>
  * or <code>pageSessionMap</code> must be holding the <code>sessionLock</code>.
@@ -51,225 +41,77 @@ import org.directwebremoting.util.SharedObjects;
  */
 public class DefaultScriptSessionManager implements ScriptSessionManager
 {
-    /**
-     * Setup a timer that will invalidate sessions
-     */
-    public DefaultScriptSessionManager()
-    {
-        Runnable runnable = new Runnable()
-        {
-            public void run()
-            {
-                maybeCheckTimeouts();
-            }
-        };
-
-        ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
-        executor.schedule(runnable, 60, TimeUnit.SECONDS);
-
-        // Maybe we need be able to cancel the executor?
-        // ScheduledFuture<?> future = executor.schedule...
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSession(java.lang.String)
      */
-    public RealScriptSession getScriptSession(String id, String page, String httpSessionId)
+    public RealScriptSession getScriptSession(String id)
     {
         maybeCheckTimeouts();
 
-        DefaultScriptSession scriptSession;
-
         synchronized (sessionLock)
         {
-            scriptSession = sessionMap.get(id);
+            DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
             if (scriptSession == null)
             {
-                return null;
+                scriptSession = new DefaultScriptSession(id, this);
+                sessionMap.put(id, scriptSession);
+            }
+            else
+            {
+                scriptSession.updateLastAccessedTime();
             }
 
-            associateScriptSessionAndPage(scriptSession, page);
-            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
-
-            // Maybe we should update the access time of the ScriptSession?
-            //  scriptSession.updateLastAccessedTime();
-            // Since this call could come from outside of a call from the
-            // browser, it's not really an indication that this session is still
-            // alive, so we don't.
+            return scriptSession;
         }
-
-        return scriptSession;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#createScriptSession(org.directwebremoting.extend.RealWebContext)
+     * @see org.directwebremoting.ScriptSessionManager#setPageForScriptSession(org.directwebremoting.extend.RealScriptSession, java.lang.String)
      */
-    public RealScriptSession createScriptSession(String page, String httpSessionId)
+    public void setPageForScriptSession(RealScriptSession scriptSession, String page)
     {
-        String id = generator.generateId(16);
-
-        DefaultScriptSession scriptSession = new DefaultScriptSession(id, this, page);
-
+        String normalizedPage = pageNormalizer.normalizePage(page);
         synchronized (sessionLock)
         {
-            sessionMap.put(id, scriptSession);
+            Set pageSessions = (Set) pageSessionMap.get(normalizedPage);
+            if (pageSessions == null)
+            {
+                pageSessions = new HashSet();
+                pageSessionMap.put(normalizedPage, pageSessions);
+            }
 
-            associateScriptSessionAndPage(scriptSession, page);
-            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
-        }
-
-        // See notes on synchronization in invalidate()
-        fireScriptSessionCreatedEvent(scriptSession);
-
-        return scriptSession;
-    }
-
-    /**
-     * Link a script session and an http session in some way
-     * Exactly what we should do here is still something of a mystery. We don't
-     * really have much experience on the best way to handle this, so currently
-     * we're just setting a script session attribute that points at the
-     * http session id, and not exposing it.
-     * <p>This method is an ideal point to override and do something better.
-     * @param scriptSession The script session to be linked to an http session
-     * @param httpSessionId The http session from the browser with the given scriptSession
-     */
-    protected void associateScriptSessionAndHttpSession(RealScriptSession scriptSession, String httpSessionId)
-    {
-        scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, httpSessionId);
-
-        Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-        if (scriptSessionIds == null)
-        {
-            scriptSessionIds = new HashSet<String>();
-            sessionXRef.put(httpSessionId, scriptSessionIds);
-        }
-        scriptSessionIds.add(scriptSession.getId());
-    }
-
-    /**
-     * Unlink any http sessions from this script session
-     * @see #associateScriptSessionAndHttpSession(RealScriptSession, String)
-     * @param scriptSession The script session to be unlinked
-     */
-    protected void disassociateScriptSessionAndHttpSession(RealScriptSession scriptSession)
-    {
-        Object httpSessionId = scriptSession.getAttribute(ATTRIBUTE_HTTPSESSIONID);
-        if (httpSessionId == null)
-        {
-            return;
-        }
-
-        Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-        if (scriptSessionIds == null)
-        {
-            log.debug("Warning: No script session ids for http session");
-            return;
-        }
-        scriptSessionIds.remove(scriptSession.getId());
-        if (scriptSessionIds.size() == 0)
-        {
-            sessionXRef.remove(httpSessionId);
-        }
-
-        scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, null);
-    }
-
-    /**
-     * Link a script session to a web page.
-     * <p>This allows people to call {@link ServerContext#getScriptSessionsByPage(String)}
-     * <p>This method is an ideal point to override and do something better.
-     * @param scriptSession The script session to be linked to a page
-     * @param page The page (un-normalized) to be linked to
-     */
-    protected void associateScriptSessionAndPage(RealScriptSession scriptSession, String page)
-    {
-        if (page == null)
-        {
-            return;
-        }
-
-        String normalizedPage = pageNormalizer.normalizePage(page);
-
-        Set<RealScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
-        if (pageSessions == null)
-        {
-            pageSessions = new HashSet<RealScriptSession>();
-            pageSessionMap.put(normalizedPage, pageSessions);
-        }
-
-        pageSessions.add(scriptSession);
-
-        scriptSession.setAttribute(ATTRIBUTE_PAGE, normalizedPage);
-    }
-
-    /**
-     * Unlink any pages from this script session
-     * @see #associateScriptSessionAndPage(RealScriptSession, String)
-     * @param scriptSession The script session to be unlinked
-     */
-    protected void disassociateScriptSessionAndPage(RealScriptSession scriptSession)
-    {
-        for (Set<RealScriptSession> pageSessions : pageSessionMap.values())
-        {
-            pageSessions.remove(scriptSession);
+            pageSessions.add(scriptSession);
         }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSessionsByPage(java.lang.String)
      */
-    public Collection<ScriptSession> getScriptSessionsByPage(String url)
+    public Collection getScriptSessionsByPage(String page)
     {
-        String normalizedPage = pageNormalizer.normalizePage(url);
+        String normalizedPage = pageNormalizer.normalizePage(page);
         synchronized (sessionLock)
         {
-            Set<RealScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
+            Set pageSessions = (Set) pageSessionMap.get(normalizedPage);
             if (pageSessions == null)
             {
-                pageSessions = new HashSet<RealScriptSession>();
+                pageSessions = new HashSet();
             }
 
-            Set<ScriptSession> reply = new HashSet<ScriptSession>();
+            Set reply = new HashSet();
             reply.addAll(pageSessions);
             return reply;
         }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionsByHttpSessionId(java.lang.String)
-     */
-    public Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
-    {
-        Collection<RealScriptSession> reply = new ArrayList<RealScriptSession>();
-
-        synchronized (sessionLock)
-        {
-            Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-            if (scriptSessionIds != null)
-            {
-                for (String scriptSessionId : scriptSessionIds)
-                {
-                    DefaultScriptSession scriptSession = sessionMap.get(scriptSessionId);
-                    if (scriptSession != null)
-                    {
-                        reply.add(scriptSession);
-                    }
-                }
-            }
-        }
-
-        return reply;
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getAllScriptSessions()
      */
-    public Collection<ScriptSession> getAllScriptSessions()
+    public Collection getAllScriptSessions()
     {
         synchronized (sessionLock)
         {
-            Set<ScriptSession> reply = new HashSet<ScriptSession>();
+            Set reply = new HashSet();
             reply.addAll(sessionMap.values());
             return reply;
         }
@@ -286,22 +128,29 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         // It feels like a deadlock risk to do so
         synchronized (sessionLock)
         {
-            // Due to the way systems get a number of script sessions for a page
-            // and the perform a number of actions on them, we may get a number
-            // of invalidation checks, and therefore calls to invalidate().
-            // We could protect ourselves from this by having a
-            // 'hasBeenInvalidated' flag, but we're taking the simple option
-            // here of just allowing multiple invalidations.
-            sessionMap.remove(scriptSession.getId());
+            RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
+            if (!scriptSession.equals(removed))
+            {
+                log.debug("ScriptSession already removed from manager. scriptSession=" + scriptSession + " removed=" + removed);
+            }
 
-            disassociateScriptSessionAndPage(scriptSession);
-            disassociateScriptSessionAndHttpSession(scriptSession);
+            int removeCount = 0;
+            for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
+            {
+                Set pageSessions = (Set) it.next();
+                boolean isRemoved = pageSessions.remove(scriptSession);
+
+                if (isRemoved)
+                {
+                    removeCount++;
+                }
+            }
+
+            if (removeCount != 1)
+            {
+                log.debug("DefaultScriptSessionManager.invalidate(): removeCount=" + removeCount + " when invalidating: " + scriptSession);
+            }
         }
-
-        // Are there any risks from doing this outside the locks?
-        // The initial analysis is that 'Destroyed' is past tense so you would
-        // have expected it to have happened already.
-        fireScriptSessionDestroyedEvent(scriptSession);
     }
 
     /**
@@ -326,12 +175,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     protected void checkTimeouts()
     {
         long now = System.currentTimeMillis();
-        List<ScriptSession> timeouts = new ArrayList<ScriptSession>();
+        List timeouts = new ArrayList();
 
         synchronized (sessionLock)
         {
-            for (DefaultScriptSession session : sessionMap.values())
+            for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
             {
+                DefaultScriptSession session = (DefaultScriptSession) it.next();
+
                 if (session.isInvalidated())
                 {
                     continue;
@@ -344,9 +195,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
                 }
             }
 
-            for (ScriptSession scriptSession : timeouts)
+            for (Iterator it = timeouts.iterator(); it.hasNext();)
             {
-                DefaultScriptSession session = (DefaultScriptSession) scriptSession;
+                DefaultScriptSession session = (DefaultScriptSession) it.next();
                 session.invalidate();
             }
         }
@@ -363,29 +214,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#setScriptSessionTimeout(long)
      */
-    public void setScriptSessionTimeout(long scriptSessionTimeout)
+    public void setScriptSessionTimeout(long timeout)
     {
-        this.scriptSessionTimeout = scriptSessionTimeout;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#addScriptSessionListener(org.directwebremoting.event.ScriptSessionListener)
-     */
-    public void addScriptSessionListener(ScriptSessionListener li)
-    {
-        scriptSessionListeners.add(ScriptSessionListener.class, li);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#removeScriptSessionListener(org.directwebremoting.event.ScriptSessionListener)
-     */
-    public void removeScriptSessionListener(ScriptSessionListener li)
-    {
-        scriptSessionListeners.remove(ScriptSessionListener.class, li);
+        this.scriptSessionTimeout = timeout;
     }
 
     /**
-     * Accessor for the PageNormalizer.
+     * Accessfor for the PageNormalizer.
      * @param pageNormalizer The new PageNormalizer
      */
     public void setPageNormalizer(PageNormalizer pageNormalizer)
@@ -402,62 +237,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     }
 
     /**
-     * This should be called whenever a {@link ScriptSession} is created
-     * @param scriptSession The newly created ScriptSession
-     */
-    protected void fireScriptSessionCreatedEvent(ScriptSession scriptSession)
-    {
-        ScriptSessionEvent ev = new ScriptSessionEvent(scriptSession);
-        Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = 0; i < listeners.length - 2; i += 2)
-        {
-            if (listeners[i] == ScriptSessionListener.class)
-            {
-                ((ScriptSessionListener) listeners[i + 1]).sessionCreated(ev);
-            }
-        }
-    }
-
-    /**
-     * This should be called whenever a {@link ScriptSession} is destroyed
-     * @param scriptSession The newly destroyed ScriptSession
-     */
-    protected void fireScriptSessionDestroyedEvent(ScriptSession scriptSession)
-    {
-        ScriptSessionEvent ev = new ScriptSessionEvent(scriptSession);
-        Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = 0; i < listeners.length - 2; i += 2)
-        {
-            if (listeners[i] == ScriptSessionListener.class)
-            {
-                ((ScriptSessionListener) listeners[i + 1]).sessionDestroyed(ev);
-            }
-        }
-    }
-
-    /**
-     * Use of this attribute is currently discouraged, we may make this public
-     * in a later release. Until then, it may change or be removed without warning.
-     */
-    public static final String ATTRIBUTE_HTTPSESSIONID = "org.directwebremoting.ScriptSession.HttpSessionId";
-
-    /**
-     * Use of this attribute is currently discouraged, we may make this public
-     * in a later release. Until then, it may change or be removed without warning.
-     */
-    public static final String ATTRIBUTE_PAGE = "org.directwebremoting.ScriptSession.Page";
-
-    /**
-     * The list of current {@link ScriptSessionListener}s
-     */
-    protected EventListenerList scriptSessionListeners = new EventListenerList();
-
-    /**
-     * How we create script session ids.
-     */
-    private static IdGenerator generator = new IdGenerator();
-
-    /**
      * By default we check for sessions that need expiring every 30 seconds
      */
     protected static final long DEFAULT_SESSION_CHECK_TIME = 30000;
@@ -470,7 +249,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     /**
      * How long do we wait before we timeout script sessions?
      */
-    private long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
+    protected long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
 
     /**
      * How often do we check for script sessions that need timing out
@@ -490,29 +269,19 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     protected final Object sessionLock = new Object();
 
     /**
-     * Allows us to associate script sessions with http sessions.
-     * The key is an http session id, the 
+     * The map of all the known sessions
      * <p>GuardedBy("sessionLock")
      */
-    private Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
+    protected Map sessionMap = new HashMap();
 
     /**
-     * The map of all the known sessions.
-     * The key is the script session id, the value is the session data
+     * The map of pages that have sessions
      * <p>GuardedBy("sessionLock")
      */
-    private Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
-
-    /**
-     * The map of pages that have sessions.
-     * The key is a normalized page, the value the script sessions that are
-     * known to be currently visiting the page
-     * <p>GuardedBy("sessionLock")
-     */
-    private Map<String, Set<RealScriptSession>> pageSessionMap = new HashMap<String, Set<RealScriptSession>>();
+    protected Map pageSessionMap = new HashMap();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultScriptSessionManager.class);
+    private static final Logger log = Logger.getLogger(DefaultScriptSessionManager.class);
 }

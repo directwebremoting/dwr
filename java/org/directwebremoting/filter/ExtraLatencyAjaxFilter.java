@@ -17,8 +17,6 @@ package org.directwebremoting.filter;
 
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.AjaxFilterChain;
 
@@ -36,24 +34,30 @@ public class ExtraLatencyAjaxFilter implements AjaxFilter
      */
     public Object doFilter(Object obj, Method method, Object[] params, AjaxFilterChain chain) throws Exception
     {
-        try
+        synchronized (this)
         {
-            Thread.sleep(delay/2);
-        }
-        catch (InterruptedException ex)
-        {
-            log.warn("Pre-exec interuption", ex);
+            try
+            {
+                wait(delay/2);
+            }
+            catch (InterruptedException ex)
+            {
+                ex.printStackTrace();
+            }
         }
 
         Object reply = chain.doFilter(obj, method, params);
 
-        try
+        synchronized (this)
         {
-            Thread.sleep(delay/2);
-        }
-        catch (InterruptedException ex)
-        {
-            log.warn("Post-exec interuption", ex);
+            try
+            {
+                wait(delay/2);
+            }
+            catch (InterruptedException ex)
+            {
+                ex.printStackTrace();
+            }
         }
 
         return reply;
@@ -75,14 +79,5 @@ public class ExtraLatencyAjaxFilter implements AjaxFilter
         this.delay = delay;
     }
 
-    /**
-     * The delay time in milliseconds.
-     * We wait for half this value before and half after the call
-     */
     private long delay = 100;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(ExtraLatencyAjaxFilter.class);
 }

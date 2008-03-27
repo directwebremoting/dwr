@@ -28,7 +28,7 @@ public interface AccessControl
      * message if anything is wrong. If nothing is wrong, return null.
      * <p>See notes on <code>getReasonToNotDisplay()</code>. This method should
      * duplicate the tests made by that method.
-     * <p>This is not a great because it mixes 2 bits of information in the same
+     * <p>This is not a great becuase it mixes 2 bits of information in the same
      * variable (is it wrong, and what is wrong) but without multi-value returns
      * in Java this seems like the most simple implementation.
      * @param creator Where does the method come from?
@@ -40,14 +40,14 @@ public interface AccessControl
     void assertExecutionIsPossible(Creator creator, String className, Method method) throws SecurityException;
 
     /**
-     * Check the method for accessibility at 'compile-time' (i.e. when the application
+     * Check the method for accessibility at 'compile-time' (i.e. when the app
      * is downloaded), and return an error message if anything is wrong. If
      * nothing is wrong, return null.
      * <p>This method is similar to <code>getReasonToNotExecute()</code> except
      * that there may be checks (like security checks) that we wish to make only
      * at runtime in case the situation changes between 'compile-time' and
      * runtime.
-     * <p>This is not a great because it mixes 2 bits of information in the same
+     * <p>This is not a great becuase it mixes 2 bits of information in the same
      * variable (is it wrong, and what is wrong) but without multi-value returns
      * in Java this seems like the most simple implementation.
      * @param creator Where does the method come from?

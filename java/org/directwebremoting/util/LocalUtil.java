@@ -16,8 +16,8 @@
 package org.directwebremoting.util;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.io.Closeable;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,13 +38,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
- * Various utilities, stuff that we're still surprised isn't in the JDK, and
- * stuff that perhaps is borderline JDK material, but isn't really pure DWR
- * either.
+ * Various utilities, mostly to make up for JDK 1.4 functionallity that is not
+ * in JDK 1.3
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public final class LocalUtil
@@ -59,53 +56,42 @@ public final class LocalUtil
     public static final int INBOUND_INDEX_VALUE = 1;
 
     /**
-     * Prevent instantiation
+     * Prevent instansiation
      */
     private LocalUtil()
     {
     }
 
     /**
-     * Create a string by joining the array elements together with the separator
-     * in-between each element. A null (in the array or as a separator) is
-     * treated as an empty string.
-     * @param array The array of elements to join
-     * @param separator The string sequence to place between array elements
-     * @return A string containing the joined elements
+     * Replacement for String#replaceAll(String, String) in JDK 1.4+
+     * @param text source text
+     * @param repl the stuff to get rid of
+     * @param with the stuff to replace it with
+     * @return replaced text or null if any args are null
      */
-    public static String join(Object[] array, String separator)
+    public static String replace(String text, String repl, String with)
     {
-        if (array == null)
+        if (text == null || repl == null || with == null || repl.length() == 0)
         {
-            return null;
+            return text;
         }
 
-        if (separator == null)
+        StringBuffer buf = new StringBuffer(text.length());
+        int searchFrom = 0;
+        while (true)
         {
-            separator = "";
+            int foundAt = text.indexOf(repl, searchFrom);
+            if (foundAt == -1)
+            {
+                break;
+            }
+
+            buf.append(text.substring(searchFrom, foundAt)).append(with);
+            searchFrom = foundAt + repl.length();
         }
+        buf.append(text.substring(searchFrom));
 
-        StringBuffer buffer = new StringBuffer();
-        boolean isFirst = true;
-
-        for (Object object : array)
-        {
-            if (isFirst)
-            {
-                isFirst = false;
-            }
-            else
-            {
-                buffer.append(separator);
-            }
-
-            if (object != null)
-            {
-                buffer.append(object);
-            }
-        }
-
-        return buffer.toString();
+        return buf.toString();
     }
 
     /**
@@ -173,7 +159,7 @@ public final class LocalUtil
      * @param c2 the second class to test
      * @return true if the classes are equivalent
      */
-    public static boolean isEquivalent(Class<?> c1, Class<?> c2)
+    public static boolean isEquivalent(Class c1, Class c2)
     {
         if (c1 == Boolean.class || c1 == Boolean.TYPE)
         {
@@ -217,9 +203,9 @@ public final class LocalUtil
 
     /**
      * @param type The class to de-primitivize
-     * @return The non-primitive version of the class
+     * @return The non-privitive version of the class
      */
-    public static Class<?> getNonPrimitiveType(Class<?> type)
+    public static Class getNonPrimitiveType(Class type)
     {
         if (!type.isPrimitive())
         {
@@ -266,7 +252,7 @@ public final class LocalUtil
     }
 
     /**
-     * Add headers to prevent browsers and proxies from caching this reply.
+     * Add headers to prevent browers and proxies from caching this reply.
      * @param resp The response to add headers to
      */
     public static void addNoCacheHeaders(HttpServletResponse resp)
@@ -289,7 +275,7 @@ public final class LocalUtil
      * @param paramType The type to test
      * @return true if the type is a Servlet type
      */
-    public static boolean isServletClass(Class<?> paramType)
+    public static boolean isServletClass(Class paramType)
     {
         return paramType == HttpServletRequest.class ||
                paramType == HttpServletResponse.class ||
@@ -299,24 +285,44 @@ public final class LocalUtil
     }
 
     /**
-     * URL decode a value.
-     * {@link URLDecoder#decode(String, String)} throws an
-     * {@link UnsupportedEncodingException}, which is silly given that the most
-     * common use case will be to pass in "UTF-8"
+     * URL decode a value. This method gets around the lack of a
+     * decode(String, String) method in JDK 1.3.
      * @param value The string to decode
      * @return The decoded string
      */
     public static String decode(String value)
     {
-        try
+        if (!testedDecoder)
         {
-            return URLDecoder.decode(value, "UTF-8");
+            try
+            {
+                decode14 = URLDecoder.class.getMethod("decode", new Class[] { String.class, String.class });
+            }
+            catch (Exception ex)
+            {
+                if (!warn13)
+                {
+                    log.warn("URLDecoder.decode(String, String) is not available. Falling back to 1.3 variant.");
+                    warn13 = true;
+                }
+            }
+
+            testedDecoder = true;
         }
-        catch (UnsupportedEncodingException ex)
+
+        if (decode14 != null)
         {
-            log.error("UTF-8 is not a valid char sequence?", ex);
-            return value;
+            try
+            {
+                return (String) decode14.invoke(null, new Object[] { value, "UTF-8" });
+            }
+            catch (Exception ex)
+            {
+                log.warn("Failed to use JDK 1.4 decoder", ex);
+            }
         }
+
+        return URLDecoder.decode(value);
     }
 
     /**
@@ -327,11 +333,12 @@ public final class LocalUtil
      * @param ignore List of keys to not warn about if they are not properties
      *               Note only the warning is skipped, we still try the setter
      */
-    public static void setParams(Object object, Map<String, ?> params, List<String> ignore)
+    public static void setParams(Object object, Map params, List ignore)
     {
-        for (Map.Entry<String, ?> entry : params.entrySet())
+        for (Iterator it = params.entrySet().iterator(); it.hasNext();)
         {
-            String key = entry.getKey();
+            Map.Entry entry = (Map.Entry) it.next();
+            String key = (String) entry.getKey();
             Object value = entry.getValue();
 
             try
@@ -369,15 +376,15 @@ public final class LocalUtil
      */
     public static void setProperty(Object object, String key, Object value) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
-        Class<? extends Object> real = object.getClass();
+        Class real = object.getClass();
 
         String setterName = "set" + key.substring(0, 1).toUpperCase(Locale.ENGLISH) + key.substring(1);
 
         try
         {
             // Can we work with whatever type we were given?
-            Method method = real.getMethod(setterName, value.getClass());
-            method.invoke(object, value);
+            Method method = real.getMethod(setterName, new Class[] { value.getClass() });
+            method.invoke(object, new Object[] { value });
             return;
         }
         catch (NoSuchMethodException ex)
@@ -390,15 +397,18 @@ public final class LocalUtil
             }
         }
 
-        for (Method setter : real.getMethods())
+        Method[] methods = real.getMethods();
+        for (int i = 0; i < methods.length; i++)
         {
+            Method setter = methods[i];
+
             if (setter.getName().equals(setterName) && setter.getParameterTypes().length == 1)
             {
-                Class<?> propertyType = setter.getParameterTypes()[0];
+                Class propertyType = setter.getParameterTypes()[0];
                 try
                 {
-                    Object param = simpleConvert((String) value, propertyType);
-                    setter.invoke(object, param);
+                    Object param = LocalUtil.simpleConvert((String) value, propertyType);
+                    setter.invoke(object, new Object[] { param });
                     return;
                 }
                 catch (IllegalArgumentException ex)
@@ -417,7 +427,7 @@ public final class LocalUtil
      * @param paramType The type to test
      * @return true if the type is acceptable to simpleConvert()
      */
-    public static boolean isTypeSimplyConvertable(Class<?> paramType)
+    public static boolean isTypeSimplyConvertable(Class paramType)
     {
         return paramType == String.class ||
             paramType == Integer.class ||
@@ -442,24 +452,22 @@ public final class LocalUtil
      * A very simple conversion function for all the IoC style setup and
      * reflection that we are doing.
      * @param value The value to convert
-     * @param paramType The type to convert to. Currently any primitive types and
+     * @param paramType The type to convert to. Currently ony primitive types and
      * String are supported.
      * @return The converted object.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T simpleConvert(String value, Class<T> paramType)
+    public static Object simpleConvert(String value, Class paramType)
     {
         if (paramType == String.class)
         {
-            return (T) value;
+            return value;
         }
 
         if (paramType == Character.class || paramType == Character.TYPE)
         {
-            value = LocalUtil.decode(value);
             if (value.length() == 1)
             {
-                return (T) Character.valueOf(value.charAt(0));
+                return new Character(value.charAt(0));
             }
             else
             {
@@ -476,12 +484,12 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Boolean.valueOf(trimValue);
+            return Boolean.valueOf(trimValue);
         }
 
         if (paramType == Boolean.TYPE)
         {
-            return (T) Boolean.valueOf(trimValue);
+            return Boolean.valueOf(trimValue);
         }
 
         if (paramType == Integer.class)
@@ -491,17 +499,17 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Integer.valueOf(trimValue);
+            return Integer.valueOf(trimValue);
         }
 
         if (paramType == Integer.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Integer.valueOf(0);
+                return new Integer(0);
             }
 
-            return (T) Integer.valueOf(trimValue);
+            return Integer.valueOf(trimValue);
         }
 
         if (paramType == Short.class)
@@ -511,17 +519,17 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Short.valueOf(trimValue);
+            return Short.valueOf(trimValue);
         }
 
         if (paramType == Short.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Short.valueOf((short) 0);
+                return new Short((short) 0);
             }
 
-            return (T) Short.valueOf(trimValue);
+            return Short.valueOf(trimValue);
         }
 
         if (paramType == Byte.class)
@@ -531,17 +539,17 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Byte.valueOf(trimValue);
+            return Byte.valueOf(trimValue);
         }
 
         if (paramType == Byte.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Byte.valueOf((byte) 0);
+                return new Byte((byte) 0);
             }
 
-            return (T) Byte.valueOf(trimValue);
+            return Byte.valueOf(trimValue);
         }
 
         if (paramType == Long.class)
@@ -551,17 +559,17 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Long.valueOf(trimValue);
+            return Long.valueOf(trimValue);
         }
 
         if (paramType == Long.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Long.valueOf(0);
+                return new Long(0);
             }
 
-            return (T) Long.valueOf(trimValue);
+            return Long.valueOf(trimValue);
         }
 
         if (paramType == Float.class)
@@ -571,17 +579,17 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Float.valueOf(trimValue);
+            return Float.valueOf(trimValue);
         }
 
         if (paramType == Float.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Float.valueOf(0);
+                return new Float(0);
             }
 
-            return (T) Float.valueOf(trimValue);
+            return Float.valueOf(trimValue);
         }
 
         if (paramType == Double.class)
@@ -591,20 +599,48 @@ public final class LocalUtil
                 return null;
             }
 
-            return (T) Double.valueOf(trimValue);
+            return Double.valueOf(trimValue);
         }
 
         if (paramType == Double.TYPE)
         {
             if (trimValue.length() == 0)
             {
-                return (T) Double.valueOf(0.0D);
+                return new Double(0);
             }
 
-            return (T) Double.valueOf(trimValue);
+            return Double.valueOf(trimValue);
         }
 
         throw new IllegalArgumentException("Unsupported conversion type: " + paramType.getName());
+    }
+
+    /**
+     * Get the short class name (i.e. without the package part)
+     * @param clazz the class to get the short name of
+     * @return the class name of the class without the package name
+     */
+    public static String getShortClassName(Class clazz)
+    {
+        String className = clazz.getName();
+
+        char[] chars = className.toCharArray();
+        int lastDot = 0;
+        for (int i = 0; i < chars.length; i++)
+        {
+            if (chars[i] == '.')
+            {
+                lastDot = i + 1;
+            }
+            else if (chars[i] == '$')
+            {
+                chars[i] = '.';
+            }
+        }
+
+        // This might come up in scans for locale/charset issues. It's not an
+        // issue since we are talking about chars.
+        return new String(chars, lastDot, chars.length - lastDot);
     }
 
     /**
@@ -647,7 +683,7 @@ public final class LocalUtil
      * @return The class if it is safe or null otherwise.
      * @throws ClassNotFoundException If <code>className</code> is not valid
      */
-    public static Class<?> classForName(String className) throws ClassNotFoundException
+    public static Class classForName(String className) throws ClassNotFoundException
     {
         // Class.forName(className);
         return Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -688,37 +724,35 @@ public final class LocalUtil
      * Utility to essentially do Class forName with the assumption that the
      * environment expects failures for missing jar files and can carry on if
      * this process fails.
-     * @param <T> The base type that we want a class to implement
-     * @param debugContext The name for debugging purposes
+     * @param name The name for debugging purposes
      * @param className The class to create
      * @param impl The implementation class - what should className do?
      * @return The class if it is safe or null otherwise.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<? extends T> classForName(String debugContext, String className, Class<T> impl)
+    public static Class classForName(String name, String className, Class impl)
     {
-        Class<? extends T> clazz;
+        Class clazz;
 
         try
         {
-            clazz = (Class<? extends T>) classForName(className);
+            clazz = classForName(className);
         }
         catch (ClassNotFoundException ex)
         {
             // We expect this sometimes, hence debug
-            log.debug("Skipping '" + debugContext + "' due to ClassNotFoundException on " + className + ". Cause: " + ex.getMessage());
+            log.debug("Skipping '" + name + "' due to ClassNotFoundException on " + className + ". Cause: " + ex.getMessage());
             return null;
         }
         catch (NoClassDefFoundError ex)
         {
             // We expect this sometimes, hence debug
-            log.debug("Skipping '" + debugContext + "' due to NoClassDefFoundError on " + className + ". Cause: " + ex.getMessage());
+            log.debug("Skipping '" + name + "' due to NoClassDefFoundError on " + className + ". Cause: " + ex.getMessage());
             return null;
         }
         catch (TransformerFactoryConfigurationError ex)
         {
             // We expect this sometimes, hence debug
-            log.debug("Skipping '" + debugContext + "' due to TransformerFactoryConfigurationError on " + className + ". Cause: " + ex.getMessage());
+            log.debug("Skipping '" + name + "' due to TransformerFactoryConfigurationError on " + className + ". Cause: " + ex.getMessage());
             log.debug("Maybe you need to add xalan.jar to your webserver?");
             return null;
         }
@@ -737,24 +771,24 @@ public final class LocalUtil
         }
         catch (InstantiationException ex)
         {
-            log.error("InstantiationException for '" + debugContext + "' failed:", ex);
+            log.error("InstantiationException for '" + name + "' failed:", ex);
             return null;
         }
         catch (IllegalAccessException ex)
         {
-            log.error("IllegalAccessException for '" + debugContext + "' failed:", ex);
+            log.error("IllegalAccessException for '" + name + "' failed:", ex);
             return null;
         }
         catch (NoClassDefFoundError ex)
         {
             // We expect this sometimes, hence debug
-            log.debug("Skipping '" + debugContext + "' due to NoClassDefFoundError on " + className + ". Cause: " + ex.getMessage());
+            log.debug("Skipping '" + name + "' due to NoClassDefFoundError on " + className + ". Cause: " + ex.getMessage());
             return null;
         }
         catch (TransformerFactoryConfigurationError ex)
         {
             // We expect this sometimes, hence debug
-            log.debug("Skipping '" + debugContext + "' due to TransformerFactoryConfigurationError on " + className + ". Cause: " + ex.getMessage());
+            log.debug("Skipping '" + name + "' due to TransformerFactoryConfigurationError on " + className + ". Cause: " + ex.getMessage());
             log.debug("Maybe you need to add xalan.jar to your webserver?");
             return null;
         }
@@ -764,12 +798,12 @@ public final class LocalUtil
             if (ex instanceof ClassNotFoundException)
             {
                 // We expect this sometimes, hence debug
-                log.debug("Skipping '" + debugContext + "' due to ClassNotFoundException on " + className + ". Cause: " + ex.getMessage());
+                log.debug("Skipping '" + name + "' due to ClassNotFoundException on " + className + ". Cause: " + ex.getMessage());
                 return null;
             }
             else
             {
-                log.error("Failed to load '" + debugContext + "' (" + className + ")", ex);
+                log.error("Failed to load '" + name + "' (" + className + ")", ex);
                 return null;
             }
         }
@@ -781,20 +815,18 @@ public final class LocalUtil
      * Utility to essentially do Class forName and newInstance with the
      * assumption that the environment expects failures for missing jar files
      * and can carry on if this process fails.
-     * @param <T> The base type that we want a class to implement
      * @param name The name for debugging purposes
      * @param className The class to create
      * @param impl The implementation class - what should className do?
      * @return The new instance if it is safe or null otherwise.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T classNewInstance(String name, String className, Class<T> impl)
+    public static Object classNewInstance(String name, String className, Class impl)
     {
-        Class<T> clazz;
+        Class clazz;
 
         try
         {
-            clazz = (Class<T>) classForName(className);
+            clazz = LocalUtil.classForName(className);
         }
         catch (ClassNotFoundException ex)
         {
@@ -854,7 +886,7 @@ public final class LocalUtil
      * If anything goes wrong, the errors are logged and ignored.
      * @param in The resource to close
      */
-    public static void close(Closeable in)
+    public static void close(InputStream in)
     {
         if (in == null)
         {
@@ -872,15 +904,37 @@ public final class LocalUtil
     }
 
     /**
-     * Return a List of super-classes for the given class.
-     * @param clazz the class to look up
-     * @return the List of super-classes in order going up from this one
+     * InputStream closer that can cope if the input stream is null.
+     * If anything goes wrong, the errors are logged and ignored.
+     * @param in The resource to close
      */
-    public static List<Class<?>> getAllSuperclasses(Class<?> clazz)
+    public static void close(RandomAccessFile in)
     {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        if (in == null)
+        {
+            return;
+        }
 
-        Class<?> superclass = clazz.getSuperclass();
+        try
+        {
+            in.close();
+        }
+        catch (IOException ex)
+        {
+            log.warn(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Return a List of superclasses for the given class.
+     * @param clazz the class to look up
+     * @return the List of superclasses in order going up from this one
+     */
+    public static List getAllSuperclasses(Class clazz)
+    {
+        List classes = new ArrayList();
+
+        Class superclass = clazz.getSuperclass();
         while (superclass != null)
         {
             classes.add(superclass);
@@ -894,14 +948,14 @@ public final class LocalUtil
      * Return a list of all fields (whatever access status, and on whatever
      * superclass they were defined) that can be found on this class.
      * <p>This is like a union of {@link Class#getDeclaredFields()} which
-     * ignores and super-classes, and {@link Class#getFields()} which ignored
-     * non-public fields
+     * ignores and superclasses, and {@link Class#getFields()} which ignored
+     * non-pubic fields
      * @param clazz The class to introspect
      * @return The complete list of fields
      */
-    public static Field[] getAllFields(Class<?> clazz)
+    public static Field[] getAllFields(Class clazz)
     {
-        List<Class<?>> classes = getAllSuperclasses(clazz);
+        List classes = getAllSuperclasses(clazz);
         classes.add(clazz);
         return getAllFields(classes);
     }
@@ -912,19 +966,35 @@ public final class LocalUtil
      * @param classes The list of classes to reflect on
      * @return The complete list of fields
      */
-    private static Field[] getAllFields(List<Class<?>> classes)
+    private static Field[] getAllFields(List classes)
     {
-        Set<Field> fields = new HashSet<Field>();
-        for (Class<?> clazz : classes)
+        Set fields = new HashSet();
+        for (Iterator it = classes.iterator(); it.hasNext();)
         {
+            Class clazz = (Class) it.next();
             fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         }
 
-        return fields.toArray(new Field[fields.size()]);
+        return (Field[]) fields.toArray(new Field[fields.size()]);
     }
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(LocalUtil.class);
+    private static final Logger log = Logger.getLogger(LocalUtil.class);
+
+    /**
+     * Have we given a warning about URLDecoder.decode() in jdk 1.3
+     */
+    private static boolean warn13 = false;
+
+    /**
+     * Have we tested for the correct URLDecoder.decode()
+     */
+    private static boolean testedDecoder = false;
+
+    /**
+     * Are we using the jdk 1.4 version of URLDecoder.decode()
+     */
+    private static Method decode14 = null;
 }

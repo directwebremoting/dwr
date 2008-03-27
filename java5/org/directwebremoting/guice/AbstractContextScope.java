@@ -15,52 +15,49 @@
  */
 package org.directwebremoting.guice;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.inject.Key;
 import com.google.inject.Provider;
+import com.google.inject.Scope;
 import com.google.inject.util.ToStringBuilder;
 
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableList;
 
-import static org.directwebremoting.guice.AbstractContextScope.State.CLOSED;
-import static org.directwebremoting.guice.AbstractContextScope.State.OPEN;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+
+import org.directwebremoting.util.Logger;
+import static org.directwebremoting.guice.AbstractContextScope.State.*;
 
 /**
  * Partial implementation of {@link ContextScope}. Concrete implementations
- * must pass the context identifier type to the super constructor and define
- * {@code get()} to return the current context identifier (and to return null
+ * must pass the context identifier type to the super constructor and define 
+ * {@code get()} to return the current context identifier (and to return null 
  * or throw an exception if there is no current context). They must also implement
  * the {@link ContextRegistry} interface.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public abstract class AbstractContextScope<C, R> implements ContextScope<C>, ContextRegistry<C, R>
-{
-    protected AbstractContextScope(Class<C> type, String scopeName)
+public abstract class AbstractContextScope<C, R> 
+    implements ContextScope<C>, ContextRegistry<C, R>
+{        
+    protected AbstractContextScope(Class<C> type, String scopeName) 
     {
         this.type = type;
         this.scopeName = scopeName;
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
+    
     public String toString()
     {
         return scopeName;
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#getKeysInScope()
-     */
+    
     public List<Key<?>> getKeysInScope()
     {
         synchronized (scopedKeys)
@@ -68,31 +65,35 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
             return new ArrayList<Key<?>>(scopedKeys);
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#scope(com.google.inject.Key, com.google.inject.Provider)
-     */
-    public <T> Provider<T> scope(final Key<T> key, final Provider<T> creator)
+    
+    public <T> Provider<T> scope(final Key<T> key, final Provider<T> creator) 
     {
         if (log.isDebugEnabled())
         {
-            log.debug(String.format("scope %s: adding key %s with creator %s", scopeName, key, creator));
+            log.debug(String.format(
+                "scope %s: adding key %s with creator %s", 
+                scopeName, key, creator
+            ));
         }
-
+        
         scopedKeys.add(key);
         final String name = key.toString();
-        return new Provider<T>()
+        return new Provider<T>() 
         {
-            public T get()
+            public T get() 
             {
                 if (log.isDebugEnabled())
                 {
-                    log.debug(String.format("scope %s: getting key %s with creator %s", scopeName, key, creator));
+                    log.debug(String.format(
+                        "scope %s: getting key %s with creator %s", 
+                        scopeName, key, creator
+                    ));
                 }
-
+        
                 C context = getContext(key);
                 R registry = registryFor(context);
-                InstanceProvider<T> future = AbstractContextScope.this.get(registry, key, name);
+                InstanceProvider<T> future = 
+                    AbstractContextScope.this.get(registry, key, name);
                 if (future == null)
                 {
                     InstanceProvider<T> futureTask = new FutureTaskProvider<T>(creator);
@@ -110,8 +111,7 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
                 return future.get();
             }
 
-            @Override
-            public String toString()
+            public String toString() 
             {
                 return new ToStringBuilder(this.getClass())
                     .add("scopeName", scopeName)
@@ -125,17 +125,12 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
 
     public abstract C get();
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#type()
-     */
-    public Class<C> type()
+
+    public Class<C> type() 
     {
         return type;
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#getOpenContexts()
-     */
+    
     public Collection<C> getOpenContexts()
     {
         Collection<C> openContexts = new ArrayList<C>();
@@ -148,10 +143,7 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
         }
         return openContexts;
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#close(java.lang.Object, org.directwebremoting.guice.ContextCloseHandler<?>[])
-     */
+    
     public void close(C context, ContextCloseHandler<?>... closeHandlers)
     {
         if (!contexts.replace(context, OPEN, CLOSED))
@@ -159,7 +151,7 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
             // Context hadn't been opened or was already closed.
             return;
         }
-
+        
         for (InstanceProvider<?> provider : registeredProviders(registryFor(context)))
         {
             Object value = null;
@@ -173,23 +165,20 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
                 // attempting creation and mean that no object was
                 // created.
             }
-
+            
             if (value == null)
             {
                 // No instance was created by this provider, so we ignore.
                 continue;
             }
-
+            
             for (ContextCloseHandler<?> closeHandler : closeHandlers)
             {
                 handleClose(closeHandler, value);
             }
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.guice.ContextScope#closeAll(org.directwebremoting.guice.ContextCloseHandler<?>[])
-     */
+    
     public void closeAll(ContextCloseHandler<?>... closeHandlers)
     {
         for (C context : getOpenContexts())
@@ -197,26 +186,26 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
             close(context, closeHandlers);
         }
     }
-
+    
     private <T> void handleClose(ContextCloseHandler<T> closeHandler, Object value)
     {
-        Class<T> closeType = closeHandler.type();
-        if (closeType.isInstance(value))
+        Class<T> type = closeHandler.type();
+        if (type.isInstance(value))
         {
             try
             {
-                closeHandler.close(closeType.cast(value));
+                closeHandler.close(type.cast(value));
             }
             catch (Exception e)
             {
                 // Ignore exceptions when closing,
                 // the closeHandler should have taken
-                // appropriate action before re-throwing.
+                // appropriate action before rethrowing.
             }
         }
     }
-
-    protected C getContext(Key<?> key)
+    
+    private C getContext(Key<?> key)
     {
         C context = null;
         RuntimeException caught = null;
@@ -237,11 +226,11 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
         {
             throw new OutOfScopeException(this, key, caught);
         }
-
+        
         return context;
     }
-
-    private Collection<InstanceProvider<?>> registeredProviders(R registry)
+    
+    private Collection<InstanceProvider<?>> registeredProviders(R registry) 
     {
         List<InstanceProvider<?>> providers = new ArrayList<InstanceProvider<?>>();
         for (Key<?> key : getKeysInScope())
@@ -254,24 +243,24 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
         }
         return providers;
     }
-
+    
     enum State
     {
         OPEN,
         CLOSED
     }
-
-    protected final Class<C> type;
-
-    protected final String scopeName;
-
+    
+    private final Class<C> type;
+    
+    private final String scopeName;
+    
     /* @GuardedBy("self") */
     private final List<Key<?>> scopedKeys = synchronizedList(new ArrayList<Key<?>>());
-
+    
     private final ConcurrentMap<C, State> contexts = new ConcurrentHashMap<C, State>();
 
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(AbstractContextScope.class);
+    private static final Logger log = Logger.getLogger(AbstractContextScope.class);
 }

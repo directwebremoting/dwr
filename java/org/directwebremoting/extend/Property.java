@@ -36,7 +36,7 @@ public interface Property
      * What type does this property
      * @return The type of object that will be returned by {@link #getValue(Object)}
      */
-    public Class<?> getPropertyType();
+    public Class getPropertyType();
 
     /**
      * Get the value of this property of the passed in java bean

@@ -24,10 +24,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
@@ -39,6 +38,7 @@ import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UtilHandler;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -66,9 +66,10 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
 
         buffer.append("<h2>Classes known to DWR:</h2>\n");
         buffer.append("<ul>\n");
-        for (String name : creatorManager.getCreatorNames(false))
+        for (Iterator it = creatorManager.getCreatorNames().iterator(); it.hasNext();)
         {
-            Creator creator = creatorManager.getCreator(name, false);
+            String name = (String) it.next();
+            Creator creator = creatorManager.getCreator(name);
 
             buffer.append("<li><a href='");
             buffer.append(root);
@@ -106,7 +107,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         String proxyEngineURL = PATH_UP + engineHandlerUrl;
         String proxyUtilURL = PATH_UP + utilHandlerUrl;
 
-        Creator creator = creatorManager.getCreator(scriptName, false);
+        Creator creator = creatorManager.getCreator(scriptName);
         Method[] methods = creator.getType().getMethods();
         StringBuffer buffer = new StringBuffer();
 
@@ -144,6 +145,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("  </style>\n");
         buffer.append("</head>\n");
         buffer.append("<body onload='dwr.util.useLoadingMessage()'>\n");
+        buffer.append(BLANK);
 
         buffer.append("<h2>Methods For: " + scriptName + " (" + creator.getType().getName() + ")</h2>\n");
         buffer.append("<p>To use this class in your javascript you will need the following script includes:</p>\n");
@@ -160,6 +162,8 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("<p>Replies from DWR are shown with a yellow background if they are simple or in an alert box otherwise.<br/>\n");
         buffer.append("The inputs are evaluated as Javascript so strings must be quoted before execution.</p>\n");
 
+        buffer.append("<p>There are " + methods.length + " declared methods:</p><ul>\n");
+
         for (int i = 0; i < methods.length; i++)
         {
             Method method = methods[i];
@@ -168,17 +172,19 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             // Is it on the list of banned names
             if (JavascriptUtil.isReservedWord(methodName))
             {
+                buffer.append(BLANK);
                 buffer.append("<li style='color: #88A;'>" + methodName + "() is not available because it is a reserved word.</li>\n");
                 continue;
             }
 
+            buffer.append(BLANK);
             buffer.append("<li>\n");
             buffer.append("  " + methodName + '(');
 
-            Class<?>[] paramTypes = method.getParameterTypes();
+            Class[] paramTypes = method.getParameterTypes();
             for (int j = 0; j < paramTypes.length; j++)
             {
-                Class<?> paramType = paramTypes[j];
+                Class paramType = paramTypes[j];
 
                 // The special type that we handle transparently
                 if (LocalUtil.isServletClass(paramType))
@@ -187,7 +193,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
                 }
                 else
                 {
-                    String value = "";
+                    String value = BLANK;
                     if (paramType == String.class)
                     {
                         value = "\"\"";
@@ -217,7 +223,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
                     buffer.append("    <input class='itext' type='text' size='10' value='" + value + "' id='p" + i + j + "' title='Will be converted to: " + paramType.getName() + "'/>");
                 }
 
-                buffer.append(j == paramTypes.length - 1 ? "" : ", \n");
+                buffer.append(j == paramTypes.length - 1 ? BLANK : ", \n");
             }
             buffer.append("  );\n");
 
@@ -257,11 +263,11 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             }
 
             // Print a warning if the method uses un-marshallable types
-            for (Class<?> paramType1 : paramTypes)
+            for (int j = 0; j < paramTypes.length; j++)
             {
-                if (!converterManager.isConvertable(paramType1))
+                if (!converterManager.isConvertable(paramTypes[j]))
                 {
-                    buffer.append("<br/><span class='warning'>(Warning: No Converter for " + paramType1.getName() + ". See <a href='#missingConverter'>below</a>)</span>\n");
+                    buffer.append("<br/><span class='warning'>(Warning: No Converter for " + paramTypes[j].getName() + ". See <a href='#missingConverter'>below</a>)</span>\n");
                 }
             }
 
@@ -287,6 +293,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             buffer.append("</li>\n");
         }
 
+        buffer.append(BLANK);
         buffer.append("</ul>\n");
 
         buffer.append("<h2>Other Links</h2>\n");
@@ -296,7 +303,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
 
         synchronized (scriptCache)
         {
-            String output = scriptCache.get(PathConstants.FILE_HELP);
+            String output = (String) scriptCache.get(PathConstants.FILE_HELP);
             if (output == null)
             {
                 InputStream raw = getClass().getResourceAsStream(DwrConstants.PACKAGE + PathConstants.FILE_HELP);
@@ -348,7 +355,6 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /* (non-Javadoc)
      * @see org.directwebremoting.DebugPageGenerator#generateInterfaceUrl(java.lang.String, java.lang.String)
      */
-    @Deprecated
     public String generateInterfaceUrl(String root, String scriptName)
     {
         return root + interfaceHandlerUrl + scriptName + PathConstants.EXTENSION_JS;
@@ -357,7 +363,6 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /* (non-Javadoc)
      * @see org.directwebremoting.DebugPageGenerator#generateEngineUrl(java.lang.String)
      */
-    @Deprecated
     public String generateEngineUrl(String root)
     {
         return root + engineHandlerUrl;
@@ -366,7 +371,6 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /* (non-Javadoc)
      * @see org.directwebremoting.DebugPageGenerator#generateLibraryUrl(java.lang.String, java.lang.String)
      */
-    @Deprecated
     public String generateLibraryUrl(String root, String library)
     {
         return root + library;
@@ -375,12 +379,11 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /* (non-Javadoc)
      * @see org.directwebremoting.DebugPageGenerator#getAvailableLibraries()
      */
-    @Deprecated
-    public Collection<String> getAvailableLibraries()
+    public Collection getAvailableLibraries()
     {
         if (availableLibraries == null)
         {
-            availableLibraries = Collections.unmodifiableCollection(Arrays.asList(utilHandlerUrl));
+            availableLibraries = Collections.unmodifiableCollection(Arrays.asList(new String[] { utilHandlerUrl }));
         }
 
         return availableLibraries;
@@ -484,13 +487,13 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /**
      * We cache the script output for speed
      */
-    protected final Map<String, String> scriptCache = new HashMap<String, String>();
+    protected final Map scriptCache = new HashMap();
 
     /**
      * For getAvailableLibraries() - just a RO Collection that currently returns
      * only util.js, but may be expanded in the future.
      */
-    private Collection<String> availableLibraries = null;
+    private Collection availableLibraries = null;
 
     /**
      * 2 dots
@@ -498,7 +501,12 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     private static final String PATH_UP = "..";
 
     /**
+     * Empty string
+     */
+    public static final String BLANK = "";
+
+    /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultDebugPageGenerator.class);
+    private static final Logger log = Logger.getLogger(DefaultDebugPageGenerator.class);
 }

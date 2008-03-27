@@ -4,31 +4,18 @@
   ~ Use, modification, and distribution subject to terms of license.
   -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
   <xsl:output omit-xml-declaration="yes" method="xml"/>
-
-  <xsl:param name="includexml">yes</xsl:param>
-  <xsl:param name="jsxtitle"></xsl:param>
-  <xsl:param name="jsxasyncmessage"></xsl:param>
-
+  <xsl:param name="includexml" select="'yes'" />
   <xsl:template match="/">
-    <xsl:choose>
-      <xsl:when test="$jsxasyncmessage and $jsxasyncmessage!=''">
-        <span><xsl:value-of select="$jsxasyncmessage"/></span>
-      </xsl:when>
-      <xsl:otherwise>
-        <div class="prettyxml">
-          <xsl:for-each select="node()">
-            <xsl:call-template name="formatxml">
-              <xsl:with-param name="selnode" select="."/>
-              <xsl:with-param name="indent" select="0"/>
-            </xsl:call-template>
-          </xsl:for-each>
-        </div>
-      </xsl:otherwise>
-    </xsl:choose>
+    <div class="prettyxml">
+      <xsl:for-each select="node()">
+        <xsl:call-template name="formatxml">
+          <xsl:with-param name="selnode" select="."/>
+          <xsl:with-param name="indent" select="0"/>
+        </xsl:call-template>
+      </xsl:for-each>
+    </div>
   </xsl:template>
-
   <xsl:template name="formatxml">
     <xsl:param name="selnode"/>
     <xsl:param name="indent">-1</xsl:param>

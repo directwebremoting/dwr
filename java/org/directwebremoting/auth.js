@@ -17,8 +17,9 @@
 /**
  * Declare an object to which we can add real functions.
  */
-if (typeof this['dwr'] == 'undefined') this.dwr = {};
-if (typeof dwr['auth'] == 'undefined') dwr.auth = {};
+if (dwr == null) var dwr = {};
+if (dwr.auth == null) dwr.auth = {};
+if (DWRAuthentication == null) var DWRAuthentication = dwr.auth;
 
 //
 // Application-wide stuff
@@ -39,7 +40,7 @@ dwr.auth.enable = function () {
   dwr.auth._enabled = true;
   dwr.auth._dwrHandleBatchExeption = dwr.engine._handleError;
   dwr.engine._handleError = dwr.auth.authWarningHandler;
-};
+}
 
 // resume dwr.auth
 dwr.auth.disable = function() {
@@ -50,13 +51,13 @@ dwr.auth.disable = function() {
   dwr.engine._handleError = dwr.auth._dwrHandleBatchExeption;
   dwr.auth._dwrHandleBatchExeption = null;
   dwr.auth._enabled = false;
-};
+}
 
 // define the url that is protected by servlet-security
 dwr.auth._protectedURL = null;
 dwr.auth.setProtectedURL = function(url) {
   dwr.auth._protectedURL = url;
-};
+}
 
 //
 // setters for the various authentication-callback
@@ -70,41 +71,41 @@ dwr.auth.setProtectedURL = function(url) {
 dwr.auth.defaultAuthenticationRequiredHandler = function(batch,ex) {
   alert(ex.message);
   return false;
-};
+}
 dwr.auth._authRequiredHandler = dwr.auth.defaultAuthenticationRequiredHandler;
 dwr.auth.setAuthenticationRequiredHandler = function(handler) {
   dwr.auth._authRequiredHandler = handler;
-};
+}
 
 // authentication failed: the server didn't accept the given credentials
 dwr.auth.defaultAuthenticationFailedHandler = function(login_form) {
   alert("Login failed");
   return false;
-};
+}
 dwr.auth._authFailedHandler = dwr.auth.defaultAuthenticationFailedHandler;
 dwr.auth.setAuthenticationFailedHandler = function(handler) {
   dwr.auth._authFailedHandler = handler;
-};
+}
 
 // access denied: the current session's user is not privileged to do
 // the remote call
 dwr.auth.defaultAccessDeniedHandler = function(batch,ex) {
   alert(ex.message);
   return false;
-};
+}
 dwr.auth._accessDeniedHandler = dwr.auth.defaultAccessDeniedHandler;
 dwr.auth.setAccessDeniedHandler = function(handler) {
   dwr.auth._accessDeniedHandler = handler;
-};
+}
 
 // authenficiation success: the user was successful authenticated
 dwr.auth.defaultAuthenticationSuccessHandler = function (msg) {
   return true;
-};
+}
 dwr.auth._successHandler = dwr.auth.defaultAuthenticationSuccessHandler;
 dwr.auth.setAuthenticationSuccessHandler = function(handler) {
   dwr.auth._successHandler = handler;
-};
+}
 
 // stores the last dwr-request-batch that dwr didn't process because of
 // authenfication/authorization-issues
@@ -133,7 +134,7 @@ dwr.auth._deepCopy = function(source) {
     }
   }
   return destination;
-};
+}
 
 // make a copy of the batch that we can replay later
 dwr.auth._cloneBatch = function(batch) {
@@ -158,7 +159,7 @@ dwr.auth._cloneBatch = function(batch) {
   clone.map.httpSessionId = dwr.engine._getJSessionId();
   clone.map.scriptSessionId = dwr.engine._getScriptSessionId();
   return clone;
-};
+}
 
 dwr.auth._exceptionPackage = "org.directwebremoting.extend.";
 // replacement for dwr's MetaDataWarningHandler
@@ -187,7 +188,7 @@ dwr.auth.authWarningHandler = function(batch, ex) {
     default:
       dwr.auth._dwrHandleBatchExeption(batch, ex);
   }
-};
+}
 
 // resend a rejected request with dwr.engine
 dwr.auth._replayBatch = function() {
@@ -202,11 +203,11 @@ dwr.auth._replayBatch = function() {
     var batch = dwr.auth._batch;
     dwr.auth._batch = null;
     dwr.engine._batches[dwr.engine._batches.length] = batch;
-    dwr.engine.transport.send(batch);
+    dwr.engine._sendData(batch);
   };
   // give dwr some time to finish the old batch processing
   setTimeout( caller, 200);
-};
+}
 
 // use some minimal protection with a private class
 // to prevent acess to credentials from other javascript code
@@ -215,21 +216,21 @@ dwr.auth.ServletLoginProcessor = function() {
   var password = null;
   this.setLogin = function(aLogin) {
     login = aLogin;
-  };
+  }
   this.getLogin = function() {
     return login;
-  };
+  }
   this.setPassword = function(aPassword) {
     password = aPassword;
-  };
+  }
   this.login = function(login_form) {
     login_form.j_username.value = login;
     login_form.j_password.value = password;
     login_form.submit();
     // just because i'm paranoid: clear password
     password = null;
-  };
-};
+  }
+}
 
 dwr.auth._loginProcessor = new dwr.auth.ServletLoginProcessor();
 
@@ -239,21 +240,21 @@ dwr.auth.authenticate = function(login, password) {
   processor.setPassword(password);
   // call login-test url in iframe
   var div = document.createElement("div");
-  div.innerHTML = "<iframe src='"+dwr.auth._protectedURL+"' frameborder='0' width='0' height='0' id='login_frame' name='login_frame' style='width:0px; height:0px; border:0px;'><"+"/iframe>";
+  div.innerHTML = "<iframe src='"+dwr.auth._protectedURL+"' frameborder='0' width='0' height='0' id='login_frame' name='login_frame' style='width:0px; height:0px; border:0px;'></iframe>";
   document.body.appendChild(div);
-};
+}
 
 dwr.auth._loginCallback = function(login_form) {
   dwr.auth._loginProcessor.login(login_form);
-};
+}
 
 dwr.auth._loginFailedCallback = function(login_form) {
   dwr.auth._authFailedHandler(login_form);
-};
+}
 
 dwr.auth._loginSucceededCallback = function(msg) {
   if (dwr.auth._successHandler(msg)) {
     dwr.auth._replayBatch();
   }
-};
+}
 

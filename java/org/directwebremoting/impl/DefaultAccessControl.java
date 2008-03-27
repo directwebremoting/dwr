@@ -71,10 +71,10 @@ public class DefaultAccessControl implements AccessControl
     public void addRoleRestriction(String scriptName, String methodName, String role)
     {
         String key = scriptName + '.' + methodName;
-        Set<String> roles = roleRestrictMap.get(key);
+        Set roles = (Set) roleRestrictMap.get(key);
         if (roles == null)
         {
-            roles = new HashSet<String>();
+            roles = new HashSet();
             roleRestrictMap.put(key, roles);
         }
 
@@ -92,7 +92,7 @@ public class DefaultAccessControl implements AccessControl
         // to default disallow mode, and check that the are not rules applied
         if (policy.defaultAllow)
         {
-            if (!policy.rules.isEmpty())
+            if (policy.rules.size() > 0)
             {
                 throw new IllegalArgumentException(Messages.getString("DefaultAccessControl.MixedIncludesAndExcludes", scriptName));
             }
@@ -115,7 +115,7 @@ public class DefaultAccessControl implements AccessControl
         // to default disallow mode, and check that the are not rules applied
         if (!policy.defaultAllow)
         {
-            if (!policy.rules.isEmpty())
+            if (policy.rules.size() > 0)
             {
                 throw new IllegalArgumentException(Messages.getString("DefaultAccessControl.MixedIncludesAndExcludes", scriptName));
             }
@@ -136,7 +136,7 @@ public class DefaultAccessControl implements AccessControl
         String methodName = method.getName();
 
         // What if there is some J2EE role based restriction?
-        Set<String> roles = getRoleRestrictions(scriptName, methodName);
+        Set roles = getRoleRestrictions(scriptName, methodName);
         if (roles != null && !roles.isEmpty())
         {
             HttpServletRequest req = WebContextFactory.get().getHttpServletRequest();
@@ -151,10 +151,10 @@ public class DefaultAccessControl implements AccessControl
      * @param methodName The name of the method (without brackets)
      * @return A Set of all the roles for the given script and method
      */
-    protected Set<String> getRoleRestrictions(String scriptName, String methodName)
+    protected Set getRoleRestrictions(String scriptName, String methodName)
     {
         String key = scriptName + '.' + methodName;
-        return roleRestrictMap.get(key);
+        return (Set) roleRestrictMap.get(key);
     }
 
     /**
@@ -162,7 +162,7 @@ public class DefaultAccessControl implements AccessControl
      * @param req The users request
      * @throws SecurityException if the users session is invalid
      */
-    protected static void assertAuthenticationIsValid(HttpServletRequest req) throws SecurityException
+    protected void assertAuthenticationIsValid(HttpServletRequest req) throws SecurityException
     {
         // ensure that at least the next call has a valid session
         req.getSession();
@@ -185,10 +185,11 @@ public class DefaultAccessControl implements AccessControl
      * @param roles The list of roles to check
      * @throws SecurityException if this user is not allowed by the list of roles
      */
-    protected static void assertAllowedByRoles(HttpServletRequest req, Set<String> roles) throws SecurityException
+    protected void assertAllowedByRoles(HttpServletRequest req, Set roles) throws SecurityException
     {
-        for (String role : roles)
+        for (Iterator it = roles.iterator(); it.hasNext();)
         {
+            String role = (String) it.next();
             if ("*".equals(role) || req.isUserInRole(role))
             {
                 return;
@@ -202,7 +203,7 @@ public class DefaultAccessControl implements AccessControl
      * Is the method public?
      * @param method The method that we wish to execute
      */
-    protected static void assertIsMethodPublic(Method method)
+    protected void assertIsMethodPublic(Method method)
     {
         if (!Modifier.isPublic(method.getModifiers()))
         {
@@ -214,7 +215,7 @@ public class DefaultAccessControl implements AccessControl
      * We ban some methods from {@link java.lang.Object}
      * @param method The method that should not be owned by {@link java.lang.Object}
      */
-    protected static void assertIsNotOnBaseObject(Method method)
+    protected void assertIsNotOnBaseObject(Method method)
     {
         if (method.getDeclaringClass() == Object.class)
         {
@@ -231,7 +232,7 @@ public class DefaultAccessControl implements AccessControl
      */
     protected void assertIsExecutable(String scriptName, String methodName) throws SecurityException
     {
-        Policy policy = policyMap.get(scriptName);
+        Policy policy = (Policy) policyMap.get(scriptName);
         if (policy == null)
         {
             return;
@@ -239,9 +240,9 @@ public class DefaultAccessControl implements AccessControl
 
         // Find a match for this method in the policy rules
         String match = null;
-        for (Iterator<String> it = policy.rules.iterator(); it.hasNext() && match == null;)
+        for (Iterator it = policy.rules.iterator(); it.hasNext() && match == null;)
         {
-            String test = it.next();
+            String test = (String) it.next();
 
             // If at some point we wish to do regex matching on rules, here is
             // the place to do it.
@@ -276,14 +277,13 @@ public class DefaultAccessControl implements AccessControl
      * Check the parameters are not DWR internal either
      * @param method The method that we want to execute
      */
-    protected static void assertAreParametersDwrInternal(Method method)
+    protected void assertAreParametersDwrInternal(Method method)
     {
         for (int j = 0; j < method.getParameterTypes().length; j++)
         {
-            Class<?> paramType = method.getParameterTypes()[j];
+            Class paramType = method.getParameterTypes()[j];
 
-            // Access to org.directwebremoting is denied except for .io
-            if (paramType.getName().startsWith(PACKAGE_DWR_DENY) && !paramType.getName().startsWith(PACKAGE_ALLOW_CONVERT))
+            if (paramType.getName().startsWith(PACKAGE_DWR_DENY))
             {
                 throw new SecurityException(Messages.getString("DefaultAccessControl.DeniedParamDWR"));
             }
@@ -294,12 +294,9 @@ public class DefaultAccessControl implements AccessControl
      * Is the class that we are executing a method on part of DWR?
      * @param creator The {@link Creator} that exposes the class
      */
-    protected static void assertIsClassDwrInternal(Creator creator)
+    protected void assertIsClassDwrInternal(Creator creator)
     {
-        String name = creator.getType().getName();
-
-        // Access to org.directwebremoting is denied except for .export
-        if (name.startsWith(PACKAGE_DWR_DENY) && !name.startsWith(PACKAGE_ALLOW_CREATE))
+        if (creator.getType().getName().startsWith(PACKAGE_DWR_DENY))
         {
             throw new SecurityException(Messages.getString("DefaultAccessControl.DeniedCoreDWR"));
         }
@@ -312,7 +309,7 @@ public class DefaultAccessControl implements AccessControl
      */
     protected Policy getPolicy(String type)
     {
-        Policy policy = policyMap.get(type);
+        Policy policy = (Policy) policyMap.get(type);
         if (policy == null)
         {
             policy = new Policy();
@@ -339,12 +336,12 @@ public class DefaultAccessControl implements AccessControl
     /**
      * A map of Creators to policies
      */
-    protected Map<String, Policy> policyMap = new HashMap<String, Policy>();
+    protected Map policyMap = new HashMap();
 
     /**
      * What role based restrictions are there?
      */
-    protected Map<String, Set<String>> roleRestrictMap = new HashMap<String, Set<String>>();
+    protected Map roleRestrictMap = new HashMap();
 
     /**
      * A struct that contains a method access policy for a Creator
@@ -352,21 +349,11 @@ public class DefaultAccessControl implements AccessControl
     static class Policy
     {
         boolean defaultAllow = true;
-        List<String> rules = new ArrayList<String>();
+        List rules = new ArrayList();
     }
 
     /**
      * My package name, so we can ban DWR classes from being created or marshalled
      */
     protected static final String PACKAGE_DWR_DENY = "org.directwebremoting.";
-
-    /**
-     * Special dwr package name from which classes may be created
-     */
-    protected static final String PACKAGE_ALLOW_CREATE = "org.directwebremoting.export.";
-
-    /**
-     * Special dwr package name from which classes may be converted
-     */
-    protected static final String PACKAGE_ALLOW_CONVERT = "org.directwebremoting.io.";
 }

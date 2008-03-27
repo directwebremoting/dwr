@@ -44,7 +44,7 @@ public class FakeServletConfig implements ServletConfig
      * @param servletContext The ServletContext
      * @param initParameters Optional init parameters (can be null)
      */
-    public FakeServletConfig(String name, ServletContext servletContext, Map<String, String> initParameters)
+    public FakeServletConfig(String name, ServletContext servletContext, Map initParameters)
     {
         this.name = name;
         this.servletContext = servletContext;
@@ -52,7 +52,7 @@ public class FakeServletConfig implements ServletConfig
 
         if (this.initParameters == null)
         {
-            this.initParameters = new HashMap<String, String>();
+            this.initParameters = new HashMap();
         }
     }
 
@@ -91,7 +91,7 @@ public class FakeServletConfig implements ServletConfig
     /* (non-Javadoc)
      * @see javax.servlet.ServletConfig#getInitParameterNames()
      */
-    public Enumeration<String> getInitParameterNames()
+    public Enumeration getInitParameterNames()
     {
         return Collections.enumeration(initParameters.keySet());
     }
@@ -109,5 +109,5 @@ public class FakeServletConfig implements ServletConfig
     /**
      * Initialization parameters
      */
-    private Map<String, String> initParameters;
+    private Map initParameters;
 }

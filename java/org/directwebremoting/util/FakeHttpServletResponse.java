@@ -25,6 +25,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -178,7 +180,6 @@ public class FakeHttpServletResponse implements HttpServletResponse
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletResponse#setStatus(int, java.lang.String)
      */
-    @Deprecated
     public void setStatus(int status, String errorMessage)
     {
         this.status = status;
@@ -207,7 +208,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
     /**
      * Accessor for the content of output body
      * @return A string of the output body
-     * @throws UnsupportedEncodingException If the internal characterEncoding is incorrect
+     * @throws UnsupportedEncodingException
      */
     public String getContentAsString() throws UnsupportedEncodingException
     {
@@ -275,7 +276,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
     }
 
     /**
-     * @param committed Set the comitted flag
+     * @param committed
      */
     public void setCommitted(boolean committed)
     {
@@ -350,7 +351,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public Cookie[] getCookies()
     {
-        return cookies.toArray(new Cookie[cookies.size()]);
+        return (Cookie[]) cookies.toArray(new Cookie[cookies.size()]);
     }
 
     /**
@@ -360,21 +361,20 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public Cookie getCookie(String name)
     {
-        for (Cookie cookie : cookies)
+        for (Iterator it = cookies.iterator(); it.hasNext();)
         {
+            Cookie cookie = (Cookie) it.next();
             if (name.equals(cookie.getName()))
             {
                 return cookie;
             }
         }
-
         return null;
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletResponse#encodeUrl(java.lang.String)
      */
-    @Deprecated
     public String encodeUrl(String url)
     {
         return url;
@@ -391,7 +391,6 @@ public class FakeHttpServletResponse implements HttpServletResponse
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletResponse#encodeRedirectUrl(java.lang.String)
      */
-    @Deprecated
     public String encodeRedirectUrl(String url)
     {
         return url;
@@ -418,7 +417,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void setHeader(String name, String value)
     {
-        doSetHeader(name, value);
+        headers.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -426,7 +425,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void addDateHeader(String name, long value)
     {
-        doAddHeader(name, value);
+        doAddHeader(name, new Long(value));
     }
 
     /* (non-Javadoc)
@@ -434,7 +433,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void setDateHeader(String name, long value)
     {
-        doSetHeader(name, value);
+        headers.put(name, new Long(value));
     }
 
     /* (non-Javadoc)
@@ -442,7 +441,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void addIntHeader(String name, int value)
     {
-        doAddHeader(name, value);
+        doAddHeader(name, new Integer(value));
     }
 
     /* (non-Javadoc)
@@ -450,35 +449,32 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void setIntHeader(String name, int value)
     {
-        doSetHeader(name, value);
+        headers.put(name, new Integer(value));
     }
 
     /**
-     * Internal method to remove all previous values and replace with new
-     * @param name The header name
-     * @param value The replacement value
-     */
-    private void doSetHeader(String name, Object value)
-    {
-        List<Object> values = new ArrayList<Object>();
-        values.add(value);
-        headers.put(name, values);
-    }
-
-    /**
-     * Internal method to add a value to those under a name
-     * @param name The header name
-     * @param value The extra value
+     * @param name
+     * @param value
      */
     private void doAddHeader(String name, Object value)
     {
-        List<Object> values = headers.get(name);
-        if (values == null)
+        Object oldValue = headers.get(name);
+        if (oldValue instanceof List)
         {
-            values = new ArrayList<Object>();
-            headers.put(name, values);
+            List list = (List) oldValue;
+            list.add(value);
         }
-        values.add(value);
+        else if (oldValue != null)
+        {
+            List list = new LinkedList();
+            list.add(oldValue);
+            list.add(value);
+            headers.put(name, list);
+        }
+        else
+        {
+            headers.put(name, value);
+        }
     }
 
     /* (non-Javadoc)
@@ -493,7 +489,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * Accessor for the current set of headers
      * @return The current set of headers
      */
-    public Set<String> getHeaderNames()
+    public Set getHeaderNames()
     {
         return headers.keySet();
     }
@@ -513,13 +509,12 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @param name The header name to lookup
      * @return The data behind this header
      */
-    @SuppressWarnings("unchecked")
-    public List<Object> getHeaders(String name)
+    public List getHeaders(String name)
     {
         Object value = headers.get(name);
         if (value instanceof List)
         {
-            return (List<Object>) value;
+            return (List) value;
         }
         else if (value != null)
         {
@@ -579,29 +574,29 @@ public class FakeHttpServletResponse implements HttpServletResponse
 
     private final DelegatingServletOutputStream outputStream = new DelegatingServletOutputStream(this.content);
 
-    private PrintWriter writer = null;
+    private PrintWriter writer;
 
     private int contentLength = 0;
 
-    private String contentType = null;
+    private String contentType;
 
     private int bufferSize = 4096;
 
-    private boolean committed = false;
+    private boolean committed;
 
     private Locale locale = Locale.getDefault();
 
-    private final List<Cookie> cookies = new ArrayList<Cookie>();
+    private final List cookies = new ArrayList();
 
-    private final Map<String, List<Object>> headers = new HashMap<String, List<Object>>();
+    private final Map headers = new HashMap();
 
     private int status = HttpServletResponse.SC_OK;
 
-    private String errorMessage = null;
+    private String errorMessage;
 
-    private String redirectedUrl = null;
+    private String redirectedUrl;
 
-    private String forwardedUrl = null;
+    private String forwardedUrl;
 
-    private String includedUrl = null;
+    private String includedUrl;
 }

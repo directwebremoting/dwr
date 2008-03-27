@@ -22,11 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
-import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.impl.DefaultContainer;
+import org.directwebremoting.util.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -51,44 +49,28 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         this.beanFactory = beanFactory;
     }
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.impl.DefaultContainer#addParameter(java.lang.String, java.lang.Object)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void addParameter(String askFor, Object valueParam) throws ContainerConfigurationException
-    {
-        try
-        {
-            Class<?> clz = ClassUtils.forName(askFor);
-            if (log.isDebugEnabled())
-            {
+    public void addParameter(Object askFor, Object valueParam)
+    throws InstantiationException, IllegalAccessException {
+        try {
+            Class clz = ClassUtils.forName((String)askFor);
+            if (log.isDebugEnabled()) {
                 log.debug("trying to resolve the following class from the Spring bean container: " + clz.getName());
             }
 
-            Map<String, Object> beansOfType = ((ListableBeanFactory) beanFactory).getBeansOfType(clz);
-            if (log.isDebugEnabled())
-            {
+            Map beansOfType = ((ListableBeanFactory)beanFactory).getBeansOfType(clz);
+            if (log.isDebugEnabled()) {
                 log.debug("beans: " + beansOfType + " - " + beansOfType.size());
             }
-
-            if (beansOfType.isEmpty())
-            {
+            if (beansOfType.size() == 0) {
                 log.debug("adding parameter the normal way");
                 super.addParameter(askFor, valueParam);
-            }
-            else if (beansOfType.size() > 1)
-            {
+            } else if (beansOfType.size() > 1) {
                 // TODO: handle multiple declarations
-                throw new ContainerConfigurationException("multiple beans of type '" + clz.getName() + "' were found in the spring configuration");
+                throw new InstantiationException("multiple beans of type '" + clz.getName() + "' were found in the spring configuration");
+            } else {
+                this.beans.put(askFor, beansOfType.values().iterator().next());
             }
-            else
-            {
-                beans.put(askFor, beansOfType.values().iterator().next());
-            }
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException e) {
             super.addParameter(askFor, valueParam);
         }
     }
@@ -96,12 +78,10 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.DefaultContainer#getBean(java.lang.String)
      */
-    @Override
     public Object getBean(String id)
     {
         Object reply;
-        try
-        {
+        try {
             reply = beanFactory.getBean(id);
         }
         catch (BeansException ex)
@@ -116,10 +96,9 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.DefaultContainer#getBeanNames()
      */
-    @Override
-    public Collection<String> getBeanNames()
+    public Collection getBeanNames()
     {
-        List<String> names = new ArrayList<String>();
+        List names = new ArrayList();
 
         // Snarf the beans from Spring
         if (beanFactory instanceof ListableBeanFactory)
@@ -154,5 +133,5 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(SpringContainer.class);
+    private static final Logger log = Logger.getLogger(SpringContainer.class);
 }

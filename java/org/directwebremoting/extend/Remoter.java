@@ -25,11 +25,11 @@ public interface Remoter
     /**
      * Generate some Javascript that forms an interface definition
      * @param scriptName The script to generate for
-     * @param contextServletPath request.contextPath + request.servletPath.
+     * @param path The path of the requests.
      * @return An interface javascript
      * @throws SecurityException
      */
-    String generateInterfaceScript(String scriptName, String contextServletPath) throws SecurityException;
+    String generateInterfaceScript(String scriptName, String path) throws SecurityException;
 
     /**
      * Execute a set of remote calls and generate set of reply data for later
@@ -38,16 +38,4 @@ public interface Remoter
      * @return A set of reply data objects
      */
     Replies execute(Calls calls);
-
-    /**
-     * The path to the DWR servlet is probably just equal to request.contextPath
-     * plus request.servletPath. However there are 2 ways to override this.
-     * One is to provide an overridePath setting, and the other is to specify
-     * useAbsolutePath=true, when the full URL up to the DWR servlet is used.
-     * This method simply echos back the contextServletPath unless one of those
-     * 2 settings are used in which case the modified value is returned.
-     * @param contextServletPath request.contextPath + request.servletPath.
-     * @return The path to the DWR servlet
-     */
-    String getPathToDwrServlet(String contextServletPath);
 }

@@ -26,14 +26,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.directwebremoting.dwrp.EnginePrivate;
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.util.LocalUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,16 +42,17 @@ import org.xml.sax.InputSource;
 
 /**
  * An implementation of Converter for DOM objects.
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Joe Walker [joe at eireneh dot com]
+ * @version $Id: StringConverter.java,v 1.2 2004/11/04 15:54:07 joe_walker Exp $
  */
 public class DOMConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String value = LocalUtil.decode(data.getValue());
+        String value = LocalUtil.decode(iv.getValue());
 
         try
         {
@@ -116,7 +117,7 @@ public class DOMConverter extends BaseV20Converter implements Converter
             xml.flush();
 
             String script = EnginePrivate.xmlStringToJavascriptDom(xml.toString());
-            OutboundVariable ov = new NonNestedOutboundVariable(script);
+            OutboundVariable ov = new SimpleOutboundVariable(script, outctx, false);
 
             outctx.put(data, ov);
 
@@ -135,7 +136,7 @@ public class DOMConverter extends BaseV20Converter implements Converter
     /**
      * How we create new transformers
      */
-    private final TransformerFactory xslFact = TransformerFactory.newInstance();
+    private TransformerFactory xslFact = TransformerFactory.newInstance();
 
     /**
      * How we create new documents

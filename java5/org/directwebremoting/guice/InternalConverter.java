@@ -29,7 +29,7 @@ import org.directwebremoting.extend.OutboundVariable;
 
 /**
  * Specialized converter implementation that uses a Provider to
- * look up instances to delegate to. This class is used by
+ * look up instances to delegate to. This class is used by 
  * {@link InternalConverterManager}.
  * @author Tim Peierls [tim at peierls dot net]
  */
@@ -39,13 +39,12 @@ class InternalConverter extends BaseV20Converter implements Converter
      * Only used to satisfy bindings for the two-arg {@code bindConversion}
      * method of {@link AbstractDwrModule}.
      */
-    @Inject
-    InternalConverter()
+    @Inject InternalConverter()
     {
         this.type = null;
         this.provider = null;
     }
-
+    
     /**
      * Adapts a Provider into a Converter.
      */
@@ -55,10 +54,8 @@ class InternalConverter extends BaseV20Converter implements Converter
         this.provider = provider;
     }
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
-     */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable data, InboundContext inctx)
+        throws MarshallException
     {
         try
         {
@@ -69,11 +66,9 @@ class InternalConverter extends BaseV20Converter implements Converter
             throw new MarshallException(type, e);
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
-     */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
+        throws MarshallException
     {
         try
         {
@@ -84,17 +79,12 @@ class InternalConverter extends BaseV20Converter implements Converter
             throw new MarshallException(type, e);
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.extend.ConverterManager)
-     */
-    @Override
+    
     public void setConverterManager(ConverterManager mgr)
     {
         provider.get().setConverterManager(mgr);
     }
-
+    
     private final Class<?> type;
-
     private final Provider<Converter> provider;
 }

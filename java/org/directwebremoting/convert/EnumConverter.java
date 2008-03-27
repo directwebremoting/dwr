@@ -17,37 +17,33 @@ package org.directwebremoting.convert;
 
 import java.lang.reflect.Method;
 
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.LocalUtil;
 
 /**
- * Converter for Enums
+ * Converter for all primitive types
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class EnumConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
+     * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String value = LocalUtil.decode(data.getValue());
+        String value = LocalUtil.decode(iv.getValue());
 
+        Object[] values;
         try
         {
-            Method getter = paramType.getMethod("valueOf", String.class);
-            Object reply = getter.invoke(paramType, value);
-            if (reply == null)
-            {
-                throw new MarshallException(paramType);
-            }
-            return reply;
+            Method getter = paramType.getMethod("values", new Class[0]);
+            values = (Object[]) getter.invoke(paramType, (Object[]) null);
         }
         catch (NoSuchMethodException ex)
         {
@@ -59,13 +55,24 @@ public class EnumConverter extends BaseV20Converter implements Converter
         {
             throw new MarshallException(paramType, ex);
         }
+
+        for (int i = 0; i < values.length; i++)
+        {
+            Object en = values[i];
+            if (value.equals(en.toString()))
+            {
+                return en;
+            }
+        }
+
+        throw new MarshallException(paramType);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
+     * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
+    public OutboundVariable convertOutbound(Object object, OutboundContext outctx)
     {
-        return new NonNestedOutboundVariable('\'' + ((Enum<?>) data).name() + '\'');
+        return new SimpleOutboundVariable('\'' + object.toString() + '\'', outctx, true);
     }
 }

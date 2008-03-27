@@ -19,17 +19,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.servlet.Servlet;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
-import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * DefaultContainer is like a mini-IoC container for DWR.
@@ -43,73 +41,36 @@ public class DefaultContainer extends AbstractContainer implements Container
 {
     /**
      * Set the class that should be used to implement the given interface
-     * @param base The interface to implement
-     * @param implementation The new implementation
-     * @throws ContainerConfigurationException If the specified beans could not be used
+     * @param askFor The interface to implement
+     * @param valueParam The new implementation
+     * @throws IllegalAccessException If the specified beans could not be accessed
+     * @throws InstantiationException If the specified beans could not be created
      */
-    public <T> void addImplementation(Class<T> base, Class<? extends T> implementation)
-    {
-        addParameter(base.getName(), implementation.getName());
-    }
-
-    /**
-     * Set the class that should be used to implement the given interface
-     * @param base The interface to implement
-     * @param implementation The new implementation
-     * @throws ContainerConfigurationException If the specified beans could not be used
-     */
-    public <T> void addImplementationOption(Class<T> base, Class<? extends T> implementation)
-    {
-        Object existingOptions = beans.get(base.getName());
-        if (existingOptions == null)
-        {
-            beans.put(base.getName(), implementation.getName());
-        }
-        else
-        {
-            beans.put(base.getName(), existingOptions + " " + implementation.getName());
-        }
-    }
-
-    /**
-     * Add a parameter to the container as a possibility for injection
-     * @param askFor The key that will be looked up
-     * @param valueParam The value to be returned from the key lookup
-     * @throws ContainerConfigurationException If the specified beans could not be used
-     */
-    public void addParameter(String askFor, Object valueParam) throws ContainerConfigurationException
+    public void addParameter(Object askFor, Object valueParam) throws InstantiationException, IllegalAccessException
     {
         Object value = valueParam;
 
-        // Maybe the value is a classname that needs instantiating
+        // Maybe the value is a classname that needs instansiating
         if (value instanceof String)
         {
             try
             {
-                Class<?> impl = LocalUtil.classForName((String) value);
+                Class impl = LocalUtil.classForName((String) value);
                 value = impl.newInstance();
             }
             catch (ClassNotFoundException ex)
             {
                 // it's not a classname, leave it
             }
-            catch (InstantiationException ex)
-            {
-                throw new ContainerConfigurationException("Unable to instantiate " + value);
-            }
-            catch (IllegalAccessException ex)
-            {
-                throw new ContainerConfigurationException("Unable to access " + value);
-            }
         }
 
-        // If we have an instantiated value object and askFor is an interface
+        // If we have an instansiated value object and askFor is an interface
         // then we can check that one implements the other
-        if (!(value instanceof String))
+        if (!(value instanceof String) && askFor instanceof String)
         {
             try
             {
-                Class<?> iface = LocalUtil.classForName(askFor);
+                Class iface = LocalUtil.classForName((String) askFor);
                 if (!iface.isAssignableFrom(value.getClass()))
                 {
                     log.error("Can't cast: " + value + " to " + askFor);
@@ -137,31 +98,21 @@ public class DefaultContainer extends AbstractContainer implements Container
     }
 
     /**
-     * Retrieve a previously set parameter
-     * @param name The parameter name to retrieve
-     * @return The value of the specified parameter, or null if one is not set
-     */
-    public String getParameter(String name)
-    {
-        Object value = beans.get(name);
-        return (value == null) ? null : value.toString();
-    }
-
-    /**
      * Called to indicate that we finished adding parameters.
      * The thread safety of a large part of DWR depends on this function only
      * being called from {@link Servlet#init(javax.servlet.ServletConfig)},
      * where all the setup is done, and where we depend on the undocumented
      * feature of all servlet containers that they complete the init process
      * of a Servlet before they begin servicing requests.
-     * @see DefaultContainer#addParameter(String, Object)
+     * @see DefaultContainer#addParameter(Object, Object)
      * @noinspection UnnecessaryLabelOnContinueStatement
      */
     public void setupFinished()
     {
         // We try to autowire each bean in turn
-        for (Entry<String, Object> entry : beans.entrySet())
+        for (Iterator it = beans.entrySet().iterator(); it.hasNext();)
         {
+            Map.Entry entry = (Map.Entry) it.next();
             // Class type = (Class) entry.getKey();
             Object ovalue = entry.getValue();
 
@@ -171,14 +122,16 @@ public class DefaultContainer extends AbstractContainer implements Container
 
                 Method[] methods = ovalue.getClass().getMethods();
                 methods:
-                for (Method setter : methods)
+                for (int i = 0; i < methods.length; i++)
                 {
+                    Method setter = methods[i];
+
                     if (setter.getName().startsWith("set") &&
-                            setter.getName().length() > 3 &&
-                            setter.getParameterTypes().length == 1)
+                        setter.getName().length() > 3 &&
+                        setter.getParameterTypes().length == 1)
                     {
                         String name = Character.toLowerCase(setter.getName().charAt(3)) + setter.getName().substring(4);
-                        Class<?> propertyType = setter.getParameterTypes()[0];
+                        Class propertyType = setter.getParameterTypes()[0];
 
                         // First we try auto-wire by name
                         Object setting = beans.get(name);
@@ -202,7 +155,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                                 }
                                 catch (IllegalArgumentException ex)
                                 {
-                                    // Ignore - this was a speculative convert anyway
+                                    // Ignore - this was a specuative convert anyway
                                 }
 
                                 continue methods;
@@ -230,7 +183,7 @@ public class DefaultContainer extends AbstractContainer implements Container
 
     /**
      * A helper to do the reflection.
-     * This helper throws away all exceptions, preferring to log.
+     * This helper throws away all exceptions, prefering to log.
      * @param setter The method to invoke
      * @param bean The object to invoke the method on
      * @param value The value to assign to the property using the setter method
@@ -239,7 +192,7 @@ public class DefaultContainer extends AbstractContainer implements Container
     {
         try
         {
-            setter.invoke(bean, value);
+            setter.invoke(bean, new Object[] { value });
         }
         catch (IllegalArgumentException ex)
         {
@@ -260,13 +213,19 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public Object getBean(String id)
     {
-        return beans.get(id);
+        Object reply = beans.get(id);
+        if (reply == null)
+        {
+            log.debug("DefaultContainer: No bean with id=" + id);
+        }
+
+        return reply;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Container#getBeanNames()
      */
-    public Collection<String> getBeanNames()
+    public Collection getBeanNames()
     {
         return Collections.unmodifiableCollection(beans.keySet());
     }
@@ -274,10 +233,10 @@ public class DefaultContainer extends AbstractContainer implements Container
     /**
      * The beans that we know of indexed by type
      */
-    protected Map<String, Object> beans = new TreeMap<String, Object>();
+    protected Map beans = new TreeMap();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultContainer.class);
+    private static final Logger log = Logger.getLogger(DefaultContainer.class);
 }

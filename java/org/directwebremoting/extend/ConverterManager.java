@@ -40,7 +40,7 @@ public interface ConverterManager
      * @throws IllegalAccessException If reflection based creation fails
      * @throws IllegalArgumentException If we have a duplicate name
      */
-    void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException;
+    void addConverter(String match, String type, Map params) throws IllegalArgumentException, InstantiationException, IllegalAccessException;
 
     /**
      * Add a new converter
@@ -56,7 +56,7 @@ public interface ConverterManager
      * @return A Collection of all the converter match strings
      * @see #getConverterByMatchString(String)
      */
-    Collection<String> getConverterMatchStrings();
+    Collection getConverterMatchStrings();
 
     /**
      * In order to be able to create stub remote objects we need to know what
@@ -72,29 +72,29 @@ public interface ConverterManager
      * @param paramType The type to check
      * @return true iff <code>paramType</code> is coercable
      */
-    boolean isConvertable(Class<?> paramType);
+    boolean isConvertable(Class paramType);
 
     /**
      * Convert an object from being a string into an object of some type.
      * Designed for use with converters that have a working map passed to them
      * @param paramType The type that you want the object to be
-     * @param data The string version of the object
+     * @param iv The string version of the object
      * @param inctx The map of data that we are working on
      * @param incc The context of this type conversion
      * @return The coerced object or null if the object could not be coerced
      * @throws MarshallException If the conversion failed for some reason
      */
-    Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException;
+    Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws MarshallException;
 
     /**
      * Convert an object into a Javavscript representation of the same.
      * This method is for use by converters wishing to recurse into some object.
-     * @param data The object to convert
+     * @param object The object to convert
      * @param converted The list of converted objects so far
      * @return A Javascript string version of the object
      * @throws MarshallException If the conversion failed for some reason
      */
-    OutboundVariable convertOutbound(Object data, OutboundContext converted) throws MarshallException;
+    OutboundVariable convertOutbound(Object object, OutboundContext converted) throws MarshallException;
 
     /**
      * We don't know enough from a method signature like setUsers(Set s) to be
@@ -103,7 +103,7 @@ public interface ConverterManager
      * @param thc The context to find any extra type information from
      * @param type The type of the specified parameter.
      */
-    void setExtraTypeInfo(TypeHintContext thc, Class<?> type);
+    void setExtraTypeInfo(TypeHintContext thc, Class type);
 
     /**
      * The extra type information that we have learnt about a method parameter.
@@ -111,11 +111,11 @@ public interface ConverterManager
      * @param thc The context to find any extra type information from
      * @return A type to use to fill out the generic type
      */
-    Class<?> getExtraTypeInfo(TypeHintContext thc);
+    Class getExtraTypeInfo(TypeHintContext thc);
 
     /**
      * Sets the converters for this converter manager.
      * @param converters the map of match pattern and their converter instances
      */
-    void setConverters(Map<String, Converter> converters);
+    void setConverters(Map converters);
 }

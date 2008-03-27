@@ -20,15 +20,11 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ScriptConduit;
-import org.directwebremoting.impl.BasicAlarm;
 import org.directwebremoting.util.DebuggingPrintWriter;
+import org.directwebremoting.util.Logger;
 
 /**
  * A ScriptConduit that works with the parent Marshaller.
@@ -44,29 +40,35 @@ public abstract class BaseScriptConduit extends ScriptConduit
      * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
+     * @throws IOException If stream ops fail
      */
-    public BaseScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public BaseScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager) throws IOException
     {
-        super(RANK_SLOW, true);
+        super(RANK_SLOW);
 
         this.response = response;
         this.batchId = batchId;
         this.converterManager = converterManager;
-        this.jsonOutput = jsonOutput;
 
         response.setContentType(getOutboundMimeType());
-        out = response.getWriter();
 
-        if (debugScriptOutput && log.isDebugEnabled())
+        if (false && log.isDebugEnabled())
         {
             // This might be considered evil - altering the program flow
             // depending on the log status, however DebuggingPrintWriter is
             // very thin and only about debugging
-            DebuggingPrintWriter dpw = new DebuggingPrintWriter("", out);
-            dpw.setPrefix("out(" + hashCode() + "): ");
+            // out = new DebuggingPrintWriter("", response.getWriter());
+        }
+        else
+        {
+            out = response.getWriter();
+        }
 
-            out = dpw;
+        // Setup a debugging prefix
+        if (out instanceof DebuggingPrintWriter)
+        {
+            DebuggingPrintWriter dpw = (DebuggingPrintWriter) out;
+            dpw.setPrefix("out(" + hashCode() + "): ");
         }
 
         beginStream();
@@ -82,7 +84,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
      * Called when we are initially setting up the stream. This does not send
      * any data to the client, just sets it up for data.
      * <p>This method is always called exactly once in the lifetime of a
-     * conduit.
+     * conduit, after {@link #preStreamSetup()} and before any scripts are sent.
      */
     protected abstract void beginStream();
 
@@ -96,27 +98,17 @@ public abstract class BaseScriptConduit extends ScriptConduit
     /**
      * A poll has finished, get the client to call us back
      * @param timetoNextPoll How long before we tell the browser to come back?
-     * @throws IOException When we fail to call endStream()
+     * @throws IOException
      */
     public void close(int timetoNextPoll) throws IOException
     {
         try
         {
-            ScriptBuffer script = EnginePrivate.getRemoteHandleCallbackScript(batchId, "0", timetoNextPoll);
-            addScript(script);
+            EnginePrivate.remoteHandleCallback(this, batchId, "0", new Integer(timetoNextPoll));
         }
         catch (Exception ex)
         {
-            ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, "0", ex);
-            try
-            {
-                addScript(script);
-            }
-            catch (MarshallException ex1)
-            {
-                log.warn("This can't happen:", ex1);
-            }
-
+            EnginePrivate.remoteHandleException(this, batchId, "0", ex);
             log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']', ex);
         }
 
@@ -159,31 +151,12 @@ public abstract class BaseScriptConduit extends ScriptConduit
     }
 
     /**
-     * Do we debug all the scripts that we output?
-     * @param debugScriptOutput true to debug all of the output scripts (verbose)
-     */
-    public void setDebugScriptOutput(boolean debugScriptOutput)
-    {
-        this.debugScriptOutput = debugScriptOutput;
-    }
-
-    /**
      * @return The Alarm that goes off if something is badly broken
      */
     public Alarm getErrorAlarm()
     {
         return alarm;
     }
-
-    /**
-     * Do we debug all the scripts that we output?
-     */
-    protected boolean debugScriptOutput = false;
-
-    /**
-     * Are we outputting in JSON mode?
-     */
-    protected boolean jsonOutput = false;
 
     /**
      * How we convert parameters
@@ -198,7 +171,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
     /**
      * The PrintWriter to send output to, and that we should synchronize against
      */
-    protected PrintWriter out;
+    protected final PrintWriter out;
 
     /**
      * What is the ID of the request that we are responding to?
@@ -213,5 +186,5 @@ public abstract class BaseScriptConduit extends ScriptConduit
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(BaseScriptConduit.class);
+    private static final Logger log = Logger.getLogger(BaseScriptConduit.class);
 }

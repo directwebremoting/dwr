@@ -29,6 +29,8 @@ public class Corporation
     /**
      * @param jsxid
      * @param name
+     * @param last
+     * @param change
      */
     public Corporation(String jsxid, String name)
     {
@@ -59,7 +61,7 @@ public class Corporation
 
     private BigDecimal min;
 
-    private static final Random random = new Random();
+    private Random random = new Random();
 
     /**
      * @return the jsxid

@@ -15,21 +15,20 @@
  */
 package org.directwebremoting.contrib;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.impl.DefaultRemoter;
+import org.directwebremoting.util.Logger;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import edu.emory.mathcs.backport.java.util.concurrent.Callable;
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutionException;
+import edu.emory.mathcs.backport.java.util.concurrent.Executors;
+import edu.emory.mathcs.backport.java.util.concurrent.Future;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeoutException;
 
 /**
  * This implementation is not officially supported, and may be removed
@@ -39,6 +38,24 @@ import java.util.concurrent.TimeoutException;
  */
 public class ParallelDefaultRemoter extends DefaultRemoter
 {
+    class OneCall implements Callable
+    {
+        private Call call;
+
+        /**
+         * @param call The call to execute
+         */
+        public OneCall(Call call)
+        {
+            this.call = call;
+        }
+
+        public Object call()
+        {
+            return execute(call);
+        }
+    }
+
     /**
      * Initialize thread pool with :
      * Core pool size : 10;
@@ -52,6 +69,8 @@ public class ParallelDefaultRemoter extends DefaultRemoter
         executorService.setCorePoolSize(corePoolsize);
         executorService.setMaximumPoolSize(maximumPoolsize);
         executorService.setKeepAliveTime(keepAliveTime, TimeUnit.MILLISECONDS);
+
+        log.info(executorService.getClass().getName().indexOf("edu.emory.mathcs.backport") > -1 ? "Backport of java.util.concurrent package used !" : "java.util.concurrent package used !");
     }
 
     /**
@@ -100,11 +119,10 @@ public class ParallelDefaultRemoter extends DefaultRemoter
      * @param calls The set of calls to execute in parallel
      * @return A set of reply data objects
      */
-    @Override
     public Replies execute(Calls calls)
     {
         Replies replies = new Replies(calls.getBatchId());
-        Future<?>[] future = new Future<?>[calls.getCallCount()];
+        Future future[] = new Future[calls.getCallCount()];
 
         if (calls.getCallCount() == 1)
         {
@@ -115,13 +133,13 @@ public class ParallelDefaultRemoter extends DefaultRemoter
             for (int callNum = 0; callNum < calls.getCallCount(); callNum++)
             {
                 Call call = calls.getCall(callNum);
-                future[callNum] = executorService.submit(new CallCallable(call));
+                future[callNum] = executorService.submit(new OneCall(call));
             }
             for (int callNum = 0; callNum < calls.getCallCount(); callNum++)
             {
                 try
                 {
-                    Reply reply = (Reply) future[callNum].get(timeout, TimeUnit.MILLISECONDS);
+                    Reply reply = (Reply) future[callNum].get(this.timeout, TimeUnit.MILLISECONDS);
                     replies.addReply(reply);
                 }
                 catch (InterruptedException ex)
@@ -144,28 +162,7 @@ public class ParallelDefaultRemoter extends DefaultRemoter
         }
     }
 
-    /**
-     * An implementation of Callable that uses a DWR Call object.
-     */
-    private class CallCallable implements Callable<Reply>
-    {
-        /**
-         * @param call The call to execute
-         */
-        public CallCallable(Call call)
-        {
-            this.call = call;
-        }
-
-        public Reply call()
-        {
-            return execute(call);
-        }
-
-        private final Call call;
-    }
-
-    private static final Log log = LogFactory.getLog(ParallelDefaultRemoter.class);
+    private static final Logger log = Logger.getLogger(ParallelDefaultRemoter.class);
 
     private int corePoolsize = 10;
 
@@ -175,5 +172,5 @@ public class ParallelDefaultRemoter extends DefaultRemoter
 
     private long timeout = 10000;
 
-    private final ThreadPoolExecutor executorService;
+    private ThreadPoolExecutor executorService;
 }

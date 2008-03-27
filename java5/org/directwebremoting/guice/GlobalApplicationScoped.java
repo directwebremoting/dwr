@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 import com.google.inject.ScopeAnnotation;
 
 /**
- * Marks classes for which there should be one instance per web application
+ * Marks classes for which there should be one instance per web application 
  * (i.e., per servlet context).
  * @author Tim Peierls [tim at peierls dot net]
  */

@@ -15,80 +15,63 @@
  */
 package org.directwebremoting.guice;
 
+import com.google.inject.Binding;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Named;
+
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.Map.Entry;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import org.directwebremoting.util.Logger;
 
 import static org.directwebremoting.guice.DwrGuiceUtil.getInjector;
 import static org.directwebremoting.guice.DwrGuiceUtil.popServletContext;
 import static org.directwebremoting.guice.DwrGuiceUtil.pushServletContext;
-import static org.directwebremoting.guice.ParamName.ACTIVE_REVERSE_AJAX_ENABLED;
-import static org.directwebremoting.guice.ParamName.ALLOW_GET_FOR_SAFARI;
-import static org.directwebremoting.guice.ParamName.ALLOW_SCRIPT_TAG_REMOTING;
-import static org.directwebremoting.guice.ParamName.CLASSES;
-import static org.directwebremoting.guice.ParamName.CROSS_DOMAIN_SESSION_SECURITY;
-import static org.directwebremoting.guice.ParamName.DEBUG;
-import static org.directwebremoting.guice.ParamName.DISCONNECTED_TIME;
-import static org.directwebremoting.guice.ParamName.IGNORE_LAST_MODIFIED;
-import static org.directwebremoting.guice.ParamName.MAX_CALL_COUNT;
-import static org.directwebremoting.guice.ParamName.MAX_POLL_HITS_PER_SECOND;
-import static org.directwebremoting.guice.ParamName.MAX_WAITING_THREADS;
-import static org.directwebremoting.guice.ParamName.MAX_WAIT_AFTER_WRITE;
-import static org.directwebremoting.guice.ParamName.NORMALIZE_INCLUDES_QUERY_STRING;
-import static org.directwebremoting.guice.ParamName.OVERRIDE_PATH;
-import static org.directwebremoting.guice.ParamName.POLL_AND_COMET_ENABLED;
-import static org.directwebremoting.guice.ParamName.POST_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.PRE_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.SCRIPT_COMPRESSED;
-import static org.directwebremoting.guice.ParamName.SCRIPT_SESSION_TIMEOUT;
-import static org.directwebremoting.guice.ParamName.SESSION_COOKIE_NAME;
-import static org.directwebremoting.guice.ParamName.WELCOME_FILES;
+import static org.directwebremoting.guice.ParamName.*;
 import static org.directwebremoting.impl.ContainerUtil.INIT_CUSTOM_CONFIGURATOR;
 
 /**
- * An extension of the basic
- * {@link org.directwebremoting.servlet.DwrServlet DwrServlet}
- * that configures itself for dependency injection with Guice.
- * Must be used in conjunction with {@link DwrGuiceServletContextListener}.
+ * An extension of the basic 
+ * {@link org.directwebremoting.servlet.DwrServlet DwrServlet} 
+ * that configures itself for dependency injection with Guice. 
+ * Must be used in conjunction with
+ * {@link org.directwebremoting.guice.DwrGuiceServletContextFilter DwrGuiceServletContextFilter}.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public class DwrGuiceServlet extends DwrServlet
+public class DwrGuiceServlet extends DwrServlet 
 {
     /**
-     * Copies DWR configuration values from the Guice bindings into
-     * {@code servletConfig} to make these values accessible to the
+     * Copies DWR configuration values from the Guice bindings into 
+     * {@code servletConfig} to make these values accessible to the 
      * standard DWR servlet configuration machinery.
      */
     @Override public void init(ServletConfig servletConfig) throws ServletException
     {
         // Save this for later use by destroy.
         this.servletContext = servletConfig.getServletContext();
-
+        
         // Set the current context thread-locally so our internal classes can
         // look up the Injector and use it in turn to look up further objects.
         pushServletContext(this.servletContext);
         try
-        {
-            // Since ServletConfig is immutable, we use a modifiable
-            // decoration of the real servlet configuration and pass
+        {      
+            // Since ServletConfig is immutable, we use a modifiable 
+            // decoration of the real servlet configuration and pass 
             // that to the init method of the superclass.
             ModifiableServletConfig config = new ModifiableServletConfig(servletConfig);
-
+        
             // Apply settings configured at bind-time.
             setInitParameters(config);
 
@@ -96,14 +79,14 @@ public class DwrGuiceServlet extends DwrServlet
             // any user-specified or default implementations, after adding
             // additional creators and converters registered at bind-time.
             configureDelegatedTypes(config);
-
+            
             // Normal DwrServlet initialization happens here using the
             // modified ServletConfig instead of the one we were passed.
             super.init(config);
 
             // Objects with (non-global) application scope are initialized
             // eagerly.
-            initApplicationScoped();
+            initApplicationScoped();            
         }
         finally
         {
@@ -111,7 +94,7 @@ public class DwrGuiceServlet extends DwrServlet
             popServletContext();
         }
     }
-
+    
     /**
      * Closes any {@code Closeable} application-scoped objects.
      * IO exceptions are collected but ignored.
@@ -120,12 +103,12 @@ public class DwrGuiceServlet extends DwrServlet
     {
         pushServletContext(this.servletContext);
         try
-        {
+        {            
             // Closeable objects with (non-global) application scope are closed.
             List<Exception> exceptions = destroyApplicationScoped();
-
+            
             super.destroy();
-
+            
             for (Exception ex : exceptions)
             {
                 log.warn("During servlet shutdown", ex);
@@ -137,7 +120,7 @@ public class DwrGuiceServlet extends DwrServlet
             this.servletContext = null;
         }
     }
-
+    
     /**
      * Inject some values that might have been configured at bind-time.
      * Override web.xml <init-param> settings in each case that injection
@@ -150,14 +133,14 @@ public class DwrGuiceServlet extends DwrServlet
         injector.injectMembers(cfg);
         cfg.setParameters();
     }
-
+    
     private static class InjectedConfig
     {
         InjectedConfig(ModifiableServletConfig config)
         {
             this.config = config;
         }
-
+        
         void setParameter(ParamName paramName, Object value)
         {
             if (value != null)
@@ -165,7 +148,7 @@ public class DwrGuiceServlet extends DwrServlet
                 config.setInitParameter(paramName.getName(), value.toString());
             }
         }
-
+        
         void setParameters()
         {
             setParameter(ALLOW_GET_FOR_SAFARI,            allowGetForSafariButMakeForgeryEasier);
@@ -189,19 +172,19 @@ public class DwrGuiceServlet extends DwrServlet
             setParameter(NORMALIZE_INCLUDES_QUERY_STRING, normalizeIncludesQueryString);
             setParameter(OVERRIDE_PATH,                   overridePath);
 
-            if (configurator != null)
+            if (configurator != null) 
             {
                 // InternalConfigurator knows how to look up the configurator
                 // instance again and delegate to it.
                 config.setInitParameter(INIT_CUSTOM_CONFIGURATOR, InternalConfigurator.class.getName());
             }
 
-            if (classes != null)
+            if (classes != null) 
             {
                 config.setInitParameter(CLASSES.getName(), classListToString(classes));
             }
         }
-
+        
         @Inject(optional=true) @InitParam(ALLOW_GET_FOR_SAFARI)            Boolean allowGetForSafariButMakeForgeryEasier = null;
         @Inject(optional=true) @InitParam(CROSS_DOMAIN_SESSION_SECURITY)   Boolean crossDomainSessionSecurity = null;
         @Inject(optional=true) @InitParam(ALLOW_SCRIPT_TAG_REMOTING)       Boolean allowScriptTagRemoting = null;
@@ -222,36 +205,36 @@ public class DwrGuiceServlet extends DwrServlet
         @Inject(optional=true) @InitParam(WELCOME_FILES)                   String  welcomeFiles = null;
         @Inject(optional=true) @InitParam(NORMALIZE_INCLUDES_QUERY_STRING) Boolean normalizeIncludesQueryString = null;
         @Inject(optional=true) @InitParam(OVERRIDE_PATH)                   String  overridePath = null;
-
+        
         @Inject(optional=true) Configurator configurator = null;
-
-        @Inject(optional=true) @InitParam(CLASSES) List<Class<?>> classes = null;
-
+        
+        @Inject(optional=true) @InitParam(CLASSES) List<Class> classes = null;
+        
         private final ModifiableServletConfig config;
     }
-
+    
 
     private void configureDelegatedTypes(ModifiableServletConfig config)
     {
-        // Get the user-specified type names, if any, for CreatorManager
-        // and ConverterManager and stash them (thread-locally) so that
-        // InternalCreatorManager and InternalConverterManager can retrieve
+        // Get the user-specified type names, if any, for CreatorManager 
+        // and ConverterManager and stash them (thread-locally) so that 
+        // InternalCreatorManager and InternalConverterManager can retrieve 
         // them in their parameterless constructors.
-
+        
         InternalCreatorManager.setTypeName(config.getInitParameter(INIT_CREATOR_MANAGER));
         InternalConverterManager.setTypeName(config.getInitParameter(INIT_CONVERTER_MANAGER));
         InternalAjaxFilterManager.setTypeName(config.getInitParameter(INIT_AJAX_FILTER_MANAGER));
-
-        // Tell DWR to use our special delegating classes that know how to
-        // create delegates of the appropriate type by looking at the type
+        
+        // Tell DWR to use our special delegating classes that know how to 
+        // create delegates of the appropriate type by looking at the type 
         // names that we just stashed.
-
+        
         config.setInitParameter(INIT_CREATOR_MANAGER, InternalCreatorManager.class.getName());
         config.setInitParameter(INIT_CONVERTER_MANAGER, InternalConverterManager.class.getName());
         config.setInitParameter(INIT_AJAX_FILTER_MANAGER, InternalAjaxFilterManager.class.getName());
     }
-
-
+    
+    
     private static void initApplicationScoped()
     {
         Injector injector = getInjector();
@@ -261,7 +244,7 @@ public class DwrGuiceServlet extends DwrServlet
             injector.getInstance(key);
         }
     }
-
+    
     private static List<Exception> destroyApplicationScoped()
     {
         final List<Exception> exceptions = new ArrayList<Exception>();
@@ -270,45 +253,42 @@ public class DwrGuiceServlet extends DwrServlet
     }
 
 
-    static String classListToString(List<Class<?>> classList)
+    static String classListToString(List<Class> classList)
     {
         StringBuilder buf = new StringBuilder();
         int count = 0;
-        for (Class<?> cls : classList)
+        for (Class cls : classList)
         {
-            if (count++ > 0)
-            {
-                buf.append(", ");
-            }
+            if (count++ > 0) buf.append(", ");
             buf.append(cls.getName());
         }
         return buf.toString();
     }
 
-
+    
     /**
      * Used to stash context for later use by destroy().
      */
     private volatile ServletContext servletContext;
-
-
-    /**
-     * The name DWR uses to look up a CreatorManager implementation class name
+    
+    
+    /** 
+     * The name DWR uses to look up a CreatorManager implementation class name 
      */
-    private static final String INIT_CREATOR_MANAGER = CreatorManager.class.getName();
-
-    /**
-     * The name DWR uses to look up a ConverterManager implementation class name
+    private static final String INIT_CREATOR_MANAGER = CreatorManager.class.getName();   
+    
+    /** 
+     * The name DWR uses to look up a ConverterManager implementation class name 
      */
     private static final String INIT_CONVERTER_MANAGER = ConverterManager.class.getName();
-
-    /**
-     * The name DWR uses to look up an AjaxFilterManager implementation class name
+    
+    /** 
+     * The name DWR uses to look up an AjaxFilterManager implementation class name 
      */
     private static final String INIT_AJAX_FILTER_MANAGER = AjaxFilterManager.class.getName();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DwrGuiceServlet.class);
+    private static final Logger log = Logger.getLogger(DwrGuiceServlet.class);
 }

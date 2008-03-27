@@ -22,34 +22,6 @@
       elementFormDefault="qualified"
       attributeFormDefault="unqualified">
 
-	<xsd:element name="proxy-ref" type="proxy">
-		<xsd:annotation>
-			<xsd:documentation><![CDATA[Remote a bean already defined in a reachable application context indicating the reference to it]]></xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-
-	<xsd:element name="url-mapping">
-		<xsd:annotation>
-			<xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-
-	<xsd:element name="annotation-scan">
-    	<xsd:annotation>
-    		<xsd:documentation><![CDATA[Allow DWR to scan the classpath, detect beans annotated with @RemoteProxy & @RemoteMethod and register the beans and Creator proxies for them.]]></xsd:documentation>
-    	</xsd:annotation>
-    	<xsd:complexType>
-    		<xsd:attribute name="base-package" type="xsd:string" />
-    		<xsd:attribute name="regex" type="xsd:string" />
-    	</xsd:complexType>
-	</xsd:element>
-
-	<xsd:element name="annotation-config">
-    	<xsd:annotation>
-    		<xsd:documentation><![CDATA[Allow DWR to scan the Spring context, detect beans annotated with @RemoteProxy & @RemoteMethod and register Creator proxies for them.]]></xsd:documentation>
-    	</xsd:annotation>
-	</xsd:element>
-
   <xsd:element name="configuration" type="configuration">
     <xsd:annotation>
       <xsd:documentation>The element that can be used to specify DWR configuration that does not relate directly to a Spring-managed bean.</xsd:documentation>
@@ -68,15 +40,6 @@
     </xsd:annotation>
   </xsd:element>
 
-  <xsd:complexType name="proxy">
-    <xsd:sequence>
-      <xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
-    </xsd:sequence>
-    <xsd:attribute name="javascript" type="xsd:string" use="optional" />
-    <xsd:attribute name="bean" type="xsd:string" />
-  </xsd:complexType>
-  
   <xsd:complexType name="configuration">
     <xsd:sequence>
       <xsd:element name="init" type="init" minOccurs="0" maxOccurs="1"/>
@@ -177,7 +140,7 @@
       <xsd:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="latencyfilter" type="latencyfilter" minOccurs="0" maxOccurs="1"/>
     </xsd:sequence>
-    <xsd:attribute name="javascript" type="xsd:string" />
+    <xsd:attribute name="javascript" type="xsd:string" use="required"/>
   </xsd:complexType>
 
   <xsd:complexType name="creator">
@@ -233,7 +196,6 @@
       </xsd:simpleType>
     </xsd:attribute>
     <xsd:attribute name="id" type="xsd:ID"/>
-    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="name" type="xsd:Name"/>
   </xsd:complexType>
-
 </xsd:schema>

@@ -16,7 +16,6 @@
 package org.directwebremoting.extend;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,7 +24,7 @@ import java.util.List;
  * iframe).
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Calls implements Iterable<Call>
+public class Calls
 {
     /**
      * How many calls are there is this request
@@ -42,7 +41,7 @@ public class Calls implements Iterable<Call>
      */
     public Call getCall(int index)
     {
-        return calls.get(index);
+        return (Call) calls.get(index);
     }
 
     /**
@@ -70,18 +69,10 @@ public class Calls implements Iterable<Call>
         return batchId;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Iterable#iterator()
-     */
-    public Iterator<Call> iterator()
-    {
-        return calls.iterator();
-    }
-
     private String batchId = null;
 
     /**
      * The collection of Calls that we should execute
      */
-    protected List<Call> calls = new ArrayList<Call>();
+    protected List calls = new ArrayList();
 }

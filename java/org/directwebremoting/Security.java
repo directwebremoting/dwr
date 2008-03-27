@@ -15,6 +15,8 @@
  */
 package org.directwebremoting;
 
+import org.directwebremoting.util.LocalUtil;
+
 /**
  * Some simple replacement utilities to help people protect themselves from
  * XSS attacks.
@@ -42,11 +44,11 @@ public class Security
     public static String escapeHtml(String original)
     {
         String reply = original;
-        reply = reply.replace("&", "&amp;");
-        reply = reply.replace("<", "&lt;");
-        reply = reply.replace(">", "&gt;");
-        reply = reply.replace("\'", "&apos;");
-        reply = reply.replace("\"", "&quot;");
+        reply = LocalUtil.replace(reply, "&", "&amp;");
+        reply = LocalUtil.replace(reply, "<", "&lt;");
+        reply = LocalUtil.replace(reply, ">", "&gt;");
+        reply = LocalUtil.replace(reply, "\'", "&apos;");
+        reply = LocalUtil.replace(reply, "\"", "&quot;");
         return reply;
     }
 
@@ -67,23 +69,23 @@ public class Security
     public static String unescapeHtml(String original)
     {
         String reply = original;
-        reply = reply.replace("&amp;", "&");
-        reply = reply.replace("&lt;", "<");
-        reply = reply.replace("&gt;", ">");
-        reply = reply.replace("&apos;", "\'");
-        reply = reply.replace("&quot;", "\"");
+        reply = LocalUtil.replace(reply, "&amp;", "&");
+        reply = LocalUtil.replace(reply, "&lt;", "<");
+        reply = LocalUtil.replace(reply, "&gt;", ">");
+        reply = LocalUtil.replace(reply, "&apos;", "\'");
+        reply = LocalUtil.replace(reply, "&quot;", "\"");
         return reply;
     }
 
     /**
      * Perform the following replacements:<ul>
      * <li>&amp; to +</li>
-     * <li>&lt; to \\u2039 (\u2039)</li>
-     * <li>&gt; to \\u203A (\u203A)</li>
-     * <li>&apos; to \\u2018 (\u2018)</li>
-     * <li>&quot; to \\u201C (\u201C)</li>
+     * <li>&lt; to \\u2039 (\u2039) (‹)</li>
+     * <li>&gt; to \\u203A (\u203A) (›)</li>
+     * <li>&apos; to \\u2018 (\u2018) (‘)</li>
+     * <li>&quot; to \\u201C (\u201C) (“)</li>
      * </ul>
-     * These replacements are useful when readability is more important than
+     * These replacements are useful when readibility is more important than
      * retaining the exact character string of the original.
      * @param original The string to perform entity replacement on
      * @return The original string with &amp;, &lt;, &gt;, ' and " escaped.
@@ -91,11 +93,11 @@ public class Security
     public static String replaceXmlCharacters(String original)
     {
         String reply = original;
-        reply = reply.replace("&", "+");
-        reply = reply.replace("<", "\u2039");
-        reply = reply.replace(">", "\u203A");
-        reply = reply.replace("\'", "\u2018");
-        reply = reply.replace("\"", "\u201C");
+        reply = LocalUtil.replace(reply, "&", "+");
+        reply = LocalUtil.replace(reply, "<", "\u2039");
+        reply = LocalUtil.replace(reply, ">", "\u203A");
+        reply = LocalUtil.replace(reply, "\'", "\u2018");
+        reply = LocalUtil.replace(reply, "\"", "\u201C");
         return reply;
     }
 

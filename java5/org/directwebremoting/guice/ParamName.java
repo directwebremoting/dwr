@@ -42,18 +42,18 @@ public enum ParamName
     WELCOME_FILES                       ("welcomeFiles"),
     NORMALIZE_INCLUDES_QUERY_STRING     ("normalizeIncludesQueryString"),
     OVERRIDE_PATH                       ("overridePath"),
-
+    
     CLASSES                             ("classes");
 
-    ParamName(String name)
+    ParamName(String name) 
     {
         this.name = name;
     }
-
+    
     public String getName()
     {
         return name;
     }
-
+    
     private final String name;
 }

@@ -44,7 +44,7 @@ public class NullCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         return clazz;
     }
@@ -57,5 +57,5 @@ public class NullCreator extends AbstractCreator implements Creator
         throw new InstantiationException(Messages.getString("NullCreator.DontCallMe"));
     }
 
-    private Class<?> clazz;
+    private Class clazz;
 }

@@ -17,10 +17,9 @@ package org.getahead.dwrdemo.filter;
 
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.AjaxFilterChain;
+import org.directwebremoting.util.Logger;
 
 
 /**
@@ -43,5 +42,5 @@ public class LoggingAjaxFilter implements AjaxFilter
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(LoggingAjaxFilter.class);
+    private static final Logger log = Logger.getLogger(LoggingAjaxFilter.class);
 }

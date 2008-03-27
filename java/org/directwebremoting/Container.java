@@ -18,10 +18,7 @@ package org.directwebremoting;
 import java.util.Collection;
 
 /**
- * A very basic IoC container.
- * See {@link org.directwebremoting.impl.ContainerUtil} for information on how
- * to setup a {@link Container}
- * @see org.directwebremoting.impl.ContainerUtil
+ * A very basic IoC container
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface Container
@@ -34,13 +31,6 @@ public interface Container
     Object getBean(String name);
 
     /**
-     * Get an instance of a bean of a given type
-     * @param type The type to get an instance of
-     * @return The object of the given type, or null if the object does not exist
-     */
-    <T> T getBean(Class<T> type);
-
-    /**
      * Get a list of all the available beans.
      * Implementation of this method is optional so it is valid for this method
      * to return an empty collection, but to return Objects when queried
@@ -48,5 +38,5 @@ public interface Container
      * for debugging purposes.
      * @return A collection containing all the availble bean names.
      */
-    Collection<String> getBeanNames();
+    Collection getBeanNames();
 }

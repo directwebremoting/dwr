@@ -18,30 +18,30 @@ package org.directwebremoting.convert;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * An implementation of Converter for Strings.
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Joe Walker [joe at eireneh dot com]
+ * @version $Id$
  */
 public class URLConverter extends BaseV20Converter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
     {
-        String urlString = LocalUtil.decode(data.getValue());
+        String urlString = LocalUtil.decode(iv.getValue());
         try
         {
             return new URL(urlString);
@@ -60,11 +60,11 @@ public class URLConverter extends BaseV20Converter implements Converter
     {
         URL url = (URL) data;
         String escaped = JavascriptUtil.escapeJavaScript(url.toExternalForm());
-        return new NonNestedOutboundVariable('\"' + escaped + '\"');
+        return new SimpleOutboundVariable('\"' + escaped + '\"', outctx, true);
     }
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(URLConverter.class);
+    private static final Logger log = Logger.getLogger(URLConverter.class);
 }

@@ -15,24 +15,42 @@
  */
 package org.directwebremoting.extend;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
+
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * We need to keep track of stuff while we are converting on the way out to
- * prevent recursion.
+ * prevent recurrsion.
  * This class helps track the conversion process.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public final class OutboundContext
 {
     /**
-     * Contexts need to know if they are producing JSON output
-     * @param jsonMode Are we producing JSON output?
+     * JDK14: Can use IdentityHashMap directly
+     * Since map needs to have referencial equality rather than object equality
+     * this constructor tries to use java.util.IdentityHashMap (>=1.4), and
+     * failing that falls back on wrapper objects in a HashMap.
      */
-    public OutboundContext(boolean jsonMode)
+    public OutboundContext()
     {
-        this.jsonMode = jsonMode;
+        // We can only assign to map once, so we use this as a staging post.
+        Map assign;
+
+        try
+        {
+            assign = (Map) LocalUtil.classForName("java.util.IdentityHashMap").newInstance();
+            referenceWrappers = false;
+        }
+        catch (Exception ex)
+        {
+            assign = new HashMap();
+            referenceWrappers = true;
+        }
+
+        map = assign;
     }
 
     /**
@@ -42,7 +60,13 @@ public final class OutboundContext
      */
     public OutboundVariable get(Object object)
     {
-        return map.get(object);
+        Object key = object;
+        if (referenceWrappers)
+        {
+            key = new ReferenceWrapper(object);
+        }
+
+        return (OutboundVariable) map.get(key);
     }
 
     /**
@@ -51,7 +75,13 @@ public final class OutboundContext
      */
     public void put(Object object, OutboundVariable ss)
     {
-        map.put(object, ss);
+        Object key = object;
+        if (referenceWrappers)
+        {
+            key = new ReferenceWrapper(object);
+        }
+
+        map.put(key, ss);
     }
 
     /**
@@ -66,37 +96,9 @@ public final class OutboundContext
         return varName;
     }
 
-    /**
-     * Things work out if they are doubly referenced during the conversion
-     * process, and can't be sure how to create output until that phase is done.
-     * This method declares that we are done conversion, and now is a good time
-     * to calculate how to generate output
-     */
-    public void prepareForOutput()
-    {
-        for (OutboundVariable variable : map.values())
-        {
-            variable.prepareAssignCode();
-        }
-
-        for (OutboundVariable variable : map.values())
-        {
-            variable.prepareBuildDeclareCodes();
-        }
-    }
-
-    /**
-     * @return Are we in JSON mode where everything is inline?
-     */
-    public boolean isJsonMode()
-    {
-        return jsonMode;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
         return map.toString();
@@ -110,15 +112,58 @@ public final class OutboundContext
     /**
      * The map of objects to how we converted them last time
      */
-    private final Map<Object, OutboundVariable> map = new IdentityHashMap<Object, OutboundVariable>();
+    private final Map map;
+
+    /**
+     * Tells if we are to wrap objects in the map to get referencial equality.
+     */
+    private boolean referenceWrappers;
 
     /**
      * What index do we tack on the next variable name that we generate
      */
     private int nextVarIndex = 0;
-    
+
     /**
-     * Are we in JSON mode where everything is inline?
+     * Wrapper class that makes sure that equals() and hashCode() uses
+     * referencial equality on the wrapped object. This is used when
+     * we can't have a IdentityHashMap in map.
      */
-    private boolean jsonMode = true;
+    private static class ReferenceWrapper
+    {
+        /**
+         * @param object The object to wrap
+         */
+        protected ReferenceWrapper(Object object)
+        {
+            this.object = object;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode()
+        {
+            return System.identityHashCode(object);
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object obj)
+        {
+            if (!(obj instanceof ReferenceWrapper))
+            {
+                return false;
+            }
+
+            ReferenceWrapper that = (ReferenceWrapper) obj;
+            return this.object == that.object;
+        }
+
+        /**
+         * My wrapped object.
+         */
+        private Object object;
+    }
 }

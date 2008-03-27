@@ -17,8 +17,8 @@
 				</object>
 				<object type="jsx3.gui.LayoutGrid">
 					<dynamics jsxbgcolor="@Solid Disabled"/>
-					<variants jsxoverflow="2" jsxrelativeposition="0"/>
-					<strings jsxheight="100%" jsxname="layout_horiz" jsxrows="*,32" jsxwidth="100%"/>
+					<variants jsxbestguess="1" jsxorientation="0" jsxoverflow="2" jsxrelativeposition="0" jsxrepeat="2" jsxsizearray="['*','32']"/>
+					<strings jsxheight="100%" jsxname="layout_horiz" jsxwidth="100%"/>
             <object type="jsx3.gui.Block">
               <dynamics/>
               <variants jsxoverflow="1"/>

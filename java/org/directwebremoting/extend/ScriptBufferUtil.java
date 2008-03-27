@@ -16,9 +16,11 @@
 package org.directwebremoting.extend;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptBuffer.StringWrapper;
 
 /**
  * A simple utility class to extract a {@link String} from a {@link ScriptBuffer}.
@@ -42,64 +44,65 @@ public class ScriptBufferUtil
      */
     public static String createOutput(ScriptBuffer buffer, ConverterManager converterManager) throws MarshallException
     {
-        return createOutput(buffer, converterManager, false);
-    }
+        OutboundContext context = new OutboundContext();
+        List ovs = new ArrayList();
 
-    /**
-     * Return a string ready for output.
-     * @param script The source of the script data
-     * @param converterManager How we convert script variable to Javascript
-     * @param jsonOutput Are we doing strict JSON output?
-     * @return Some Javascript to be eval()ed by a browser.
-     * @throws MarshallException If an error happens during parameter marshalling
-     */
-    public static String createOutput(ScriptBuffer script, ConverterManager converterManager, boolean jsonOutput) throws MarshallException
-    {
-        OutboundContext context = new OutboundContext(jsonOutput);
-        List<OutboundVariable> scriptParts = new ArrayList<OutboundVariable>();
-
-        // First convert everything into OutboundVariables
-        for (Object part : script.getParts())
+        // First convert everything
+        for (Iterator it = buffer.getParts().iterator(); it.hasNext();)
         {
-            OutboundVariable ov = converterManager.convertOutbound(part, context);
-            scriptParts.add(ov);
+            Object element = it.next();
+            if (!(element instanceof StringWrapper))
+            {
+                OutboundVariable ov = converterManager.convertOutbound(element, context);
+                ovs.add(ov);
+            }
+            else
+            {
+                ovs.add(element);
+            }
         }
 
-        StringBuffer buffer = new StringBuffer();
-        context.prepareForOutput();
+        StringBuffer output = new StringBuffer();
 
         // First we look for the declaration code
-        for (OutboundVariable ov : scriptParts)
+        for (Iterator it = ovs.iterator(); it.hasNext();)
         {
-            buffer.append(ov.getDeclareCode());
+            Object element = it.next();
+            if (element instanceof OutboundVariable)
+            {
+                OutboundVariable ov = (OutboundVariable) element;
+                output.append(ov.getDeclareCode());
+            }
         }
 
         // Then we look for the construction code
-        for (OutboundVariable ov : scriptParts)
+        for (Iterator it = ovs.iterator(); it.hasNext();)
         {
-            buffer.append(ov.getBuildCode());
+            Object element = it.next();
+            if (element instanceof OutboundVariable)
+            {
+                OutboundVariable ov = (OutboundVariable) element;
+                output.append(ov.getBuildCode());
+            }
         }
 
         // Then we output everything else
-        for (OutboundVariable ov : scriptParts)
+        for (Iterator it = ovs.iterator(); it.hasNext();)
         {
-            String assignCode = ov.getAssignCode();
-            if (assignCode == null)
+            Object element = it.next();
+            if (element instanceof StringWrapper)
             {
-                throw new NullPointerException();
+                StringWrapper str = (StringWrapper) element;
+                output.append(str.toString());
             }
-            buffer.append(assignCode);
+            else
+            {
+                OutboundVariable ov = (OutboundVariable) element;
+                output.append(ov.getAssignCode());
+            }
         }
 
-        // Real JSON must be wrapped in { }
-        String output = buffer.toString();
-        if (jsonOutput && !output.startsWith("{"))
-        {
-            return "{ \"reply\":" + output + "}";
-        }
-        else
-        {
-            return output;
-        }
+        String exported = output.toString();
+        return exported;
     }
 }

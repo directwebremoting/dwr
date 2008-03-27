@@ -16,13 +16,6 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.jsonp.JsonCallException;
-import org.directwebremoting.util.Messages;
 
 /**
  * Call is a POJO to encapsulate the information required to make a single java
@@ -130,76 +123,6 @@ public class Call
         return methodName;
     }
 
-    /**
-     * Find the method the best matches the method name and parameters
-     */
-    public void findMethod(CreatorManager creatorManager, ConverterManager converterManager, InboundContext inctx)
-    {
-        if (scriptName == null)
-        {
-            throw new IllegalArgumentException(Messages.getString("JsonCallMarshaller.MissingClassParam"));
-        }
-
-        if (methodName == null)
-        {
-            throw new IllegalArgumentException(Messages.getString("JsonCallMarshaller.MissingMethodParam"));
-        }
-
-        // Get a list of the available matching methods with the coerced
-        // parameters that we will use to call it if we choose to use
-        // that method.
-        Creator creator = creatorManager.getCreator(scriptName, true);
-        List<Method> available = new ArrayList<Method>();
-
-        methods:
-        for (Method methodOptions : creator.getType().getMethods())
-        {
-            // Check method name and access
-            if (methodOptions.getName().equals(methodName))
-            {
-                // Check number of parameters
-                if (methodOptions.getParameterTypes().length == inctx.getParameterCount())
-                {
-                    // Clear the previous conversion attempts (the param types
-                    // will probably be different)
-                    inctx.clearConverted();
-
-                    // Check parameter types
-                    for (int j = 0; j < methodOptions.getParameterTypes().length; j++)
-                    {
-                        Class<?> paramType = methodOptions.getParameterTypes()[j];
-                        if (!converterManager.isConvertable(paramType))
-                        {
-                            // Give up with this method and try the next
-                            continue methods;
-                        }
-                    }
-
-                    available.add(methodOptions);
-                }
-            }
-        }
-
-        // Pick a method to call
-        if (available.size() > 1)
-        {
-            log.warn("Warning multiple matching methods. Using first match.");
-        }
-
-        if (available.isEmpty())
-        {
-            String name = scriptName + '.' + methodName;
-            String error = Messages.getString("JsonCallMarshaller.UnknownMethod", name);
-            log.warn("Marshalling exception: " + error);
-
-            throw new JsonCallException("No available method. See logs for more details.");
-        }
-
-        // At the moment we are just going to take the first match, for a
-        // later increment we might pick the best implementation
-        method = available.get(0);
-    }
-
     private String callId = null;
 
     private String scriptName = null;
@@ -211,9 +134,4 @@ public class Call
     private Object[] parameters = null;
 
     private Throwable exception = null;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(Call.class);
 }

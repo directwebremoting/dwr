@@ -20,7 +20,6 @@ import java.util.List;
 import javax.servlet.ServletContextAttributeEvent;
 import javax.servlet.ServletContextAttributeListener;
 
-import org.directwebremoting.Container;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.impl.ContainerUtil;
 
@@ -41,12 +40,11 @@ public class EfficientShutdownServletContextAttributeListener implements Servlet
     /* (non-Javadoc)
      * @see javax.servlet.ServletContextAttributeListener#attributeRemoved(javax.servlet.ServletContextAttributeEvent)
      */
-    @SuppressWarnings("unchecked")
     public void attributeRemoved(ServletContextAttributeEvent ev)
     {
         if (ev.getName().equals(ContainerUtil.ATTRIBUTE_CONTAINER_LIST))
         {
-            List<Container>containers = (List<Container>) ev.getValue();
+            List containers = (List) ev.getValue();
             ContainerUtil.shutdownServerLoadMonitorsInContainerList(containers, "EfficientShutdownServletContextAttributeListener");
         }
     }

@@ -15,13 +15,13 @@
  */
 package org.directwebremoting.guice;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import com.google.inject.BindingAnnotation;
 
-import static java.lang.annotation.ElementType.FIELD;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.FIELD;
 
 /**
  * Marks classes to be Ajax-filtered by DWR.

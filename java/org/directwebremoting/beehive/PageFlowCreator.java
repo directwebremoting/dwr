@@ -5,12 +5,11 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.create.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * Page Flow Creator
@@ -28,24 +27,26 @@ public class PageFlowCreator extends AbstractCreator implements Creator
      */
     public PageFlowCreator() throws ClassNotFoundException
     {
+        // noinspection EmptyCatchBlock
         try
         {
             bhFlowClass = LocalUtil.classForName("org.apache.beehive.netui.pageflow.PageFlowController");
 
-            Class<?> bhUtilClass = LocalUtil.classForName("org.apache.beehive.netui.pageflow.PageFlowUtils");
-            bhGetter = bhUtilClass.getMethod("getCurrentPageFlow", HttpServletRequest.class);
+            Class bhUtilClass = LocalUtil.classForName("org.apache.beehive.netui.pageflow.PageFlowUtils");
+            bhGetter = bhUtilClass.getMethod("getCurrentPageFlow", new Class[] { HttpServletRequest.class });
         }
         catch (Exception ex)
         {
             // We're expecting this to fail, and notice below
         }
 
+        // noinspection EmptyCatchBlock
         try
         {
             wlFlowClass = LocalUtil.classForName("com.bea.wlw.netui.pageflow.PageFlowController");
 
-            Class<?> wlUtilClass = LocalUtil.classForName("com.bea.wlw.netui.pageflow.PageFlowUtils");
-            wlGetter = wlUtilClass.getMethod("getCurrentPageFlow", HttpServletRequest.class);
+            Class wlUtilClass = LocalUtil.classForName("com.bea.wlw.netui.pageflow.PageFlowUtils");
+            wlGetter = wlUtilClass.getMethod("getCurrentPageFlow", new Class[] { HttpServletRequest.class });
         }
         catch (Exception ex)
         {
@@ -85,7 +86,7 @@ public class PageFlowCreator extends AbstractCreator implements Creator
         try
         {
             HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
-            return getter.invoke(null, request);
+            return getter.invoke(null, new Object[] { request });
         }
         catch (InvocationTargetException ex)
         {
@@ -100,7 +101,7 @@ public class PageFlowCreator extends AbstractCreator implements Creator
     /**
      * @return The PageFlowController that we are using (Beehive/Weblogic)
      */
-    public Class<?> getType()
+    public Class getType()
     {
         if (instanceType == null)
         {
@@ -121,17 +122,17 @@ public class PageFlowCreator extends AbstractCreator implements Creator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(PageFlowCreator.class);
+    private static final Logger log = Logger.getLogger(PageFlowCreator.class);
 
-    private Class<?> instanceType = null;
+    private Class instanceType;
 
-    private Method getter = null;
+    private Method getter;
 
-    private Method bhGetter = null;
+    private Method bhGetter;
 
-    private Method wlGetter = null;
+    private Method wlGetter;
 
-    private Class<?> bhFlowClass = null;
+    private Class bhFlowClass;
 
-    private Class<?> wlFlowClass = null;
+    private Class wlFlowClass;
 }

@@ -38,7 +38,7 @@ public class AboutHandler implements Handler
         response.setContentType(MimeConstants.MIME_HTML);
         PrintWriter out = response.getWriter();
         out.print("<html><head><title>DWR - Easy Ajax for Java</title></head><body>");
-        out.print("<p><a href='http://getahead.org/dwr/'>DWR - Easy Ajax for Java</a></p>");
+        out.print("<h1 style='font-size:100%;font-weight:normal;'>This site is using <a href='http://getahead.org/dwr'>DWR - Easy Ajax for Java</a>.");
         out.print("</body></html>");
     }
 }

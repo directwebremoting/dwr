@@ -2,30 +2,4 @@
  * Copyright (c) 2001-2007, TIBCO Software Inc.
  * Use, modification, and distribution subject to terms of license.
  */
-jsx3.require("jsx3.chart.Axis");jsx3.Class.defineClass("jsx3.chart.CategoryAxis",jsx3.chart.Axis,null,function(c,p){var
-ub={d:"h6",a:"aligned",c:"av",f:"gn",b:"between",e:"tickAlignment"};c.TICKS_ALIGNED=ub.a;c.TICKS_BETWEEN=ub.b;c.MAX_TICKS=200;c.BG={aligned:1,between:1};p.init=function(i,r,q){this.jsxsuper(i,r,q);this.tickAlignment=ub.b;this.categoryField=null;this.paddingLow=null;this.paddingHigh=null;this.Ho(ub.c,0);this.Ho(ub.d,0);};p.getTickAlignment=function(){return this.tickAlignment;};p.setTickAlignment=function(l){if(c.BG[l]){this.tickAlignment=l;}else throw new
-jsx3.IllegalArgumentException(ub.e,l);};p.getCategoryField=function(){return this.categoryField;};p.setCategoryField=function(m){this.categoryField=m;};p.getPaddingLow=function(){return this.paddingLow!=null?this.paddingLow:0;};p.setPaddingLow=function(h){this.paddingLow=h;};p.getPaddingHigh=function(){return this.paddingHigh!=null?this.paddingHigh:0;};p.setPaddingHigh=function(r){this.paddingHigh=r;};p.fl=function(){this.Ll(ub.f);var
-da=this.getChart();if(da==null){this.Ho(ub.c,0);this.Ho(ub.d,0);}else{var
-tb=da.pe(this,true);var
-ib=da.bh();this.Ho(ub.d,tb.length);this.Ho(ub.c,ib!=null?ib.length:0);}};p.Hf=function(){var
-nb=this.pj(ub.f);if(nb!=null)return nb;var
-B=this.pj(ub.c);nb=[];if(B<1)return nb;var
-ga=this.getPaddingLow();var
-Va=this.getPaddingHigh();var
-x=this.tickAlignment==ub.b?B+1:B;var
-La=x-1;var
-fb=La+ga+Va;var
-pb=this.length/fb;var
-C=ga*pb;for(var
-Qa=0;Qa<x&&Qa<c.MAX_TICKS;Qa++)nb.push(Math.round(C+Qa*pb));this.Ho(ub.f,nb);return nb;};p.se=function(){var
-B=this.pj(ub.c);if(this.tickAlignment==ub.b){var
-Ab=this.Hf();var
-Xa=[];for(var
-va=0;va<B;va++)Xa[va]=Math.round((Ab[va]+Ab[va+1])/2);return Xa;}else return this.Hf();};p.Xj=function(b){var
-Pa=b;var
-z=this.getChart();if(this.categoryField&&z!=null){var
-ab=z.bh();if(ab!=null){var
-ga=ab[b];if(ga!=null)Pa=ga.getAttribute([this.categoryField]);}}return Pa;};p.mo=function(){return false;};p.getRangeForCategory=function(j){var
-_=this.Hf();if(this.tickAlignment==ub.b){if(j<0||j>=_.length-1)return null;else return [_[j],_[j+1]];}else{if(j<0||j>=_.length||_.length<2)return null;var
-Xa=j==0?_[1]-_[0]:_[j]-_[j-1];return [Math.round(_[j]-Xa/2),Math.round(_[j]+Xa/2)];}};p.getPointForCategory=function(n){var
-Aa=this.Hf();if(this.tickAlignment==ub.b){if(n<0||n>=Aa.length-1)return null;else return Math.round((Aa[n]+Aa[n+1])/2);}else return Aa[n];};c.getVersion=function(){return jsx3.chart.si;};});
+jsx3.require("jsx3.chart.Axis");jsx3.Class.defineClass("jsx3.chart.CategoryAxis",jsx3.chart.Axis,null,function(q,b){q.TICKS_ALIGNED="aligned";q.TICKS_BETWEEN="between";q.Tf=200;q.Di={aligned:1,between:1};b.init=function(s,h,m){this.jsxsuper(s,h,m);this.tickAlignment=q.TICKS_BETWEEN;this.categoryField=null;this.paddingLow=null;this.paddingHigh=null;this.xI("dK",0);this.xI("uI",0);};b.getTickAlignment=function(){return this.tickAlignment;};b.setTickAlignment=function(p){if(q.Di[p]){this.tickAlignment=p;}else{throw new jsx3.IllegalArgumentException("tickAlignment",p);}};b.getCategoryField=function(){return this.categoryField;};b.setCategoryField=function(n){this.categoryField=n;};b.getPaddingLow=function(){return this.paddingLow!=null?this.paddingLow:0;};b.setPaddingLow=function(a){this.paddingLow=a;};b.getPaddingHigh=function(){return this.paddingHigh!=null?this.paddingHigh:0;};b.setPaddingHigh=function(c){this.paddingHigh=c;};b.g6=function(){this.qX("Y6");var Kb=this.getChart();if(Kb==null){this.xI("dK",0);this.xI("uI",0);}else{var Cb=Kb.aX(this,true);var rb=Kb.gH();this.xI("uI",Cb.length);this.xI("dK",rb!=null?rb.length:0);}};b.RQ=function(){var wc=this.Q0("Y6");if(wc!=null)return wc;var wb=this.Q0("dK");wc=[];if(wb<1)return wc;var Ec=this.getPaddingLow();var _=this.getPaddingHigh();var ac=this.tickAlignment==q.TICKS_BETWEEN?wb+1:wb;var N=ac-1;var hc=N+Ec+_;var Jb=this.length/hc;var Fb=Ec*Jb;for(var gb=0;gb<ac&&gb<q.Tf;gb++){wc.push(Math.round(Fb+gb*Jb));}this.xI("Y6",wc);return wc;};b.w4=function(){var V=this.Q0("dK");if(this.tickAlignment==q.TICKS_BETWEEN){var cb=this.RQ();var sc=[];for(var E=0;E<V;E++){sc[E]=Math.round((cb[E]+cb[E+1])/2);}return sc;}else{return this.RQ();}};b.a1=function(d){var rb=d;var x=this.getChart();if(this.categoryField&&x!=null){var Z=x.gH();if(Z!=null){var Yb=Z[d];if(Yb!=null)rb=Yb.getAttribute([this.categoryField]);}}return rb;};b.vX=function(){return false;};b.getRangeForCategory=function(f){var Gb=this.RQ();if(this.tickAlignment==q.TICKS_BETWEEN){if(f<0||f>=Gb.length-1)return null;else return [Gb[f],Gb[f+1]];}else{if(f<0||f>=Gb.length||Gb.length<2)return null;var Dc=f==0?Gb[1]-Gb[0]:Gb[f]-Gb[f-1];return [Math.round(Gb[f]-Dc/2),Math.round(Gb[f]+Dc/2)];}};b.getPointForCategory=function(r){var F=this.RQ();if(this.tickAlignment==q.TICKS_BETWEEN){if(r<0||r>=F.length-1)return null;else return Math.round((F[r]+F[r+1])/2);}else{return F[r];}};b.toString=function(){return "[CategoryAxis '"+this.getName()+"' hor:"+this.horizontal+" pri:"+this.primary+"]";};q.getVersion=function(){return jsx3.chart.q2;};});

@@ -22,10 +22,8 @@ import javax.servlet.ServletContext;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
-import org.directwebremoting.ScriptSession;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.VersionUtil;
 
 /**
@@ -50,29 +48,9 @@ public class DefaultServerContext implements ServerContext
     /* (non-Javadoc)
      * @see org.directwebremoting.ServerContext#getAllScriptSessions()
      */
-    public Collection<ScriptSession> getAllScriptSessions()
+    public Collection getAllScriptSessions()
     {
         return getScriptSessionManager().getAllScriptSessions();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getScriptSessionsByPage(java.lang.String)
-     */
-    public Collection<ScriptSession> getScriptSessionsByPage(String url)
-    {
-        return getScriptSessionManager().getScriptSessionsByPage(url);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getScriptSessionById(java.lang.String)
-     */
-    public ScriptSession getScriptSessionById(String sessionId)
-    {
-        // ScriptSessionManager().getScriptSession() can take a page and
-        // httpSessionId so it can associate them, but we will have already done
-        // that if we can as a result of work done creating a WebContext. For
-        // use in a ServerContext we won't know, so we can pass in null
-        return getScriptSessionManager().getScriptSession(sessionId, null, null);
     }
 
     /* (non-Javadoc)
@@ -81,6 +59,14 @@ public class DefaultServerContext implements ServerContext
     public Container getContainer()
     {
         return container;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ServerContext#getScriptSessionsByPage(java.lang.String)
+     */
+    public Collection getScriptSessionsByPage(String otherPage)
+    {
+        return getScriptSessionManager().getScriptSessionsByPage(otherPage);
     }
 
     /* (non-Javadoc)
@@ -104,16 +90,7 @@ public class DefaultServerContext implements ServerContext
      */
     public String getVersion()
     {
-        return VersionUtil.getLabel();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getContextPath()
-     */
-    public String getContextPath()
-    {
-        UrlProcessor urlProcessor = container.getBean(UrlProcessor.class);
-        return urlProcessor.getContextPath();
+        return VersionUtil.getVersion();
     }
 
     /**
@@ -124,7 +101,7 @@ public class DefaultServerContext implements ServerContext
     {
         if (sessionManager == null)
         {
-            sessionManager = container.getBean(ScriptSessionManager.class);
+            sessionManager = (ScriptSessionManager) container.getBean(ScriptSessionManager.class.getName());
         }
 
         return sessionManager;
@@ -138,7 +115,7 @@ public class DefaultServerContext implements ServerContext
     {
         if (converterManager == null)
         {
-            converterManager = container.getBean(ConverterManager.class);
+            converterManager = (ConverterManager) container.getBean(ConverterManager.class.getName());
         }
 
         return converterManager;
@@ -155,7 +132,7 @@ public class DefaultServerContext implements ServerContext
     private ServletContext context = null;
 
     /**
-     * The IOC container implementation
+     * The Ioc container implementation
      */
     private Container container = null;
 

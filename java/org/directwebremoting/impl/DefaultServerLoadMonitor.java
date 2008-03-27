@@ -15,11 +15,10 @@
  */
 package org.directwebremoting.impl;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.WaitController;
 import org.directwebremoting.util.HitMonitor;
+import org.directwebremoting.util.Logger;
 
 /**
  * A smart implementation of ServerLoadMonitor.
@@ -35,12 +34,12 @@ import org.directwebremoting.util.HitMonitor;
  * </pre>
  * <p>Where cT is the connectedTime and dT is the disconnectedTime.</p>
  * 
- * <p>We impose some limits: a maximum number of simultaneously connected
+ * <p>We impose some limits: a maximum number of symultaneously connected
  * browsers <code>maxWaitingThreads</code>, and the maximum number of
  * connections per second <code>maxHitsPerSecond</code>.</p>
  * 
  * <p>We attempt to keep the actual waitingThreads and hitsPerSecond within
- * bounds by varying connectedTime and disconnectedTime.</p>
+ * bounds by vairying connectedTime and disconnectedTime.</p>
  * 
  * <p>The system is in one of 3 modes: USAGE_LOW, USAGE_HIGH and USAGE_DIGG. The
  * boundary between USAGE_LOW and USAGE_HIGH is called threadOut. The boundary
@@ -104,7 +103,6 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.AbstractServerLoadMonitor#threadWaitStarting(org.directwebremoting.extend.WaitController)
      */
-    @Override
     public void threadWaitStarting(WaitController controller)
     {
         hitMonitor.recordHit();
@@ -117,7 +115,6 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.AbstractServerLoadMonitor#threadWaitEnding(org.directwebremoting.extend.WaitController)
      */
-    @Override
     public void threadWaitEnding(WaitController controller)
     {
         waitingThreads--;
@@ -207,6 +204,7 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
         }
 
         setMode(USAGE_DIGG);
+        return;
     }
 
     /**
@@ -336,5 +334,5 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultServerLoadMonitor.class);
+    private static final Logger log = Logger.getLogger(DefaultServerLoadMonitor.class);
 }

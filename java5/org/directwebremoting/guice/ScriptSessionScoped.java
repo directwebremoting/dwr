@@ -28,6 +28,6 @@ import com.google.inject.ScopeAnnotation;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ScopeAnnotation
-public @interface ScriptSessionScoped
+public @interface ScriptSessionScoped 
 {
 }

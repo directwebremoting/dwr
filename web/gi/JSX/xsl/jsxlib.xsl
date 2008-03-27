@@ -4,7 +4,7 @@
   ~ Use, modification, and distribution subject to terms of license.
   -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:msxsl="urn:schemas-microsoft-com:xslt">
+    xmlns:msxsl="urn:schemas-microsoft-com:xslt" exclude-result-prefixes="msxsl">
 
   <xsl:param name="jsxpath"></xsl:param>
   <xsl:param name="jsxpathapps"></xsl:param>
@@ -25,17 +25,11 @@
       <xsl:when test="starts-with($uri,'jsx:///')">
         <xsl:value-of select="concat($jsxpath, 'JSX/', substring($uri,7))"/>
       </xsl:when>
-      <xsl:when test="starts-with($uri,'jsx:/')">
-        <xsl:value-of select="concat($jsxpath, 'JSX/', substring($uri,5))"/>
-      </xsl:when>
-      <xsl:when test="starts-with($uri,'jsxapp:/')">
-        <xsl:value-of select="concat($jsxpathapps, substring($uri,8))"/>
+      <xsl:when test="starts-with($uri,'jsxapp:///')">
+        <xsl:value-of select="concat($jsxpathapps, substring($uri,10))"/>
       </xsl:when>
       <xsl:when test="starts-with($uri,'jsxuser:///')">
         <xsl:value-of select="concat($jsxpathapps, substring($uri,11))"/>
-      </xsl:when>
-      <xsl:when test="starts-with($uri,'jsxuser:/')">
-        <xsl:value-of select="concat($jsxpathapps, substring($uri,9))"/>
       </xsl:when>
       <xsl:when test="starts-with($uri,'jsxaddin://')">
         <!-- cannot resolve addin links in XSL -->

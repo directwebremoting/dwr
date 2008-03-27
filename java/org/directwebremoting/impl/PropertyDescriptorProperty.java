@@ -47,7 +47,7 @@ public class PropertyDescriptorProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    public Class<?> getPropertyType()
+    public Class getPropertyType()
     {
         return descriptor.getPropertyType();
     }
@@ -59,7 +59,7 @@ public class PropertyDescriptorProperty implements Property
     {
         try
         {
-            return descriptor.getReadMethod().invoke(bean);
+            return descriptor.getReadMethod().invoke(bean, new Object[0]);
         }
         catch (InvocationTargetException ex)
         {
@@ -78,7 +78,7 @@ public class PropertyDescriptorProperty implements Property
     {
         try
         {
-            descriptor.getWriteMethod().invoke(bean, value);
+            descriptor.getWriteMethod().invoke(bean, new Object[] { value });
         }
         catch (InvocationTargetException ex)
         {

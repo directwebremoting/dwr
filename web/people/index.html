@@ -8,6 +8,7 @@
   <script type='text/javascript' src='../dwr/util.js'> </script>
   <script type='text/javascript' src='../dwr/interface/People.js'> </script>
   <script type="text/javascript" src='index.js'> </script>
+  <script type="text/javascript" src='../generic.js'> </script>
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
 </head>
@@ -255,7 +256,7 @@ function fillTable() {
     // Create a new set cloned from the pattern row
     var person, id;
     people.sort(function(p1, p2) { return p1.name.localeCompare(p2.name); });
-    for (var i = 0; i &lt; people.length; i++) {
+    for (var i = 0; i < people.length; i++) {
       person = people[i];
       id = person.id;
       dwr.util.cloneNode("pattern", { idSuffix:id });

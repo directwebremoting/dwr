@@ -21,14 +21,13 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.util.Continuation;
+import org.directwebremoting.util.Logger;
 import org.directwebremoting.util.MimeConstants;
 
 /**
- * Handles an exception occurring during the request dispatching.
+ * Handles an exception occuring during the request disptaching.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class ExceptionHandler implements Handler
@@ -38,12 +37,10 @@ public class ExceptionHandler implements Handler
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        // Allow Jetty RequestRetry exception to propagate to container
+        // Allow Jetty RequestRetry exception to propogate to container
         Continuation.rethrowIfContinuation(cause);
 
         log.warn("Error: " + cause);
-        log.debug("Debug for stack trace:", cause);
-
         if (cause instanceof SecurityException && log.isDebugEnabled())
         {
             log.debug("- User Agent: " + request.getHeader(HttpConstants.HEADER_USER_AGENT));
@@ -92,5 +89,5 @@ public class ExceptionHandler implements Handler
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(ExceptionHandler.class);
+    private static final Logger log = Logger.getLogger(ExceptionHandler.class);
 }

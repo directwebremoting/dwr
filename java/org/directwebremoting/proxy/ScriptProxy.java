@@ -17,6 +17,7 @@ package org.directwebremoting.proxy;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.directwebremoting.ScriptBuffer;
@@ -24,8 +25,8 @@ import org.directwebremoting.ScriptSession;
 
 /**
  * Class to help people send scripts to collections of browsers.
- * ScriptProxy also is the base class for the Java implementations of GI, Util
- * and Script.aculo.us.Effect.
+ * ScriptProxy also is the base class for the Java implementations of Util
+ * and Scriptaculous.Effect.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class ScriptProxy
@@ -50,13 +51,13 @@ public class ScriptProxy
      * Non-http thread constructor
      * @param scriptSessions The browsers to alter
      */
-    public ScriptProxy(Collection<ScriptSession> scriptSessions)
+    public ScriptProxy(Collection scriptSessions)
     {
         this.scriptSessions.addAll(scriptSessions);
     }
 
     /**
-     * @param scriptSession The script session to add to the list
+     * @param scriptSession
      */
     public void addScriptSession(ScriptSession scriptSession)
     {
@@ -64,9 +65,9 @@ public class ScriptProxy
     }
 
     /**
-     * @param addScriptSessions The script sessions to add to the list
+     * @param addScriptSessions
      */
-    public void addScriptSessions(Collection<ScriptSession> addScriptSessions)
+    public void addScriptSessions(Collection addScriptSessions)
     {
         scriptSessions.addAll(addScriptSessions);
     }
@@ -143,7 +144,7 @@ public class ScriptProxy
      * @param param1 The first parameter to the above function
      * @param param2 The second parameter to the above function
      * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
+     * @param param4 The fouth parameter to the above function
      */
     public void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4)
     {
@@ -189,76 +190,14 @@ public class ScriptProxy
     }
 
     /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     */
-    public void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(",")
-              .appendData(param5)
-              .appendScript(",")
-              .appendData(param6)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     */
-    public void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(",")
-              .appendData(param5)
-              .appendScript(",")
-              .appendData(param6)
-              .appendScript(",")
-              .appendData(param7)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
      * Utility to add the given script to all known browsers.
      * @param script The Javascript to send to the browsers
      */
     public void addScript(ScriptBuffer script)
     {
-        for (ScriptSession scriptSession : scriptSessions)
+        for (Iterator it = scriptSessions.iterator(); it.hasNext();)
         {
+            ScriptSession scriptSession = (ScriptSession) it.next();
             scriptSession.addScript(script);
         }
     }
@@ -266,5 +205,5 @@ public class ScriptProxy
     /**
      * The browsers that we affect.
      */
-    private final List<ScriptSession> scriptSessions = new ArrayList<ScriptSession>();
+    private final List scriptSessions = new ArrayList();
 }

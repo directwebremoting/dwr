@@ -19,7 +19,7 @@ package org.directwebremoting.util;
  * Various constants from generating output.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface MimeConstants
+public class MimeConstants
 {
     /**
      * MIME constant for plain text.

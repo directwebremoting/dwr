@@ -20,11 +20,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import javax.faces.el.VariableResolver;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.create.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * This is a DWR creator implementation, to allow dwr beans to be allocated into
@@ -38,7 +37,7 @@ public class JsfCreator extends AbstractCreator implements Creator
     /* (non-Javadoc)
      * @see org.directwebremoting.Creator#getType()
      */
-    public Class<?> getType()
+    public Class getType()
     {
         if (instanceType == null)
         {
@@ -146,10 +145,10 @@ public class JsfCreator extends AbstractCreator implements Creator
     /**
      * The cached type of bean that we are creating
      */
-    private Class<?> instanceType;
+    private Class instanceType;
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(JsfCreator.class);
+    private static final Logger log = Logger.getLogger(JsfCreator.class);
 }

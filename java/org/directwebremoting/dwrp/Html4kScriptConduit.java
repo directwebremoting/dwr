@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.util.MimeConstants;
@@ -34,7 +35,7 @@ import org.directwebremoting.util.MimeConstants;
  * and then poll, looking for new data into the iframe. The html tags should be
  * removed and script between script-start and script-end tags eval()ed.
  * <p>This conduit also sends 4k of whitespace data on each flush. This causes
- * IE to recognize new content. This would be a significant network overhead
+ * IE to recognise new content. This would be a significant network overhead
  * so it is important to use gzip on the connection. This complexity has caused
  * us to turn this conduit off at the moment.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -46,17 +47,16 @@ public class Html4kScriptConduit extends BaseScriptConduit
      * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
+     * @throws IOException If stream ops fail
      */
-    public Html4kScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public Html4kScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager) throws IOException
     {
-        super(response, batchId, converterManager, jsonOutput);
+        super(response, batchId, converterManager);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
+     * @see org.directwebremoting.dwrp.BaseCallMarshaller#getOutboundMimeType()
      */
-    @Override
     protected String getOutboundMimeType()
     {
         return MimeConstants.MIME_HTML;
@@ -65,7 +65,6 @@ public class Html4kScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
      */
-    @Override
     public void beginStream()
     {
         synchronized (out)
@@ -81,7 +80,6 @@ public class Html4kScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#endStream()
      */
-    @Override
     public void endStream()
     {
         synchronized (out)
@@ -97,10 +95,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
-    @Override
     public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, MarshallException
     {
-        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
+        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager);
 
         synchronized (out)
         {
@@ -108,7 +105,8 @@ public class Html4kScriptConduit extends BaseScriptConduit
             out.println(script);
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
 
-            out.print(FOUR_K_FLUSH_DATA);
+            out.print(fourKFlushData);
+
             return flush();
         }
     }
@@ -116,7 +114,7 @@ public class Html4kScriptConduit extends BaseScriptConduit
     /**
      * The slab of data we send to IE to get it to stream
      */
-    protected static final String FOUR_K_FLUSH_DATA;
+    protected static final String fourKFlushData;
     static
     {
         StringBuffer buffer = new StringBuffer(409600);
@@ -124,6 +122,6 @@ public class Html4kScriptConduit extends BaseScriptConduit
         {
             buffer.append(" ");
         }
-        FOUR_K_FLUSH_DATA = buffer.toString();
+        fourKFlushData = buffer.toString();
     }
 }

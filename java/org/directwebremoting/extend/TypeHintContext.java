@@ -16,18 +16,14 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
- * {@link TypeHintContext} should probably be called TypeHint. Its a way to
- * provide help to the converter in describing what types it should be
- * converting to.
  * Something to hold the method, paramNo and index together as an object
  * that can be a key in a Map.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -51,9 +47,10 @@ public class TypeHintContext
         this.method = method;
         this.parameterNumber = parameterNumber;
 
-        Type[] types = method.getGenericParameterTypes();
+        // Type[] types = method.getGenericParameterTypes();
+        Object[] types = (Object[]) LocalUtil.invoke(method, getGenericParameterTypesMethod, new Object[0]);
 
-        if (types != null && types.length > 0)
+        if (types != null)
         {
             if (parameterNumber >= types.length)
             {
@@ -67,8 +64,8 @@ public class TypeHintContext
             this.parameterType = null;
         }
 
-        parameterNumberTree = new ArrayList<Integer>();
-        parameterTypeTree = new ArrayList<Type>();
+        parameterNumberTree = new ArrayList();
+        parameterTypeTree = new ArrayList();
     }
 
     /**
@@ -78,15 +75,15 @@ public class TypeHintContext
      * @param parameterNumber The number of the parameter to edit (counts from 0)
      * @param parameterType The Type for this context
      */
-    private TypeHintContext(ConverterManager manager, Method method, int parameterNumber, Type parameterType)
+    private TypeHintContext(ConverterManager manager, Method method, int parameterNumber, Object/*Type*/ parameterType)
     {
         this.converterManager = manager;
         this.method = method;
         this.parameterNumber = parameterNumber;
         this.parameterType = parameterType;
 
-        parameterNumberTree = new ArrayList<Integer>();
-        parameterTypeTree = new ArrayList<Type>();
+        parameterNumberTree = new ArrayList();
+        parameterTypeTree = new ArrayList();
     }
 
     /**
@@ -96,25 +93,30 @@ public class TypeHintContext
      */
     public TypeHintContext createChildContext(int newParameterNumber)
     {
-        Type childType = null;
+        Object/*Type*/ childType = null;
 
-        if (parameterType instanceof ParameterizedType)
+        if (isGenericsSupported)
         {
-            ParameterizedType ptype = (ParameterizedType) parameterType;
-            Type[] actualTypeArguments = ptype.getActualTypeArguments();
-
-            if (newParameterNumber >= actualTypeArguments.length)
+            //if (parameterType instanceof ParameterizedType)
+            if (parameterizedTypeClass.isInstance(parameterType))
             {
-                throw new IllegalArgumentException("newParameterNumber=" + newParameterNumber + " is too big when parameterType=" + parameterType + " give actualTypeArguments.length=" + actualTypeArguments.length);
-            }
+                Object/*Type*/ ptype = /*(Type)*/ parameterType;
+                // Type[] rawParams = ptype.getActualTypeArguments();
+                Object[] actualTypeArguments = (Object[]) LocalUtil.invoke(ptype, getActualTypeArgumentsMethod, new Object[0]);
 
-            childType = actualTypeArguments[newParameterNumber];
+                if (newParameterNumber >= actualTypeArguments.length)
+                {
+                    throw new IllegalArgumentException("newParameterNumber=" + newParameterNumber + " is too big when parameterType=" + parameterType + " give actualTypeArguments.length=" + actualTypeArguments.length);
+                }
+
+                childType = actualTypeArguments[newParameterNumber];
+            }
         }
 
         TypeHintContext child = new TypeHintContext(converterManager, this.method, this.parameterNumber, childType);
 
         child.parameterNumberTree.addAll(this.parameterNumberTree);
-        child.parameterNumberTree.add(newParameterNumber);
+        child.parameterNumberTree.add(new Integer(newParameterNumber));
 
         child.parameterTypeTree.addAll(parameterTypeTree);
         child.parameterTypeTree.add(parameterType);
@@ -127,9 +129,9 @@ public class TypeHintContext
      * JDK5 introspection or
      * @return The extra type information for this context
      */
-    public Class<?> getExtraTypeInfo()
+    public Class getExtraTypeInfo()
     {
-        Class<?> type;
+        Class type = null;
 
         if (converterManager != null)
         {
@@ -141,23 +143,28 @@ public class TypeHintContext
             }
         }
 
-        if (parameterType instanceof ParameterizedType)
+        if (isGenericsSupported)
         {
-            ParameterizedType ptype = (ParameterizedType) parameterType;
-            Type rawType = ptype.getRawType();
-
-            if (rawType instanceof Class)
+            //if (parameterType instanceof ParameterizedType)
+            if (parameterizedTypeClass.isInstance(parameterType))
             {
-                type = (Class<?>) rawType;
-                log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + toString());
+                Object/*Type*/ ptype = /*(Type)*/ parameterType;
+                // Type rawType = ptype.getRawType();
+                Object rawType = LocalUtil.invoke(ptype, getRawTypeMethod, new Object[0]);
+
+                if (rawType instanceof Class)
+                {
+                    type = (Class) rawType;
+                    log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + toString());
+                    return type;
+                }
+            }
+            else if (parameterType instanceof Class)
+            {
+                type = (Class) parameterType;
+                log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + toString());
                 return type;
             }
-        }
-        else if (parameterType instanceof Class)
-        {
-            type = (Class<?>) parameterType;
-            log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + toString());
-            return type;
         }
 
         log.warn("Missing type info for " + toString() + ". Assuming this is a map with String keys. Please add to <signatures> in dwr.xml");
@@ -167,7 +174,6 @@ public class TypeHintContext
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    @Override
     public int hashCode()
     {
         return method.hashCode() + parameterNumber + parameterNumberTree.hashCode();
@@ -176,7 +182,6 @@ public class TypeHintContext
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    @Override
     public boolean equals(Object obj)
     {
         if (obj == null)
@@ -212,9 +217,6 @@ public class TypeHintContext
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    // This really wants to go in the second loop but see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6297416
-    @SuppressWarnings("unused")
-    @Override
     public String toString()
     {
         if (cachedToString == null)
@@ -225,15 +227,15 @@ public class TypeHintContext
             buffer.append('(');
             buffer.append(parameterNumber);
 
-            for (Integer i : parameterNumberTree)
+            for (Iterator it = parameterNumberTree.iterator(); it.hasNext();)
             {
                 buffer.append('<');
-                buffer.append(i);
+                buffer.append(it.next());
             }
-
-            for (Integer i : parameterNumberTree)
+            for (Iterator it = parameterNumberTree.iterator(); it.hasNext();)
             {
                 buffer.append('>');
+                it.next();
             }
 
             buffer.append(')');
@@ -267,20 +269,132 @@ public class TypeHintContext
     /**
      * The type parameter of the method that the conversion is happening for
      */
-    private final Type parameterType;
+    private final Object/*Type*/ parameterType;
 
     /**
      * The list of generic parameters that we have dug into
      */
-    private final List<Integer> parameterNumberTree;
+    private final List parameterNumberTree;
 
     /**
      * The list of generic parameters that we have dug into
      */
-    private final List<Type> parameterTypeTree;
+    private final List parameterTypeTree;
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(TypeHintContext.class);
+    private static final Logger log = Logger.getLogger(TypeHintContext.class);
+
+    /**
+     * We have to use ParameterizedType through reflection since we work on JDK 1.3
+     */
+    private static final Class parameterizedTypeClass;
+
+    /**
+     * We have to execute getGenericParameterTypes() through reflection too
+     */
+    private static final Method getGenericParameterTypesMethod;
+
+    /**
+     * We have to execute getActualTypeArguments() through reflection too
+     */
+    private static final Method getActualTypeArgumentsMethod;
+
+    /**
+     * We have to execute getRawType() through reflection too
+     */
+    private static final Method getRawTypeMethod;
+
+    /**
+     * Can we use generic type info?
+     */
+    private static final boolean isGenericsSupported;
+
+    static
+    {
+        // This is one of those times when you really wish you were in a
+        // dynamic language ...
+
+        // This may seem like a lot of bother just to call Class forName() a
+        // couple of times, however it is complex because the fields are final
+        // so we can only set them once
+        int failures = 0;
+
+        Class tempParameterizedTypeClass;
+        try
+        {
+            tempParameterizedTypeClass = LocalUtil.classForName("java.lang.reflect.ParameterizedType");
+            log.debug("JDK1.5 reflection available.");
+        }
+        catch (Exception ex)
+        {
+            tempParameterizedTypeClass = null;
+            log.debug("JDK1.5 reflection not available. Generic parameters must use <signatures>.");
+            failures++;
+        }
+
+        Method tempGetGenericParameterTypesMethod = null;
+        try
+        {
+            tempGetGenericParameterTypesMethod = Method.class.getDeclaredMethod("getGenericParameterTypes", new Class[0]);
+        }
+        catch (Exception ex)
+        {
+            log.debug("Error finding Method.getGenericParameterTypes(): JDK1.5 reflection not available.");
+            failures++;
+        }
+        catch (Error er)
+        {
+            // TODO: remove this error trapping - it's just here to debug a WL issue
+            log.error("If you see this stack trace please report it to the DWR users mailing list", er);
+        }
+
+        Method tempGetActualTypeArgumentsMethod = null;
+        try
+        {
+            if (tempParameterizedTypeClass != null)
+            {
+                tempGetActualTypeArgumentsMethod = tempParameterizedTypeClass.getDeclaredMethod("getActualTypeArguments", new Class[0]);
+            }
+        }
+        catch (Exception ex)
+        {
+            log.debug("Error finding ParameterizedType.getActualTypeArguments(): JDK1.5 reflection not available.");
+            failures++;
+        }
+
+        Method tempGetRawTypeMethod = null;
+        try
+        {
+            if (tempParameterizedTypeClass != null)
+            {
+                tempGetRawTypeMethod = tempParameterizedTypeClass.getDeclaredMethod("getRawType", new Class[0]);
+            }
+        }
+        catch (Exception ex)
+        {
+            log.debug("Error finding ParameterizedType.getRawType(): JDK1.5 reflection not available.");
+            failures++;
+        }
+
+        if (failures == 0)
+        {
+            isGenericsSupported = true;
+
+            parameterizedTypeClass = tempParameterizedTypeClass;
+            getGenericParameterTypesMethod = tempGetGenericParameterTypesMethod;
+            getActualTypeArgumentsMethod = tempGetActualTypeArgumentsMethod;
+            getRawTypeMethod = tempGetRawTypeMethod;
+        }
+        else
+        {
+            isGenericsSupported = false;
+
+            parameterizedTypeClass = null;
+            getGenericParameterTypesMethod = null;
+            getActualTypeArgumentsMethod = null;
+            getRawTypeMethod = null;
+        }
+    }
 }

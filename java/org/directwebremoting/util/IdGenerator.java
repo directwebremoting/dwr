@@ -20,9 +20,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
  * Code to generate page ids.
  * IdGenerators are expensive to setup so it is suggested that you share
@@ -44,10 +41,9 @@ public class IdGenerator
         long seed = System.currentTimeMillis();
 
         // Also throw in the system identifier for 'this' from toString
-        char[] entropy = toString().toCharArray();
+        char[] entropy = this.toString().toCharArray();
         for (int i = 0; i < entropy.length; i++)
         {
-            //noinspection IntegerMultiplicationImplicitCastToLong
             long update = ((byte) entropy[i]) << ((i % 8) * 8);
             seed ^= update;
         }
@@ -62,7 +58,7 @@ public class IdGenerator
      */
     public synchronized String generateId(int length)
     {
-        byte[] buffer = new byte[length];
+        byte buffer[] = new byte[16];
 
         // Render the result as a String of hexadecimal digits
         StringBuffer reply = new StringBuffer();
@@ -155,9 +151,7 @@ public class IdGenerator
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @SuppressWarnings({"EmptyMethod"})
-    @Override
-    public final String toString()
+    public String toString()
     {
         // This is to make the point that we need toString to return something
         // that includes some sort of system identifier as does the default.
@@ -176,21 +170,21 @@ public class IdGenerator
      * identifiers.  This must be an algorithm supported by the
      * <code>java.security.MessageDigest</code> class on your platform.
      */
-    private String algorithm = DEFAULT_ALGORITHM;
+    protected String algorithm = DEFAULT_ALGORITHM;
 
     /**
      * A random number generator to use when generating session identifiers.
      */
-    private Random random = new SecureRandom();
+    protected Random random = new SecureRandom();
 
     /**
      * Return the MessageDigest implementation to be used when creating session
      * identifiers.
      */
-    private MessageDigest digest = null;
+    protected MessageDigest digest = null;
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(IdGenerator.class);
+    private static final Logger log = Logger.getLogger(IdGenerator.class);
 }

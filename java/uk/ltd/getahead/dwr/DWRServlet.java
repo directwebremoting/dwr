@@ -35,7 +35,6 @@ import org.directwebremoting.servlet.DwrServlet;
  * @deprecated Use org.directwebremoting.servlet.DwrServlet
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-@Deprecated
 public class DWRServlet extends DwrServlet
 {
 }

@@ -17,7 +17,6 @@ package org.directwebremoting.extend;
 
 import java.io.IOException;
 
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 
 /**
@@ -28,16 +27,6 @@ import org.directwebremoting.ScriptSession;
  */
 public interface RealScriptSession extends ScriptSession
 {
-    /**
-     * If this ScriptSession currently has a connected {@link ScriptConduit}
-     * and this conduit accepts and claims to be able to publish the script
-     * then publish and return true, otherwise return false.
-     * Add a script to the list waiting for remote execution.
-     * The version automatically wraps the string in a ClientScript object.
-     * @param script The script to execute
-     */
-    boolean addScriptImmediately(ScriptBuffer script);
-
     /**
      * While a Marshaller is processing a request it can register a
      * ScriptConduit with the ScriptSession to say - "pass scripts to me"
@@ -73,27 +62,11 @@ public interface RealScriptSession extends ScriptSession
     boolean hasWaitingScripts();
 
     /**
-     * Called whenever a browser accesses this ScriptSession to ensure that the
-     * session does not timeout before it should.
+     * Accessor for an object that we use to announce to people that might be
+     * waiting on output from this ScriptSession that there is some output
+     * ready for action.
+     * @return The mutex object used by the script session
+     * @deprecated
      */
-    void updateLastAccessedTime();
-
-    /**
-     * If the global parameter avoid2ConnectionLimitWithWindowName == true then
-     * we need to keep a track of the names of the windows that connect to us
-     * @param windowName The new name for the window that spawned this Session
-     */
-    void setWindowName(String windowName);
-
-    /**
-     * Accessor for the name attached to this window
-     */
-    String getWindowName();
-
-    /**
-     * Are there any persistent {@link ScriptConduit}s currently connected to
-     * this session?
-     * @return The number of current persistent connections.
-     */
-    int countPersistentConnections();
+    Object getScriptLock();
 }

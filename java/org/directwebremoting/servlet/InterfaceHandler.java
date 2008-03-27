@@ -16,12 +16,12 @@
 package org.directwebremoting.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.MimeConstants;
@@ -30,51 +30,46 @@ import org.directwebremoting.util.MimeConstants;
  * A handler for interface generation requests
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class InterfaceHandler extends JavaScriptHandler
+public class InterfaceHandler implements Handler
 {
-    /**
-     * Setup the {@link JavaScriptHandler} defaults
-     */
-    public InterfaceHandler()
-    {
-        setMimeType(MimeConstants.MIME_JS);
-    }
-
     /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    @Override
-    protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
+    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
         String scriptName = request.getPathInfo();
-
-        if (!scriptName.endsWith(PathConstants.EXTENSION_JS))
-        {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return "";
-        }
-
-        scriptName = scriptName.replace(interfaceHandlerUrl, "");
-        scriptName = scriptName.replace(PathConstants.EXTENSION_JS, "");
-
+        scriptName = LocalUtil.replace(scriptName, interfaceHandlerUrl, "");
+        scriptName = LocalUtil.replace(scriptName, PathConstants.EXTENSION_JS, "");
         if (!LocalUtil.isJavaIdentifier(scriptName))
         {
-            log.debug("Throwing at request for script with name: '" + scriptName + "'");
             throw new SecurityException("Script names may only contain Java Identifiers");
         }
 
-        String contextServletPath = request.getContextPath() + request.getServletPath();
-        return remoter.generateInterfaceScript(scriptName, contextServletPath);
+        String path = request.getContextPath() + request.getServletPath();
+
+        String script = remoter.generateInterfaceScript(scriptName, path);
+
+        // Officially we should use MimeConstants.MIME_JS, but if we cheat and
+        // use MimeConstants.MIME_PLAIN then it will be easier to read in a
+        // browser window, and will still work just fine.
+        response.setContentType(MimeConstants.MIME_PLAIN);
+        PrintWriter out = response.getWriter();
+        out.print(script);
     }
 
     /**
      * Setter for the remoter
-     * @param remoter The new remoter
+     * @param remoter
      */
     public void setRemoter(Remoter remoter)
     {
         this.remoter = remoter;
     }
+
+    /**
+     * The bean to execute remote requests and generate interfaces
+     */
+    protected Remoter remoter = null;
 
     /**
      * Setter for the URL that this handler available on
@@ -85,27 +80,8 @@ public class InterfaceHandler extends JavaScriptHandler
         this.interfaceHandlerUrl = interfaceHandlerUrl;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return "InterfaceHandler(" + interfaceHandlerUrl + ")";
-    }
-
-    /**
-     * The bean to execute remote requests and generate interfaces
-     */
-    protected Remoter remoter = null;
-
     /**
      * What URL is this handler available on?
      */
     protected String interfaceHandlerUrl;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(InterfaceHandler.class);
 }

@@ -18,7 +18,7 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,22 +26,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.extend.Alarm;
-import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
-import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.OutputAlarm;
-import org.directwebremoting.impl.ShutdownAlarm;
-import org.directwebremoting.impl.TimedAlarm;
-import org.directwebremoting.util.BrowserDetect;
+import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -65,7 +58,6 @@ public class PollHandler implements Handler
     /* (non-Javadoc)
      * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    @SuppressWarnings({"ThrowableInstanceNeverThrown"})
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
         // If you're new to understanding this file, you may wish to skip this
@@ -80,8 +72,9 @@ public class PollHandler implements Handler
         // to write to the response outside of the servlet thread, there is no
         // need for us to do anything if we have been restarted. So we ignore
         // all Jetty continuation restarts.
-        if (containerAbstraction.isResponseCompleted(request))
+        if (JettyContinuationSleeper.isRestart(request))
         {
+            JettyContinuationSleeper.restart(request);
             return;
         }
 
@@ -91,7 +84,7 @@ public class PollHandler implements Handler
         final PollBatch batch;
         try
         {
-            batch = new PollBatch(request);
+            batch = new PollBatch(request, pageNormalizer);
         }
         catch (ServerException ex)
         {
@@ -100,11 +93,6 @@ public class PollHandler implements Handler
             sendErrorScript(response, script);
             return;
         }
-
-        // Check to see that the page and script session id are valid
-        RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-        String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
-        webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
 
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)
@@ -129,16 +117,25 @@ public class PollHandler implements Handler
         // conduits (although if there are more than 2, something is strange)
         // All scripts destined for a page go to a ScriptSession and then out
         // via a ScriptConduit.
-        final RealScriptSession scriptSession = (RealScriptSession) webContext.getScriptSession();
+        final RealScriptSession scriptSession = batch.getScriptSession();
 
         // Create a conduit depending on the type of request (from the URL)
         final BaseScriptConduit conduit = createScriptConduit(batch, response);
 
         // So we're going to go to sleep. How do we wake up?
-        Sleeper sleeper = containerAbstraction.createSleeper(request);
+        final Sleeper sleeper;
+        // If this is Jetty then we can use Continuations
+        if (Continuation.isJetty())
+        {
+            sleeper = new JettyContinuationSleeper(request);
+        }
+        else
+        {
+            sleeper = new ThreadWaitSleeper();
+        }
 
         // There are various reasons why we want to wake up and carry on ...
-        final List<Alarm> alarms = new ArrayList<Alarm>();
+        final List alarms = new ArrayList();
 
         // If the conduit has an error flushing data, it needs to give up
         alarms.add(conduit.getErrorAlarm());
@@ -153,32 +150,6 @@ public class PollHandler implements Handler
 
         // Set the system up to resume anyway after maxConnectedTime
         long connectedTime = serverLoadMonitor.getConnectedTime();
-        int idealDisconnectedTime = serverLoadMonitor.getDisconnectedTime();
-
-        // Nasty 2 connection limit hack. How many times is this browser connected?
-        String httpSessionId = webContext.getSession(true).getId();
-        Collection<RealScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
-        int persistentConnections = 0;
-        for (RealScriptSession session : sessions)
-        {
-            persistentConnections += session.countPersistentConnections();
-        }
-
-        // We should not hold onto the last connection
-        int connectionLimit = BrowserDetect.getConnectionLimit(request);
-        if (persistentConnections + 1 >= connectionLimit)
-        {
-            connectedTime = 0;
-            idealDisconnectedTime = connectionLimitDisconnectedTime;
-
-            if (log.isDebugEnabled())
-            {
-                String uaStr = BrowserDetect.getUserAgentDebugString(request);
-                log.debug("Persistent connections=" + persistentConnections + ". (limit=" + connectionLimit + " in " + uaStr + "). Polling");
-            }
-        }
-        final int disconnectedTime = idealDisconnectedTime;
-
         alarms.add(new TimedAlarm(connectedTime));
 
         // We also need to wake-up if the server is being shut down
@@ -188,8 +159,9 @@ public class PollHandler implements Handler
         alarms.add(new ShutdownAlarm(serverLoadMonitor));
 
         // Make sure that all the alarms know what to wake
-        for (Alarm alarm : alarms)
+        for (Iterator it = alarms.iterator(); it.hasNext();)
         {
+            Alarm alarm = (Alarm) it.next();
             alarm.setAlarmAction(sleeper);
         }
 
@@ -207,8 +179,9 @@ public class PollHandler implements Handler
             public void run()
             {
                 // Cancel all the alarms
-                for (Alarm alarm : alarms)
+                for (Iterator it = alarms.iterator(); it.hasNext();)
                 {
+                    Alarm alarm = (Alarm) it.next();
                     alarm.cancel();
                 }
 
@@ -218,7 +191,8 @@ public class PollHandler implements Handler
                 // Tell the browser to come back at the right time
                 try
                 {
-                    conduit.close(disconnectedTime);
+                    int timeToNextPoll = serverLoadMonitor.getDisconnectedTime();
+                    conduit.close(timeToNextPoll);
                 }
                 catch (IOException ex)
                 {
@@ -246,17 +220,17 @@ public class PollHandler implements Handler
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(response, batch.getBatchId(), converterManager);
         }
         else
         {
             if (batch.getPartialResponse() == PartialResponse.FLUSH)
             {
-                conduit = new Html4kScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new Html4kScriptConduit(response, batch.getBatchId(), converterManager);
             }
             else
             {
-                conduit = new HtmlScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new HtmlScriptConduit(response, batch.getBatchId(), converterManager);
             }
         }
 
@@ -287,32 +261,45 @@ public class PollHandler implements Handler
     }
 
     /**
-     * @return Are we outputting in JSON mode?
+     * Accessor for the DefaultCreatorManager that we configure
+     * @param converterManager The new DefaultConverterManager
      */
-    public boolean isJsonOutput()
+    public void setConverterManager(ConverterManager converterManager)
     {
-        return jsonOutput;
+        this.converterManager = converterManager;
     }
 
     /**
-     * @param jsonOutput Are we outputting in JSON mode?
+     * Accessor for the server load monitor
+     * @param serverLoadMonitor the new server load monitor
      */
-    public void setJsonOutput(boolean jsonOutput)
+    public void setServerLoadMonitor(ServerLoadMonitor serverLoadMonitor)
     {
-        this.jsonOutput = jsonOutput;
+        this.serverLoadMonitor = serverLoadMonitor;
     }
 
     /**
-     * Are we outputting in JSON mode?
+     * Accessor for the PageNormalizer.
+     * @param pageNormalizer The new PageNormalizer
      */
-    protected boolean jsonOutput = false;
+    public void setPageNormalizer(PageNormalizer pageNormalizer)
+    {
+        this.pageNormalizer = pageNormalizer;
+    }
+
+    /**
+     * @param scriptSessionManager the scriptSessionManager to set
+     */
+    public void setScriptSessionManager(ScriptSessionManager scriptSessionManager)
+    {
+        this.scriptSessionManager = scriptSessionManager;
+    }
 
     /**
      * Use {@link #setActiveReverseAjaxEnabled(boolean)}
      * @param pollAndCometEnabled Are we doing full reverse ajax
      * @deprecated Use {@link #setActiveReverseAjaxEnabled(boolean)}
      */
-    @Deprecated
     public void setPollAndCometEnabled(boolean pollAndCometEnabled)
     {
         this.activeReverseAjaxEnabled = pollAndCometEnabled;
@@ -328,22 +315,12 @@ public class PollHandler implements Handler
     }
 
     /**
-     * Are we doing full reverse ajax
-     */
-    protected boolean activeReverseAjaxEnabled = false;
-
-    /**
      * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
      */
     public void setAllowGetForSafariButMakeForgeryEasier(boolean allowGetForSafariButMakeForgeryEasier)
     {
         this.allowGetForSafariButMakeForgeryEasier = allowGetForSafariButMakeForgeryEasier;
     }
-
-    /**
-     * By default we disable GET, but this hinders old Safaris
-     */
-    protected boolean allowGetForSafariButMakeForgeryEasier = false;
 
     /**
      * Sometimes with proxies, you need to close the stream all the time to
@@ -355,6 +332,16 @@ public class PollHandler implements Handler
     {
         this.maxWaitAfterWrite = maxWaitAfterWrite;
     }
+
+    /**
+     * Are we doing full reverse ajax
+     */
+    protected boolean activeReverseAjaxEnabled = false;
+
+    /**
+     * By default we disable GET, but this hinders old Safaris
+     */
+    protected boolean allowGetForSafariButMakeForgeryEasier = false;
 
     /**
      * Sometimes with proxies, you need to close the stream all the time to
@@ -370,27 +357,9 @@ public class PollHandler implements Handler
     protected boolean plain;
 
     /**
-     * Accessor for the PageNormalizer.
-     * @param pageNormalizer The new PageNormalizer
-     */
-    public void setPageNormalizer(PageNormalizer pageNormalizer)
-    {
-        this.pageNormalizer = pageNormalizer;
-    }
-
-    /**
      * How we turn pages into the canonical form.
      */
     protected PageNormalizer pageNormalizer;
-
-    /**
-     * Accessor for the server load monitor
-     * @param serverLoadMonitor the new server load monitor
-     */
-    public void setServerLoadMonitor(ServerLoadMonitor serverLoadMonitor)
-    {
-        this.serverLoadMonitor = serverLoadMonitor;
-    }
 
     /**
      * We need to tell the system that we are waiting so it can load adjust
@@ -398,63 +367,14 @@ public class PollHandler implements Handler
     protected ServerLoadMonitor serverLoadMonitor = null;
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param converterManager The new DefaultConverterManager
-     */
-    public void setConverterManager(ConverterManager converterManager)
-    {
-        this.converterManager = converterManager;
-    }
-
-    /**
      * How we convert parameters
      */
     protected ConverterManager converterManager = null;
 
     /**
-     * @param scriptSessionManager the scriptSessionManager to set
-     */
-    public void setScriptSessionManager(ScriptSessionManager scriptSessionManager)
-    {
-        this.scriptSessionManager = scriptSessionManager;
-    }
-
-    /**
      * The owner of script sessions
      */
     protected ScriptSessionManager scriptSessionManager = null;
-
-    /**
-     * @param containerAbstraction the containerAbstraction to set
-     */
-    public void setContainerAbstraction(ContainerAbstraction containerAbstraction)
-    {
-        this.containerAbstraction = containerAbstraction;
-    }
-
-    /**
-     * How we abstract away container specific logic
-     */
-    protected ContainerAbstraction containerAbstraction = null;
-
-    /**
-     * Accessor for the disconnected time when we are at a browsers connection limit.
-     * @param connectionLimitDisconnectedTime How long should clients spend disconnected
-     */
-    public void setConnectionLimitDisconnectedTime(int connectionLimitDisconnectedTime)
-    {
-        if (connectionLimitDisconnectedTime < 500)
-        {
-            connectionLimitDisconnectedTime = 500;
-        }
-
-        this.connectionLimitDisconnectedTime = connectionLimitDisconnectedTime;
-    }
-
-    /**
-     * How long are we telling users to wait before they come back next
-     */
-    protected int connectionLimitDisconnectedTime = 5000;
 
     /**
      * The log stream

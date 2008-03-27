@@ -3,11 +3,10 @@ package org.directwebremoting.fluent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
@@ -19,13 +18,14 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.SignatureParser;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * A {@link Configurator} that used the FluentInterface style as
  * <a href="http://www.martinfowler.com/bliki/FluentInterface.html">described by
  * Martin Fowler</a>.
  *
- * <p>To wire up the configuration programmatically rather than having to use
+ * <p>To wire up the configuration programatically rather than having to use
  * <code>dwr.xml</code>. In order to use this style, you'll need to:</p>
  *
  * <ul>
@@ -72,7 +72,7 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * Add a new {@link Converter} definition.
      * @param id The id referred to by the {@link #withConverter(String, String)}
-     * @param converterClassName The implementation of {@link Converter} to instantiate.
+     * @param converterClassName The implementation of {@link Converter} to instansitate.
      * @return <code>this</code> to continue the fluency
      */
     public FluentConfigurator withConverterType(String id, String converterClassName)
@@ -83,7 +83,7 @@ public abstract class FluentConfigurator implements Configurator
     }
 
     /**
-     * Use a {@link Converter} to instantiate a class
+     * Use a {@link Converter} to instansiate a class
      * @param newConverter A predefined {@link Converter} or one defined by
      * {@link #withConverterType(String, String)}.
      * @param newMatch The javascript name of this component
@@ -100,7 +100,7 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * Add a new {@link Creator} definition.
      * @param id The id referred to by the {@link #withCreator(String, String)}
-     * @param creatorClassName The implementation of {@link Creator} to instantiate.
+     * @param creatorClassName The implementation of {@link Creator} to instansitate.
      * @return <code>this</code> to continue the fluency
      */
     public FluentConfigurator withCreatorType(String id, String creatorClassName)
@@ -111,7 +111,7 @@ public abstract class FluentConfigurator implements Configurator
     }
 
     /**
-     * Use a {@link Creator} to instantiate a class
+     * Use a {@link Creator} to instansiate a class
      * @param newTypeName A predefined {@link Creator} or one defined by
      * {@link #withCreatorType(String, String)}.
      * @param newScriptName The javascript name of this component
@@ -146,7 +146,7 @@ public abstract class FluentConfigurator implements Configurator
     {
         if (params == null)
         {
-            params = new HashMap<String, String>();
+            params = new HashMap();
         }
 
         params.put(name, value);
@@ -162,7 +162,7 @@ public abstract class FluentConfigurator implements Configurator
     {
         if (filters == null)
         {
-            filters = new ArrayList<String>();
+            filters = new ArrayList();
         }
 
         filters.add(newFilterClassName);
@@ -184,7 +184,7 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * Add an exclude rule to a {@link Creator}
      * This should be used during a {@link #withCreator(String, String)} call.
-     * @param methodName The method name to be disallowed
+     * @param methodName The method name to be dis-allowed
      * @return <code>this</code> to continue the fluency
      */
     public FluentConfigurator exclude(String methodName)
@@ -304,13 +304,14 @@ public abstract class FluentConfigurator implements Configurator
                 
                 if (filters != null)
                 {
-                    for (String className : filters)
+                    for (Iterator it = filters.iterator(); it.hasNext();)
                     {
-                        AjaxFilter filter = LocalUtil.classNewInstance(scriptName, className, AjaxFilter.class);
+                        String className = (String) it.next();
+                        AjaxFilter filter = (AjaxFilter) LocalUtil.classNewInstance(scriptName, className, AjaxFilter.class);
 
                         if (filter != null)
                         {
-                            LocalUtil.setParams(filter, Collections.<String, Object>emptyMap(), Collections.<String>emptyList());
+                            LocalUtil.setParams(filter, Collections.EMPTY_MAP, Collections.EMPTY_LIST);
                             ajaxFilterManager.addAjaxFilter(filter, scriptName);
                         }
 
@@ -330,12 +331,11 @@ public abstract class FluentConfigurator implements Configurator
         case STATE_ALLOW_FILTER:
             try
             {
-                Class<?> impl = LocalUtil.classForName(filterClassName);
+                Class impl = LocalUtil.classForName(filterClassName);
                 AjaxFilter object = (AjaxFilter) impl.newInstance();
 
-                if (params != null)
-                {
-                    LocalUtil.setParams(object, params, Collections.<String>emptyList());
+                if (params != null) {
+                    LocalUtil.setParams(object, params, Collections.EMPTY_LIST);
                 }
                 
                 ajaxFilterManager.addAjaxFilter(object);
@@ -376,10 +376,10 @@ public abstract class FluentConfigurator implements Configurator
      */
     public void configure(Container container)
     {
-        converterManager = container.getBean(ConverterManager.class);
-        ajaxFilterManager = container.getBean(AjaxFilterManager.class);
-        accessControl = container.getBean(AccessControl.class);
-        creatorManager = container.getBean(CreatorManager.class);
+        converterManager = (ConverterManager) container.getBean(ConverterManager.class.getName());
+        ajaxFilterManager = (AjaxFilterManager) container.getBean(AjaxFilterManager.class.getName());
+        accessControl = (AccessControl) container.getBean(AccessControl.class.getName());
+        creatorManager = (CreatorManager) container.getBean(CreatorManager.class.getName());
 
         configure();
 
@@ -414,12 +414,12 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * holds name / value pairs used in <allow create|convert ... />
      */
-    private Map<String, String> params = null;
+    private Map params = null;
     
     /**
      * holds classNames of filters used in <allow create/ filter />
      */
-    private List<String> filters = null;
+    private List filters = null;
 
     /**
      * holds signature lines
@@ -434,7 +434,7 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * JDK5: we can convert this to Collections.emptyMap();
      */
-    private static final Map<String, String> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, String>());
+    private static final Map EMPTY_MAP = Collections.unmodifiableMap(new HashMap());
 
     /**
      * What AjaxFilters apply to which Ajax calls?
@@ -494,5 +494,5 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FluentConfigurator.class);
+    private static final Logger log = Logger.getLogger(FluentConfigurator.class);
 }

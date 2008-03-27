@@ -22,14 +22,14 @@ import org.directwebremoting.extend.Handler;
  * Various constants from generating output.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface PathConstants
+public class PathConstants
 {
     /**
      * When we prime the {@link Container} with URLs for {@link Handler}s we use
      * a prefix so the {@link UrlProcessor} knows that this is a URL and not
      * some other property
      */
-    public static final String PATH_PREFIX = "url:";
+    public static final String URL_PREFIX = "url:";
 
     /**
      * Help page name

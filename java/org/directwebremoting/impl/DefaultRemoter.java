@@ -18,22 +18,16 @@ package org.directwebremoting.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.AjaxFilterChain;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.dwrp.EnginePrivate;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Call;
@@ -44,12 +38,14 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.Property;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Logger;
 
 /**
  * In implementation of Remoter that delegates requests to a set of Modules
@@ -61,167 +57,26 @@ public class DefaultRemoter implements Remoter
     /* (non-Javadoc)
      * @see org.directwebremoting.Remoter#generateInterfaceScript(java.lang.String, java.lang.String)
      */
-    public String generateInterfaceScript(String scriptName, String contextServletPath) throws SecurityException
+    public String generateInterfaceScript(String scriptName, String path) throws SecurityException
     {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(createParameterDefinitions(scriptName));
-        buffer.append(EnginePrivate.getEngineInitScript());
-        buffer.append(createClassDefinition(scriptName));
-        buffer.append(createPathDefinition(scriptName, contextServletPath));
-        buffer.append(createMethodDefinitions(scriptName));
-
-        return buffer.toString();
-    }
-
-    /**
-     * Create a class definition string.
-     * This is similar to {@link EnginePrivate#getEngineInitScript()} except
-     * that it creates scripts for a specific class not for dwr.engine
-     * @see EnginePrivate#getEngineInitScript()
-     * @param scriptName
-     */
-    protected String createClassDefinition(String scriptName)
-    {
-        return "if (typeof this['" + scriptName + "'] == 'undefined') this." + scriptName + " = {};\n\n";
-    }
-
-    /**
-     * Create a _path member to point at DWR
-     * @param scriptName The class that we are creating a member for
-     * @param path The default path to the DWR servlet
-     */
-    protected String createPathDefinition(String scriptName, String path)
-    {
-        return scriptName + "._path = '" + getPathToDwrServlet(path) + "';\n\n";
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Remoter#getPathToDwrServlet(java.lang.String)
-     */
-    public String getPathToDwrServlet(String contextServletPath)
-    {
-        String actualPath = contextServletPath;
+        String actualPath = path;
         if (overridePath != null)
         {
             actualPath = overridePath;
         }
 
-        if (useAbsolutePath)
+        StringBuffer buffer = new StringBuffer();
+
+        // Output the class definitions for the converted objects
+        Collection converterMatches = converterManager.getConverterMatchStrings();
+        Iterator it = converterMatches.iterator();
+        while (it.hasNext())
         {
-            HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
+            String match = (String) it.next();
 
-            StringBuffer absolutePath = new StringBuffer(48);
-
-            String scheme = request.getScheme();
-            int port = request.getServerPort();
-
-            absolutePath.append(scheme);
-            absolutePath.append("://");
-            absolutePath.append(request.getServerName());
-
-            if (port > 0 && 
-                ((scheme.equalsIgnoreCase("http") && port != 80) || 
-                 (scheme.equalsIgnoreCase("https") && port != 443)))
-            {
-                absolutePath.append(':');
-                absolutePath.append(port);
-            }
-            
-            absolutePath.append(request.getContextPath());
-            absolutePath.append(request.getServletPath());
-
-            actualPath = absolutePath.toString();
-        }
-
-        return actualPath;
-    }
-
-    /**
-     * Create a list of method definitions for the given creator.
-     * @param fullCreatorName To allow AccessControl to allow/deny requests
-     */
-    protected String createMethodDefinitions(String fullCreatorName)
-    {
-        Creator creator = creatorManager.getCreator(fullCreatorName, false);
-        String scriptName = creator.getJavascript();
-
-        StringBuilder buffer = new StringBuilder();
-
-        Method[] methods = creator.getType().getMethods();
-        for (Method method : methods)
-        {
-            String methodName = method.getName();
-
-            // We don't need to check accessControl.getReasonToNotExecute()
-            // because the checks are made by the execute() method, but we do
-            // check if we can display it
             try
             {
-                accessControl.assertIsDisplayable(creator, scriptName, method);
-            }
-            catch (SecurityException ex)
-            {
-                if (!allowImpossibleTests)
-                {
-                    continue;
-                }
-            }
-
-            // Is it on the list of banned names
-            if (JavascriptUtil.isReservedWord(methodName))
-            {
-                continue;
-            }
-
-            // Check to see if the creator is reloadable
-            // If it is, then do not cache the generated Javascript
-            // See the notes on creator.isCacheable().
-            String script;
-            if (!creator.isCacheable())
-            {
-                script = getMethodJS(scriptName, method);
-            }
-            else
-            {
-                String key = scriptName + "." + method.getName();
-
-                // For optimal performance we might use the Memoizer pattern
-                // JCiP#108 however performance isn't a big issue and we are
-                // prepared to cope with getMethodJS() being run more than once.
-                script = methodCache.get(key);
-                if (script == null)
-                {
-                    script = getMethodJS(scriptName, method);
-                    methodCache.put(key, script);
-                }
-            }
-
-            buffer.append(script);
-        }
-
-        return buffer.toString();
-    }
-
-    /**
-     * Output the class definitions for all the converted objects.
-     * An optimization for this class might be to only generate class
-     * definitions for classes used as parameters in the class that we are
-     * currently generating a proxy for.
-     * <p>Currently the <code>scriptName</code> parameter is not used, we just
-     * generate the class definitions for all types, however conceptually, it
-     * should be used
-     * @param scriptName The script for which we are generating parameter classes
-     */
-    protected String createParameterDefinitions(String scriptName)
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        for (String match : converterManager.getConverterMatchStrings())
-        {
-            try
-            {
-                StringBuilder paramBuffer = new StringBuilder();
+                StringBuffer paramBuffer = new StringBuffer();
 
                 Converter conv = converterManager.getConverterByMatchString(match);
                 // We will only generate JavaScript classes for compound objects/beans
@@ -231,19 +86,19 @@ public class DefaultRemoter implements Remoter
                     String jsClassName = boConv.getJavascript();
 
                     // We need a configured JavaScript class name
-                    if (jsClassName != null && !"".equals(jsClassName))
+                    if (jsClassName != null && !jsClassName.equals(""))
                     {
                         // Wildcard match strings are currently not supported
-                        if (!match.contains("*"))
+                        if (match.indexOf("*") == -1)
                         {
                             paramBuffer.append('\n');
 
-                            // output: if (typeof this['<class>'] != 'function') { function <class>() {
-                            paramBuffer.append("if (typeof this['" + jsClassName + "'] != 'function') {\n");
+                            // output: if (typeof <class> != "function") { var <class> = function() {
+                            paramBuffer.append("if (typeof " + jsClassName + " != \"function\") {\n");
                             paramBuffer.append("  function " + jsClassName + "() {\n");
 
                             // output: this.<property> = <init-value>;
-                            Class<?> mappedType;
+                            Class mappedType;
                             try
                             {
                                 mappedType = LocalUtil.classForName(match);
@@ -253,12 +108,13 @@ public class DefaultRemoter implements Remoter
                                 throw new IllegalArgumentException(ex.getMessage());
                             }
 
-                            Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
-                            for (Entry<String, Property> entry : properties.entrySet())
+                            Map properties = boConv.getPropertyMapFromClass(mappedType, true, true);
+                            for (Iterator pit = properties.entrySet().iterator(); pit.hasNext();)
                             {
-                                String name = entry.getKey();
-                                Property property = entry.getValue();
-                                Class<?> propType = property.getPropertyType();
+                                Map.Entry entry = (Map.Entry) pit.next();
+                                String name = (String) entry.getKey();
+                                Property property = (Property) entry.getValue();
+                                Class propType = property.getPropertyType();
 
                                 // Property name
                                 paramBuffer.append("    this." + name + " = ");
@@ -298,38 +154,85 @@ public class DefaultRemoter implements Remoter
                 buffer.append("// Missing parameter declaration for " + match + ". See the server logs for details.");
             }
         }
+
+        Creator creator = creatorManager.getCreator(scriptName);
+
         buffer.append('\n');
+
+        String init = EnginePrivate.getEngineInitScript();
+        buffer.append(init);
+
+        buffer.append("if (" + scriptName + " == null) var " + scriptName + " = {};\n");
+        buffer.append(scriptName + "._path = '" + actualPath + "';\n");
+
+        Method[] methods = creator.getType().getMethods();
+        for (int i = 0; i < methods.length; i++)
+        {
+            Method method = methods[i];
+            String methodName = method.getName();
+
+            // We don't need to check accessControl.getReasonToNotExecute()
+            // because the checks are made by the execute() method, but we do
+            // check if we can display it
+            try
+            {
+                accessControl.assertIsDisplayable(creator, scriptName, method);
+            }
+            catch (SecurityException ex)
+            {
+                if (!allowImpossibleTests)
+                {
+                    continue;
+                }
+            }
+
+            // Is it on the list of banned names
+            if (JavascriptUtil.isReservedWord(methodName))
+            {
+                continue;
+            }
+
+            // Check to see if the creator is reloadable
+            // If it is, then do not cache the generated Javascript
+            String script;
+            if (!creator.isCacheable())
+            {
+                script = getMethodJS(scriptName, method);
+            }
+            else
+            {
+                String key = scriptName + "." + method.getName();
+
+                // For optimal performance we might use the Memoizer pattern
+                // JCiP#108 however performance isn't a big issue and we are
+                // prepared to cope with getMethodJS() being run more than once.
+                script = (String) methodCache.get(key);
+                if (script == null)
+                {
+                    script = getMethodJS(scriptName, method);
+                    methodCache.put(key, script);
+                }
+            }
+
+            buffer.append(script);
+        }
 
         return buffer.toString();
     }
 
     /**
      * Generates Javascript for a given Java method
-     * @param scriptName  Name of the Javascript file, without ".js" suffix
+     * @param scriptName  Name of the Javascript file, sans ".js" suffix
      * @param method Target method
      * @return Javascript implementing the DWR call for the target method
      */
-    protected String getMethodJS(String scriptName, Method method)
+    private String getMethodJS(String scriptName, Method method)
     {
         StringBuffer buffer = new StringBuffer();
 
         String methodName = method.getName();
-        Class<?>[] paramTypes = method.getParameterTypes();
-
-        // Create the sdoc comment
-        buffer.append("/**\n");
-        for (int j = 0; j < paramTypes.length; j++)
-        {
-            if (!LocalUtil.isServletClass(paramTypes[j]))
-            {
-                buffer.append(" * @param {" + paramTypes[j] + "} p" + j + " a param\n");
-            }
-        }
-        buffer.append(" * @param {function|Object} callback callback function or options object\n");
-        buffer.append(" */\n");
-
-        // Create the function definition
         buffer.append(scriptName + '.' + methodName + " = function(");
+        Class[] paramTypes = method.getParameterTypes();
         for (int j = 0; j < paramTypes.length; j++)
         {
             if (!LocalUtil.isServletClass(paramTypes[j]))
@@ -337,11 +240,11 @@ public class DefaultRemoter implements Remoter
                 buffer.append("p" + j + ", ");
             }
         }
+
         buffer.append("callback) {\n");
 
-        // The method body calls into engine.js
         String executeFunctionName = EnginePrivate.getExecuteFunctionName();
-        buffer.append("  return " + executeFunctionName + "(" + scriptName + "._path, '" + scriptName + "', '" + methodName + "\', ");
+        buffer.append("  " + executeFunctionName + "(" + scriptName + "._path, '" + scriptName + "', '" + methodName + "\', ");
         for (int j = 0; j < paramTypes.length; j++)
         {
             if (LocalUtil.isServletClass(paramTypes[j]))
@@ -353,8 +256,9 @@ public class DefaultRemoter implements Remoter
                 buffer.append("p" + j + ", ");
             }
         }
+
         buffer.append("callback);\n");
-        buffer.append("};\n\n");
+        buffer.append("}\n");
 
         return buffer.toString();
     }
@@ -373,8 +277,9 @@ public class DefaultRemoter implements Remoter
             throw new SecurityException("Call count for batch is too high");
         }
 
-        for (Call call : calls)
+        for (int callNum = 0; callNum < callCount; callNum++)
         {
+            Call call = calls.getCall(callNum);
             Reply reply = execute(call);
             replies.addReply(reply);
         }
@@ -400,7 +305,7 @@ public class DefaultRemoter implements Remoter
             // Get a list of the available matching methods with the coerced
             // parameters that we will use to call it if we choose to use that
             // method.
-            Creator creator = creatorManager.getCreator(call.getScriptName(), true);
+            Creator creator = creatorManager.getCreator(call.getScriptName());
 
             // We don't need to check accessControl.getReasonToNotExecute()
             // because the checks are made by the doExec method, but we do check
@@ -469,18 +374,14 @@ public class DefaultRemoter implements Remoter
             }
 
             // Some debug
+            log.info("Exec: " + call.getScriptName() + "." + call.getMethodName() + "()");
             if (log.isDebugEnabled())
             {
                 StringBuffer buffer = new StringBuffer();
-                buffer.append("Exec: ")
-                      .append(call.getScriptName())
-                      .append(".")
-                      .append(call.getMethodName())
-                      .append("()");
 
                 if (create)
                 {
-                    buffer.append(" Object created, ");
+                    buffer.append("--Object created, ");
                     if (!scope.equals(Creator.PAGE))
                     {
                         buffer.append(" stored in ");
@@ -493,7 +394,7 @@ public class DefaultRemoter implements Remoter
                 }
                 else
                 {
-                    buffer.append(" Object found in ");
+                    buffer.append("--Object found in ");
                     buffer.append(scope);
                 }
                 buffer.append(". ");
@@ -518,69 +419,34 @@ public class DefaultRemoter implements Remoter
             }
 
             // Execute the filter chain method.toString()
-            List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
-            final Iterator<AjaxFilter> it = filters.iterator();
-
+            final Iterator it = ajaxFilterManager.getAjaxFilters(call.getScriptName());
             AjaxFilterChain chain = new AjaxFilterChain()
             {
-                public Object doFilter(Object obj, Method meth, Object[] params) throws Exception
+                public Object doFilter(Object obj, Method meth, Object[] p) throws Exception
                 {
-                    if (it.hasNext())
-                    {
-                        AjaxFilter next = it.next();
-                        return next.doFilter(obj, meth, params, this);
-                    }
-                    else
-                    {
-                        return meth.invoke(obj, params);
-                    }
+                    AjaxFilter next = (AjaxFilter) it.next();
+                    return next.doFilter(obj, meth, p, this);
                 }
             };
             Object reply = chain.doFilter(object, method, call.getParameters());
             return new Reply(call.getCallId(), reply);
         }
-        catch (SecurityException ex)
-        {
-            log.debug("Security Exception: ", ex);
-
-            // If we are in live mode, then we don't even say what went wrong
-            if (debug)
-            {
-                return new Reply(call.getCallId(), null, ex);
-            }
-            else
-            {
-                return new Reply(call.getCallId(), null, new SecurityException());
-            }
-        }
         catch (InvocationTargetException ex)
         {
-            // Allow Jetty RequestRetry exception to propagate to container
+            // Allow Jetty RequestRetry exception to propogate to container
             Continuation.rethrowIfContinuation(ex);
 
-            log.debug("Method execution failed: ", ex.getTargetException());
+            log.warn("Method execution failed: ", ex.getTargetException());
             return new Reply(call.getCallId(), null, ex.getTargetException());
         }
         catch (Exception ex)
         {
-            // Allow Jetty RequestRetry exception to propagate to container
+            // Allow Jetty RequestRetry exception to propogate to container
             Continuation.rethrowIfContinuation(ex);
 
-            log.debug("Method execution failed: ", ex);
+            log.warn("Method execution failed: ", ex);
             return new Reply(call.getCallId(), null, ex);
         }
-    }
-
-    /**
-     * By default we use a relative path to the DWR servlet which can help if
-     * there are several routes to the servlet. However it can be a pain if
-     * the DWR engine is running on a different port from the web-server.
-     * However this is a minority case so this is not officially supported.
-     * @param useAbsolutePath Does DWR generate an absolute _path property
-     */
-    public void setUseAbsolutePath(boolean useAbsolutePath)
-    {
-        this.useAbsolutePath = useAbsolutePath;
     }
 
     /**
@@ -648,20 +514,6 @@ public class DefaultRemoter implements Remoter
     }
 
     /**
-     * Set the debug status
-     * @param debug The new debug setting
-     */
-    public void setDebug(boolean debug)
-    {
-        this.debug = debug;
-    }
-
-    /**
-     * Are we in debug-mode and therefore more helpful at the expense of security?
-     */
-    private boolean debug = false;
-
-    /**
      * What AjaxFilters apply to which Ajax calls?
      */
     private AjaxFilterManager ajaxFilterManager = null;
@@ -684,31 +536,26 @@ public class DefaultRemoter implements Remoter
     /**
      * If we need to override the default path
      */
-    protected String overridePath = null;
-
-    /**
-     * @see #setUseAbsolutePath(boolean)
-     */
-    protected boolean useAbsolutePath = false;
+    private String overridePath = null;
 
     /**
      * This helps us test that access rules are being followed
      */
-    protected boolean allowImpossibleTests = false;
+    private boolean allowImpossibleTests = false;
 
     /**
      * To prevent a DoS attack we limit the max number of calls that can be
      * made in a batch
      */
-    protected int maxCallCount = 20;
+    private int maxCallCount = 20;
 
     /**
      * Generated Javascript cache
      */
-    protected Map<String, String> methodCache = Collections.synchronizedMap(new HashMap<String, String>());
+    private Map methodCache = Collections.synchronizedMap(new HashMap());
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DefaultRemoter.class);
+    private static final Logger log = Logger.getLogger(DefaultRemoter.class);
 }

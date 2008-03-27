@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -35,9 +36,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * For the benefit of anyone that wants to create a fake HttpServletRequest
@@ -81,17 +79,17 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getHeaders(java.lang.String)
      */
-    public Enumeration<String[]> getHeaders(String name)
+    public Enumeration getHeaders(String name)
     {
-        return Collections.enumeration(Collections.<String[]>emptySet());
+        return new Vector().elements();
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getHeaderNames()
      */
-    public Enumeration<String> getHeaderNames()
+    public Enumeration getHeaderNames()
     {
-        return Collections.enumeration(Collections.<String>emptySet());
+        return new Vector().elements();
     }
 
     /* (non-Javadoc)
@@ -248,11 +246,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
         return false;
     }
 
-    /**
+    /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromUrl()
-     * @deprecated
      */
-    @Deprecated
     public boolean isRequestedSessionIdFromUrl()
     {
         return false;
@@ -269,7 +265,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getAttributeNames()
      */
-    public Enumeration<String> getAttributeNames()
+    public Enumeration getAttributeNames()
     {
         return Collections.enumeration(attributes.keySet());
     }
@@ -317,7 +313,6 @@ public class FakeHttpServletRequest implements HttpServletRequest
             /* (non-Javadoc)
              * @see java.io.InputStream#read()
              */
-            @Override
             public int read() throws IOException
             {
                 return -1;
@@ -363,9 +358,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getParameterNames()
      */
-    public Enumeration<String> getParameterNames()
+    public Enumeration getParameterNames()
     {
-        return Collections.enumeration(Collections.<String>emptySet());
+        return new Vector().elements();
     }
 
     /* (non-Javadoc)
@@ -379,9 +374,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getParameterMap()
      */
-    public Map<String, String> getParameterMap()
+    public Map getParameterMap()
     {
-        return Collections.emptyMap();
+        return Collections.EMPTY_MAP;
     }
 
     /* (non-Javadoc)
@@ -482,9 +477,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getLocales()
      */
-    public Enumeration<Locale> getLocales()
+    public Enumeration getLocales()
     {
-        return Collections.enumeration(Arrays.asList(Locale.getDefault()));
+        return Collections.enumeration(Arrays.asList(new Locale[] { Locale.getDefault() }));
     }
 
     /* (non-Javadoc)
@@ -518,11 +513,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
         };
     }
 
-    /**
+    /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
-     * @deprecated
      */
-    @Deprecated
     public String getRealPath(String path)
     {
         return null;
@@ -536,10 +529,10 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /**
      * The list of attributes
      */
-    private Map<String, Object> attributes = new HashMap<String, Object>();
+    private Map attributes = new HashMap();
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FakeHttpServletRequest.class);
+    private static final Logger log = Logger.getLogger(FakeHttpServletRequest.class);
 }

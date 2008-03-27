@@ -76,7 +76,6 @@ public class ActionDefinition
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @Override
     public String toString()
     {
         return "[ActionDefinition: namespace=" + namespace + " action=" + action + " method=" + method + " executeResult=" + executeResult + "]";

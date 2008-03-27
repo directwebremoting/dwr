@@ -1,130 +1,75 @@
 <?xml version="1.0"?>
-<project name="dwr" default="compile">
+<project name="dwr20" default="compile">
 
   <!--=======================================================================-->
   <!-- File that contains local settings, you may need to edit this -->
   <property file="build.properties"/>
-
-  <!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
-  <property file="${source.root}/java/dwr-version.properties"/>
-  <condition property="label" value="${major}.${minor}.${revision}">
-    <equals arg1="${title}" arg2=""/>
-  </condition>
-  <condition property="label" value="${major}.${minor}.${revision}.${build}.${title}">
-    <not>
-      <equals arg1="${title}" arg2=""/>
-    </not>
-  </condition>
-
-  <path id="classpath">
-    <!--
-    <pathelement path="${java.class.path}/"/>
-    <pathelement path="${additional.path}"/>
-    -->
-    <fileset dir="${source.root}/jar" includes="**/*.jar"/>
-    <pathelement location="${target.root}/classes"/>
-    <pathelement location="${target.root}/test-classes"/>
-    <pathelement location="${target.root}/demo-classes"/>
-  </path>
-
-  <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
-    <classpath>
-      <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
-    </classpath>
-  </taskdef>
+  <!-- Version number information -->
+  <property file="${source.java}/dwr-version.properties"/>
 
   <!--=======================================================================-->
   <target name="compile" description="Compile the sources">
+    <echo message="If the build fails with a message about 'C:/Program Files/Java/jdk-1.3.1' then you probably need to edit build.properties."/>
+    <echo message="Building JDK1.3 files in ${source.java} using ${java.13.home} on ${os.name}"/>
     <tstamp/>
-    <mkdir dir="${target.root}/classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/classes">
-      <exclude name="**/package.html"/>
-      <exclude name="**/package-info.java"/>
-      <src path="${source.root}/java"/>
-      <src path="${source.root}/java5"/>
-      <src path="${source.root}/generated/gi/java"/>
-      <classpath refid="classpath"/>
+    <mkdir dir="${target.class}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}" fork="yes"
+        source="1.3" target="1.3" includeantruntime="no" includejavaruntime="yes">
+      <src path="${source.java}"/>
+      <src path="${source.demo}"/>
+      <bootclasspath>
+        <fileset dir="${java.13.home}" includes="**/*.jar"/>
+      </bootclasspath>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
     </javac>
-    <copy todir="${target.root}/classes">
-      <fileset dir="${source.root}/java">
+    <echo message="Building JDK5 files in ${source.java5} using ${java.15.home} on ${os.name}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}" fork="yes"
+        source="1.5" target="1.5" includeantruntime="no" includejavaruntime="yes">
+      <src path="${source.java5}"/>
+      <bootclasspath>
+        <fileset dir="${java.15.home}" includes="**/*.jar"/>
+      </bootclasspath>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
+    </javac>
+    <copy todir="${target.class}">
+      <fileset dir="${source.java}">
         <exclude name="**/*.java"/>
         <exclude name="**/package.html"/>
         <exclude name="**/package-info.java"/>
       </fileset>
-      <fileset dir="${source.root}/generated/gi/java">
+      <fileset dir="${source.java5}">
         <exclude name="**/*.java"/>
         <exclude name="**/package.html"/>
         <exclude name="**/package-info.java"/>
       </fileset>
-      <fileset dir="${source.root}/java5">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/etc/classpath">
+      <fileset dir="${source.etc}/classpath">
         <exclude name="**/log4j.properties"/>
       </fileset>
-    </copy>
-    <mkdir dir="${target.root}/demo-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/demo-classes">
-      <src path="${source.root}/demo"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <mkdir dir="${target.root}/test-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/test-classes">
-      <src path="${source.root}/test/java"/>
-      <src path="${source.root}/util/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/test-classes">
-      <fileset dir="${source.root}/test/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/test/resources"/>
-    </copy>
-    <mkdir dir="${target.root}/jaxer-main-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/jaxer-main-classes">
-      <src path="${source.root}/jaxer/main/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/jaxer-main-classes">
-      <fileset dir="${source.root}/jaxer/main/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/jaxer/main/resources"/>
-    </copy>
-    <mkdir dir="${target.root}/jaxer-test-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/jaxer-test-classes">
-      <src path="${source.root}/jaxer/test/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/jaxer-test-classes">
-      <fileset dir="${source.root}/jaxer/test/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/jaxer/test/resources"/>
     </copy>
   </target>
 
   <!--=======================================================================-->
   <target name="javadoc">
-    <mkdir dir="${target.root}/javadoc"/>
+    <mkdir dir="${target.javadoc}"/>
     <javadoc access="public"
         author="true"
-        destdir="${target.root}/javadoc"
-        doctitle="DWR Version ${label}"
+        destdir="${target.javadoc}"
+        doctitle="DWR Version ${version}"
         use="true"
         splitindex="true"
         version="true">
-      <sourcepath path="${source.root}/java"/>
-      <sourcepath path="${source.root}/java5"/>
-      <classpath refid="classpath"/>
+      <sourcepath path="${source.java}"/>
+      <sourcepath path="${source.java5}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <!-- fileset dir="${source.lib}" includes="**/*.jar"/ -->
+      </classpath>
       <package name="org.directwebremoting.*"/>
       <package name="uk.ltd.getahead.dwr.*"/>
       <footer>Copyright &#168; 2005</footer>
@@ -132,38 +77,25 @@
   </target>
 
   <!--=======================================================================-->
-  <target name="dtddoc">
-    <path id="dtddocpath">
-      <fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar"/>
-    </path>
-    <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath"/>
-    <mkdir dir="${target.root}/dtddoc"/>
-    <DTDDoc showHiddenTags="false"
-        showFixmeTags="false"
-        sourceDir="${source.root}/java"
-        destDir="${target.root}/dtddoc"
-        docTitle = "DTDDoc's example">
-      <include name="**/*.dtd"/>
-      <exclude name="common/*.dtd"/>
-    </DTDDoc>
-  </target>
-
-  <!--=======================================================================-->
   <target name="jar" depends="compile" description="Create output JAR file">
-    <mkdir dir="${target.root}"/>
-    <jar destfile="${target.root}/dwr.jar" compress="true">
-      <fileset dir="${target.root}/classes"/>
+    <mkdir dir="${target.files}"/>
+    <jar destfile="${target.files}/dwr.jar" compress="true">
+      <fileset dir="${target.class}">
+        <exclude name="**/dwrdemo/**"/>
+      </fileset>
     </jar>
-    <retroweaver inputjar="${target.root}/dwr.jar" outputjar="${target.root}/dwr-jdk14.jar" target="1.4"/>
   </target>
 
   <!--=======================================================================-->
   <target name="war" depends="jar" description="Create output WAR file">
-    <war destfile="${target.root}/dwr.war" webxml="${source.root}/web/WEB-INF/web.xml">
-      <lib file="${target.root}/dwr.jar"/>
-      <classes dir="${target.root}/demo-classes"/>
-      <classes dir="${source.root}/demo"/>
-      <fileset dir="${source.root}/web">
+    <war destfile="${target.files}/dwr.war" webxml="${source.web}/WEB-INF/web.xml">
+      <lib file="${target.files}/dwr.jar"/>
+      <classes dir="${target.class}">
+        <include name="**/dwrdemo/**"/>
+      </classes>
+      <classes dir="${source.demo}">
+      </classes>
+      <fileset dir="${source.web}">
         <exclude name="**/*.iml"/>
         <exclude name="**/*.ipr"/>
         <exclude name="**/*.iws"/>
@@ -175,108 +107,45 @@
 
   <!--=======================================================================-->
   <target name="files" depends="war, javadoc" description="Create output WAR and JAR files">
-    <zip destfile="${target.root}/dwr-${label}-src.zip">
+    <zip destfile="${target.files}/dwr-${version}-src.zip">
       <fileset dir="${source.root}">
         <exclude name="target/**"/>
         <exclude name="**/*.iml"/>
         <exclude name="**/*.ipr"/>
         <exclude name="**/*.iws"/>
       </fileset>
-      <fileset dir="${target.root}">
+      <fileset dir="${target.files}">
         <include name="dwr.jar"/>
         <include name="dwr.war"/>
       </fileset>
       <!-- The DWR website extracts javadoc from here -->
-      <zipfileset dir="${target.root}/javadoc" prefix="javadoc"/>
+      <zipfileset dir="${target.javadoc}" prefix="javadoc"/>
     </zip>
   </target>
 
   <!--=======================================================================-->
-  <target name="unpack" depends="war" description="Extracts the war file, including un-jaring dwr.jar for fast update">
-    <delete dir="${target.war}"/>
-    <unwar src="${target.root}/dwr.war" dest="${target.war}"/>
-    <unjar src="${target.war}/WEB-INF/lib/dwr.jar" dest="${target.war}/WEB-INF/classes"/>
-    <delete file="${target.war}/WEB-INF/lib/dwr.jar"/>
+  <target name="unpack" depends="war" description="Extracts the war file">
+    <unwar src="${target.files}/dwr.war" dest="${target.war}"/>
   </target>
 
   <!--=======================================================================-->
-  <target name="fast-unpack" depends="compile" description="Extracts the war file">
-    <copy todir="${target.war}">
-      <fileset dir="${source.root}/web">
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-        <exclude name="WEB-INF/classes/**"/>
-      </fileset>
-    </copy>
-    <copy todir="${target.war}/WEB-INF/classes">
-      <fileset dir="${target.root}/classes"/>
-      <fileset dir="${target.root}/demo-classes"/>
-      <fileset dir="${source.root}/demo"/>
-    </copy>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="tomcat-reload" depends="fast-unpack" description="Asks tomcat to re-load a DWR context">
-    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
-      <classpath>
-        <pathelement path="${tomcat.home}/lib/catalina-ant.jar"/>
-      </classpath>
-    </taskdef>
-    <reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="${tomcat.context}"/>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="test" depends="compile" description="Runs the test suite">
-    <mkdir dir="${target.root}/junit"/>
-    <!-- Since we're using JUnit4, we need Ant1.7 to grok the tests -->
-    <junit fork="yes" haltonfailure="yes">
-      <formatter type="xml"/>
-      <classpath refid="classpath"/>
-      <batchtest todir="${target.root}/junit">
-        <fileset dir="${source.root}/test/java">
-          <include name="**/*Test.java"/>
-          <exclude name="**/AllTests.java"/>
-          <exclude name="**/Test.java"/>
-        </fileset>
-      </batchtest>
-    </junit>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="jaxer" depends="compile" description="Create Jaxer output file">
-    <mkdir dir="${target.root}/jaxer"/>
-    <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
-      <fileset dir="${target.root}/classes"/>
-      <fileset dir="${target.root}/jaxer-main-classes"/>
-    </jar>
-    <copy file="${source.root}/jaxer/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
-    <copy file="${source.root}/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
-    <war destfile="${target.root}/jaxer/demoServer.war" webxml="${source.root}/jaxer/web/WEB-INF/web.xml">
-      <lib file="${target.root}/jaxer/jaxer-dwr.jar"/>
-      <classes dir="${target.root}/jaxer-test-classes"/>
-      <fileset dir="${source.root}/jaxer/web">
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-        <exclude name="WEB-INF/web.xml"/>
-        <exclude name="WEB-INF/classes/**"/>
-      </fileset>
-    </war>
-    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/jaxer/jaxer-web">
-      <exclude name="**/*.iml"/>
-      <exclude name="**/*.ipr"/>
-      <exclude name="**/*.iws"/>
-      <exclude name="WEB-INF/web.xml"/>
-      <exclude name="WEB-INF/classes/**"/>
-    </zip>
+  <path id="hostedqa.classpath">
+    <fileset dir="${source.jar}">
+      <include name="hostedqa.jar"/>
+    </fileset>
+  </path>
+  <target name="hostedqa" depends="files" description="Sends the WAR to HostedQA and runs all tests">
+    <taskdef resource="hostedqatasks" classpathref="hostedqa.classpath"/>
+    <upload file="${target.files}/dwr.war" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}" resourceId="20"/>
+    <playsuite suiteId="18" clientConfigs="21,22,34" appConfigs="15" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}"/>
   </target>
 
   <!--=======================================================================-->
   <target name="clean">
+    <delete dir="${target.class}"/>
     <delete dir="${target.root}"/>
-    <delete defaultexcludes="false" verbose="true" dir="${source.root}">
-      <include name="**/*.DS_Store"/>
+    <delete defaultexcludes="false" verbose="true">
+      <fileset dir="." includes="**/.DS_Store"/>
     </delete>
   </target>
 

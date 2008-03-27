@@ -45,7 +45,7 @@ public class IndexHandler implements Handler
 
     /**
      * Setter for the debug page generator
-     * @param debugPageGenerator The new debug page generator
+     * @param debugPageGenerator
      */
     public void setDebugPageGenerator(DebugPageGenerator debugPageGenerator)
     {

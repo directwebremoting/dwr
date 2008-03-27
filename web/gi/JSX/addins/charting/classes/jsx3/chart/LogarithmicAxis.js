@@ -2,38 +2,4 @@
  * Copyright (c) 2001-2007, TIBCO Software Inc.
  * Use, modification, and distribution subject to terms of license.
  */
-jsx3.require("jsx3.chart.Axis");jsx3.Class.defineClass("jsx3.chart.LogarithmicAxis",jsx3.chart.Axis,null,function(b,m){var
-ub={d:" in chart ",a:"Zg",c:"no range for axis ",f:" is all negative ",b:"re",e:"range of axis "};b.MAX_TICKS=200;b.WM=1;b.PH=0;b.by=2;m.init=function(p,k,j){this.jsxsuper(p,k,j);this.autoAdjust=jsx3.Boolean.TRUE;this.baseAtZero=jsx3.Boolean.TRUE;this.showNegativeValues=jsx3.Boolean.FALSE;this.minExponent=null;this.maxExponent=null;this.base=10;this.majorDivisions=1;this.Ho(ub.a,b.PH);this.Ho(ub.b,b.by);};m.getAutoAdjust=function(){return this.autoAdjust;};m.setAutoAdjust=function(c){this.autoAdjust=c;};m.getBaseAtZero=function(){return this.baseAtZero;};m.setBaseAtZero=function(n){this.baseAtZero=n;};m.getShowNegativeValues=function(){return this.showNegativeValues;};m.setShowNegativeValues=function(f){this.showNegativeValues=f;};m.getMinExponent=function(){return this.minExponent;};m.setMinExponent=function(o){this.minExponent=o;};m.getMaxExponent=function(){return this.maxExponent;};m.setMaxExponent=function(e){this.maxExponent=e;};m.getBase=function(){return this.base;};m.setBase=function(n){this.base=n;};m.getMajorDivisions=function(){return this.majorDivisions;};m.setMajorDivisions=function(f){this.majorDivisions=f;};m.fl=function(){var
-Aa=false;if(this.autoAdjust)Aa=this.Zp();if(!Aa){this.Ho(ub.a,this.minExponent!=null?this.minExponent:b.PH);this.Ho(ub.b,this.maxExponent!=null?this.maxExponent:b.by);}};m.Zp=function(){var
-Eb=this.getChart();if(Eb==null)return false;var
-sa=Eb.getRangeForAxis(this);if(sa==null){jsx3.chart.LOG.debug(ub.c+this+ub.d+Eb);return false;}var
-O=Math.max(0,sa[0]);var
-da=Math.max(0,sa[1]);if(da==0){jsx3.chart.LOG.debug(ub.e+this+ub.f+Eb);return false;}var
-Ba=null,Ra=null;if(this.minExponent!=null){Ba=this.minExponent;}else if(this.baseAtZero)Ba=0;if(this.maxExponent!=null)Ra=this.maxExponent;O=O*b.WM;da=da*b.WM;if(Ba==null)if(O==0)Ba=0;else Ba=Math.floor(Math.log(O)/Math.log(this.base));if(Ra==null)Ra=Math.ceil(Math.log(da)/Math.log(this.base));this.Ho(ub.a,Ba);this.Ho(ub.b,Ra);return true;};m.Xj=function(f){var
-x=this.pj(ub.a);var
-Fb=Math.floor(x+f/this.majorDivisions);var
-M=f%this.majorDivisions;if(M==0){return Math.pow(this.base,Fb);}else{var
-Ta=Math.pow(this.base,Fb);var
-sb=Math.pow(this.base,Fb+1);return Ta+M*(sb-Ta)/this.majorDivisions;}};m.Hf=function(){var
-Ja=this.pj(ub.a);var
-Za=this.pj(ub.b);var
-sa=[];var
-Ga=0;for(var
-ra=Ja;ra<=Za&&Ga<b.MAX_TICKS;ra++){var
-db=Math.pow(this.base,ra);if(ra>Ja){var
-Va=Math.pow(this.base,ra-1);for(var
-Ra=1;Ra<this.majorDivisions;Ra++){var
-Pa=Va+Ra*(db-Va)/this.majorDivisions;sa.push(this.getCoordinateFor(Pa));Ga++;}}sa.push(this.getCoordinateFor(db));Ga++;}return sa;};m.Gl=function(j,f){var
-cb=[];if(f==0){return [];}else if(f==j.length){return [];}else{var
-L=this.Xj(f-1);var
-Cb=this.Xj(f);for(var
-ra=1;ra<this.minorTickDivisions;ra++){var
-kb=L+ra*(Cb-L)/this.minorTickDivisions;cb.push(this.getCoordinateFor(kb));}}return cb;};m.mo=function(){return false;};m.getCoordinateFor=function(p){var
-Ua=this.pj(ub.a);var
-sa=this.pj(ub.b);var
-cb=null;if(p<=0){cb=0;}else{var
-ea=Math.log(p)/Math.log(this.base);if(ea<Ua){cb=0;}else if(ea>sa){cb=this.length;}else cb=Math.round(this.length*(ea-Ua)/(sa-Ua));}return this.horizontal?cb:this.length-cb;};m.getCoordinateForNoClip=function(j){var
-Pa=this.pj(ub.a);var
-yb=this.pj(ub.b);var
-da=null;if(j<=0){da=-1;}else{var
-Na=Math.log(j)/Math.log(this.base);da=Math.round(this.length*(Na-Pa)/(yb-Pa));}return this.horizontal?da:this.length-da;};b.getVersion=function(){return jsx3.chart.si;};});
+jsx3.require("jsx3.chart.Axis");jsx3.Class.defineClass("jsx3.chart.LogarithmicAxis",jsx3.chart.Axis,null,function(b,m){b.Tf=200;b.Qs=1;b.eo=0;b.jo=2;m.init=function(k,p,e){this.jsxsuper(k,p,e);this.autoAdjust=jsx3.Boolean.TRUE;this.baseAtZero=jsx3.Boolean.TRUE;this.showNegativeValues=jsx3.Boolean.FALSE;this.minExponent=null;this.maxExponent=null;this.base=10;this.majorDivisions=1;this.xI("wR",b.eo);this.xI("tQ",b.jo);};m.getAutoAdjust=function(){return this.autoAdjust;};m.setAutoAdjust=function(f){this.autoAdjust=f;};m.getBaseAtZero=function(){return this.baseAtZero;};m.setBaseAtZero=function(c){this.baseAtZero=c;};m.getShowNegativeValues=function(){return this.showNegativeValues;};m.setShowNegativeValues=function(o){this.showNegativeValues=o;};m.getMinExponent=function(){return this.minExponent;};m.setMinExponent=function(g){this.minExponent=g;};m.getMaxExponent=function(){return this.maxExponent;};m.setMaxExponent=function(j){this.maxExponent=j;};m.getBase=function(){return this.base;};m.setBase=function(l){this.base=l;};m.getMajorDivisions=function(){return this.majorDivisions;};m.setMajorDivisions=function(a){this.majorDivisions=a;};m.g6=function(){var S=false;if(this.autoAdjust)S=this.Pd();if(!S){this.xI("wR",this.minExponent!=null?this.minExponent:b.eo);this.xI("tQ",this.maxExponent!=null?this.maxExponent:b.jo);}};m.Pd=function(){var u=this.getChart();if(u==null)return false;var Db=u.getRangeForAxis(this);if(Db==null){jsx3.chart.LOG.debug("no range for axis "+this+" in chart "+u);return false;}var wb=Math.max(0,Db[0]);var I=Math.max(0,Db[1]);if(I==0){jsx3.chart.LOG.debug("range of axis "+this+" is all negative "+u);return false;}var qb=null,vb=null;if(this.minExponent!=null){qb=this.minExponent;}else{if(this.baseAtZero){qb=0;}}if(this.maxExponent!=null){vb=this.maxExponent;}wb=wb*b.Qs;I=I*b.Qs;if(qb==null){if(wb==0)qb=0;else qb=Math.floor(Math.log(wb)/Math.log(this.base));}if(vb==null){vb=Math.ceil(Math.log(I)/Math.log(this.base));}this.xI("wR",qb);this.xI("tQ",vb);return true;};m.a1=function(c){var fb=this.Q0("wR");var uc=Math.floor(fb+c/this.majorDivisions);var jb=c%this.majorDivisions;if(jb==0){return Math.pow(this.base,uc);}else{var Bc=Math.pow(this.base,uc);var Mb=Math.pow(this.base,uc+1);return Bc+jb*(Mb-Bc)/this.majorDivisions;}};m.RQ=function(){var S=this.Q0("wR");var fb=this.Q0("tQ");var wc=[];var vb=0;for(var gb=S;gb<=fb&&vb<b.Tf;gb++){var G=Math.pow(this.base,gb);if(gb>S){var Sb=Math.pow(this.base,gb-1);for(var Ic=1;Ic<this.majorDivisions;Ic++){var Cb=Sb+Ic*(G-Sb)/this.majorDivisions;wc.push(this.getCoordinateFor(Cb));vb++;}}wc.push(this.getCoordinateFor(G));vb++;}return wc;};m.RY=function(n,i){var B=[];if(i==0){return [];}else{if(i==n.length){return [];}else{var bc=this.a1(i-1);var rc=this.a1(i);for(var gb=1;gb<this.minorTickDivisions;gb++){var nb=bc+gb*(rc-bc)/this.minorTickDivisions;B.push(this.getCoordinateFor(nb));}}}return B;};m.vX=function(){return false;};m.getCoordinateFor=function(n){var Cc=this.Q0("wR");var hb=this.Q0("tQ");var B=null;if(n<=0){B=0;}else{var Y=Math.log(n)/Math.log(this.base);if(Y<Cc){B=0;}else{if(Y>hb){B=this.length;}else{B=Math.round(this.length*(Y-Cc)/(hb-Cc));}}}return this.horizontal?B:this.length-B;};m.getCoordinateForNoClip=function(o){var Eb=this.Q0("wR");var M=this.Q0("tQ");var E=null;if(o<=0){E=-1;}else{var X=Math.log(o)/Math.log(this.base);E=Math.round(this.length*(X-Eb)/(M-Eb));}return this.horizontal?E:this.length-E;};m.toString=function(){return "[LogarithmicAxis '"+this.getName()+"']";};b.getVersion=function(){return jsx3.chart.q2;};});

@@ -15,21 +15,26 @@
  */
 package org.directwebremoting.guice;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.Stage;
+import com.google.inject.TypeLiteral;
+import static com.google.inject.name.Names.named;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
+import org.directwebremoting.impl.DefaultContainer;
+import org.directwebremoting.util.Logger;
 
 import static org.directwebremoting.guice.DwrGuiceUtil.popServletContext;
 import static org.directwebremoting.guice.DwrGuiceUtil.pushServletContext;
@@ -39,11 +44,10 @@ import static org.directwebremoting.guice.DwrGuiceUtil.pushServletContext;
  * configure an {@link Injector} and stash it in the {@link ServletContext}.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public abstract class DwrGuiceServletContextListener extends AbstractDwrModule implements ServletContextListener
+public abstract class DwrGuiceServletContextListener
+    extends AbstractDwrModule
+    implements ServletContextListener
 {
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
-     */
     public void contextInitialized(ServletContextEvent servletContextEvent)
     {
         ServletContext servletContext = servletContextEvent.getServletContext();
@@ -59,10 +63,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
             popServletContext();
         }
     }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
-     */
+   
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
         List<Exception> exceptions = new ArrayList<Exception>();
@@ -72,14 +73,13 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
             log.warn("During context destroy, closing globally-scoped Closeables: " + e, e);
         }
     }
-
-
+    
+    
     /**
      * Define this method to configure bindings at servlet context initialization.
      * Call {@link AbstractModule#install AbstractModule.install(Module)} within
      * this method to use binding code from other modules.
      */
-    @Override
     protected abstract void configure();
 
     /**
@@ -118,7 +118,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
 
         return stage;
     }
-
+    
     /**
      * Subclasses can use this during stage determination and binding to
      * read values from the current servlet context.
@@ -132,7 +132,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
     /**
      * Returns the Injector instance installed in the given ServletContext.
      */
-    protected static Injector getPublishedInjector(ServletContext servletContext)
+    static Injector getPublishedInjector(ServletContext servletContext)
     {
         Injector injector = (Injector) servletContext.getAttribute(INJECTOR);
 
@@ -147,7 +147,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
         return injector;
     }
 
-    protected static void publishInjector(ServletContext servletContext, Injector injector)
+    static void publishInjector(ServletContext servletContext, Injector injector)
     {
         servletContext.setAttribute(INJECTOR, injector);
     }
@@ -169,5 +169,5 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrModule i
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DwrGuiceServletContextListener.class);
+    private static final Logger log = Logger.getLogger(DwrGuiceServletContextListener.class);
 }

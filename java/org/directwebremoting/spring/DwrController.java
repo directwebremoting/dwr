@@ -18,28 +18,25 @@ package org.directwebremoting.spring;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
-import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.impl.ContainerMap;
 import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
+import org.directwebremoting.util.Logger;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -66,11 +63,11 @@ import org.springframework.web.servlet.mvc.AbstractController;
    &lt;bean id="dwrConfiguration" class="org.directwebremoting.spring.SpringConfigurator">
       &lt;property name="creators">
          &lt;map>
-            &lt;entry key="<b>beanName</b>">
+            &lt;entry key="<b>mybean</b>">
                &lt;bean class="org.directwebremoting.spring.CreatorConfig">
                   &lt;property name="creator">
                      &lt;bean class="org.directwebremoting.spring.BeanCreator">
-                        &lt;property name="bean" ref="<b>BeanName</b>"/>
+                        &lt;property name="bean" ref="<b>myBean</b>"/>
                      &lt;/bean>
                   &lt;/property>
                &lt;/bean>
@@ -80,7 +77,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
    &lt;/bean>
 
    &lt;-- the bean you want to remote using DWR -->
-   &lt;bean id="<b>beanName</b>" class="BeanName"/>
+   &lt;bean id="<b>myBean</b>" class="MyBean"/>
    </pre></code>
  *
  * In the near future we want to provide a DWR namespace for Spring, which should allow you to
@@ -92,8 +89,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
    &lt;/dwr:configuration>
 
    &lt;-- the bean you want to remote using DWR -->
-   &lt;bean id="<b>beanName</b>" class="BeanName">
-      &lt;dwr:remote javascript="<b>beanName</b>"/>
+   &lt;bean id="<b>myBean</b>" class="MyBean">
+      &lt;dwr:remote javascript="<b>mybean</b>"/>
    &lt;/bean>
    </pre></code>
  * Which should be equivalent to the previous example. Please note that this is still work in progress
@@ -118,7 +115,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
     /**
      * Sets whether DWR should be in debug mode (default is <code>false</code>). <br/>
-     * This allows access to the debug pages provided by DWR under <code>/[WEBAPP]/dwr/</code>.
+     * This allows access to the debug pages provided by DWR under <code>/[app-ctx]/dwr/</code>.
      * <b>NOTE</b>: make sure to not set this property to <code>true</code> in a production environment.
      * @param debug the indication of whether to start DWR in debug mode
      */
@@ -132,7 +129,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      * The configurators are used to set up DWR correctly.
      * @param configurators the configurators to apply to this controller
      */
-    public void setConfigurators(List<Configurator> configurators)
+    public void setConfigurators(List configurators)
     {
         this.configurators = configurators;
     }
@@ -157,28 +154,9 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      */
     public void afterPropertiesSet() throws Exception
     {
-        ApplicationContext parent = getApplicationContext().getParent(); 
-        if (parent != null)
-        {
-            try
-            {
-                Object parentConfigurator = parent.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID);
-                if ((parentConfigurator != null) && (!configurators.contains(parentConfigurator)))
-                {
-                    configurators.add((Configurator) parentConfigurator);
-                }
-            } catch (RuntimeException rex)
-            {
-                if (log.isDebugEnabled())
-                {
-                    log.debug("Could not detect dwr configuration in parent context");
-                }
-            }
-        }
         ServletContext servletContext = getServletContext();
 
-        if (logger.isDebugEnabled())
-        {
+        if (logger.isDebugEnabled()) {
             logger.debug("afterPropertiesSet() called with servletContext '" + servletContext + "'");  
         }
         
@@ -193,28 +171,20 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         // <bean name="pollAndCometEnabled" class="java.lang.String">
         //     <constructor-arg index="0"><value>true</value></constructor-arg>
         // </bean>
-        // TODO: Decide if we want to get rid of this
-        ContainerMap containerMap = new ContainerMap(container, true);
-        for (Entry<String, Object> entry : containerMap.entrySet())
-        {
-            Object value = entry.getValue();
-            if (value instanceof String)
-            {
-                configParams.put(entry.getKey(), (String) value);
-            }
-        }
-        configParams.put("debug", "" + debug);
-
+        configParams.putAll(new ContainerMap(container, true));
         servletConfig = new FakeServletConfig(name, servletContext, configParams);
-
+        
         try
         {
-            ContainerUtil.setupDefaultContainer(container, servletConfig);
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
-            webContextBuilder = container.getBean(WebContextBuilder.class);
+            ContainerUtil.setupDefaults(container, servletConfig);
+            ContainerUtil.setupFromServletConfig(container, servletConfig);
+            container.addParameter("debug", "" + debug);
+            container.setupFinished();
+
+            webContextBuilder = StartupUtil.initWebContext(servletConfig, servletContext, container);
+            StartupUtil.initServerContext(servletConfig, servletContext, container);
 
             ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-            ContainerUtil.publishContainer(container, servletConfig);
 
             // The dwr.xml from within the JAR file.
             if (includeDefaultConfig)
@@ -223,6 +193,15 @@ public class DwrController extends AbstractController implements BeanNameAware, 
             }
 
             ContainerUtil.configure(container, configurators);
+            ContainerUtil.publishContainer(container, servletConfig);
+        }
+        catch (InstantiationException ex)
+        {
+            throw new BeanCreationException("Failed to instansiate", ex);
+        }
+        catch (IllegalAccessException ex)
+        {
+            throw new BeanCreationException("Access error", ex);
         }
         catch (Exception ex)
         {
@@ -240,11 +219,10 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      * It delegates to the <code>UrlProcessor</code> and also takes case of setting and unsetting of the
      * current <code>WebContext</code>.
      * @param request the request to handle
-     * @param response the response to handle
+     * @param response the reponse to handle
      * @throws Exception in case handling of the request fails unexpectedly
      * @see org.directwebremoting.WebContext
      */
-    @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         try
@@ -252,7 +230,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
             // set up the web context and delegate to the processor
             webContextBuilder.set(request, response, servletConfig, getServletContext(), container);
 
-            UrlProcessor processor = container.getBean(UrlProcessor.class);
+            UrlProcessor processor = (UrlProcessor) container.getBean(UrlProcessor.class.getName());
             processor.handle(request, response);
         }
         finally
@@ -279,7 +257,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      * <a href="http://getahead.org/dwr/server/servlet">http://getahead.org/dwr/server/servlet</a>
      * @param configParams the configParams to set
      */
-    public void setConfigParams(Map<String, String> configParams)
+    public void setConfigParams(Map configParams)
     {
         Assert.notNull(configParams, "configParams cannot be null");
         this.configParams = configParams;
@@ -321,16 +299,16 @@ public class DwrController extends AbstractController implements BeanNameAware, 
     /**
      * What Configurators exist for us to configure ourselves.
      */
-    private List<Configurator> configurators;
+    private List configurators;
 
     /**
      * Additional parameters such as pollAndCometEnabled. For a full list see:
      * <a href="http://getahead.org/dwr/server/servlet">http://getahead.org/dwr/server/servlet</a>
      */
-    private Map<String, String> configParams = new HashMap<String, String>();
+    private Map configParams = new HashMap();
     
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DwrController.class);
+    private static final Logger log = Logger.getLogger(DwrController.class);
 }

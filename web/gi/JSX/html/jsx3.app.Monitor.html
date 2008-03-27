@@ -8,14 +8,14 @@
     <title>Application Monitor</title>
 
     <style type="text/css">
-      pre.jsx_appmonitor { padding:0px; margin:0px; }
+      PRE.jsx_appmonitor { padding:0px; margin:0px; }
       /* These colors should match the ones defined in ide.css for consistency. */
-      pre.FATAL { color:#660099; }
-      pre.ERROR { color:#990000; }
-      pre.WARN { color:#996600; }
-      pre.INFO { color:#000000; }
-      pre.DEBUG { color:#444444; }
-      pre.TRACE { color:#888888; }      
+      PRE.FATAL { color:#660099; }
+      PRE.ERROR { color:#990000; }
+      PRE.WARN { color:#996600; }
+      PRE.INFO { color:#000000; }
+      PRE.DEBUG { color:#444444; }
+      PRE.TRACE { color:#888888; }      
     </style>
 
     <script type="text/javascript" language="JavaScript">
@@ -33,15 +33,18 @@
       window.appendMessage = function(strMessage, strClass) {
         //append the new message to the 'content' block
         var content = window.document.getElementById("content");
-        var oElm = document.createElement("pre");
+        var oElm = document.createElement("PRE");
         oElm.className = "jsx_appmonitor" + (strClass ? (" " + strClass) : "");
-        oElm.appendChild(document.createTextNode(strMessage));
+/* @JSC */ if (window.opener.jsx3.CLASS_LOADER.IE) {
+        oElm.innerText = strMessage;
+/* @JSC */ } else if (window.opener.jsx3.CLASS_LOADER.FX) {
+        oElm.innerHTML = strMessage;
+/* @JSC */ }
         content.appendChild(oElm);
 
         // scroll to last message
-        var childCount = content.childNodes.length;
-        if (childCount > 0)
-          content.parentNode.scrollTop = content.childNodes[childCount-1].offsetTop;
+        if ((childCount = content.childNodes.length) > 0) 
+          content.scrollTop = content.childNodes[childCount-1].offsetTop;
       };
 
     </script>

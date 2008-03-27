@@ -18,31 +18,12 @@ package org.directwebremoting;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Accessor for the current ServerContext.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class ServerContextFactory
 {
-    /**
-     * Accessor for the current ServerContext in the normal case where there is
-     * only one DWR in the current classloader
-     * @return The current ServerContext.
-     */
-    public static ServerContext get()
-    {
-        if (builder == null)
-        {
-            log.warn("ServerContextBuilder is null. This probably means that DWR has not initialized properly");
-            return null;
-        }
-
-        return builder.get();
-    }
-
     /**
      * Accessor for the current ServerContext.
      * @param ctx The servlet context to allow us to bootstrap
@@ -52,7 +33,6 @@ public class ServerContextFactory
     {
         if (builder == null)
         {
-            log.warn("ServerContextBuilder is null. This probably means that DWR has not initialized properly");
             return null;
         }
 
@@ -73,7 +53,7 @@ public class ServerContextFactory
     /**
      * The ServerContextBuilder from which we will get ServerContext objects
      */
-    private static ServerContextBuilder builder = null;
+    private static ServerContextBuilder builder;
 
     /**
      * Class to enable us to access servlet parameters.
@@ -90,22 +70,10 @@ public class ServerContextFactory
         void set(ServletConfig config, ServletContext context, Container container);
 
         /**
-         * Accessor for the current ServerContext in the normal case where there
-         * is only one DWR in the current classloader
-         * @return The ServerContext that is associated with this web application
-         */
-        ServerContext get();
-
-        /**
          * Accessor for the current ServerContext
          * @param context The web application environment
          * @return The ServerContext that is associated with this web application
          */
         ServerContext get(ServletContext context);
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(WebContextFactory.class);
 }

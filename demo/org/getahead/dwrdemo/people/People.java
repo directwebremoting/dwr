@@ -15,14 +15,12 @@
  */
 package org.getahead.dwrdemo.people;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.getahead.dwrdemo.util.RandomData;
+import org.directwebremoting.util.Logger;
 
 /**
  * A container for a set of people
@@ -35,15 +33,8 @@ public class People
      */
     public People()
     {
-        init(5);
-    }
-
-    /**
-     * 
-     */
-    public void init(int count)
-    {
-        for (int i = 0; i < count; i++)
+        log.debug("Generating a new set of random people");
+        for (int i = 0; i < 5; i++)
         {
             people.add(getRandomPerson());
         }
@@ -53,28 +44,9 @@ public class People
      * Accessor for the current list of people
      * @return the current list of people
      */
-    public List<Person> getAllPeople()
+    public Set getAllPeople()
     {
         return people;
-    }
-
-    /**
-     * Accessor for a subset of the current list of people
-     * @return the current list of people
-     */
-    public List<Person> getMatchingPeople(String filter)
-    {
-        List<Person> reply = new ArrayList<Person>();
-        Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        for (Person person : people)
-        {
-            if (regex.matcher(person.getName()).find())
-            {
-                reply.add(person);
-                log.debug("Adding " + person + " to reply");
-            }
-        }
-        return reply;
     }
 
     /**
@@ -105,18 +77,33 @@ public class People
     }
 
     /**
+     * the current list of people
+     */
+    private Set people = new HashSet();
+
+    /**
      * Create a random person
      * @return a random person
      */
-    public static Person getRandomPerson()
+    private Person getRandomPerson()
     {
         Person person = new Person();
         person.setId(getNextId());
-        person.setName(RandomData.getFullName());
-        String[] addressAndNumber = RandomData.getAddressAndNumber();
-        person.setAddress(addressAndNumber[0]);
-        person.setPhoneNumber(addressAndNumber[1]);
-        person.setSalary(RandomData.getSalary());
+
+        String firstname = FIRSTNAMES[random.nextInt(FIRSTNAMES.length)];
+        String surname = SURNAMES[random.nextInt(SURNAMES.length)];
+        person.setName(firstname + " " + surname);
+
+        String housenum = (random.nextInt(99) + 1) + " ";
+        String road1 = ROADS1[random.nextInt(ROADS1.length)];
+        String road2 = ROADS2[random.nextInt(ROADS2.length)];
+        String town = TOWNS[random.nextInt(TOWNS.length)];
+        String address = housenum + road1 + " " + road2 + ", " + town;
+        person.setAddress(address);
+
+        float salary = Math.round(10 + 90 * random.nextFloat()) * 1000;
+        person.setSalary(salary);
+
         return person;
     }
 
@@ -125,8 +112,9 @@ public class People
      */
     protected void debug()
     {
-        for (Person person : people)
+        for (Iterator it = people.iterator(); it.hasNext();)
         {
+            Person person = (Person) it.next();
             log.debug(person.toString());
         }
     }
@@ -135,7 +123,7 @@ public class People
      * Get the next unique ID in a thread safe way
      * @return a unique id
      */
-    public static synchronized int getNextId()
+    private static synchronized int getNextId()
     {
         return nextId++;
     }
@@ -145,13 +133,38 @@ public class People
      */
     private static int nextId = 1;
 
-    /**
-     * the current list of people
-     */
-    private List<Person> people =  Collections.synchronizedList(new ArrayList<Person>());
+    private Random random = new Random();
+
+    private static final String[] FIRSTNAMES =
+    {
+        "Fred", "Jim", "Shiela", "Jack", "Betty", "Jacob", "Martha", "Kelly",
+        "Luke", "Matt", "Gemma", "Joe", "Ben", "Jessie", "Leanne", "Becky",
+    };
+
+    private static final String[] SURNAMES =
+    {
+        "Sutcliffe", "MacDonald", "Duckworth", "Smith", "Wisner", "Iversen",
+        "Nield", "Turton", "Trelfer", "Wilson", "Johnson", "Cowan", "Daniels",
+    };
+
+    private static final String[] ROADS1 =
+    {
+        "Green", "Red", "Yellow", "Brown", "Blue", "Black", "White",
+    };
+
+    private static final String[] ROADS2 =
+    {
+        "Close", "Drive", "Street", "Avenue", "Crescent", "Road", "Place",
+    };
+
+    private static final String[] TOWNS =
+    {
+        "Birmingham", "Kettering", "Paris", "San Francisco", "New York",
+        "San Mateo", "Barcelona",
+    };
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(People.class);
+    private static final Logger log = Logger.getLogger(People.class);
 }
