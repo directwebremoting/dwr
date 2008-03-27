@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Unit Test</title>
+  <script type='text/javascript' src='/dwr/dwr/interface/Test.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='testsuite.js'></script>
+  <style>
+  .showborder td, .showborder th
+  {
+      border: 1px solid #999999;
+      padding: 2px 5px 2px 5px;
+  }
+
+  .showborder
+  {
+      border-collapse: collapse;
+  }
+
+  #chart
+  {
+      font-size: 70%;
+  }
+  </style>
+</head>
+
+<body onload="init()">
+
+<h2>Unit Test Page</h2>
+
+<div style="margin-bottom:5px">
+  Style:
+  <select id="method">
+    <option value="iframe">IFRAME</option>
+    <option value="xhr" selected="selected">XMLHttpRequest</option>
+  </select>
+  &nbsp;
+  Verb:
+  <select id="verb">
+    <option>GET</option>
+    <option selected="selected">POST</option>
+  </select>
+</div>
+<div>
+  Rate:
+  <select id="rate">
+    <option value="0">0ms (No delay)</option>
+    <option value="5">5ms (Very Fast)</option>
+    <option value="10">10ms</option>
+    <option value="15" selected="selected">15ms</option>
+    <option value="20">20ms</option>
+    <option value="25">25ms</option>
+    <option value="30">30ms</option>
+    <option value="40">40ms</option>
+    <option value="50">50ms</option>
+    <option value="100">100ms (Slow)</option>
+  </select>
+  &nbsp;
+  Batch size:
+  <select id="size">
+    <option value="0" selected="selected">0 (None)</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="6">6</option>
+    <option value="12">12</option>
+    <option value="25">25</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+    <option value="200">200</option>
+    <option value="400">400</option>
+  </select>
+  &nbsp;
+  Ordered:
+  <select id="ordered">
+    <option>Yes</option>
+    <option selected="selected">No</option>
+  </select>
+</div>
+
+<p>
+  Found <script>document.write(tests.length)</script> unit tests.<br/>
+  <input type="button" onclick="startTest();" id="start" value="Start"/>
+  <span id='totals'></span>
+</p>
+
+<p>
+  Tests Executed (<span id='execreport'>0</span>):
+</p>
+<div style="border: 1px solid black; width:90%;">
+  <div id="progress" style="width:0%; background:green;">&nbsp;</div>
+</div>
+
+<p>
+  Failures (<span id='failreport'>0</span>):
+</p>
+<div id="failures" style="border: 1px solid red; max-height:200px; overflow:auto; width:90%;">
+  None:
+</div>
+
+<div id="table">
+  <h2 style="margin-top:40px;">Results</h2>
+  <table class="showborder">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Function</th>
+        <th>Data</th>
+        <th>Action</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="chart">
+    </tbody>
+  </table>
+</div>
+
+<div id="reply" style="display:none;">
+  <h2 style="margin-top:40px;">More Information</h2>
+  <p>
+    Please wait until the tests have finished, and then tell us if they worked
+    so we can make DWR better.
+  </p>
+  <p>
+    If you got any error dialogs, please tell us roughly what they said:
+    <br/>
+    <textarea id="moreinfo" style="width:100%; margin-top:10px; margin-bottom:10px;" rows="5">
+    </textarea>
+    <br/>
+    If your browser is spoofing its identity, please tell us what it really is.
+    Full user agent not required, something like "Opera/4" or "IE/5" is fine. 
+    <br/>
+    <input type="hidden" id="useragent-reported"/>
+    <input type="text" id="useragent-real" style="width:100%; margin-top:10px; margin-bottom:10px;"/>
+    <br/>
+    <input type="button" onclick="report();" value="File report / Get results"/>
+  </p>
+</div>
+
+<div id="results" style="display:none;">
+  <table class="showborder">
+    <thead>
+      <tr>
+        <th>Browser</th>
+        <th>Results</th>
+      </tr>
+    </thead>
+    <tbody id="resultsTable">
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
