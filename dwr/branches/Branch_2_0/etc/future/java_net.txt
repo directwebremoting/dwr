@@ -1,0 +1,56 @@
+
+ProgressBar
+
+XML page
+	transfm -> too many xml, tomcat-compat?
+
+Security page
+why is DWR safer than normal web apps
+
+// jar:file:${catalina.home}/webapps/dwr/WEB-INF/lib/dwr.jar!/-
+grant codeBase "file:/Share/joe/other/dwr/web/WEB-INF/classes/-"
+{
+     permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.util.http";
+};
+
+On the signatures element:
+    The parsing is good enough to decode a well formed signature and *usually*
+    provide an error when something is wrong. BUT it is not foolproof so you
+    may discover that it can decode something that is technically wrong. Some
+    future version of DWR may be more strict about the syntax, so don't rely
+    on "features" of the parser that allow you to be more lax than you should.
+    In particular you may find the DWR has an uncanny ability to know which
+    class you were talking about with you doing an import. DO NOT rely on this
+    feature, or if you do, don't be surprised when it breaks.
+
+http://raibledesigns.com/page/rd?entry=fixing_your_java_net_project
+
+http://www.trimpath.com/project/wiki/JavaScriptTemplates
+
+If you're hosting your open source project at java.net, you might be annoyed by the fact that you can't disable the forums or issue tracker. The forums pretty much suck, mainly because there's no "remember me" on the site and it's a pain to click 3 times just to answer someone's question. They also don't have the ability to quote a previous message. In addition to the less-than-adequate forums, the issue tracker doesn't hold a candle to JIRA.
+
+For the longest time, I've been wanting to remove both the "Discussion forums" and "Project issues" links from the AppFuse homepage. I asked the java.net folks, and they didn't have a solution. Finally, I thought of one on my own.
+
+In case you didn't know - you can create a project_tools.html file in your project's www directory - which allows you to append items to the menu on the left site. Add a little JavaScript action and you can manipulate or remove items as well. Here's what I'm using to remove the link for the Discussion forums, as well as change the Project issues to point to JIRA. If you find any issues with this script, please let me know.
+
+<script type="text/javascript">
+
+function replaceLinks() {
+ try {
+ var tools = document.getElementById("projecttools");
+ var links = tools.getElementsByTagName("a");
+ for (i=0; i < links.length; i++) {
+ if (links[i].getAttribute("href").indexOf("ProjectIssues") > -1) {
+ links[i].setAttribute("href", "http://issues.appfuse.org/browse/APF");
+ links[i].innerHTML="JIRA Issue Tracker";
+ }
+
+ if (links[i].getAttribute("href").indexOf("ProjectForumView") > -1) {
+ links[i].parentNode.style.display = "none";
+ }
+ }
+ } catch (e) {}
+}
+
+window.onload=replaceLinks;
+</script>

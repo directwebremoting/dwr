@@ -1,0 +1,4 @@
+boolean d = true;
+d |= false;
+System.out.println(d);
+ (No explicit return value)

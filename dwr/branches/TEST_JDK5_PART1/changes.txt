@@ -1,0 +1,41 @@
+
+Future Ideas
+------------
+save log messages to a ring buffer and then have DWR grab them and turn them
+    into alert()s whenever engine.js is read. Only good for errors and warnings
+    but could help in setting things up.
+Create a wiki with help on error messages along with a link in error
+Create a jdk 1.5 version of the collections code converter to get more type info
+Create a batch send mechanism so a page can start by sending a set of remote
+    calls all at the same time.
+Add pluggable marshallers so we could do JSON or XML-RPC out the back end
+use jdk5 annotations to pass comments to generated javascript interface so the
+    the created javascript is documented (or maybe javacc and javadoc)
+Add creators for HiveMind Pica, Nano, etc
+
+Recent changes
+--------------
+Have a way for DWR to call a JSP and return the data as a string to javascript
+Added code to support StringEscapeUtils.escapeJavaScript() from commons-lang (Dimitry D'hondt/Joe Walker)
+Extracted Creator and Converter types along with Configurator that reads dwr.xml files (Joe Walker)
+Changed all javascript variables and functions to be prefixed dwr to avoid namespace clases (Joe Walker)
+Spring integration allowing you to get beans from spring (Joe Walker)
+Vastly improved documentation
+
+Changes for Version 0.3
+-----------------------
+Added execute using XMLHttpRequest, or a fallback to iframe. (Joe Walker)
+Changed compilations to include 1.3 VMs. Not tested on anything but 1.4/5 though (Dennis Graham)
+Tweak to make server responses clearer in demo pages (Joe Walker)
+Separated engine.js to make changing it easier (Joe Walker)
+Fixed a bug that caused the errorHandler to be called whatever (Dave Rooney)
+Fixed a bug that failed to cut up the allowed parameter properly (Daniel Wunsch)
+Added an ant build file (Joe Walker)
+Execute static methods without creating bean (suggested by Nils Kilden-Pedersen)
+I've added more documentation to the home page about ExecutionContext
+    Access to HttpServletRequest and associated classes is now possible using
+    uk.ltd.getahead.dwr.ExecutionContext. For example:
+    req = ExecutionContext.getExecutionContext().getHttpServletRequest();
+Fixed caching issues (Joe Walker)
+Broke the main servlet down a bit because it was getting too big (Joe Walker)
+New demo site (Joe Walker)

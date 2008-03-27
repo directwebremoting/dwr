@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<project name="dwr" default="all">
+
+  <!--=======================================================================-->
+  <property name="source.root" value="."/>
+  <property name="source.java" value="${source.root}/java"/>
+  <property name="source.jar" value="${source.root}/jar"/>
+  <property name="source.etc" value="${source.root}/etc"/>
+  <property name="source.web" value="${source.root}/web"/>
+
+  <property name="target.root" value="${source.root}/target/ant"/>
+  <property name="target.classes" value="${target.root}/temp/classes"/>
+  <property name="target.war" value="${target.root}/war"/>
+
+  <!--=======================================================================-->
+  <target name="prepare">
+    <echo message="Building on ${os.name}"/>
+    <tstamp/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="compile" depends="prepare" description="Validate source syntax">
+    <mkdir dir="${target.classes}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.classes}">
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+      </classpath>
+      <src path="${source.java}"/>
+    </javac>
+    <copy todir="${target.classes}">
+      <fileset dir="${source.java}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="compile" description="Create a JAR file">
+    <jar destfile="dwr.jar" compress="true" >
+      <fileset dir="${target.classes}"/>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="war" depends="compile" description="Create a WAR directory">
+    <mkdir dir="${target.war}"/>
+    <copy todir="${target.war}">
+      <fileset dir="${source.web}"/>
+    </copy>
+    <mkdir dir="${target.war}/WEB-INF/classes"/>
+    <copy todir="${target.war}/WEB-INF/classes">
+      <fileset dir="${target.classes}"/>
+      <!-- fileset dir="${source.etc}/classpath"/ -->
+    </copy>
+    <copy tofile="${target.war}/../${ant.project.name}.xml" filtering="true" file="${source.etc}/tomcat/server-context.xml">
+      <filterset>
+        <filter token="target.war" value="${basedir}/${target.war}"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="icontext" description="Create a context file that points tomcat into this directory">
+    <mkdir dir="${target.war}/../internal"/>
+    <!-- do the copy whatever, the values in database.properties may have changed -->
+    <delete failonerror="no" file="${target.war}/../internal/${ant.project.name}.xml"/>
+    <mkdir dir="${target.war}/../internal"/>
+    <copy tofile="${target.war}/../internal/${ant.project.name}.xml" filtering="true" file="${source.etc}/tomcat/server-context.xml">
+      <filterset>
+        <filter token="target.war" value="${basedir}/${source.web}"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="all" depends="clean, jar, war">
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean">
+    <delete dir="${target.root}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="cvsup" description="cvs update">
+    <cvs dest=".">
+      <commandline>
+        <argument value="-q"/>
+        <argument value="update"/>
+        <argument value="-d"/>
+        <argument value="-P"/>
+      </commandline>
+    </cvs>
+  </target>
+
+</project>
