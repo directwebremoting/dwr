@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Upgrading DWR</title>
+  <style>
+  .contrib
+  {
+    font-size: 80%;
+    color: #336;
+  }
+  </style>
+</head>
+
+<body>
+
+<h2>Current Development Work</h2>
+<p>
+  The <a href="https://dwr.dev.java.net/issues/buglist.cgi?component=dwr;issue_status=NEW;issue_status=STARTED;issue_status=REOPENED;email1=;emailtype1=exact;emailassigned_to1=1;email2=;emailtype2=exact;emailreporter2=1;issueidtype=include;issue_id=;changedin=;votes=;chfieldfrom=;chfieldto=Now;chfieldvalue=;short_desc=;short_desc_type=substring;long_desc=;long_desc_type=substring;issue_file_loc=;issue_file_loc_type=substring;status_whiteboard=;status_whiteboard_type=substring;field0-0-0=noop;type0-0-0=noop;value0-0-0=;cmdtype=doit;order=Reuse+same+sort+as+last+time;Submit+query=Submit+query">issues list</a>
+  at dwr.dev.java.net contains a roadmap of planned features and when we are
+  thinking of adding them in. It is expected that many features will drop out
+  of 1.0 and move into 1.1, but we've not worked out which yet.
+</p>
+
+<!-- 
+<h2>Changes in progress for Version 0.7</h2>
+<ul>
+</ul>
+-->
+
+<h2>Changes for Version 0.8</h2>
+<p>
+  The changes planned for version 0.7 were rolled into version 0.8, so 0.7 never
+  existed as a separate release.
+</p>
+<ul>
+  <li>
+    <b>Batch sending of remote calls:</b><br/>
+    DWR will now send a group of remote calls together in a single batch to
+    reduce network latency. See <code>DWREngine.beginBatch()</code> and
+    <code>DWREngine.endBatch()</code> for more information.
+  </li>
+  <li>
+    <b>Provision of call ordering promises:</b><br/>
+    DWR can return results in the order in which they were sent using
+    <code>DWREngine.setOrdered()</code>. Warning: Setting this to true will slow
+    down your application, and it expose you to timeouts if a message gets lost.
+    In addition and it may well mean that you are being lazy and not thinking
+    about the asynchronous model properly.    
+  </li>
+  <li>
+    <b>Fine grained access control:</b><br/>
+    You can now specify exactly which methods are allowed and disallowed using
+    the include and exclude elements in dwr.xml:
+<pre>
+&lt;create creator="new" javascript="JDate" class="java.util.Date"&gt;
+  &lt;include method="getSeconds"/&gt;
+  &lt;include method="getMinutes"/&gt;
+&lt;/create&gt;
+</pre>
+    The alternative is to <code>&lt;exclude .../&gt;</code>. You can do one or the
+    other but not both.
+  </li>
+  <li>
+    <b>J2EE role based authorization:</b><br/>
+    You can now specify that certain methods are only available to users with
+    certain roles:
+<pre>
+&lt;create creator="new" javascript="JDate" class="java.util.Date"&gt;
+  &lt;auth method="toString" role="devel"/&gt;
+&lt;/create&gt;
+</pre>
+    This requires you to have added J2EE security turned on in your web.xml.
+  </li>
+  <li>
+    <b>Methods on java.lang.Object (like <code>wait()</code>) are now disallowed.</b>
+  </li>
+  <li>
+    <b>Enhanced debug pages:</b><br/>
+    The debug pages at <code>http://localhost:8080/[YOUR-WEB-APP]/dwr</code>
+    have been enhanced to allow you to enter parameters other than strings, to
+    show more detail on returned objects and to give more feedback on why
+    methods are unavailable.<br/>
+  </li>
+  <li>
+    <b>Auto-fill of Servlet Spec parameters:</b><br/>
+    If you have a DWR remoted method that has an HttpServletRequest parameter
+    then DWR will automatically fill it in for you. This gives you a way of
+    accessing HttpServletRequest like ExecutionContext except that you don't get
+    the dependency on DWR. It also works for HttpServletResponse etc.
+  </li>
+  <li>
+    <b>Logging is now fine grained, and there is more of it:</b><br/>
+    If you were turning DWR debug on globally, you probably don't want to any more!
+  </li>
+  <li>
+    <b>You can specify detailed type information for collections:</b><br/>
+    List, Set etc don't have type info (and even under 1.5 it seems you can't
+    get at it) so you can specify the types in dwr.xml:
+<pre>
+&lt;create creator="new" javascript="Test" class="uk.ltd.getahead.testdwr.Test"&gt;
+  &lt;parameter method="testBeanSetParam" number="0" type="uk.ltd.getahead.testdwr.TestBean"/&gt;
+&lt;/create&gt;
+</pre>
+    This solution is not perfect, and there is an update planned post 1.0
+  </li>
+</ul>
+
+<h2>Changes for Version 0.6.1</h2>
+<ul>
+<li>Spring fix to only create 1 Factory <span class="contrib">(Marc Logemann, Roustem Karimov, Joe Walker)</span></li>
+<li>JavaScript documentation uses JSDoc <span class="contrib">(Joe Walker)</span></li>
+<li>Update website to have better Spring info <span class="contrib">(Joe Walker)</span></li>
+</ul>
+
+<h2>Changes for Version 0.6</h2>
+<ul>
+<li>Better documentation <span class="contrib">(Joe Walker)</span></li>
+<li>Better error messages <span class="contrib">(Joe Walker)</span></li>
+<li>New ScriptedCreator <span class="contrib">(Joe Walker)</span></li>
+<li>Wider support for browsers <span class="contrib">(Brian Doyle, Joe Walker, Mark Goodwin)</span></li>
+<li>Performance fixes <span class="contrib">(Benjamin Francioni, Joe Walker)</span></li>
+<li>Fix to support Jetty <span class="contrib">(Mark Murphy)</span></li>
+<li>Better SpringCreator <span class="contrib">(Joe Walker, Bram Smeets, Marc Logemann)</span></li>
+<li>Logging via commons-logging if it is avaiable <span class="contrib">(Joe Walker)</span></li>
+<li>New ContextCreator <span class="contrib">(Frank Nestel)</span></li>
+<li>URL tweak to provide more info to web log analysers <span class="contrib">(Joe Walker)</span></li>
+<li>New converters for DOM, JDOM, XOM, DOM4J <span class="contrib">(Joe Walker)</span></li>
+<li>Validation demo <span class="contrib">(Joe Walker)</span></li>
+<li>Range selection addition to DWRUtil <span class="contrib">(Mark Goodwin, Joe Walker)</span></li>
+<li>OnReturn addition to DWRUtil <span class="contrib">(Joe Walker)</span></li>
+</ul>
+
+<h2>Changes for Version 0.5</h2>
+<ul>
+<li>Conversion from global javascript methods to static object-based methods <span class="contrib">(Joe Walker)</span></li>
+<li>Various bug fixes in utils.js <span class="contrib">(Joe Walker)</span></li>
+<li>Change license to ASL 2.0 <span class="contrib">(Joe Walker)</span></li>
+<li>Fix to support Weblogic 8.1.3 <span class="contrib">(John Christopher)</span></li>
+<li>Updated Spring creator <span class="contrib">(Marc Logemann)</span></li>
+<li>New Creator init system using a map rather than a DOM element <span class="contrib">(Joe Walker)</span></li>
+</ul>
+
+<h2>Changes for Version 0.4</h2>
+<ul>
+<li>Have a way for DWR to call a JSP and return the data as a string to javascript</li>
+<li>Added code to support StringEscapeUtils.escapeJavaScript() from commons-lang</li>
+<li>Extracted Creator and Converter types along with Configurator that reads dwr.xml files</li>
+<li>Changed all javascript variables and functions to be prefixed dwr to avoid namespace clases</li>
+<li>Spring integration allowing you to get beans from spring</li>
+<li>Vastly improved documentation</li>
+</ul>
+
+<h2>Changes for Version 0.3</h2>
+<ul>
+<li>Added execute using XMLHttpRequest, or a fallback to iframe. <span class="contrib">(Joe Walker)</span></li>
+<li>Changed compilations to include 1.3 VMs. Not tested on anything but 1.4/5 though <span class="contrib">(Dennis Graham)</span></li>
+<li>Tweak to make server responses clearer in demo pages <span class="contrib">(Joe Walker)</span></li>
+<li>Separated engine.js to make changing it easier <span class="contrib">(Joe Walker)</span></li>
+<li>Fixed a bug that caused the errorHandler to be called whatever <span class="contrib">(Dave Rooney)</span></li>
+<li>Fixed a bug that failed to cut up the allowed parameter properly <span class="contrib">(Daniel Wunsch)</span></li>
+<li>Added an ant build file <span class="contrib">(Joe Walker)</span></li>
+<li>Execute static methods without creating bean <span class="contrib">(suggested by Nils Kilden-Pedersen)</span></li>
+<li>I've added more documentation to the home page about ExecutionContext
+    Access to HttpServletRequest and associated classes is now possible using
+    uk.ltd.getahead.dwr.ExecutionContext. For example:
+    req = ExecutionContext.getExecutionContext().getHttpServletRequest();</li>
+<li>Fixed caching issues <span class="contrib">(Joe Walker)</span></li>
+<li>Broke the main servlet down a bit because it was getting too big <span class="contrib">(Joe Walker)</span></li>
+<li>New demo site <span class="contrib">(Joe Walker)</span></li>
+</ul>
+
+</body>
+</html>

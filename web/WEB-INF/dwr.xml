@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 0.4//EN"
+    "http://www.getahead.ltd.uk/dwr/dwr.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" class="uk.ltd.getahead.testdwr.TestBean2Converter"/>
+  </init>
+
+  <allow>
+    <!--
+    Security testing
+    <convert converter="bean" match="uk.ltd.getahead.dwr.*"/>
+    <create creator="new" javascript="Error" class="uk.ltd.getahead.dwr.InboundContext"/>
+    -->
+
+    <create creator="new" javascript="Test">
+      <param name="class" value="uk.ltd.getahead.testdwr.Test"/>
+    </create>
+
+    <create creator="new" javascript="JDate">
+      <param name="class" value="java.util.Date"/>
+      <include method="getSeconds"/>
+      <include method="getMinutes"/>
+      <include method="getMonth"/>
+      <include method="getHours"/>
+      <include method="toString"/>
+      <auth method="toString" role="admin"/>
+      <auth method="toString" role="devel"/>
+    </create>
+
+    <create creator="session" javascript="TestBean">
+      <param name="class" value="uk.ltd.getahead.testdwr.TestBean"/>
+    </create>
+
+    <create creator="session" javascript="Demo">
+      <param name="class" value="uk.ltd.getahead.testdwr.Demo"/>
+    </create>
+
+    <create creator="new" javascript="Chat">
+      <param name="class" value="uk.ltd.getahead.testdwr.Chat"/>
+    </create>
+
+    <!--
+    <create creator="spring" javascript="SpringBean">
+      <param name="beanName" value="SpringBean"/>
+    </create>
+    -->
+
+    <create creator="new" javascript="UrlValidator">
+      <param name="class" value="org.apache.commons.validator.UrlValidator"/>
+    </create>
+
+    <create creator="new" javascript="CreditCardValidator">
+      <param name="class" value="org.apache.commons.validator.CreditCardValidator"/>
+    </create>
+
+    <create creator="script" javascript="EmailValidator">
+      <param name="language" value="beanshell"/>
+      <param name="script">
+        import org.apache.commons.validator.EmailValidator;
+        return EmailValidator.getInstance();
+      </param>
+    </create>
+
+    <convert converter="bean" match="uk.ltd.getahead.testdwr.*"/>
+    <convert converter="bean" match="$Proxy*"/>
+
+    <convert converter="testbean" match="uk.ltd.getahead.testdwr.TestBean2"/>
+
+  </allow>
+
+  <signatures>
+  <![CDATA[
+  import java.util.Set;
+  import uk.ltd.getahead.testdwr.*;
+
+  Test.testBeanSetParam(Set<TestBean>);
+  Test.charTestBeanMapParam(Map<Character, TestBean>);
+  ]]>
+  </signatures>
+
+</dwr>

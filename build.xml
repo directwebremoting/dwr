@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<project name="dwr" default="war">
+
+  <!--=======================================================================-->
+  <property file="project.properties"/>
+  <property file="${source.java}/dwr-version.properties"/>
+
+  <!--=======================================================================-->
+  <target name="war" description="Create a WAR directory">
+    <echo message="Building on ${os.name}"/>
+    <tstamp/>
+    <mkdir dir="${target.class}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.class}" source="1.3">
+      <src path="${source.java}"/>
+      <src path="${source.test}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <fileset dir="${source.lib}" includes="**/*.jar"/>
+      </classpath>
+    </javac>
+    <copy todir="${target.class}">
+      <fileset dir="${source.java}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="war" description="Create a JAR file">
+    <jar destfile="dwr.jar" compress="true" >
+      <fileset dir="${target.class}">
+        <exclude name="**/test/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jsdoc" description="Document the JavaScript">
+    <exec executable="/opt/jsdoc/jsdoc.pl" dir="${target.jsdoc}">
+      <arg file="${source.java}/uk/ltd/getahead/dwr/engine.js"/>
+      <arg file="${source.java}/uk/ltd/getahead/dwr/util.js"/>
+    </exec>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="javadoc">
+    <mkdir dir="${target.javadoc}"/>
+    <javadoc access="public"
+        author="true"
+        destdir="${target.javadoc}"
+        doctitle="DWR Version ${version}"
+        use="true"
+        splitindex="true"
+        version="true">
+      <sourcepath path="${source.java}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <fileset dir="${source.lib}" includes="**/*.jar"/>
+      </classpath>
+      <package name="uk.ltd.getahead.dwr.*"/>
+      <footer>Copyright &#168; 2005</footer>
+    </javadoc>
+  </target>
+
+  <!--=======================================================================-->
+  <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask">
+    <classpath>
+      <fileset dir="${source.jar}" includes="**/*.jar"/>
+    </classpath>
+  </taskdef>
+  <target name="dtddoc">
+    <DTDDoc showHiddenTags="true"
+        showFixmeTags="false"
+        sourceDir="${basedir}/${source.java}"
+        destDir="${basedir}/${target.dtddoc}"
+        docTitle="DWR Version ${version}">
+      <include name="**/*.dtd"/>
+    </DTDDoc>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="targetwar" depends="war" description="Create a separate WAR directory">
+    <style basedir="${source.web}"
+        extension=".html"
+        style="${source.web}/template.xsl"
+        destdir="${target.war}">
+      <outputproperty name="method" value="html"/>
+      <outputproperty name="omit-xml-declaration" value="yes"/>
+      <include name="**/*.html"/>
+      <exclude name="javadoc-ExecutionContext.html"/>
+      <exclude name="WEB-INF/classes/**"/>
+    </style>
+    <copy todir="${target.war}">
+      <fileset dir="${source.web}">
+        <exclude name="*.xsl"/>
+        <exclude name="*.html"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean">
+    <delete dir="${target.class}"/>
+    <delete dir="${target.war}"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="cvsup" description="cvs update">
+    <cvs dest=".">
+      <commandline>
+        <argument value="-q"/>
+        <argument value="update"/>
+        <argument value="-d"/>
+        <argument value="-P"/>
+      </commandline>
+    </cvs>
+  </target>
+
+  <!--=======================================================================-->
+  <!--
+    Run test suite. This and clover.tests take their includes and excludes from
+    build.properties. However it's possible to run specific tests by passing in
+    the test.includes and (optionally) test.excludes properties through the
+    command line, as below:
+      ant tests -Dtest.includes=org/springframework/jdbc/**/*Test*
+  -->
+  <target name="tests" depends="buildtests" description="Run tests">
+    <property name="reports.dir" value="${target.junit.reports}"/>
+    <mkdir dir="${reports.dir}"/>
+    <junit forkmode="perBatch" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+      <jvmarg line="-Djava.awt.headless=true"/>
+
+      <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+      <classpath location="${target.testclass}"/>
+      <classpath location="${target.class}"/>
+      <!-- Need files loaded as resources -->
+      <classpath location="${test.dir}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <fileset dir="${source.lib}" includes="**/*.jar"/>
+      </classpath>
+
+      <formatter type="plain" usefile="false"/>
+      <formatter type="xml"/>
+
+      <batchtest fork="yes" todir="${reports.dir}">
+        <fileset dir="${target.testclass}"
+                 includes="${test.includes}"
+                 excludes="${test.excludes}"/>
+      </batchtest>
+    </junit>
+
+  </target>
+
+  <!--=======================================================================-->
+  <target name="buildtests" depends="jar" description="Compile test source tree java files into class files">
+    <mkdir dir="${target.testclass}"/>
+    <javac destdir="${target.testclass}" source="1.3" target="1.3" debug="${debug}"
+        deprecation="false" optimize="false" failonerror="true">
+      <!--src path="${commons.attributes.tempdir.test}"/-->
+      <src path="${source.test}"/>
+      <!--classpath refid="all-libs"/-->
+      <classpath location="${target.class}"/>
+      <classpath>
+        <fileset dir="${source.jar}" includes="**/*.jar"/>
+        <fileset dir="${source.lib}" includes="**/*.jar"/>
+      </classpath>
+    </javac>
+
+    <!-- Pick up logging config from test directory -->
+    <copy todir="${target.class}" preservelastmodified="true">
+      <fileset dir="${source.test}">
+        <include name="**/*.properties"/>
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+</project>

@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title id="title">DWR - Util.js</title>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <style>
+.close { margin:0px; padding:0px; }
+.reply { background:#DDF; }
+.fake { text-decoration:underline; color:green; cursor:pointer; }
+  </style>
+  <script type="text/javascript">
+function objectEval(text)
+{
+    // eval() breaks when we use it to get an object using the { a:42, b:'x' }
+    // syntax because it thinks that { and } surround a block and not an object
+    // So we wrap it in an array and extract the first element to get around
+    // this.
+    // The regex = [start of line][whitespace]{[stuff]}[whitespace][end of line]
+    text = text.replace(/\n/g, " ");
+    text = text.replace(/\r/g, " ");
+    if (text.match(/^\s*\{.*\}\s*$/))
+    {
+        text = "[" + text + "][0]";
+    }
+
+    return eval(text);
+}
+  </script>
+</head>
+
+<body>
+
+<h1>util.js</h1>
+
+<h2>Manipulating Simple Elements</h2>
+
+<p><b>Text Elements</b>: <code>h*, p, pre, div, saddress, blockquote, a, span,
+b, big, i, small, sub, sup, tt, em, strong, code, acronym, bdo, cite, dfn, kbd,
+q, samp, var</code>
+</p>
+
+<p><b>Input Elements</b>: <code>textarea, select, option, input[type=text],
+input[type=password], input[type=hidden], input[type=radio],
+input[type=checkbox]</code>
+</p>
+
+<p><b>Functions</b>:</p>
+<ul>
+  <li><code>DWRUtil.setValue(element, value);</code></li>
+  <li><code>DWRUtil.setValues(object)</code></li>
+  <li><code>DWRUtil.getValue(element)</code></li>
+  <li><code>DWRUtil.getText(element)</code></li>
+  <li style="color:gray;"><code>DWRUtil.getValues(object)</code> (needs writing)</li>
+</ul>
+
+<p>
+These elements simply house some text. We can set the text of any of these
+elements using <code>setValue(element, value);</code> or clear them using
+<code>setValue(element, null)</code>. If we attempt to set the value of any of
+these elements using an object or an array then nothing happens.
+Maybe at some time in the future we should be creating new elements based on the
+specified element for arrays, or something similar for objects.
+</p>
+
+<p>
+We do not check that the element is one of the listed types - currently we just
+set innerHTML on anything that we don't recognise as being something that we
+should treat in an other way. Input elements of type checkbox, and select/option
+elements work by selecting the item with the named value. Radio input elements
+work by converting the value to a boolean and selecting based on that.
+</p>
+
+<p>
+Data can be read with <code>DWRUtil.getValue(element)</code>. This is not much
+use for non-editable fields, but very useful for input elements.
+</p>
+
+<h2>Examples</h2>
+
+<p>
+The section with the yellow-ish background below has example of most HTML
+elements each with an id containing its own tag name - for example:
+<code>&lt;b id="b"&gt;means bold&lt;/b&gt;</code>. These elements can be
+altered and read using the test functions below:
+</p>
+
+<h3>Functions</h3>
+
+<h4>DWRUtil.setValue</h4>
+<p>
+  Find the element with the id specified in the first parameter and
+  alter its contents to be the value in the second parameter.
+</p>
+<script type="text/javascript">
+function doSetValue()
+{
+    DWRUtil.setValue($('setvalueele').value, $('setvalueval').value);
+}
+</script>
+<p>
+  <code>DWRUtil.setValue</code>(
+    element id = <input id="setvalueele" onchange="DWRUtil.onReturn(event, doSetValue)" value="b"/>, 
+    value = <input id="setvalueval" onchange="DWRUtil.onReturn(event, doSetValue)" value="BOLD TEXT"/> )
+  <input type="button" value="setValue" onclick="doSetValue()"/>
+</p>
+
+<h4>DWRUtil.setValues</h4>
+<p>
+Similar to setValue except that the input is a Javascript object that contains
+name/value pairs. The names are assumed to be the IDs of HTML elements, and the
+values, what we should set the contents of the elements.
+</p>
+<script type="text/javascript">
+function inlineExample()
+{
+    DWRUtil.setValue("setvalues", "{\n  b:'this is b content',\n  strong:'this is strong content',\n  i:'this is i content',\n  em:'this is em content',\n  cite:'this is cite content',\n  dfn:'this is dfn content',\n  u:'this is u content',\n  big:'this is big content',\n  small:'this is small content',\n  sub:'this is sub content',\n  sup:'this is sup content',\n  span:'this is span content',\n  tt:'this is tt content',\n  code:'this is code content',\n  kbd:'this is kbd content',\n  samp:'this is samp content',\n  acronym:'this is acronym content',\n  bdo:'this is bdo content',\n  q:'this is q content'\n}");
+}
+function inlineClear()
+{
+    DWRUtil.setValue("setvalues", "{\n  b:null,\n  strong:null,\n  i:null,\n  em:null,\n  cite:null,\n  dfn:null,\n  u:null,\n  big:null,\n  small:null,\n  sub:null,\n  sup:null,\n  span:null,\n  tt:null,\n  code:null,\n  kbd:null,\n  samp:null,\n  acronym:null,\n  bdo:null,\n  q:null\n}");
+}
+function blockExample()
+{
+    DWRUtil.setValue("setvalues", "{\n  p:'this is p content',\n  div:'this is div content',\n  h1:'h1',\n  h2:'h2',\n  h3:'h3',\n  h4:'h4',\n  h5:'h5',\n}");
+}
+function doSetValues()
+{
+    var text = DWRUtil.getValue('setvalues');
+    var object = objectEval(text);
+    DWRUtil.setValues(object);
+}
+</script>
+<p>
+<code>DWRUtil.setValues</code>(
+  object =
+  <textarea rows="5" cols="40" id="setvalues" style="vertical-align:top;" onchange="DWRUtil.onReturn(event, doSetValues)">{
+  p: "this is p content",
+  b: "this is b content",
+}</textarea> )
+<input type="button" value="setValues" onclick="doSetValues()"/><br />
+Examples:
+inline elements [<a class="fake" onclick="inlineExample()">text</a>, <a class="fake" onclick="inlineClear()">blank</a>]
+block elements [<a class="fake" onclick="blockExample()">text</a>, <a class="fake" onclick="blockClear()">blank</a>]
+form elements [<a class="fake" onclick="formExample()">text</a>, <a class="fake" onclick="formClear()">blank</a>]
+</p>
+
+<h4>DWRUtil.getValue</h4>
+<p>
+The read version of <code>setValue()</code>. This gets the values out of the
+HTML elements without you needing to worry about how a selection list differs
+from a div.
+</p>
+<script type="text/javascript">
+function doGetValue()
+{
+    var ret = DWRUtil.getValue($('setvalueele').value, $('setvalueval').value);
+    DWRUtil.setValue("getvalueret", ret);
+}
+</script>
+<p>
+  <code>DWRUtil.getValue</code>(
+    element id = <input id="getvalue" onchange="DWRUtil.onReturn(event, doGetValue)" value="b"/> )
+  <input type="button" value="getValue" onclick="doGetValue()"/>
+  returns = "<span id="getvalueret" class="reply"></span>"
+</p>
+
+<h3>Text Elements</h3>
+
+<div style="background:#FFFFDD; padding:10px;">
+
+<table>
+  <tr>
+    <th>Normal Text</th>
+    <th>Heading Levels</th>
+    <th>Inline Text</th>
+  </tr>
+  <tr>
+    <td rowspan="5" width="250">
+      <p>the p element denotes:</p>
+      <p id="p">
+        a paragraph of normal text like this.
+      </p>
+      <p>while a div is similar but:</p>
+      <div style="background:#EEEEEE;" id="div">
+        without any extra margins like p has.
+      </div>
+    </td>
+    <td><h1 id="h1" class="close">1</h1></td>
+    <td rowspan="5">
+      <p>
+        This is a paragraph that contains a full selection of in-line elements,
+        (except var because it confuses javascript since var is a reserved word)
+        In-line elements include: a (<a href="/" id="a">which forms a link</a>),
+        b (<b id="b">means bold</b>) and
+        strong (<strong id="strong">similar without stylistic direction</strong>),
+        i (<i id="i">brings on italics</i>),
+        em (<em id="em">the style free counterpart</em>),
+        cite (<cite id="cite">like this</cite>) and
+        dfn (<dfn id="dfn">like this</dfn>) are all similar,
+        u (<u id="u">for underline</u>),
+        big (<big id="big">for bigger text</big>) and
+        small (<small id="small">for smaller text</small>),
+        sub (<sub id="sub">subscript</sub>) and
+        sup (<sup id="sup">superscript</sup>),
+        span (<span id="span" style="background:#EEE;">can mean anything</span>),
+        tt (<tt id="tt">like this</tt>),
+        code (<code id="code">like this</code>),
+        kbd (<kbd id="kbd">like this</kbd>) and
+        samp (<samp id="samp">like this</samp>) are all similar,
+        acronym (<acronym id="acronym">like this</acronym>),
+        bdo (<bdo id="bdo">like this</bdo>) and finally, 
+        q (<q id="q">adds i18n quotes in Mozilla</q>)
+      </p>
+    </td>
+  </tr>
+  <tr><td><h2 id="h2" class="close">2</h2></td></tr>
+  <tr><td><h3 id="h3" class="close">3</h3></td></tr>
+  <tr><td><h4 id="h4" class="close">4</h4></td></tr>
+  <tr><td><h5 id="h5" class="close">5</h5></td></tr>
+</table>
+
+<h3>Form Elements</h3>
+
+<table>
+  <tr>
+    <td>Text area:</td>
+    <td><textarea id="textarea">default text area contents</textarea></td>
+    <td>Selection list:</td>
+    <td>
+      <select id="select">
+        <option selected="selected" value="one">one</option>
+        <option value="two">two</option>
+        <option value="three">three</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>Text input:</td>
+    <td><input id="input-text" value="default text value" /></td>
+    <td>Password input:</td>
+    <td><input id="input-pasword" value="password" type="password" /></td>
+  </tr>
+  <tr>
+    <td>Radio buttons:</td>
+    <td>
+      <input checked="checked" name="input-radio" value="one" type="radio" />one<br />
+      <input name="input-radio" value="two" type="radio" />two
+    </td>
+    <td>Check box:</td>
+    <td><input id="input-checkbox" value="input checkbox" type="checkbox" />input</td>
+  </tr>
+  <tr>
+    <td>File input:</td>
+    <td><input id="input-file" type="file" /></td>
+    <td>Hidden input:</td>
+    <td><input id="input-hidden" value="hidden" type="hidden" /></td>
+  </tr>
+  <tr>
+    <td>Form button:</td>
+    <td><input id="input-button" value="button" type="button" /></td>
+    <td>Fancy button:</td>
+    <td><button id="button">button</button></td>
+  </tr>
+</table>
+
+</div>
+
+<h2>For the Future</h2>
+
+<p>
+There are many elements that we could do interesting things with, that we
+currently don't. <code>link</code>, <code>script</code> and <code>style</code>
+could all be pressed into service to provide dynamic loading of extra content.
+The ability to create a kind of import statement for Javascript is particularly
+interesting.
+</p>
+
+<p>It would be good to be able to to custom rollovers by manipulating the
+<code>img</code>, <code>object</code> or <code>param</code> elements. Maybe
+code that altered image sizes would also be cool, so this probably deserves
+a section of its own.
+</p>
+
+<p>
+We could do more with the <code>a</code> element than we do. We could have
+<code>setValue()</code> for a hyperlink set the destination rather than the link
+text although this might get confusing, maybe a new function is required.
+</p>
+
+<p>
+The elements <code>hr, br, base, meta, map and area</code> are probably not
+worth any further attention.
+</p>
+
+</body>
+</html>

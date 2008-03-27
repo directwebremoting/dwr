@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR and Spring</title>
+</head>
+
+<body>
+
+<h1>DWR and Spring</h1>
+
+<h2>Check-list to get DWR working with Spring</h2>
+<ol>
+  <li>
+    Make sure you are on the latest DWR.
+    You can tell which version of DWR this site is using by clicking on the
+    query server button on the <a href="demo-text.html">dynamic text demo</a>.
+    Recent versions of DWR have make error reporting much better so an upgrade
+    is often worth it.
+  </li>
+  <li>
+    Make sure you are happy with everything on the
+    <a href="intro.html">introduction</a> page.
+  </li>
+  <li>
+    Make sure your Spring beans work properly outside of DWR.
+  </li>
+  <li>
+    Configure DWR to work with Spring. See the section on the spring creator
+    (towards the bottom) of the <a href="spring.html">configuration</a>
+    page.
+  </li>
+  <li>
+    Look at the demo pages: http://localhost:8080/[YOUR-WEBAPP]/dwr to check
+    that your spring beans appear.
+  </li>
+</ol>
+
+<p>
+  Bram Smeets has written up <a href="http://bram.jteam.nl/?p=2">an interesting
+  blog</a> on now to configure DWR using beans.xml in place of WEB-INF/web.xml.
+  The section on the SpringCreator is a bit out of date however.
+</p>
+
+<p>
+  I would be interested in working out how to specify dwr.xml in beans.xml as
+  well, although this will take a fair bit of Spring-fu to do. Does anyone
+  know much about how to make this happen? If so please join one of the
+  <a href="https://dwr.dev.java.net/servlets/ProjectMailingListList">mailing lists</a>
+  and tell me about it.
+</p>
+
+<h2>The SpringCreator</h2>
+<p>
+  The spring creator is declared by default by DWR as follows:
+  <code>&lt;creator id="spring" class="uk.ltd.getahead.dwr.create.SpringCreator"/&gt;</code>
+  As with 'new' you don't need to add this line to your dwr.xml
+</p>
+<p>
+  This creator will lookup beans in your spring beans.xml file and use Spring
+  to create them. This creator will be very useful to you if you already use
+  Spring and totally useless if you don't.
+</p>
+<p>
+  You allow DWR to use the spring creator to create and remote your beans as
+  follows:
+</p>
+<pre>
+&lt;allow&gt;
+  ...
+  &lt;create
+      creator="spring"
+      javascript="Fred"&gt;
+    &lt;param name="beanName" value="Shiela"/&gt;
+    &lt;param name="location" value="beans.xml"/&gt;
+  &lt;/create&gt;
+&lt;/allow&gt;
+</pre>
+<p>
+  This causes DWR to look for a bean in a Spring Bean Factory.
+  The location parameter is optional. If it is missing then you are expected to
+  have declared the location of your Spring beans using the standard spring
+  <b>WEB-INF/web.xml</b> configuration system:
+</p>
+<pre>
+&lt;context-param&gt;
+  &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+  &lt;param-value&gt;/WEB-INF/classes/beans.xml&lt;/param-value&gt;
+&lt;/context-param&gt;
+&lt;listener&gt;
+  &lt;listener-class&gt;
+    org.springframework.web.context.ContextLoaderListener
+  &lt;/listener-class&gt;
+&lt;/listener&gt; 
+</pre>
+<p>
+  If you prefer to specify which beans.xml to use in your dwr.xml file then you
+  can use a location* parameter. You can specify as many as you wish although
+  the names must be unique and start 'location'. For example: location-1,
+  location-2. These locations are used as parameters to a Spring
+  ClassPathXmlApplicationContext.
+  <br/>
+  The spring creator also supports the now deprecated resourceName parameter
+  (which you can still use as a parameter as previously) however this use
+  will be removed soon.
+</p>
+<p>
+  DWR does not have a runtime (or compile time) dependency on Spring so if you
+  don't use Spring then you won't be affected by this.
+</p>
+<p>
+  I would welcome submissions of Creators designed for HiveMind, Pico, etc.
+</p>
+
+</body>
+</html>
