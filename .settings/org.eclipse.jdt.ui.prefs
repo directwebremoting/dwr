@@ -1,0 +1,23 @@
+#Sun Sep 11 09:43:20 BST 2005
+comment_clear_blank_lines=false
+comment_format_comments=false
+comment_format_header=false
+comment_format_html=true
+comment_format_source_code=true
+comment_indent_parameter_description=true
+comment_indent_root_tags=false
+comment_line_length=80
+comment_new_line_for_parameter=false
+comment_separate_root_tags=false
+eclipse.preferences.version=1
+formatter_settings_version=8
+internal.default.compliance=user
+org.eclipse.jdt.ui.exception.name=ex
+org.eclipse.jdt.ui.gettersetter.use.is=true
+org.eclipse.jdt.ui.ignorelowercasenames=true
+org.eclipse.jdt.ui.importorder=java;javax;org;com;
+org.eclipse.jdt.ui.javadoc=true
+org.eclipse.jdt.ui.keywordthis=false
+org.eclipse.jdt.ui.ondemandthreshold=99
+org.eclipse.jdt.ui.overrideannotation=true
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>
