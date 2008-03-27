@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data jsxnamespace="propsbundle">
+  <locale key="ja">
+    <record jsxid="format.date.long" jsxtext="yyyy'年'M'月'd'日'"/>
+    <record jsxid="format.time.medium" jsxtext="H:mm:ss"/>
+    <record jsxid="format.date.full" jsxtext="yyyy'年'M'月'd'日'EEEE"/>
+    <record jsxid="format.time.short" jsxtext="H:mm"/>
+    <record jsxid="format.date.medium" jsxtext="yyyy/MM/dd"/>
+    <record jsxid="format.time.long" jsxtext="H:mm:ss:z"/>
+    <record jsxid="format.time.full" jsxtext="H'時'mm'分'ss'秒'z"/>
+    <record eval="1" jsxid="date.month.abbrev" jsxtext="['1 月','2 月','3 月','4 月','5 月','6 月','7 月','8 月','9 月','10 月','11 月','12 月']"/>
+    <record eval="1" jsxid="date.month" jsxtext="['1 月','2 月','3 月','4 月','5 月','6 月','7 月','8 月','9 月','10 月','11 月','12 月']"/>
+    <record eval="1" jsxid="date.day.abbrev" jsxtext="['日','月','火','水','木','金','土']"/>
+    <record eval="1" jsxid="date.day" jsxtext="['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日']"/>
+    <record eval="1" jsxid="date.day.narrow" jsxtext="['日','月','火','水','木','金','土']"/>
+    <record eval="1" jsxid="date.era.long" jsxtext="['紀元前','西暦']"/>
+    <record eval="1" jsxid="date.era" jsxtext="['紀元前','西暦']"/>
+    <record eval="1" jsxid="time.ampm" jsxtext="['午前','午後']"/>
+    <record jsxid="string.lang.ar" jsxtext="アラビア語"/>
+    <record jsxid="string.lang.da" jsxtext="デンマーク語"/>
+    <record jsxid="string.lang.de" jsxtext="ドイツ語"/>
+    <record jsxid="string.lang.el" jsxtext="ギリシャ語"/>
+    <record jsxid="string.lang.en" jsxtext="英語"/>
+    <record jsxid="string.lang.es" jsxtext="スペイン語"/>
+    <record jsxid="string.lang.fr" jsxtext="フランス語"/>
+    <record jsxid="string.lang.it" jsxtext="イタリア語"/>
+    <record jsxid="string.lang.ja" jsxtext="日本語"/>
+    <record jsxid="string.lang.ko" jsxtext="韓国語"/>
+    <record jsxid="string.lang.pt" jsxtext="ポルトガル語"/>
+    <record jsxid="string.lang.ru" jsxtext="ロシア語"/>
+    <record jsxid="string.lang.sv" jsxtext="スウェーデン語"/>
+    <record jsxid="string.lang.zh" jsxtext="中国語"/>
+    <record jsxid="string.terr.AU" jsxtext="オーストラリア"/>
+    <record jsxid="string.terr.BR" jsxtext="ブラジル"/>
+    <record jsxid="string.terr.CA" jsxtext="カナダ"/>
+    <record jsxid="string.terr.CN" jsxtext="中国"/>
+    <record jsxid="string.terr.DE" jsxtext="ドイツ"/>
+    <record jsxid="string.terr.DK" jsxtext="デンマーク"/>
+    <record jsxid="string.terr.ES" jsxtext="スペイン"/>
+    <record jsxid="string.terr.FR" jsxtext="フランス"/>
+    <record jsxid="string.terr.GB" jsxtext="イギリス"/>
+    <record jsxid="string.terr.GR" jsxtext="ギリシャ"/>
+    <record jsxid="string.terr.HK" jsxtext="中華人民共和国香港特別行政区"/>
+    <record jsxid="string.terr.IT" jsxtext="イタリア"/>
+    <record jsxid="string.terr.JP" jsxtext="日本"/>
+    <record jsxid="string.terr.KR" jsxtext="大韓民国"/>
+    <record jsxid="string.terr.MX" jsxtext="メキシコ"/>
+    <record jsxid="string.terr.NZ" jsxtext="ニュージーランド"/>
+    <record jsxid="string.terr.PT" jsxtext="ポルトガル"/>
+    <record jsxid="string.terr.RU" jsxtext="ロシア"/>
+    <record jsxid="string.terr.SE" jsxtext="スウェーデン"/>
+    <record jsxid="string.terr.TW" jsxtext="台湾"/>
+    <record jsxid="string.terr.US" jsxtext="アメリカ合衆国"/>
+    <record eval="1" jsxid="time.24hour" jsxtext="true"/>
+    <record jsxid="time.sep.hour-min" jsxtext=":"/>
+    <record jsxid="time.sep.min-sec" jsxtext=":"/>
+  </locale>
+<locale key="ja_JP">
+    <record eval="1" jsxid="date.firstWeekDay" jsxtext="0"/>
+    <record jsxid="currency.code" jsxtext="JPY"/>
+    <record jsxid="format.number.currency" jsxtext="¤#,##0.00"/>
+  </locale>
+</data>
