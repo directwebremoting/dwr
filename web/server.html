@@ -1,0 +1,58 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>DWR - Unit Test</title>
+  <script type='text/javascript' src='./dwr/interface/Test.js'></script>
+  <script type='text/javascript' src='./dwr/engine.js'></script>
+  <script type='text/javascript' src='./dwr/util.js'></script>
+  <script type='text/javascript'>
+    function init() {
+        DWREngine.setErrorHandler(errorHandler);
+        DWREngine.setWarningHandler(warningHandler);
+        update();
+    }
+    function update() {
+        count++;
+        Test.slowStringParam("ping", 1000, {
+            callback:callback,
+            timeout:1050,
+            errorHandler:callErrorHandler
+        });
+    }
+    function callback(data) {
+        if (data == "ping") {
+            report("Server OK");
+        }
+        else {
+            report("Server returned: " + data);
+        }
+        setTimeout(update, 1000);
+    }
+    function callErrorHandler() {
+        report("Timeout or server error");
+        setTimeout(update, 1000);
+    }
+    function errorHandler(message) {
+        report("Error: " + message);
+    }
+    function warningHandler(message) {
+        report("Warning: " + message);
+    }
+    function report(message) {
+        var ele = $("status");
+        ele.options[ele.options.length] = new Option("" + count + ": " + message);
+    }
+    var count = 0;
+  </script>
+</head>
+
+<body onload="init()">
+
+<p>Status:</p>
+
+<select id="status" size="50" style="height:90%;width:40em">
+</select>
+
+</body>
+
+</html>
