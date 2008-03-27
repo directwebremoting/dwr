@@ -1,0 +1,396 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<HTML>
+<HEAD>
+<TITLE>DWR - JavaDoc for ExecutionContext</TITLE>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="javadoc.css" TITLE="Style">
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+</HEAD>
+
+<BODY>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<!-- ======== START OF CLASS DATA ======== -->
+
+<h2>DWR JavaDoc</h2>
+<p>
+  There is only 1 public class in DWR. The others are currently subject to
+  change, however more should be published properly before 1.0 is released.
+</p>
+
+<H2>
+<FONT SIZE="-1">uk.ltd.getahead.dwr</FONT>
+<BR>
+Class ExecutionContext</H2>
+
+<PRE>
+java.lang.Object
+  <IMG SRC="inherit.gif" ALT="extended by "><B>uk.ltd.getahead.dwr.ExecutionContext</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>ExecutionContext</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Class to enable us to access servlet parameters.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Joe Walker [joe at getahead dot ltd dot uk]</DD>
+</DL>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#forwardToString(java.lang.String)">forwardToString</A></B>(java.lang.String&nbsp;url)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Forward a request to a given URL and catch the data written to it</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="" title="class in uk.ltd.getahead.dwr">ExecutionContext</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="#get()">get</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accessor for the current ExecutionContext.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="" title="class in uk.ltd.getahead.dwr">ExecutionContext</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getExecutionContext()">getExecutionContext</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>Use ExecutionContext.get();</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;HttpServletRequest</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getHttpServletRequest()">getHttpServletRequest</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accessor for the http request information.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;HttpServletResponse</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getHttpServletResponse()">getHttpServletResponse</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accessor for the http response bean.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;ServletConfig</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getServletConfig()">getServletConfig</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accessor for the servlet config.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;ServletContext</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getServletContext()">getServletContext</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the ServletContext to which this session belongs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;HttpSession</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getSession()">getSession</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current session associated with this request,
+ or if the request does not have a session, creates one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;HttpSession</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getSession(boolean)">getSession</A></B>(boolean&nbsp;create)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current HttpSession associated with this request or, if
+ there is no current session and create is true, returns a new session.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getSourceControlInfo()">getSourceControlInfo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fish the version number out of the dwr.properties file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#getVersion()">getVersion</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fish the version number out of the dwr.properties file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#setExecutionContext(HttpServletRequest, HttpServletResponse, ServletConfig)">setExecutionContext</A></B>(HttpServletRequest&nbsp;request,
+                    HttpServletResponse&nbsp;response,
+                    ServletConfig&nbsp;config)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Make the current thread know what the current request is.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="#unset()">unset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unset the current ExecutionContext
+ This method is only for use internally to DWR.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSession()"><!-- --></A><H3>
+getSession</H3>
+<PRE>
+public HttpSession <B>getSession</B>()</PRE>
+<DL>
+<DD>Returns the current session associated with this request,
+ or if the request does not have a session, creates one.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Returns the http session.<DT><B>See Also:</B><DD><CODE>HttpServletRequest#getSession()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSession(boolean)"><!-- --></A><H3>
+getSession</H3>
+<PRE>
+public HttpSession <B>getSession</B>(boolean&nbsp;create)</PRE>
+<DL>
+<DD>Returns the current HttpSession associated with this request or, if
+ there is no current session and create is true, returns a new session. 
+ If create is false and the request has no valid HttpSession, this method
+ returns null.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>create</CODE> - false to return null if there's no current session
+<DT><B>Returns:</B><DD>the session associated with this request<DT><B>See Also:</B><DD><CODE>HttpServletRequest#getSession(boolean)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getServletConfig()"><!-- --></A><H3>
+getServletConfig</H3>
+<PRE>
+public ServletConfig <B>getServletConfig</B>()</PRE>
+<DL>
+<DD>Accessor for the servlet config.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Returns the config.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getServletContext()"><!-- --></A><H3>
+getServletContext</H3>
+<PRE>
+public ServletContext <B>getServletContext</B>()</PRE>
+<DL>
+<DD>Returns the ServletContext to which this session belongs.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The servlet context information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHttpServletRequest()"><!-- --></A><H3>
+getHttpServletRequest</H3>
+<PRE>
+public HttpServletRequest <B>getHttpServletRequest</B>()</PRE>
+<DL>
+<DD>Accessor for the http request information.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Returns the request.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHttpServletResponse()"><!-- --></A><H3>
+getHttpServletResponse</H3>
+<PRE>
+public HttpServletResponse <B>getHttpServletResponse</B>()</PRE>
+<DL>
+<DD>Accessor for the http response bean.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Returns the response.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="forwardToString(java.lang.String)"><!-- --></A><H3>
+forwardToString</H3>
+<PRE>
+public java.lang.String <B>forwardToString</B>(java.lang.String&nbsp;url)
+                                 throws ServletException,
+                                        java.io.IOException</PRE>
+<DL>
+<DD>Forward a request to a given URL and catch the data written to it
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>url</CODE> - The URL to forward to
+<DT><B>Returns:</B><DD>The text that results from forwarding to the given URL
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if the target resource throws this exception
+<DD><CODE>ServletException</CODE> - if the target resource throws this exception
+<DD><CODE>java.lang.IllegalStateException</CODE> - if the response was already committed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVersion()"><!-- --></A><H3>
+getVersion</H3>
+<PRE>
+public java.lang.String <B>getVersion</B>()</PRE>
+<DL>
+<DD>Fish the version number out of the dwr.properties file.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The current version number.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSourceControlInfo()"><!-- --></A><H3>
+getSourceControlInfo</H3>
+<PRE>
+protected java.lang.String <B>getSourceControlInfo</B>()</PRE>
+<DL>
+<DD>Fish the version number out of the dwr.properties file.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The current version number.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getExecutionContext()"><!-- --></A><H3>
+getExecutionContext</H3>
+<PRE>
+public static <A HREF="" title="class in uk.ltd.getahead.dwr">ExecutionContext</A> <B>getExecutionContext</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>Use ExecutionContext.get();</I>
+<P>
+<DD>This method will be removed in the next release
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The current ExecutionContext<DT><B>See Also:</B><DD><A HREF="#get()"><CODE>get()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get()"><!-- --></A><H3>
+get</H3>
+<PRE>
+public static <A HREF="" title="class in uk.ltd.getahead.dwr">ExecutionContext</A> <B>get</B>()</PRE>
+<DL>
+<DD>Accessor for the current ExecutionContext.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The current ExecutionContext</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setExecutionContext(HttpServletRequest, HttpServletResponse, ServletConfig)"><!-- --></A><H3>
+setExecutionContext</H3>
+<PRE>
+protected static void <B>setExecutionContext</B>(HttpServletRequest&nbsp;request,
+                                          HttpServletResponse&nbsp;response,
+                                          ServletConfig&nbsp;config)</PRE>
+<DL>
+<DD>Make the current thread know what the current request is.
+ This method is only for use internally to DWR.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>request</CODE> - The incoming http request<DD><CODE>response</CODE> - The outgoing http reply<DD><CODE>config</CODE> - The servlet configuration<DT><B>See Also:</B><DD><A HREF="#unset()"><CODE>unset()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="unset()"><!-- --></A><H3>
+unset</H3>
+<PRE>
+protected static void <B>unset</B>()</PRE>
+<DL>
+<DD>Unset the current ExecutionContext
+ This method is only for use internally to DWR.
+<P>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="#setExecutionContext(HttpServletRequest, HttpServletResponse, ServletConfig)"><CODE>setExecutionContext(HttpServletRequest, HttpServletResponse, ServletConfig)</CODE></A></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+</div>
+</BODY>
+</HTML>

@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR Demo - Dynamically Updating Text</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/util.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/jscp.js'></script>
+  <script>
+  function update()
+  {
+      Demo.getServerInfo(loadinfo);
+  }
+  
+  function loadinfo(data)
+  {
+      document.getElementById("reply").innerHTML = data;
+  }
+  
+  function forward()
+  {
+      Demo.getForward(loadforward);
+  }
+
+  function loadforward(data)
+  {
+      document.getElementById("forward").innerHTML = data;
+  }
+  </script>
+</head>
+
+<body>
+<div id="page-logo">DWR</div>
+<div id="page-title">Direct Web Remoting - AJAX and XMLHttpRequest made easy</div>
+<div id="page-portlet-1" class="sidebody">
+  <a href="sidebar.html">Site-Map</a>
+  <script type='text/javascript'>JSCP.insert("page-portlet-1", "sidebar.html");</script>
+</div>
+
+<div id="page-content">
+
+<h1>Dynamically Updating Text</h1>
+
+<h2>Demo</h2>
+<p>
+  Query Server: <input value="Execute" type="button" onclick="update()"/>
+  <br/>
+  Server Information: <span id="reply" style="background:#ddeecc; padding-left:4px; padding-right:4px;"></span>
+</p>
+
+<h2>How it works</h2>
+
+<p>
+  When you click on the "Execute" button the on-click event gets called:
+  <code>onclick="update()"</code>. The <code>update()</code> function
+  looks like this:
+</p>
+
+<pre>
+function update()
+{
+    Demo.getServerInfo(loadinfo);
+}
+</pre>
+
+<p>
+  DWR is asynchronous due to the way Javascript works so it won't halt the
+  web browser while we are waiting for the background HTTP request to return.
+  So the parameter (<code>loadinfo</code>) gives DWR somewhere to put the data
+  when the call has returned.
+  <br/>
+  The Javascript proxy methods produced by DWR all have 1 extra parameter at the
+  start which is the name of a function to which to give the returned data.
+  <br/>
+  First DWR arranges for the <code>Demo.getServerInfo()</code> Java code to be
+  called:
+</p>
+
+<pre>
+public String getServerInfo()
+{
+    return ExecutionContext.getExecutionContext()
+                    .getServletContext().getServerInfo();
+}
+</pre>
+
+<p>
+  Normally the code called by DWR is a simple POJO that knows nothing about the
+  web. In this demonstration we want to find out about the web server so we use
+  the <code>ExecutionContext</code> class to get access to the ServletContext.
+  <br/>
+  When this method returns, DWR calls <code>loadinfo()</code> function which
+  moves the text to the reply span:
+</p>
+
+<pre>
+function loadinfo(data)
+{
+    document.getElementById("reply").innerHTML = data;
+}
+</pre>
+
+<p>
+  And that's it. In effect we have written about 4 lines of code to get data
+  from the server, and display it in the browser. I'm not sure it gets much
+  simpler than that!
+</p>
+
+<h2>Resource Forward Demo</h2>
+<p>
+  <input value="Include Page" type="button" onclick="forward()"/>
+  <br/>
+  Included Page:
+  <div id="forward"></div>
+</p>
+
+<h2>How it works</h2>
+
+<p>
+  This example is very similar, the only difference is that we are using the
+  contents of <a href="forward.jsp">this JSP page</a>, and using the
+  ExecutionContext class to allow us to get data from other pages. There are
+  no iframes used in this example - just DWR and a humble div.
+  <br/>
+  The code is all very similar to the above example except for slightly
+  different Java code:
+</p>
+
+<pre>
+public String getInclude() throws ServletException, IOException
+{
+    return ExecutionContext.getExecutionContext()
+                  .forwardToString("forward.jsp");
+}
+</pre>
+
+</div>
+</body>
+</html>
