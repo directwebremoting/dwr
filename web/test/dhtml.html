@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../generic.js'> </script>
+  <script type='text/javascript' src='dhtml.js'> </script>
+  <link type="text/css" href="../generic.css" rel="stylesheet" />
+  <title>DWR - DHTML Tests</title>
+</head>
+
+<body>
+
+<div>[ <a href="../index.html">Top Level</a> ]</div>
+
+<script type="text/javascript">
+var arrayFive = [ 'One', 'Two', 'Three', 'Four', 'Five' ];
+var arrayObject = [
+  { name:'One', value:'1' },
+  { name:'Two', value:'2' },
+  { name:'Three', value:'3' },
+  { name:'Four', value:'4' },
+  { name:'Five', value:'5' }
+];
+var map = { one:1, two:2, three:3, four:4, five:5 };
+
+function executeAll() {
+  var prop;
+  for (prop in window) {
+    if (prop.match(/test/) && typeof window[prop] == "function" && prop != "testEquals") {
+      eval(prop + "();");
+    }
+  }
+}
+
+function success() {
+}
+
+function failure(message) {
+  alert(message);
+}
+</script>
+
+<h1>Tests</h1>
+
+<div>
+  <button onclick="executeAll()">ExecuteAll</button>
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function submitFunction() {
+  $("alert").style.display = "inline";
+  setTimeout("$('alert').style.display = 'none';", 1000);
+}
+</script>
+
+<p>
+  <input type="text" onkeydown="DWRUtil.onReturn(event, submitFunction)"/>
+  <input type="button" onclick="submitFunction()" value="GO"/>
+  <span id="alert" style="display:none; background:#FFFFDD; font-weight:bold;">submitFunction called</span>
+</p>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testRemoveOptions() {
+  DWRUtil.removeAllOptions('removeOptions');
+}
+</script>
+
+<div>
+  <button onclick="testRemoveOptions();">RemoveOptions</button>
+  <select id="removeOptions">
+    <option value="v1">One</option>
+    <option value="v2">Two</option>
+    <option value="v3">Three</option>
+    <option value="v4">Four</option>
+    <option value="v5">Five</option>
+  </select>
+  (These options should disappear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsBasic() {
+  DWRUtil.addOptions('addOptionsBasic', arrayFive);
+  if (DWRUtil.getValue('addOptionsBasic') == "One") success();
+  else failure("DWRUtil.getValue('addOptionsBasic') = " + DWRUtil.getValue('addOptionsBasic'));
+  if (DWRUtil.getText('addOptionsBasic') == "One") success();
+  else failure("DWRUtil.getText('addOptionsBasic') = " + DWRUtil.getText('addOptionsBasic'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsBasic();">AddOptionsBasic</button>
+  <select id="addOptionsBasic"> </select>
+  (Options One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsObject1() {
+  DWRUtil.addOptions('addOptionsObject1', arrayObject, "name");
+  if (DWRUtil.getValue('addOptionsObject1') == "One") success();
+  else failure("DWRUtil.getValue('addOptionsObject1') = " + DWRUtil.getValue('addOptionsObject1'));
+  if (DWRUtil.getText('addOptionsObject1') == "One") success();
+  else failure("DWRUtil.getText('addOptionsObject1') = " + DWRUtil.getText('addOptionsObject1'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsObject1();">AddOptionsObject1</button>
+  <select id="addOptionsObject1"> </select>
+  (Options One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsObject2() {
+  DWRUtil.addOptions('addOptionsObject2', arrayObject, "name", "value");
+  if (DWRUtil.getValue('addOptionsObject2') == "One") success();
+  else failure("DWRUtil.getValue('addOptionsObject2') = " + DWRUtil.getValue('addOptionsObject2'));
+  if (DWRUtil.getText('addOptionsObject2') == "1") success();
+  else failure("DWRUtil.getText('addOptionsObject2') = " + DWRUtil.getText('addOptionsObject2'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsObject2();">AddOptionsObject2</button>
+  <select id="addOptionsObject2"> </select>
+  (Options 1-5 should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsObject3() {
+  DWRUtil.addOptions('addOptionsObject3', arrayObject, "value");
+  if (DWRUtil.getValue('addOptionsObject3') == "1") success();
+  else failure("DWRUtil.getValue('addOptionsObject3') = " + DWRUtil.getValue('addOptionsObject3'));
+  if (DWRUtil.getText('addOptionsObject3') == "1") success();
+  else failure("DWRUtil.getText('addOptionsObject3') = " + DWRUtil.getText('addOptionsObject3'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsObject3();">AddOptionsObject3</button>
+  <select id="addOptionsObject3"> </select>
+  (Options 1-5 should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsObject4() {
+  DWRUtil.addOptions('addOptionsObject4', arrayObject, "value", "name");
+  if (DWRUtil.getValue('addOptionsObject4') == "1") success();
+  else failure("DWRUtil.getValue('addOptionsObject4') = " + DWRUtil.getValue('addOptionsObject4'));
+  if (DWRUtil.getText('addOptionsObject4') == "One") success();
+  else failure("DWRUtil.getText('addOptionsObject4') = " + DWRUtil.getText('addOptionsObject4'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsObject4();">AddOptionsObject4</button>
+  <select id="addOptionsObject4"> </select>
+  (Options One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsMap1() {
+  DWRUtil.addOptions('addOptionsMap1', map);
+  if (DWRUtil.getValue('addOptionsMap1') == "one") success();
+  else failure("DWRUtil.getValue('addOptionsMap1') = " + DWRUtil.getValue('addOptionsMap1'));
+  if (DWRUtil.getText('addOptionsMap1') == "1") success();
+  else failure("DWRUtil.getText('addOptionsMap1') = " + DWRUtil.getText('addOptionsMap1'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsMap1();">AddOptionsMap1</button>
+  <select id="addOptionsMap1"> </select>
+  (Options 1-5 should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddOptionsMap2() {
+  DWRUtil.addOptions('addOptionsMap2', map, true);
+  if (DWRUtil.getValue('addOptionsMap2') == "1") success();
+  else failure("DWRUtil.getValue('addOptionsMap2') = " + DWRUtil.getValue('addOptionsMap2'));
+  if (DWRUtil.getText('addOptionsMap2') == "one") success();
+  else failure("DWRUtil.getText('addOptionsMap2') = " + DWRUtil.getText('addOptionsMap2'));
+}
+</script>
+
+<div>
+  <button onclick="testAddOptionsMap2();">AddOptionsMap2</button>
+  <select id="addOptionsMap2"> </select>
+  (Options one-five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testRemoveItems() {
+  DWRUtil.removeAllOptions('removeItems');
+}
+</script>
+
+<div>
+  <button onclick="testRemoveItems();">RemoveItems</button>
+  <ul id="removeItems">
+    <li>One</li><li>Two</li><li>Three</li><li>Four</li><li>Five</li>
+  </ul>
+  (These items should disappear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddItemsBasic() {
+  DWRUtil.addOptions('addItemsBasic', arrayFive);
+}
+</script>
+
+<div>
+  <button onclick="testAddItemsBasic();">AddItemsBasic</button>
+  <ul id="addItemsBasic"> </ul>
+  (Items One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddItemsObject1() {
+  DWRUtil.addOptions('addItemsObject1', arrayObject, "name");
+}
+</script>
+
+<div>
+  <button onclick="testAddItemsObject1();">AddItemsObject1</button>
+  <ul id="addItemsObject1"> </ul>
+  (Items One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddItemsObject2() {
+  DWRUtil.addOptions('addItemsObject2', arrayObject, "name", "value");
+}
+</script>
+
+<div>
+  <button onclick="testAddItemsObject2();">AddItemsObject2</button>
+  <ul id="addItemsObject2"> </ul>
+  (Items 1-5 should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddItemsObject3() {
+  DWRUtil.addOptions('addItemsObject3', arrayObject, "value");
+}
+</script>
+
+<div>
+  <button onclick="testAddItemsObject3();">AddItemsObject3</button>
+  <ul id="addItemsObject3"> </ul>
+  (Items 1-5 should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddItemsObject4() {
+  DWRUtil.addOptions('addItemsObject4', arrayObject, "value", "name");
+}
+</script>
+
+<div>
+  <button onclick="testAddItemsObject4();">AddItemsObject4</button>
+  <ul id="addItemsObject4"> </ul>
+  (Items One-Five should appear)
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testCloneNode1() {
+  DWRUtil.cloneNode('cloneNode1', { idPrefix:'pre', idSuffix:'suf' });
+  $("precloneNode1suf").style.backgroundColor = "#AFA";
+  DWRUtil.setValue("precloneNode1Inner2suf", "v2");
+  var clonetext = DWRUtil.getValue("precloneNode1Inner1suf", { textContent:true });
+  DWRUtil.setValue("cloneNode1Results", clonetext);
+}
+</script>
+
+<div>
+  <div id="cloneNode1">
+    <ul id="cloneNode1Inner1">
+      <li>One</li><li>Two</li><li>Three</li><li>Four</li>
+    </ul>
+    <select id="cloneNode1Inner2">
+      <option value="v1">One</option><option value="v2">Two</option>
+      <option value="v3">Three</option><option value="v4">Four</option>
+    </select>
+  </div>
+  <button onclick="testCloneNode1();">testCloneNode1</button>
+  Results: [<span id="cloneNode1Results"> </span>]
+  <div>
+    (Green clone should appear with Results: [OneTwoThreeFour] and Option Two selected)
+  </div>
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testAddRowsBasic() {
+  DWRUtil.addRows('addRowsBasic', arrayFive, [
+    function(data) { return data; },
+    function(data) { return data.toUpperCase(); },
+    function(data) {
+      var input = document.createElement("input");
+      input.setAttribute("type", "button");
+      input.setAttribute("value", "DOM Test");
+      input.setAttribute("onclick", "alert('" + data + "');");
+      return input;
+    },
+    function(data) { return "<input type='button' value='innerHTML Test' onclick='alert(\"" + data + "\");'>"; }
+  ]);
+}
+</script>
+
+<div>
+  <button onclick="testAddRowsBasic();">AddRowsBasic</button>
+  <table border="1">
+    <thead><tr><th>Unaltered</th><th>Altered</th><th>DOM Button</th><th>InnerHTML Button</th></tr></thead>
+    <tbody id="addRowsBasic"> </tbody>
+  </table>
+</div>
+
+<hr/><!--====================================================================-->
+
+<script type="text/javascript">
+function testSetValuesDiv() {
+  var settings = {
+    setValuesDiv:"setValuesDiv",
+    setValuesSpan:"setValuesSpan",
+    setValuesSelect:"two",
+    setValuesText:"setValuesText",
+    setValuesPassword:"AB",
+    setValuesTextarea:"setValuesTextarea",
+    setValuesButton1:"B1-Two",
+    setValuesButton2:"B2-Two",
+    setValuesRadio1:true,
+    setValuesRadio2:false,
+    setValuesRadio3:"one",
+    setValuesRadio4:"two",
+    setValuesCheckbox1:true,
+    setValuesCheckbox2:false
+  };
+  DWRUtil.setValues(settings);
+
+  var empty = {
+    setValuesDiv:null,
+    setValuesSpan:null,
+    setValuesSelect:null,
+    setValuesText:null,
+    setValuesPassword:null,
+    setValuesTextarea:null,
+    setValuesButton1:null,
+    setValuesButton2:null,
+    setValuesRadio1:null,
+    setValuesRadio2:null,
+    setValuesRadio3:null,
+    setValuesRadio4:null,
+    setValuesCheckbox1:null,
+    setValuesCheckbox2:null
+  };
+  DWRUtil.getValues(empty);
+  var reply = testEquals(settings, empty, 0);
+  if (reply != true) {
+    alert(reply);
+  }
+}
+</script>
+
+<button onclick="testSetValuesDiv()">SetValuesDiv</button>
+
+<div>setValuesDiv: <div id="setValuesDiv"></div> (Should become 'setValuesDiv')</div>
+<div>setValuesSpan: <span id="setValuesSpan"></span> (Should become 'setValuesSpan')</div>
+
+<div>
+  setValuesSelect:
+  <select id="setValuesSelect">
+    <option selected="selected" value="one">text one</option>
+    <option value="two">text two</option>
+    <option value="three">text three</option>
+  </select>
+  (Should become 'text two')
+</div>
+
+<div>setValuesText: <input id="setValuesText" value="" /> (Should become 'setValuesText')</div>
+<div>setValuesPassword: <input id="setValuesPassword" type="password" /> (Should have 2 chars)</div>
+<div>setValuesTextarea: <textarea id="setValuesTextarea"></textarea> (Should become 'setValuesTextarea')</div>
+
+<div>setValuesButton1: <input id="setValuesButton1" value="One" type="button" /> (Should become 'B1-Two')</div>
+<div>setValuesButton2: <button id="setValuesButton2">One</button> (Should become 'B2-Two')</div>
+
+<div>setValuesRadio1: <input id="setValuesRadio1" value="one" type="radio"/> (Should become checked)</div>
+<div>setValuesRadio2: <input id="setValuesRadio2" value="one" type="radio" checked="checked"/> (Should become unchecked)</div>
+
+<div>
+  setValuesRadio3:
+  <input name="setValuesRadio3" value="one" type="radio"/>
+  <input name="setValuesRadio3" value="two" type="radio" checked="checked"/>
+  (Should become YN)
+</div>
+
+<div>
+  setValuesRadio4:
+  <input name="setValuesRadio4" value="one" type="radio" checked="checked"/>
+  <input name="setValuesRadio4" value="two" type="radio"/>
+  (Should become NY)
+</div>
+
+<div>setValuesCheckbox1: <input id="setValuesCheckbox1" type="checkbox" /> (Should become checked)</div>
+<div>setValuesCheckbox2: <input id="setValuesCheckbox2" type="checkbox" checked="checked" /> (Should become unchecked)</div>
+
+<hr/><!--====================================================================-->
+
+</body>
+</html>
+
+
