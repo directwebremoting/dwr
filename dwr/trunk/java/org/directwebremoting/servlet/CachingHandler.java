@@ -16,9 +16,7 @@
 package org.directwebremoting.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,44 +26,70 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
-import org.directwebremoting.util.CopyUtils;
 
 /**
+ * A handler that deals with ETags and other nonsense to do with keeping a
+ * browsers cache in-sync with a web server.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class CachingFileHandler implements Handler
+public abstract class CachingHandler implements Handler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        if (isUpToDate(request))
+        long lastModified = getLastModifiedTime();
+
+        // Is the browser in sync with our latest?
+        if (isUpToDate(request, lastModified))
         {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
 
-        String output;
-
+        // Is our cache up to date WRT the real resource?
+        CachedResource resource;
         synchronized (scriptCache)
         {
             String url = request.getPathInfo();
-            output = scriptCache.get(url);
-            if (output == null)
+            resource = scriptCache.get(url);
+
+            if (resource == null || lastModified > resource.lastModifiedTime)
             {
-                output = generateCachableContent(request, response);
+                if (log.isDebugEnabled())
+                {
+                    if (resource == null)
+                    {
+                        log.debug("Generating contents for " + url + ". It is not currently cached." );
+                    }
+                    else
+                    {
+                        log.debug("Generating contents for " + url + ". Resource modtime=" + lastModified + ". Cached modtime");
+                    }
+                }
+
+                resource = new CachedResource();
+                resource.contents = generateCachableContent(request, response);
+                resource.lastModifiedTime = lastModified;
+                scriptCache.put(url, resource);
             }
-            scriptCache.put(url, output);
         }
 
         response.setContentType(mimeType);
-        response.setDateHeader(HttpConstants.HEADER_LAST_MODIFIED, CONTAINER_START_TIME);
-        response.setHeader(HttpConstants.HEADER_ETAG, ETAG);
+        response.setDateHeader(HttpConstants.HEADER_LAST_MODIFIED, lastModified);
+        response.setHeader(HttpConstants.HEADER_ETAG, "\"" + lastModified + '\"');
 
         PrintWriter out = response.getWriter();
-        out.println(output);
+        out.println(resource.contents);
     }
+
+    /**
+     * Detect the last time, after which we are sure that the resource has not
+     * changed
+     * @return The last modification time
+     */
+    protected abstract long getLastModifiedTime();
 
     /**
      * Create a String which can be cached and sent as a 302
@@ -77,34 +101,14 @@ public abstract class CachingFileHandler implements Handler
     protected abstract String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     /**
-     * An easy way to implement {@link #generateCachableContent(HttpServletRequest, HttpServletResponse)}
-     * is to simply <code>return {@link #readResource(String)};</code> using the
-     * path to some resource provided in dwr.jar.
-     * @param resource The fully qualified path (i.e. includes package) to a resource in dwr.jar
-     * @return The contents of the resource as a string
-     * @throws IOException If the resource can not be found or read
-     */
-    protected String readResource(String resource) throws IOException
-    {
-        InputStream raw = getClass().getResourceAsStream(resource);
-        if (raw == null)
-        {
-            throw new IOException("Failed to find resource: " + resource);
-        }
-
-        StringWriter sw = new StringWriter();
-        CopyUtils.copy(raw, sw);
-
-        return sw.toString();
-    }
-
-    /**
      * Do we need to send the content for this file
      * @param req The HTTP request
      * @return true iff the ETags and If-Modified-Since headers say we have not changed
      */
-    protected boolean isUpToDate(HttpServletRequest req)
+    protected boolean isUpToDate(HttpServletRequest req, long lastModified)
     {
+        String etag = "\"" + lastModified + '\"';
+
         if (ignoreLastModified)
         {
             return false;
@@ -142,11 +146,11 @@ public abstract class CachingFileHandler implements Handler
         if (givenEtag == null)
         {
             // There is no ETag, just go with If-Modified-Since
-            if (modifiedSince > CONTAINER_START_TIME)
+            if (modifiedSince >= lastModified)
             {
                 if (log.isDebugEnabled())
                 {
-                    log.debug("Sending 304 for " + pathInfo + " If-Modified-Since=" + modifiedSince + ", Last-Modified=" + CONTAINER_START_TIME);
+                    log.debug("Sending 304 for " + pathInfo + " If-Modified-Since=" + modifiedSince + ", Last-Modified=" + lastModified);
                 }
                 return true;
             }
@@ -158,12 +162,12 @@ public abstract class CachingFileHandler implements Handler
         // Deal with missing If-Modified-Since
         if (modifiedSince == -1)
         {
-            if (!ETAG.equals(givenEtag))
+            if (!etag.equals(givenEtag))
             {
                 // There is an ETag, but no If-Modified-Since
                 if (log.isDebugEnabled())
                 {
-                    log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=-1, Old ETag=" + givenEtag + ", New ETag=" + ETAG);
+                    log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=-1, Old ETag=" + givenEtag + ", New ETag=" + etag);
                 }
                 return true;
             }
@@ -173,16 +177,16 @@ public abstract class CachingFileHandler implements Handler
         }
 
         // Do both values indicate that we are in-date?
-        if (ETAG.equals(givenEtag) && modifiedSince < CONTAINER_START_TIME)
+        if (etag.equals(givenEtag) && modifiedSince >= lastModified)
         {
             if (log.isDebugEnabled())
             {
-                log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Container Start=" + CONTAINER_START_TIME + ", Old ETag=" + givenEtag + ", New ETag=" + ETAG);
+                log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
             }
             return true;
         }
 
-        log.debug("Sending content for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Container Start=" + CONTAINER_START_TIME + ", Old ETag=" + givenEtag + ", New ETag=" + ETAG);
+        log.debug("Sending content for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
         return false;
     }
 
@@ -212,28 +216,6 @@ public abstract class CachingFileHandler implements Handler
     }
 
     /**
-     * The time on the script files
-     */
-    private static final long CONTAINER_START_TIME;
-
-    /**
-     * The ETAG (=time for us) on the script files
-     */
-    private static final String ETAG;
-
-    /**
-     * Initialize the container start time
-     */
-    static
-    {
-        // Browsers are only accurate to the second
-        long now = System.currentTimeMillis();
-        CONTAINER_START_TIME = now - (now % 1000);
-
-        ETAG = "\"" + CONTAINER_START_TIME + '\"';
-    }
-
-    /**
      * The mime type to send the output under
      */
     private String mimeType;
@@ -241,7 +223,16 @@ public abstract class CachingFileHandler implements Handler
     /**
      * We cache the script output for speed
      */
-    private final Map<String, String> scriptCache = new HashMap<String, String>();
+    private final Map<String, CachedResource> scriptCache = new HashMap<String, CachedResource>();
+
+    /**
+     * I wish Java had tuples
+     */
+    class CachedResource
+    {
+        protected String contents;
+        protected long lastModifiedTime;
+    }
 
     /**
      * Do we ignore all the Last-Modified/ETags blathering?
@@ -251,5 +242,5 @@ public abstract class CachingFileHandler implements Handler
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(CachingFileHandler.class);
+    private static final Log log = LogFactory.getLog(CachingHandler.class);
 }
