@@ -381,7 +381,6 @@
                 <configuration>
                   <sources>
                     <source>${basedir}/java</source>
-                    <source>${basedir}/java5</source>
                   </sources>
                 </configuration>
               </execution>

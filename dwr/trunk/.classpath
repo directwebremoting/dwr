@@ -114,7 +114,6 @@
 	<classpathentry kind="lib" path="jar/yuicompressor-2.3.5.jar" sourcepath="/library/jarlib/yuicompressor-2.3.5/src"/>
 	<classpathentry kind="src" output="target/eclipse/classes/main" path="etc/classpath"/>
 	<classpathentry kind="src" output="target/eclipse/classes/main" path="java"/>
-	<classpathentry kind="src" output="target/eclipse/classes/main" path="java5"/>
 	<classpathentry kind="src" output="target/eclipse/classes/util" path="util/java"/>
 	<classpathentry kind="src" output="target/eclipse/classes/demo" path="demo"/>
 	<classpathentry kind="src" output="target/eclipse/classes/test" path="test/java"/>

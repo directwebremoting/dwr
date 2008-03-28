@@ -41,7 +41,6 @@
       <exclude name="**/package.html"/>
       <exclude name="**/package-info.java"/>
       <src path="${source.root}/java"/>
-      <src path="${source.root}/java5"/>
       <src path="${source.root}/generated/gi/java"/>
       <classpath refid="classpath"/>
     </javac>
@@ -52,11 +51,6 @@
         <exclude name="**/package-info.java"/>
       </fileset>
       <fileset dir="${source.root}/generated/gi/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/java5">
         <exclude name="**/*.java"/>
         <exclude name="**/package.html"/>
         <exclude name="**/package-info.java"/>
@@ -123,7 +117,6 @@
         splitindex="true"
         version="true">
       <sourcepath path="${source.root}/java"/>
-      <sourcepath path="${source.root}/java5"/>
       <classpath refid="classpath"/>
       <package name="org.directwebremoting.*"/>
       <package name="uk.ltd.getahead.dwr.*"/>
