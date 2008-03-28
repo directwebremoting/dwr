@@ -218,7 +218,7 @@ public class FileHandler implements Handler, InitializingBean
         long modifiedSince = -1;
         try
         {
-            // HACK: Webfear appears to get confused sometimes
+            // HACK: Websphere appears to get confused sometimes
             modifiedSince = req.getDateHeader(HttpConstants.HEADER_IF_MODIFIED);
         }
         catch (RuntimeException ex)
@@ -246,7 +246,7 @@ public class FileHandler implements Handler, InitializingBean
         if (givenEtag == null)
         {
             // There is no ETag, just go with If-Modified-Since
-            if (modifiedSince > servletContainerStartTime)
+            if (servletContainerStartTime > modifiedSince)
             {
                 if (log.isDebugEnabled())
                 {
@@ -277,7 +277,7 @@ public class FileHandler implements Handler, InitializingBean
         }
 
         // Do both values indicate that we are in-date?
-        if (etag.equals(givenEtag) && modifiedSince <= servletContainerStartTime)
+        if (etag.equals(givenEtag) && servletContainerStartTime > modifiedSince)
         {
             if (log.isDebugEnabled())
             {
