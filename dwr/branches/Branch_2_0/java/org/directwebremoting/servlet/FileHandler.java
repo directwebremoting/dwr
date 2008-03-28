@@ -246,7 +246,7 @@ public class FileHandler implements Handler, InitializingBean
         if (givenEtag == null)
         {
             // There is no ETag, just go with If-Modified-Since
-            if (servletContainerStartTime > modifiedSince)
+            if (modifiedSince >= servletContainerStartTime)
             {
                 if (log.isDebugEnabled())
                 {
@@ -277,7 +277,7 @@ public class FileHandler implements Handler, InitializingBean
         }
 
         // Do both values indicate that we are in-date?
-        if (etag.equals(givenEtag) && servletContainerStartTime > modifiedSince)
+        if (etag.equals(givenEtag) && modifiedSince >= servletContainerStartTime)
         {
             if (log.isDebugEnabled())
             {
