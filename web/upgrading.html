@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Upgrading to DWR 0.4</title>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h2>Upgrading to DWR 0.4</h2>
+<p>
+  web/WEB-INF/web.xml has a fully fleshed out example of the options for dwr.
+  2 parameters (config and logLevel) you can safely ignore.
+  The 3rd, debug, you should leave as true if you want the test/debug setup to
+  work (this is what you are using below)
+  I would suggest turning this off in live.
+</p>
+
+<p>
+  Secondly you will need a dwr.xml file that does the job of the old allow
+  parameter. By default it lives in WEB-INF/dwr.xml (there is an example in the
+  web folder of this too)
+  <br/>
+  I suggest starting with the example in the web/WEB-INF folder and removing
+  the &lt;init> section and for each allow have a
+  &lt;create creator="new" javascript="Test" class="full.java.pkg.Test"/> tag.
+  <br/>
+  The different type of creators allow us to have different sources for the
+  beans. <code>new</code> was all that existed in dwr 0.3. <code>session</code>
+  gets the bean from the session (creating it if it does not exist).
+  <code>spring</code> uses the spring framework and <code>static</code> works on
+  static methods only.
+  <br/>
+  You can remove all the converter options in the allow section.
+  By default all primitive types, arrays and Strings get converted without need
+  for declaration. The system dwr file in <code>java/uk/ltd/getahead/dwr</code>
+  might help you see what is going on a bit.
+</p>
+
+<p>
+  There is one other breaking change, where in your html you were doing:
+</p>
+<pre>
+  &lt;script type='text/javascript' src='/XXX/dwr/interface/full.java.pkg.Test.js'></script>
+</pre>
+<p>
+  You would need to do:
+</p>
+<pre>
+  &lt;script type='text/javascript' src='/XXX/dwr/interface/Test.js'></script>
+</pre>
+<p>
+  Where Test is the value you specify in the javascript attribute in your create tag (see above).
+</p>
+
+</body>
+</html>

@@ -1,22 +1,7 @@
-/*
- * Copyright 2005 Joe Walker
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package uk.ltd.getahead.dwr;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.io.StringWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -25,169 +10,123 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.directwebremoting.Container;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
+import uk.ltd.getahead.dwr.util.SwallowingHttpServletResponse;
 
 /**
  * Class to enable us to access servlet parameters.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
- * @deprecated Use WebContext / WebContextFactory for better results
  */
-@Deprecated
-public class ExecutionContext implements WebContext
+public final class ExecutionContext
 {
     /**
-     * Create an ExecutionContext for compatibility purposes with a real
-     * WebContext to proxy to.
-     * @param proxy The WebContext to proxy to.
+     * @param request
+     * @param response
+     * @param config
      */
-    private ExecutionContext(WebContext proxy)
+    public ExecutionContext(HttpServletRequest request, HttpServletResponse response, ServletConfig config)
     {
-        this.proxy = proxy;
+        this.request = request;
+        this.response = response;
+        this.config = config;
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getSession()
+    /**
+     * @return Returns the http session.
      */
     public HttpSession getSession()
     {
-        return proxy.getSession();
+        return request.getSession();
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getSession(boolean)
+    /**
+     * @param create 
+     * @return Returns the http session.
      */
     public HttpSession getSession(boolean create)
     {
-        return proxy.getSession(create);
+        return request.getSession(create);
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getServletConfig()
+    /**
+     * @return Returns the config.
      */
     public ServletConfig getServletConfig()
     {
-        return proxy.getServletConfig();
+        return config;
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getServletContext()
+    /**
+     * @return Returns the context.
      */
     public ServletContext getServletContext()
     {
-        return proxy.getServletContext();
+        return getSession().getServletContext();
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getHttpServletRequest()
+    /**
+     * @return Returns the request.
      */
     public HttpServletRequest getHttpServletRequest()
     {
-        return proxy.getHttpServletRequest();
+        return request;
     }
 
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getHttpServletResponse()
+    /**
+     * @return Returns the response.
      */
     public HttpServletResponse getHttpServletResponse()
     {
-        return proxy.getHttpServletResponse();
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#forwardToString(java.lang.String)
-     */
-    public String forwardToString(String url) throws ServletException, IOException
-    {
-        return proxy.forwardToString(url);
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getVersion()
-     */
-    public String getVersion()
-    {
-        return proxy.getVersion();
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getBrowser()
-     */
-    public ScriptSession getScriptSession()
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getPage()");
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getAllScriptSessions()
-     */
-    public Collection<ScriptSession> getAllScriptSessions()
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getAllScriptSessions()");
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getScriptSessionsByPage(java.lang.String)
-     */
-    public Collection<ScriptSession> getScriptSessionsByPage(String page)
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getScriptSessionsByPage()");
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getScriptSessionById(java.lang.String)
-     */
-    public ScriptSession getScriptSessionById(String sessionId)
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getScriptSessionById()");
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getContainer()
-     */
-    public Container getContainer()
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().getContainer()");
-    }
-
-    /* (non-Javadoc)
-     * @see uk.ltd.getahead.dwr.WebContext#getCurrentPage()
-     */
-    public String getCurrentPage()
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().toJavascript()");
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ServerContext#getContextPath()
-     */
-    public String getContextPath()
-    {
-        throw new UnsupportedOperationException("Use WebContextFactory.get().toJavascript()");
+        return response;
     }
 
     /**
-     * Accessor for the current ExecutionContext.
-     * @return The current ExecutionContext or null if the current thread was
-     * not started by DWR.
-     * @deprecated Use WebContextFactory.get() for better results
+     * Forward a request to a given URL and catch the data written to it
+     * @param url The URL to forward to
+     * @return The text that results from forwarding to the given URL
+     * @throws IOException 
+     * @throws ServletException 
      */
-    @Deprecated
-    public static ExecutionContext get()
+    public String forwardToString(final String url) throws ServletException, IOException
     {
-        WebContext context = WebContextFactory.get();
-        if (context == null)
-        {
-            return null;
-        }
+        final StringWriter sout = new StringWriter();
+        final StringBuffer buffer = sout.getBuffer();
 
-        return new ExecutionContext(context);
+        HttpServletResponse fakeResponse = new SwallowingHttpServletResponse(getHttpServletResponse(), sout, url);
+
+        getServletContext().getRequestDispatcher(url).forward(getHttpServletRequest(), fakeResponse);
+
+        return buffer.toString();
+    }
+
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final ServletConfig config;
+
+    private static ThreadLocal user = new ThreadLocal();
+
+    /**
+     * @return The current ExecutionContext
+     */
+    public static ExecutionContext getExecutionContext()
+    {
+        return (ExecutionContext) user.get();
     }
 
     /**
-     * The real WebContext to proxy to
+     * @param request
+     * @param response
+     * @param config
      */
-    private WebContext proxy = null;
+    protected static void setExecutionContext(HttpServletRequest request, HttpServletResponse response, ServletConfig config)
+    {
+        user.set(new ExecutionContext(request, response, config));
+    }
+
+    /**
+     * Unset the current ExecutionContext
+     */
+    protected static void unset()
+    {
+        user.set(null);
+    }
 }

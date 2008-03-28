@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>DWR - Dynamically Populating a Selection List</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="generic.css"/>
+  <script type='text/javascript' src='/dwr/dwr/interface/Demo.js'></script>
+  <script type='text/javascript' src='/dwr/dwr/engine.js'></script>
+  <script>
+  function update()
+  {
+      var bigselect = document.getElementById("bigselect");
+      Demo.getNumbers(fillList, bigselect.checked);
+  }
+
+  function fillList(data)
+  {
+      var numlist = document.getElementById("numlist");
+      numlist.options.length = 0;
+      for (var i = 0; i < data.length; i++)
+      {
+          var opt = new Option(data[i]);
+          numlist.options[numlist.options.length] = opt;
+      }
+      numlist.size = data.length;
+  }
+  </script>
+</head>
+
+<body onload="update()">
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h1>Dynamically Populating a Selection List</h1>
+
+<h2>Demo</h2>
+<p>
+  Big Numbers: <input type="checkbox" id="bigselect" onclick="update();"/>
+  <br/>
+  Pick a Number:
+  <select id="numlist" style="vertical-align:top;">
+  </select>
+</p>
+
+<h2>How it works</h2>
+
+<p>
+  When the page loads and when you click on the "Big Numbers" check box the
+  <code>update()</code> function gets called.<br/>
+  It looks like this:
+</p>
+
+<pre>
+function update()
+{
+    var bigselect = document.getElementById("bigselect");
+    Demo.getNumbers(fillList, bigselect.checked);
+}
+</pre>
+
+<p>
+  <code>bigselect</code> is the id of the checkbox input element.
+  <code>Demo.getNumbers()</code> is a Java function defined within
+  <code>uk.ltd.getahead.dwr.test.Demo</code>. It looks like this:
+</p>
+
+<pre>
+public int[] getNumbers(boolean big)
+{
+    if (big)
+    {
+        return new int[] { 1000, 2000, 3000, 4000 };
+    }
+    else
+    {
+        return new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    }
+}
+</pre>
+
+<p>
+  When this method returns, we asked DWR to call <code>fillList()</code> when
+  we got data from the getNumbers call. The <code>fillList()</code> JavaScript
+  function looks like this:
+</p>
+
+<pre>
+function fillList(data)
+{
+    var numlist = document.getElementById("numlist");
+    numlist.options.length = 0;
+    for (var i = 0; i < data.length; i++)
+    {
+        var opt = new Option(data[i]);
+        numlist.options[numlist.options.length] = opt;
+    }
+    numlist.size = data.length;
+}
+</pre>
+
+<p>
+  This function takes the data returned from <code>getNumbers()</code> as the
+  <code>data</code> parameter and loops over the elements of the array creating
+  new options for the select as it goes.
+</p>
+
+</body>
+</html>
