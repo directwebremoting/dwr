@@ -649,7 +649,7 @@ dwr.engine._sendData = function(batch) {
     if (batch.isPoll) {
       dwr.engine._pollReq = batch.req;
       // In IE XHR is an ActiveX control so you can't augment it like this
-      if (!document.all) batch.req.batch = batch;
+      if (!(document.all && !window.opera)) batch.req.batch = batch;
     }
     // Workaround for Safari 1.x POST bug
     var indexSafari = navigator.userAgent.indexOf("Safari/");
@@ -769,9 +769,22 @@ dwr.engine._constructRequest = function(batch) {
   else {
     // PERFORMANCE: for iframe mode this is thrown away.
     request.body = "";
-    for (prop in batch.map) {
-      if (typeof batch.map[prop] != "function") {
-        request.body += prop + "=" + batch.map[prop] + dwr.engine._postSeperator;
+    if (document.all && !window.opera) {
+      // Use array joining on IE (fastest)
+      var buf = [];
+      for (prop in batch.map) {
+        if (typeof batch.map[prop] != "function") {
+          buf.push(prop + "=" + batch.map[prop] + dwr.engine._postSeperator);
+        }
+      }
+      request.body = buf.join("");
+    }
+    else {
+      // Use string concat on other browsers (fastest)
+      for (prop in batch.map) {
+        if (typeof batch.map[prop] != "function") {
+          request.body += prop + "=" + batch.map[prop] + dwr.engine._postSeperator;
+        }
       }
     }
     request.body = dwr.engine._contentRewriteHandler(request.body);
@@ -1212,16 +1225,33 @@ dwr.engine._serializeArray = function(batch, referto, data, name) {
   var ref = dwr.engine._lookup(referto, data, name);
   if (ref) return ref;
 
-  var reply = "Array:[";
-  for (var i = 0; i < data.length; i++) {
-    if (i != 0) reply += ",";
-    batch.paramCount++;
-    var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-    dwr.engine._serializeAll(batch, referto, data[i], childName);
-    reply += "reference:";
-    reply += childName;
+  if (document.all && !window.opera) {
+    // Use array joining on IE (fastest)
+    var buf = ["Array:["];
+    for (var i = 0; i < data.length; i++) {
+      if (i != 0) buf.push(",");
+      batch.paramCount++;
+      var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+      dwr.engine._serializeAll(batch, referto, data[i], childName);
+      buf.push("reference:");
+      buf.push(childName);
+    }
+    buf.push("]");
+    reply = buf.join("");
   }
-  reply += "]";
+  else {
+    // Use string concat on other browsers (fastest)
+    var reply = "Array:[";
+    for (var i = 0; i < data.length; i++) {
+      if (i != 0) reply += ",";
+      batch.paramCount++;
+      var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+      dwr.engine._serializeAll(batch, referto, data[i], childName);
+      reply += "reference:";
+      reply += childName;
+    }
+    reply += "]";
+  }
 
   return reply;
 };
