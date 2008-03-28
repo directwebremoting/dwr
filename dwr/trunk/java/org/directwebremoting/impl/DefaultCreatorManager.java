@@ -154,10 +154,10 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreatorNames()
      */
-    public Collection<String> getCreatorNames() throws SecurityException
-    {
-        return getCreatorNames(false);
-    }
+    //public Collection<String> getCreatorNames() throws SecurityException
+    //{
+    //    return getCreatorNames(false);
+    //}
 
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreatorNames(boolean)
@@ -192,10 +192,10 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreator(java.lang.String)
      */
-    public Creator getCreator(String scriptName) throws SecurityException
-    {
-        return getCreator(scriptName, false);
-    }
+    //public Creator getCreator(String scriptName) throws SecurityException
+    //{
+    //    return getCreator(scriptName, false);
+    //}
 
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreator(java.lang.String, boolean)
