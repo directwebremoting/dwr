@@ -23,20 +23,75 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Various functions to do with working out what is at the other end of the
  * wire, and what it can do.
+ * 
+ * <h2>Version number documentation</h2>
+ * 
+ * <h3>Safari</h3>
+ * <p>Quick summary:
+ * <ul>
+ * <li>Jaguar  = 10.2.x  = Safari 1.0.x = WebKit/85
+ * <li>Panther = 10.3.0+ = Safari 1.1.x = WebKit/100
+ * <li>Panther = 10.3.4+ = Safari 1.2.x = WebKit/125
+ * <li>Panther = 10.3.9+ = Safari 1.3.x = WebKit/312
+ * <li>Tiger   = 10.4.x  = Safari 2.0.x = WebKit/412-419
+ * <li>Tiger   = 10.4.11 = Safari 3.0.x = WebKit/523
+ * <li>Leopard = 10.5.x  = Safari 3.0.x = WebKit/523
+ * <li>Windows           = Safari 3.0.x = WebKit/523
+ * <li>Leopard = 10.5.x  = Safari 3.1.x = WebKit/525-526
+ * </ul>
+ * 
+ * <p>For full information see the Safari and WebKit Version Information:
+ * <a href="http://developer.apple.com/internet/safari/uamatrix.html">at Apple
+ * Developer Connection</a> and for browsers in general, see this fairly complete
+ * <a href="http://www.useragentstring.com/pages/useragentstring.php">list of
+ * user agent strings</a>.</p>
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class BrowserDetect
 {
+    /**
+     * How many connections can this browser open simultaneously?
+     * @param request The request so we can get at the user-agent header
+     * @return The number of connections that we think this browser can take
+     */
     public static int getConnectionLimit(HttpServletRequest request)
     {
         if (atLeast(request, UserAgent.IE, 8))
         {
             return 6;
         }
+        else if (atLeast(request, UserAgent.AppleWebKit, 8))
+        {
+            return 4;
+        }
+        else if (atLeast(request, UserAgent.Opera, 9))
+        {
+            return 4;
+        }
         else
         {
             return 2;
         }
+    }
+
+    /**
+     * Does this web browser support comet?
+     * @param request The request so we can get at the user-agent header
+     * @return True if long lived HTTP connections are supported
+     */
+    public static boolean supportsComet(HttpServletRequest request)
+    {
+        String userAgent = request.getHeader("user-agent");
+
+        // None of the non-iPhone mobile browsers that I've tested support comet
+        if (userAgent.contains("Symbian"))
+        {
+            return false;
+        }
+
+        // We need to test for other failing browsers here
+
+        return true;
     }
 
     /**
@@ -215,6 +270,7 @@ public class BrowserDetect
     {
         String userAgent = request.getHeader("user-agent");
 
+        log.debug("User-Agent: " + userAgent);
         log.debug("Version assuming IE: " + getMajorVersionAssumingIE(userAgent));
         log.debug("Version assuming Gecko: " + getMajorVersionAssumingGecko(userAgent));
         log.debug("Version assuming Opera: " + getMajorVersionAssumingOpera(userAgent));

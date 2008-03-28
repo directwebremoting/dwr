@@ -39,6 +39,7 @@ import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.OutputAlarm;
+import org.directwebremoting.impl.PollingServerLoadMonitor;
 import org.directwebremoting.impl.ShutdownAlarm;
 import org.directwebremoting.impl.TimedAlarm;
 import org.directwebremoting.util.BrowserDetect;
@@ -151,33 +152,41 @@ public class PollHandler implements Handler
             alarms.add(new OutputAlarm(scriptSession, maxWaitAfterWrite));
         }
 
-        // Set the system up to resume anyway after maxConnectedTime
-        long connectedTime = serverLoadMonitor.getConnectedTime();
-        int idealDisconnectedTime = serverLoadMonitor.getDisconnectedTime();
-
-        // Nasty 2 connection limit hack. How many times is this browser connected?
-        String httpSessionId = webContext.getSession(true).getId();
-        Collection<RealScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
-        int persistentConnections = 0;
-        for (RealScriptSession session : sessions)
+        // Use of comet depends on the type of browser and the number of current
+        // connections from this browser (detected by cookies)
+        boolean comet = BrowserDetect.supportsComet(request);
+        if (comet)
         {
-            persistentConnections += session.countPersistentConnections();
-        }
-
-        // We should not hold onto the last connection
-        int connectionLimit = BrowserDetect.getConnectionLimit(request);
-        if (persistentConnections + 1 >= connectionLimit)
-        {
-            connectedTime = 0;
-            idealDisconnectedTime = connectionLimitDisconnectedTime;
-
-            if (log.isDebugEnabled())
+            // Nasty 2 connection limit hack. How many times is this browser connected?
+            String httpSessionId = webContext.getSession(true).getId();
+            Collection<RealScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
+            int persistentConnections = 0;
+            for (RealScriptSession session : sessions)
             {
-                String uaStr = BrowserDetect.getUserAgentDebugString(request);
-                log.debug("Persistent connections=" + persistentConnections + ". (limit=" + connectionLimit + " in " + uaStr + "). Polling");
+                persistentConnections += session.countPersistentConnections();
+            }
+
+            int connectionLimit = BrowserDetect.getConnectionLimit(request);
+            if (persistentConnections + 1 >= connectionLimit)
+            {
+                comet = false;
+
+                if (log.isDebugEnabled())
+                {
+                    String uaStr = BrowserDetect.getUserAgentDebugString(request);
+                    log.debug("Persistent connections=" + persistentConnections + ". (limit=" + connectionLimit + " in " + uaStr + "). Polling");
+                }
             }
         }
-        final int disconnectedTime = idealDisconnectedTime;
+        else
+        {
+            log.debug("Browser does not support comet, polling");
+        }
+
+        // Set the system up to resume anyway after maxConnectedTime
+        ServerLoadMonitor slm = comet ? serverLoadMonitor : pollingServerLoadMonitor;
+        long connectedTime = slm.getConnectedTime();
+        final int disconnectedTime = slm.getDisconnectedTime();
 
         alarms.add(new TimedAlarm(connectedTime));
 
@@ -398,6 +407,12 @@ public class PollHandler implements Handler
     protected ServerLoadMonitor serverLoadMonitor = null;
 
     /**
+     * There is only one polling ServerLoadMonitor, so we're not bothering
+     * with setters for now
+     */
+    protected ServerLoadMonitor pollingServerLoadMonitor = new PollingServerLoadMonitor();
+
+    /**
      * Accessor for the DefaultCreatorManager that we configure
      * @param converterManager The new DefaultConverterManager
      */
@@ -436,25 +451,6 @@ public class PollHandler implements Handler
      * How we abstract away container specific logic
      */
     protected ContainerAbstraction containerAbstraction = null;
-
-    /**
-     * Accessor for the disconnected time when we are at a browsers connection limit.
-     * @param connectionLimitDisconnectedTime How long should clients spend disconnected
-     */
-    public void setConnectionLimitDisconnectedTime(int connectionLimitDisconnectedTime)
-    {
-        if (connectionLimitDisconnectedTime < 500)
-        {
-            connectionLimitDisconnectedTime = 500;
-        }
-
-        this.connectionLimitDisconnectedTime = connectionLimitDisconnectedTime;
-    }
-
-    /**
-     * How long are we telling users to wait before they come back next
-     */
-    protected int connectionLimitDisconnectedTime = 5000;
 
     /**
      * The log stream
