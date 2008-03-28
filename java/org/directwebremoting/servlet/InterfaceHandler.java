@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.MimeConstants;
 
 /**
  * A handler for interface generation requests
@@ -32,14 +31,6 @@ import org.directwebremoting.util.MimeConstants;
  */
 public class InterfaceHandler extends JavaScriptHandler
 {
-    /**
-     * Setup the {@link JavaScriptHandler} defaults
-     */
-    public InterfaceHandler()
-    {
-        setMimeType(MimeConstants.MIME_JS);
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -65,6 +56,15 @@ public class InterfaceHandler extends JavaScriptHandler
 
         String contextServletPath = request.getContextPath() + request.getServletPath();
         return remoter.generateInterfaceScript(scriptName, contextServletPath);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.servlet.CachingHandler#getLastModifiedTime()
+     */
+    @Override
+    protected long getLastModifiedTime()
+    {
+        return LocalUtil.getSystemClassloadTime();
     }
 
     /**

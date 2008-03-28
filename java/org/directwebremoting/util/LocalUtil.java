@@ -924,6 +924,30 @@ public final class LocalUtil
     }
 
     /**
+     * Get a timestamp for the earliest time that we know the JVM started
+     * @return a JVM start time
+     */
+    public static long getSystemClassloadTime()
+    {
+        return CLASSLOAD_TIME;
+    }
+
+    /**
+     * The time on the script files
+     */
+    private static final long CLASSLOAD_TIME;
+
+    /**
+     * Initialize the container start time
+     */
+    static
+    {
+        // Browsers are only accurate to the second
+        long now = System.currentTimeMillis();
+        CLASSLOAD_TIME = now - (now % 1000);
+    }
+
+    /**
      * The log stream
      */
     private static final Log log = LogFactory.getLog(LocalUtil.class);

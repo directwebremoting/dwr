@@ -28,10 +28,10 @@ import javax.servlet.http.HttpServletResponse;
  * more EL-like syntax.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class TemplateHandler extends CachingFileHandler
+public abstract class TemplateHandler extends CachingHandler
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.CachingFileHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.directwebremoting.servlet.CachingHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     protected String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException

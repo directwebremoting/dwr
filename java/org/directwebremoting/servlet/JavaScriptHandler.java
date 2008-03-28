@@ -23,16 +23,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Compressor;
+import org.directwebremoting.util.MimeConstants;
 
 /**
- * Basically a file servlet component that does some <b>very limited</b>
- * EL type processing on the file. See the source for the cheat.
+ * Once we know a resource is JavaScript, we can go about compressing it.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class JavaScriptHandler extends TemplateHandler
 {
+    /**
+     * Setup the {@link JavaScriptHandler} defaults
+     */
+    public JavaScriptHandler()
+    {
+        setMimeType(MimeConstants.MIME_JS);
+    }
+
     /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.CachingFileHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.directwebremoting.servlet.CachingHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     protected String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException
