@@ -340,6 +340,9 @@ dwr.engine._partialResponseNo = 0;
 dwr.engine._partialResponseYes = 1;
 dwr.engine._partialResponseFlush = 2;
 
+/** Is this page in the process of unloading? */
+dwr.engine._unloading = false;
+
 /**
  * @private Send a request. Called by the Javascript interface stub
  * @param path part of URL after the host and before the exec bit without leading or trailing /s
@@ -797,6 +800,11 @@ dwr.engine._stateChange = function(batch) {
     return;
   }
 
+  if (dwr.engine._unloading) {
+    dwr.engine._debug("Ignoring reply from server as page is unloading.");
+    return;
+  }
+  
   try {
     var reply = req.responseText;
     reply = dwr.engine._replyRewriteHandler(reply);
@@ -846,7 +854,7 @@ dwr.engine._stateChange = function(batch) {
   dwr.engine._eval(toEval);
   dwr.engine._receivedBatch = null;
   dwr.engine._validateBatch(batch);
-  dwr.engine._clearUp(batch);
+  if (!batch.completed) dwr.engine._clearUp(batch);
 };
 
 /**
@@ -980,7 +988,7 @@ dwr.engine._callPostHooks = function(batch) {
 /** @private A call has finished by whatever means and we need to shut it all down. */
 dwr.engine._clearUp = function(batch) {
   if (!batch) { dwr.engine._debug("Warning: null batch in dwr.engine._clearUp()", true); return; }
-  if (batch.completed == "true") { dwr.engine._debug("Warning: Double complete", true); return; }
+  if (batch.completed) { dwr.engine._debug("Warning: Double complete", true); return; }
 
   // IFrame tidyup
   if (batch.div) batch.div.parentNode.removeChild(batch.div);
@@ -1017,6 +1025,29 @@ dwr.engine._clearUp = function(batch) {
     dwr.engine._sendData(sendbatch);
   }
 };
+
+/** @private Abort any XHRs in progress at page unload (solves zombie socket problems in IE). */
+dwr.engine._unloader = function() {
+  dwr.engine._unloading = true;
+
+  // Empty queue of waiting ordered requests
+  dwr.engine._batchQueue.length = 0;
+
+  // Abort any ongoing XHRs and clear their batches
+  for (var batchId in dwr.engine._batches) {
+    var batch = dwr.engine._batches[batchId];
+    // Only process objects that look like batches (avoid prototype additions!)
+    if (batch && batch.map) {
+      if (batch.req) {
+        batch.req.abort();
+      }
+      dwr.engine._clearUp(batch);
+    }
+  }
+};
+// Now register the unload handler
+if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
+else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
 
 /** @private Generic error handling routing to save having null checks everywhere */
 dwr.engine._handleError = function(batch, ex) {
