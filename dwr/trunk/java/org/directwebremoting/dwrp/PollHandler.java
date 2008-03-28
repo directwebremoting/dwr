@@ -369,7 +369,6 @@ public class PollHandler implements Handler
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicated that we do not do early
      * closing after writes.
-     * See also: org.directwebremoting.servlet.FileHandler.maxWaitAfterWrite
      */
     protected int maxWaitAfterWrite = -1;
 
