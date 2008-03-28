@@ -219,7 +219,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
     /**
      * We can turn connection limit avoidance off
      */
-    private boolean avoidConnectionLimitWithWindowName = true;
+    private boolean avoidConnectionLimitWithWindowName = false;
 
     /**
      * If a window does not have a name, we give it one so we can avoid the
