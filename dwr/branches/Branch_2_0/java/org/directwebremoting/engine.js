@@ -435,7 +435,7 @@ dwr.engine._poll = function() {
   batch.handlers[0] = {
     callback:function(pause) {
       dwr.engine._pollRetries = 0;
-      setTimeout("dwr.engine._poll()", pause);
+      setTimeout(dwr.engine._poll, pause);
     }
   };
 
@@ -452,7 +452,7 @@ dwr.engine._pollErrorHandler = function(msg, ex) {
   dwr.engine._pollRetries++;
   dwr.engine._debug("Reverse Ajax poll failed (pollRetries=" + dwr.engine._pollRetries + "): " + ex.name + " : " + ex.message);
   if (dwr.engine._pollRetries < dwr.engine._maxPollRetries) {
-    setTimeout("dwr.engine._poll()", 10000);
+    setTimeout(dwr.engine._poll, 10000);
   }
   else {
     dwr.engine._activeReverseAjax = false;
@@ -555,7 +555,7 @@ dwr.engine._checkCometPoll = function() {
 
   // If the poll resources are still there, come back again
   if (dwr.engine._outstandingIFrames.length > 0 || dwr.engine._pollReq) {
-    setTimeout("dwr.engine._checkCometPoll()", dwr.engine._pollCometInterval);
+    setTimeout(dwr.engine._checkCometPoll, dwr.engine._pollCometInterval);
   }
 };
 
@@ -624,7 +624,7 @@ dwr.engine._sendData = function(batch) {
   batch.preHooks = null;
   // Set a timeout
   if (batch.timeout && batch.timeout != 0) {
-    batch.interval = setInterval(function() { dwr.engine._abortRequest(batch); }, batch.timeout);
+    batch.timeoutId = setTimeout(function() { dwr.engine._abortRequest(batch); }, batch.timeout);
   }
   // Get setup for XMLHttpRequest if possible
   if (batch.rpcType == dwr.engine.XMLHttpRequest) {
@@ -981,7 +981,6 @@ dwr.engine._eval = function(script) {
 /** @private Called as a result of a request timeout */
 dwr.engine._abortRequest = function(batch) {
   if (batch && !batch.completed) {
-    clearInterval(batch.interval);
     dwr.engine._clearUp(batch);
     if (batch.req) batch.req.abort();
     dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
@@ -1021,6 +1020,12 @@ dwr.engine._clearUp = function(batch) {
     // If this is a poll frame then stop comet polling
     if (batch.req == dwr.engine._pollReq) dwr.engine._pollReq = null;
     delete batch.req;
+  }
+
+  // Timeout tidyup
+  if (batch.timeoutId) {
+    clearTimeout(batch.timeoutId);
+    delete batch.timeoutId;
   }
 
   if (batch.map && (batch.map.batchId || batch.map.batchId == 0)) {
