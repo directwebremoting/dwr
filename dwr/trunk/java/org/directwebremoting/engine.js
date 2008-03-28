@@ -144,15 +144,6 @@ if (typeof this['dwr'] == 'undefined') {
    * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setNotifyServerOnPageUnload = function(notify) {
-    if (notify == dwr.engine._isNotifyServerOnPageUnload) return;
-    if (notify) {
-      if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
-      else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
-    }
-    else {
-      if (window.removeEventListener) window.removeEventListener('unload', dwr.engine._unloader, false);
-      else if (window.detachEvent) window.detachEvent('onunload', dwr.engine._unloader);
-    }
     dwr.engine._isNotifyServerOnPageUnload = notify;
   };
 
@@ -373,7 +364,7 @@ if (typeof this['dwr'] == 'undefined') {
   dwr.engine._partialResponseFlush = 2;
 
   /** Are we doing page unloading? */
-  dwr.engine._isNotifyServerOnPageUnload = false;
+  dwr.engine._isNotifyServerOnPageUnload = true;
 
   /**
    * Find the HTTP session id sent by the web server
@@ -405,25 +396,52 @@ if (typeof this['dwr'] == 'undefined') {
   dwr.engine._contentRewriteHandler = dwr.engine._defaultInterceptor;
   dwr.engine._replyRewriteHandler = dwr.engine._defaultInterceptor;
 
-  /** @private If we have used reverse ajax then we try to tell the server we are gone */
+  /** Is this page in the process of unloading? */
+  dwr.engine._unloading = false;
+
+  // Now register the unload handler
+  if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
+  else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
+
+  /** @private Abort any XHRs in progress at page unload (solves zombie socket problems in IE). */
   dwr.engine._unloader = function() {
-    dwr.engine._debug("calling unloader for: " + dwr.engine._scriptSessionId);
-    var batch = {
-      map:{
-        callCount:1,
-        'c0-scriptName':'__System',
-        'c0-methodName':'pageUnloaded',
-        'c0-id':0
-      },
-      paramCount:0, isPoll:false, async:true,
-      headers:{}, preHooks:[], postHooks:[],
-      timeout:dwr.engine._timeout,
-      errorHandler:null, warningHandler:null, textHtmlHandler:null,
-      path:dwr.engine._pathToDwrServlet,
-      handlers:[{ exceptionHandler:null, callback:null }]
-    };
-    dwr.engine.transport.send(batch);
-    dwr.engine.setNotifyServerOnPageUnload(false);
+    dwr.engine._unloading = true;
+
+    // Empty queue of waiting ordered requests
+    dwr.engine._batchQueue.length = 0;
+
+    // Abort any ongoing XHRs and clear their batches
+    for (var batchId in dwr.engine._batches) {
+      var batch = dwr.engine._batches[batchId];
+      // Only process objects that look like batches (avoid prototype additions!)
+      if (batch && batch.map) {
+        if (batch.req) {
+          batch.req.abort();
+        }
+        dwr.engine._clearUp(batch);
+      }
+    }
+
+    // If we have used reverse ajax then we try to tell the server we are gone
+    if (dwr.engine._isNotifyServerOnPageUnload) {
+      dwr.engine._debug("calling unloader for: " + dwr.engine._scriptSessionId);
+      var batch = {
+        map:{
+          callCount:1,
+          'c0-scriptName':'__System',
+          'c0-methodName':'pageUnloaded',
+          'c0-id':0
+        },
+        paramCount:0, isPoll:false, async:true,
+        headers:{}, preHooks:[], postHooks:[],
+        timeout:dwr.engine._timeout,
+        errorHandler:null, warningHandler:null, textHtmlHandler:null,
+        path:dwr.engine._pathToDwrServlet,
+        handlers:[{ exceptionHandler:null, callback:null }]
+      };
+      dwr.engine.transport.send(batch);
+      dwr.engine._isNotifyServerOnPageUnload = false;
+    }
   };
 
   /**
@@ -502,7 +520,7 @@ if (typeof this['dwr'] == 'undefined') {
     }
 
     dwr.engine._debug("Reverse Ajax poll failed (retries=" + dwr.engine._pollRetries + "). Trying again in " + dwr.engine._retryIntervals[index] + "s: " + ex.name + " : " + ex.message);
-    setTimeout("dwr.engine._poll()", 1000 * dwr.engine._retryIntervals[index]);
+    setTimeout(dwr.engine._poll(), 1000 * dwr.engine._retryIntervals[index]);
 
     dwr.engine._pollRetries++;
   };
@@ -863,16 +881,33 @@ if (typeof this['dwr'] == 'undefined') {
      * @see dwr.engine.serialize.convert() for parameter details
      */
     convertArray:function(batch, referto, data, name) {
-      var reply = "Array:[";
-      for (var i = 0; i < data.length; i++) {
-        if (i != 0) reply += ",";
-        batch.paramCount++;
-        var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-        dwr.engine.serialize.convert(batch, referto, data[i], childName);
-        reply += "reference:";
-        reply += childName;
+      if (dwr.engine.isIE <= 7) {
+        // Use array joining on IE1-7 (fastest)
+        var buf = ["Array:["];
+        for (var i = 0; i < data.length; i++) {
+          if (i != 0) buf.push(",");
+          batch.paramCount++;
+          var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+          dwr.engine._serializeAll(batch, referto, data[i], childName);
+          buf.push("reference:");
+          buf.push(childName);
+        }
+        buf.push("]");
+        reply = buf.join("");
       }
-      reply += "]";
+      else {
+        // Use string concat on other browsers (fastest)
+        var reply = "Array:[";
+        for (var i = 0; i < data.length; i++) {
+          if (i != 0) reply += ",";
+          batch.paramCount++;
+          var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+          dwr.engine._serializeAll(batch, referto, data[i], childName);
+          reply += "reference:";
+          reply += childName;
+        }
+        reply += "]";
+      }
 
       return reply;
     },
@@ -1048,7 +1083,6 @@ if (typeof this['dwr'] == 'undefined') {
      */
     abort:function(batch) {
       if (batch && !batch.completed) {
-        clearInterval(batch.interval);
         dwr.engine.batch.remove(batch);
 
         if (batch.req) {
@@ -1113,7 +1147,7 @@ if (typeof this['dwr'] == 'undefined') {
         if (batch.isPoll) {
           dwr.engine._pollReq = batch.req;
           // In IE XHR is an ActiveX control so you can't augment it like this
-          if (!document.all) batch.req.batch = batch;
+          if (!dwr.engine.isIE) batch.req.batch = batch;
         }
 
         httpMethod = dwr.engine.transport.xhr.httpMethod;
@@ -1199,6 +1233,11 @@ if (typeof this['dwr'] == 'undefined') {
           return;
         }
 
+        if (dwr.engine._unloading) {
+          dwr.engine._debug("Ignoring reply from server as page is unloading.");
+          return;
+        }
+
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
@@ -1252,7 +1291,7 @@ if (typeof this['dwr'] == 'undefined') {
         dwr.engine._eval(toEval);
         dwr.engine._receivedBatch = null;
         dwr.engine.batch.validate(batch);
-        dwr.engine.batch.remove(batch);
+        if (!batch.completed) dwr.engine.batch.remove(batch);
       },
 
       /**
@@ -1270,7 +1309,7 @@ if (typeof this['dwr'] == 'undefined') {
 
         // If the poll resources are still there, come back again
         if (dwr.engine._pollReq) {
-          setTimeout("dwr.engine.transport.xhr.checkCometPoll()", dwr.engine._pollCometInterval);
+          setTimeout(dwr.engine.transport.xhr.checkCometPoll(), dwr.engine._pollCometInterval);
         }
       },
 
@@ -1486,7 +1525,7 @@ if (typeof this['dwr'] == 'undefined') {
         }
 
         if (dwr.engine.transport.iframe.outstandingIFrames.length > 0) {
-          setTimeout("dwr.engine.transport.iframe.checkCometPoll()", dwr.engine._pollCometInterval);
+          setTimeout(dwr.engine.transport.iframe.checkCometPoll(), dwr.engine._pollCometInterval);
         }
       }
 
@@ -1617,7 +1656,7 @@ if (typeof this['dwr'] == 'undefined') {
         handlers:[{
           callback:function(pause) {
             dwr.engine._pollRetries = 0;
-            setTimeout("dwr.engine._poll()", pause);
+            setTimeout(dwr.engine._poll(), pause);
           }
         }],
         isPoll:true,
@@ -1749,7 +1788,7 @@ if (typeof this['dwr'] == 'undefined') {
       batch.preHooks = null;
       // Set a timeout
       if (batch.timeout && batch.timeout != 0) {
-        batch.interval = setInterval(function() { dwr.engine.transport.abort(batch); }, batch.timeout);
+        batch.timeoutId = setTimeout(function() { dwr.engine.transport.abort(batch); }, batch.timeout);
       }
     },
 
@@ -1805,6 +1844,24 @@ if (typeof this['dwr'] == 'undefined') {
       }
       else {
         // PERFORMANCE: for iframe mode this is thrown away.
+        if (dwr.engine.isIE <= 7) {
+          // Use array joining on IE1-7 (fastest)
+          var buf = [];
+          for (prop in batch.map) {
+            if (typeof batch.map[prop] != "function") {
+              buf.push(prop + "=" + batch.map[prop] + dwr.engine._postSeperator);
+            }
+          }
+          request.body = buf.join("");
+        }
+        else {
+          // Use string concat on other browsers (fastest)
+          for (prop in batch.map) {
+            if (typeof batch.map[prop] != "function") {
+              request.body += prop + "=" + batch.map[prop] + dwr.engine._postSeperator;
+            }
+          }
+        }
         var bodyBuffer = [];
         for (prop in batch.map) {
           if (typeof batch.map[prop] != "function") {
@@ -1857,6 +1914,12 @@ if (typeof this['dwr'] == 'undefined') {
 
       // Transport tidyup
       dwr.engine.transport.remove(batch);
+
+      // Timeout tidyup
+      if (batch.timeoutId) {
+        clearTimeout(batch.timeoutId);
+        delete batch.timeoutId;
+      }
 
       // TODO: co-locate all the functions that work on a set of batches
       if (batch.map && (batch.map.batchId || batch.map.batchId == 0)) {
