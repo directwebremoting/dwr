@@ -682,7 +682,7 @@ dwr.engine._sendData = function(batch) {
     }
   }
   else if (batch.rpcType != dwr.engine.ScriptTag) {
-    var idname = batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map["c0-id"];
+    var idname = batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map.batchId;
     // Removed htmlfile implementation. Don't expect it to return before v3
     batch.div = document.createElement("div");
     // Add the div to the document first, otherwise IE 6 will ignore onload handler.
@@ -701,6 +701,7 @@ dwr.engine._sendData = function(batch) {
       batch.form = batch.document.createElement("form");
       batch.form.setAttribute("id", "dwr-form");
       batch.form.setAttribute("action", request.url);
+      batch.form.setAttribute("style", "display:none;");
       batch.form.setAttribute("target", idname);
       batch.form.target = idname;
       batch.form.setAttribute("method", batch.httpMethod);
