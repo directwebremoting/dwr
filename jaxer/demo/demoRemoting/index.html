@@ -4,24 +4,20 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Jaxer With DWR Remoting</title>
 
-  <!-- frameworkPatch.js should be pre-integrated -->
-  <script type='text/javascript' src='frameworkPatch.js' runat="server"></script>
   <script type='text/javascript' runat="server">
-  Jaxer.dwr.pathToDwrServlet = "http://localhost:8080/demoServer/dwr";
+  Jaxer.dwr.pathToDwrServlet = "http://appserver.intranet:8080/demoServer/dwr";
   Jaxer.dwr.requireUtil();
-  Jaxer.dwr.configureAccess("org.getahead.dwrdemo.intro.Intro");
+  Jaxer.dwr.configureAccess("com.example.jaxer.Simple");
 
   function loadServer() {
-    var parts = Intro.getInsert();
-    dwr.util.setValue('fillFromServer', parts[0], { escapeHtml:false });
+    var reply = Simple.sayHello('Jaxer');
+    dwr.util.setValue('replyDiv', reply);
   }
   </script>
 </head>
 <body onserverload="loadServer()">
 
-<p>Normal paragraph rendered in HTML</p>
-
-<p>From the server: <div id="fillFromServer"></div></p>
+<p>From the server: <div id="replyDiv"></div></p>
 
 </body>
 </html>
