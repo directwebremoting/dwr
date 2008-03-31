@@ -1405,7 +1405,7 @@ if (typeof this['dwr'] == 'undefined') {
        * @return {String} a name prefix for created elements
        */
       getId:function(batch) {
-        return batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map["c0-id"];
+        return batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map.batchId;
       },
 
       /**
