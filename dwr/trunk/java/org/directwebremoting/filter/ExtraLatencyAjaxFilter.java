@@ -24,7 +24,7 @@ import org.directwebremoting.AjaxFilterChain;
 
 /**
  * An example filter that delays responding to a query by a customizable time
- * to simulate internet latency. Half of the delay is inserted before and half
+ * to simulate Internet latency. Half of the delay is inserted before and half
  * after the invocation.
  * <p>The default delay is 100 milliseconds.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
