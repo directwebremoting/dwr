@@ -157,7 +157,7 @@ public class LegacyCompressor implements Compressor
                 }
 
                 // Skip @DWR comments
-                if (!line.contains(COMMENT_RETAIN))
+                if (!line.contains(COMMENT_RETAIN) && !line.matches("https{0,1}:\\/\\/"))
                 {
                     int cstart = line.indexOf(COMMENT_SL_START);
                     if (cstart >= 0)
