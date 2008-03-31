@@ -35,11 +35,11 @@
       <param-name>initApplicationScopeCreatorsAtStartup</param-name>
       <param-value>true</param-value>
     </init-param>
+    <!--
     <init-param>
       <param-name>maxWaitAfterWrite</param-name>
-      <param-value>100</param-value>
+      <param-value>-1</param-value>
     </init-param>
-    <!--
     <init-param>
       <param-name>org.directwebremoting.extend.ServerLoadMonitor</param-name>
       <param-value>org.directwebremoting.impl.PollingServerLoadMonitor</param-value>

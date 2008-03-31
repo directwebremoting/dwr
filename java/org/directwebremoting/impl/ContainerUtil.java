@@ -178,6 +178,8 @@ public class ContainerUtil
         createUrlMapping(container, "/call/plainpoll/", "plainPollHandlerUrl", PlainPollHandler.class);
         createUrlMapping(container, "/call/htmlcall/", "htmlCallHandlerUrl", HtmlCallHandler.class);
         createUrlMapping(container, "/call/htmlpoll/", "htmlPollHandlerUrl", HtmlPollHandler.class);
+
+        container.addParameter("maxWaitAfterWrite", "500");
     }
 
     /**
