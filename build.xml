@@ -80,29 +80,16 @@
     </copy>
     <mkdir dir="${target.root}/jaxer-main-classes"/>
     <javac debug="on" includes="**/*.java" destdir="${target.root}/jaxer-main-classes">
-      <src path="${source.root}/jaxer/main/java"/>
+      <src path="${source.root}/ui/jaxer/main/java"/>
       <classpath refid="classpath"/>
     </javac>
     <copy todir="${target.root}/jaxer-main-classes">
-      <fileset dir="${source.root}/jaxer/main/java">
+      <fileset dir="${source.root}/ui/jaxer/main/java">
         <exclude name="**/*.java"/>
         <exclude name="**/package.html"/>
         <exclude name="**/package-info.java"/>
       </fileset>
-      <fileset dir="${source.root}/jaxer/main/resources"/>
-    </copy>
-    <mkdir dir="${target.root}/jaxer-test-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/jaxer-test-classes">
-      <src path="${source.root}/jaxer/test/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/jaxer-test-classes">
-      <fileset dir="${source.root}/jaxer/test/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/jaxer/test/resources"/>
+      <fileset dir="${source.root}/ui/jaxer/main/resources"/>
     </copy>
   </target>
 
@@ -243,12 +230,12 @@
       <fileset dir="${target.root}/classes"/>
       <fileset dir="${target.root}/jaxer-main-classes"/>
     </jar>
-    <copy file="${source.root}/jaxer/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
-    <copy file="${source.root}/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
-    <war destfile="${target.root}/jaxer/demoServer.war" webxml="${source.root}/jaxer/web/WEB-INF/web.xml">
+    <copy file="${source.root}/ui/jaxer/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
+    <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
+    <war destfile="${target.root}/jaxer/demoServer.war" webxml="${source.root}/ui/jaxer/web/WEB-INF/web.xml">
       <lib file="${target.root}/jaxer/jaxer-dwr.jar"/>
       <classes dir="${target.root}/jaxer-test-classes"/>
-      <fileset dir="${source.root}/jaxer/web">
+      <fileset dir="${source.root}/ui/jaxer/web">
         <exclude name="**/*.iml"/>
         <exclude name="**/*.ipr"/>
         <exclude name="**/*.iws"/>
@@ -256,7 +243,7 @@
         <exclude name="WEB-INF/classes/**"/>
       </fileset>
     </war>
-    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/jaxer/jaxer-web">
+    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/demo/demoRemoting">
       <exclude name="**/*.iml"/>
       <exclude name="**/*.ipr"/>
       <exclude name="**/*.iws"/>
