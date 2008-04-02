@@ -7,7 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="core/impl/jar/servlet-api-2.4.jar" sourcepath="/library/jarlib/servlet-2.4/servlet-api-2.4-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="core/impl/jar/jsp-api-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="core/impl/jar/jetty-6.1.5.jar" sourcepath="/library/jarlib/jetty-6.1.5/jetty-6.1.5.zip"/>
 	<classpathentry exported="true" kind="lib" path="core/impl/jar/jetty-util-6.1.5.jar" sourcepath="/library/jarlib/jetty-6.1.5/jetty-6.1.5.zip"/>
 	<classpathentry exported="true" kind="lib" path="core/impl/jar/selenium-rc-0.9.2.jar" sourcepath="/library/jarlib/selenium-remote-control-0.9.2/selenium-java-client-driver-0.9.2/selenium-java-client-driver-sources.jar">
@@ -41,6 +40,7 @@
 	<classpathentry kind="lib" path="core/impl/jar/itext-2.0.6.jar"/>
 	<classpathentry kind="src" path="core/api/main/java"/>
 	<classpathentry kind="src" path="core/spi/main/java"/>
+	<classpathentry kind="src" path="core/impl/old-demo/java"/>
 	<classpathentry kind="lib" path="core/convert/jar/jdom-1.0.jar" sourcepath="/library/jarlib/jdom-1.0/jdom-1.0.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
@@ -65,6 +65,7 @@
 	<classpathentry kind="src" path="core/convert/test/java"/>
 	<classpathentry kind="src" path="core/util/main/java"/>
 	<classpathentry kind="src" path="core/legacy/main/java"/>
+	<classpathentry kind="src" path="protocol/dwrp/main/java"/>
 	<classpathentry kind="src" path="protocol/json/main/java"/>
 	<classpathentry kind="lib" path="protocol/bayeux/jar/cometd-api-0.9.20070627.jar"/>
 	<classpathentry kind="lib" path="protocol/bayeux/jar/cometd-bayeux-6.1.5.jar" sourcepath="/library/jarlib/jetty-6.1.5/cometd-bayeux-6.1.5-sources.jar"/>
@@ -107,33 +108,26 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/library/jarlib/jms-1.1/doc/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="serverside/struts/jar/struts-1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://struts.apache.org/struts-doc-1.1/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="serverside/struts/main"/>
+	<classpathentry kind="src" path="serverside/struts/demo/java"/>
 	<classpathentry kind="src" path="serverside/various/main/java"/>
-	<classpathentry kind="src" path="protocol/dwrp/main/java"/>
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-2.5.2.jar" sourcepath="jar/spring-2.5.2-sources.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-mock.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-webmvc-2.5.2.jar"/>
 	<classpathentry kind="src" path="serverside/spring/main/java"/>
 	<classpathentry kind="src" path="serverside/spring/main/resources"/>
 	<classpathentry kind="src" path="serverside/spring/test/java"/>
-	<classpathentry kind="src" path="ui/gi/demo/java"/>
 	<classpathentry kind="src" path="ui/dwr/main/java"/>
 	<classpathentry kind="src" path="ui/scriptaculous/main/java"/>
-	<classpathentry kind="src" path="ui/jaxer/main/java"/>
-	<classpathentry kind="src" path="ui/jaxer/main/resources"/>
-	<classpathentry kind="src" path="ui/jaxer/demo/java"/>
-	<classpathentry kind="src" path="ui/gi/main/java"/>
-	<classpathentry kind="src" path="ui/gi/generated/java"/>
-	<classpathentry kind="lib" path="noncla/various/jar/struts-1.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://struts.apache.org/struts-doc-1.1/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="noncla/various/jar/myfaces-api.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="noncla/various/main/java"/>
-	<classpathentry kind="src" path="noncla/various/demo/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
