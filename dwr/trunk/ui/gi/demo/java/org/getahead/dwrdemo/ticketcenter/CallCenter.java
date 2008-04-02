@@ -41,7 +41,8 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.proxy.browser.Window;
 import org.directwebremoting.util.SharedObjects;
-import org.getahead.dwrdemo.util.RandomData;
+
+import com.example.dwr.util.RandomData;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
