@@ -77,7 +77,7 @@ public class Fill extends jsx3.html.Tag
     /**
      * Returns the color field, as a CSS hex string.
      */
-    @SuppressWarnings("unchecked")
+
     public void getColorHtml(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -125,7 +125,7 @@ public class Fill extends jsx3.html.Tag
      * Returns the alpha field, as previously set in the constructor or with setAlpha().
      * @param callback alpha
      */
-    @SuppressWarnings("unchecked")
+
     public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -162,7 +162,7 @@ public class Fill extends jsx3.html.Tag
      * Returns the type field, as set with setType().
      * @param callback type
      */
-    @SuppressWarnings("unchecked")
+
     public void getType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -241,7 +241,7 @@ public class Fill extends jsx3.html.Tag
      * Returns the alpha2 field, as set with setAlpha2().
      * @param callback alpha2
      */
-    @SuppressWarnings("unchecked")
+
     public void getAlpha2(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -278,7 +278,7 @@ public class Fill extends jsx3.html.Tag
      * Returns the angle field (the angle along which the gradient goes), as set with setAngle().
      * @param callback angle
      */
-    @SuppressWarnings("unchecked")
+
     public void getAngle(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -315,7 +315,7 @@ public class Fill extends jsx3.html.Tag
      * Returns the colors field, as set with setColors().
      * @param callback colors
      */
-    @SuppressWarnings("unchecked")
+
     public void getColors(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -355,7 +355,7 @@ public class Fill extends jsx3.html.Tag
     is already a vector fill, or otherwise a new vector fill created by parsing the string according to the
     format specified above.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Fill valueOf(String v)
     {
         String extension = "valueOf(\"" + v + "\").";
@@ -378,7 +378,7 @@ public class Fill extends jsx3.html.Tag
     is already a vector fill, or otherwise a new vector fill created by parsing the string according to the
     format specified above.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Fill valueOf(jsx3.vector.Fill v)
     {
         String extension = "valueOf(\"" + v + "\").";

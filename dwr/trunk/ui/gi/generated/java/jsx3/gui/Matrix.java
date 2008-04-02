@@ -264,7 +264,7 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
     /**
      * Returns the name of the CDF attribute to sort on. If no value is set an empty string is returned by default.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortPath(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -303,7 +303,7 @@ on this attribute before being painted to screen.
 setSortType() or the data type of the current sort.
      * @param callback <code>jsx3.gui.Matrix.Column.TYPE_TEXT</code> or <code>jsx3.gui.Matrix.Column.TYPE_NUMBER</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -341,7 +341,7 @@ the data type specific to the sort column is used for sorting.
      * Returns the direction (jsx3.gui.Matrix.SORT_ASCENDING or jsx3.gui.Matrix.SORT_DESCENDING) for the sorted column; if no direction specified, ascending is returned
      * @param callback one of: jsx3.gui.Matrix.SORT_ASCENDING or jsx3.gui.Matrix.SORT_DESCENDING
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortDirection(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -377,7 +377,7 @@ the data type specific to the sort column is used for sorting.
     /**
      * Returns whether the list will render with sortable columns. If null or jsx3.Boolean.TRUE, the instance is sortable.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanSort(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -415,7 +415,7 @@ the data type specific to the sort column is used for sorting.
 the isntance will allow child columns to be reordered.
      * @param callback one of: jsx3.Boolean.TRUE or jsx3.Boolean.FALSE
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanReorder(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -491,7 +491,7 @@ the element in the CDF source document identified by strCdfId, and the cell at t
      * Returns the CSS string to apply to a Row/Cell when it has focus
      * @param strDefault The default value to use if null (Matrix.FOCUS_STYLE)
      */
-    @SuppressWarnings("unchecked")
+
     public void getFocusStyle(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -555,7 +555,7 @@ a call to repaint or repaintData.
      * Returns the CSS string to apply to a Row/Cell when it has focus
      * @param strDefault The default value to use if null (Matrix.SELECTION_BG)
      */
-    @SuppressWarnings("unchecked")
+
     public void getSelectionBG(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -617,7 +617,7 @@ a call to repaint or repaintData.
      * Returns the jsxid(s) for the selected record(s). Equivalent to this.getValue() except that the return value is always an Array.
      * @param callback JavaScript array of stings
      */
-    @SuppressWarnings("unchecked")
+
     public void getSelectedIds(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -676,7 +676,7 @@ accordingly. If this list is a multi-select list then this selection will be add
      * Returns an object array of name/value pairs representing the current auto row session. When the session is committed, this
 object will be converted into a CDF Record for the instance.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getAutoRowSession()
     {
         String extension = "getAutoRowSession().";
@@ -696,7 +696,7 @@ object will be converted into a CDF Record for the instance.
 object will be converted into a CDF Record for the instance.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAutoRowSession(Class<T> returnType)
     {
         String extension = "getAutoRowSession().";
@@ -749,7 +749,7 @@ object will be converted into a CDF Record for the instance.
     /**
      * Returns whether or not this column can be resized by the user. If not set, the column will be assumed resizable
      */
-    @SuppressWarnings("unchecked")
+
     public void getResizable(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -787,7 +787,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
      * Returns whether or not an 'auto append' row will be rendered, allowing the user to automatically add new rows to the instance.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getAutoRow(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -829,7 +829,7 @@ by strCdfId and the first column mapped to the named CDF attribute, strAttName.
      * @param strCdfId jsxid property for CDF record
      * @param strAttName attribute name on the CDF record. For example, <code>jsxtext</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getContentElement(String strCdfId, String strAttName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -870,7 +870,7 @@ If no value is specified, a unique id is generated.
      * @param strXMLId 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLId(String strXMLId)
     {
         String extension = "setXMLId(\"" + strXMLId + "\").";
@@ -893,7 +893,7 @@ If no value is specified, a unique id is generated.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLId(String strXMLId, Class<T> returnType)
     {
         String extension = "setXMLId(\"" + strXMLId + "\").";
@@ -914,7 +914,7 @@ way of specifying the source XML document of this object.
      * @param strXML <code>null</code> or a well-formed serialized XML element.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLString(String strXML)
     {
         String extension = "setXMLString(\"" + strXML + "\").";
@@ -936,7 +936,7 @@ way of specifying the source XML document of this object.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLString(String strXML, Class<T> returnType)
     {
         String extension = "setXMLString(\"" + strXML + "\").";
@@ -958,7 +958,7 @@ source XML document of this object.
   specifies a valid XML document.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLURL(String strXMLURL)
     {
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
@@ -981,7 +981,7 @@ source XML document of this object.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLURL(String strXMLURL, Class<T> returnType)
     {
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
@@ -999,7 +999,7 @@ source XML document of this object.
     /**
      * Returns an array of all jsxid attributes in the source CDF in the order they would appear if painted on-screen
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortedIds(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1025,7 +1025,7 @@ source XML document of this object.
      * Returns the selection model. If no selection type is specified, the instance will employ single row selection (SELECTION_ROW)
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getSelectionModel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1062,7 +1062,7 @@ source XML document of this object.
      * Returns the row height
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getRowHeight(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1104,7 +1104,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * Returns the number of rows each panel should contain.  If null, the default value will be used: jsx3.gui.Matrix.DEFAULT_ROWS_PER_PANEL
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getRowsPerPanel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1143,7 +1143,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 Note that this is different from the number of painted panels allowed on screen (e.g., getPanelPoolSize()).
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getPanelQueueSize(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1180,7 +1180,7 @@ Note that this is different from the number of painted panels allowed on screen 
      * Returns the the number of milliseconds to wait before checking for inactive panels to garbage collect.  If null, the default value will be used: jsx3.gui.Matrix.DEFAULT_REAPER_INTERVAL
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getReaperInterval(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1219,7 +1219,7 @@ than this value exists, the panels furthest away (as calculated by the scroll po
 the value defined by the constant, Matrix.DEFAULT_PANEL_POOL_COUNT, will be used.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getPanelPoolSize(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1266,7 +1266,7 @@ Matrix.PAGING_PAGED: Paint outer container. Paint First and last panels during s
 Matrix.PAGING_STEPPED: Paint root nodes and any open descendants. Paint others as they are toggled open. (rendering model: hierarchical)
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getPagingModel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1304,7 +1304,7 @@ Matrix.PAGING_STEPPED: Paint root nodes and any open descendants. Paint others a
 the default value of jsx3.gui.Matrix.DEFAULT_HEADER_HEIGHT.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getHeaderHeight(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1345,7 +1345,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * Returns the info label to display when scrolling a paged instance, in order to show the scroll position.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getScrollInfoLabel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1387,7 +1387,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
      * Returns the horizontal scroll position of the list.
      * @param callback a non-negative number
      */
-    @SuppressWarnings("unchecked")
+
     public void getScrollLeft(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1424,7 +1424,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
      * Returns the vertical scroll position.
      * @param callback a non-negative number
      */
-    @SuppressWarnings("unchecked")
+
     public void getScrollTop(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1477,7 +1477,7 @@ If null or jsx3.Boolean.FALSE, scale width will not be used and the column width
 fully, displaying a horizontal scrollbar when necessary. In such a case, all wildcard columns (e.g., *) will be resolved to the value,
 jsx3.gui.Matrix.Column.DEFAULT_WIDTH.
      */
-    @SuppressWarnings("unchecked")
+
     public void getScaleWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1515,7 +1515,7 @@ exceed the available width of the viewport.
     /**
      * Returns CSS property value(s) for a border (border: solid 1px #000000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getHeaderBorder(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1551,7 +1551,7 @@ exceed the available width of the viewport.
     /**
      * Returns CSS property value(s) for a border (border: solid 1px #000000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getBodyBorder(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1582,7 +1582,7 @@ immediately to keep the box model abstraction in synch with the native view. How
 suppressed to avoid unnecessary reparsing of the XSLT during repeated property updates.
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Block setBodyBorder(String strCSS, boolean bSuppressRepaint)
     {
         String extension = "setBodyBorder(\"" + strCSS + "\", \"" + bSuppressRepaint + "\").";
@@ -1607,7 +1607,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setBodyBorder(String strCSS, boolean bSuppressRepaint, Class<T> returnType)
     {
         String extension = "setBodyBorder(\"" + strCSS + "\", \"" + bSuppressRepaint + "\").";
@@ -1626,7 +1626,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * Returns an array of selected values (or empty array) if the selection model is Matrix.SELECTION_MULTI_ROW. Returns a string (or null)
 for the other selection models
      */
-    @SuppressWarnings("unchecked")
+
     public void getValue(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1652,7 +1652,7 @@ for the other selection models
      * 
      * @param callback <code>jsx3.gui.Form.STATEINVALID</code> or <code>jsx3.gui.Form.STATEVALID</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void doValidate(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1679,7 +1679,7 @@ for the other selection models
 of the rendering context will be painted on-screen.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderingModel(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1718,7 +1718,7 @@ of the rendering context will be painted on-screen.
 id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderingContext(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1757,7 +1757,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param strDefault The default value to use if null
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getSuppressHScroller(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1795,7 +1795,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param strDefault The default value to use if null
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getSuppressVScroller(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1839,7 +1839,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
      * @param strDefault The default value to use if null
      * @param callback positive integer
      */
-    @SuppressWarnings("unchecked")
+
     public void getFixedColumnIndex(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1877,7 +1877,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
      * @param strDefault The default value to use if null
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderNavigators(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1919,7 +1919,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      * @param callback URL for icon to use. If null, <code>jsx3.gui.Matrix.ICON</code> will be applied when rendered.
      */
-    @SuppressWarnings("unchecked")
+
     public void getIcon(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1957,7 +1957,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      * @param callback URL for icon. If null, <code>jsx3.gui.Matrix.ICON_MINUS</code> will be applied when rendered.
      */
-    @SuppressWarnings("unchecked")
+
     public void getIconMinus(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1995,7 +1995,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      * @param callback URL for icon to use. If null, <code>jsx3.gui.Matrix.ICON_PLUS</code> will be applied when rendered.
      */
-    @SuppressWarnings("unchecked")
+
     public void getIconPlus(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2035,7 +2035,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
    immediately updated to reflect the deleted record.
      * @return the record removed from the data source or <code>null</code> if no such record found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node deleteRecord(String strRecordId, boolean bRedraw)
     {
         String extension = "deleteRecord(\"" + strRecordId + "\", \"" + bRedraw + "\").";
@@ -2062,7 +2062,7 @@ in the XML document, this method fails quietly.
    immediately updated to reflect the inserted property.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument insertRecordProperty(String strRecordId, String strPropName, String strPropValue, boolean bRedraw)
     {
         String extension = "insertRecordProperty(\"" + strRecordId + "\", \"" + strPropName + "\", \"" + strPropValue + "\", \"" + bRedraw + "\").";
@@ -2089,7 +2089,7 @@ in the XML document, this method fails quietly.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T insertRecordProperty(String strRecordId, String strPropName, String strPropValue, boolean bRedraw, Class<T> returnType)
     {
         String extension = "insertRecordProperty(\"" + strRecordId + "\", \"" + strPropName + "\", \"" + strPropValue + "\", \"" + bRedraw + "\").";
@@ -2188,7 +2188,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
   last token can be the key code contained in brackets, <code>[13]</code>.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.proxy.CodeBlock fctCallback, String strKeys)
     {
         String extension = "doKeyBinding(\"" + fctCallback + "\", \"" + strKeys + "\").";
@@ -2208,7 +2208,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Resets the validation state of this control.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form doReset()
     {
         String extension = "doReset().";
@@ -2228,7 +2228,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T doReset(Class<T> returnType)
     {
         String extension = "doReset().";
@@ -2247,7 +2247,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Returns the background color of this control when it is disabled.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisabledBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2273,7 +2273,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Returns the font color to use when this control is disabled.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisabledColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2300,7 +2300,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
 STATEENABLED.
      * @param callback <code>STATEDISABLED</code> or <code>STATEENABLED</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getEnabled(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2326,7 +2326,7 @@ STATEENABLED.
      * Returns the key binding that when keyed will fire the execute event for this control.
      * @param callback plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      */
-    @SuppressWarnings("unchecked")
+
     public void getKeyBinding(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2353,7 +2353,7 @@ STATEENABLED.
 OPTIONAL.
      * @param callback <code>REQUIRED</code> or <code>OPTIONAL</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getRequired(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2380,7 +2380,7 @@ OPTIONAL.
 STATEVALID.
      * @param callback <code>STATEINVALID</code> or <code>STATEVALID</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getValidationState(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2407,7 +2407,7 @@ STATEVALID.
      * @param strColor valid CSS property value, (i.e., red, #ff0000)
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setDisabledBackgroundColor(String strColor)
     {
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
@@ -2428,7 +2428,7 @@ STATEVALID.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setDisabledBackgroundColor(String strColor, Class<T> returnType)
     {
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
@@ -2448,7 +2448,7 @@ STATEVALID.
      * @param strColor valid CSS property value, (i.e., red, #ff0000)
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setDisabledColor(String strColor)
     {
         String extension = "setDisabledColor(\"" + strColor + "\").";
@@ -2469,7 +2469,7 @@ STATEVALID.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setDisabledColor(String strColor, Class<T> returnType)
     {
         String extension = "setDisabledColor(\"" + strColor + "\").";
@@ -2503,7 +2503,7 @@ event for this control.
      * @param strSequence plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setKeyBinding(String strSequence)
     {
         String extension = "setKeyBinding(\"" + strSequence + "\").";
@@ -2525,7 +2525,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setKeyBinding(String strSequence, Class<T> returnType)
     {
         String extension = "setKeyBinding(\"" + strSequence + "\").";
@@ -2545,7 +2545,7 @@ event for this control.
      * @param required {int} <code>REQUIRED</code> or <code>OPTIONAL</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setRequired(int required)
     {
         String extension = "setRequired(\"" + required + "\").";
@@ -2566,7 +2566,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setRequired(int required, Class<T> returnType)
     {
         String extension = "setRequired(\"" + required + "\").";
@@ -2586,7 +2586,7 @@ event for this control.
      * @param intState <code>STATEINVALID</code> or <code>STATEVALID</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setValidationState(int intState)
     {
         String extension = "setValidationState(\"" + intState + "\").";
@@ -2607,7 +2607,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setValidationState(int intState, Class<T> returnType)
     {
         String extension = "setValidationState(\"" + intState + "\").";
@@ -2638,7 +2638,7 @@ document.
 is destroyed.
      * @param callback <code>CLEANUPRESOURCES</code> or <code>SHARERESOURCES</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getShareResources(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2677,7 +2677,7 @@ following actions are also taken:
     document is returned immediately.
   Otherwise, setSourceXML is called on this object, passing in the created document.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getXML()
     {
         String extension = "getXML().";
@@ -2710,7 +2710,7 @@ following actions are also taken:
   Otherwise, setSourceXML is called on this object, passing in the created document.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXML(Class<T> returnType)
     {
         String extension = "getXML().";
@@ -2729,7 +2729,7 @@ following actions are also taken:
      * Returns the XML ID of this object.
      * @param callback the XML ID.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2754,7 +2754,7 @@ following actions are also taken:
     /**
      * Returns the XML string of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLString(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2779,7 +2779,7 @@ following actions are also taken:
     /**
      * Returns the list of XML transformers of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLTransformers(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2804,7 +2804,7 @@ following actions are also taken:
     /**
      * Returns the XML URL of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2829,7 +2829,7 @@ following actions are also taken:
     /**
      * Returns the XSL ID of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXSLId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2854,7 +2854,7 @@ following actions are also taken:
     /**
      * Returns a map containing all the parameters to pass to the XSL stylesheet during transformation.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getXSLParams()
     {
         String extension = "getXSLParams().";
@@ -2873,7 +2873,7 @@ following actions are also taken:
      * Returns a map containing all the parameters to pass to the XSL stylesheet during transformation.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXSLParams(Class<T> returnType)
     {
         String extension = "getXSLParams().";
@@ -2892,7 +2892,7 @@ following actions are also taken:
      * Returns whether the XML data source of this object is loaded asynchronously.
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXmlAsync(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2918,7 +2918,7 @@ following actions are also taken:
      * Returns whether this object is bound to the XML document stored in the data cache.
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXmlBind(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2964,7 +2964,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param strName the name of the XSL parameter to remove.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable removeXSLParam(String strName)
     {
         String extension = "removeXSLParam(\"" + strName + "\").";
@@ -2985,7 +2985,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeXSLParam(String strName, Class<T> returnType)
     {
         String extension = "removeXSLParam(\"" + strName + "\").";
@@ -3004,7 +3004,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * Removes all parameters from the list of parameters to pass to the XSL stylesheet during transformation.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable removeXSLParams()
     {
         String extension = "removeXSLParams().";
@@ -3024,7 +3024,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeXSLParams(Class<T> returnType)
     {
         String extension = "removeXSLParams().";
@@ -3058,7 +3058,7 @@ is destroyed.
   is the default value if the property is <code>null</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setShareResources(int intShare)
     {
         String extension = "setShareResources(\"" + intShare + "\").";
@@ -3081,7 +3081,7 @@ is destroyed.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setShareResources(int intShare, Class<T> returnType)
     {
         String extension = "setShareResources(\"" + intShare + "\").";
@@ -3112,7 +3112,7 @@ string of this object. This method executes the following steps:
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument setSourceXML(jsx3.xml.CdfDocument objDoc, jsx3.app.Cache objCache)
     {
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
@@ -3144,7 +3144,7 @@ string of this object. This method executes the following steps:
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setSourceXML(jsx3.xml.CdfDocument objDoc, jsx3.app.Cache objCache, Class<T> returnType)
     {
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
@@ -3184,7 +3184,7 @@ strValue is null the parameter is removed.
      * @param strValue the value of the XSL parameter to add.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXSLParam(String strName, String strValue)
     {
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
@@ -3207,7 +3207,7 @@ strValue is null the parameter is removed.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXSLParam(String strName, String strValue, Class<T> returnType)
     {
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
@@ -3228,7 +3228,7 @@ data sources loaded from an XML URL.
      * @param bAsync 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXmlAsync(boolean bAsync)
     {
         String extension = "setXmlAsync(\"" + bAsync + "\").";
@@ -3250,7 +3250,7 @@ data sources loaded from an XML URL.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXmlAsync(boolean bAsync, Class<T> returnType)
     {
         String extension = "setXmlAsync(\"" + bAsync + "\").";
@@ -3272,7 +3272,7 @@ the cache under the XML Id of this object changes.
      * @param bBind 
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void setXmlBind(boolean bBind, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -3318,7 +3318,7 @@ the this object already has a record with jsxid equal to the record to adopt
      * @param bRedraw forces suppression of the insert event
      * @return the adopted record.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node adoptRecord(jsx3.xml.CdfDocument strSourceId, String strRecordId, String strParentRecordId, boolean bRedraw)
     {
         String extension = "adoptRecord(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
@@ -3358,7 +3358,7 @@ the this object already has a record with jsxid equal to the record to adopt
      * @param bRedraw forces suppression of the insert event
      * @return the adopted record.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node adoptRecord(String strSourceId, String strRecordId, String strParentRecordId, boolean bRedraw)
     {
         String extension = "adoptRecord(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
@@ -3396,7 +3396,7 @@ which the record identified by strSourceId will be placed
    immediately updated to reflect the deleted record.
      * @return the adopted record.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node adoptRecordBefore(jsx3.xml.CdfDocument strSourceId, String strRecordId, String strSiblingRecordId, boolean bRedraw)
     {
         String extension = "adoptRecordBefore(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";
@@ -3434,7 +3434,7 @@ which the record identified by strSourceId will be placed
    immediately updated to reflect the deleted record.
      * @return the adopted record.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node adoptRecordBefore(String strSourceId, String strRecordId, String strSiblingRecordId, boolean bRedraw)
     {
         String extension = "adoptRecordBefore(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";
@@ -3491,7 +3491,7 @@ objCDF.getRecordNode(strId).getAttribute("propName");
      * @param strRecordId the <code>jsxid</code> attribute of the data record to return.
      * @return the object representation of a CDF node or <code>null</code> if no such record found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getRecord(String strRecordId)
     {
         String extension = "getRecord(\"" + strRecordId + "\").";
@@ -3518,7 +3518,7 @@ objCDF.getRecordNode(strId).getAttribute("propName");
      * @param returnType The expected return type
      * @return the object representation of a CDF node or <code>null</code> if no such record found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getRecord(String strRecordId, Class<T> returnType)
     {
         String extension = "getRecord(\"" + strRecordId + "\").";
@@ -3542,7 +3542,7 @@ redrawRecord(strRecordId, jsx3.xml.CDF.UPDATE); on this object.
      * @return the record node or <code>null</code> if none exists with a <code>jsxid</code>
    attribute equal to <code>strRecordId</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node getRecordNode(String strRecordId)
     {
         String extension = "getRecordNode(\"" + strRecordId + "\").";
@@ -3579,7 +3579,7 @@ the given jsxid is inserted.
    immediately updated to reflect the additional record.
      * @return the newly created or updated entity.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node insertRecord(jsx3.lang.Object objRecord, String strParentRecordId, boolean bRedraw)
     {
         String extension = "insertRecord(\"" + objRecord + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
@@ -3613,7 +3613,7 @@ there is an existing record with jsxid equal to objRecord.jsxid
    immediately updated to reflect the additional record.
      * @return the newly created entity.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node insertRecordBefore(jsx3.lang.Object objRecord, String strSiblingRecordId, boolean bRedraw)
     {
         String extension = "insertRecordBefore(\"" + objRecord + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";

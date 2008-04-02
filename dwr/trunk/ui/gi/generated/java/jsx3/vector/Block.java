@@ -45,7 +45,7 @@ public class Block extends jsx3.gui.Block
      * Returns the vector canvas on which this control paints itself. If no canvas has already been created, then
 createVector() is called to create it.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Tag getCanvas()
     {
         String extension = "getCanvas().";
@@ -65,7 +65,7 @@ createVector() is called to create it.
 createVector() is called to create it.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getCanvas(Class<T> returnType)
     {
         String extension = "getCanvas().";
@@ -95,7 +95,7 @@ CustomVector.prototype.createVector = function() {
 This method should do the work of creating and updating the vector tree to the state when it is ready to be
 rendered on screen, but without calling updateVector() directly.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Tag createVector()
     {
         String extension = "createVector().";
@@ -126,7 +126,7 @@ This method should do the work of creating and updating the vector tree to the s
 rendered on screen, but without calling updateVector() directly.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T createVector(Class<T> returnType)
     {
         String extension = "createVector().";
@@ -157,7 +157,7 @@ CustomVector.prototype.updateVector = function(objVector) {
      * @param callback <code>true</code> if the tree could be updated inline or <code>false</code> if it must be
    recreated by calling <code>createVector()</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void updateVector(jsx3.vector.Tag objVector, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -184,7 +184,7 @@ CustomVector.prototype.updateVector = function(objVector) {
 createVector() in this class calls this method to create the base vector tag. This method may be
 overridden to provide a base tag of another type that Canvas.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Tag createCanvas()
     {
         String extension = "createCanvas().";
@@ -205,7 +205,7 @@ createVector() in this class calls this method to create the base vector tag. Th
 overridden to provide a base tag of another type that Canvas.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T createCanvas(Class<T> returnType)
     {
         String extension = "createCanvas().";

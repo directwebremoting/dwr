@@ -60,7 +60,7 @@ public class LayoutGrid extends jsx3.gui.Block
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getCols(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -99,7 +99,7 @@ public class LayoutGrid extends jsx3.gui.Block
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getRows(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

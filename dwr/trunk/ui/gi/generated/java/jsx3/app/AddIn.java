@@ -47,7 +47,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -72,7 +72,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -97,7 +97,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getDescription(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -122,7 +122,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getVersion(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -147,7 +147,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getKey(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -172,7 +172,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Settings getSettings()
     {
         String extension = "getSettings().";
@@ -192,7 +192,7 @@ public class AddIn extends jsx3.lang.Object
      * 
      * @param strURI 
      */
-    @SuppressWarnings("unchecked")
+
     public void resolveURI(java.net.URI strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -218,7 +218,7 @@ public class AddIn extends jsx3.lang.Object
      * 
      * @param strURI 
      */
-    @SuppressWarnings("unchecked")
+
     public void resolveURI(String strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -243,7 +243,7 @@ public class AddIn extends jsx3.lang.Object
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getUriPrefix(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -270,7 +270,7 @@ public class AddIn extends jsx3.lang.Object
      * @param strURI 
      * @param bRel 
      */
-    @SuppressWarnings("unchecked")
+
     public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -297,7 +297,7 @@ public class AddIn extends jsx3.lang.Object
      * @param strURI 
      * @param bRel 
      */
-    @SuppressWarnings("unchecked")
+
     public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

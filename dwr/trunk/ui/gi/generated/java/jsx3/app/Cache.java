@@ -117,7 +117,7 @@ public class Cache extends jsx3.lang.Object
      * @param strId 
      * @return the remove document, if any.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument clearById(String strId)
     {
         String extension = "clearById(\"" + strId + "\").";
@@ -138,7 +138,7 @@ public class Cache extends jsx3.lang.Object
      * @param returnType The expected return type
      * @return the remove document, if any.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T clearById(String strId, Class<T> returnType)
     {
         String extension = "clearById(\"" + strId + "\").";
@@ -158,7 +158,7 @@ public class Cache extends jsx3.lang.Object
      * @param intTimestamp epoch seconds or a date object.
      * @param callback the ids of the removed documents.
      */
-    @SuppressWarnings("unchecked")
+
     public void clearByTimestamp(java.util.Date intTimestamp, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -185,7 +185,7 @@ public class Cache extends jsx3.lang.Object
      * @param intTimestamp epoch seconds or a date object.
      * @param callback the ids of the removed documents.
      */
-    @SuppressWarnings("unchecked")
+
     public void clearByTimestamp(int intTimestamp, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -212,7 +212,7 @@ public class Cache extends jsx3.lang.Object
      * @param strId 
      * @return the stored document or <code>null</code> if none exists.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getDocument(String strId)
     {
         String extension = "getDocument(\"" + strId + "\").";
@@ -233,7 +233,7 @@ public class Cache extends jsx3.lang.Object
      * @param returnType The expected return type
      * @return the stored document or <code>null</code> if none exists.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getDocument(String strId, Class<T> returnType)
     {
         String extension = "getDocument(\"" + strId + "\").";
@@ -258,8 +258,8 @@ synchronously and returns it.
    class with which to instantiate the new document instance if a new document is opened.
      * @return the document retrieved from the cache or loaded.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument getOrOpenDocument(String strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument getOrOpenDocument(String strURL, String strId, Class<?> objClass)
     {
         String extension = "getOrOpenDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -284,8 +284,8 @@ synchronously and returns it.
      * @param returnType The expected return type
      * @return the document retrieved from the cache or loaded.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getOrOpenDocument(String strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T getOrOpenDocument(String strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "getOrOpenDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -309,8 +309,8 @@ synchronously and returns it.
    class with which to instantiate the new document instance if a new document is opened.
      * @return the document retrieved from the cache or loaded.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument getOrOpenDocument(java.net.URI strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument getOrOpenDocument(java.net.URI strURL, String strId, Class<?> objClass)
     {
         String extension = "getOrOpenDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -335,8 +335,8 @@ synchronously and returns it.
      * @param returnType The expected return type
      * @return the document retrieved from the cache or loaded.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getOrOpenDocument(java.net.URI strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T getOrOpenDocument(java.net.URI strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "getOrOpenDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -359,8 +359,8 @@ synchronously and returns it.
    class with which to instantiate the new document instance.
      * @return the loaded document object.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument openDocument(String strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument openDocument(String strURL, String strId, Class<?> objClass)
     {
         String extension = "openDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -384,8 +384,8 @@ synchronously and returns it.
      * @param returnType The expected return type
      * @return the loaded document object.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T openDocument(String strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T openDocument(String strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "openDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -408,8 +408,8 @@ synchronously and returns it.
    class with which to instantiate the new document instance.
      * @return the loaded document object.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument openDocument(java.net.URI strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument openDocument(java.net.URI strURL, String strId, Class<?> objClass)
     {
         String extension = "openDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -433,8 +433,8 @@ synchronously and returns it.
      * @param returnType The expected return type
      * @return the loaded document object.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T openDocument(java.net.URI strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T openDocument(java.net.URI strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "openDocument(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -458,8 +458,8 @@ synchronously and returns it.
      * @return the document retrieved from the cache or a placeholder document if the document
    is in the process of loading asynchronously.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument getOrOpenAsync(String strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument getOrOpenAsync(String strURL, String strId, Class<?> objClass)
     {
         String extension = "getOrOpenAsync(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -484,8 +484,8 @@ synchronously and returns it.
      * @return the document retrieved from the cache or a placeholder document if the document
    is in the process of loading asynchronously.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getOrOpenAsync(String strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T getOrOpenAsync(String strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "getOrOpenAsync(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -509,8 +509,8 @@ synchronously and returns it.
      * @return the document retrieved from the cache or a placeholder document if the document
    is in the process of loading asynchronously.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.xml.CdfDocument getOrOpenAsync(java.net.URI strURL, String strId, Class objClass)
+
+    public jsx3.xml.CdfDocument getOrOpenAsync(java.net.URI strURL, String strId, Class<?> objClass)
     {
         String extension = "getOrOpenAsync(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -535,8 +535,8 @@ synchronously and returns it.
      * @return the document retrieved from the cache or a placeholder document if the document
    is in the process of loading asynchronously.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getOrOpenAsync(java.net.URI strURL, String strId, Class objClass, Class<T> returnType)
+
+    public <T> T getOrOpenAsync(java.net.URI strURL, String strId, Class<?> objClass, Class<T> returnType)
     {
         String extension = "getOrOpenAsync(\"" + strURL + "\", \"" + strId + "\", \"" + objClass + "\").";
         try
@@ -569,7 +569,7 @@ exists in this cache under strId then that document is removed from the cache.
      * @param callback the timestamp as an integer (epoch seconds) or <code>null</code> if no such document exists
    in this cache.
      */
-    @SuppressWarnings("unchecked")
+
     public void getTimestamp(String strId, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -594,7 +594,7 @@ exists in this cache under strId then that document is removed from the cache.
     /**
      * Returns a list of all the keys in this cache instance.
      */
-    @SuppressWarnings("unchecked")
+
     public void keys(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -632,7 +632,7 @@ method.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

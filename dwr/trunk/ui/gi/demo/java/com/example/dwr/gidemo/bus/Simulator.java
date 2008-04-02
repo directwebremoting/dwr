@@ -49,7 +49,6 @@ public class Simulator implements Runnable
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
-    @SuppressWarnings("unchecked")
     public void run()
     {
         try

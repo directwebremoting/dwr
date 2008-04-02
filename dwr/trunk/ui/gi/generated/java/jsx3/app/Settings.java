@@ -109,7 +109,7 @@ class are backed by the same XML source document.
      * @param strKey the setting key.
      * @param callback the stored value.
      */
-    @SuppressWarnings("unchecked")
+
     public void get(String strKey, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -135,7 +135,7 @@ class are backed by the same XML source document.
      * Returns a stored setting value as the raw XML node.
      * @param strKey the setting key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Node getNode(String strKey)
     {
         String extension = "getNode(\"" + strKey + "\").";

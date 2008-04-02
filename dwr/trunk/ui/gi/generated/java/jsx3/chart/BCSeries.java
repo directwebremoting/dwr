@@ -55,7 +55,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the x-coordinate of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getXValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -81,7 +81,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the y-coordinate of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getYValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -107,7 +107,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the minimum value (x or y) of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -133,7 +133,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the xField field.
      * @param callback xField
      */
-    @SuppressWarnings("unchecked")
+
     public void getXField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -170,7 +170,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the yField field.
      * @param callback yField
      */
-    @SuppressWarnings("unchecked")
+
     public void getYField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -207,7 +207,7 @@ public class BCSeries extends jsx3.chart.Series
      * Returns the minField field.
      * @param callback minField
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

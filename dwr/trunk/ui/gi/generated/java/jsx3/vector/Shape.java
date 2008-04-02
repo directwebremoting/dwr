@@ -61,7 +61,7 @@ public class Shape extends jsx3.vector.Tag
      * Returns the path field.
      * @param callback path
      */
-    @SuppressWarnings("unchecked")
+
     public void getPath(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -101,7 +101,7 @@ public class Shape extends jsx3.vector.Tag
      * @param bRel 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Shape pathMoveTo(int x, int y, boolean bRel)
     {
         String extension = "pathMoveTo(\"" + x + "\", \"" + y + "\", \"" + bRel + "\").";
@@ -124,7 +124,7 @@ public class Shape extends jsx3.vector.Tag
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T pathMoveTo(int x, int y, boolean bRel, Class<T> returnType)
     {
         String extension = "pathMoveTo(\"" + x + "\", \"" + y + "\", \"" + bRel + "\").";
@@ -146,7 +146,7 @@ public class Shape extends jsx3.vector.Tag
      * @param bRel 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Shape pathLineTo(int x, int y, boolean bRel)
     {
         String extension = "pathLineTo(\"" + x + "\", \"" + y + "\", \"" + bRel + "\").";
@@ -169,7 +169,7 @@ public class Shape extends jsx3.vector.Tag
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T pathLineTo(int x, int y, boolean bRel, Class<T> returnType)
     {
         String extension = "pathLineTo(\"" + x + "\", \"" + y + "\", \"" + bRel + "\").";
@@ -197,7 +197,7 @@ public class Shape extends jsx3.vector.Tag
      * @param bCW 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Shape pathArcTo(int cx, int cy, int rx, int ry, int x1, int y1, int x2, int y2, boolean bCW)
     {
         String extension = "pathArcTo(\"" + cx + "\", \"" + cy + "\", \"" + rx + "\", \"" + ry + "\", \"" + x1 + "\", \"" + y1 + "\", \"" + x2 + "\", \"" + y2 + "\", \"" + bCW + "\").";
@@ -226,7 +226,7 @@ public class Shape extends jsx3.vector.Tag
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T pathArcTo(int cx, int cy, int rx, int ry, int x1, int y1, int x2, int y2, boolean bCW, Class<T> returnType)
     {
         String extension = "pathArcTo(\"" + cx + "\", \"" + cy + "\", \"" + rx + "\", \"" + ry + "\", \"" + x1 + "\", \"" + y1 + "\", \"" + x2 + "\", \"" + y2 + "\", \"" + bCW + "\").";
@@ -245,7 +245,7 @@ public class Shape extends jsx3.vector.Tag
      * 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Shape pathClose()
     {
         String extension = "pathClose().";
@@ -265,7 +265,7 @@ public class Shape extends jsx3.vector.Tag
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T pathClose(Class<T> returnType)
     {
         String extension = "pathClose().";

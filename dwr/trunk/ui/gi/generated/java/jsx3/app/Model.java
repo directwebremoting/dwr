@@ -131,7 +131,7 @@ children are searched in order and the first matching child is returned.
      * @return the child at the given index or with the given name, or <code>null</code> if no such
     child exists.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getChild(int vntIndexOrName)
     {
         String extension = "getChild(\"" + vntIndexOrName + "\").";
@@ -154,7 +154,7 @@ children are searched in order and the first matching child is returned.
      * @return the child at the given index or with the given name, or <code>null</code> if no such
     child exists.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getChild(int vntIndexOrName, Class<T> returnType)
     {
         String extension = "getChild(\"" + vntIndexOrName + "\").";
@@ -176,7 +176,7 @@ children are searched in order and the first matching child is returned.
      * @return the child at the given index or with the given name, or <code>null</code> if no such
     child exists.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getChild(String vntIndexOrName)
     {
         String extension = "getChild(\"" + vntIndexOrName + "\").";
@@ -199,7 +199,7 @@ children are searched in order and the first matching child is returned.
      * @return the child at the given index or with the given name, or <code>null</code> if no such
     child exists.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getChild(String vntIndexOrName, Class<T> returnType)
     {
         String extension = "getChild(\"" + vntIndexOrName + "\").";
@@ -217,7 +217,7 @@ children are searched in order and the first matching child is returned.
     /**
      * Returns the first child.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getFirstChild()
     {
         String extension = "getFirstChild().";
@@ -236,7 +236,7 @@ children are searched in order and the first matching child is returned.
      * Returns the first child.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getFirstChild(Class<T> returnType)
     {
         String extension = "getFirstChild().";
@@ -254,7 +254,7 @@ children are searched in order and the first matching child is returned.
     /**
      * Returns the last child.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getLastChild()
     {
         String extension = "getLastChild().";
@@ -273,7 +273,7 @@ children are searched in order and the first matching child is returned.
      * Returns the last child.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getLastChild(Class<T> returnType)
     {
         String extension = "getLastChild().";
@@ -291,7 +291,7 @@ children are searched in order and the first matching child is returned.
     /**
      * Returns the next sibling.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getNextSibling()
     {
         String extension = "getNextSibling().";
@@ -310,7 +310,7 @@ children are searched in order and the first matching child is returned.
      * Returns the next sibling.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getNextSibling(Class<T> returnType)
     {
         String extension = "getNextSibling().";
@@ -328,7 +328,7 @@ children are searched in order and the first matching child is returned.
     /**
      * Returns the previous sibling.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getPreviousSibling()
     {
         String extension = "getPreviousSibling().";
@@ -347,7 +347,7 @@ children are searched in order and the first matching child is returned.
      * Returns the previous sibling.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getPreviousSibling(Class<T> returnType)
     {
         String extension = "getPreviousSibling().";
@@ -366,7 +366,7 @@ children are searched in order and the first matching child is returned.
      * Returns an array containing all the child DOM nodes of this object. The return value is the original array rather
 than a copy and should not be modified.
      */
-    @SuppressWarnings("unchecked")
+
     public void getChildren(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -393,7 +393,7 @@ than a copy and should not be modified.
      * @param callback one of <code>PERSISTNONE</code>, <code>PERSISTEMBED</code>, <code>PERSISTREF</code>,
    <code>PERSISTREFASYNC</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getPersistence(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -474,7 +474,7 @@ should be used instead to ensure that the child is removed from its current pare
      * @param objChild 
      * @param callback true to allow the set, false to veto
      */
-    @SuppressWarnings("unchecked")
+
     public void onSetChild(java.lang.Object objChild, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -502,7 +502,7 @@ the prospective parent has not already vetoed the adoption in the onSetChild() m
      * @param objParent 
      * @param callback true to allow the set, false to veto
      */
-    @SuppressWarnings("unchecked")
+
     public void onSetParent(java.lang.Object objParent, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -580,7 +580,7 @@ method.
      * @param vntItem either the index of the child to remove or the child itself.
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model removeChild(jsx3.app.Model vntItem)
     {
         String extension = "removeChild(\"" + vntItem + "\").";
@@ -604,7 +604,7 @@ method.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeChild(jsx3.app.Model vntItem, Class<T> returnType)
     {
         String extension = "removeChild(\"" + vntItem + "\").";
@@ -627,7 +627,7 @@ method.
      * @param vntItem either the index of the child to remove or the child itself.
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model removeChild(int vntItem)
     {
         String extension = "removeChild(\"" + vntItem + "\").";
@@ -651,7 +651,7 @@ method.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeChild(int vntItem, Class<T> returnType)
     {
         String extension = "removeChild(\"" + vntItem + "\").";
@@ -672,7 +672,7 @@ method.
   children are removed.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model removeChildren(Object[] arrChildren)
     {
         String extension = "removeChildren(\"" + arrChildren + "\").";
@@ -694,7 +694,7 @@ method.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeChildren(Object[] arrChildren, Class<T> returnType)
     {
         String extension = "removeChildren(\"" + arrChildren + "\").";
@@ -714,7 +714,7 @@ method.
 object is part of a DOM fragment. Until an object is added to a DOM tree by passing it as the parameter to
 setChild(), the object will be a DOM fragment.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Server getServer()
     {
         String extension = "getServer().";
@@ -757,7 +757,7 @@ does not already have a DOM parent, setChild() should be used instead of this me
    that would lead to unnecessary updates to the VIEW)
      * @param callback true if successful
      */
-    @SuppressWarnings("unchecked")
+
     public void insertBefore(jsx3.app.Model objMoveChild, jsx3.app.Model objPrecedeChild, boolean bRepaint, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -800,7 +800,7 @@ object's parent node.
     for load as a fragment.
      * @return the clone.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model doClone(int intPersist, int intMode)
     {
         String extension = "doClone(\"" + intPersist + "\", \"" + intMode + "\").";
@@ -825,7 +825,7 @@ object's parent node.
      * @param returnType The expected return type
      * @return the clone.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T doClone(int intPersist, int intMode, Class<T> returnType)
     {
         String extension = "doClone(\"" + intPersist + "\", \"" + intMode + "\").";
@@ -847,7 +847,7 @@ object's parent node.
      * @param bChildOnly if <code>true</code>, only search the children of this DOM node.
      * @return the descendant with the given name or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getDescendantOfName(String strName, boolean bDepthFirst, boolean bChildOnly)
     {
         String extension = "getDescendantOfName(\"" + strName + "\", \"" + bDepthFirst + "\", \"" + bChildOnly + "\").";
@@ -870,7 +870,7 @@ object's parent node.
      * @param returnType The expected return type
      * @return the descendant with the given name or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getDescendantOfName(String strName, boolean bDepthFirst, boolean bChildOnly, Class<T> returnType)
     {
         String extension = "getDescendantOfName(\"" + strName + "\", \"" + bDepthFirst + "\", \"" + bChildOnly + "\").";
@@ -893,7 +893,7 @@ object's parent node.
    (rather than returning subclasses too).
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getFirstChildOfType(org.directwebremoting.proxy.CodeBlock strType, boolean bExact)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
@@ -917,7 +917,7 @@ object's parent node.
      * @param returnType The expected return type
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getFirstChildOfType(org.directwebremoting.proxy.CodeBlock strType, boolean bExact, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
@@ -940,8 +940,8 @@ object's parent node.
    (rather than returning subclasses too).
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.app.Model getFirstChildOfType(Class strType, boolean bExact)
+
+    public jsx3.app.Model getFirstChildOfType(Class<?> strType, boolean bExact)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
         try
@@ -964,8 +964,8 @@ object's parent node.
      * @param returnType The expected return type
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getFirstChildOfType(Class strType, boolean bExact, Class<T> returnType)
+
+    public <T> T getFirstChildOfType(Class<?> strType, boolean bExact, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
         try
@@ -987,7 +987,7 @@ object's parent node.
    (rather than returning subclasses too).
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getFirstChildOfType(String strType, boolean bExact)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
@@ -1011,7 +1011,7 @@ object's parent node.
      * @param returnType The expected return type
      * @return the child of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getFirstChildOfType(String strType, boolean bExact, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + strType + "\", \"" + bExact + "\").";
@@ -1033,7 +1033,7 @@ object's parent node.
      * @param bShallow if <code>true</code>, only search direct children, not all descendants.
      * @param callback an array of matching descendants
      */
-    @SuppressWarnings("unchecked")
+
     public void getDescendantsOfType(org.directwebremoting.proxy.CodeBlock strType, boolean bShallow, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1062,7 +1062,7 @@ object's parent node.
      * @param bShallow if <code>true</code>, only search direct children, not all descendants.
      * @param callback an array of matching descendants
      */
-    @SuppressWarnings("unchecked")
+
     public void getDescendantsOfType(String strType, boolean bShallow, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1091,8 +1091,8 @@ object's parent node.
      * @param bShallow if <code>true</code>, only search direct children, not all descendants.
      * @param callback an array of matching descendants
      */
-    @SuppressWarnings("unchecked")
-    public void getDescendantsOfType(Class strType, boolean bShallow, org.directwebremoting.proxy.Callback<Object[]> callback)
+
+    public void getDescendantsOfType(Class<?> strType, boolean bShallow, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1124,7 +1124,7 @@ returned in order according to the search order used.
      * @param bIncludeSelf if <code>true</code>, include this node in the search.
      * @return the match (bMultiple = false) or matches (bMultiple = true).
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model findDescendants(org.directwebremoting.proxy.CodeBlock fctTest, boolean bDepthFirst, boolean bMultiple, boolean bShallow, boolean bIncludeSelf)
     {
         String extension = "findDescendants(\"" + fctTest + "\", \"" + bDepthFirst + "\", \"" + bMultiple + "\", \"" + bShallow + "\", \"" + bIncludeSelf + "\").";
@@ -1151,7 +1151,7 @@ returned in order according to the search order used.
      * @param returnType The expected return type
      * @return the match (bMultiple = false) or matches (bMultiple = true).
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T findDescendants(org.directwebremoting.proxy.CodeBlock fctTest, boolean bDepthFirst, boolean bMultiple, boolean bShallow, boolean bIncludeSelf, Class<T> returnType)
     {
         String extension = "findDescendants(\"" + fctTest + "\", \"" + bDepthFirst + "\", \"" + bMultiple + "\", \"" + bShallow + "\", \"" + bIncludeSelf + "\").";
@@ -1187,7 +1187,7 @@ objParent parameter for access to the DOM tree.
      * Returns the custom JSX-generated id for the object (i.e., _jsx2384098324509823049).
      * @param callback JSX id
      */
-    @SuppressWarnings("unchecked")
+
     public void getId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1213,7 +1213,7 @@ objParent parameter for access to the DOM tree.
      * Returns the zero-based index for this DOM node in relation to its siblings.
      * @param callback the index or <code>-1</code> if this object does not have a parent.
      */
-    @SuppressWarnings("unchecked")
+
     public void getChildIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1238,7 +1238,7 @@ objParent parameter for access to the DOM tree.
     /**
      * Returns the custom developer-defined name of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1274,7 +1274,7 @@ objParent parameter for access to the DOM tree.
     /**
      * Returns the help ID of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getHelpId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1313,7 +1313,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param callback <code>LT_NORMAL</code>, <code>LT_SLEEP_PAINT</code>, <code>LT_SLEEP_DESER</code>,
    <code>LT_SLEEP_PD</code>, <code>LT_SHOW_PAINT</code>, or <code>LT_SHOW_DESER</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getLoadType(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1350,7 +1350,7 @@ deserializes and paints in relation to its parent DOM node.
     /**
      * Returns the parent DOM node of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getParent()
     {
         String extension = "getParent().";
@@ -1369,7 +1369,7 @@ deserializes and paints in relation to its parent DOM node.
      * Returns the parent DOM node of this object.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getParent(Class<T> returnType)
     {
         String extension = "getParent().";
@@ -1390,7 +1390,7 @@ deserializes and paints in relation to its parent DOM node.
    or <code>jsx3.Class</code> instance.
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getAncestorOfType(String strType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
@@ -1412,7 +1412,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param returnType The expected return type
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAncestorOfType(String strType, Class<T> returnType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
@@ -1433,8 +1433,8 @@ deserializes and paints in relation to its parent DOM node.
    or <code>jsx3.Class</code> instance.
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
-    public jsx3.app.Model getAncestorOfType(Class strType)
+
+    public jsx3.app.Model getAncestorOfType(Class<?> strType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
         try
@@ -1455,8 +1455,8 @@ deserializes and paints in relation to its parent DOM node.
      * @param returnType The expected return type
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getAncestorOfType(Class strType, Class<T> returnType)
+
+    public <T> T getAncestorOfType(Class<?> strType, Class<T> returnType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
         try
@@ -1476,7 +1476,7 @@ deserializes and paints in relation to its parent DOM node.
    or <code>jsx3.Class</code> instance.
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getAncestorOfType(org.directwebremoting.proxy.CodeBlock strType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
@@ -1498,7 +1498,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param returnType The expected return type
      * @return the first ancestor of the given type or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAncestorOfType(org.directwebremoting.proxy.CodeBlock strType, Class<T> returnType)
     {
         String extension = "getAncestorOfType(\"" + strType + "\").";
@@ -1518,7 +1518,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param strName the name to query on.
      * @return the first ancestor with the given name or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getAncestorOfName(String strName)
     {
         String extension = "getAncestorOfName(\"" + strName + "\").";
@@ -1539,7 +1539,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param returnType The expected return type
      * @return the first ancestor with the given name or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAncestorOfName(String strName, Class<T> returnType)
     {
         String extension = "getAncestorOfName(\"" + strName + "\").";
@@ -1560,7 +1560,7 @@ deserializes and paints in relation to its parent DOM node.
    <code>true</code> if the node matches.
      * @param bIncludeSelf if <code>true</code>, include this object in the search
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model findAncestor(org.directwebremoting.proxy.CodeBlock fctTest, boolean bIncludeSelf)
     {
         String extension = "findAncestor(\"" + fctTest + "\", \"" + bIncludeSelf + "\").";
@@ -1582,7 +1582,7 @@ deserializes and paints in relation to its parent DOM node.
      * @param bIncludeSelf if <code>true</code>, include this object in the search
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T findAncestor(org.directwebremoting.proxy.CodeBlock fctTest, boolean bIncludeSelf, Class<T> returnType)
     {
         String extension = "findAncestor(\"" + fctTest + "\", \"" + bIncludeSelf + "\").";
@@ -1604,7 +1604,7 @@ called on this object.
   <code>toXMLDoc()</code> for a description.
      * @param callback this object serialized as an XML string.
      */
-    @SuppressWarnings("unchecked")
+
     public void toXML(jsx3.lang.Object objProperties, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1644,7 +1644,7 @@ The objProperties parameter may include the following keys:
   valid names and how they affect serialization.
      * @return this object serialized as an XML document.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument toXMLDoc(jsx3.lang.Object objProperties)
     {
         String extension = "toXMLDoc(\"" + objProperties + "\").";
@@ -1678,7 +1678,7 @@ The objProperties parameter may include the following keys:
      * @param returnType The expected return type
      * @return this object serialized as an XML document.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T toXMLDoc(jsx3.lang.Object objProperties, Class<T> returnType)
     {
         String extension = "toXMLDoc(\"" + objProperties + "\").";
@@ -1698,7 +1698,7 @@ The objProperties parameter may include the following keys:
 is set when this object is bound to a DOM tree.
      * @param callback the namespace of the server that owns this object instance.
      */
-    @SuppressWarnings("unchecked")
+
     public void getNS(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1724,7 +1724,7 @@ is set when this object is bound to a DOM tree.
      * Returns the URI resolver for this DOM node. This method returns the server of this object unless this node
 or its ancestor was loaded into the DOM with an explicit URI resolver.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.URIResolver getUriResolver()
     {
         String extension = "getUriResolver().";
@@ -1744,7 +1744,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
 or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getUriResolver(Class<T> returnType)
     {
         String extension = "getUriResolver().";
@@ -1770,7 +1770,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model load(java.net.URI strURL, boolean bRepaint, jsx3.net.URIResolver objResolver)
     {
         String extension = "load(\"" + strURL + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1797,7 +1797,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T load(java.net.URI strURL, boolean bRepaint, jsx3.net.URIResolver objResolver, Class<T> returnType)
     {
         String extension = "load(\"" + strURL + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1823,7 +1823,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model load(String strURL, boolean bRepaint, jsx3.net.URIResolver objResolver)
     {
         String extension = "load(\"" + strURL + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1850,7 +1850,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T load(String strURL, boolean bRepaint, jsx3.net.URIResolver objResolver, Class<T> returnType)
     {
         String extension = "load(\"" + strURL + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1874,7 +1874,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model loadXML(jsx3.xml.CdfDocument strXML, boolean bRepaint, jsx3.net.URIResolver objResolver)
     {
         String extension = "loadXML(\"" + strXML + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1899,7 +1899,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T loadXML(jsx3.xml.CdfDocument strXML, boolean bRepaint, jsx3.net.URIResolver objResolver, Class<T> returnType)
     {
         String extension = "loadXML(\"" + strXML + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1923,7 +1923,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model loadXML(String strXML, boolean bRepaint, jsx3.net.URIResolver objResolver)
     {
         String extension = "loadXML(\"" + strXML + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -1948,7 +1948,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T loadXML(String strXML, boolean bRepaint, jsx3.net.URIResolver objResolver, Class<T> returnType)
     {
         String extension = "loadXML(\"" + strXML + "\", \"" + bRepaint + "\", \"" + objResolver + "\").";
@@ -2010,7 +2010,7 @@ times in one application.
      * @param strKey the name of the meta data field, one of the keys in <code>META_FIELDS</code>.
      * @param callback the meta data value or empty string.
      */
-    @SuppressWarnings("unchecked")
+
     public void getMetaValue(String strKey, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -2097,7 +2097,7 @@ This implementation of this method executes the on-after-deserialize script of t
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

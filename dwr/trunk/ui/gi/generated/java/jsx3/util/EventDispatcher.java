@@ -327,7 +327,7 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

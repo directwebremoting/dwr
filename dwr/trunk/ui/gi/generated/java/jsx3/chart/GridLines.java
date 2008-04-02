@@ -58,7 +58,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the horizontalAbove field, whether to draw the horizontal lines and fills above the vertical ones.
      * @param callback horizontalAbove
      */
-    @SuppressWarnings("unchecked")
+
     public void getHorizontalAbove(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -95,7 +95,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the inForeground field, whether to draw this legend on top of the data series (or below).
      * @param callback inForeground
      */
-    @SuppressWarnings("unchecked")
+
     public void getInForeground(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -132,7 +132,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the borderStroke field, string representation of the stroke used to outline the grid lines.
      * @param callback borderStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getBorderStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -169,7 +169,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the fillV field, array of string representations of vector fills used to fill in areas between vertical major ticks; if the length of the array is greater than one, the areas alternate through the list of fills.
      * @param callback fillV
      */
-    @SuppressWarnings("unchecked")
+
     public void getFillV(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -206,7 +206,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the strokeMajorV field, array of string representations of VectorStroke's used to draw the vertical major ticks; if the length of the array is greater than one, the ticks alternate through the list of strokes.
      * @param callback strokeMajorV
      */
-    @SuppressWarnings("unchecked")
+
     public void getStrokeMajorV(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -243,7 +243,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the strokeMinorV field, array of string representations of VectorStroke's used to draw the vertical minor ticks; if the length of the array is greater than one, the ticks alternate through the list of strokes.
      * @param callback strokeMinorV
      */
-    @SuppressWarnings("unchecked")
+
     public void getStrokeMinorV(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -280,7 +280,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the fillH field, array of string representations of vector fills used to fill in areas between horizontal major ticks; if the length of the array is greater than one, the areas alternate through the list of fills.
      * @param callback fillH
      */
-    @SuppressWarnings("unchecked")
+
     public void getFillH(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -317,7 +317,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the strokeMajorH field, array of string representations of VectorStroke's used to draw the horizontal major ticks; if the length of the array is greater than one, the ticks alternate through the list of strokes.
      * @param callback strokeMajorH
      */
-    @SuppressWarnings("unchecked")
+
     public void getStrokeMajorH(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -354,7 +354,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the strokeMinorH field, array of string representations of VectorStroke's used to draw the horizontal minor ticks; if the length of the array is greater than one, the ticks alternate through the list of strokes.
      * @param callback strokeMinorH
      */
-    @SuppressWarnings("unchecked")
+
     public void getStrokeMinorH(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -390,7 +390,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     /**
      * Returns the x (horizontal) axis used to determine where to draw tick lines.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getXAxis()
     {
         String extension = "getXAxis().";
@@ -409,7 +409,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the x (horizontal) axis used to determine where to draw tick lines.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXAxis(Class<T> returnType)
     {
         String extension = "getXAxis().";
@@ -427,7 +427,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     /**
      * Returns the y (vertical) axis used to determine where to draw tick lines.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getYAxis()
     {
         String extension = "getYAxis().";
@@ -446,7 +446,7 @@ public class GridLines extends jsx3.chart.ChartComponent
      * Returns the y (vertical) axis used to determine where to draw tick lines.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getYAxis(Class<T> returnType)
     {
         String extension = "getYAxis().";

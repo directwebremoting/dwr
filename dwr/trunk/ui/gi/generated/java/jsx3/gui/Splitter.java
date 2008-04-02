@@ -66,7 +66,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * Returns a valid percentage (e.g., 100.00%  23.567%) that will be applied to the on-screen element as its CSS width/height percentage
      */
-    @SuppressWarnings("unchecked")
+
     public void getSubcontainer1Pct(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -105,7 +105,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * Returns a valid integer representing the minimum size in pixels for the container; the default minimum is 1
      */
-    @SuppressWarnings("unchecked")
+
     public void getSubcontainer1Min(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -144,7 +144,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * Returns a valid integer representing the minimum size in pixels for the container; the default minimum is 8
      */
-    @SuppressWarnings("unchecked")
+
     public void getSubcontainer2Min(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -183,7 +183,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * *Returns whether the splitter layout is top-over (--) or side-by-side (|).
      */
-    @SuppressWarnings("unchecked")
+
     public void getOrientation(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -222,7 +222,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * Returns the URL for the image to use for the splitter handle when the splitter is rendered top over bottom (--).  When not set, Splitter.VSPLITIMAGE will be used when painted on-screen.
      */
-    @SuppressWarnings("unchecked")
+
     public void getVSplitImage(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -260,7 +260,7 @@ public class Splitter extends jsx3.gui.Block
     /**
      * Returns the URL for the image to use for the splitter handle when the splitter is rendered side by side ( | ). When not set, Splitter.HSPLITIMAGE will be used when painted on-screen.
      */
-    @SuppressWarnings("unchecked")
+
     public void getHSplitImage(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

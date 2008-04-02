@@ -55,7 +55,7 @@ public class ChartComponent extends jsx3.gui.Block
      * Returns the chart of which this component is a part.
      * @return this if this is a chart, or the first ancestor that is a chart
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Chart getChart()
     {
         String extension = "getChart().";
@@ -75,7 +75,7 @@ public class ChartComponent extends jsx3.gui.Block
      * @param returnType The expected return type
      * @return this if this is a chart, or the first ancestor that is a chart
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getChart(Class<T> returnType)
     {
         String extension = "getChart().";

@@ -69,7 +69,7 @@ public class Request extends jsx3.lang.Object
      * Aborts the request.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Request abort()
     {
         String extension = "abort().";
@@ -88,7 +88,7 @@ public class Request extends jsx3.lang.Object
     /**
      * Gets the value of all the HTTP headers.
      */
-    @SuppressWarnings("unchecked")
+
     public void getAllResponseHeaders(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -114,7 +114,7 @@ public class Request extends jsx3.lang.Object
      * Gets the value of a specific HTTP response header.
      * @param strName the name for the response header to retrieve.
      */
-    @SuppressWarnings("unchecked")
+
     public void getResponseHeader(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -139,7 +139,7 @@ public class Request extends jsx3.lang.Object
     /**
      * Gets the HTTP response line status (e.g. "OK").
      */
-    @SuppressWarnings("unchecked")
+
     public void getStatusText(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -164,7 +164,7 @@ public class Request extends jsx3.lang.Object
     /**
      * Gets the HTTP response code (e.g. 200, 404, 500, etc).
      */
-    @SuppressWarnings("unchecked")
+
     public void getStatus(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -189,7 +189,7 @@ public class Request extends jsx3.lang.Object
     /**
      * Gets the content of the response as string.
      */
-    @SuppressWarnings("unchecked")
+
     public void getResponseText(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -215,7 +215,7 @@ public class Request extends jsx3.lang.Object
      * Gets the content of the response as an XML document. If the response is not a valid XML document,
 null is returned.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getResponseXML()
     {
         String extension = "getResponseXML().";
@@ -235,7 +235,7 @@ null is returned.
 null is returned.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getResponseXML(Class<T> returnType)
     {
         String extension = "getResponseXML().";
@@ -274,7 +274,7 @@ this method.
      * @param strPass The password for authentication. This parameter is ignored if the user parameter is null ("") or missing.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Request open(String strMethod, java.net.URI strURL, boolean bAsync, String strUser, String strPass)
     {
         String extension = "open(\"" + strMethod + "\", \"" + strURL + "\", \"" + bAsync + "\", \"" + strUser + "\", \"" + strPass + "\").";
@@ -299,7 +299,7 @@ this method.
      * @param strPass The password for authentication. This parameter is ignored if the user parameter is null ("") or missing.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Request open(String strMethod, String strURL, boolean bAsync, String strUser, String strPass)
     {
         String extension = "open(\"" + strMethod + "\", \"" + strURL + "\", \"" + bAsync + "\", \"" + strUser + "\", \"" + strPass + "\").";
@@ -318,7 +318,7 @@ this method.
     /**
      * Gets the URL passed when opening this request.
      */
-    @SuppressWarnings("unchecked")
+
     public void getURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -348,7 +348,7 @@ this method.
    be notified of a timeout.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Request send(String strContent, int intTimeout)
     {
         String extension = "send(\"" + strContent + "\", \"" + intTimeout + "\").";
@@ -369,7 +369,7 @@ this method.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

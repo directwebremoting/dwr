@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="src" path="test/java"/>
-	<classpathentry kind="src" path="core/api/main/java"/>
-	<classpathentry kind="src" path="core/spi/main/java"/>
 	<classpathentry exported="true" kind="lib" path="core/impl/jar/commons-logging-1.0.4.jar" sourcepath="/library/jarlib/logging-1.0.4/commons-logging-1.0.4.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://jakarta.apache.org/commons/logging/api"/>
@@ -41,11 +38,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="core/impl/jar/commons-io-1.3.1.jar"/>
 	<classpathentry kind="lib" path="core/impl/jar/yuicompressor-2.3.5.jar" sourcepath="/library/jarlib/yuicompressor-2.3.5/src"/>
-	<classpathentry kind="src" path="core/impl/main/java"/>
-	<classpathentry kind="src" path="core/impl/main/resources"/>
 	<classpathentry kind="lib" path="core/impl/jar/itext-2.0.6.jar"/>
-	<classpathentry kind="src" path="core/impl/demo/java"/>
-	<classpathentry kind="src" path="core/util/main/java"/>
+	<classpathentry kind="src" path="core/api/main/java"/>
+	<classpathentry kind="src" path="core/spi/main/java"/>
 	<classpathentry kind="lib" path="core/convert/jar/jdom-1.0.jar" sourcepath="/library/jarlib/jdom-1.0/jdom-1.0.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
@@ -62,8 +57,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="core/convert/jar/xbean-2.2.0.jar"/>
+	<classpathentry kind="src" path="core/impl/main/java"/>
+	<classpathentry kind="src" path="core/impl/main/resources"/>
+	<classpathentry kind="src" path="core/impl/test/java"/>
+	<classpathentry kind="src" path="core/impl/demo/java"/>
 	<classpathentry kind="src" path="core/convert/main/java"/>
 	<classpathentry kind="src" path="core/convert/test/java"/>
+	<classpathentry kind="src" path="core/util/main/java"/>
 	<classpathentry kind="src" path="core/legacy/main/java"/>
 	<classpathentry kind="src" path="protocol/json/main/java"/>
 	<classpathentry kind="lib" path="protocol/bayeux/jar/cometd-api-0.9.20070627.jar"/>

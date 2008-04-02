@@ -96,7 +96,7 @@ UNICODE
 EVENTSVERS
      * @param strEnvKey the key of the environment value to return
      */
-    @SuppressWarnings("unchecked")
+
     public void getEnv(String strEnvKey, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -121,7 +121,7 @@ EVENTSVERS
     /**
      * Returns the settings of this server/project per config.xml
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Settings getSettings()
     {
         String extension = "getSettings().";
@@ -142,7 +142,7 @@ EVENTSVERS
            if no taskbar is found, dialogs are not minimized, but are 'window shaded'Ñlike a Mac used to do
      * @param objJSX if null, this.JSXROOT is assumed; otherwise the object in the DOM from which to start looking for a descendant taskbar (a jsx3.gui.WindowBar instance)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.WindowBar getTaskBar(jsx3.app.Model objJSX)
     {
         String extension = "getTaskBar(\"" + objJSX + "\").";
@@ -243,7 +243,7 @@ parameter.
      * @return the return type depends on the <code>strType</code>
    parameter. See the method description.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument loadInclude(java.net.URI strSrc, String strId, String strType, String bReload)
     {
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
@@ -289,7 +289,7 @@ parameter.
      * @return the return type depends on the <code>strType</code>
    parameter. See the method description.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T loadInclude(java.net.URI strSrc, String strId, String strType, String bReload, Class<T> returnType)
     {
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
@@ -334,7 +334,7 @@ parameter.
      * @return the return type depends on the <code>strType</code>
    parameter. See the method description.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument loadInclude(String strSrc, String strId, String strType, String bReload)
     {
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
@@ -380,7 +380,7 @@ parameter.
      * @return the return type depends on the <code>strType</code>
    parameter. See the method description.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T loadInclude(String strSrc, String strId, String strType, String bReload, Class<T> returnType)
     {
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
@@ -413,7 +413,7 @@ The resource must be registered in the config.xml file of this application.
      * @return the return type depends on the type of resource.
    See the documentation for <code>loadInclude()</code> for more information.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument loadResource(String strId)
     {
         String extension = "loadResource(\"" + strId + "\").";
@@ -436,7 +436,7 @@ The resource must be registered in the config.xml file of this application.
      * @return the return type depends on the type of resource.
    See the documentation for <code>loadInclude()</code> for more information.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T loadResource(String strId, Class<T> returnType)
     {
         String extension = "loadResource(\"" + strId + "\").";
@@ -469,7 +469,7 @@ The resource must be registered in the config.xml file of this application.
      * @param strToken if present tokens such as {0}, {1}, {n} will be replaced with the nth element of this vararg array
      * @param callback value of the property
      */
-    @SuppressWarnings("unchecked")
+
     public void getDynamicProperty(String strPropName, String strToken, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -513,7 +513,7 @@ The resource must be registered in the config.xml file of this application.
      * @param name name of the cookie
      * @param bRaw 
      */
-    @SuppressWarnings("unchecked")
+
     public void getCookie(String name, boolean bRaw, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -551,7 +551,7 @@ The resource must be registered in the config.xml file of this application.
     /**
      * Returns the root block for this server (JSXROOT)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Block getRootBlock()
     {
         String extension = "getRootBlock().";
@@ -570,7 +570,7 @@ The resource must be registered in the config.xml file of this application.
      * Returns the root block for this server (JSXROOT)
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getRootBlock(Class<T> returnType)
     {
         String extension = "getRootBlock().";
@@ -589,7 +589,7 @@ The resource must be registered in the config.xml file of this application.
      * To implement jsx3.gui.Alerts interface.
      * @return the root block.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getAlertsParent()
     {
         String extension = "getAlertsParent().";
@@ -609,7 +609,7 @@ The resource must be registered in the config.xml file of this application.
      * @param returnType The expected return type
      * @return the root block.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAlertsParent(Class<T> returnType)
     {
         String extension = "getAlertsParent().";
@@ -627,7 +627,7 @@ The resource must be registered in the config.xml file of this application.
     /**
      * Returns the body block for this server (JSXBODY)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Block getBodyBlock()
     {
         String extension = "getBodyBlock().";
@@ -646,7 +646,7 @@ The resource must be registered in the config.xml file of this application.
      * Returns the body block for this server (JSXBODY)
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getBodyBlock(Class<T> returnType)
     {
         String extension = "getBodyBlock().";
@@ -665,7 +665,7 @@ The resource must be registered in the config.xml file of this application.
      * Returns the list of objects that are children of the body object. These are the root objects
     in a serialization file and the root nodes in the Component Hierarchy palette.
      */
-    @SuppressWarnings("unchecked")
+
     public void getRootObjects(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -690,7 +690,7 @@ The resource must be registered in the config.xml file of this application.
     /**
      * Returns the XML/XSL cache for this server
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Cache getCache()
     {
         String extension = "getCache().";
@@ -709,7 +709,7 @@ The resource must be registered in the config.xml file of this application.
     /**
      * Returns the DOM for this server
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.DOM getDOM()
     {
         String extension = "getDOM().";
@@ -730,7 +730,7 @@ The resource must be registered in the config.xml file of this application.
      * @param strId either the id (_jsxid) of the object or its name (jsxname)
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getJSX(String strId)
     {
         String extension = "getJSX(\"" + strId + "\").";
@@ -751,7 +751,7 @@ The resource must be registered in the config.xml file of this application.
      * @param returnType The expected return type
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getJSX(String strId, Class<T> returnType)
     {
         String extension = "getJSX(\"" + strId + "\").";
@@ -771,7 +771,7 @@ The resource must be registered in the config.xml file of this application.
      * @param strId the name (jsxname) of the object
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getJSXByName(String strId)
     {
         String extension = "getJSXByName(\"" + strId + "\").";
@@ -792,7 +792,7 @@ The resource must be registered in the config.xml file of this application.
      * @param returnType The expected return type
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getJSXByName(String strId, Class<T> returnType)
     {
         String extension = "getJSXByName(\"" + strId + "\").";
@@ -812,7 +812,7 @@ The resource must be registered in the config.xml file of this application.
      * @param strId the id (_jsxid) of the object
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getJSXById(String strId)
     {
         String extension = "getJSXById(\"" + strId + "\").";
@@ -833,7 +833,7 @@ The resource must be registered in the config.xml file of this application.
      * @param returnType The expected return type
      * @return the JSX object or null if none found
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getJSXById(String strId, Class<T> returnType)
     {
         String extension = "getJSXById(\"" + strId + "\").";
@@ -853,7 +853,7 @@ The resource must be registered in the config.xml file of this application.
 in this window in order to distribute the application across multiple browser windows.
      * @param strName the unique name of the window to create
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Window createAppWindow(String strName)
     {
         String extension = "createAppWindow(\"" + strName + "\").";
@@ -874,7 +874,7 @@ in this window in order to distribute the application across multiple browser wi
      * @param strSource either an XML document containing the window to load or the URL of the
    component to load.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Window loadAppWindow(String strSource)
     {
         String extension = "loadAppWindow(\"" + strSource + "\").";
@@ -895,7 +895,7 @@ in this window in order to distribute the application across multiple browser wi
      * @param strSource either an XML document containing the window to load or the URL of the
    component to load.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Window loadAppWindow(jsx3.xml.Node strSource)
     {
         String extension = "loadAppWindow(\"" + strSource + "\").";
@@ -916,7 +916,7 @@ in this window in order to distribute the application across multiple browser wi
      * @param strName the unique name of the window to retrieve
      * @return the window instance or <code>null</code> if no such window exists.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Window getAppWindow(String strName)
     {
         String extension = "getAppWindow(\"" + strName + "\").";
@@ -938,7 +938,7 @@ JSX object is a descendent of the root block of this server or one of its jsx3.g
      * @param objJSX 
      * @param callback document object
      */
-    @SuppressWarnings("unchecked")
+
     public void getDocumentOf(jsx3.app.Model objJSX, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -966,7 +966,7 @@ this server as well as all of its jsx3.gui.Window roots.
      * @param objJSX 
      * @param callback DOM object
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderedOf(jsx3.app.Model objJSX, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -997,7 +997,7 @@ unaffected.
      * @param strURI the URI to resolve.
      * @param callback the resolved URI.
      */
-    @SuppressWarnings("unchecked")
+
     public void resolveURI(String strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1028,7 +1028,7 @@ unaffected.
      * @param strURI the URI to resolve.
      * @param callback the resolved URI.
      */
-    @SuppressWarnings("unchecked")
+
     public void resolveURI(java.net.URI strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1053,7 +1053,7 @@ unaffected.
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getUriPrefix(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1081,7 +1081,7 @@ unaffected.
      * @param bRel 
      * @param callback the relativized URI.
      */
-    @SuppressWarnings("unchecked")
+
     public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1109,7 +1109,7 @@ unaffected.
      * @param bRel 
      * @param callback the relativized URI.
      */
-    @SuppressWarnings("unchecked")
+
     public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1136,7 +1136,7 @@ unaffected.
 that locale is returned. Otherwise, getDefaultLocale() is consulted, and finally the system-wide
 locale.
      */
-    @SuppressWarnings("unchecked")
+
     public void getLocale(org.directwebremoting.proxy.Callback<java.util.Locale> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1173,7 +1173,7 @@ locale.
      * Returns the default locale of this server. This is configured with the default_locale configuration
 setting.
      */
-    @SuppressWarnings("unchecked")
+
     public void getDefaultLocale(org.directwebremoting.proxy.Callback<java.util.Locale> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1223,7 +1223,7 @@ objJSX.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

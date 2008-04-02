@@ -95,7 +95,7 @@ public class Stack extends jsx3.gui.Block
      * Returns the child of this stack that will be painted as the content of this stack. This implementation
 returns the first child that is not a menu or a toolbar button.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getContentChild()
     {
         String extension = "getContentChild().";
@@ -115,7 +115,7 @@ returns the first child that is not a menu or a toolbar button.
 returns the first child that is not a menu or a toolbar button.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getContentChild(Class<T> returnType)
     {
         String extension = "getContentChild().";
@@ -134,7 +134,7 @@ returns the first child that is not a menu or a toolbar button.
      * Returns valid CSS property value, (i.e., red, #ffffff) when caption bar for stack is moused over. Default: jsx3.gui.Stack.ACTIVECOLOR
      * @param callback valid CSS property value, (i.e., red, #ffffff)
      */
-    @SuppressWarnings("unchecked")
+
     public void getActiveColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -174,7 +174,7 @@ returns the first child that is not a menu or a toolbar button.
      * Returns valid CSS property value, (i.e., red, #ffffff) when caption bar for stack is moused out. Default: jsx3.gui.Stack.INACTIVECOLOR
      * @param callback valid CSS property value, (i.e., red, #ffffff)
      */
-    @SuppressWarnings("unchecked")
+
     public void getInactiveColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -213,7 +213,7 @@ returns the first child that is not a menu or a toolbar button.
     /**
      * Returns whether or not this stack is the active (expanded) stack
      */
-    @SuppressWarnings("unchecked")
+
     public void isFront(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -64,7 +64,7 @@ public class PointSeries extends jsx3.chart.PlotSeries
      * Returns the magnitude field, the magnitude value to use for each data point in this series.
      * @param callback magnitude
      */
-    @SuppressWarnings("unchecked")
+
     public void getMagnitude(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -102,7 +102,7 @@ public class PointSeries extends jsx3.chart.PlotSeries
      * @param series 
      * @param record 
      */
-    @SuppressWarnings("unchecked")
+
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -101,7 +101,7 @@ public class Tag extends jsx3.lang.Object
      * Returns the parent tag.
      * @return parent
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.html.Tag getParent()
     {
         String extension = "getParent().";
@@ -121,7 +121,7 @@ public class Tag extends jsx3.lang.Object
      * @param returnType The expected return type
      * @return parent
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getParent(Class<T> returnType)
     {
         String extension = "getParent().";
@@ -140,7 +140,7 @@ public class Tag extends jsx3.lang.Object
      * Returns the children tags.
      * @param callback children
      */
-    @SuppressWarnings("unchecked")
+
     public void getChildren(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -166,7 +166,7 @@ public class Tag extends jsx3.lang.Object
      * Returns the id field.
      * @param callback id
      */
-    @SuppressWarnings("unchecked")
+
     public void getId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -203,7 +203,7 @@ public class Tag extends jsx3.lang.Object
      * Returns the cssClass field.
      * @param callback cssClass
      */
-    @SuppressWarnings("unchecked")
+
     public void getClassName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -262,7 +262,7 @@ public class Tag extends jsx3.lang.Object
      * @param child 
      * @param callback <code>true</code> to allow the append, <code>false</code> to veto.
      */
-    @SuppressWarnings("unchecked")
+
     public void onAppendChild(jsx3.html.Tag child, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -289,7 +289,7 @@ public class Tag extends jsx3.lang.Object
      * @param child 
      * @param callback <code>true</code> to allow the removal, <code>false</code> to veto.
      */
-    @SuppressWarnings("unchecked")
+
     public void onRemoveChild(jsx3.html.Tag child, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -329,7 +329,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
      * @param strName the name of the attribute.
      * @param callback the value of the attribute.
      */
-    @SuppressWarnings("unchecked")
+
     public void getProperty(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -380,7 +380,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * @param strName the name of the style.
      * @param callback the value of the style.
      */
-    @SuppressWarnings("unchecked")
+
     public void getStyle(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -417,7 +417,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * Returns the name of this HTML element, such as "table" or "div".
      * @param callback the tag name
      */
-    @SuppressWarnings("unchecked")
+
     public void getTagName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -443,7 +443,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * Returns the namespace of this HTML element.
      * @param callback the tag name
      */
-    @SuppressWarnings("unchecked")
+
     public void getTagNS(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -470,7 +470,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
 This method is only available in the VML version of this class.
      * @param callback this tag serialized to HTML.
      */
-    @SuppressWarnings("unchecked")
+
     public void paint(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -497,7 +497,7 @@ This method is only available in the VML version of this class.
 This method is only available in the SVG version of this class.
      * @param callback the native browser html element.
      */
-    @SuppressWarnings("unchecked")
+
     public void paintDom(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -534,7 +534,7 @@ override this method should begin with a call to jsxsuper().
      * Returns the first child tag of type type.
      * @param type the fully-qualified class name or the class constructor function.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.html.Tag getFirstChildOfType(String type)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";
@@ -554,7 +554,7 @@ override this method should begin with a call to jsxsuper().
      * @param type the fully-qualified class name or the class constructor function.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getFirstChildOfType(String type, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";
@@ -573,7 +573,7 @@ override this method should begin with a call to jsxsuper().
      * Returns the first child tag of type type.
      * @param type the fully-qualified class name or the class constructor function.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.html.Tag getFirstChildOfType(org.directwebremoting.proxy.CodeBlock type)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";
@@ -593,7 +593,7 @@ override this method should begin with a call to jsxsuper().
      * @param type the fully-qualified class name or the class constructor function.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getFirstChildOfType(org.directwebremoting.proxy.CodeBlock type, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";

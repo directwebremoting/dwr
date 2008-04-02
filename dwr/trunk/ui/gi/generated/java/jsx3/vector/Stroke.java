@@ -70,7 +70,7 @@ public class Stroke extends jsx3.html.Tag
      * Returns the color field.
      * @param callback color
      */
-    @SuppressWarnings("unchecked")
+
     public void getColor(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -95,7 +95,7 @@ public class Stroke extends jsx3.html.Tag
     /**
      * Returns the color field, as a CSS hex string.
      */
-    @SuppressWarnings("unchecked")
+
     public void getColorHtml(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -143,7 +143,7 @@ public class Stroke extends jsx3.html.Tag
      * Returns the width field.
      * @param callback width
      */
-    @SuppressWarnings("unchecked")
+
     public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -180,7 +180,7 @@ public class Stroke extends jsx3.html.Tag
      * Returns the alpha field.
      * @param callback alpha
      */
-    @SuppressWarnings("unchecked")
+
     public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -218,7 +218,7 @@ public class Stroke extends jsx3.html.Tag
      * @param v the string representation
      * @param callback null if v is empty, v if v is already a VectorStroke, or otherwise a new VectorStroke created by parsing the string according to the format specified above
      */
-    @SuppressWarnings("unchecked")
+
     public void valueOf(String v, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -67,7 +67,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * Returns the tickAlignment field, if 'between' then the midpoint of the category is between two major ticks, otherwise if 'aligned' then the midpoint of the category is aligned with a major tick.
      * @param callback tickAlignment, one of {'aligned','between'}
      */
-    @SuppressWarnings("unchecked")
+
     public void getTickAlignment(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -104,7 +104,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * Returns the categoryField field, the attribute of records from the data provider that contains the category name (this value can still be transformed by Axis's 'labelFunction' field).
      * @param callback categoryField
      */
-    @SuppressWarnings("unchecked")
+
     public void getCategoryField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -141,7 +141,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * Returns the paddingLow field, the number of category widths to pad the beginning of the axis with.
      * @param callback paddingLow
      */
-    @SuppressWarnings("unchecked")
+
     public void getPaddingLow(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -178,7 +178,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * Returns the paddingHigh field, the number of category widths to pad the end of the axis with.
      * @param callback paddingHigh
      */
-    @SuppressWarnings("unchecked")
+
     public void getPaddingHigh(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

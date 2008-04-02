@@ -58,7 +58,7 @@ public class Painted extends jsx3.app.Model
      * @param objGUI object reference to item to get absolute position for&#8212;as opposed to this instance (useful for determining placement of html objects contained by JSX objects, but not part of the actual JSX DOM)
      * @return JScript object with properties: L, T, W, H (corresponding to left, top width, height)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getAbsolutePosition(String objRoot, String objGUI)
     {
         String extension = "getAbsolutePosition(\"" + objRoot + "\", \"" + objGUI + "\").";
@@ -82,7 +82,7 @@ public class Painted extends jsx3.app.Model
      * @param returnType The expected return type
      * @return JScript object with properties: L, T, W, H (corresponding to left, top width, height)
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAbsolutePosition(String objRoot, String objGUI, Class<T> returnType)
     {
         String extension = "getAbsolutePosition(\"" + objRoot + "\", \"" + objGUI + "\").";
@@ -117,7 +117,7 @@ public class Painted extends jsx3.app.Model
      * @param strName property on this GUI object that will now use a dynamic property (e.g., 'jsxleft','jsxtop','jsxheight',etc.);
      * @param callback value of the property
      */
-    @SuppressWarnings("unchecked")
+
     public void getDynamicProperty(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -157,7 +157,7 @@ public class Painted extends jsx3.app.Model
      * Returns value for the custom attribute with the given name; returns null if no attribute found
      * @param strName the name of the property/attribute
      */
-    @SuppressWarnings("unchecked")
+
     public void getAttribute(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -183,7 +183,7 @@ public class Painted extends jsx3.app.Model
      * Returns handle to the JavaScript Object Array containing all events for the JSX GUI object;
            NOTE: This object will contain zero or more JavaScript Objects with the following Properties: script, type, system
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getAttributes()
     {
         String extension = "getAttributes().";
@@ -203,7 +203,7 @@ public class Painted extends jsx3.app.Model
            NOTE: This object will contain zero or more JavaScript Objects with the following Properties: script, type, system
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAttributes(Class<T> returnType)
     {
         String extension = "getAttributes().";
@@ -223,7 +223,7 @@ public class Painted extends jsx3.app.Model
      * @param strName the name of the custom property to remove
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Painted removeAttribute(String strName)
     {
         String extension = "removeAttribute(\"" + strName + "\").";
@@ -244,7 +244,7 @@ public class Painted extends jsx3.app.Model
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeAttribute(String strName, Class<T> returnType)
     {
         String extension = "removeAttribute(\"" + strName + "\").";
@@ -263,7 +263,7 @@ public class Painted extends jsx3.app.Model
      * removes all events bound to this object; NOTE: The object must still be painted/repainted for its corresponding on-screen view to be likewise updated; returns a reference to self (this) to facilitate method chaining
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Painted removeAttributes()
     {
         String extension = "removeAttributes().";
@@ -283,7 +283,7 @@ public class Painted extends jsx3.app.Model
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeAttributes(Class<T> returnType)
     {
         String extension = "removeAttributes().";
@@ -301,7 +301,7 @@ public class Painted extends jsx3.app.Model
     /**
      * gives focus to the on-screen VIEW for the element; returns a handle to the html/dhtml element as exposed by the native browser
      */
-    @SuppressWarnings("unchecked")
+
     public void focus(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -329,7 +329,7 @@ public class Painted extends jsx3.app.Model
   This argument is optional but improves the efficiency of this method if provided.
      * @param callback IE DHTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -357,7 +357,7 @@ public class Painted extends jsx3.app.Model
   This argument is optional but improves the efficiency of this method if provided.
      * @param callback IE DHTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void getRendered(jsx3.lang.Object objGUI, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -384,7 +384,7 @@ public class Painted extends jsx3.app.Model
 returned HTML. This method has no effect if this object is not currently displayed.
      * @param callback the result of calling <code>paint()</code> or <code>null</code> if this object is not displayed.
      */
-    @SuppressWarnings("unchecked")
+
     public void repaint(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -410,7 +410,7 @@ returned HTML. This method has no effect if this object is not currently display
      * Returns the DHTML, used for this object's on-screen VIEW
      * @param callback DHTML
      */
-    @SuppressWarnings("unchecked")
+
     public void paint(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -471,7 +471,7 @@ has no effect if this object is not currently painted.
      * @param c the children to paint. If not provided <code>this.getChildren()</code> is used.
      * @param callback DHTML
      */
-    @SuppressWarnings("unchecked")
+
     public void paintChildren(Object[] c, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

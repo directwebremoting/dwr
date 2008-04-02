@@ -65,7 +65,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the boxHeight field, the diameter of the box that shows the fill of each series or category.
      * @param callback boxHeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getBoxHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -102,7 +102,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the lineHeight field, the vertical space taken for each legend entry.
      * @param callback lineHeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getLineHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -139,7 +139,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the labelClass field, the CSS class name applied to the name of each series or category.
      * @param callback labelClass
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelClass(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -176,7 +176,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the labelStyle field, a CSS style attribute applied to the name of each series or category, ie "font-family: Arial; font-size: 10px;".
      * @param callback labelStyle
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelStyle(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -213,7 +213,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the backgroundFill field, a string representation of the vector fill used to color in the background of the legend.
      * @param callback backgroundFill
      */
-    @SuppressWarnings("unchecked")
+
     public void getBackgroundFill(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -250,7 +250,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the backgroundStroke field, a string representation of the VectorStroke used to outline the legend.
      * @param callback backgroundStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getBackgroundStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -287,7 +287,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the preferredWidth field, the width that this component would like to have, though its true size is dictated by the container component.
      * @param callback preferredWidth
      */
-    @SuppressWarnings("unchecked")
+
     public void getPreferredWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -324,7 +324,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * Returns the preferredHeight field, the height that this component would like to have, though its true size is dictated by the container component.
      * @param callback preferredHeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getPreferredHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -360,7 +360,7 @@ public class Legend extends jsx3.chart.ChartComponent
     /**
      * Find the first jsx3.chart.ChartLabel child
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.ChartLabel getLegendTitle()
     {
         String extension = "getLegendTitle().";

@@ -69,7 +69,7 @@ public class DOM extends jsx3.lang.Object
      * Creates a new unique system id.
      * @param strNameSpace the application namespace for which to generate the id.
      */
-    @SuppressWarnings("unchecked")
+
     public void newId(String strNameSpace, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -106,7 +106,7 @@ public class DOM extends jsx3.lang.Object
      * @param strId either the id of the object to return or its name.
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model get(String strId)
     {
         String extension = "get(\"" + strId + "\").";
@@ -127,7 +127,7 @@ public class DOM extends jsx3.lang.Object
      * @param returnType The expected return type
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T get(String strId, Class<T> returnType)
     {
         String extension = "get(\"" + strId + "\").";
@@ -149,7 +149,7 @@ strName the behavior of this method is undefined.
      * @param strName the name of the object to return.
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getByName(String strName)
     {
         String extension = "getByName(\"" + strName + "\").";
@@ -172,7 +172,7 @@ strName the behavior of this method is undefined.
      * @param returnType The expected return type
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getByName(String strName, Class<T> returnType)
     {
         String extension = "getByName(\"" + strName + "\").";
@@ -194,7 +194,7 @@ DOM nodes for each unique name. Therefore, this method performs efficiently.
      * @param callback an array of the matching DOM nodes. This return value should not be mutated as
   that will effect the internal functioning of this DOM.
      */
-    @SuppressWarnings("unchecked")
+
     public void getAllByName(String strName, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -221,7 +221,7 @@ DOM nodes for each unique name. Therefore, this method performs efficiently.
      * @param strId the id of the object to return.
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getById(String strId)
     {
         String extension = "getById(\"" + strId + "\").";
@@ -242,7 +242,7 @@ DOM nodes for each unique name. Therefore, this method performs efficiently.
      * @param returnType The expected return type
      * @return the matching DOM object or <code>null</code> if none found.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getById(String strId, Class<T> returnType)
     {
         String extension = "getById(\"" + strId + "\").";
@@ -310,7 +310,7 @@ index appropriately.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

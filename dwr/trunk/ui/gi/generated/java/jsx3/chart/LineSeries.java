@@ -94,7 +94,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the xField field.
      * @param callback xField
      */
-    @SuppressWarnings("unchecked")
+
     public void getXField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -131,7 +131,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the yField field.
      * @param callback yField
      */
-    @SuppressWarnings("unchecked")
+
     public void getYField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -168,7 +168,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the form field.
      * @param callback form
      */
-    @SuppressWarnings("unchecked")
+
     public void getForm(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -205,7 +205,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the interpolateValues field.
      * @param callback interpolateValues
      */
-    @SuppressWarnings("unchecked")
+
     public void getInterpolateValues(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -242,7 +242,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the pointRadius field.
      * @param callback pointRadius
      */
-    @SuppressWarnings("unchecked")
+
     public void getPointRadius(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -279,7 +279,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the pointRenderer field.
      * @return pointRenderer
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.PointRenderer getPointRenderer()
     {
         String extension = "getPointRenderer().";
@@ -310,7 +310,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the pointFill field.
      * @param callback pointFill
      */
-    @SuppressWarnings("unchecked")
+
     public void getPointFill(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -347,7 +347,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the pointStroke field.
      * @param callback pointStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getPointStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -384,7 +384,7 @@ public class LineSeries extends jsx3.chart.Series
      * Returns the pointGradient field.
      * @param callback pointGradient
      */
-    @SuppressWarnings("unchecked")
+
     public void getPointGradient(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -422,7 +422,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param series 
      * @param record 
      */
-    @SuppressWarnings("unchecked")
+
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

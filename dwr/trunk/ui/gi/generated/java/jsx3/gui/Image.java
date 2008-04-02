@@ -41,7 +41,7 @@ public class Image extends jsx3.gui.Block
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderedWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -66,7 +66,7 @@ public class Image extends jsx3.gui.Block
     /**
      * 
      */
-    @SuppressWarnings("unchecked")
+
     public void getRenderedHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -91,7 +91,7 @@ public class Image extends jsx3.gui.Block
     /**
      * Returns the URI of this image.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSrc(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

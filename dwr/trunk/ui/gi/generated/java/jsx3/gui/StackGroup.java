@@ -69,7 +69,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
      * Returns the size of the handle common to all child stack instances (in pixels). Default: jsx3.gui.StackGroup.DEFAULTBARSIZE
      * @param callback size in pixels
      */
-    @SuppressWarnings("unchecked")
+
     public void getBarSize(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -108,7 +108,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
     /**
      * Returns zero-based index for the tab that is active per its placement in the child JScript array
      */
-    @SuppressWarnings("unchecked")
+
     public void getSelectedIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

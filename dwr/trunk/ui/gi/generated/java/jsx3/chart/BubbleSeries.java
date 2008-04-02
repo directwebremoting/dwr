@@ -60,7 +60,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * @param series 
      * @param record 
      */
-    @SuppressWarnings("unchecked")
+
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -86,7 +86,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * Returns the magnitudeField field.
      * @param callback magnitudeField
      */
-    @SuppressWarnings("unchecked")
+
     public void getMagnitudeField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -123,7 +123,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * Returns the magnitude of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getMagnitudeValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

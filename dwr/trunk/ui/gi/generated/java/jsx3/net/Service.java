@@ -114,7 +114,7 @@ this document is used to simulate a typical server response
     /**
      * Returns a CR-LF delimited list of supported namespaces and thei related prefix (as defined by the Object, jsx3.net.Service.ns). Any nodes in a rules document (CXF) that implements one of the namespaces listed by this function, should implement the corresponding namespace prefix as also detailed here.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSupportedNamespaces(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -139,7 +139,7 @@ this document is used to simulate a typical server response
     /**
      * Gets the URL for the rules file to use (a CXF document). This rules file will be used by the Service instance to generate, send, receive and process XML messages
      */
-    @SuppressWarnings("unchecked")
+
     public void getRulesURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -196,7 +196,7 @@ point to the specific location in the document where the generated message shoul
     /**
      * Gets URL for the base stub to use for the request message (the XML document to contain the generated document)
      */
-    @SuppressWarnings("unchecked")
+
     public void getOutboundStubURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -239,7 +239,7 @@ equivalent: <code>jsxapp://test/xml/typical.xml</code>, <b>and</b> <code>xml/typ
      * Gets the namespace for the server/project to run the service instance within. If a namespace isn't provided, the system will look for the first
 application and use its namespace. If no applications exist, the namespace will be completely ignored.
      */
-    @SuppressWarnings("unchecked")
+
     public void getNamespace(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -264,7 +264,7 @@ application and use its namespace. If no applications exist, the namespace will 
     /**
      * Returns the server that this service runs in, as set by the setNamespace() method.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Server getServer()
     {
         String extension = "getServer().";
@@ -310,7 +310,7 @@ application and use its namespace. If no applications exist, the namespace will 
      * Gets XPath address for the node in the outbound stub document to which to append the generated message.
      * @param callback Valid XSL path
      */
-    @SuppressWarnings("unchecked")
+
     public void getOutboundStubPath(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -350,7 +350,7 @@ Overrides the static setting in the rules file.
      * Gets the URL for a "typical", XML-formatted server resonse document. This document is then used when the project is
 run in static mode (as defined by the Project Deployment Options).
      */
-    @SuppressWarnings("unchecked")
+
     public void getInboundURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -392,7 +392,7 @@ then the following inputs (all of which are valid) are equivalent: <code>jsxapp:
     /**
      * Gets URL for a 'typical' XML-formatted request document to send to the server; when this is set, the mapper does not even attempt to generate a document. Instead, this document is sent directly to the server without any processing. Useful for testing requests that never change
      */
-    @SuppressWarnings("unchecked")
+
     public void getOutboundURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -435,7 +435,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Gets the name of the operation to use within a multi-operation rules file. Note: Rules created via a WSDL often have multiple named operations. Rules files generated without a WSDL contain no named operations, and instead use a single transaction.
      */
-    @SuppressWarnings("unchecked")
+
     public void getOperationName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -473,7 +473,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Returns the rules document used by the Service instance (a CXF document)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getRulesXML()
     {
         String extension = "getRulesXML().";
@@ -492,7 +492,7 @@ to the context server. For example, if the project directory for the context ser
      * Returns the rules document used by the Service instance (a CXF document)
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getRulesXML(Class<T> returnType)
     {
         String extension = "getRulesXML().";
@@ -511,7 +511,7 @@ to the context server. For example, if the project directory for the context ser
      * Dereferences the parsed rules tree (a jsx3.xml.Document instance) managed by this Service instance, forcing a reload of the document from disk the next time the rules document is requested
      * @return reference to self
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Service resetRulesTree()
     {
         String extension = "resetRulesTree().";
@@ -530,7 +530,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Gets user name to send as part of the http request (for servers requiring http authentication)
      */
-    @SuppressWarnings("unchecked")
+
     public void getUserName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -568,7 +568,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Gets password to send as part of the http request (for servers requiring http authentication)
      */
-    @SuppressWarnings("unchecked")
+
     public void getUserPass(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -606,7 +606,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Gets the jsx3.net.HttpRequest instance that performs the transaction with the remote service (the transport object for the message).
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Request getRequest()
     {
         String extension = "getRequest().";
@@ -625,7 +625,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Call this method after the service has responded to get a parsed instance of the server's XML response
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getInboundDocument()
     {
         String extension = "getInboundDocument().";
@@ -644,7 +644,7 @@ to the context server. For example, if the project directory for the context ser
      * Call this method after the service has responded to get a parsed instance of the server's XML response
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getInboundDocument(Class<T> returnType)
     {
         String extension = "getInboundDocument().";
@@ -673,7 +673,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Call this method after 'doCall' has been called to get a parsed instance of the request document--what was actually sent to the remote service
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getOutboundDocument()
     {
         String extension = "getOutboundDocument().";
@@ -692,7 +692,7 @@ to the context server. For example, if the project directory for the context ser
      * Call this method after 'doCall' has been called to get a parsed instance of the request document--what was actually sent to the remote service
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getOutboundDocument(Class<T> returnType)
     {
         String extension = "getOutboundDocument().";
@@ -710,7 +710,7 @@ to the context server. For example, if the project directory for the context ser
     /**
      * Gets the URL for the service endpoint where the request will be sent
      */
-    @SuppressWarnings("unchecked")
+
     public void getEndpointURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -749,7 +749,7 @@ to the context server. For example, if the project directory for the context ser
      * Gets the method for the request. Default is POST
      * @param callback one of: GET or POST
      */
-    @SuppressWarnings("unchecked")
+
     public void getMethod(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -787,7 +787,7 @@ to the context server. For example, if the project directory for the context ser
      * @param bCancelIfInvalid If true, the remote service will not be called if the message does not pass validation while being generated.
      * @param callback true if the message passed all validation rules while being generated.
      */
-    @SuppressWarnings("unchecked")
+
     public void doCall(boolean bCancelIfInvalid, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -915,7 +915,7 @@ to the context server. For example, if the project directory for the context ser
      * Resets the rules tree to default state (with all 'skip' flags removed) from those rules that were skipped during the previous transaction
      * @return reference to self
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Service resetRules()
     {
         String extension = "resetRules().";
@@ -937,7 +937,7 @@ to the context server. For example, if the project directory for the context ser
      * @param strShellURL relative URL to message shell to use as the starting container to put content into. Note that calling <code>setOutboundStubURL</code> or <code>setOutboundStubDocument</code> in conjunction with <code>setOutboundStubPath</code>
 are preferred to passing this parameter, since they provide much greater control. Also note that this value is stored statically in the rules document when the rules document is first created via the XML Mapping Utility.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getServiceMessage(String MESSAGETYPE, String strShellURL)
     {
         String extension = "getServiceMessage(\"" + MESSAGETYPE + "\", \"" + strShellURL + "\").";
@@ -959,7 +959,7 @@ are preferred to passing this parameter, since they provide much greater control
 are preferred to passing this parameter, since they provide much greater control. Also note that this value is stored statically in the rules document when the rules document is first created via the XML Mapping Utility.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getServiceMessage(String MESSAGETYPE, String strShellURL, Class<T> returnType)
     {
         String extension = "getServiceMessage(\"" + MESSAGETYPE + "\", \"" + strShellURL + "\").";
@@ -978,7 +978,7 @@ are preferred to passing this parameter, since they provide much greater control
      * Gets the HTTP response code (i.e., 200, 404, 500, etc). This will be the response code provided by the bound jsx3.net.Request instance
 used for the transport. However, if setStatus has been called on the Service instance, the value supplied by the developer will be used instead.
      */
-    @SuppressWarnings("unchecked")
+
     public void getStatus(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1018,7 +1018,7 @@ instructions and mappings when a Fault occurs as well as when running tests in S
     /**
      * Gets the mode (static jsx3.Boolean.FALSE or live jsx3.Boolean.TRUE).
      */
-    @SuppressWarnings("unchecked")
+
     public void getMode(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1085,7 +1085,7 @@ all sibling mapping rules that would create an 'attribute' entity. Call this met
 for best performance.
      * @return XSLT document
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument compile()
     {
         String extension = "compile().";
@@ -1117,7 +1117,7 @@ for best performance.
      * @param returnType The expected return type
      * @return XSLT document
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T compile(Class<T> returnType)
     {
         String extension = "compile().";
@@ -1137,7 +1137,7 @@ for best performance.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

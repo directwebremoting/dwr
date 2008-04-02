@@ -116,7 +116,7 @@ public class Tab extends jsx3.gui.Block
      * Returns background image that will underlay each tab to provide an outset-type border. Default: jsx3.gui.Tab.DEFAULTBEVELIMAGE
      * @param callback valid url (typically relative) to point to an image that can be used as a bacground image for the tab
      */
-    @SuppressWarnings("unchecked")
+
     public void getBevel(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -165,7 +165,7 @@ public class Tab extends jsx3.gui.Block
      * Returns valid CSS property value, (e.g., red, #ffffff) when tab is active. Default: jsx3.gui.Tab.DEFAULTACTIVECOLOR
      * @param callback valid CSS property value, (e.g., red, #ffffff)
      */
-    @SuppressWarnings("unchecked")
+
     public void getActiveColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -204,7 +204,7 @@ public class Tab extends jsx3.gui.Block
      * Returns valid CSS property value, (e.g., red, #ffffff) when tab is inactive (not selected tab in the group). Default: jsx3.gui.Tab.DEFAULTINACTIVECOLOR
      * @param callback valid CSS property value, (e.g., red, #ffffff)
      */
-    @SuppressWarnings("unchecked")
+
     public void getInactiveColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -243,7 +243,7 @@ public class Tab extends jsx3.gui.Block
      * Returns the state for the tab control. Default: jsx3.gui.Tab.STATEENABLED
      * @param callback one of: jsx3.gui.Tab.STATEDISABLED, jsx3.gui.Tab.STATEENABLED
      */
-    @SuppressWarnings("unchecked")
+
     public void getEnabled(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -282,7 +282,7 @@ public class Tab extends jsx3.gui.Block
      * Returns the child of this tab that will be painted as the content of this tab. This implementation returns the
 first child of this stack.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getContentChild()
     {
         String extension = "getContentChild().";
@@ -302,7 +302,7 @@ first child of this stack.
 first child of this stack.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getContentChild(Class<T> returnType)
     {
         String extension = "getContentChild().";

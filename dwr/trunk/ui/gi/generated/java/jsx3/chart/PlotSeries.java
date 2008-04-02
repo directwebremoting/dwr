@@ -55,7 +55,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the x-coordinate of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getXValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -81,7 +81,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the y-coordinate of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getYValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -107,7 +107,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the xField field.
      * @param callback xField
      */
-    @SuppressWarnings("unchecked")
+
     public void getXField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -144,7 +144,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the yField field.
      * @param callback yField
      */
-    @SuppressWarnings("unchecked")
+
     public void getYField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -181,7 +181,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the renderer field.
      * @return renderer
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.PointRenderer getRenderer()
     {
         String extension = "getRenderer().";
@@ -212,7 +212,7 @@ public class PlotSeries extends jsx3.chart.Series
      * Returns the renderer used for the legend.
      * @return the same renderer as used to draw the points
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.PointRenderer getLegendRenderer()
     {
         String extension = "getLegendRenderer().";
