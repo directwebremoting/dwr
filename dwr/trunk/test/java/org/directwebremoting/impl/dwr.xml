@@ -4,7 +4,7 @@
 <dwr>
 
   <init>
-    <converter id="testbean" class="org.getahead.dwrdemo.marshall.TestBean2Converter"/>
+    <converter id="testbean" class="com.example.dwr.marshall.TestBean2Converter"/>
   </init>
 
   <allow>
@@ -14,7 +14,7 @@
     </filter>
 
     <create creator="new" javascript="Test">
-      <param name="class" value="org.getahead.dwrdemo.marshall.Test"/>
+      <param name="class" value="com.example.dwr.marshall.Test"/>
     </create>
 
     <create creator="new" javascript="JDate">
@@ -22,19 +22,19 @@
       <exclude method="getHours"/>
       <auth method="getMinutes" role="admin"/>
       <auth method="getMinutes" role="devel"/>
-      <filter class="org.getahead.dwrdemo.marshall.Logging1AjaxFilter"/>
-      <filter class="org.getahead.dwrdemo.marshall.Logging2AjaxFilter"/>
+      <filter class="com.example.dwr.marshall.Logging1AjaxFilter"/>
+      <filter class="com.example.dwr.marshall.Logging2AjaxFilter"/>
     </create>
 
     <create creator="new" javascript="TestBean" scope="session">
-      <param name="class" value="org.getahead.dwrdemo.marshall.TestBean"/>
-      <filter class="org.getahead.dwrdemo.marshall.RandomSecurityAjaxFilter"/>
+      <param name="class" value="com.example.dwr.marshall.TestBean"/>
+      <filter class="com.example.dwr.marshall.RandomSecurityAjaxFilter"/>
     </create>
 
-    <convert converter="testbean" match="org.getahead.dwrdemo.marshall.TestBean"/>
+    <convert converter="testbean" match="com.example.dwr.marshall.TestBean"/>
 
-    <convert converter="bean" match="org.getahead.dwrdemo.marshall.ObjB"/>
-    <convert converter="object" match="org.getahead.dwrdemo.marshall.ObjA">
+    <convert converter="bean" match="com.example.dwr.marshall.ObjB"/>
+    <convert converter="object" match="com.example.dwr.marshall.ObjA">
       <param name="force" value="true"/>
     </convert>
 
@@ -43,7 +43,7 @@
   <signatures>
   <![CDATA[
   import java.util.*;
-  import org.getahead.dwrdemo.marshall.*;
+  import com.example.dwr.marshall.*;
 
   Test.testBeanSetParam(Set<TestBean>);
   Test.testBeanListParam(List<TestBean>);

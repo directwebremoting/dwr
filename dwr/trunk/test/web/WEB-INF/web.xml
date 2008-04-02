@@ -25,9 +25,9 @@
     <init-param>
       <param-name>classes</param-name>
       <param-value>
-      org.getahead.dwrdemo.marshall.TestBean2Converter,
-      org.getahead.dwrdemo.marshall.Test,
-      org.getahead.dwrdemo.marshall.TestBean
+      com.example.dwr.marshall.TestBean2Converter,
+      com.example.dwr.marshall.Test,
+      com.example.dwr.marshall.TestBean
       </param-value>
     </init-param>
     <init-param>
