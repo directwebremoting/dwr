@@ -41,6 +41,7 @@ public class PersonForm extends ValidatorForm
     /* (non-Javadoc)
      * @see org.apache.struts.validator.ValidatorForm#validate(org.apache.struts.action.ActionMapping, javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request)
     {
         ActionErrors errors = super.validate(mapping, request);
