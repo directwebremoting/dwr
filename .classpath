@@ -113,7 +113,7 @@
 			<attribute name="javadoc_location" value="http://struts.apache.org/struts-doc-1.1/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="serverside/struts/main"/>
+	<classpathentry kind="src" path="serverside/struts/main/java"/>
 	<classpathentry kind="src" path="serverside/struts/demo/java"/>
 	<classpathentry kind="src" path="serverside/various/main/java"/>
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-2.5.2.jar" sourcepath="jar/spring-2.5.2-sources.jar"/>
