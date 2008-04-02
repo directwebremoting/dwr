@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">
+<html xmlns="http://www.w3.org/TR/xhtml1">
+<head>
+  <title>Air-Band Configurator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="global/generic.css" />
+  <script type='text/javascript' src='dwr/interface/Actions.js'></script>
+  <script type='text/javascript' src='dwr/engine.js'></script>
+  <script type='text/javascript' src='dwr/util.js'></script>
+  <script type="text/javascript">
+    var initialtab=[1, "tabPayment"];
+  </script>
+  <script type="text/javascript" src="global/generic.js"></script>
+  <script type="text/javascript" src="global/query.js"></script>
+  <script type="text/javascript" src="global/tabs.js"></script>
+  <script type="text/javascript">
+    function saveContact(prefix)
+    {
+        var custid = DWRUtil.getValue("custid");
+        var contid = DWRUtil.getValue(prefix + "id");
+
+        var usecontact = DWRUtil.getValue(prefix + "usecontactused");
+        if (usecontact)
+        {
+            // DWRUtil.getValue(prefix + "username"),
+            var fullname =  DWRUtil.getValue(prefix + "fullname");
+            var email = DWRUtil.getValue(prefix + "email");
+            var phonework = DWRUtil.getValue(prefix + "phonework");
+            var phonemobile = DWRUtil.getValue(prefix + "phonemobile");
+            Actions.updateContact(reportMessage, custid, contid, prefix, fullname, email, phonework, phonemobile);
+        }
+        else
+        {
+            Actions.clearContact(reportMessage, custid, prefix);
+        }
+    }
+
+    function changePassword(prefix)
+    {
+        var password = DWRUtil.getValue(prefix + "password");
+        var confirm = DWRUtil.getValue(prefix + "confirm");
+        if (password != confirm)
+        {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        var id = DWRUtil.getValue(prefix + "contid");
+        Actions.changePassword(reportMessage, id, password);
+    }
+
+    function enableContactDetails(prefix)
+    {
+        var active = DWRUtil.getValue(prefix + "usecontactused");
+        DWRUtil.setEnabled(prefix + "fullname", active);
+        //DWRUtil.setEnabled(prefix + "username", active);
+        DWRUtil.setEnabled(prefix + "password", active);
+        DWRUtil.setEnabled(prefix + "confirm", active);
+        DWRUtil.setEnabled(prefix + "email", active);
+        DWRUtil.setEnabled(prefix + "phonework", active);
+        DWRUtil.setEnabled(prefix + "phonemobile", active);
+        //DWRUtil.setEnabled(prefix + "submitcontact", active);
+        DWRUtil.setEnabled(prefix + "submitpassword", active);
+    }
+
+    function reportMessage(message)
+    {
+        alert(message);
+        loadStart();
+    }
+
+    function loadStart()
+    {
+        var custid = queryString("custid");
+        if (custid == null)
+        {
+            alert("Missing customer id");
+            history.back();
+        }
+
+        Actions.getCompanyContactMap(loadContact, custid);
+        Actions.getCompanyPayments(loadPayments, custid);
+    }
+
+    function loadContact(map)
+    {
+        DWRUtil.setValues(map);
+
+        DWRUtil.setValue("acctusecontactnull", map.acctid == null);
+        DWRUtil.setValue("acctusecontactused", map.acctid != null);
+        enableContactDetails("acct");
+
+        DWRUtil.setValue("salesusecontactnull", map.salesid == null);
+        DWRUtil.setValue("salesusecontactused", map.salesid != null);
+        enableContactDetails("sales");
+
+        DWRUtil.setValue("techusecontactnull", map.techid == null);
+        DWRUtil.setValue("techusecontactused", map.techid != null);
+        enableContactDetails("tech");
+    }
+
+    var getPaymentDate = function(line) { return line.date };
+    var getPaymentAmount = function(line) { return line.amount };
+    var getPaymentMethod = function(line) { return line.method };
+    var getPaymentSale = function(line) { return line.servicename };
+    function loadPayments(table)
+    {
+        DWRUtil.removeAllRows("payments");
+        DWRUtil.addRows("payments", table, [ getPaymentDate, getPaymentAmount, getPaymentMethod, getPaymentSale ])
+    }
+
+    callOnLoad(init);
+    DWREngine.setErrorHandler(reportMessage);
+  </script>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h1>Air Band Customer Details</h1>
+
+<div id="custid" style="float:right; color:grey;"></div>
+<p>
+  Company details for <span id="companyname"></span>
+</p>
+
+<div id="messages"></div>
+
+<ul id="tablist">
+  <li><a href="#" onClick="return expandContent('tabPayment', this)" class="current">View Payments</a></li>
+  <li><a href="#" onClick="return expandContent('tabAddress', this)" theme="#EAEAFF">Address</a></li>
+  <li><a href="#" onClick="return expandContent('tabContactAcct', this)" theme="#EAEAFF">Accounts Contact</a></li>
+  <li><a href="#" onClick="return expandContent('tabContactSales', this)" theme="#FFE6E6">Sales Contact</a></li>
+  <li><a href="#" onClick="return expandContent('tabContactTech', this)" theme="#DFFFDF">Technical Contact</a></li>
+</ul>
+
+<div id="tabcontentcontainer">
+
+  <div id="tabPayment" class="tabcontent">
+    We have received the following payments:
+    <table>
+      <thead>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Services</th>
+      </thead>
+      <tbody id="payments"></tbody>
+    </table>
+  </div>
+
+  <div id="tabAddress" class="tabcontent">
+    Registered Company Address:<br/>
+    <textarea id="address" cols="50" rows="5"></textarea>
+    <br/>
+    <input type="button" onclick="changeAddress();" value="Update Address"/>
+  </div>
+
+  <div id="tabContactAcct" class="tabcontent">
+    <!-- these 2 just make writing scripts easier -->
+    <input type="hidden" id="acctusecontactnull"/>
+    <input type="hidden" id="acctusecontactused"/>
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td>
+          <input type="text" id="acctfullname" size="30"/>
+          <span id="acctid" class="quiet"></span>
+        </td>
+      </tr>
+      <!--
+      <tr>
+        <td>Username:</td>
+        <td><input type="text" id="acctusername" size="10"/></td>
+      </tr>
+      -->
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="acctemail" size="40"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="acctphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="acctphonemobile" size="20"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="saveContact('acct');" value="Update Accounts Contact" id="acctsubmitcontact"/>
+        </td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type="password" id="acctpassword" size="10"/></td>
+      </tr>
+      <tr>
+        <td>Password (confirm):</td>
+        <td><input type="password" id="acctconfirm" size="10"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="changePassword('acct');" value="Change Password" id="acctsubmitpassword"/>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="tabContactSales" class="tabcontent">
+    <input type="radio" id="salesusecontactnull" name="salesusecontact" value="null" onchange="enableContactDetails('sales')"/> Use account contact for sales queries.
+    <br />
+    <input type="radio" id="salesusecontactused" name="salesusecontact" value="used" onchange="enableContactDetails('sales')"/> Use the following contact:
+    <br />
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td>
+          <input type="text" id="salesfullname" size="30"/>
+          <span id="salesid" class="quiet"></span>
+        </td>
+      </tr>
+      <!--
+      <tr>
+        <td>Username:</td>
+        <td><input type="text" id="salesusername" size="10"/></td>
+      </tr>
+      -->
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="salesemail" size="40"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="salesphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="salesphonemobile" size="20"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="saveContact('sales');" value="Update Sales Contact" id="salessubmitcontact"/>
+        </td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type="password" id="salespassword" size="10"/></td>
+      </tr>
+      <tr>
+        <td>Password (confirm):</td>
+        <td><input type="password" id="salesconfirm" size="10"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="changePassword('sales');" value="Change Password" id="salessubmitpassword"/>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="tabContactTech" class="tabcontent">
+    <input type="radio" id="techusecontactnull" name="techusecontact" value="null" onchange="enableContactDetails('tech')"/> Use account contact for technical queries.
+    <br />
+    <input type="radio" id="techusecontactused" name="techusecontact" value="used" onchange="enableContactDetails('tech')"/> Use the following contact:
+    <br />
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td>
+          <input type="text" id="techfullname" size="30"/>
+          <span id="techid" class="quiet"></span>
+        </td>
+      </tr>
+      <!--
+      <tr>
+        <td>Username:</td>
+        <td><input type="text" id="techusername" size="10"/></td>
+      </tr>
+      -->
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="techemail" size="40"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="techphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="techphonemobile" size="20"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="saveContact('tech');" value="Update Technical Contact" id="techsubmitcontact"/>
+        </td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type="password" id="techpassword" size="10"/></td>
+      </tr>
+      <tr>
+        <td>Password (confirm):</td>
+        <td><input type="password" id="techconfirm" size="10"/></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td style="text-align:right;">
+          <input type="button" onclick="changePassword('tech');" value="Change Password" id="techsubmitpassword"/>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<p>
+  Useful links:
+</p>
+<ul>
+  <li><a href="#">Broadband usage stats</a></li>
+  <li><a href="#">Other stuff</a></li>
+</ul>
+
+</body>
+</html>
