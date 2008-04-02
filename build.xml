@@ -6,7 +6,7 @@
   <property file="build.properties"/>
 
   <!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
-  <property file="${source.root}/java/dwr-version.properties"/>
+  <property file="${source.root}/core/impl/resources/dwr-version.properties"/>
   <condition property="label" value="${major}.${minor}.${revision}">
     <equals arg1="${title}" arg2=""/>
   </condition>
