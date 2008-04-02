@@ -76,9 +76,7 @@
  *   You can install your own DWR configurator using
  *   {@code bind(Configurator.class).toInstance(yourConfigurator)},
  *   which then overrides any {@code dwr.xml} configuration.
- *   You'll probably want to use a
- *   {@link org.directwebremoting.fluent.FluentConfigurator FluentConfigurator}
- *   for this purpose.
+ *   You'll probably want to use a FluentConfigurator for this purpose.
  * </p>
  * <p>
  *   You can still configure DWR's settings normally via {@code <init-param>}

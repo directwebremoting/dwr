@@ -12,7 +12,7 @@ key classes using {@link WebContext}/{@link WebContextFactory} or
 <p>There are other packages that may be of use to average users:</p>
 <ul>
 <li>The JavaScript proxy classes are stored in org.directwebremoting.proxy.*</li>
-<li>The {@link FluentConfigurator} has it's own package, and</li>
+<li>Various event classes are in org.directwebremoting.event.*</li>
 <li>The {@link FileTransfer} is in org.directwebremoting.io<li>
 </ul>
 
@@ -20,5 +20,4 @@ key classes using {@link WebContext}/{@link WebContextFactory} or
 */
 package org.directwebremoting;
 
-import org.directwebremoting.fluent.FluentConfigurator;
 import org.directwebremoting.io.FileTransfer;
