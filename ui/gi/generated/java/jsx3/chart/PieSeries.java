@@ -72,7 +72,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the totalAngle field, overrides per-chart setting in PieChart.
      * @param callback totalAngle
      */
-    @SuppressWarnings("unchecked")
+
     public void getTotalAngle(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -109,7 +109,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the startAngle field, overrides per-chart setting in PieChart.
      * @param callback startAngle
      */
-    @SuppressWarnings("unchecked")
+
     public void getStartAngle(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -146,7 +146,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the field field, the attribute of the data provider to use as values for this series.
      * @param callback field
      */
-    @SuppressWarnings("unchecked")
+
     public void getField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -183,7 +183,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the value of a data point in this series for the given record.
      * @param record the <record/> node
      */
-    @SuppressWarnings("unchecked")
+
     public void getValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -209,7 +209,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the colors field, overrides per-chart setting in PieChart.
      * @param callback colors
      */
-    @SuppressWarnings("unchecked")
+
     public void getColors(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -246,7 +246,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the labelPlacement field, where to place the optional ChartLabel child.
      * @param callback labelPlacement
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelPlacement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -283,7 +283,7 @@ public class PieSeries extends jsx3.chart.Series
      * Returns the labelOffset field, the pixel offset of the optional ChartLabel child.
      * @param callback labelOffset
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelOffset(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -322,7 +322,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param record 
      * @param percent 
      */
-    @SuppressWarnings("unchecked")
+
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, java.lang.Object percent, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -67,7 +67,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
      * Returns the columnWidth field.
      * @param callback columnWidth
      */
-    @SuppressWarnings("unchecked")
+
     public void getColumnWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -105,7 +105,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
      * @param series 
      * @param record 
      */
-    @SuppressWarnings("unchecked")
+
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

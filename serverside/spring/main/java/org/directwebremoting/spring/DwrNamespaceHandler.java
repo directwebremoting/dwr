@@ -463,7 +463,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
     /**
      * 
      */
-    private static BeanDefinition findParentDefinition(String parentName, BeanDefinitionRegistry registry)
+    protected static BeanDefinition findParentDefinition(String parentName, BeanDefinitionRegistry registry)
     {
         if (registry != null)
         {

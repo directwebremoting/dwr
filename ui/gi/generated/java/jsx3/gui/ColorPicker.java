@@ -131,7 +131,7 @@ public class ColorPicker extends jsx3.gui.Block
      * Returns the RGB value of the currently selected color as an integer. The return value is
 a 24-bit number of the form 0xRRGGBB.
      */
-    @SuppressWarnings("unchecked")
+
     public void getValue(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -181,7 +181,7 @@ a 24-bit number of the form 0xRRGGBB.
      * 
      * @param callback always <code>jsx3.gui.Form.STATEVALID</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void doValidate(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -207,7 +207,7 @@ a 24-bit number of the form 0xRRGGBB.
      * Returns the RGB value of the currently selected color as an integer. The return value is 
 a 24-bit number of the form 0xRRGGBB.
      */
-    @SuppressWarnings("unchecked")
+
     public void getRGB(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -244,7 +244,7 @@ a 24-bit number of the form 0xRRGGBB.
      * 
      * @param callback <code>HUE</code>, <code>SATURATION</code>, or <code>BRIGHTNESS</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getAxis(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -299,7 +299,7 @@ left side.
      * @param l The brightness component, [0.0, 1.0].
      * @param callback <code>[r, g, b]</code>. Each component is an integer [0, 255].
      */
-    @SuppressWarnings("unchecked")
+
     public void HSBtoRGB(float h, float s, float l, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -329,7 +329,7 @@ left side.
      * @param b The blue component, <code>[0, 255]</code>.
      * @param callback <code>[h, s, b]</code>. Each component is a float <code>[0.0, 1.0]</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void RGBtoHSB(int r, int g, int b, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -367,7 +367,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
   last token can be the key code contained in brackets, <code>[13]</code>.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.proxy.CodeBlock fctCallback, String strKeys)
     {
         String extension = "doKeyBinding(\"" + fctCallback + "\", \"" + strKeys + "\").";
@@ -387,7 +387,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Resets the validation state of this control.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form doReset()
     {
         String extension = "doReset().";
@@ -407,7 +407,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T doReset(Class<T> returnType)
     {
         String extension = "doReset().";
@@ -426,7 +426,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Returns the background color of this control when it is disabled.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisabledBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -452,7 +452,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * Returns the font color to use when this control is disabled.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisabledColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -479,7 +479,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
 STATEENABLED.
      * @param callback <code>STATEDISABLED</code> or <code>STATEENABLED</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getEnabled(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -505,7 +505,7 @@ STATEENABLED.
      * Returns the key binding that when keyed will fire the execute event for this control.
      * @param callback plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      */
-    @SuppressWarnings("unchecked")
+
     public void getKeyBinding(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -532,7 +532,7 @@ STATEENABLED.
 OPTIONAL.
      * @param callback <code>REQUIRED</code> or <code>OPTIONAL</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getRequired(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -559,7 +559,7 @@ OPTIONAL.
 STATEVALID.
      * @param callback <code>STATEINVALID</code> or <code>STATEVALID</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getValidationState(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -586,7 +586,7 @@ STATEVALID.
      * @param strColor valid CSS property value, (i.e., red, #ff0000)
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setDisabledBackgroundColor(String strColor)
     {
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
@@ -607,7 +607,7 @@ STATEVALID.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setDisabledBackgroundColor(String strColor, Class<T> returnType)
     {
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
@@ -627,7 +627,7 @@ STATEVALID.
      * @param strColor valid CSS property value, (i.e., red, #ff0000)
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setDisabledColor(String strColor)
     {
         String extension = "setDisabledColor(\"" + strColor + "\").";
@@ -648,7 +648,7 @@ STATEVALID.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setDisabledColor(String strColor, Class<T> returnType)
     {
         String extension = "setDisabledColor(\"" + strColor + "\").";
@@ -682,7 +682,7 @@ event for this control.
      * @param strSequence plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setKeyBinding(String strSequence)
     {
         String extension = "setKeyBinding(\"" + strSequence + "\").";
@@ -704,7 +704,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setKeyBinding(String strSequence, Class<T> returnType)
     {
         String extension = "setKeyBinding(\"" + strSequence + "\").";
@@ -724,7 +724,7 @@ event for this control.
      * @param required {int} <code>REQUIRED</code> or <code>OPTIONAL</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setRequired(int required)
     {
         String extension = "setRequired(\"" + required + "\").";
@@ -745,7 +745,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setRequired(int required, Class<T> returnType)
     {
         String extension = "setRequired(\"" + required + "\").";
@@ -765,7 +765,7 @@ event for this control.
      * @param intState <code>STATEINVALID</code> or <code>STATEVALID</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Form setValidationState(int intState)
     {
         String extension = "setValidationState(\"" + intState + "\").";
@@ -786,7 +786,7 @@ event for this control.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setValidationState(int intState, Class<T> returnType)
     {
         String extension = "setValidationState(\"" + intState + "\").";

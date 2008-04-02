@@ -99,7 +99,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * formats labels as a percent, ie "50%"
      * @param v 
      */
-    @SuppressWarnings("unchecked")
+
     public void percent(Integer v, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -126,7 +126,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * @param v 
      * @param signif 
      */
-    @SuppressWarnings("unchecked")
+
     public void scientific(Integer v, int signif, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -152,7 +152,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the horizontal field, whether this is an x axis, otherwise it is a y axis.
      * @param callback horizontal
      */
-    @SuppressWarnings("unchecked")
+
     public void getHorizontal(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -189,7 +189,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the showAxis field, whether to show the line along the axis.
      * @param callback showAxis
      */
-    @SuppressWarnings("unchecked")
+
     public void getShowAxis(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -226,7 +226,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the labelFunction field.
      * @param callback labelFunction
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelFunction(org.directwebremoting.proxy.Callback<org.directwebremoting.proxy.CodeBlock> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -263,7 +263,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the axisStroke field, string representation of the VectorStroke used to draw the line of the axis.
      * @param callback axisStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getAxisStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -300,7 +300,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the showLabels field, whether to show major tick labels.
      * @param callback showLabels
      */
-    @SuppressWarnings("unchecked")
+
     public void getShowLabels(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -337,7 +337,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the labelGap field, the pixel gap between the tick lines and the labels.
      * @param callback labelGap
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelGap(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -385,7 +385,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the tickLength field, the length in pixels of the major tick (if tickPlacement is "cross" the length will actually be twice this.
      * @param callback tickLength
      */
-    @SuppressWarnings("unchecked")
+
     public void getTickLength(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -422,7 +422,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the tickPlacement field, where to place the major ticks.
      * @param callback tickPlacement, one of {'none','inside','outside','cross'}
      */
-    @SuppressWarnings("unchecked")
+
     public void getTickPlacement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -459,7 +459,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the tickStroke field, string representation of VectorStroke used to draw major ticks.
      * @param callback tickStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getTickStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -496,7 +496,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the minorTickDivisions field, number of minor tick divisions between major ticks; the number of minor ticks drawn will be this number minus 1.
      * @param callback minorTickDivisions
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinorTickDivisions(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -533,7 +533,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the minorTickLength field, the length in pixels of the minor tick (if tickPlacement is "cross" the length will actually be twice this.
      * @param callback minorTickLength
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinorTickLength(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -570,7 +570,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the minorTickPlacement field, where to place the minor ticks.
      * @param callback minorTickPlacement, one of {'none','inside','outside','cross'}
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinorTickPlacement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -607,7 +607,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the minorTickStroke field, string representation of VectorStroke used to draw minor ticks.
      * @param callback minorTickStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinorTickStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -644,7 +644,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the labelClass field, the CSS class used to render major tick labels.
      * @param callback labelClass
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelClass(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -681,7 +681,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the labelStyle field, the CSS style attribute used to render major tick labels.
      * @param callback labelStyle
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelStyle(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -718,7 +718,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the labelColor field, the RGB color value of the label font; note that this is the only way to set the color of the text, using a CSS style attribute will have no effect.
      * @param callback labelColor
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -766,7 +766,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the display width, the maximum amount of space perpendicular to the axis and outside of the data area that the ticks and labels may occupy (doesn't include area given to axis title).
      * @param callback displayWidth
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisplayWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -802,7 +802,7 @@ public class Axis extends jsx3.chart.ChartComponent
     /**
      * Returns the optional jsx3.chart.ChartLabel child.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.ChartLabel getAxisTitle()
     {
         String extension = "getAxisTitle().";
@@ -821,7 +821,7 @@ public class Axis extends jsx3.chart.ChartComponent
     /**
      * Returns the opposing axis.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getOpposingAxis()
     {
         String extension = "getOpposingAxis().";
@@ -840,7 +840,7 @@ public class Axis extends jsx3.chart.ChartComponent
      * Returns the opposing axis.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getOpposingAxis(Class<T> returnType)
     {
         String extension = "getOpposingAxis().";

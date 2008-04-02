@@ -56,7 +56,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the autoAdjust field.
      * @param callback autoAdjust
      */
-    @SuppressWarnings("unchecked")
+
     public void getAutoAdjust(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -93,7 +93,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the baseAtZero field, whether or not to set the minimum value to base^0, otherwise will choose an appropriate value for the data range.
      * @param callback baseAtZero
      */
-    @SuppressWarnings("unchecked")
+
     public void getBaseAtZero(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -130,7 +130,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the showNegativeValues field.
      * @param callback showNegativeValues
      */
-    @SuppressWarnings("unchecked")
+
     public void getShowNegativeValues(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -167,7 +167,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the minExponent field, the range of values displayed will begin at base^minExpronent.
      * @param callback minExponent
      */
-    @SuppressWarnings("unchecked")
+
     public void getMinExponent(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -204,7 +204,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the maxExponent field, the range of values displayed will end at base^maxExponent.
      * @param callback maxExponent
      */
-    @SuppressWarnings("unchecked")
+
     public void getMaxExponent(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -241,7 +241,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the base field.
      * @param callback base
      */
-    @SuppressWarnings("unchecked")
+
     public void getBase(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -278,7 +278,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * Returns the majorDivisions field, the number of major tick line divisions to place between the values base^n and base^(n+1). A good value can be base-1, though the default value is 1..
      * @param callback majorDivisions
      */
-    @SuppressWarnings("unchecked")
+
     public void getMajorDivisions(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -316,7 +316,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
      * @param value a value displayed along the axis
      * @param callback coordinate along the axis
      */
-    @SuppressWarnings("unchecked")
+
     public void getCoordinateFor(Integer value, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

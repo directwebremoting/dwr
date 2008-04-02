@@ -298,7 +298,7 @@ public class BlockX extends jsx3.gui.Block
     /**
      * Returns the XSL string of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXSLString(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -325,7 +325,7 @@ public class BlockX extends jsx3.gui.Block
      * @param strXSL 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXSLString(String strXSL)
     {
         String extension = "setXSLString(\"" + strXSL + "\").";
@@ -346,7 +346,7 @@ public class BlockX extends jsx3.gui.Block
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXSLString(String strXSL, Class<T> returnType)
     {
         String extension = "setXSLString(\"" + strXSL + "\").";
@@ -364,7 +364,7 @@ public class BlockX extends jsx3.gui.Block
     /**
      * Returns the XSL URL of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXSLURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -391,7 +391,7 @@ public class BlockX extends jsx3.gui.Block
      * @param strXSLURL 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXSLURL(String strXSLURL)
     {
         String extension = "setXSLURL(\"" + strXSLURL + "\").";
@@ -412,7 +412,7 @@ public class BlockX extends jsx3.gui.Block
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXSLURL(String strXSLURL, Class<T> returnType)
     {
         String extension = "setXSLURL(\"" + strXSLURL + "\").";
@@ -443,7 +443,7 @@ document.
 is destroyed.
      * @param callback <code>CLEANUPRESOURCES</code> or <code>SHARERESOURCES</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getShareResources(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -482,7 +482,7 @@ following actions are also taken:
     document is returned immediately.
   Otherwise, setSourceXML is called on this object, passing in the created document.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getXML()
     {
         String extension = "getXML().";
@@ -515,7 +515,7 @@ following actions are also taken:
   Otherwise, setSourceXML is called on this object, passing in the created document.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXML(Class<T> returnType)
     {
         String extension = "getXML().";
@@ -534,7 +534,7 @@ following actions are also taken:
      * Returns the XML ID of this object.
      * @param callback the XML ID.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -559,7 +559,7 @@ following actions are also taken:
     /**
      * Returns the XML string of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLString(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -584,7 +584,7 @@ following actions are also taken:
     /**
      * Returns the list of XML transformers of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLTransformers(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -609,7 +609,7 @@ following actions are also taken:
     /**
      * Returns the XML URL of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXMLURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -642,7 +642,7 @@ following actions are also taken:
   Otherwise, the default stylesheet (Cacheable.DEFAULTSTYLESHEET) is returned.
      * @return the XSL source document.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getXSL()
     {
         String extension = "getXSL().";
@@ -669,7 +669,7 @@ following actions are also taken:
      * @param returnType The expected return type
      * @return the XSL source document.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXSL(Class<T> returnType)
     {
         String extension = "getXSL().";
@@ -687,7 +687,7 @@ following actions are also taken:
     /**
      * Returns the XSL ID of this object.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXSLId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -712,7 +712,7 @@ following actions are also taken:
     /**
      * Returns a map containing all the parameters to pass to the XSL stylesheet during transformation.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getXSLParams()
     {
         String extension = "getXSLParams().";
@@ -731,7 +731,7 @@ following actions are also taken:
      * Returns a map containing all the parameters to pass to the XSL stylesheet during transformation.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXSLParams(Class<T> returnType)
     {
         String extension = "getXSLParams().";
@@ -750,7 +750,7 @@ following actions are also taken:
      * Returns whether the XML data source of this object is loaded asynchronously.
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXmlAsync(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -776,7 +776,7 @@ following actions are also taken:
      * Returns whether this object is bound to the XML document stored in the data cache.
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getXmlBind(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -822,7 +822,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param strName the name of the XSL parameter to remove.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable removeXSLParam(String strName)
     {
         String extension = "removeXSLParam(\"" + strName + "\").";
@@ -843,7 +843,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeXSLParam(String strName, Class<T> returnType)
     {
         String extension = "removeXSLParam(\"" + strName + "\").";
@@ -862,7 +862,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * Removes all parameters from the list of parameters to pass to the XSL stylesheet during transformation.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable removeXSLParams()
     {
         String extension = "removeXSLParams().";
@@ -882,7 +882,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeXSLParams(Class<T> returnType)
     {
         String extension = "removeXSLParams().";
@@ -928,7 +928,7 @@ is destroyed.
   is the default value if the property is <code>null</code>.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setShareResources(int intShare)
     {
         String extension = "setShareResources(\"" + intShare + "\").";
@@ -951,7 +951,7 @@ is destroyed.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setShareResources(int intShare, Class<T> returnType)
     {
         String extension = "setShareResources(\"" + intShare + "\").";
@@ -982,7 +982,7 @@ string of this object. This method executes the following steps:
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument setSourceXML(jsx3.xml.CdfDocument objDoc, jsx3.app.Cache objCache)
     {
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
@@ -1014,7 +1014,7 @@ string of this object. This method executes the following steps:
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setSourceXML(jsx3.xml.CdfDocument objDoc, jsx3.app.Cache objCache, Class<T> returnType)
     {
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
@@ -1036,7 +1036,7 @@ If no value is specified, a unique id is generated.
      * @param strXMLId 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLId(String strXMLId)
     {
         String extension = "setXMLId(\"" + strXMLId + "\").";
@@ -1059,7 +1059,7 @@ If no value is specified, a unique id is generated.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLId(String strXMLId, Class<T> returnType)
     {
         String extension = "setXMLId(\"" + strXMLId + "\").";
@@ -1080,7 +1080,7 @@ way of specifying the source XML document of this object.
      * @param strXML <code>null</code> or a well-formed serialized XML element.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLString(String strXML)
     {
         String extension = "setXMLString(\"" + strXML + "\").";
@@ -1102,7 +1102,7 @@ way of specifying the source XML document of this object.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLString(String strXML, Class<T> returnType)
     {
         String extension = "setXMLString(\"" + strXML + "\").";
@@ -1142,7 +1142,7 @@ source XML document of this object.
   specifies a valid XML document.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXMLURL(String strXMLURL)
     {
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
@@ -1165,7 +1165,7 @@ source XML document of this object.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXMLURL(String strXMLURL, Class<T> returnType)
     {
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
@@ -1187,7 +1187,7 @@ strValue is null the parameter is removed.
      * @param strValue the value of the XSL parameter to add.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXSLParam(String strName, String strValue)
     {
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
@@ -1210,7 +1210,7 @@ strValue is null the parameter is removed.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXSLParam(String strName, String strValue, Class<T> returnType)
     {
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
@@ -1231,7 +1231,7 @@ data sources loaded from an XML URL.
      * @param bAsync 
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.Cacheable setXmlAsync(boolean bAsync)
     {
         String extension = "setXmlAsync(\"" + bAsync + "\").";
@@ -1253,7 +1253,7 @@ data sources loaded from an XML URL.
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setXmlAsync(boolean bAsync, Class<T> returnType)
     {
         String extension = "setXmlAsync(\"" + bAsync + "\").";
@@ -1275,7 +1275,7 @@ the cache under the XML Id of this object changes.
      * @param bBind 
      * @param callback <code>0</code> or <code>1</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void setXmlBind(boolean bBind, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

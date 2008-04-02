@@ -50,7 +50,7 @@ public class PointRenderer extends jsx3.lang.Object
      * @param fill 
      * @param stroke 
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Tag render(int x1, int y1, int x2, int y2, jsx3.vector.Fill fill, jsx3.vector.Stroke stroke)
     {
         String extension = "render(\"" + x1 + "\", \"" + y1 + "\", \"" + x2 + "\", \"" + y2 + "\", \"" + fill + "\", \"" + stroke + "\").";
@@ -75,7 +75,7 @@ public class PointRenderer extends jsx3.lang.Object
      * @param stroke 
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T render(int x1, int y1, int x2, int y2, jsx3.vector.Fill fill, jsx3.vector.Stroke stroke, Class<T> returnType)
     {
         String extension = "render(\"" + x1 + "\", \"" + y1 + "\", \"" + x2 + "\", \"" + y2 + "\", \"" + fill + "\", \"" + stroke + "\").";
@@ -95,7 +95,7 @@ public class PointRenderer extends jsx3.lang.Object
    if the point renderer will be used in a plot chart.
      * @param area 
      */
-    @SuppressWarnings("unchecked")
+
     public void areaToRadius(Integer area, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

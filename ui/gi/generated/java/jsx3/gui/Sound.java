@@ -64,7 +64,7 @@ public class Sound extends jsx3.gui.Painted
      * Returns the URL of the sound file.
      * @param callback the URL of the sound file to play
      */
-    @SuppressWarnings("unchecked")
+
     public void getURL(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -103,7 +103,7 @@ public class Sound extends jsx3.gui.Painted
      * Returns the volume that the sound plays at.
      * @param callback the volume to play the sound at, [0,100]
      */
-    @SuppressWarnings("unchecked")
+
     public void getVolume(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -173,7 +173,7 @@ point where it was paused.
      * Returns the length of the sound in seconds.
      * @param callback the length in seconds or <code>NaN</code> if the length can not be determined
      */
-    @SuppressWarnings("unchecked")
+
     public void getLength(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -199,7 +199,7 @@ point where it was paused.
      * Returns the current position (elapsed time) of the sound in seconds.
      * @param callback the current position in seconds or <code>NaN</code> if the position can not be determined
      */
-    @SuppressWarnings("unchecked")
+
     public void getPosition(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -235,7 +235,7 @@ point where it was paused.
     /**
      * Returns the full name and version number of the audio plugin used to play this sound.
      */
-    @SuppressWarnings("unchecked")
+
     public void getPluginVersion(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -267,7 +267,7 @@ registered event script is executed in isolation to prevent most side effects.
    property of the event object that is published through the <code>EventDispatcher</code> interface.
      * @return the result of evaluating the event script or <code>null</code> if not event script is registered
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object doEvent(String strType, jsx3.lang.Object objContext)
     {
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
@@ -293,7 +293,7 @@ registered event script is executed in isolation to prevent most side effects.
      * @param returnType The expected return type
      * @return the result of evaluating the event script or <code>null</code> if not event script is registered
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T doEvent(String strType, jsx3.lang.Object objContext, Class<T> returnType)
     {
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
@@ -313,7 +313,7 @@ registered event script is executed in isolation to prevent most side effects.
 dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanDrag(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -339,7 +339,7 @@ dragged and dropped on another container supporting drop.
      * Returns whether this object can be the target of a drop event.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanDrop(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -365,7 +365,7 @@ dragged and dropped on another container supporting drop.
      * Returns whether is object can be moved around the screen (this is not the same as drag/drop).
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanMove(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -391,7 +391,7 @@ dragged and dropped on another container supporting drop.
      * Returns whether is object can be spyglassed.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanSpy(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -419,7 +419,7 @@ setEvent() method or during component deserialization.
      * @param strType the event type, one of the model event types defined as static fields in this class
      * @param callback the JavaScript event script
      */
-    @SuppressWarnings("unchecked")
+
     public void getEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -446,7 +446,7 @@ setEvent() method or during component deserialization.
 the instance field itself and not a copy.
      * @return an associative array mapping event type to event script
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getEvents()
     {
         String extension = "getEvents().";
@@ -467,7 +467,7 @@ the instance field itself and not a copy.
      * @param returnType The expected return type
      * @return an associative array mapping event type to event script
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getEvents(Class<T> returnType)
     {
         String extension = "getEvents().";
@@ -486,7 +486,7 @@ the instance field itself and not a copy.
      * Returns the name of the jsx3.gui.Menu instance to display (as a context menu) when a user
 clicks on this object with the right button.
      */
-    @SuppressWarnings("unchecked")
+
     public void getMenu(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -513,7 +513,7 @@ clicks on this object with the right button.
      * @param strType the event type, one of the model event types defined as static fields in this class
      * @param callback the JavaScript event script
      */
-    @SuppressWarnings("unchecked")
+
     public void hasEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -559,7 +559,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(jsx3.gui.HotKey vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -599,7 +599,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -639,7 +639,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(String vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -679,7 +679,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(String vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -719,7 +719,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(jsx3.gui.HotKey vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -759,7 +759,7 @@ function (the most recently registered) will be executed by a single keydown eve
    to invoke the hot key.
      * @return the registered hot key.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
@@ -780,7 +780,7 @@ function (the most recently registered) will be executed by a single keydown eve
      * @param strType the event type, one of the model event types defined as static fields in this class
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive removeEvent(String strType)
     {
         String extension = "removeEvent(\"" + strType + "\").";
@@ -801,7 +801,7 @@ function (the most recently registered) will be executed by a single keydown eve
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeEvent(String strType, Class<T> returnType)
     {
         String extension = "removeEvent(\"" + strType + "\").";
@@ -820,7 +820,7 @@ function (the most recently registered) will be executed by a single keydown eve
      * Removes all events scripts registered with this object.
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive removeEvents()
     {
         String extension = "removeEvents().";
@@ -840,7 +840,7 @@ function (the most recently registered) will be executed by a single keydown eve
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T removeEvents(Class<T> returnType)
     {
         String extension = "removeEvents().";
@@ -861,7 +861,7 @@ Implementing classes can decide whether to consult this value or ignore it.
      * @param bDrag <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setCanDrag(int bDrag)
     {
         String extension = "setCanDrag(\"" + bDrag + "\").";
@@ -883,7 +883,7 @@ Implementing classes can decide whether to consult this value or ignore it.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setCanDrag(int bDrag, Class<T> returnType)
     {
         String extension = "setCanDrag(\"" + bDrag + "\").";
@@ -904,7 +904,7 @@ this value or ignore it.
      * @param bDrop <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setCanDrop(int bDrop)
     {
         String extension = "setCanDrop(\"" + bDrop + "\").";
@@ -926,7 +926,7 @@ this value or ignore it.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setCanDrop(int bDrop, Class<T> returnType)
     {
         String extension = "setCanDrop(\"" + bDrop + "\").";
@@ -947,7 +947,7 @@ can decide whether to consult this value or ignore it.
      * @param bMovable <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setCanMove(int bMovable)
     {
         String extension = "setCanMove(\"" + bMovable + "\").";
@@ -969,7 +969,7 @@ can decide whether to consult this value or ignore it.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setCanMove(int bMovable, Class<T> returnType)
     {
         String extension = "setCanMove(\"" + bMovable + "\").";
@@ -990,7 +990,7 @@ this value or ignore it.
      * @param bSpy <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setCanSpy(int bSpy)
     {
         String extension = "setCanSpy(\"" + bSpy + "\").";
@@ -1012,7 +1012,7 @@ this value or ignore it.
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setCanSpy(int bSpy, Class<T> returnType)
     {
         String extension = "setCanSpy(\"" + bSpy + "\").";
@@ -1042,7 +1042,7 @@ any registered event script.
      * @param strType the event type. Must be one of the model event types defined as static fields in this class
      * @return reference to this
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setEvent(String strScript, String strType)
     {
         String extension = "setEvent(\"" + strScript + "\", \"" + strType + "\").";
@@ -1073,7 +1073,7 @@ any registered event script.
      * @param returnType The expected return type
      * @return reference to this
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setEvent(String strScript, String strType, Class<T> returnType)
     {
         String extension = "setEvent(\"" + strScript + "\", \"" + strType + "\").";
@@ -1094,7 +1094,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
      * @param strMenu name or id (jsxname or jsxid) of the context menu
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Interactive setMenu(String strMenu)
     {
         String extension = "setMenu(\"" + strMenu + "\").";
@@ -1116,7 +1116,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
      * @param returnType The expected return type
      * @return this object
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T setMenu(String strMenu, Class<T> returnType)
     {
         String extension = "setMenu(\"" + strMenu + "\").";

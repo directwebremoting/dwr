@@ -80,7 +80,7 @@ public class Tag extends jsx3.html.BlockTag
      * Returns the rotation field.
      * @param callback rotation
      */
-    @SuppressWarnings("unchecked")
+
     public void getRotation(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

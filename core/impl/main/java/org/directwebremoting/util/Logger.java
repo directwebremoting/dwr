@@ -47,7 +47,6 @@ public final class Logger
      * Prevent instantiation
      * @param base The class to log against
      */
-    @SuppressWarnings("unchecked")
     private Logger(Class<?> base)
     {
         if (!defaultTried)

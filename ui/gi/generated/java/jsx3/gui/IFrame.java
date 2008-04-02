@@ -57,7 +57,7 @@ public class IFrame extends jsx3.gui.Block
      * Returns the native iframe object of this iframe. Depending on browser security settings and the URL of this
 iframe, the native iframe object may not be available. In this case, this method returns null.
      */
-    @SuppressWarnings("unchecked")
+
     public void getIFrame(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -83,7 +83,7 @@ iframe, the native iframe object may not be available. In this case, this method
      * Returns the native document object of this iframe. Depending on browser security settings and the URL of this
 iframe, the native document object may not be available. In this case, this method returns null.
      */
-    @SuppressWarnings("unchecked")
+
     public void getContentDocument(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -108,7 +108,7 @@ iframe, the native document object may not be available. In this case, this meth
     /**
      * Returns the URI of this iframe.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSrc(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -147,7 +147,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
     /**
      * Returns the scroll mode of this iframe.
      */
-    @SuppressWarnings("unchecked")
+
     public void getScrolling(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

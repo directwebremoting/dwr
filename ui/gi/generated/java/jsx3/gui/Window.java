@@ -87,7 +87,7 @@ this method may or may not actually open a window. The only safe way to determin
 successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the window successfully opened (probably).
      */
-    @SuppressWarnings("unchecked")
+
     public void open(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -114,7 +114,7 @@ successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the window successfully closed or <code>false</code> if it didn't close
    because of JavaScript security constraints or user interaction.
      */
-    @SuppressWarnings("unchecked")
+
     public void close(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -150,7 +150,7 @@ successfully opened is to register for the DID_OPEN event.
      * Returns whether the browser window of this window instance is open.
      * @param callback <code>true</code> if the window is open.
      */
-    @SuppressWarnings("unchecked")
+
     public void isOpen(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -176,7 +176,7 @@ successfully opened is to register for the DID_OPEN event.
      * Returns whether the parent application window of this window instance is open.
      * @param callback <code>true</code> if the parent window is open.
      */
-    @SuppressWarnings("unchecked")
+
     public void isParentOpen(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -227,7 +227,7 @@ relative to the upper-left corner of the screen.
 If the parent window is no longer open, this method returns the position relative to the upper-left
 corner of the screen.
      */
-    @SuppressWarnings("unchecked")
+
     public void getOffsetLeft(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -254,7 +254,7 @@ corner of the screen.
 If the parent window is no longer open, this method returns the position relative to the upper-left
 corner of the screen.
      */
-    @SuppressWarnings("unchecked")
+
     public void getOffsetTop(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -280,7 +280,7 @@ corner of the screen.
      * Returns the first DOM child of this window object. If no child exists, this method creates a root block, adds it
 to the DOM, and returns it. A window will only render its first DOM child.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Block getRootBlock()
     {
         String extension = "getRootBlock().";
@@ -300,7 +300,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
 to the DOM, and returns it. A window will only render its first DOM child.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getRootBlock(Class<T> returnType)
     {
         String extension = "getRootBlock().";
@@ -318,7 +318,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
     /**
      * Repaints the root block of this window.
      */
-    @SuppressWarnings("unchecked")
+
     public void repaint(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -344,7 +344,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
      * Returns the inner (visible) width of this window. This does not include the border and padding that the
 browser may render around the window content.
      */
-    @SuppressWarnings("unchecked")
+
     public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -382,7 +382,7 @@ immediately.
      * Returns the inner (visible) height of this window. This does not include the border and padding that the
 browser may render around the window content.
      */
-    @SuppressWarnings("unchecked")
+
     public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -422,7 +422,7 @@ the last value passed to setResizable() and therefore may not truly reflect the 
 browser window.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void isResizable(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -461,7 +461,7 @@ this method will reflect the last value passed to setScrollable() and therefore 
 reflect the current state of the browser window.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void isScrollable(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -502,7 +502,7 @@ all the JavaScript code and so it is very likely that interacting with a window 
 will raise errors.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void isDependent(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -538,7 +538,7 @@ will raise errors.
     /**
      * Returns the title of this window.
      */
-    @SuppressWarnings("unchecked")
+
     public void getTitle(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

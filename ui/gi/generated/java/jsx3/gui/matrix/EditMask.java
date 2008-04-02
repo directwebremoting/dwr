@@ -71,7 +71,7 @@ to initialize itself.
      * @param objTD 
      * @param callback <code>false</code> to cancel the edit session.
      */
-    @SuppressWarnings("unchecked")
+
     public void emBeginEdit(String strValue, jsx3.lang.Object objTdDim, jsx3.lang.Object objPaneDim, jsx3.gui.Matrix objMatrix, jsx3.gui.matrix.Column objColumn, String strRecordId, String objTD, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -97,7 +97,7 @@ to initialize itself.
      * Called when the current edit session ends. This method should return the edited value.
      * @param callback the edited value.
      */
-    @SuppressWarnings("unchecked")
+
     public void emEndEdit(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -123,7 +123,7 @@ to initialize itself.
      * Returns the current value stored in the edit mask.
      * @param callback the current value of the edit mask.
      */
-    @SuppressWarnings("unchecked")
+
     public void emGetValue(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -176,7 +176,7 @@ td {HTMLElement}
 value {String} may be null
      * @return the edit session.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object emGetSession()
     {
         String extension = "emGetSession().";
@@ -203,7 +203,7 @@ value {String} may be null
      * @param returnType The expected return type
      * @return the edit session.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T emGetSession(Class<T> returnType)
     {
         String extension = "emGetSession().";

@@ -61,7 +61,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the left field.
      * @param callback left
      */
-    @SuppressWarnings("unchecked")
+
     public void getLeft(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -98,7 +98,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the top field.
      * @param callback top
      */
-    @SuppressWarnings("unchecked")
+
     public void getTop(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -135,7 +135,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the width field.
      * @param callback width
      */
-    @SuppressWarnings("unchecked")
+
     public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -172,7 +172,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the height field.
      * @param callback height
      */
-    @SuppressWarnings("unchecked")
+
     public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -209,7 +209,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the margin field, as set by setMargin().
      * @param callback margin
      */
-    @SuppressWarnings("unchecked")
+
     public void getMargin(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -246,7 +246,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the padding field, as set by setPadding().
      * @param callback padding
      */
-    @SuppressWarnings("unchecked")
+
     public void getPadding(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -283,7 +283,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the position field.
      * @param callback position
      */
-    @SuppressWarnings("unchecked")
+
     public void getPosition(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -320,7 +320,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the zIndex field.
      * @param callback zIndex
      */
-    @SuppressWarnings("unchecked")
+
     public void getZIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -357,7 +357,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the bgcolor field.
      * @param callback bgcolor
      */
-    @SuppressWarnings("unchecked")
+
     public void getBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -394,7 +394,7 @@ public class BlockTag extends jsx3.html.Tag
      * parses the margin field into an array of four int values
      * @param callback [top,right,bottom,left]
      */
-    @SuppressWarnings("unchecked")
+
     public void getMarginDimensions(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -420,7 +420,7 @@ public class BlockTag extends jsx3.html.Tag
      * parses the padding field into an array of four int values
      * @param callback [top,right,bottom,left]
      */
-    @SuppressWarnings("unchecked")
+
     public void getPaddingDimensions(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -446,7 +446,7 @@ public class BlockTag extends jsx3.html.Tag
      * Returns the dimensions in an array of four int values
      * @param callback [left,top,width,height]
      */
-    @SuppressWarnings("unchecked")
+
     public void getDimensions(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

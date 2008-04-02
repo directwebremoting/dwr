@@ -74,7 +74,7 @@ public class Column extends jsx3.gui.Block
      * Gets the user-defined XSL template (xsl:template) that will override the defualt template defined by Column.TEMPLATES.default.
      * @param strDefault xsl:template
      */
-    @SuppressWarnings("unchecked")
+
     public void getValueTemplate(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -114,7 +114,7 @@ The path wildcard is as follows:
     /**
      * Gets whether or not this column can be resized by the user. If not set, the column will be assumed resizable
      */
-    @SuppressWarnings("unchecked")
+
     public void getResizable(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -153,7 +153,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
 this column will called to repaint to reflect the updated value
      * @param callback Comma-delimited attribute list
      */
-    @SuppressWarnings("unchecked")
+
     public void getTriggers(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -191,7 +191,7 @@ this column will called to repaint to reflect the updated value
      * Returns the selection path for this column of data. Returns 'jsxid' if no path specified
      * @param callback selection path
      */
-    @SuppressWarnings("unchecked")
+
     public void getPath(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -232,7 +232,7 @@ However, the repaint can be suppressed to avoid unnecessary reparsing of the XSL
 returns the value of this.getPath(). The data source of the matrix containing this column is
 sorted on this attribute when the matrix is sorted on this column.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortPath(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -269,7 +269,7 @@ sorted on this attribute when the matrix is sorted on this column.
      * Returns the data type for this column of data (affects sorting if this column is used for sorting the data); valid types include: jsx3.gui.Matrix.Column.TYPE_TEXT and jsx3.gui.Matrix.Column.TYPE_NUMBER
      * @param callback data type for this column's data
      */
-    @SuppressWarnings("unchecked")
+
     public void getDataType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -306,7 +306,7 @@ sorted on this attribute when the matrix is sorted on this column.
      * Returns the data type for this column of data (affects sorting if this column is used for sorting the data).
      * @param callback one of: jsx3.gui.Matrix.Column.TYPE_TEXT, jsx3.gui.Matrix.Column.TYPE_NUMBER
      */
-    @SuppressWarnings("unchecked")
+
     public void getSortDataType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -343,7 +343,7 @@ sorted on this attribute when the matrix is sorted on this column.
      * Returns whether the parent list/grid can be sorted on this column. If no value is provided, the column is assumed sortable unless
 the parent control explicitly specifies that no column should sort.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCanSort(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -439,7 +439,7 @@ implment the interface, jsx3.gui.Matrix.ColumnFormat, or adhere to its APIs.
 Can also return the function literal
      * @param callback named object or function literal
      */
-    @SuppressWarnings("unchecked")
+
     public void getFormatHandler(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -467,7 +467,7 @@ it corresponds to the position of this column as rendered on-screen, meaning if 
 displayed (e.g., display = none), the value returned from this method will be less than what would be returned by getChildIndex.
 Returns null if this object is not displayed.
      */
-    @SuppressWarnings("unchecked")
+
     public void getDisplayIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -492,7 +492,7 @@ Returns null if this object is not displayed.
     /**
      * Returns CSS property value for the data cell background-color.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -528,7 +528,7 @@ Returns null if this object is not displayed.
     /**
      * Returns CSS property value for the data cell border.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellBorder(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -568,7 +568,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns CSS property value for the data cell color.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -604,7 +604,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns CSS property value for the data cell cursor.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellCursor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -640,7 +640,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell font-family.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellFontName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -676,7 +676,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell font-size.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellFontSize(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -712,7 +712,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell font-weight.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellFontWeight(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -748,7 +748,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell padding.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellPadding(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -788,7 +788,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell text-align.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellTextAlign(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -824,7 +824,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     /**
      * Returns the CSS property value for the data cell vertical-align. If no value is provided, the data cells render top-aligned.
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellVAlign(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -861,7 +861,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * Returns whether or not the data cellc will support text-wrapping. If no value is specified, the text will not wrap
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getCellWrap(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -899,7 +899,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
      * Gets whether or not the header cell will support text-wrapping. If not specified, the cell will be painted with no wrapping.
      * @param strDefault The default value to use if null
      */
-    @SuppressWarnings("unchecked")
+
     public void getWrap(String strDefault, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -935,7 +935,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
     /**
      * Returns the CSS property value for the header cell vertical-align. If no value is provided, the header cell render top-aligned.
      */
-    @SuppressWarnings("unchecked")
+
     public void getVAlign(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

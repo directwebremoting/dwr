@@ -64,7 +64,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * Returns the array of children GridLines instances.
      * @param callback gridLines
      */
-    @SuppressWarnings("unchecked")
+
     public void getGridLines(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -90,7 +90,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * Returns the primary x axis, if any.
      * @return primaryXAxis
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getPrimaryXAxis()
     {
         String extension = "getPrimaryXAxis().";
@@ -110,7 +110,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * @param returnType The expected return type
      * @return primaryXAxis
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getPrimaryXAxis(Class<T> returnType)
     {
         String extension = "getPrimaryXAxis().";
@@ -129,7 +129,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * Returns the primary y axis, if any.
      * @return primaryYAxis
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getPrimaryYAxis()
     {
         String extension = "getPrimaryYAxis().";
@@ -149,7 +149,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * @param returnType The expected return type
      * @return primaryYAxis
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getPrimaryYAxis(Class<T> returnType)
     {
         String extension = "getPrimaryYAxis().";
@@ -169,7 +169,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * @param axis 
      * @param callback [min,max] or null if no range can be found
      */
-    @SuppressWarnings("unchecked")
+
     public void getRangeForAxis(jsx3.chart.Axis axis, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -196,7 +196,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * @param series the series to consider
      * @param callback [min,max] or null if no range can be found
      */
-    @SuppressWarnings("unchecked")
+
     public void getXRange(Object[] series, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -223,7 +223,7 @@ public class CartesianChart extends jsx3.chart.Chart
      * @param series the series to consider
      * @param callback [min,max] or null if no range can be found
      */
-    @SuppressWarnings("unchecked")
+
     public void getYRange(Object[] series, org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

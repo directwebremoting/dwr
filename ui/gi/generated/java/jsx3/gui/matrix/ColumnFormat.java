@@ -62,7 +62,7 @@ public class ColumnFormat extends jsx3.lang.Object
      * @param strKey 
      * @param objColumn 
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.matrix.ColumnFormat getInstance(String strKey, jsx3.gui.matrix.Column objColumn)
     {
         String extension = "getInstance(\"" + strKey + "\", \"" + objColumn + "\").";
@@ -83,7 +83,7 @@ public class ColumnFormat extends jsx3.lang.Object
 false is returned, the formatter will not even attempt to iterate
      * @param callback true if the formatter should be called to iterate and format
      */
-    @SuppressWarnings("unchecked")
+
     public void validate(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

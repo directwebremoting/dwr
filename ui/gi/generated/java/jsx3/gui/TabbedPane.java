@@ -73,7 +73,7 @@ public class TabbedPane extends jsx3.gui.Block
     /**
      * Returns the zero-based child index of the active child tab.
      */
-    @SuppressWarnings("unchecked")
+
     public void getSelectedIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -129,7 +129,7 @@ the tab itself.
      * Returns the CSS height property (in pixels) for child tabs
      * @param callback height (in pixels)
      */
-    @SuppressWarnings("unchecked")
+
     public void getTabHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

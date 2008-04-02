@@ -42,7 +42,7 @@ public class Alerts extends jsx3.lang.Object
      * implementors of this mixin interface must implement this method
      * @return the parent of the alert dialogs
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.app.Model getAlertsParent()
     {
         String extension = "getAlertsParent().";
@@ -62,7 +62,7 @@ public class Alerts extends jsx3.lang.Object
      * @param returnType The expected return type
      * @return the parent of the alert dialogs
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAlertsParent(Class<T> returnType)
     {
         String extension = "getAlertsParent().";

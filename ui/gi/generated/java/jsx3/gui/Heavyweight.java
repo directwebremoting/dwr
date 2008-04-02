@@ -62,7 +62,7 @@ public class Heavyweight extends jsx3.lang.Object
      * Returns the instance of the heavyweight object with the given ID; to get the on-screen HTML instance call: jsx3.gui.Heavyweight.GO([id]).getRendered()
      * @param strId unique ID for the heavyweight instance
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight GO(String strId)
     {
         String extension = "GO(\"" + strId + "\").";
@@ -136,7 +136,7 @@ public class Heavyweight extends jsx3.lang.Object
      * @param objGUI optional argument improves efficiency if provided.
      * @param callback Browser-Native DHTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -163,7 +163,7 @@ public class Heavyweight extends jsx3.lang.Object
      * @param objGUI optional argument improves efficiency if provided.
      * @param callback Browser-Native DHTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void getRendered(String objGUI, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -188,7 +188,7 @@ public class Heavyweight extends jsx3.lang.Object
     /**
      * Returns the unique id for this heavyweight instance
      */
-    @SuppressWarnings("unchecked")
+
     public void getId(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -213,7 +213,7 @@ public class Heavyweight extends jsx3.lang.Object
     /**
      * Returns the HTML content to display inside the HW instance on-screen
      */
-    @SuppressWarnings("unchecked")
+
     public void getHTML(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -252,7 +252,7 @@ public class Heavyweight extends jsx3.lang.Object
     /**
      * Returns an object reference to the Browser Element parent to be used; if none specified, the browser BODY will be used
      */
-    @SuppressWarnings("unchecked")
+
     public void getDomParent(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -294,7 +294,7 @@ command during a double-pass, a width to height ratio can be established to prov
 the text content.  For example, a value of .8 would mean that the width of the heavyweight container would
 represent 80% and the height would represent 20% of the total perimiter
      */
-    @SuppressWarnings("unchecked")
+
     public void getRatio(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -334,7 +334,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * Returns the overflow property for CONTENTS of the HW container; it is assumed that anytime a perfect fit cannot occur that the content will have its overflow property set to 'auto' unless specified otherwise
      * @param callback [jsx3.gui.Block.OVERFLOWSCROLL, jsx3.gui.Block.OVERFLOWHIDDEN, jsx3.gui.Block.OVERFLOWEXPAND]
      */
-    @SuppressWarnings("unchecked")
+
     public void getOverflow(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -387,7 +387,7 @@ represent 80% and the height would represent 20% of the total perimiter
     /**
      * Returns the z-index property; assumes jsx3.gui.Heavyweight.DEFAULTZINDEX if none supplied
      */
-    @SuppressWarnings("unchecked")
+
     public void getZIndex(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -424,7 +424,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * Returns the CSS width property (in pixels); if this value is set, it is assumed that the Heavyweight container will not have its width lessened to fit on-screen.
      * @param callback width (in pixels)
      */
-    @SuppressWarnings("unchecked")
+
     public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -461,7 +461,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * Returns the CSS height property (in pixels); if this value is set, it is assumed that the Heavyweight container will not have its height lessened to fit on-screen.
      * @param callback height (in pixels)
      */
-    @SuppressWarnings("unchecked")
+
     public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -507,7 +507,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param intOff offset (in pixels) by which to nudge the horizontal placement of the HW instance before displaying (useful for submenus, for example, where their left has a -10px offset to overlay the parent menu item)
      * @return this object (this)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight addXRule(jsx3.gui.Event objAnchor, String strAnchorPoint, String strPoint, int intOff)
     {
         String extension = "addXRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
@@ -533,7 +533,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param intOff offset (in pixels) by which to nudge the horizontal placement of the HW instance before displaying (useful for submenus, for example, where their left has a -10px offset to overlay the parent menu item)
      * @return this object (this)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight addXRule(jsx3.lang.Object objAnchor, String strAnchorPoint, String strPoint, int intOff)
     {
         String extension = "addXRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
@@ -559,7 +559,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param intOff offset (in pixels) by which to nudge the vertical placement of the HW instance before displaying (useful for submenus, for example, where their left has a -10px offset to overlay the parent menu item)
      * @return this object (this)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight addYRule(jsx3.lang.Object objAnchor, String strAnchorPoint, String strPoint, int intOff)
     {
         String extension = "addYRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
@@ -585,7 +585,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param intOff offset (in pixels) by which to nudge the vertical placement of the HW instance before displaying (useful for submenus, for example, where their left has a -10px offset to overlay the parent menu item)
      * @return this object (this)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight addYRule(jsx3.gui.Event objAnchor, String strAnchorPoint, String strPoint, int intOff)
     {
         String extension = "addYRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
@@ -610,7 +610,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param strAxis character (string) representing whether the rule is for the X or Y axis. Rememeber to capitalize!
      * @return this object (this)
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Heavyweight addRule(int intPixel, String strPoint, int intOff, String strAxis)
     {
         String extension = "addRule(\"" + intPixel + "\", \"" + strPoint + "\", \"" + intOff + "\", \"" + strAxis + "\").";
@@ -631,7 +631,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param intIndex the index (in rank order of execution) of the POSITION RULEing rule set to apply (it is assumed that at least one POSITION RULE ruleset exists)
      * @param strAxis character (string) representing whether the rule is for the X or Y axis. Rememeber to capitalize!
      */
-    @SuppressWarnings("unchecked")
+
     public void getPositionRule(int intIndex, String strAxis, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -656,7 +656,7 @@ represent 80% and the height would represent 20% of the total perimiter
     /**
      * Returns a JavaScript object array (hash).  This hash contains the Y rules and the X rules for positioning the object
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getPositionRules()
     {
         String extension = "getPositionRules().";
@@ -675,7 +675,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * Returns a JavaScript object array (hash).  This hash contains the Y rules and the X rules for positioning the object
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getPositionRules(Class<T> returnType)
     {
         String extension = "getPositionRules().";

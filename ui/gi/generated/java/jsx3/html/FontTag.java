@@ -44,7 +44,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the fontFamily field.
      * @param callback fontFamily
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontFamily(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -81,7 +81,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the fontsize field.
      * @param callback fontsize
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontSize(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -129,7 +129,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the fontStyle field.
      * @param callback fontStyle
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontStyle(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -166,7 +166,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the fontWeight field.
      * @param callback fontWeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontWeight(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -203,7 +203,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the textAlign field.
      * @param callback textAlign
      */
-    @SuppressWarnings("unchecked")
+
     public void getTextAlign(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -240,7 +240,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the textDecoration field.
      * @param callback textDecoration
      */
-    @SuppressWarnings("unchecked")
+
     public void getTextDecoration(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -277,7 +277,7 @@ public class FontTag extends jsx3.lang.Object
      * Returns the color field.
      * @param callback color
      */
-    @SuppressWarnings("unchecked")
+
     public void getColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

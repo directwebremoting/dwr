@@ -90,7 +90,7 @@ public class Form extends jsx3.lang.Object
      * Creates a new form and initialize it from the HTML representation of a form.
      * @param strFragment the html fragment containing a <form/> tag.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.net.Form newFromFragment(String strFragment)
     {
         String extension = "newFromFragment(\"" + strFragment + "\").";
@@ -110,7 +110,7 @@ public class Form extends jsx3.lang.Object
      * Returns the method of this form.
      * @param callback <code>METHOD_GET</code> or <code>METHOD_POST</code>.
      */
-    @SuppressWarnings("unchecked")
+
     public void getMethod(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -147,7 +147,7 @@ public class Form extends jsx3.lang.Object
      * Returns the action of this form, the URL that this form is submitted to.
      * @param callback action
      */
-    @SuppressWarnings("unchecked")
+
     public void getAction(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -183,7 +183,7 @@ public class Form extends jsx3.lang.Object
     /**
      * Returns whether this form is multipart. Only multipart forms may upload files.
      */
-    @SuppressWarnings("unchecked")
+
     public void getMultipart(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -221,7 +221,7 @@ public class Form extends jsx3.lang.Object
      * @param strName the name of the form field to query.
      * @param callback the field value or <code>null</code> if no such field exists.
      */
-    @SuppressWarnings("unchecked")
+
     public void getField(String strName, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -246,7 +246,7 @@ public class Form extends jsx3.lang.Object
     /**
      * Returns the names of all fields in this form.
      */
-    @SuppressWarnings("unchecked")
+
     public void getFields(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -341,7 +341,7 @@ supported in browsers other than Microsoft Internet Explorer.
     /**
      * Returns the content of the response as a string.
      */
-    @SuppressWarnings("unchecked")
+
     public void getResponseText(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -366,7 +366,7 @@ supported in browsers other than Microsoft Internet Explorer.
     /**
      * Returns the content of the response as an XML document.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument getResponseXML()
     {
         String extension = "getResponseXML().";
@@ -385,7 +385,7 @@ supported in browsers other than Microsoft Internet Explorer.
      * Returns the content of the response as an XML document.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getResponseXML(Class<T> returnType)
     {
         String extension = "getResponseXML().";
@@ -441,7 +441,7 @@ or a default position and dimensions will be used.
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

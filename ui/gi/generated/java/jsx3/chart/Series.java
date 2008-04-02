@@ -57,7 +57,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the seriesName field.
      * @param callback seriesName
      */
-    @SuppressWarnings("unchecked")
+
     public void getSeriesName(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -105,7 +105,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the function used to render tooltips for each area drawn by this series.
      * @param callback function(series,record) : string
      */
-    @SuppressWarnings("unchecked")
+
     public void getTooltipFunction(org.directwebremoting.proxy.Callback<org.directwebremoting.proxy.CodeBlock> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -131,7 +131,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the stroke field.
      * @param callback stroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -168,7 +168,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the fill field.
      * @param callback fill
      */
-    @SuppressWarnings("unchecked")
+
     public void getFill(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -205,7 +205,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the fillGradient field.
      * @param callback fillGradient
      */
-    @SuppressWarnings("unchecked")
+
     public void getFillGradient(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -242,7 +242,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the x axis that this series is plotted against.
      * @return the x axis
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getXAxis()
     {
         String extension = "getXAxis().";
@@ -262,7 +262,7 @@ public class Series extends jsx3.chart.ChartComponent
      * @param returnType The expected return type
      * @return the x axis
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getXAxis(Class<T> returnType)
     {
         String extension = "getXAxis().";
@@ -281,7 +281,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the y axis that this series is plotted against.
      * @return the y axis
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.Axis getYAxis()
     {
         String extension = "getYAxis().";
@@ -301,7 +301,7 @@ public class Series extends jsx3.chart.ChartComponent
      * @param returnType The expected return type
      * @return the y axis
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getYAxis(Class<T> returnType)
     {
         String extension = "getYAxis().";
@@ -320,7 +320,7 @@ public class Series extends jsx3.chart.ChartComponent
      * Returns the colorFunction field.
      * @param callback colorFunction
      */
-    @SuppressWarnings("unchecked")
+
     public void getColorFunction(org.directwebremoting.proxy.Callback<org.directwebremoting.proxy.CodeBlock> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -356,7 +356,7 @@ public class Series extends jsx3.chart.ChartComponent
     /**
      * Returns the optional jsx3.chart.ChartLabel child of this series.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.chart.ChartLabel getLabel()
     {
         String extension = "getLabel().";

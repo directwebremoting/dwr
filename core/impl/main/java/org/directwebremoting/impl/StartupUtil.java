@@ -182,7 +182,6 @@ public class StartupUtil
      * @deprecated Since version 2.1 DWR does not use Servlet Logging
      */
     @Deprecated
-    @SuppressWarnings("unused")
     public static void setupLogging(ServletConfig servletConfig, HttpServlet servlet)
     {
     }

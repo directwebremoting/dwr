@@ -58,7 +58,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the text field.
      * @param callback text
      */
-    @SuppressWarnings("unchecked")
+
     public void getText(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -95,7 +95,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the color field.
      * @param callback color
      */
-    @SuppressWarnings("unchecked")
+
     public void getColor(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -121,7 +121,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the fontFamily field.
      * @param callback fontFamily
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontFamily(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -147,7 +147,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the fontsize field.
      * @param callback fontsize
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontSize(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -173,7 +173,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the fontStyle field.
      * @param callback fontStyle
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontStyle(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -199,7 +199,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the fontWeight field.
      * @param callback fontWeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getFontWeight(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -225,7 +225,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the textAlign field.
      * @param callback textAlign
      */
-    @SuppressWarnings("unchecked")
+
     public void getTextAlign(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -251,7 +251,7 @@ public class TextLine extends jsx3.vector.Shape
      * Returns the textDecoration field.
      * @param callback textDecoration
      */
-    @SuppressWarnings("unchecked")
+
     public void getTextDecoration(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

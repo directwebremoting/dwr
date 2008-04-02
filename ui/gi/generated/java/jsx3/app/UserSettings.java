@@ -68,7 +68,7 @@ public class UserSettings extends jsx3.lang.Object
      * @param strKey the setting key.
      * @param callback the stored value.
      */
-    @SuppressWarnings("unchecked")
+
     public void get(String strKey, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

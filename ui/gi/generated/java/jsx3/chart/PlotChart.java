@@ -81,7 +81,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
      * Returns the maxPointRadius field, limit the radius of points on this chart to this value.
      * @param callback maxPointRadius
      */
-    @SuppressWarnings("unchecked")
+
     public void getMaxPointRadius(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -118,7 +118,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
      * Returns the magnitudeMethod field; the magnitude method defines how the magnitude value of a record in a bubble series is converted to a radius for the rendered point; a value of "radius" means that the magnitude will equal the radius of the point, "diameter" means that the magnitude will equal the diameter (2 * radius), and "area" means that the area of the point will be proportional to the magnitude.
      * @param callback magnitudeMethod, one of {"radius","diameter","area"}
      */
-    @SuppressWarnings("unchecked")
+
     public void getMagnitudeMethod(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

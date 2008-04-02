@@ -77,7 +77,7 @@ public class BCChart extends jsx3.chart.CartesianChart
      * Returns the type field, corresponds to the variation of chart, one of {'clustered','stacked','stacked100'}.
      * @param callback type
      */
-    @SuppressWarnings("unchecked")
+
     public void getType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -114,7 +114,7 @@ public class BCChart extends jsx3.chart.CartesianChart
      * Returns the seriesOverlap field, the ratio of a column width/row height that a column/row overlaps with the adjacent column/row.
      * @param callback seriesOverlap
      */
-    @SuppressWarnings("unchecked")
+
     public void getSeriesOverlap(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -151,7 +151,7 @@ public class BCChart extends jsx3.chart.CartesianChart
      * Returns the categoryCoverage field, the ratio of the range of a category that is covered by bars/columns.
      * @param callback categoryCoverage
      */
-    @SuppressWarnings("unchecked")
+
     public void getCategoryCoverage(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -66,7 +66,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * Returns the autoAdjust field, whether to adjust the max/min/interval to the range of the data.
      * @param callback autoAdjust
      */
-    @SuppressWarnings("unchecked")
+
     public void getAutoAdjust(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -103,7 +103,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * Returns the baseAtZero field, whether to set either the min or max value of this axis to 0 if applicable and if autoAdjust is true.
      * @param callback baseAtZero
      */
-    @SuppressWarnings("unchecked")
+
     public void getBaseAtZero(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -140,7 +140,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * Returns the min field, the minimum value displayed by this axis, overrides autoAdjust.
      * @param callback min
      */
-    @SuppressWarnings("unchecked")
+
     public void getMin(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -177,7 +177,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * Returns the max field, the maximum value displayed by this axis, overrides autoAdjust.
      * @param callback max
      */
-    @SuppressWarnings("unchecked")
+
     public void getMax(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -214,7 +214,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * Returns the interval field, the interval between major ticks, overrides autoAdjust.
      * @param callback interval
      */
-    @SuppressWarnings("unchecked")
+
     public void getInterval(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -252,7 +252,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param value a value displayed along the axis
      * @param callback coordinate along the axis
      */
-    @SuppressWarnings("unchecked")
+
     public void getCoordinateFor(Integer value, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

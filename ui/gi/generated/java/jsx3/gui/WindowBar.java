@@ -105,7 +105,7 @@ public class WindowBar extends jsx3.gui.Block
      * Returns the type of the window bar; one of: jsx3.gui.WindowBar.TYPECAPTION, jsx3.gui.WindowBar.TYPETOOL, jsx3.gui.WindowBar.TYPEMENU, jsx3.gui.WindowBar.TYPETASK
      * @param callback one of: jsx3.gui.WindowBar.TYPECAPTION, jsx3.gui.WindowBar.TYPETOOL, jsx3.gui.WindowBar.TYPEMENU, jsx3.gui.WindowBar.TYPETASK
      */
-    @SuppressWarnings("unchecked")
+
     public void getType(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

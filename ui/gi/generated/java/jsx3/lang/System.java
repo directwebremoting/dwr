@@ -42,7 +42,7 @@ public class System extends jsx3.lang.Object
      * Returns a system property as specified by a JSS file loaded by the JSX runtime or an addin.
      * @param strKey 
      */
-    @SuppressWarnings("unchecked")
+
     public void getProperty(String strKey, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -101,7 +101,7 @@ locale is determined by introspecting the browser. If all else fails the default
      * @param strKey 
      * @param strTokens 
      */
-    @SuppressWarnings("unchecked")
+
     public void getMessage(String strKey, jsx3.lang.Object strTokens, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -127,7 +127,7 @@ locale is determined by introspecting the browser. If all else fails the default
      * Returns the version number of General Interface.
      * @param callback <code>"3.1.0"</code>, etc.
      */
-    @SuppressWarnings("unchecked")
+
     public void getVersion(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

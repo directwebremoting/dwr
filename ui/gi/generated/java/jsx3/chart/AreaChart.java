@@ -79,7 +79,7 @@ public class AreaChart extends jsx3.chart.CartesianChart
      * Returns the type field, corresponds to the variation of area chart, one of {'overlay','stacked','stacked100'}.
      * @param callback type
      */
-    @SuppressWarnings("unchecked")
+
     public void getType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

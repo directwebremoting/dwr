@@ -333,7 +333,7 @@ public class Event extends jsx3.lang.Object
      * Returns the type of event, e.g. mousedown, click, etc.
      * @param callback event type
      */
-    @SuppressWarnings("unchecked")
+
     public void getType(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -359,7 +359,7 @@ public class Event extends jsx3.lang.Object
      * Returns handle to the HTML element acted upon (click, mousedown, etc).
      * @param callback HTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void srcElement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -385,7 +385,7 @@ public class Event extends jsx3.lang.Object
      * Returns handle to the HTML element that was moused over (onmouseover).
      * @param callback HTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void toElement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -411,7 +411,7 @@ public class Event extends jsx3.lang.Object
      * Returns handle to the HTML element that was moused away from (onmouseout).
      * @param callback HTML object
      */
-    @SuppressWarnings("unchecked")
+
     public void fromElement(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -437,7 +437,7 @@ public class Event extends jsx3.lang.Object
      * Returns integer representing the key code of the key just pressed/keyed-down.
      * @param callback keycode
      */
-    @SuppressWarnings("unchecked")
+
     public void keyCode(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -463,7 +463,7 @@ public class Event extends jsx3.lang.Object
      * Returns the clientX property for the event (where it occurred on-screen).
      * @param callback pixel position
      */
-    @SuppressWarnings("unchecked")
+
     public void clientX(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -489,7 +489,7 @@ public class Event extends jsx3.lang.Object
      * Returns the clientY property for the event (where it occurred on-screen).
      * @param callback pixel position
      */
-    @SuppressWarnings("unchecked")
+
     public void clientY(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -515,7 +515,7 @@ public class Event extends jsx3.lang.Object
      * Returns the actual position in the browser from the left edge for where the event occurred.
      * @param callback pixel position
      */
-    @SuppressWarnings("unchecked")
+
     public void getTrueX(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -541,7 +541,7 @@ public class Event extends jsx3.lang.Object
      * Returns the actual position in the browser from the top edge for where the event occurred.
      * @param callback pixel position
      */
-    @SuppressWarnings("unchecked")
+
     public void getTrueY(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -566,7 +566,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the shift key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void shiftKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -591,7 +591,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true the ctrl key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void ctrlKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -616,7 +616,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the alt key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void altKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -641,7 +641,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the enter key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void enterKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -666,7 +666,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the space bar was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void spaceKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -691,7 +691,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the tab key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void tabKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -716,7 +716,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the right-arrow key was pressed
      */
-    @SuppressWarnings("unchecked")
+
     public void rightArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -741,7 +741,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the left-arrow key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void leftArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -766,7 +766,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the up-arrow key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void upArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -791,7 +791,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the down-arrow key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void downArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -816,7 +816,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the delete key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void deleteKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -841,7 +841,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the backspace key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void backspaceKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -866,7 +866,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the insert key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void insertKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -891,7 +891,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the home key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void homeKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -916,7 +916,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the end key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void endKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -941,7 +941,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the page-up key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void pageUpKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -966,7 +966,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the page-down key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void pageDownKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -991,7 +991,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the escape key was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void escapeKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1046,7 +1046,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the left-mouse-button was clicked.
      */
-    @SuppressWarnings("unchecked")
+
     public void leftButton(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1071,7 +1071,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns true if the right-mouse-button was clicked.
      */
-    @SuppressWarnings("unchecked")
+
     public void rightButton(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1096,7 +1096,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Returns integer designating the mouse button clicked/moused-down/moused-up; 1 (left), 2 (right), and as supported.
      */
-    @SuppressWarnings("unchecked")
+
     public void button(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1132,7 +1132,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Whether one of the four arrow keys was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void isArrowKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -1157,7 +1157,7 @@ public class Event extends jsx3.lang.Object
     /**
      * Whether one of the 15 function keys was pressed.
      */
-    @SuppressWarnings("unchecked")
+
     public void isFunctionKey(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -83,7 +83,7 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
      * Returns the DOM node that should be focused when the edit session begins. The default behavior is to return
 the first descendant (breadth-first) that implements jsx3.gui.Form.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Painted getMaskFirstResponder()
     {
         String extension = "getMaskFirstResponder().";
@@ -103,7 +103,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
 the first descendant (breadth-first) that implements jsx3.gui.Form.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getMaskFirstResponder(Class<T> returnType)
     {
         String extension = "getMaskFirstResponder().";
@@ -122,7 +122,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
      * Returns the value currently stored in this edit mask. The default behavior is to return the value of
 the first descendant (breadth-first) that implements jsx3.gui.Form.
      */
-    @SuppressWarnings("unchecked")
+
     public void getMaskValue(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

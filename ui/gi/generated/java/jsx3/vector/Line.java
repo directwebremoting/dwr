@@ -73,7 +73,7 @@ public class Line extends jsx3.vector.Shape
      * Returns the x1 field.
      * @param callback x1
      */
-    @SuppressWarnings("unchecked")
+
     public void getX1(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -110,7 +110,7 @@ public class Line extends jsx3.vector.Shape
      * Returns the y1 field.
      * @param callback y1
      */
-    @SuppressWarnings("unchecked")
+
     public void getY1(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -147,7 +147,7 @@ public class Line extends jsx3.vector.Shape
      * Returns the x2 field.
      * @param callback x2
      */
-    @SuppressWarnings("unchecked")
+
     public void getX2(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -184,7 +184,7 @@ public class Line extends jsx3.vector.Shape
      * Returns the y2 field.
      * @param callback y2
      */
-    @SuppressWarnings("unchecked")
+
     public void getY2(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

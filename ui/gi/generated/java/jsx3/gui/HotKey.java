@@ -48,7 +48,7 @@ public class HotKey extends jsx3.lang.Object
      * @param strKey 
      * @param fctCallback 
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.HotKey valueOf(String strKey, org.directwebremoting.proxy.CodeBlock fctCallback)
     {
         String extension = "valueOf(\"" + strKey + "\", \"" + fctCallback + "\").";
@@ -67,7 +67,7 @@ public class HotKey extends jsx3.lang.Object
     /**
      * Returns the keycode that this hot key responds to.
      */
-    @SuppressWarnings("unchecked")
+
     public void getKeyCode(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -93,7 +93,7 @@ public class HotKey extends jsx3.lang.Object
      * Returns whether this hot key should be invoked for the keydown event objEvent.
      * @param objEvent 
      */
-    @SuppressWarnings("unchecked")
+
     public void isMatch(jsx3.gui.Event objEvent, org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -122,7 +122,7 @@ event through the event dispatcher interface.
      * @param arrArgs 
      * @return this method returns whatever value was returned by the hot key callback function.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object invoke(jsx3.lang.Object objThis, Object[] arrArgs)
     {
         String extension = "invoke(\"" + objThis + "\", \"" + arrArgs + "\").";
@@ -145,7 +145,7 @@ event through the event dispatcher interface.
      * @param returnType The expected return type
      * @return this method returns whatever value was returned by the hot key callback function.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T invoke(jsx3.lang.Object objThis, Object[] arrArgs, Class<T> returnType)
     {
         String extension = "invoke(\"" + objThis + "\", \"" + arrArgs + "\").";
@@ -163,7 +163,7 @@ event through the event dispatcher interface.
     /**
      * Returns whether this hot key is enabled.
      */
-    @SuppressWarnings("unchecked")
+
     public void isEnabled(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -200,7 +200,7 @@ this method.
     /**
      * Returns whether this hot key had been destoyed.
      */
-    @SuppressWarnings("unchecked")
+
     public void isDestroyed(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -250,7 +250,7 @@ The following string representations are supported:
      * @param strChar the string representation of a key.
      * @param callback the keycode.
      */
-    @SuppressWarnings("unchecked")
+
     public void keyDownCharToCode(String strChar, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -277,7 +277,7 @@ The following string representations are supported:
      * @param objEvent the event, should have at least a field 'subject' that is the event id, another common field is 'target' (target will default to this instance)
      * @param callback the number of listeners to which the event was broadcast
      */
-    @SuppressWarnings("unchecked")
+
     public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

@@ -77,7 +77,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * Returns the preferredWidth field.
      * @param callback preferredWidth
      */
-    @SuppressWarnings("unchecked")
+
     public void getPreferredWidth(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -114,7 +114,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * Returns the preferredHeight field.
      * @param callback preferredHeight
      */
-    @SuppressWarnings("unchecked")
+
     public void getPreferredHeight(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -151,7 +151,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * Returns the alpha field, the opacity of the background fill.
      * @param callback alpha
      */
-    @SuppressWarnings("unchecked")
+
     public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -188,7 +188,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * Returns the borderStroke field, string representation of the VectorStroke used to outline the background.
      * @param callback borderStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getBorderStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -225,7 +225,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * Returns the labelRotation field.
      * @param callback labelRotation
      */
-    @SuppressWarnings("unchecked")
+
     public void getLabelRotation(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -261,7 +261,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     /**
      * whether this label is display at 90 or -90 degrees
      */
-    @SuppressWarnings("unchecked")
+
     public void isRotated(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

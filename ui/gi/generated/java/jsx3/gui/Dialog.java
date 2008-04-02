@@ -148,7 +148,7 @@ public class Dialog extends jsx3.gui.Block
     /**
      * Returns whether this dialog instance is the front-most dialog among all open dialogs
      */
-    @SuppressWarnings("unchecked")
+
     public void isFront(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -175,7 +175,7 @@ public class Dialog extends jsx3.gui.Block
      * @param objTaskBar specify the task bar to search in
      * @return or null
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.ToolbarButton getTaskButton(jsx3.gui.WindowBar objTaskBar)
     {
         String extension = "getTaskButton(\"" + objTaskBar + "\").";
@@ -205,7 +205,7 @@ public class Dialog extends jsx3.gui.Block
      * Returns state of the window (full-size / window-shaded). Default: jsx3.gui.Dialog.MAXIMIZED
      * @param callback one of: jsx3.gui.Dialog.MAXIMIZED or jsx3.gui.Dialog.MINIMIZED
      */
-    @SuppressWarnings("unchecked")
+
     public void getWindowState(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -244,7 +244,7 @@ public class Dialog extends jsx3.gui.Block
      * Returns numeric multiplier for the dialog's z-index. If a dialog box needs to always be on top of other dialog box instances, this multiplier can be increased to assure the appropriate zIndex.  For example, a value of 5 would mean that this dialog box would be stacked on top of all dialog boxes with a alwaysOnTop multiplier less than 5. Default: 1
      * @param callback integer
      */
-    @SuppressWarnings("unchecked")
+
     public void getZMultiplier(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -283,7 +283,7 @@ public class Dialog extends jsx3.gui.Block
      * Returns whether a dialog displays as modal or not. Modal dialogs mask the rest of the container with an semi-transparent mask that blocks mouse interaction. Modal dialogs do not show up in the task bar. Default: jsx3.gui.Dialog.NONMODAL
      * @param callback one of: jsx3.gui.Dialog.NONMODAL or jsx3.gui.Dialog.MODAL
      */
-    @SuppressWarnings("unchecked")
+
     public void getModal(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -333,7 +333,7 @@ public class Dialog extends jsx3.gui.Block
      * Returns whether the dialog can be resized or not. Default: jsx3.gui.Dialog.RESIZABLE
      * @param callback one of: jsx3.gui.Dialog.RESIZABLE jsx3.gui.Dialog.FIXED
      */
-    @SuppressWarnings("unchecked")
+
     public void getResize(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -390,7 +390,7 @@ public class Dialog extends jsx3.gui.Block
      * Returns an object handle to the jsx3.gui.WindowBar instance associated with the jsx3.gui.Dialog instance
      * @return jsx3.gui.WindowBar instance or null
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.WindowBar getCaptionBar()
     {
         String extension = "getCaptionBar().";
@@ -410,7 +410,7 @@ public class Dialog extends jsx3.gui.Block
      * Implements necessary method for the Alerts interface.
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.gui.Block getAlertsParent()
     {
         String extension = "getAlertsParent().";
@@ -430,7 +430,7 @@ public class Dialog extends jsx3.gui.Block
      * @param returnType The expected return type
      * @return this object.
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getAlertsParent(Class<T> returnType)
     {
         String extension = "getAlertsParent().";

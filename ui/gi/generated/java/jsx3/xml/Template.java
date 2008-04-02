@@ -91,7 +91,7 @@ property of this processor and returns null.
      * @param bObject 
      * @param callback the result of the transformation
      */
-    @SuppressWarnings("unchecked")
+
     public void transform(jsx3.xml.Node objXML, boolean bObject, org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -119,7 +119,7 @@ property of this processor and returns null.
      * @param objXML 
      * @return if a valid result tree is formed as a result of the transformation
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.xml.CdfDocument transformToObject(jsx3.xml.Node objXML)
     {
         String extension = "transformToObject(\"" + objXML + "\").";
@@ -141,7 +141,7 @@ property of this processor and returns null.
      * @param returnType The expected return type
      * @return if a valid result tree is formed as a result of the transformation
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T transformToObject(jsx3.xml.Node objXML, Class<T> returnType)
     {
         String extension = "transformToObject(\"" + objXML + "\").";
@@ -162,7 +162,7 @@ property of this processor and returns null.
 code Ð an integer error code, 0 for no error.
 description Ð a text description of the error that occurred.
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.lang.Object getError()
     {
         String extension = "getError().";
@@ -184,7 +184,7 @@ code Ð an integer error code, 0 for no error.
 description Ð a text description of the error that occurred.
      * @param returnType The expected return type
      */
-    @SuppressWarnings("unchecked")
+
     public <T> T getError(Class<T> returnType)
     {
         String extension = "getError().";
@@ -202,7 +202,7 @@ description Ð a text description of the error that occurred.
     /**
      * Returns true if the last operation on this XML entity caused an error.
      */
-    @SuppressWarnings("unchecked")
+
     public void hasError(org.directwebremoting.proxy.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();

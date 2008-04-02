@@ -61,7 +61,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the innerRadius field, the radius as the hole in the middle of the pie as a ratio of the entire radius.
      * @param callback innerRadius
      */
-    @SuppressWarnings("unchecked")
+
     public void getInnerRadius(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -98,7 +98,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the seriesPadding field, the amount of padding between rings in a doughnut chart as a ratio of the width of a ring.
      * @param callback seriesPadding
      */
-    @SuppressWarnings("unchecked")
+
     public void getSeriesPadding(org.directwebremoting.proxy.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -135,7 +135,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the totalAngle field, the total angle used for each series; may be overridden on a series-by-series basis by jsx3.chart.PieSeries.totalAngle.
      * @param callback totalAngle
      */
-    @SuppressWarnings("unchecked")
+
     public void getTotalAngle(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -172,7 +172,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the startAngle field, the start angle of the first slice in each series; 0 points upwards and increasing values go clockwise; may be overridden on a series-by-series basis by jsx3.chart.PieSeries.startAngle.
      * @param callback startAngle
      */
-    @SuppressWarnings("unchecked")
+
     public void getStartAngle(org.directwebremoting.proxy.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -209,7 +209,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the categoryField field, the attribute of a record that contains the category name value; necessary because there is no CategoryAxis to define this in a radial chart.
      * @param callback categoryField
      */
-    @SuppressWarnings("unchecked")
+
     public void getCategoryField(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -246,7 +246,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the colors field, an array of string representations of a vector fill, to color in the slices of all the data series; may be overridden by jsx3.chart.PieSeries.colors for an individual series..
      * @param callback colors
      */
-    @SuppressWarnings("unchecked")
+
     public void getColors(org.directwebremoting.proxy.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -283,7 +283,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the colorFunction field, a function that defines how to color in the slices of each data series in this chart, with the signature function(record, index) : jsx3.vector.Fill; may be overridden by jsx3.chart.PieSeries.colorFunction for an individual series..
      * @param callback colorFunction
      */
-    @SuppressWarnings("unchecked")
+
     public void getColorFunction(org.directwebremoting.proxy.Callback<org.directwebremoting.proxy.CodeBlock> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -320,7 +320,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * Returns the seriesStroke field, string representation of a VectorStroke to outline the slices of all the series with; may be overridden by jsx3.chart.PieSeries.stroke for an individual series..
      * @param callback seriesStroke
      */
-    @SuppressWarnings("unchecked")
+
     public void getSeriesStroke(org.directwebremoting.proxy.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
@@ -358,7 +358,7 @@ public class PieChart extends jsx3.chart.RadialChart
      * @param record 
      * @param index the index of the record in the data provider
      */
-    @SuppressWarnings("unchecked")
+
     public jsx3.vector.Fill defaultColoring(jsx3.xml.Node record, int index)
     {
         String extension = "defaultColoring(\"" + record + "\", \"" + index + "\").";
