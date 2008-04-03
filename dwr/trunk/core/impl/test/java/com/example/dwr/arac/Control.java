@@ -1,4 +1,4 @@
-package org.getahead.dwrdemo.arac;
+package com.example.dwr.arac;
 
 import java.util.Collection;
 import java.util.Date;

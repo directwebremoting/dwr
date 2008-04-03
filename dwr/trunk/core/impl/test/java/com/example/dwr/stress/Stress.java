@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.getahead.dwrdemo.stress;
+package com.example.dwr.stress;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;

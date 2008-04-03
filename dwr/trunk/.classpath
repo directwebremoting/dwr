@@ -40,7 +40,6 @@
 	<classpathentry kind="lib" path="core/impl/jar/itext-2.0.6.jar"/>
 	<classpathentry kind="src" path="core/api/main/java"/>
 	<classpathentry kind="src" path="core/spi/main/java"/>
-	<classpathentry kind="src" path="core/impl/old-demo/java"/>
 	<classpathentry kind="lib" path="core/convert/jar/jdom-1.0.jar" sourcepath="/library/jarlib/jdom-1.0/jdom-1.0.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
@@ -60,7 +59,9 @@
 	<classpathentry kind="src" path="core/impl/main/java"/>
 	<classpathentry kind="src" path="core/impl/main/resources"/>
 	<classpathentry kind="src" path="core/impl/test/java"/>
+	<classpathentry kind="src" path="core/impl/test/resources"/>
 	<classpathentry kind="src" path="core/impl/demo/java"/>
+	<classpathentry kind="src" path="core/impl/old-demo/java"/>
 	<classpathentry kind="src" path="core/convert/main/java"/>
 	<classpathentry kind="src" path="core/convert/test/java"/>
 	<classpathentry kind="src" path="core/util/main/java"/>

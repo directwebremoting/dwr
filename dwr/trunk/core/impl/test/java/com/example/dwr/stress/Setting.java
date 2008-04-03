@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.getahead.dwrdemo.stress;
+package com.example.dwr.stress;
 
 import java.util.ArrayList;
 import java.util.List;
