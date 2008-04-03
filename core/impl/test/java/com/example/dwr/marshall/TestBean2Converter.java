@@ -13,28 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.getahead.dwrdemo.marshall;
+package com.example.dwr.marshall;
+
+import org.directwebremoting.convert.BeanConverter;
 
 /**
+ * For demo purposes
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ObjA
+public class TestBean2Converter extends BeanConverter
 {
-    private ObjB objB;
-
-    /**
-     * @return objb
-     */
-    public ObjB getObjB()
-    {
-        return objB;
-    }
-
-    /**
-     * @param objB
-     */
-    public void setObjB(ObjB objB)
-    {
-        this.objB = objB;
-    }
 }

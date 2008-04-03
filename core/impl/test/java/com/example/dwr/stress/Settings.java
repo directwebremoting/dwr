@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.getahead.dwrdemo.stress;
+package com.example.dwr.stress;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

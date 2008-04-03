@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.getahead.dwrdemo.marshall;
+package com.example.dwr.marshall;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ObjB
+public class ObjA
 {
-    private ObjA objA;
+    private ObjB objB;
 
     /**
-     * @return obja
+     * @return objb
      */
-    public ObjA getObjA()
+    public ObjB getObjB()
     {
-        return objA;
+        return objB;
     }
 
     /**
-     * @param objA
+     * @param objB
      */
-    public void setObjA(ObjA objA)
+    public void setObjB(ObjB objB)
     {
-        this.objA = objA;
+        this.objB = objB;
     }
 }
