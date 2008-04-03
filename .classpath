@@ -57,9 +57,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="core/convert/jar/xbean-2.2.0.jar"/>
 	<classpathentry kind="src" path="core/impl/main/java"/>
-	<classpathentry kind="src" path="core/impl/main/resources"/>
 	<classpathentry kind="src" path="core/impl/test/java"/>
-	<classpathentry kind="src" path="core/impl/test/resources"/>
 	<classpathentry kind="src" path="core/impl/demo/java"/>
 	<classpathentry kind="src" path="core/impl/old-demo/java"/>
 	<classpathentry kind="src" path="core/convert/main/java"/>
@@ -121,7 +119,6 @@
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-mock.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/jar/spring-webmvc-2.5.2.jar"/>
 	<classpathentry kind="src" path="serverside/spring/main/java"/>
-	<classpathentry kind="src" path="serverside/spring/main/resources"/>
 	<classpathentry kind="src" path="serverside/spring/test/java"/>
 	<classpathentry kind="lib" path="noncla/various/jar/myfaces-api.jar">
 		<attributes>
