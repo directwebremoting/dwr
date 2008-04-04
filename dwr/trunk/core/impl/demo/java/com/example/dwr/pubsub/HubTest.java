@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.HubFactory;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
-import org.directwebremoting.extend.MarshallException;
 
 import com.example.dwr.people.Person;
 
@@ -42,14 +41,7 @@ public class HubTest
         {
             public void onMessage(MessageEvent message)
             {
-                try
-                {
-                    log.info(message.getData(String.class));
-                }
-                catch (MarshallException ex)
-                {
-                    log.info("Failed to read data published to " + TOPIC_TEXT);
-                }
+                log.info(message.getData(String.class));
             }
         });
 
@@ -57,14 +49,7 @@ public class HubTest
         {
             public void onMessage(MessageEvent message)
             {
-                try
-                {
-                    log.info(message.getData(Person.class));
-                }
-                catch (MarshallException ex)
-                {
-                    log.info("Failed to read data published to " + TOPIC_TEXT);
-                }
+                log.info(message.getData(Person.class));
             }
         });
     }

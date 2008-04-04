@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 package org.directwebremoting.event;
+
 import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.ProgressListener;
+
 /**
  * Progress listener that stores results in the user session.
- *
  * @author Jose Noheda
  */
 public class SessionProgressListener implements ProgressListener
@@ -27,18 +28,22 @@ public class SessionProgressListener implements ProgressListener
     {
         this.session = session;
     }
+
     public long getBytesRead()
     {
         return bytesRead;
     }
+
     public long getContentLength()
     {
         return contentLength;
     }
+
     public long getItem()
     {
         return item;
     }
+
     public void update(long newBytesRead, long newContentLength, int items)
     {
         if (session.getAttribute(CANCEL_UPLOAD) != null)
@@ -50,14 +55,17 @@ public class SessionProgressListener implements ProgressListener
         this.contentLength = newContentLength;
         this.item = items;
     }
+
     /**
      * The session where the results are stored.
      */
     private volatile HttpSession session;
+
     /**
      * The progress.
      */
     private volatile long bytesRead = 0L, contentLength = 0L, item = 0L;
+
     /**
      * The attribute that indicates if the user wants to cancel the upload.
      */

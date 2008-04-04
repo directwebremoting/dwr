@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Hub;
 import org.directwebremoting.event.MessageEvent;
-import org.directwebremoting.extend.MarshallException;
 
 /**
  * An implementation of all the {@link Message} types rolled into one.
@@ -603,14 +602,7 @@ public class DwrMessage implements Message, MapMessage, TextMessage, ObjectMessa
             return map.get(name);
 
         case MESSAGE_EVENT:
-            try
-            {
-                return message.getData(Map.class);
-            }
-            catch (MarshallException ex)
-            {
-                return "";
-            }
+            return message.getData(Map.class);
 
         case NONE:
             return "";
@@ -749,14 +741,7 @@ public class DwrMessage implements Message, MapMessage, TextMessage, ObjectMessa
             return null;
 
         case MESSAGE_EVENT:
-            try
-            {
-                return message.getData(String.class);
-            }
-            catch (MarshallException ex)
-            {
-                return null;
-            }
+            return message.getData(String.class);
 
         case NONE:
             return null;
