@@ -16,11 +16,13 @@
 package org.directwebremoting.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -33,15 +35,8 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.HubFactory.HubBuilder;
-import org.directwebremoting.ServerContextFactory.ServerContextBuilder;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
-import org.directwebremoting.dwrp.DefaultConverterManager;
-import org.directwebremoting.dwrp.HtmlCallHandler;
-import org.directwebremoting.dwrp.HtmlPollHandler;
-import org.directwebremoting.dwrp.PlainCallHandler;
-import org.directwebremoting.dwrp.PlainPollHandler;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Compressor;
@@ -51,29 +46,12 @@ import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
-import org.directwebremoting.extend.DebugPageGenerator;
-import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Handler;
-import org.directwebremoting.extend.PageNormalizer;
-import org.directwebremoting.extend.Remoter;
-import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.jsonp.JsonCallHandler;
-import org.directwebremoting.servlet.AboutHandler;
-import org.directwebremoting.servlet.AuthHandler;
-import org.directwebremoting.servlet.DownloadHandler;
 import org.directwebremoting.servlet.DwrWebContextFilter;
-import org.directwebremoting.servlet.EngineHandler;
-import org.directwebremoting.servlet.GiHandler;
-import org.directwebremoting.servlet.IndexHandler;
-import org.directwebremoting.servlet.InterfaceHandler;
-import org.directwebremoting.servlet.MonitorHandler;
 import org.directwebremoting.servlet.PathConstants;
-import org.directwebremoting.servlet.TestHandler;
 import org.directwebremoting.servlet.UrlProcessor;
-import org.directwebremoting.servlet.UtilHandler;
-import org.directwebremoting.servlet.WebworkUtilHandler;
 import org.directwebremoting.util.LocalUtil;
 import org.xml.sax.SAXException;
 
@@ -264,48 +242,23 @@ public class ContainerUtil
      */
     public static void setupDefaults(DefaultContainer container) throws ContainerConfigurationException
     {
-        container.addImplementation(AccessControl.class, DefaultAccessControl.class);
-        container.addImplementation(ConverterManager.class, DefaultConverterManager.class);
-        container.addImplementation(CreatorManager.class, DefaultCreatorManager.class);
-        container.addImplementation(UrlProcessor.class, UrlProcessor.class);
-        container.addImplementation(HubBuilder.class, DefaultHubBuilder.class);
-        container.addImplementation(WebContextBuilder.class, DefaultWebContextBuilder.class);
-        container.addImplementation(ServerContextBuilder.class, DefaultServerContextBuilder.class);
-        container.addImplementation(AjaxFilterManager.class, DefaultAjaxFilterManager.class);
-        container.addImplementation(Remoter.class, DefaultRemoter.class);
-        container.addImplementation(DebugPageGenerator.class, DefaultDebugPageGenerator.class);
-        container.addImplementation(ScriptSessionManager.class, DefaultScriptSessionManager.class);
-        container.addImplementation(PageNormalizer.class, DefaultPageNormalizer.class);
-        container.addImplementation(DownloadManager.class, InMemoryDownloadManager.class);
+        try
+        {
+            InputStream in = ContainerUtil.class.getResourceAsStream(DwrConstants.FILE_DEFAULT_PROPERTIES);
+            Properties defaults = new Properties();
+            defaults.load(in);
 
-        container.addImplementationOption(Compressor.class, YahooJSCompressor.class);
-        container.addImplementationOption(Compressor.class, ShrinkSafeCompressor.class);
-        container.addImplementationOption(Compressor.class, LegacyCompressor.class);
-        container.addImplementationOption(Compressor.class, NullCompressor.class);
-
-        container.addImplementationOption(ContainerAbstraction.class, JettyContainerAbstraction.class);
-        container.addImplementationOption(ContainerAbstraction.class, GrizzlyContainerAbstraction.class);
-        container.addImplementationOption(ContainerAbstraction.class, ServletSpecContainerAbstraction.class);
-
-        // Mapping handlers to URLs
-        createPathMapping(container, "/index.html", IndexHandler.class, "indexHandlerUrl");
-        createPathMapping(container, "/engine.js", EngineHandler.class, "engineHandlerUrl");
-        createPathMapping(container, "/util.js", UtilHandler.class, "utilHandlerUrl");
-        createPathMapping(container, "/auth.js", AuthHandler.class);
-        createPathMapping(container, "/gi.js", GiHandler.class);
-        createPathMapping(container, "/webwork/DWRActionUtil.js", WebworkUtilHandler.class);
-        createPathMapping(container, "/about", AboutHandler.class);
-        createPathMapping(container, "/test/", TestHandler.class, "testHandlerUrl");
-        createPathMapping(container, "/interface/", InterfaceHandler.class, "interfaceHandlerUrl");
-        createPathMapping(container, "/monitor/", MonitorHandler.class);
-        createPathMapping(container, "/download/", DownloadHandler.class, "downloadHandlerUrl");
-        createPathMapping(container, "/json/", JsonCallHandler.class);
-        createPathMapping(container, "/call/plaincall/", PlainCallHandler.class, "plainCallHandlerUrl");
-        createPathMapping(container, "/call/plainpoll/", PlainPollHandler.class, "plainPollHandlerUrl");
-        createPathMapping(container, "/call/htmlcall/", HtmlCallHandler.class, "htmlCallHandlerUrl");
-        createPathMapping(container, "/call/htmlpoll/", HtmlPollHandler.class, "htmlPollHandlerUrl");
-
-        container.addParameter("maxWaitAfterWrite", "500");
+            for (Map.Entry<?, ?> entry : defaults.entrySet())
+            {
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                container.addParameter(key, value);
+            }
+        }
+        catch (IOException ex)
+        {
+            throw new ContainerConfigurationException("Failed to load system defaults", ex);
+        }
     }
 
     /**

@@ -33,6 +33,11 @@ public interface DwrConstants
     public static final String FILE_DWR_XML = PACKAGE + "/dwr.xml";
 
     /**
+     * The default set of entries into the container
+     */
+    public static final String FILE_DEFAULT_PROPERTIES = PACKAGE + "/default.properties";
+
+    /**
      * The default dwr.xml file path
      */
     public static final String DEFAULT_DWR_XML = "/WEB-INF/dwr.xml";
