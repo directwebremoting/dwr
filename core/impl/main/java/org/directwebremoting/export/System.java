@@ -28,6 +28,7 @@ import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
 import org.directwebremoting.extend.CallbackHelper;
@@ -94,7 +95,7 @@ public class System
         ServletContext servletContext = webContext.getServletContext();
         Hub hub = HubFactory.get(servletContext);
 
-        MessageEvent event = new MessageEvent(hub, converterManager, data);
+        MessageEvent event = new DefaultMessageEvent(hub, converterManager, data);
         hub.publish(topic, event);
     }
 

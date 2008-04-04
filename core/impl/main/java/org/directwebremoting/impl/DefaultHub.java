@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.directwebremoting.Hub;
+import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
 
@@ -100,7 +101,7 @@ public class DefaultHub implements Hub
             }
             else
             {
-                event = new MessageEvent(this, data);
+                event = new DefaultMessageEvent(this, data);
             }
             listener.onMessage(event);
         }

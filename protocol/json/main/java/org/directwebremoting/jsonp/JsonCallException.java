@@ -22,7 +22,7 @@ package org.directwebremoting.jsonp;
 public class JsonCallException extends RuntimeException
 {
     /**
-     * All JsonCallException must have a reason
+     * All JsonCallExceptions must have a reason
      */
     public JsonCallException(String reason)
     {

@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.jsonp.JsonCallException;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -192,7 +191,7 @@ public class Call
             String error = Messages.getString("JsonCallMarshaller.UnknownMethod", name);
             log.warn("Marshalling exception: " + error);
 
-            throw new JsonCallException("No available method. See logs for more details.");
+            throw new IllegalArgumentException("No available method. See logs for more details.");
         }
 
         // At the moment we are just going to take the first match, for a
