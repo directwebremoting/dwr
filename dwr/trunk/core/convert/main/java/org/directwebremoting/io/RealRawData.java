@@ -26,14 +26,14 @@ import org.directwebremoting.util.JavascriptUtil;
  * be converting to.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class RawData
+public class RealRawData implements RawData
 {
     /**
      * RawData is immutable. Setup the raw string data that we wrap
      * @param inboundContext The context variables that could be associated with this
      * @param inboundVariable The variable we are delaying marshalling
      */
-    public RawData(InboundVariable inboundVariable, InboundContext inboundContext)
+    public RealRawData(InboundVariable inboundVariable, InboundContext inboundContext)
     {
         this.inboundVariable = inboundVariable;
         this.inboundContext = inboundContext;

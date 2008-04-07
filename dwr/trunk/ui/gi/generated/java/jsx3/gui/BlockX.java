@@ -313,7 +313,7 @@ public class BlockX extends jsx3.gui.Block
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -379,7 +379,7 @@ public class BlockX extends jsx3.gui.Block
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -458,7 +458,7 @@ is destroyed.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -549,7 +549,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -574,7 +574,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -599,7 +599,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -624,7 +624,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -702,7 +702,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -765,7 +765,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -791,7 +791,7 @@ following actions are also taken:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1290,7 +1290,7 @@ the cache under the XML Id of this object changes.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

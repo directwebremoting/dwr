@@ -86,7 +86,7 @@ to initialize itself.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -112,7 +112,7 @@ to initialize itself.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -138,7 +138,7 @@ to initialize itself.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

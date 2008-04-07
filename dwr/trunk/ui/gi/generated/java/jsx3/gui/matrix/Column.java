@@ -89,7 +89,7 @@ public class Column extends jsx3.gui.Block
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -129,7 +129,7 @@ The path wildcard is as follows:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -168,7 +168,7 @@ this column will called to repaint to reflect the updated value
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -206,7 +206,7 @@ this column will called to repaint to reflect the updated value
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -247,7 +247,7 @@ sorted on this attribute when the matrix is sorted on this column.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -284,7 +284,7 @@ sorted on this attribute when the matrix is sorted on this column.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -321,7 +321,7 @@ sorted on this attribute when the matrix is sorted on this column.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -358,7 +358,7 @@ the parent control explicitly specifies that no column should sort.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -454,7 +454,7 @@ Can also return the function literal
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -482,7 +482,7 @@ Returns null if this object is not displayed.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -507,7 +507,7 @@ Returns null if this object is not displayed.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -543,7 +543,7 @@ Returns null if this object is not displayed.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -583,7 +583,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -619,7 +619,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -655,7 +655,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -691,7 +691,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -727,7 +727,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -763,7 +763,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -803,7 +803,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -839,7 +839,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -876,7 +876,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -914,7 +914,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -950,7 +950,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

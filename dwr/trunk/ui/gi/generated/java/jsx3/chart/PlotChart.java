@@ -96,7 +96,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -133,7 +133,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

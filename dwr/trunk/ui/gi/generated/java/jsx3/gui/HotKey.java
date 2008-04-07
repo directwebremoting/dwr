@@ -82,7 +82,7 @@ public class HotKey extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -108,7 +108,7 @@ public class HotKey extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -178,7 +178,7 @@ event through the event dispatcher interface.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -215,7 +215,7 @@ this method.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -265,7 +265,7 @@ The following string representations are supported:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -292,7 +292,7 @@ The following string representations are supported:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

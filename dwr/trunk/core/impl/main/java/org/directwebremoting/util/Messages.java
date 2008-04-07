@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 public class Messages
 {
     /**
-     * Prevent instansiation
+     * Prevent instantiation
      */
     private Messages()
     {

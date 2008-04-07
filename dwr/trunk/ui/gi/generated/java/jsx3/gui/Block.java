@@ -419,7 +419,7 @@ public class Block extends jsx3.gui.Painted
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -460,7 +460,7 @@ public class Block extends jsx3.gui.Painted
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -499,7 +499,7 @@ public class Block extends jsx3.gui.Painted
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -540,7 +540,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -581,7 +581,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -619,7 +619,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -660,7 +660,7 @@ Instance Properties are the preferred method for applying styles.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -701,7 +701,7 @@ Dynamic Properties are the preferred method for applying global styles.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -742,7 +742,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -782,7 +782,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -822,7 +822,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -862,7 +862,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -915,7 +915,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -956,7 +956,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1420,7 +1420,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1445,7 +1445,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1488,7 +1488,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1527,7 +1527,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1569,7 +1569,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1611,7 +1611,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1653,7 +1653,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1693,7 +1693,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1731,7 +1731,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1771,7 +1771,7 @@ Returns reference to self to facilitate method chaining;
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1827,7 +1827,7 @@ from its parent and only applies if this object is absolutely positioned.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1865,7 +1865,7 @@ from its parent and only applies if this object is absolutely positioned.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -1918,7 +1918,7 @@ from its parent and only applies if this object is absolutely positioned.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2029,7 +2029,7 @@ dragged and dropped on another container supporting drop.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2055,7 +2055,7 @@ dragged and dropped on another container supporting drop.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2081,7 +2081,7 @@ dragged and dropped on another container supporting drop.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2107,7 +2107,7 @@ dragged and dropped on another container supporting drop.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2135,7 +2135,7 @@ setEvent() method or during component deserialization.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2202,7 +2202,7 @@ clicks on this object with the right button.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -2229,7 +2229,7 @@ clicks on this object with the right button.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelper.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

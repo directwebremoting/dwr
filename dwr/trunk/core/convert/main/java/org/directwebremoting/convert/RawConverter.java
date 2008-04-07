@@ -22,6 +22,7 @@ import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.io.RealRawData;
 import org.directwebremoting.io.RawData;
 
 /**
@@ -38,7 +39,7 @@ public class RawConverter extends BaseV20Converter implements Converter
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
     {
-        return new RawData(data, inctx);
+        return new RealRawData(data, inctx);
     }
 
     /* (non-Javadoc)

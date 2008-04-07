@@ -31,7 +31,6 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AccessDeniedException;
 import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.LoginRequiredException;
 import org.directwebremoting.util.Messages;
 
 /**

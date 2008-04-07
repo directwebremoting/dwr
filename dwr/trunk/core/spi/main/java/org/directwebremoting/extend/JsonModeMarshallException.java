@@ -15,7 +15,8 @@
  */
 package org.directwebremoting.extend;
 
-import org.directwebremoting.util.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * JsonModeMarshallException is a hint to the conversion process that
@@ -31,7 +32,9 @@ public class JsonModeMarshallException extends RuntimeException
      */
     public JsonModeMarshallException(Class<?> paramType)
     {
-        super(Messages.getString("MarshallException.SimpleFailure", paramType.getName()));
+        super("Error marshalling type. See the logs for more details.");
+        log.warn("Failure to marshall type: " + paramType.getName());
+
         this.paramType = paramType;
     }
 
@@ -42,7 +45,9 @@ public class JsonModeMarshallException extends RuntimeException
      */
     public JsonModeMarshallException(Class<?> paramType, Throwable ex)
     {
-        super(Messages.getString("MarshallException.FailureWithCause", paramType.getName(), ex.getMessage()), ex);
+        super("Error marshalling type. See the logs for more details.", ex);
+        log.warn("Failure to marshall type: " + paramType.getName() + ". Due to: " + ex);
+
         this.paramType = paramType;
     }
 
@@ -53,9 +58,12 @@ public class JsonModeMarshallException extends RuntimeException
      */
     public JsonModeMarshallException(Class<?> paramType, String message)
     {
-        super(Messages.getString("MarshallException.FailureWithCause", paramType.getName(), message));
+        super(message);
+        log.warn("Failure to marshall type: " + paramType.getName());
+
         this.paramType = paramType;
     }
+
     /**
      * Accessor for the type we are converting to/from
      * @return The type we are converting to/from
@@ -69,4 +77,9 @@ public class JsonModeMarshallException extends RuntimeException
      * The type we are converting to/from
      */
     private Class<?> paramType;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(JsonModeMarshallException.class);
 }

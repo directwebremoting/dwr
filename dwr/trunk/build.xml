@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="dwr" default="compile">
 
+  <!-- For terminology, see the readme.txt file alongside this build file -->
+
   <!--=======================================================================-->
   <!-- File that contains local settings, you may need to edit this -->
   <property file="build.properties"/>
@@ -16,81 +18,125 @@
     </not>
   </condition>
 
-  <path id="classpath">
-    <!--
-    <pathelement path="${java.class.path}/"/>
-    <pathelement path="${additional.path}"/>
-    -->
-    <fileset dir="${source.root}/jar" includes="**/*.jar"/>
-    <pathelement location="${target.root}/classes"/>
-    <pathelement location="${target.root}/test-classes"/>
-    <pathelement location="${target.root}/demo-classes"/>
-  </path>
-
   <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
     <classpath>
       <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
     </classpath>
   </taskdef>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <fileset dir="${source.root}/etc/ant" includes="**/*"/>
+    </classpath>
+  </taskdef>
 
   <!--=======================================================================-->
-  <target name="compile" description="Compile the sources">
+  <target name="prepare" description="Various bits of setup">
     <tstamp/>
-    <mkdir dir="${target.root}/classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/classes">
+    <mkdir dir="${target.root}/jar"/>
+    <mkdir dir="${target.root}/main-classes"/>
+    <mkdir dir="${target.root}/test-classes"/>
+    <mkdir dir="${target.root}/demo-classes"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="compile" depends="prepare" description="Compile the sources">
+
+    <!-- This set of modules needs breaking down so we can compile them individually -->
+    <compile-set modules="core/api" tree="main"/>
+    <compile-set modules="core/spi" tree="main"/>
+    <compile-set modules="core/convert, core/impl, protocol/dwrp" tree="main"/>
+
+    <!-- In theory these should be able to happen in any order -->
+    <compile-set modules="core/legacy" tree="main"/>
+    <compile-set modules="protocol/json" tree="main"/>
+    <compile-set modules="protocol/bayeux" tree="main"/>
+    <compile-set modules="serverside/spring" tree="main"/>
+    <compile-set modules="serverside/guice" tree="main"/>
+    <compile-set modules="serverside/struts" tree="main"/>
+    <compile-set modules="serverside/hibernate" tree="main"/>
+    <compile-set modules="serverside/various" tree="main"/>
+    <compile-set modules="ui/dwr" tree="main"/>
+    <compile-set modules="ui/gi" tree="main"/>
+    <!-- need some way to shunt this across
+    <compile-set modules="ui/gi" tree="generated"/>
+    -->
+    <compile-set modules="ui/scriptaculous" tree="main"/>
+    <compile-set modules="ui/jaxer" tree="main"/>
+    <compile-set modules="noncla/various" tree="main"/>
+
+    <!-- it's in main, but perhaps should be in test?
+    <compile-set modules="core/util" tree="main"/>
+    -->
+
+    <compile-set modules="core/impl" tree="test"/>
+    <compile-set modules="core/convert" tree="test"/>
+    <compile-set modules="serverside/spring" tree="test"/>
+    <compile-set modules="serverside/hibernate" tree="test"/>
+    <compile-set modules="ui/gi" tree="test"/>
+
+    <compile-set modules="core/impl" tree="demo"/>
+    <compile-set modules="serverside/struts" tree="demo"/>
+    <compile-set modules="ui/dwr" tree="demo"/>
+    <compile-set modules="ui/gi" tree="demo"/>
+    <compile-set modules="noncla/various" tree="demo"/>
+
+</target>
+
+  <!--=======================================================================-->
+  <macrodef name="compile-set" description="Compile the sources from a set of trees">
+    <attribute name="modules" description="A comma delimited set of module paths"/>
+    <attribute name="tree" description="Must be one of [main|test|demo]"/>
+    <sequential>
+      <echo message="Compiling modules: @{modules} with tree: @{tree}"/>
+      <foreach list="@{modules}" param="module" target="compile-set-copy-jars" trim="true"/>
+      <!-- compile the sources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
+      <antcall target="compile-set-compile">
+        <param name="modules" value="@{modules}"/>
+        <param name="tree" value="@{tree}"/>
+      </antcall>
+      <foreach list="@{modules}" param="module" target="compile-set-copy-resources" trim="true">
+        <param name="tree" value="@{tree}"/>
+      </foreach>
+    </sequential>
+  </macrodef>
+  <!-- copy the jar files in @{module}/jar the pool -->
+  <target name="compile-set-copy-jars">
+    <if>
+      <available file="${module}/jar"/>
+      <then>
+        <copy todir="${target.root}/jar" verbose="true">
+          <fileset dir="${module}/jar">
+            <include name="**/*.jar"/>
+          </fileset>
+        </copy>
+      </then>
+    </if>
+  </target>
+  <!-- copy the resources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
+  <target name="compile-set-copy-resources">
+    <copy todir="${target.root}/${tree}-classes">
+      <fileset dir="${module}/${tree}/java">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+    </copy>
+  </target>
+  <!-- -->
+  <target name="compile-set-compile">
+    <propertyregex property="sources1" input="!${modules}%" regexp=", *" replace="%!" defaultvalue="${modules}"/>
+    <propertyregex property="sources2" input="${sources1}" regexp="!" replace="${source.root}/" defaultvalue="${sources1}"/>
+    <propertyregex property="sources3" input="${sources2}" regexp="%" replace="/${tree}/java:" defaultvalue="${sources2}"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.root}/${tree}-classes" srcdir="${sources3}">
       <exclude name="**/package.html"/>
       <exclude name="**/package-info.java"/>
-      <src path="${source.root}/java"/>
-      <src path="${source.root}/generated/gi/java"/>
-      <classpath refid="classpath"/>
+      <classpath>
+        <fileset dir="${target.root}/jar" includes="**/*.jar"/>
+        <pathelement location="${target.root}/main-classes"/>
+        <pathelement location="${target.root}/test-classes"/>
+        <pathelement location="${target.root}/demo-classes"/>
+      </classpath>
     </javac>
-    <copy todir="${target.root}/classes">
-      <fileset dir="${source.root}/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/generated/gi/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/etc/classpath">
-        <exclude name="**/log4j.properties"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${target.root}/demo-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/demo-classes">
-      <src path="${source.root}/demo"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <mkdir dir="${target.root}/test-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/test-classes">
-      <src path="${source.root}/test/java"/>
-      <src path="${source.root}/util/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/test-classes">
-      <fileset dir="${source.root}/test/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/test/resources"/>
-    </copy>
-    <mkdir dir="${target.root}/jaxer-main-classes"/>
-    <javac debug="on" includes="**/*.java" destdir="${target.root}/jaxer-main-classes">
-      <src path="${source.root}/ui/jaxer/main/java"/>
-      <classpath refid="classpath"/>
-    </javac>
-    <copy todir="${target.root}/jaxer-main-classes">
-      <fileset dir="${source.root}/ui/jaxer/main/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-      <fileset dir="${source.root}/ui/jaxer/main/resources"/>
-    </copy>
   </target>
 
   <!--=======================================================================-->

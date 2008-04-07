@@ -125,5 +125,16 @@
 			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="ui/dwr/main/java"/>
+	<classpathentry kind="src" path="ui/dwr/demo/java"/>
+	<classpathentry kind="src" path="ui/scriptaculous/main/java"/>
+	<classpathentry kind="src" path="ui/gi/main/java"/>
+	<classpathentry kind="src" path="ui/gi/test/java"/>
+	<classpathentry kind="src" path="ui/gi/demo/java"/>
+	<classpathentry kind="src" path="ui/gi/generated/java"/>
+	<classpathentry kind="src" path="ui/jaxer/demo/java"/>
+	<classpathentry kind="src" path="ui/jaxer/main/java"/>
+	<classpathentry kind="src" path="noncla/various/demo/java"/>
+	<classpathentry kind="src" path="noncla/various/main/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
