@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.extend.CallbackHelper;
+import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.proxy.Callback;
 import org.directwebremoting.proxy.ScriptProxy;
 
@@ -86,7 +86,7 @@ public class Window extends ScriptProxy
 
         if (callback != null)
         {
-            String key = CallbackHelper.saveCallback(callback, Boolean.class);
+            String key = CallbackHelperFactory.saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -112,7 +112,7 @@ public class Window extends ScriptProxy
 
         if (callback != null)
         {
-            String key = CallbackHelper.saveCallback(callback, String.class);
+            String key = CallbackHelperFactory.saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

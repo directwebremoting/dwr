@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.directwebremoting.util.JavascriptUtil;
-
 /**
  * In official JSON parlance this should be called Object, however this would
  * cause confusion with {@link java.lang.Object} which is auto-imported.
@@ -51,7 +49,7 @@ public class JsonObject extends JsonValue implements Map<String, JsonValue>
             }
 
             output.append('\'');
-            output.append(JavascriptUtil.escapeJavaScript(entry.getKey()));
+            output.append(JsonString.escapeJavaScript(entry.getKey()));
             output.append("':");
             output.append(entry.getValue().toExternalRepresentation());
         }

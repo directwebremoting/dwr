@@ -31,9 +31,9 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
-import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.io.RawData;
+import org.directwebremoting.impl.DefaultCallbackHelper;
+import org.directwebremoting.io.RealRawData;
 
 /**
  * Various functions exported by DWR to help us with various book-keeping
@@ -70,11 +70,11 @@ public class System
      * @param key The unique id under which a callback is registered
      * @param data The data to decode and pass to the callback
      */
-    public void activateCallback(String key, RawData data)
+    public void activateCallback(String key, RealRawData data)
     {
         try
         {
-            CallbackHelper.executeCallback(key, data);
+            DefaultCallbackHelper.executeCallback(key, data);
         }
         catch (Exception ex)
         {
@@ -88,7 +88,7 @@ public class System
      * @param topic The topic that has been published to
      * @param data The published data
      */
-    public void publish(String topic, RawData data)
+    public void publish(String topic, RealRawData data)
     {
         WebContext webContext = WebContextFactory.get();
         ConverterManager converterManager = webContext.getContainer().getBean(ConverterManager.class);

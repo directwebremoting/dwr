@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.extend;
+package org.directwebremoting.impl;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]

@@ -18,12 +18,10 @@ package org.directwebremoting.extend;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
-import org.directwebremoting.dwrp.PollHandler;
-
 /**
- * We need to keep container specific logic out of {@link PollHandler}, and
- * other parts of DWR. Each container will need an implementation of this
- * interface, which will generally just return configurations of generic classes.
+ * We need to keep container specific logic out of PollHandler, and other parts
+ * of DWR. Each container will need an implementation of this interface, which 
+ * will generally just return configurations of generic classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface ContainerAbstraction
@@ -53,8 +51,8 @@ public interface ContainerAbstraction
     /**
      * Some async-servlet implementations (Jetty) restart requests, when we
      * might have already completed dealing with them. If this method returns
-     * true then {@link PollHandler} will assume that we're done and will bail
-     * out before we even get started.
+     * true then PollHandler will assume that we're done and will bail out
+     * before we even get started.
      * @param request The request that we might be finished with
      * @return true if the request is completed
      */

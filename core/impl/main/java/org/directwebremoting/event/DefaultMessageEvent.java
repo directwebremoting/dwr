@@ -22,7 +22,7 @@ import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.io.RawData;
+import org.directwebremoting.io.RealRawData;
 
 /**
  * An MessageEvent is fired to a set of {@link MessageListener}s by the DWR
@@ -50,7 +50,7 @@ public class DefaultMessageEvent implements MessageEvent
      * @param converterManager
      * @param rawData
      */
-    public DefaultMessageEvent(Hub hub, ConverterManager converterManager, RawData rawData)
+    public DefaultMessageEvent(Hub hub, ConverterManager converterManager, RealRawData rawData)
     {
         this.hub = hub;
         this.converterManager = converterManager;
@@ -131,7 +131,7 @@ public class DefaultMessageEvent implements MessageEvent
 
     private Hub hub;
     private Object data;
-    private RawData rawData;
+    private RealRawData rawData;
     private Source source;
     private ConverterManager converterManager;
 }
