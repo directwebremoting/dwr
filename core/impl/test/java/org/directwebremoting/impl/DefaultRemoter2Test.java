@@ -17,7 +17,6 @@ package org.directwebremoting.impl;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Remoter;
-import org.directwebremoting.util.SingletonContainer;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

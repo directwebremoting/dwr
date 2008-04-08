@@ -1,4 +1,4 @@
-package org.directwebremoting.util;
+package org.directwebremoting.impl;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -8,8 +8,6 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.impl.DwrXmlConfigurator;
-import org.directwebremoting.impl.StartupUtil;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
