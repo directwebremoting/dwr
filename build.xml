@@ -41,85 +41,76 @@
   <!--=======================================================================-->
   <target name="compile" depends="prepare" description="Compile the sources">
 
-    <!-- This set of modules needs breaking down so we can compile them individually -->
-    <compile-set modules="core/api" tree="main"/>
-    <compile-set modules="core/spi" tree="main"/>
-    <compile-set modules="core/convert" tree="main"/>
-    <compile-set modules="core/impl" tree="main"/>
-    <compile-set modules="core/legacy" tree="main"/>
+    <compile-set module="core/api" tree="main"/>
+    <compile-set module="core/spi" tree="main"/>
+    <compile-set module="core/convert" tree="main"/>
+    <compile-set module="core/impl" tree="main"/>
+    <compile-set module="core/legacy" tree="main"/>
 
     <!-- In theory these should be able to happen in any order -->
-    <compile-set modules="protocol/dwrp" tree="main"/>
-    <compile-set modules="protocol/json" tree="main"/>
-    <compile-set modules="protocol/bayeux" tree="main"/>
-    <compile-set modules="serverside/spring" tree="main"/>
-    <compile-set modules="serverside/guice" tree="main"/>
-    <compile-set modules="serverside/struts" tree="main"/>
-    <compile-set modules="serverside/hibernate" tree="main"/>
-    <compile-set modules="serverside/various" tree="main"/>
-    <compile-set modules="ui/dwr" tree="main"/>
-    <compile-set modules="ui/gi" tree="generated"/>
-    <compile-set modules="ui/gi" tree="main"/>
-    <compile-set modules="ui/scriptaculous" tree="main"/>
-    <compile-set modules="ui/jaxer" tree="main"/>
-    <compile-set modules="noncla/various" tree="main"/>
+    <compile-set module="protocol/dwrp" tree="main"/>
+    <compile-set module="protocol/json" tree="main"/>
+    <compile-set module="protocol/bayeux" tree="main"/>
+    <compile-set module="serverside/spring" tree="main"/>
+    <compile-set module="serverside/guice" tree="main"/>
+    <compile-set module="serverside/struts" tree="main"/>
+    <compile-set module="serverside/hibernate" tree="main"/>
+    <compile-set module="serverside/various" tree="main"/>
+    <compile-set module="ui/dwr" tree="main"/>
+    <compile-set module="ui/gi" tree="generated"/>
+    <compile-set module="ui/gi" tree="main"/>
+    <compile-set module="ui/scriptaculous" tree="main"/>
+    <compile-set module="ui/jaxer" tree="main"/>
+    <compile-set module="noncla/various" tree="main"/>
 
-    <compile-set modules="core/util" tree="test"/>
+    <compile-set module="core/util" tree="test"/>
 
-    <compile-set modules="core/impl" tree="test"/>
-    <compile-set modules="core/convert" tree="test"/>
-    <compile-set modules="serverside/spring" tree="test"/>
-    <compile-set modules="serverside/hibernate" tree="test"/>
-    <compile-set modules="ui/gi" tree="test"/>
+    <compile-set module="core/impl" tree="test"/>
+    <compile-set module="core/convert" tree="test"/>
+    <compile-set module="serverside/spring" tree="test"/>
+    <compile-set module="serverside/hibernate" tree="test"/>
+    <compile-set module="ui/gi" tree="test"/>
 
-    <compile-set modules="core/impl" tree="demo"/>
-    <compile-set modules="serverside/struts" tree="demo"/>
-    <compile-set modules="ui/dwr" tree="demo"/>
-    <compile-set modules="ui/gi" tree="demo"/>
-    <compile-set modules="noncla/various" tree="demo"/>
+    <compile-set module="core/impl" tree="demo"/>
+    <compile-set module="serverside/struts" tree="demo"/>
+    <compile-set module="ui/dwr" tree="demo"/>
+    <compile-set module="ui/gi" tree="demo"/>
+    <compile-set module="noncla/various" tree="demo"/>
 
   </target>
 
   <!--=======================================================================-->
   <macrodef name="compile-set" description="Compile the sources from a set of trees">
-    <attribute name="modules" description="A comma delimited set of module paths"/>
+    <attribute name="module" description="The module to compile"/>
     <attribute name="tree" description="Must be one of [main|test|demo]"/>
     <sequential>
-      <echo message="Compiling modules: @{modules} with tree: @{tree}"/>
-      <foreach list="@{modules}" param="module" target="compile-set-copy-jars" trim="true"/>
+      <echo message="Compiling module: @{module} with tree: @{tree}"/>
+      <!-- copy jar files to the jar pool, to help suss the classpath -->
+      <if>
+        <available file="${module}/jar"/>
+        <then>
+          <copy todir="${target.root}/jar" verbose="true">
+            <fileset dir="${module}/jar">
+              <include name="**/*.jar"/>
+            </fileset>
+          </copy>
+        </then>
+      </if>
       <!-- compile the sources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
       <antcall target="compile-set-compile">
         <param name="modules" value="@{modules}"/>
         <param name="tree" value="@{tree}"/>
       </antcall>
-      <foreach list="@{modules}" param="module" target="compile-set-copy-resources" trim="true">
-        <param name="tree" value="@{tree}"/>
-      </foreach>
+      <!-- copy the resources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
+      <copy todir="${target.root}/@{tree}-classes">
+        <fileset dir="${module}/@{tree}/java">
+          <exclude name="**/*.java"/>
+          <exclude name="**/package.html"/>
+          <exclude name="**/package-info.java"/>
+        </fileset>
+      </copy>
     </sequential>
   </macrodef>
-  <!-- copy the jar files in @{module}/jar the pool -->
-  <target name="compile-set-copy-jars">
-    <if>
-      <available file="${module}/jar"/>
-      <then>
-        <copy todir="${target.root}/jar" verbose="true">
-          <fileset dir="${module}/jar">
-            <include name="**/*.jar"/>
-          </fileset>
-        </copy>
-      </then>
-    </if>
-  </target>
-  <!-- copy the resources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
-  <target name="compile-set-copy-resources">
-    <copy todir="${target.root}/${tree}-classes">
-      <fileset dir="${module}/${tree}/java">
-        <exclude name="**/*.java"/>
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-      </fileset>
-    </copy>
-  </target>
   <!-- -->
   <target name="compile-set-compile">
     <propertyregex property="sources1" input="!${modules}%" regexp=", *" replace="%!" defaultvalue="!${modules}%"/>
