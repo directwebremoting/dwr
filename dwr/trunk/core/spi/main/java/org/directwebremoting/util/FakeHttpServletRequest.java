@@ -16,6 +16,7 @@
 package org.directwebremoting.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -24,8 +25,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -107,17 +110,42 @@ public class FakeHttpServletRequest implements HttpServletRequest
      */
     public String getMethod()
     {
-        log.warn("Inventing data in FakeHttpServletRequest.getMethod() to remain plausible.");
-        return "GET";
+        return method;
     }
+
+    /**
+     * @see #getMethod()
+     */
+    public void setMethod(String method)
+    {
+        this.method = method;
+    }
+
+    /**
+     * @see #getMethod()
+     */
+    private String method = "GET";
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getPathInfo()
      */
     public String getPathInfo()
     {
-        return null;
+        return pathInfo;
     }
+
+    /**
+     * @see #getPathInfo()
+     */
+    public void setPathInfo(String pathInfo)
+    {
+        this.pathInfo = pathInfo;
+    }
+
+    /**
+     * @see #getPathInfo()
+     */
+    private String pathInfo;
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getPathTranslated()
@@ -157,8 +185,21 @@ public class FakeHttpServletRequest implements HttpServletRequest
      */
     public boolean isUserInRole(String role)
     {
-        return false;
+        return roles.contains(role);
     }
+
+    /**
+     * @see #isUserInRole(String)
+     */
+    public void addUserRole(String role)
+    {
+        roles.add(role);
+    }
+
+    /**
+     * @see #isUserInRole(String)
+     */
+    private Set<String> roles = new HashSet<String>();
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getUserPrincipal()
@@ -295,7 +336,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
      */
     public int getContentLength()
     {
-        return 0;
+        return content.length;
     }
 
     /* (non-Javadoc)
@@ -303,9 +344,21 @@ public class FakeHttpServletRequest implements HttpServletRequest
      */
     public String getContentType()
     {
-        log.warn("Inventing data in FakeHttpServletRequest.getContentType() to remain plausible.");
-        return "text/plain";
+        return contentType;
     }
+
+    /**
+     * @see #getContentType()
+     */
+    public void setContentType(String contentType)
+    {
+        this.contentType = contentType;
+    }
+
+    /**
+     * @see #getContentType()
+     */
+    private String contentType = "text/plain";
 
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getInputStream()
@@ -314,16 +367,103 @@ public class FakeHttpServletRequest implements HttpServletRequest
     {
         return new ServletInputStream()
         {
+            private ByteArrayInputStream proxy = new ByteArrayInputStream(content);
+
             /* (non-Javadoc)
              * @see java.io.InputStream#read()
              */
             @Override
             public int read() throws IOException
             {
-                return -1;
+                return proxy.read();
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#available()
+             */
+            @Override
+            public int available() throws IOException
+            {
+                return proxy.available();
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#mark(int)
+             */
+            @Override
+            public synchronized void mark(int readlimit)
+            {
+                proxy.mark(readlimit);
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#markSupported()
+             */
+            @Override
+            public boolean markSupported()
+            {
+                return proxy.markSupported();
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#read(byte[], int, int)
+             */
+            @Override
+            public int read(byte[] b, int off, int len) throws IOException
+            {
+                return proxy.read(b, off, len);
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#close()
+             */
+            @Override
+            public void close() throws IOException
+            {
+                proxy.close();
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#read(byte[])
+             */
+            @Override
+            public int read(byte[] b) throws IOException
+            {
+                return proxy.read(b);
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#reset()
+             */
+            @Override
+            public synchronized void reset() throws IOException
+            {
+                proxy.reset();
+            }
+
+            /* (non-Javadoc)
+             * @see java.io.InputStream#skip(long)
+             */
+            @Override
+            public long skip(long n) throws IOException
+            {
+                return proxy.skip(n);
             }
         };
     }
+
+    /**
+     * @see #getInputStream()
+     */
+    public void setContent(byte[] content)
+    {
+        this.content = content;
+    }
+
+    /**
+     * @see #getInputStream()
+     */
+    protected byte[] content;
 
     /**
      * @return "127.0.0.1"

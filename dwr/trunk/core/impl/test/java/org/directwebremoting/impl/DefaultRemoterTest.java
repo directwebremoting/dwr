@@ -29,11 +29,11 @@ import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.impl.test.TestCreatedObject;
 import org.directwebremoting.impl.test.TestWebContextFactory;
+import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -53,7 +53,7 @@ public class DefaultRemoterTest
 
     private AjaxFilterManager ajaxFilterManager;
 
-    private MockHttpServletRequest request;
+    private FakeHttpServletRequest request;
 
     @Before
     public void setUp() throws Exception
@@ -67,7 +67,7 @@ public class DefaultRemoterTest
         ajaxFilterManager = createMock(AjaxFilterManager.class);
         defaultRemoter.setAjaxFilterManager(ajaxFilterManager);
 
-        request = new MockHttpServletRequest();
+        request = new FakeHttpServletRequest();
     }
 
     /**
@@ -118,7 +118,7 @@ public class DefaultRemoterTest
         builder.set(request, null, null, null, null);
         TestWebContextFactory.setWebContextBuilder(builder);
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        FakeHttpServletResponse response = new FakeHttpServletResponse();
         //Calls calls = marshaller.marshallInbound(request, response);
         //Replies replies = defaultRemoter.execute(calls);
         //marshaller.marshallOutbound(replies, request, response);
@@ -226,7 +226,7 @@ public class DefaultRemoterTest
         replay(creatorManager);
         replay(accessControl);
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        FakeHttpServletResponse response = new FakeHttpServletResponse();
         //Calls calls = marshaller.marshallInbound(request, response);
         //Replies replies = defaultRemoter.execute(calls);
         //marshaller.marshallOutbound(replies, request, response);

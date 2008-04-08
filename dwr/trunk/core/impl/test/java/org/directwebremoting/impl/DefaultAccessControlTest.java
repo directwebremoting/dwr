@@ -23,10 +23,10 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.Creator;
+import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Bram Smeets
@@ -36,12 +36,12 @@ public class DefaultAccessControlTest
 {
     private DefaultAccessControl accessControl = new DefaultAccessControl();
 
-    private MockHttpServletRequest request;
+    private FakeHttpServletRequest request;
 
     @Before
     public void setUp()
     {
-        request = new MockHttpServletRequest();
+        request = new FakeHttpServletRequest();
     }
 
     @Test(expected = SecurityException.class)
@@ -96,7 +96,7 @@ public class DefaultAccessControlTest
     public void testReasonToNotExecute() throws Exception
     {
         WebContextBuilder builder = new DefaultWebContextBuilder();
-        builder.set(new MockHttpServletRequest(), new MockHttpServletResponse(), null, null, null);
+        builder.set(new FakeHttpServletRequest(), new FakeHttpServletResponse(), null, null, null);
         WebContextFactory.setWebContextBuilder(builder);
 
         NewCreator creator = new NewCreator();
