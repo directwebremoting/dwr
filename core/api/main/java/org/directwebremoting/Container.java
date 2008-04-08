@@ -19,9 +19,7 @@ import java.util.Collection;
 
 /**
  * A very basic IoC container.
- * See {@link org.directwebremoting.extend.ContainerUtil} for information on how
- * to setup a {@link Container}
- * @see org.directwebremoting.extend.ContainerUtil
+ * See ContainerUtil for information on how to setup a {@link Container}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface Container
@@ -46,7 +44,7 @@ public interface Container
      * to return an empty collection, but to return Objects when queried
      * directly using {@link #getBean(String)}. This method should only be used
      * for debugging purposes.
-     * @return A collection containing all the availble bean names.
+     * @return A collection containing all the available bean names.
      */
     Collection<String> getBeanNames();
 }

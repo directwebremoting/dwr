@@ -8,7 +8,7 @@
   <property file="build.properties"/>
 
   <!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
-  <property file="${source.root}/core/impl/resources/dwr-version.properties"/>
+  <property file="${source.root}/core/impl/main/java/dwr-version.properties"/>
   <condition property="label" value="${major}.${minor}.${revision}">
     <equals arg1="${title}" arg2=""/>
   </condition>
@@ -33,48 +33,52 @@
   <target name="prepare" description="Various bits of setup">
     <tstamp/>
     <mkdir dir="${target.root}/jar"/>
-    <mkdir dir="${target.root}/main-classes"/>
-    <mkdir dir="${target.root}/test-classes"/>
-    <mkdir dir="${target.root}/demo-classes"/>
+    <mkdir dir="${target.root}/classes/main"/>
+    <mkdir dir="${target.root}/classes/test"/>
+    <mkdir dir="${target.root}/classes/demo"/>
+    <mkdir dir="${target.root}/web/demo/WEB-INF/classes"/>
+    <mkdir dir="${target.root}/web/demo/WEB-INF/lib"/>
+    <mkdir dir="${target.root}/web/test/WEB-INF/classes"/>
+    <mkdir dir="${target.root}/web/test/WEB-INF/lib"/>
   </target>
 
   <!--=======================================================================-->
   <target name="compile" depends="prepare" description="Compile the sources">
 
-    <compile-module module="core/api"/>
-    <compile-module module="core/spi"/>
-    <compile-module module="core/convert"/>
-    <compile-module module="core/impl"/>
-    <compile-module module="core/legacy"/>
-    <compile-module module="core/util"/>
+    <process-module module="core/api"/>
+    <process-module module="core/spi"/>
+    <process-module module="core/convert"/>
+    <process-module module="core/impl"/>
+    <process-module module="core/legacy"/>
+    <process-module module="core/util"/>
 
-    <compile-module module="protocol/dwrp"/>
-    <compile-module module="protocol/json"/>
-    <compile-module module="protocol/bayeux"/>
+    <process-module module="protocol/dwrp"/>
+    <process-module module="protocol/json"/>
+    <process-module module="protocol/bayeux"/>
 
-    <compile-module module="serverside/spring"/>
-    <compile-module module="serverside/guice"/>
-    <compile-module module="serverside/struts"/>
-    <compile-module module="serverside/hibernate"/>
-    <compile-module module="serverside/various"/>
+    <process-module module="serverside/spring"/>
+    <process-module module="serverside/guice"/>
+    <process-module module="serverside/struts"/>
+    <process-module module="serverside/hibernate"/>
+    <process-module module="serverside/various"/>
 
-    <compile-module module="ui/dwr"/>
-    <compile-module module="ui/gi"/>
-    <compile-module module="ui/scriptaculous"/>
-    <compile-module module="ui/jaxer"/>
+    <process-module module="ui/dwr"/>
+    <process-module module="ui/gi"/>
+    <process-module module="ui/scriptaculous"/>
+    <process-module module="ui/jaxer"/>
 
-    <compile-module module="noncla/various"/>
+    <process-module module="noncla/various"/>
 
   </target>
 
   <!--=======================================================================-->
-  <macrodef name="compile-module" description="Compile the sources from a set of trees">
+  <macrodef name="process-module" description="Compile the sources from a set of trees">
     <attribute name="module" description="The module to compile"/>
     <sequential>
-      <echo message="Compiling module: @{module}"/>
+      <echo message="Processing module: @{module}"/>
       <!-- copy jar files to the jar pool, to help suss the classpath -->
       <if>
-        <available file="@{module}/jar"/>
+        <available file="${source.root}/@{module}/jar"/>
         <then>
           <copy todir="${target.root}/jar" verbose="true">
             <fileset dir="@{module}/jar">
@@ -85,10 +89,10 @@
       </if>
       <!-- The main tree -->
       <if>
-        <available file="@{module}/main/java"/>
+        <available file="${source.root}/@{module}/main/java"/>
         <then>
           <if>
-            <available file="@{module}/generated/java"/>
+            <available file="${source.root}/@{module}/generated/java"/>
             <then>
               <compile-tree module="@{module}" tree="main">
                 <sources>
@@ -109,9 +113,30 @@
           </if>
         </then>
       </if>
+      <!-- The test tree -->
+      <if>
+        <available file="${source.root}/@{module}/test/java"/>
+        <then>
+          <compile-tree module="@{module}" tree="test">
+            <sources>
+              <src path="${source.root}/@{module}/test/java"/>
+            </sources>
+          </compile-tree>
+          <compile-copy module="@{module}" tree="test"/>
+        </then>
+      </if>
+      <!-- The test web tree -->
+      <if>
+        <available file="${source.root}/@{module}/test/web"/>
+        <then>
+          <copy todir="${target.root}/web/test">
+            <fileset dir="${source.root}/@{module}/test/web"/>
+          </copy>
+        </then>
+      </if>
       <!-- The demo tree -->
       <if>
-        <available file="@{module}/demo/java"/>
+        <available file="${source.root}/@{module}/demo/java"/>
         <then>
           <compile-tree module="@{module}" tree="demo">
             <sources>
@@ -121,16 +146,13 @@
           <compile-copy module="@{module}" tree="demo"/>
         </then>
       </if>
-      <!-- The test tree -->
+      <!-- The demo web tree -->
       <if>
-        <available file="@{module}/test/java"/>
+        <available file="${source.root}/@{module}/demo/web"/>
         <then>
-          <compile-tree module="@{module}" tree="test">
-            <sources>
-              <src path="${source.root}/@{module}/test/java"/>
-            </sources>
-          </compile-tree>
-          <compile-copy module="@{module}" tree="test"/>
+          <copy todir="${target.root}/web/demo">
+            <fileset dir="${source.root}/@{module}/demo/web"/>
+          </copy>
         </then>
       </if>
     </sequential>
@@ -142,14 +164,14 @@
     <attribute name="tree" description="Must be one of [main|test|demo]"/>
     <element name="sources"/>
     <sequential>
-      <!-- compile the sources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
-      <javac debug="on" includes="**/*.java" destdir="${target.root}/@{tree}-classes">
+      <!-- compile the sources in @{module}/@{tree}/java into ${target.root}/classes/@{tree} -->
+      <javac debug="on" includes="**/*.java" destdir="${target.root}/classes/@{tree}">
         <exclude name="**/package.html"/>
         <exclude name="**/package-info.java"/>
         <sources/>
         <classpath>
           <fileset dir="${target.root}/jar" includes="**/*.jar"/>
-          <pathelement location="${target.root}/main-classes"/>
+          <pathelement location="${target.root}/classes/main"/>
         </classpath>
       </javac>
     </sequential>
@@ -160,8 +182,8 @@
     <attribute name="module" description="The module to compile"/>
     <attribute name="tree" description="Must be one of [main|test|demo]"/>
     <sequential>
-      <!-- copy the resources in @{module}/@{tree}/java into ${target.root}/@{tree}-classes -->
-      <copy todir="${target.root}/@{tree}-classes">
+      <!-- copy the resources in @{module}/@{tree}/java into ${target.root}/classes/@{tree} -->
+      <copy todir="${target.root}/classes/@{tree}">
         <fileset dir="${source.root}/@{module}/@{tree}/java">
           <exclude name="**/*.java"/>
           <exclude name="**/package.html"/>
@@ -181,11 +203,13 @@
         use="true"
         splitindex="true"
         version="true">
-      <sourcepath path="${source.root}/java"/>
-      <classpath refid="classpath"/>
+      <sourcepath path="${source.root}/core/api/main/java"/>
+      <classpath>
+        <pathelement location="${target.root}/classes/main"/>
+        <fileset dir="${target.root}/jar" includes="**/*.jar"/>
+      </classpath>
       <package name="org.directwebremoting.*"/>
-      <package name="uk.ltd.getahead.dwr.*"/>
-      <footer>Copyright &#168; 2005</footer>
+      <footer>Copyright &#168; 2008</footer>
     </javadoc>
   </target>
 
@@ -198,7 +222,7 @@
     <mkdir dir="${target.root}/dtddoc"/>
     <DTDDoc showHiddenTags="false"
         showFixmeTags="false"
-        sourceDir="${source.root}/java"
+        sourceDir="${source.root}/core/impl/main/java"
         destDir="${target.root}/dtddoc"
         docTitle = "DTDDoc's example">
       <include name="**/*.dtd"/>
@@ -210,29 +234,25 @@
   <target name="jar" depends="compile" description="Create output JAR file">
     <mkdir dir="${target.root}"/>
     <jar destfile="${target.root}/dwr.jar" compress="true">
-      <fileset dir="${target.root}/classes"/>
+      <fileset dir="${target.root}/classes/main"/>
     </jar>
     <retroweaver inputjar="${target.root}/dwr.jar" outputjar="${target.root}/dwr-jdk14.jar" target="1.4"/>
   </target>
 
   <!--=======================================================================-->
   <target name="war" depends="jar" description="Create output WAR file">
-    <war destfile="${target.root}/dwr.war" webxml="${source.root}/web/WEB-INF/web.xml">
-      <lib file="${target.root}/dwr.jar"/>
-      <classes dir="${target.root}/demo-classes"/>
-      <classes dir="${source.root}/demo"/>
-      <fileset dir="${source.root}/web">
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-        <exclude name="WEB-INF/web.xml"/>
-        <exclude name="WEB-INF/classes/**"/>
-      </fileset>
-    </war>
+    <copy todir="${target.root}/web/demo/WEB-INF/classes">
+      <fileset dir="${target.root}/classes/demo"/>
+    </copy>
+    <copy todir="${target.root}/web/test/WEB-INF/classes">
+      <fileset dir="${target.root}/classes/test"/>
+    </copy>
   </target>
 
   <!--=======================================================================-->
   <target name="files" depends="war, javadoc" description="Create output WAR and JAR files">
+    <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo/WEB-INF/classes"/>
+    <zip destfile="${target.root}/dwr-test.war" basedir="${target.root}/web/test/WEB-INF/classes"/>
     <zip destfile="${target.root}/dwr-${label}-src.zip">
       <fileset dir="${source.root}">
         <exclude name="target/**"/>
@@ -250,32 +270,7 @@
   </target>
 
   <!--=======================================================================-->
-  <target name="unpack" depends="war" description="Extracts the war file, including un-jaring dwr.jar for fast update">
-    <delete dir="${target.war}"/>
-    <unwar src="${target.root}/dwr.war" dest="${target.war}"/>
-    <unjar src="${target.war}/WEB-INF/lib/dwr.jar" dest="${target.war}/WEB-INF/classes"/>
-    <delete file="${target.war}/WEB-INF/lib/dwr.jar"/>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="fast-unpack" depends="compile" description="Extracts the war file">
-    <copy todir="${target.war}">
-      <fileset dir="${source.root}/web">
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-        <exclude name="WEB-INF/classes/**"/>
-      </fileset>
-    </copy>
-    <copy todir="${target.war}/WEB-INF/classes">
-      <fileset dir="${target.root}/classes"/>
-      <fileset dir="${target.root}/demo-classes"/>
-      <fileset dir="${source.root}/demo"/>
-    </copy>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="tomcat-reload" depends="fast-unpack" description="Asks tomcat to re-load a DWR context">
+  <target name="tomcat-reload" depends="war" description="Asks tomcat to re-load a DWR context">
     <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
       <classpath>
         <pathelement path="${tomcat.home}/lib/catalina-ant.jar"/>
