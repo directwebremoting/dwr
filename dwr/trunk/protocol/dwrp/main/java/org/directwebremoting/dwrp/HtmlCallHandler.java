@@ -18,6 +18,7 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.util.MimeConstants;
 
 /**

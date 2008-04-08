@@ -20,8 +20,9 @@ import java.beans.PropertyDescriptor;
 import java.util.Map;
 
 import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.extend.PlainProperty;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.impl.PropertyDescriptorProperty;
+import org.directwebremoting.extend.PropertyDescriptorProperty;
 
 /**
  * A special case of BeanConverter that doesn't convert StackTraces

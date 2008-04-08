@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.extend;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.Property;
 
 /**
  * An implementation of {@link Property} that proxies to a {@link PropertyDescriptor}

@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.directwebremoting.extend.Converter;
+import org.directwebremoting.extend.FieldProperty;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.impl.FieldProperty;
 
 /**
  * Convert a Javascript associative array into a JavaBean

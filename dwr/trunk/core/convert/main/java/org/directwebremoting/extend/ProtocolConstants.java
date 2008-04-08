@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
 /**
  * Various constants for type conversion

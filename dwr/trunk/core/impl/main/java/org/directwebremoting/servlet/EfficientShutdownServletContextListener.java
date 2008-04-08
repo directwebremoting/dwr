@@ -22,7 +22,7 @@ import javax.servlet.ServletContextListener;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.impl.ContainerUtil;
+import org.directwebremoting.impl.StartupUtil;
 
 /**
  * A {@link ServletContextListener} that can be used to call
@@ -43,7 +43,7 @@ public class EfficientShutdownServletContextListener implements ServletContextLi
      */
     public void contextDestroyed(ServletContextEvent ev)
     {
-        List<Container> containers = ContainerUtil.getAllPublishedContainers(ev.getServletContext());
-        ContainerUtil.shutdownServerLoadMonitorsInContainerList(containers, "EfficientShutdownServletContextListener");
+        List<Container> containers = StartupUtil.getAllPublishedContainers(ev.getServletContext());
+        StartupUtil.shutdownServerLoadMonitorsInContainerList(containers, "EfficientShutdownServletContextListener");
     }
 }

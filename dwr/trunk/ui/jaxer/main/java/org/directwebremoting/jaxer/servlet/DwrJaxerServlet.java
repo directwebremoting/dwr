@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.DwrXmlConfigurator;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.jaxer.impl.JaxerContainer;
@@ -57,13 +56,13 @@ public class DwrJaxerServlet extends HttpServlet
 
         try
         {
-            ContainerUtil.resolveMultipleImplementations(container, servletConfig);
+            StartupUtil.resolveMultipleImplementations(container, servletConfig);
             container.setupFinished();
 
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
+            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
 
             DwrXmlConfigurator system = new DwrXmlConfigurator();
             system.setClassResourceName(DwrConstants.FILE_DWR_XML);
@@ -73,7 +72,7 @@ public class DwrJaxerServlet extends HttpServlet
             custom.setClassResourceName("/org/directwebremoting/jaxer/dwr.xml");
             custom.configure(container);
 
-            ContainerUtil.publishContainer(container, servletConfig);
+            StartupUtil.publishContainer(container, servletConfig);
         }
         catch (ExceptionInInitializerError ex)
         {

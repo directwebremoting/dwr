@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.impl.ContainerMap;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
@@ -209,20 +208,20 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
         try
         {
-            ContainerUtil.setupDefaultContainer(container, servletConfig);
+            StartupUtil.setupDefaultContainer(container, servletConfig);
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-            ContainerUtil.publishContainer(container, servletConfig);
+            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
+            StartupUtil.publishContainer(container, servletConfig);
 
             // The dwr.xml from within the JAR file.
             if (includeDefaultConfig)
             {
-                ContainerUtil.configureFromSystemDwrXml(container);
+                StartupUtil.configureFromSystemDwrXml(container);
             }
 
-            ContainerUtil.configure(container, configurators);
+            StartupUtil.configure(container, configurators);
         }
         catch (Exception ex)
         {

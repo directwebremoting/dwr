@@ -18,8 +18,8 @@ package org.directwebremoting.impl;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory.ServerContextBuilder;
@@ -70,7 +70,7 @@ public class DefaultServerContextBuilder implements ServerContextBuilder
      */
     public ServerContext get()
     {
-        ServerContext serverContext = ContainerUtil.getSingletonServerContext();
+        ServerContext serverContext = StartupUtil.getSingletonServerContext();
         if (serverContext == null)
         {
             log.fatal("Error initializing Hub because singleton ServerContext == null.");

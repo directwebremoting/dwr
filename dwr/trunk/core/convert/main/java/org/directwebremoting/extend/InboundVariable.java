@@ -19,8 +19,6 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.dwrp.ParseUtil;
-import org.directwebremoting.dwrp.ProtocolConstants;
 import org.directwebremoting.json.InvalidJsonException;
 import org.directwebremoting.json.JsonArray;
 import org.directwebremoting.json.JsonBoolean;
@@ -29,7 +27,6 @@ import org.directwebremoting.json.JsonNumber;
 import org.directwebremoting.json.JsonObject;
 import org.directwebremoting.json.JsonString;
 import org.directwebremoting.json.JsonValue;
-import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -235,8 +232,8 @@ public final class InboundVariable
             {
                 String token = st.nextToken();
 
-                String[] split = ParseUtil.splitInbound(token);
-                String splitValue = split[LocalUtil.INBOUND_INDEX_VALUE];
+                String[] split = ConvertUtil.splitInbound(token);
+                String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
 
                 InboundVariable nested = context.getInboundVariable(splitValue);
                 array.add(nested.getJsonValue(onError, currentDepth + 1));
@@ -286,8 +283,8 @@ public final class InboundVariable
                 // Convert the value part of the token by splitting it into the
                 // type and value (as passed in by Javascript)
                 String valStr = token.substring(colonpos + 1).trim();
-                String[] splitIv = ParseUtil.splitInbound(valStr);
-                String splitIvValue = splitIv[LocalUtil.INBOUND_INDEX_VALUE];
+                String[] splitIv = ConvertUtil.splitInbound(valStr);
+                String splitIvValue = splitIv[ConvertUtil.INBOUND_INDEX_VALUE];
 
                 String keyStr = token.substring(0, colonpos).trim();
 

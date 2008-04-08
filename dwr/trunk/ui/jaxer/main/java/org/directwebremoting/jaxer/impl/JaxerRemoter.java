@@ -17,8 +17,8 @@ package org.directwebremoting.jaxer.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.dwrp.EnginePrivate;
 import org.directwebremoting.extend.Creator;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.impl.DefaultRemoter;
 
 /**

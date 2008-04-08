@@ -28,21 +28,20 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.dwrp.ArrayJsonOutboundVariable;
-import org.directwebremoting.dwrp.ArrayNonJsonOutboundVariable;
-import org.directwebremoting.dwrp.CollectionOutboundVariable;
-import org.directwebremoting.dwrp.ErrorOutboundVariable;
-import org.directwebremoting.dwrp.ParseUtil;
-import org.directwebremoting.dwrp.ProtocolConstants;
+import org.directwebremoting.extend.ArrayJsonOutboundVariable;
+import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
+import org.directwebremoting.extend.CollectionOutboundVariable;
+import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -147,9 +146,9 @@ public class CollectionConverter extends BaseV20Converter implements Converter
             {
                 String token = st.nextToken();
 
-                String[] split = ParseUtil.splitInbound(token);
-                String splitType = split[LocalUtil.INBOUND_INDEX_TYPE];
-                String splitValue = split[LocalUtil.INBOUND_INDEX_VALUE];
+                String[] split = ConvertUtil.splitInbound(token);
+                String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
+                String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
 
                 InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
                 nested.dereference();

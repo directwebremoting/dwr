@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.util.MimeConstants;

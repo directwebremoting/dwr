@@ -17,8 +17,8 @@ package org.directwebremoting.jaxer.impl;
 
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.Remoter;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.DefaultContainer;
+import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.jaxer.servlet.JaxerInterfaceHandler;
 
 /**
@@ -36,12 +36,12 @@ public class JaxerContainer extends DefaultContainer
     public JaxerContainer()
     {
         // Setup the same set of defaults that DWR uses
-        ContainerUtil.setupDefaults(this);
+        StartupUtil.setupDefaults(this);
 
         // Overrides for custom implementations
         addImplementation(CreatorManager.class, WideOpenCreatorManager.class);
         addImplementation(Remoter.class, JaxerRemoter.class);
-        ContainerUtil.createPathMapping(this, "/new/", JaxerInterfaceHandler.class, "interfaceHandlerUrl");
+        StartupUtil.createPathMapping(this, "/new/", JaxerInterfaceHandler.class, "interfaceHandlerUrl");
 
         // Custom settings for existing DWR implementations
         addParameter("debug", "true");

@@ -23,18 +23,18 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.dwrp.MapOutboundVariable;
-import org.directwebremoting.dwrp.ObjectJsonOutboundVariable;
-import org.directwebremoting.dwrp.ObjectNonJsonOutboundVariable;
-import org.directwebremoting.dwrp.ParseUtil;
-import org.directwebremoting.dwrp.ProtocolConstants;
+import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.MapOutboundVariable;
 import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.extend.ObjectJsonOutboundVariable;
+import org.directwebremoting.extend.ObjectNonJsonOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
@@ -134,9 +134,9 @@ public class MapConverter implements Converter
                 // Convert the value part of the token by splitting it into the
                 // type and value (as passed in by Javascript)
                 String valStr = token.substring(colonpos + 1).trim();
-                String[] splitIv = ParseUtil.splitInbound(valStr);
-                String splitIvValue = splitIv[LocalUtil.INBOUND_INDEX_VALUE];
-                String splitIvType = splitIv[LocalUtil.INBOUND_INDEX_TYPE];
+                String[] splitIv = ConvertUtil.splitInbound(valStr);
+                String splitIvValue = splitIv[ConvertUtil.INBOUND_INDEX_VALUE];
+                String splitIvType = splitIv[ConvertUtil.INBOUND_INDEX_TYPE];
                 InboundVariable valIv = new InboundVariable(incx, null, splitIvType, splitIvValue);
                 valIv.dereference();
                 Object val = converterManager.convertInbound(valType, valIv, inctx, valThc);

@@ -22,7 +22,7 @@ import javax.servlet.ServletContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.impl.PropertyDescriptorProperty;
+import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.engine.SessionImplementor;

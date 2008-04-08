@@ -44,10 +44,12 @@
     <!-- This set of modules needs breaking down so we can compile them individually -->
     <compile-set modules="core/api" tree="main"/>
     <compile-set modules="core/spi" tree="main"/>
-    <compile-set modules="core/convert, core/impl, protocol/dwrp" tree="main"/>
+    <compile-set modules="core/convert" tree="main"/>
+    <compile-set modules="core/impl" tree="main"/>
+    <compile-set modules="core/legacy" tree="main"/>
 
     <!-- In theory these should be able to happen in any order -->
-    <compile-set modules="core/legacy" tree="main"/>
+    <compile-set modules="protocol/dwrp" tree="main"/>
     <compile-set modules="protocol/json" tree="main"/>
     <compile-set modules="protocol/bayeux" tree="main"/>
     <compile-set modules="serverside/spring" tree="main"/>
@@ -56,17 +58,13 @@
     <compile-set modules="serverside/hibernate" tree="main"/>
     <compile-set modules="serverside/various" tree="main"/>
     <compile-set modules="ui/dwr" tree="main"/>
-    <compile-set modules="ui/gi" tree="main"/>
-    <!-- need some way to shunt this across
     <compile-set modules="ui/gi" tree="generated"/>
-    -->
+    <compile-set modules="ui/gi" tree="main"/>
     <compile-set modules="ui/scriptaculous" tree="main"/>
     <compile-set modules="ui/jaxer" tree="main"/>
     <compile-set modules="noncla/various" tree="main"/>
 
-    <!-- it's in main, but perhaps should be in test?
-    <compile-set modules="core/util" tree="main"/>
-    -->
+    <compile-set modules="core/util" tree="test"/>
 
     <compile-set modules="core/impl" tree="test"/>
     <compile-set modules="core/convert" tree="test"/>
@@ -80,7 +78,7 @@
     <compile-set modules="ui/gi" tree="demo"/>
     <compile-set modules="noncla/various" tree="demo"/>
 
-</target>
+  </target>
 
   <!--=======================================================================-->
   <macrodef name="compile-set" description="Compile the sources from a set of trees">
@@ -124,9 +122,15 @@
   </target>
   <!-- -->
   <target name="compile-set-compile">
-    <propertyregex property="sources1" input="!${modules}%" regexp=", *" replace="%!" defaultvalue="${modules}"/>
-    <propertyregex property="sources2" input="${sources1}" regexp="!" replace="${source.root}/" defaultvalue="${sources1}"/>
-    <propertyregex property="sources3" input="${sources2}" regexp="%" replace="/${tree}/java:" defaultvalue="${sources2}"/>
+    <propertyregex property="sources1" input="!${modules}%" regexp=", *" replace="%!" defaultvalue="!${modules}%"/>
+    <propertyregex property="sources2" input="${sources1}" regexp="!" replace="${source.root}/"/>
+    <propertyregex property="sources3" input="${sources2}" regexp="%" replace="/${tree}/java:"/>
+    <if>
+      <equals arg1="${tree}" arg2="generated"/>
+      <then>
+        <var name="tree" value="main"/>
+      </then>
+    </if>
     <javac debug="on" includes="**/*.java" destdir="${target.root}/${tree}-classes" srcdir="${sources3}">
       <exclude name="**/package.html"/>
       <exclude name="**/package-info.java"/>

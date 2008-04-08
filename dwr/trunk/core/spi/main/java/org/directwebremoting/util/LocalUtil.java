@@ -49,16 +49,6 @@ import org.apache.commons.logging.Log;
 public final class LocalUtil
 {
     /**
-     * splitInbound() returns the type info in this parameter
-     */
-    public static final int INBOUND_INDEX_TYPE = 0;
-
-    /**
-     * splitInbound() returns the value info in this parameter
-     */
-    public static final int INBOUND_INDEX_VALUE = 1;
-
-    /**
      * Prevent instantiation
      */
     private LocalUtil()

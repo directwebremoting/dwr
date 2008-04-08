@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.impl.BasicAlarm;

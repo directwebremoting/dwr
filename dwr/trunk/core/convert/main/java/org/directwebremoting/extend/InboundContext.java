@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.directwebremoting.dwrp.ProtocolConstants;
 
 /**
  * InboundContext is the context for set of inbound conversions.

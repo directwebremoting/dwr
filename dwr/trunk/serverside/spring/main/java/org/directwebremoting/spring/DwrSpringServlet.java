@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -41,10 +40,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * The servlet that handles all calls to DWR. <br>
  * It retrieves its configuration from the Spring IoC container. This is done in two ways:
  * <ol>
- *   <li>Use the Spring namespace. When using the Spring namespace for DWR, the confgiuration for DWR is
+ *   <li>Use the Spring namespace. When using the Spring namespace for DWR, the configuration for DWR is
  *       automatically picked up by this servlet.</li>
  *   <li>Explicitly specify which configurations to pick up. When explicitly defining the DWR configuration in
- *       Spring yourself, you can explicitely specify them in the init parameters.</li>
+ *       Spring yourself, you can explicitly specify them in the init parameters.</li>
  * </ol>
  * Same as with the <code>DwrServlet</code>, you can specify a <code>debug</code> init parameter on this servlet
  * to put DWR in debug mode (allowing access to the very handy debug pages).
@@ -101,13 +100,13 @@ public class DwrSpringServlet extends HttpServlet
 
             container = new SpringContainer();
             container.setBeanFactory(appContext);
-            ContainerUtil.setupDefaultContainer(container, servletConfig);
+            StartupUtil.setupDefaultContainer(container, servletConfig);
 
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
-            ContainerUtil.publishContainer(container, servletConfig);
+            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
+            StartupUtil.publishContainer(container, servletConfig);
 
             // retrieve the configurators from Spring (loaded by the ContextLoaderListener)
             try
@@ -121,11 +120,11 @@ public class DwrSpringServlet extends HttpServlet
 
             if (includeDefaultConfig)
             {
-                ContainerUtil.configureFromSystemDwrXml(container);
+                StartupUtil.configureFromSystemDwrXml(container);
             }
 
-            ContainerUtil.configureFromInitParams(container, servletConfig);
-            ContainerUtil.configure(container, configurators);
+            StartupUtil.configureFromInitParams(container, servletConfig);
+            StartupUtil.configure(container, configurators);
         }
         catch (Exception ex)
         {

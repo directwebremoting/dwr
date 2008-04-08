@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.extend;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.Property;
 
 /**
- * An implementation of {@link Property} that proxies to a {@link Field}
+ * An implementation of {@link Property} that simply uses stored values.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class FieldProperty implements Property
+public class PlainProperty implements Property
 {
     /**
-     * @param field The Field that we are proxying to
+     * @param name The property name
+     * @param value The property value irrespective of the object that we read it on
      */
-    public FieldProperty(Field field)
+    public PlainProperty(String name, Object value)
     {
-        this.field = field;
+        this.name = name;
+        this.value = value;
     }
 
     /* (non-Javadoc)
@@ -40,7 +42,7 @@ public class FieldProperty implements Property
      */
     public String getName()
     {
-        return field.getName();
+        return name;
     }
 
     /* (non-Javadoc)
@@ -48,37 +50,7 @@ public class FieldProperty implements Property
      */
     public Class<?> getPropertyType()
     {
-        return field.getType();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
-     */
-    public Object getValue(Object bean) throws MarshallException
-    {
-        try
-        {
-            return field.get(bean);
-        }
-        catch (Exception ex)
-        {
-            throw new MarshallException(bean.getClass(), ex);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
-     */
-    public void setValue(Object bean, Object value) throws MarshallException
-    {
-        try
-        {
-            field.set(bean, value);
-        }
-        catch (Exception ex)
-        {
-            throw new MarshallException(bean.getClass(), ex);
-        }
+        return value.getClass();
     }
 
     /* (non-Javadoc)
@@ -89,8 +61,34 @@ public class FieldProperty implements Property
         return null;
     }
 
-    /**
-     * The Field that we are proxying to
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    private Field field;
+    public Object getValue(Object bean) throws MarshallException
+    {
+        return value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
+     */
+    public void setValue(Object bean, Object value) throws MarshallException
+    {
+        log.warn("Attempt to setValue() on plain property.");
+    }
+
+    /**
+     * The name of this property
+     */
+    private final String name;
+
+    /**
+     * The property value irrespective of the object that we read it on
+     */
+    private final Object value;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(PlainProperty.class);
 }

@@ -58,7 +58,7 @@ public class DefaultHubBuilder implements HubBuilder
         if (serverContext == null)
         {
             // If not see if there is a singleton
-            serverContext = ContainerUtil.getSingletonServerContext();
+            serverContext = StartupUtil.getSingletonServerContext();
             if (serverContext == null)
             {
                 log.fatal("Error initializing Hub because singleton ServerContext == null.");
