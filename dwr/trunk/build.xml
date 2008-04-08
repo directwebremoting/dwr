@@ -251,8 +251,8 @@
 
   <!--=======================================================================-->
   <target name="files" depends="war, javadoc" description="Create output WAR and JAR files">
-    <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo/WEB-INF/classes"/>
-    <zip destfile="${target.root}/dwr-test.war" basedir="${target.root}/web/test/WEB-INF/classes"/>
+    <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
+    <zip destfile="${target.root}/dwr-test.war" basedir="${target.root}/web/test"/>
     <zip destfile="${target.root}/dwr-${label}-src.zip">
       <fileset dir="${source.root}">
         <exclude name="target/**"/>
@@ -331,18 +331,6 @@
     <delete defaultexcludes="false" verbose="true" dir="${source.root}">
       <include name="**/*.DS_Store"/>
     </delete>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="cvsup" description="cvs update">
-    <cvs dest=".">
-      <commandline>
-        <argument value="-q"/>
-        <argument value="update"/>
-        <argument value="-d"/>
-        <argument value="-P"/>
-      </commandline>
-    </cvs>
   </target>
 
 </project>
