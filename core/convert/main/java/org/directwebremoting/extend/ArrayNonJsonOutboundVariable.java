@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
-import org.directwebremoting.extend.OutboundContext;
-import org.directwebremoting.extend.OutboundVariable;
 
 /**
  * An OutboundVariable that creates data from Collections.

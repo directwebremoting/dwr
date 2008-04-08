@@ -26,7 +26,7 @@ import org.directwebremoting.Container;
 import org.directwebremoting.dwrp.PlainCallHandler;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Remoter;
-import org.directwebremoting.impl.ContainerUtil;
+import org.directwebremoting.impl.StartupUtil;
 
 import dojox.cometd.Bayeux;
 
@@ -64,7 +64,7 @@ public class BayeuxServletContextAttributeListener implements ServletContextAttr
                 }
             }
             
-            if (ContainerUtil.ATTRIBUTE_CONTAINER_LIST.equals(scab.getName()))
+            if (StartupUtil.ATTRIBUTE_CONTAINER_LIST.equals(scab.getName()))
             {
                 @SuppressWarnings("unchecked")
                 List<Container> containers = (List<Container>) scab.getValue();

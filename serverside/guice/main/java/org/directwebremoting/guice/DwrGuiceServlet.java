@@ -58,7 +58,7 @@ import static org.directwebremoting.guice.ParamName.SCRIPT_COMPRESSED;
 import static org.directwebremoting.guice.ParamName.SCRIPT_SESSION_TIMEOUT;
 import static org.directwebremoting.guice.ParamName.SESSION_COOKIE_NAME;
 import static org.directwebremoting.guice.ParamName.WELCOME_FILES;
-import static org.directwebremoting.impl.ContainerUtil.INIT_CUSTOM_CONFIGURATOR;
+import static org.directwebremoting.impl.StartupUtil.INIT_CUSTOM_CONFIGURATOR;
 
 /**
  * An extension of the basic

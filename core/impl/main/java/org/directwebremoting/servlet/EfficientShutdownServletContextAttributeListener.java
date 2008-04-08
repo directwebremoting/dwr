@@ -22,7 +22,7 @@ import javax.servlet.ServletContextAttributeListener;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.impl.ContainerUtil;
+import org.directwebremoting.impl.StartupUtil;
 
 /**
  * A {@link ServletContextAttributeListener} that can be used to call
@@ -44,10 +44,10 @@ public class EfficientShutdownServletContextAttributeListener implements Servlet
     @SuppressWarnings("unchecked")
     public void attributeRemoved(ServletContextAttributeEvent ev)
     {
-        if (ev.getName().equals(ContainerUtil.ATTRIBUTE_CONTAINER_LIST))
+        if (ev.getName().equals(StartupUtil.ATTRIBUTE_CONTAINER_LIST))
         {
             List<Container>containers = (List<Container>) ev.getValue();
-            ContainerUtil.shutdownServerLoadMonitorsInContainerList(containers, "EfficientShutdownServletContextAttributeListener");
+            StartupUtil.shutdownServerLoadMonitorsInContainerList(containers, "EfficientShutdownServletContextAttributeListener");
         }
     }
 
@@ -58,4 +58,3 @@ public class EfficientShutdownServletContextAttributeListener implements Servlet
     {
     }
 }
-

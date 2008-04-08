@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.extend.PlainProperty;
 import org.directwebremoting.extend.Property;
 
 /**

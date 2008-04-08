@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.extend.FormField;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.util.Messages;
 

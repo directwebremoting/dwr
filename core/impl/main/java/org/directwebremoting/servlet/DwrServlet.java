@@ -24,12 +24,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.StartupUtil;
 
 /**
@@ -68,14 +67,14 @@ public class DwrServlet extends HttpServlet
             StartupUtil.logStartup(servletConfig);
 
             // create and setup a DefaultContainer
-            container = ContainerUtil.createAndSetupDefaultContainer(servletConfig);
+            container = StartupUtil.createAndSetupDefaultContainer(servletConfig);
 
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
-            ContainerUtil.publishContainer(container, servletConfig);
-            ContainerUtil.configureContainerFully(container, servletConfig);
+            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
+            StartupUtil.publishContainer(container, servletConfig);
+            StartupUtil.configureContainerFully(container, servletConfig);
         }
         catch (ExceptionInInitializerError ex)
         {

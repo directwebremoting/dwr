@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
 import java.util.Map;
 
-import org.directwebremoting.extend.OutboundContext;
-import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.LocalUtil;
 
 /**

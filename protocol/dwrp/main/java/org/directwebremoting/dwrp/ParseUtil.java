@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.FormField;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
@@ -39,32 +40,6 @@ import org.directwebremoting.util.Messages;
  */
 public class ParseUtil
 {
-    /**
-     * The javascript outbound marshaller prefixes the toString value with a
-     * colon and the original type information. This undoes that.
-     * @param data The string to be split up
-     * @return A string array containing the split data
-     */
-    public static String[] splitInbound(String data)
-    {
-        String[] reply = new String[2];
-
-        int colon = data.indexOf(ProtocolConstants.INBOUND_TYPE_SEPARATOR);
-        if (colon == -1)
-        {
-            log.error("Missing : in conversion data (" + data + ')');
-            reply[LocalUtil.INBOUND_INDEX_TYPE] = ProtocolConstants.TYPE_STRING;
-            reply[LocalUtil.INBOUND_INDEX_VALUE] = data;
-        }
-        else
-        {
-            reply[LocalUtil.INBOUND_INDEX_TYPE] = data.substring(0, colon);
-            reply[LocalUtil.INBOUND_INDEX_VALUE] = data.substring(colon + 1);
-        }
-
-        return reply;
-    }
-    
     /**
      * Parse an inbound request into a set of fields
      * @param request The original browser's request

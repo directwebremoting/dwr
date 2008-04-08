@@ -8,7 +8,6 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.impl.ContainerUtil;
 import org.directwebremoting.impl.DwrXmlConfigurator;
 import org.directwebremoting.impl.StartupUtil;
 
@@ -24,14 +23,14 @@ public class SingletonContainer
     {
         try
         {
-            container = ContainerUtil.createAndSetupDefaultContainer(servletConfig);
+            container = StartupUtil.createAndSetupDefaultContainer(servletConfig);
 
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
-            ContainerUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-            ContainerUtil.publishContainer(container, servletConfig);
+            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
+            StartupUtil.publishContainer(container, servletConfig);
 
-            ContainerUtil.configureFromSystemDwrXml(container);
+            StartupUtil.configureFromSystemDwrXml(container);
 
             DwrXmlConfigurator local = new DwrXmlConfigurator();
             local.setClassResourceName(classResourceName);

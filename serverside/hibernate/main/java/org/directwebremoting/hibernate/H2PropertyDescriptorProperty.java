@@ -21,7 +21,7 @@ import net.sf.hibernate.LazyInitializationException;
 
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.impl.PropertyDescriptorProperty;
+import org.directwebremoting.extend.PropertyDescriptorProperty;
 
 /**
  * A {@link Property} that catches hiberntate exceptions.

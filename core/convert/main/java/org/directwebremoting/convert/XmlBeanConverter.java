@@ -28,15 +28,14 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
-import org.directwebremoting.dwrp.ParseUtil;
-import org.directwebremoting.dwrp.ProtocolConstants;
+import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
+import org.directwebremoting.extend.PropertyDescriptorProperty;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.impl.PropertyDescriptorProperty;
-import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
 
 /**
@@ -149,9 +148,9 @@ public class XmlBeanConverter extends BeanConverter
 
                 Class<?> propType = property.getPropertyType();
 
-                String[] split = ParseUtil.splitInbound(val);
-                String splitValue = split[LocalUtil.INBOUND_INDEX_VALUE];
-                String splitType = split[LocalUtil.INBOUND_INDEX_TYPE];
+                String[] split = ConvertUtil.splitInbound(val);
+                String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
+                String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
 
                 InboundVariable nested = new InboundVariable(iv.getLookup(), null, splitType, splitValue);
                 nested.dereference();

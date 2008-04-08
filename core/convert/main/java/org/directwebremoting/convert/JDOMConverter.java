@@ -18,8 +18,8 @@ package org.directwebremoting.convert;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import org.directwebremoting.dwrp.EnginePrivate;
 import org.directwebremoting.extend.Converter;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;

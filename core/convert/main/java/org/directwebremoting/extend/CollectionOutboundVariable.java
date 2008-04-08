@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
-import java.util.Map;
+import java.util.Collection;
 
-import org.directwebremoting.extend.OutboundVariable;
 
 /**
  * A helper class for people that want to implement {@link OutboundVariable}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface MapOutboundVariable extends OutboundVariable
+public interface CollectionOutboundVariable extends OutboundVariable
 {
     /**
      * Recursive OutboundVariable need to be given their children after
@@ -31,5 +30,5 @@ public interface MapOutboundVariable extends OutboundVariable
      * conditions.
      * @param children The contained objects
      */
-     void setChildren(Map<String, OutboundVariable> children);
+     void setChildren(Collection<OutboundVariable> children);
 }

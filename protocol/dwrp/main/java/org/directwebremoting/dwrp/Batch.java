@@ -27,8 +27,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
+import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.InboundContext;
+import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
@@ -138,10 +140,10 @@ public class Batch
                     }
                     else
                     {
-                        String[] split = ParseUtil.splitInbound(formField.getString());
+                        String[] split = ConvertUtil.splitInbound(formField.getString());
 
-                        String value = split[LocalUtil.INBOUND_INDEX_VALUE];
-                        String type = split[LocalUtil.INBOUND_INDEX_TYPE];
+                        String value = split[ConvertUtil.INBOUND_INDEX_VALUE];
+                        String type = split[ConvertUtil.INBOUND_INDEX_TYPE];
                         inctx.createInboundVariable(callNum, key, type, value);
                     }
                     it.remove();

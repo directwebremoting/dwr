@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.impl.DefaultRemoter;
 import org.directwebremoting.proxy.ScriptProxy;
 import org.directwebremoting.util.JavascriptUtil;
 
@@ -152,7 +151,7 @@ public class EnginePrivate extends ScriptProxy
     }
 
     /**
-     * {@link DefaultRemoter} needs to know the name of the execute function
+     * The DefaultRemoter needs to know the name of the execute function
      * @return The execute function name
      */
     public static String getExecuteFunctionName()

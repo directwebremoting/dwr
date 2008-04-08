@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.extend;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.imageio.ImageIO;
 
 /**
  * A way to convert {@link BufferedImage}s to files so they can be written
  * using a FileServingServlet or similar.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ImageIOFileGenerator extends AbstractFileGenerator
+public class InputStreamFileGenerator extends AbstractFileGenerator
 {
     /**
      * Setup the image to convert
-     * @param image the image to convert
+     * @param in the data to stream
      * @param mimeType The mime type to convert the image into
-     * @param type {@link ImageIO} type
      */
-    public ImageIOFileGenerator(BufferedImage image, String mimeType, String basename, String type)
+    public InputStreamFileGenerator(InputStream in, String filename, String mimeType)
     {
-        super(basename + "." + type, mimeType);
-        this.image = image;
-        this.type = type;
+        super(filename, mimeType);
+        this.in = in;
     }
 
     /* (non-Javadoc)
@@ -46,16 +44,20 @@ public class ImageIOFileGenerator extends AbstractFileGenerator
      */
     public void generateFile(OutputStream out) throws IOException
     {
-        ImageIO.write(image, type, out);
+        byte[] buffer = new byte[1024];
+        while (true)
+        {
+            int length = in.read(buffer);
+            if (length == -1)
+            {
+                break;
+            }
+            out.write(buffer, 0, length);
+        }
     }
 
     /**
-     * The extension for the filename to go with the mime-type
+     * The stream that we are about to export
      */
-    protected String type;
-
-    /**
-     * The image that we are about to export
-     */
-    protected final BufferedImage image;
+    protected final InputStream in;
 }

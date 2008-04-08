@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.extend;
 
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.util.LocalUtil;
 
 /**

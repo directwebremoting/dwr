@@ -56,12 +56,12 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="core/convert/jar/xbean-2.2.0.jar"/>
+	<classpathentry kind="src" path="core/convert/main/java"/>
+	<classpathentry kind="src" path="core/convert/test/java"/>
 	<classpathentry kind="src" path="core/impl/main/java"/>
 	<classpathentry kind="src" path="core/impl/test/java"/>
 	<classpathentry kind="src" path="core/impl/demo/java"/>
 	<classpathentry kind="src" path="core/impl/old-demo/java"/>
-	<classpathentry kind="src" path="core/convert/main/java"/>
-	<classpathentry kind="src" path="core/convert/test/java"/>
 	<classpathentry kind="src" path="core/util/test/java"/>
 	<classpathentry kind="src" path="core/legacy/main/java"/>
 	<classpathentry kind="src" path="protocol/dwrp/main/java"/>

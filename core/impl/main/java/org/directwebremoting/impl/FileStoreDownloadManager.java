@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.directwebremoting.Container;
+import org.directwebremoting.extend.AbstractFileGenerator;
 import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.extend.FileGenerator;
 import org.directwebremoting.extend.InitializingBean;
