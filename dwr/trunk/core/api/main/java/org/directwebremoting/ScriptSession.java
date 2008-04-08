@@ -138,8 +138,7 @@ public interface ScriptSession
      * What page is this script session attached to?
      * The page does not include server information, but does include everything
      * from the host/port onwards, including the query parameters depending on
-     * the configured {@link org.directwebremoting.extend.PageNormalizer}, which
-     * by default removes them.
+     * the configured PageNormalizer, which by default removes them.
      * @return The page that this script session is viewing
      */
     String getPage();
