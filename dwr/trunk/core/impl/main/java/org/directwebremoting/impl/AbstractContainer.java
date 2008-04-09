@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.InitializingBean;
 
@@ -49,6 +51,20 @@ public abstract class AbstractContainer implements Container
      */
     public <T> T getBean(Class<T> type)
     {
-        return type.cast(getBean(type.getName()));
+        Object bean = getBean(type.getName());
+        try
+        {
+            return type.cast(bean);
+        }
+        catch (ClassCastException ex)
+        {
+            log.error("ClassCastException: Asked for implementation of " + type.getName() + " but the container has a type of " + bean.getClass().getName());
+            throw ex;
+        }
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(AbstractContainer.class);
 }

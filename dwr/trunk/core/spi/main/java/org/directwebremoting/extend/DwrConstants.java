@@ -35,15 +35,10 @@ public interface DwrConstants
     /**
      * The default set of entries into the container
      */
-    public static final String FILE_DEFAULT_PROPERTIES = PACKAGE + "/default.properties";
+    public static final String FILE_DEFAULT_PROPERTIES = PACKAGE + "/defaults.properties";
 
     /**
      * The default dwr.xml file path
      */
     public static final String DEFAULT_DWR_XML = "/WEB-INF/dwr.xml";
-
-    /**
-     * The string that we use to make scripts fail eval() without processing
-     */
-    public static final String SCRIPT_TAG_PROTECTION = "throw 'allowScriptTagRemoting is false.';";
 }

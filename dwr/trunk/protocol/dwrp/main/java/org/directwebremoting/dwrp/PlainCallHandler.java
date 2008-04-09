@@ -18,7 +18,6 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -97,5 +96,5 @@ public class PlainCallHandler extends BaseCallHandler
     /**
      * What is the string we use for script tag hack protection
      */
-    private String scriptTagProtection = DwrConstants.SCRIPT_TAG_PROTECTION;
+    private String scriptTagProtection;
 }

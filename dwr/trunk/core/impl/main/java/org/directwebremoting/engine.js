@@ -399,10 +399,6 @@ if (typeof this['dwr'] == 'undefined') {
   /** Is this page in the process of unloading? */
   dwr.engine._unloading = false;
 
-  // Now register the unload handler
-  if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
-  else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
-
   /** @private Abort any XHRs in progress at page unload (solves zombie socket problems in IE). */
   dwr.engine._unloader = function() {
     dwr.engine._unloading = true;
@@ -443,6 +439,10 @@ if (typeof this['dwr'] == 'undefined') {
       dwr.engine._isNotifyServerOnPageUnload = false;
     }
   };
+
+  // Now register the unload handler
+  if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
+  else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
 
   /**
    * Send a request. Called by the Javascript interface stub
