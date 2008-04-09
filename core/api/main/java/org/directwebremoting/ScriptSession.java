@@ -17,7 +17,7 @@ package org.directwebremoting;
 
 import java.util.Iterator;
 
-import javax.servlet.http.HttpSession;
+import org.directwebremoting.event.ScriptSessionBindingListener;
 
 /**
  * Script scope is like session scope except that it is managed using a
@@ -43,15 +43,13 @@ public interface ScriptSession
      * If an object of the same name is already bound to the session, the
      * object is replaced.
      * <p>After this method executes, and if the new object implements
-     * <code>HttpSessionBindingListener</code>, the container calls
-     * <code>HttpSessionBindingListener.valueBound</code>. The container then
-     * notifies any <code>HttpSessionAttributeListener</code>s in the web
-     * application.
+     * {@link ScriptSessionBindingListener}, the container calls
+     * {@link ScriptSessionBindingListener#valueBound}.
      * <p>If an object was already bound to this session of this name that
-     * implements <code>HttpSessionBindingListener</code>, its
-     * <code>HttpSessionBindingListener.valueUnbound</code> method is called.
+     * implements {@link ScriptSessionBindingListener}, its
+     * {@link ScriptSessionBindingListener#valueUnbound} method is called.
      * <p>If the value passed in is null, this has the same effect as calling
-     * <code>removeAttribute()<code>.
+     * {@link #removeAttribute}.
      * @param name the name to which the object is bound; cannot be null
      * @param value the object to be bound
      * @throws IllegalStateException if the page has been invalidated
@@ -63,10 +61,8 @@ public interface ScriptSession
      * If the session does not have an object bound with the specified name,
      * this method does nothing.
      * <p>After this method executes, and if the object implements
-     * <code>HttpSessionBindingListener</code>, the container calls
-     * <code>HttpSessionBindingListener.valueUnbound</code>. The container
-     * then notifies any <code>HttpSessionAttributeListener</code>s in the web
-     * application.
+     * {@link ScriptSessionBindingListener}, the container calls
+     * {@link ScriptSessionBindingListener#valueUnbound}.
      * @param name the name of the object to remove from this session
      * @throws IllegalStateException if the page has been invalidated
      */
@@ -89,12 +85,12 @@ public interface ScriptSession
 
     /**
      * Checks to see if this ScriptSession has been invalidated.
-     * <p>There is no similar method on {@link HttpSession} because it is
-     * assumed that you do not store HttpSessions from one request to another,
-     * so all sessions that you have access to will always be either valid, or
-     * you have just invalidated it yourself so you wont need to ask. This
-     * method makes up for the change that now ScriptSessions are accessible
-     * from outside the normal scope.
+     * <p>There is no similar method on {@link javax.servlet.http.HttpSession}
+     * because it is assumed that you do not store HttpSessions from one request
+     * to another, so all sessions that you have access to will always be either
+     * valid, or you have just invalidated it yourself so you wont need to ask.
+     * This method makes up for the change that now ScriptSessions are
+     * accessible from outside the normal scope.
      * @return true if the ScriptSession has been invalidated
      */
     boolean isInvalidated();

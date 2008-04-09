@@ -29,6 +29,8 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.event.ScriptSessionBindingEvent;
+import org.directwebremoting.event.ScriptSessionBindingListener;
 import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
@@ -84,7 +86,20 @@ public class DefaultScriptSession implements RealScriptSession
         invalidateIfNeeded();
         synchronized (attributes)
         {
-            attributes.put(name, value);
+            if (value != null)
+            {
+                if (value instanceof ScriptSessionBindingListener)
+                {
+                    ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+                    listener.valueBound(new ScriptSessionBindingEvent(this, name));
+                }
+
+                attributes.put(name, value);
+            }
+            else
+            {
+                removeAttribute(name);
+            }
         }
     }
 
@@ -94,9 +109,16 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeAttribute(String name)
     {
         invalidateIfNeeded();
+
         synchronized (attributes)
         {
-            attributes.remove(name);
+            Object value = attributes.remove(name);
+
+            if (value != null && value instanceof ScriptSessionBindingListener)
+            {
+                ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+                listener.valueUnbound(new ScriptSessionBindingEvent(this, name));
+            }
         }
     }
 
@@ -480,7 +502,7 @@ public class DefaultScriptSession implements RealScriptSession
      * Have we been made invalid?
      * <p>GuardedBy("invalidLock")
      */
-    private boolean invalidated = false;
+    private volatile boolean invalidated = false;
 
     /**
      * The object that we use to synchronize against when we want to work with
