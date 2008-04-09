@@ -38,7 +38,7 @@ public class JettyTestLauncher
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
-        server.addHandler(new WebAppContext("test/web","/dwr-test"));
+        server.addHandler(new WebAppContext("core/impl/test/web","/dwr-test"));
 
         server.start();
         server.join();

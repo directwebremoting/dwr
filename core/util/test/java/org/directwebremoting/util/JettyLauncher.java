@@ -38,7 +38,7 @@ public class JettyLauncher
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
-        server.addHandler(new WebAppContext("web","/dwr"));
+        server.addHandler(new WebAppContext("core/impl/demo/web","/dwr"));
 
         server.start();
         server.join();

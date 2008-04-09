@@ -47,7 +47,6 @@ import org.directwebremoting.extend.Compressor;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ContainerConfigurationException;
-import org.directwebremoting.extend.ContainerUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -261,7 +260,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                throw new ContainerConfigurationException("Exception while loading ContainerAbstraction called : " + abstractionImplName, ex);
+                log.debug("Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+            }
+            catch (NoClassDefFoundError ex)
+            {
+                log.debug("Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
             }
         }
 
@@ -313,7 +316,7 @@ public class StartupUtil
     {
         try
         {
-            InputStream in = ContainerUtil.class.getResourceAsStream(DwrConstants.FILE_DEFAULT_PROPERTIES);
+            InputStream in = StartupUtil.class.getResourceAsStream(DwrConstants.FILE_DEFAULT_PROPERTIES);
             Properties defaults = new Properties();
             defaults.load(in);
 

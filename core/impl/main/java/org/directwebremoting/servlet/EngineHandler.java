@@ -234,7 +234,7 @@ public class EngineHandler extends FileJavaScriptHandler
     /**
      * What is the string we use for script tag hack protection
      */
-    private String scriptTagProtection = DwrConstants.SCRIPT_TAG_PROTECTION;
+    private String scriptTagProtection;
 
     /**
      * Does DWR by default use synchronous XHR - i.e. Sjax
