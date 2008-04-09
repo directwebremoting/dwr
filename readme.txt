@@ -16,16 +16,18 @@ The source to DWR is held in the DWR subversion repository:
 There are a number of projects closely related to DWR, held in the same
 repository:
 - drapgen: A method of generating reverse ajax proxies
-- dwrtest: A set of pre-configured test environments
+- dwr-test: A set of pre-configured test environments
 - library: Source .zip files referred to from DWR jar files
+- battleships: A multi-player web game that can be built in an hour
 
 DWR is primarily build using ant. The important ant targets are:
 - clean: Removes target files and .DS_Store files left around by OSX
-- files: Build a set of output .zip files for distribution
-- unpack: Create a clean unpacked war file for tomcat/jetty/etc
-- fast-unpack: Augment an existing war file with recent changes
-- test: Run unit tests
-
+- standard: Build a set of output .zip files for distribution
+- war: Create a clean unpacked war file for tomcat/jetty/etc
+The DWR build system can be adapted to create outputs containing different
+modules (see Terminology) so it is simple to create a dwr.jar file that
+contains exactly the modules that you need. See the 'war' target and the
+execution of the 'build' macrodef.
 
 Terminology
 -----------
