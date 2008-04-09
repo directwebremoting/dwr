@@ -31,13 +31,14 @@
 
   <!--=======================================================================-->
   <target name="war" depends="prepare" description="Create output WAR files">
-    <build target="${target.root}" modules="
+    <property name="modules" value="
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
       protocol/dwrp, protocol/json, protocol/bayeux,
       serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
-      ui/dwr, ui/gi, ui/scriptaculous, ui/jaxer,
+      ui/dwr, ui/gi, ui/scriptaculous,
       noncla/various
       "/>
+    <build target="${target.root}" modules="${modules}"/>
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
     </jar>
@@ -70,10 +71,11 @@
 
   <!--=======================================================================-->
   <target name="jaxer" depends="prepare" description="Create Jaxer output files">
-    <build target="${target.root}/jaxer" modules="
+    <property name="modules" value="
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
       protocol/dwrp, ui/jaxer
       "/>
+    <build target="${target.root}" modules="${modules}"/>
     <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
       <fileset dir="${target.root}/jaxer/classes/main"/>
     </jar>
