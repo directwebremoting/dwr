@@ -63,7 +63,11 @@
         <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
       </classpath>
     </taskdef>
-    <retroweaver inputjar="${target.root}/dwr.jar" outputjar="${target.root}/dwr-jdk14.jar" target="1.4"/>
+    <echo message="${basedir}/${target.root}/dwr.jar"/>
+    <!-- retroweaver is borked because it doesn't inherit directories properly
+    so if you call this ant build from another it gets the basedir wrong. so
+    we need to prefix the paths with ${basedir} -->
+    <retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4"/>
     <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
     <zip destfile="${target.root}/dwr-test.war" basedir="${target.root}/web/test"/>
     <antcall target="source"/>
@@ -75,7 +79,7 @@
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
       protocol/dwrp, ui/jaxer
       "/>
-    <build target="${target.root}" modules="${modules}"/>
+    <build target="${target.root}/jaxer" modules="${modules}"/>
     <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
       <fileset dir="${target.root}/jaxer/classes/main"/>
     </jar>
