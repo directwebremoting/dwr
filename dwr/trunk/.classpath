@@ -93,7 +93,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="serverside/struts/main/java"/>
-	<classpathentry kind="src" path="serverside/struts/custom/java"/>
+	<classpathentry kind="src" path="serverside/struts/customDemo/java"/>
 	<classpathentry kind="lib" path="serverside/various/jar/javax.jms-1.1.jar" sourcepath="/library/jarlib/jms-1.1/src/share">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/library/jarlib/jms-1.1/doc/api/"/>
@@ -123,8 +123,8 @@
 	<classpathentry kind="src" path="ui/gi/test/java"/>
 	<classpathentry kind="src" path="ui/gi/demo/java"/>
 	<classpathentry kind="src" path="ui/gi/generated/java"/>
-	<classpathentry kind="src" path="ui/jaxer/demo/java"/>
 	<classpathentry kind="src" path="ui/jaxer/main/java"/>
+	<classpathentry kind="src" path="ui/jaxer/customDemo/java"/>
 	<classpathentry kind="src" path="noncla/various/demo/java"/>
 	<classpathentry kind="src" path="noncla/various/main/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
