@@ -92,7 +92,7 @@
     <copy file="${source.root}/ui/jaxer/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
     <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
     <zip destfile="${target.root}/jaxer/demoServer.war" basedir="${target.root}/jaxer/web/demo"/>
-    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/demo/demoRemoting"/>
+    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/custom/demoRemoting"/>
   </target>
 
   <!--=======================================================================-->
