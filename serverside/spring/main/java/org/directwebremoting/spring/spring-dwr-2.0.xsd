@@ -23,31 +23,31 @@
       attributeFormDefault="unqualified">
 
 	<xsd:element name="proxy-ref" type="proxy">
-		<xsd:annotation>
-			<xsd:documentation><![CDATA[Remote a bean already defined in a reachable application context indicating the reference to it]]></xsd:documentation>
-		</xsd:annotation>
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[Remote a bean already defined in a reachable application context indicating the reference to it]]></xsd:documentation>
+            </xsd:annotation>
 	</xsd:element>
 
 	<xsd:element name="url-mapping">
-		<xsd:annotation>
-			<xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
-		</xsd:annotation>
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
+            </xsd:annotation>
 	</xsd:element>
 
 	<xsd:element name="annotation-scan">
-    	<xsd:annotation>
-    		<xsd:documentation><![CDATA[Allow DWR to scan the classpath, detect beans annotated with @RemoteProxy & @RemoteMethod and register the beans and Creator proxies for them.]]></xsd:documentation>
-    	</xsd:annotation>
-    	<xsd:complexType>
-    		<xsd:attribute name="base-package" type="xsd:string" />
-    		<xsd:attribute name="regex" type="xsd:string" />
-    	</xsd:complexType>
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[Allow DWR to scan the classpath, detect beans annotated with @RemoteProxy & @RemoteMethod and register the beans and Creator proxies for them.]]></xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                <xsd:attribute name="base-package" type="xsd:string" />
+                <xsd:attribute name="regex" type="xsd:string" />
+            </xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="annotation-config">
-    	<xsd:annotation>
-    		<xsd:documentation><![CDATA[Allow DWR to scan the Spring context, detect beans annotated with @RemoteProxy & @RemoteMethod and register Creator proxies for them.]]></xsd:documentation>
-    	</xsd:annotation>
+            <xsd:annotation>
+                <xsd:documentation><![CDATA[Allow DWR to scan the Spring context, detect beans annotated with @RemoteProxy & @RemoteMethod and register Creator proxies for them.]]></xsd:documentation>
+            </xsd:annotation>
 	</xsd:element>
 
   <xsd:element name="configuration" type="configuration">
@@ -195,6 +195,9 @@
   </xsd:complexType>
 
   <xsd:complexType name="filter">
+    <xsd:sequence>
+        <xsd:element name="param" type="config-param" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
     <xsd:attribute name="class" type="xsd:string" use="required"/>
   </xsd:complexType>
 

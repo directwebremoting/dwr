@@ -167,6 +167,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
             {
                 Element element = (Element) node;
                 String filterClass = element.getAttribute("class");
+                List<Element> filterParamElements = DomUtils.getChildElementsByTagName(element, "param");
                 BeanDefinitionBuilder beanFilter;
                 try
                 {
@@ -175,6 +176,10 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
                 catch (ClassNotFoundException e)
                 {
                     throw new IllegalArgumentException("DWR filter class '" + filterClass + "' was not found. " + "Check the class name specified in <dwr:filter class=\"" + filterClass + "\" /> exists");
+                }
+                for (Element filterParamElement : filterParamElements)
+                {
+                    beanFilter.addPropertyValue(filterParamElement.getAttribute("name"), filterParamElement.getAttribute("value"));
                 }
                 BeanDefinitionHolder holder2 = new BeanDefinitionHolder(beanFilter.getBeanDefinition(), "__filter_" + filterClass + "_" + javascript);
                 BeanDefinitionReaderUtils.registerBeanDefinition(holder2, registry);
