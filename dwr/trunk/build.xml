@@ -75,24 +75,34 @@
 
   <!--=======================================================================-->
   <target name="jaxer" depends="prepare" description="Create Jaxer output files">
+    <!-- Build the core jaxer modules -->
     <property name="modules" value="
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
-      protocol/dwrp, ui/jaxer
+      protocol/dwrp, protocol/json, ui/jaxer
       "/>
     <build target="${target.root}/jaxer" modules="${modules}"/>
+    <!-- The 3 core outputs are a readme, jaxer-dwr.jar and a template web.xml -->
+    <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
     <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
       <fileset dir="${target.root}/jaxer/classes/main"/>
     </jar>
-    <copy todir="${target.root}/jaxer/web/demo/WEB-INF/classes">
+    <copy file="${source.root}/ui/jaxer/customDemo/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
+    <!-- Demo: Build an exploded jaxer demo war file, and zip it up -->
+    <property name="jaxer.demo.war" value="${target.root}/jaxer/web/ui/jaxer"/>
+    <copy todir="${jaxer.demo.war}">
+      <fileset dir="${source.root}/ui/jaxer/customDemo/web"/>
+    </copy>
+    <copy todir="${jaxer.demo.war}/WEB-INF/classes">
       <fileset dir="${target.root}/jaxer/classes/demo"/>
     </copy>
-    <copy todir="${target.root}/jaxer/web/demo/WEB-INF/lib">
+    <copy todir="${jaxer.demo.war}/WEB-INF/lib">
       <fileset file="${target.root}/jaxer/jaxer-dwr.jar"/>
     </copy>
-    <copy file="${source.root}/ui/jaxer/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
-    <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
-    <zip destfile="${target.root}/jaxer/demoServer.war" basedir="${target.root}/jaxer/web/demo"/>
-    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/custom/demoRemoting"/>
+    <zip destfile="${target.root}/jaxer/demoServer.war">
+      <fileset dir="${jaxer.demo.war}"/>
+    </zip>
+    <!-- Demo: Build a zip of a file to stick into jaxer/public -->
+    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/customDemo/demoRemoting"/>
   </target>
 
   <!--=======================================================================-->
@@ -135,21 +145,21 @@
         <if>
           <available file="${source.root}/${module}/generated/java"/>
           <then>
-            <compile-tree module="${module}" tree="main" target="${target}">
+            <compile-tree module="${module}" tree="main">
               <sources>
                 <src path="${source.root}/${module}/main/java"/>
                 <src path="${source.root}/${module}/generated/java"/>
               </sources>
             </compile-tree>
-            <compile-copy module="${module}" tree="main" target="${target}"/>
+            <compile-copy module="${module}" tree="main"/>
           </then>
           <else>
-            <compile-tree module="${module}" tree="main" target="${target}">
+            <compile-tree module="${module}" tree="main">
               <sources>
                 <src path="${source.root}/${module}/main/java"/>
               </sources>
             </compile-tree>
-            <compile-copy module="${module}" tree="main" target="${target}"/>
+            <compile-copy module="${module}" tree="main"/>
           </else>
         </if>
       </then>
@@ -158,12 +168,12 @@
     <if>
       <available file="${source.root}/${module}/test/java"/>
       <then>
-        <compile-tree module="${module}" tree="test" target="${target}">
+        <compile-tree module="${module}" tree="test">
           <sources>
             <src path="${source.root}/${module}/test/java"/>
           </sources>
         </compile-tree>
-        <compile-copy module="${module}" tree="test" target="${target}"/>
+        <compile-copy module="${module}" tree="test"/>
       </then>
     </if>
     <!-- The test web tree -->
@@ -179,12 +189,12 @@
     <if>
       <available file="${source.root}/${module}/demo/java"/>
       <then>
-        <compile-tree module="${module}" tree="demo" target="${target}">
+        <compile-tree module="${module}" tree="demo">
           <sources>
             <src path="${source.root}/${module}/demo/java"/>
           </sources>
         </compile-tree>
-        <compile-copy module="${module}" tree="demo" target="${target}"/>
+        <compile-copy module="${module}" tree="demo"/>
       </then>
     </if>
     <!-- The demo web tree -->
@@ -196,13 +206,38 @@
         </copy>
       </then>
     </if>
+    <!-- The customDemo tree -->
+    <if>
+      <available file="${source.root}/${module}/customDemo"/>
+      <then>
+        <mkdir dir="${target}/web/${module}/WEB-INF/classes"/>
+        <copy todir="${target}/web/${module}">
+          <fileset dir="${source.root}/${module}/customDemo/web"/>
+        </copy>
+        <javac debug="on" includes="**/*.java" destdir="${target}/web/${module}/WEB-INF/classes">
+          <exclude name="**/package.html"/>
+          <exclude name="**/package-info.java"/>
+          <src path="${source.root}/${module}/customDemo/java"/>
+          <classpath>
+            <fileset dir="${target}/jar" includes="**/*.jar"/>
+            <pathelement location="${target}/classes/main"/>
+          </classpath>
+        </javac>
+        <copy todir="${target}/web/${module}/WEB-INF/classes">
+          <fileset dir="${source.root}/${module}/customDemo/java">
+            <exclude name="**/*.java"/>
+            <exclude name="**/package.html"/>
+            <exclude name="**/package-info.java"/>
+          </fileset>
+        </copy>
+      </then>
+    </if>
   </target>
 
   <!--=======================================================================-->
   <macrodef name="compile-tree" description="Compile the sources from a set of trees">
     <attribute name="module" description="The module to compile"/>
     <attribute name="tree" description="Must be one of [main|test|demo]"/>
-    <attribute name="target" description="The base directory for this build"/>
     <element name="sources"/>
     <sequential>
       <!-- compile the sources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
@@ -222,7 +257,6 @@
   <macrodef name="compile-copy" description="Compile the sources from a set of trees">
     <attribute name="module" description="The module to compile"/>
     <attribute name="tree" description="Must be one of [main|test|demo]"/>
-    <attribute name="target" description="The base directory for this build"/>
     <sequential>
       <!-- copy the resources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
       <copy todir="${target}/classes/@{tree}">

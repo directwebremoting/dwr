@@ -4,8 +4,17 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Jaxer With DWR Remoting</title>
 
+  <!--
+  This import is only needed if you are running against a version of Jaxer from
+  before the DWR+Jaxer integration. You need this if you get the error message:
+  'Jaxer error processing request: JavaScript Error: "Jaxer.dwr is undefined"'
+
+  <script type='text/javascript' runat="server" src="frameworkPatch.js"> </script>
+  -->
+
   <script type='text/javascript' runat="server">
-  Jaxer.dwr.pathToDwrServlet = "http://appserver.intranet:8080/demoServer/dwr";
+  // This line should point to your deployment of DWR
+  Jaxer.dwr.pathToDwrServlet = "http://localhost:8080/demoServer/dwr";
   Jaxer.dwr.requireUtil();
   Jaxer.dwr.configureAccess("com.example.jaxer.Simple");
 
@@ -17,7 +26,7 @@
 </head>
 <body onserverload="loadServer()">
 
-<p>From the server: <div id="replyDiv"></div></p>
+<p>Message from the server: <span id="replyDiv"></span></p>
 
 </body>
 </html>

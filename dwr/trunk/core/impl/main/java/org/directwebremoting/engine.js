@@ -266,7 +266,7 @@ if (typeof this['dwr'] == 'undefined') {
     title:"${versionTitle}",
 
     /**
-     *  The strings above concetenated
+     * The strings above concatenated
      */
     label:"${versionLabel}"
   };
@@ -389,7 +389,7 @@ if (typeof this['dwr'] == 'undefined') {
   /** For debugging when something unexplained happens. */
   dwr.engine._warningHandler = dwr.engine.defaultWarningHandler;
 
-  /** Undocumented interceptors - do not use */
+  /** Undocumented intercepters - do not use */
   dwr.engine._postSeperator = "\n";
   dwr.engine._defaultInterceptor = function(data) { return data; };
   dwr.engine._urlRewriteHandler = dwr.engine._defaultInterceptor;
@@ -441,8 +441,10 @@ if (typeof this['dwr'] == 'undefined') {
   };
 
   // Now register the unload handler
-  if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
-  else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
+  if (!dwr.engine.isJaxerServer) {
+    if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
+    else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
+  }
 
   /**
    * Send a request. Called by the Javascript interface stub
@@ -1233,7 +1235,7 @@ if (typeof this['dwr'] == 'undefined') {
           return;
         }
 
-        if (dwr.engine._unloading) {
+        if (dwr.engine._unloading && !dwr.engine.isJaxerServer) {
           dwr.engine._debug("Ignoring reply from server as page is unloading.");
           return;
         }
