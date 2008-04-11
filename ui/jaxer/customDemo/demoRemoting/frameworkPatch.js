@@ -58,5 +58,5 @@ Jaxer.dwr.configureAccess = function(className) {
 Jaxer.dwr._requireSingle = function(required) {
   var url = Jaxer.dwr.pathToDwrServlet + "/" + required + ".js";
   Jaxer.Log.info("importing: " + url);
-  document.writeln("<scr" + "ipt type='text/javascript' src='" + url + "' runat='server'></scr" + "ipt>");
+  Jaxer.load(url);
 };
