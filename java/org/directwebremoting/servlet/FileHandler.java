@@ -130,55 +130,63 @@ public class FileHandler implements Handler, InitializingBean
                     throw new IOException("Failed to find resource: " + resource);
                 }
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(raw));
-                while (true)
+                BufferedReader in = null;
+                try
                 {
-                    String line = in.readLine();
-                    if (line == null)
+                    in = new BufferedReader(new InputStreamReader(raw));
+                    while (true)
                     {
-                        break;
-                    }
-
-                    if (dynamic)
-                    {
-                        if (line.indexOf(PARAM_SCRIPT_COOKIENAME) != -1)
+                        String line = in.readLine();
+                        if (line == null)
                         {
-                            line = LocalUtil.replace(line, PARAM_SCRIPT_COOKIENAME, sessionCookieName);
+                            break;
                         }
-
-                        if (line.indexOf(PARAM_SCRIPT_POLLXHR) != -1)
+    
+                        if (dynamic)
                         {
-                            line = LocalUtil.replace(line, PARAM_SCRIPT_POLLXHR, pollWithXhr);
-                        }
-
-                        if (line.indexOf(PARAM_SCRIPT_SESSIONID) != -1)
-                        {
-                            line = LocalUtil.replace(line, PARAM_SCRIPT_SESSIONID, generator.generateId(pageIdLength));
-                        }
-
-                        if (line.indexOf(PARAM_SCRIPT_ALLOWGET) != -1)
-                        {
-                            line = LocalUtil.replace(line, PARAM_SCRIPT_ALLOWGET, String.valueOf(allowGetForSafariButMakeForgeryEasier));
-                        }
-
-                        if (line.indexOf(PARAM_SCRIPT_TAG_PROTECTION) != -1)
-                        {
-                            line = LocalUtil.replace(line, PARAM_SCRIPT_TAG_PROTECTION, scriptTagProtection);
-                        }
-
-                        if (line.indexOf(PARAM_DEFAULT_PATH) != -1)
-                        {
-                            String path = request.getContextPath() + request.getServletPath();
-                            if (overridePath != null)
+                            if (line.indexOf(PARAM_SCRIPT_COOKIENAME) != -1)
                             {
-                                path = overridePath;
+                                line = LocalUtil.replace(line, PARAM_SCRIPT_COOKIENAME, sessionCookieName);
                             }
-                            line = LocalUtil.replace(line, PARAM_DEFAULT_PATH, path);
+    
+                            if (line.indexOf(PARAM_SCRIPT_POLLXHR) != -1)
+                            {
+                                line = LocalUtil.replace(line, PARAM_SCRIPT_POLLXHR, pollWithXhr);
+                            }
+    
+                            if (line.indexOf(PARAM_SCRIPT_SESSIONID) != -1)
+                            {
+                                line = LocalUtil.replace(line, PARAM_SCRIPT_SESSIONID, generator.generateId(pageIdLength));
+                            }
+    
+                            if (line.indexOf(PARAM_SCRIPT_ALLOWGET) != -1)
+                            {
+                                line = LocalUtil.replace(line, PARAM_SCRIPT_ALLOWGET, String.valueOf(allowGetForSafariButMakeForgeryEasier));
+                            }
+    
+                            if (line.indexOf(PARAM_SCRIPT_TAG_PROTECTION) != -1)
+                            {
+                                line = LocalUtil.replace(line, PARAM_SCRIPT_TAG_PROTECTION, scriptTagProtection);
+                            }
+    
+                            if (line.indexOf(PARAM_DEFAULT_PATH) != -1)
+                            {
+                                String path = request.getContextPath() + request.getServletPath();
+                                if (overridePath != null)
+                                {
+                                    path = overridePath;
+                                }
+                                line = LocalUtil.replace(line, PARAM_DEFAULT_PATH, path);
+                            }
                         }
+    
+                        buffer.append(line);
+                        buffer.append('\n');
                     }
-
-                    buffer.append(line);
-                    buffer.append('\n');
+                }
+                finally
+                {
+                    LocalUtil.close(in);
                 }
 
                 output = buffer.toString();
