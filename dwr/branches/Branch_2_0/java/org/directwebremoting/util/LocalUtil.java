@@ -18,6 +18,7 @@ package org.directwebremoting.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -887,6 +888,28 @@ public final class LocalUtil
      * @param in The resource to close
      */
     public static void close(InputStream in)
+    {
+        if (in == null)
+        {
+            return;
+        }
+
+        try
+        {
+            in.close();
+        }
+        catch (IOException ex)
+        {
+            log.warn(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * InputStream closer that can cope if the input stream is null.
+     * If anything goes wrong, the errors are logged and ignored.
+     * @param in The resource to close
+     */
+    public static void close(Reader in)
     {
         if (in == null)
         {
