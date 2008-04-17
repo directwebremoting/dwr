@@ -49,14 +49,23 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     @Override
     protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        InputStream raw = CachingHandler.class.getResourceAsStream(resource);
-        if (raw == null)
-        {
-            throw new IOException("Failed to find resource: " + resource);
-        }
-
         StringWriter sw = new StringWriter();
-        CopyUtils.copy(raw, sw);
+        InputStream raw = null;
+
+        try
+        {
+            raw = CachingHandler.class.getResourceAsStream(resource);
+            if (raw == null)
+            {
+                throw new IOException("Failed to find resource: " + resource);
+            }
+    
+            CopyUtils.copy(raw, sw);
+        }
+        finally
+        {
+            LocalUtil.close(raw);
+        }
 
         return sw.toString();
     }
