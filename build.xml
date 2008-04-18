@@ -35,19 +35,22 @@
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
       protocol/dwrp, protocol/json, protocol/bayeux,
       serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
-      ui/dwr, ui/gi, ui/scriptaculous,
+      ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
       noncla/various
       "/>
     <build target="${target.root}" modules="${modules}"/>
+    <!-- The standard dwr.jar file -->
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
     </jar>
+    <!-- The demo 'dwr.war' file, exploded -->
     <copy todir="${target.root}/web/demo/WEB-INF/classes">
       <fileset dir="${target.root}/classes/demo"/>
     </copy>
     <copy todir="${target.root}/web/demo/WEB-INF/lib">
       <fileset file="${target.root}/dwr.jar"/>
     </copy>
+    <!-- The testing 'testdwr.war' file, exploded -->
     <copy todir="${target.root}/web/test/WEB-INF/classes">
       <fileset dir="${target.root}/classes/test"/>
     </copy>
@@ -58,20 +61,55 @@
 
   <!--=======================================================================-->
   <target name="standard" depends="war" description="Create output WAR and JAR files">
+    <!-- Run retroweaver if dwr.jar has changed since we last ran it -->
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
         <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
       </classpath>
     </taskdef>
-    <echo message="${basedir}/${target.root}/dwr.jar"/>
-    <!-- retroweaver is borked because it doesn't inherit directories properly
-    so if you call this ant build from another it gets the basedir wrong. so
-    we need to prefix the paths with ${basedir} -->
-    <retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4"/>
-    <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
-    <zip destfile="${target.root}/dwr-test.war" basedir="${target.root}/web/test"/>
-    <antcall target="source"/>
+    <if-not-uptodate destfile="${basedir}/${target.root}/dwr-jdk14.jar" sourcedir="${target.root}/classes/main">
+      <action>
+        <!-- retroweaver is borked because it doesn't inherit directories properly
+        so if you call this ant build from another it gets the basedir wrong. so
+        we need to prefix the paths with ${basedir} -->
+        <retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4"/>
+      </action>
+    </if-not-uptodate>
+    <!-- Rezip the demo war file if it's contents have changed -->
+    <if-not-uptodate destfile="${target.root}/dwr.war" sourcedir="${target.root}/web/demo">
+      <action>
+        <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
+      </action>
+    </if-not-uptodate>
+    <!-- Rezip the test war file if it's contents have changed -->
+    <if-not-uptodate destfile="${target.root}/testdwr.war" sourcedir="${target.root}/web/test">
+      <action>
+        <zip destfile="${target.root}/testdwr.war" basedir="${target.root}/web/test"/>
+      </action>
+    </if-not-uptodate>
   </target>
+
+  <!--=======================================================================-->
+  <macrodef name="if-not-uptodate">
+    <attribute name="destfile"/>
+    <attribute name="sourcedir"/>
+    <element name="action"/>
+    <sequential>
+      <if>
+        <or>
+          <not><available file="@{destfile}"/></not>
+          <not>
+            <uptodate targetfile="@{destfile}">
+              <srcfiles dir="@{sourcedir}" includes="**/*"/>
+            </uptodate>
+          </not>
+        </or>
+        <then>
+          <action/>
+        </then>      
+      </if>
+    </sequential>
+  </macrodef>
 
   <!--=======================================================================-->
   <target name="jaxer" depends="prepare" description="Create Jaxer output files">
