@@ -21,7 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An accessor for the current Hub
+ * An accessor for the current Hub.
+ * The nested {@link HubBuilder} will only be of use to system implementors.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class HubFactory
