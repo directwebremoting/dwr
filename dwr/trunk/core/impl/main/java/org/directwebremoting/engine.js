@@ -890,7 +890,7 @@ if (typeof this['dwr'] == 'undefined') {
           if (i != 0) buf.push(",");
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine._serializeAll(batch, referto, data[i], childName);
+          dwr.engine.serialize.convert(batch, referto, data[i], childName);
           buf.push("reference:");
           buf.push(childName);
         }
@@ -904,7 +904,7 @@ if (typeof this['dwr'] == 'undefined') {
           if (i != 0) reply += ",";
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine._serializeAll(batch, referto, data[i], childName);
+          dwr.engine.serialize.convert(batch, referto, data[i], childName);
           reply += "reference:";
           reply += childName;
         }
