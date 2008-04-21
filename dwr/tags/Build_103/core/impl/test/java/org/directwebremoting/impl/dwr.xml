@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://www.getahead.ltd.uk/dwr/dwr30.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" class="com.example.dwr.marshall.TestBean2Converter"/>
+  </init>
+
+  <allow>
+
+    <filter class="org.directwebremoting.filter.ExtraLatencyAjaxFilter">
+      <param name="delay" value="200"/>
+    </filter>
+
+    <create creator="new" javascript="Test">
+      <param name="class" value="com.example.dwr.marshall.Test"/>
+    </create>
+
+    <create creator="new" javascript="JDate">
+      <param name="class" value="java.util.Date"/>
+      <exclude method="getHours"/>
+      <auth method="getMinutes" role="admin"/>
+      <auth method="getMinutes" role="devel"/>
+      <filter class="com.example.dwr.marshall.Logging1AjaxFilter"/>
+      <filter class="com.example.dwr.marshall.Logging2AjaxFilter"/>
+    </create>
+
+    <create creator="new" javascript="TestBean" scope="session">
+      <param name="class" value="com.example.dwr.marshall.TestBean"/>
+      <filter class="com.example.dwr.marshall.RandomSecurityAjaxFilter"/>
+    </create>
+
+    <convert converter="testbean" match="com.example.dwr.marshall.TestBean"/>
+
+    <convert converter="bean" match="com.example.dwr.marshall.ObjB"/>
+    <convert converter="object" match="com.example.dwr.marshall.ObjA">
+      <param name="force" value="true"/>
+    </convert>
+
+  </allow>
+
+  <signatures>
+  <![CDATA[
+  import java.util.*;
+  import com.example.dwr.marshall.*;
+
+  Test.testBeanSetParam(Set<TestBean>);
+  Test.testBeanListParam(List<TestBean>);
+  Test.charTestBeanMapParam(Map<Character, TestBean>);
+
+  Test.stringStringMapParam(Map<String, String>);
+  Test.stringStringHashMapParam(HashMap<String, String>);
+  Test.stringStringTreeMapParam(TreeMap<String, String>);
+
+  Test.stringCollectionParam(Collection<String>);
+
+  Test.stringListParam(List<String>);
+  Test.stringLinkedListParam(LinkedList<String>);
+  Test.stringArrayListParam(ArrayList<String>);
+
+  Test.stringSetParam(Set<String>);
+  Test.stringHashSetParam(HashSet<String>);
+  Test.stringTreeSetParam(TreeSet<String>);
+  ]]>
+  </signatures>
+
+</dwr>

@@ -1,0 +1,199 @@
+@CHARSET "ISO-8859-1";
+
+body
+{
+    font-family: verdana, arial, sans-serif;
+    color: #666;
+    background: #eee;
+    margin: 0px;
+}
+
+#menu
+{
+    padding-top: 10px;
+    width: 160px;
+}
+
+.button
+{
+    border: 1px solid #777;
+    margin: 5px;
+    padding: 2px 10px;
+    color: #000;
+    font-size: 100%;
+    cursor: pointer;
+}
+
+.popup
+{
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    padding: 10px;
+    position: absolute;
+    display: none;
+}
+
+.title
+{
+    border: 1px solid #777;
+    padding: 0px 5px;
+    color: #000;
+}
+
+.quiet
+{
+    color: #333;
+    font-size: 50%;
+}
+
+.wide
+{
+    width: 100%;
+}
+
+.buttonbar
+{
+    text-align: right;
+    padding: 10px 20px;
+}
+
+h1
+{
+    font-size: 120%;
+    margin: 0px;
+}
+
+table
+{
+    border-collapse: collapse;
+}
+
+tr
+{
+    padding: 2px;
+}
+
+td, th
+{
+    vertical-align: top;
+    padding: 2px;
+}
+
+table.rowed
+{
+    border-collapse: collapse;
+    border: 1px solid #BBBBBB;
+    background-color: #fff;
+}
+
+table.rowed th
+{
+    background-color: #eee;
+}
+
+table.rowed td
+{
+    border-top: 1px solid #DDDDDD;
+    padding: 5px;
+}
+
+.customersStyle
+{
+    background-color: #07b;
+}
+
+#customersDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+.customerStyle
+{
+    background-color: #29d;
+}
+
+#customerDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+.servicesStyle
+{
+    background-color: #273;
+}
+
+#servicesDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+#servicesTable td
+{
+    text-align: center;
+}
+
+.serviceStyle
+{
+    background-color: #495;
+}
+
+#serviceDiv
+{
+    top: 10px;
+    left: 190px;
+    width: 300px;
+}
+
+.salesStyle
+{
+    background-color: #e61;
+}
+
+#salesDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+.saleStyle
+{
+    background-color: #f83;
+}
+
+#saleDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+.remindersStyle
+{
+    background-color: #e23;
+}
+
+#remindersDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}
+
+.reminderStyle
+{
+    background-color: #f45;
+}
+
+#reminderDiv
+{
+    width: 600px;
+    top: 100px;
+    left: 150px;
+}

@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/TR/xhtml1">
+<head>
+  <title>Air-Band Configurator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+  <link rel="stylesheet" type="text/css" href="global/generic.css" />
+  <script type='text/javascript' src='dwr/interface/Actions.js'></script>
+  <script type='text/javascript' src='dwr/engine.js'></script>
+  <script type='text/javascript' src='dwr/util.js'></script>
+  <script type="text/javascript">
+    var initialtab = [1, "tabBasic"];
+  </script>
+  <script type='text/javascript' src='global/generic.js'></script>
+  <script type="text/javascript" src="global/tabs.js"></script>
+  <script type="text/javascript" src="global/query.js"></script>
+  <script type="text/javascript">
+    function saveCompany()
+    {
+        var name = DWRUtil.getValue("companyname");
+        var address = DWRUtil.getValue("address");
+        custid = Actions.addCustomer(savedCompany, name, address);
+    }
+
+    var custid;
+
+    function savedCompany(id)
+    {
+        custid = id;
+        Tabs.expandContent('tabContactAcct', document.getElementById('liContactAcct'))
+    }
+
+    function saveContactAcct()
+    {
+        var fullname =  DWRUtil.getValue("acctfullname");
+        var email = DWRUtil.getValue("acctemail");
+        var phonework = DWRUtil.getValue("acctphonework");
+        var phonemobile = DWRUtil.getValue("acctphonemobile");
+
+        Actions.updateContact(savedContactAcct, custid, -1, "acct", fullname, email, phonework, phonemobile);
+    }
+
+    function savedContactAcct(message)
+    {
+        Tabs.expandContent('tabContactSales', document.getElementById('liContactSales'))
+    }
+
+    function saveContactSales()
+    {
+        var usecontact = DWRUtil.getValue("salesusecontactused");
+        if (usecontact)
+        {
+            var fullname =  DWRUtil.getValue("salesfullname");
+            var email = DWRUtil.getValue("salesemail");
+            var phonework = DWRUtil.getValue("salesphonework");
+            var phonemobile = DWRUtil.getValue("salesphonemobile");
+            Actions.updateContact(savedContactSales, custid, -1, "sales", fullname, email, phonework, phonemobile);
+        }
+        else
+        {
+            Actions.clearContact(savedContactSales, custid, "sales");
+        }
+    }
+
+    function savedContactSales(message)
+    {
+        Tabs.expandContent('tabContactTech', document.getElementById('liContactTech'))
+    }
+
+    function saveContactTech()
+    {
+        var usecontact = DWRUtil.getValue("techusecontactused");
+        if (usecontact)
+        {
+            var fullname =  DWRUtil.getValue("techfullname");
+            var email = DWRUtil.getValue("techemail");
+            var phonework = DWRUtil.getValue("techphonework");
+            var phonemobile = DWRUtil.getValue("techphonemobile");
+            Actions.updateContact(savedContactTech, custid, -1, "tech", fullname, email, phonework, phonemobile);
+        }
+        else
+        {
+            Actions.clearContact(savedContactTech, custid, "tech");
+        }
+    }
+
+    function savedContactTech(message)
+    {
+        window.location = "admin-cust.html";
+    }
+
+    function reportMessage(message)
+    {
+        alert(message);
+    }
+
+    function init()
+    {
+        DWRUtil.useLoadingMessage();
+        DWREngine.setErrorHandler(reportMessage);
+
+        DWRUtil.setValue("salesusecontactnull", true);
+        DWRUtil.setValue("salesusecontactused", false);
+        enableContactDetails("sales");
+
+        DWRUtil.setValue("techusecontactnull", true);
+        DWRUtil.setValue("techusecontactused", false);
+        enableContactDetails("tech");
+    }
+
+    function enableContactDetails(prefix)
+    {
+        var active = DWRUtil.getValue(prefix + "usecontactused");
+        setEnabled(prefix + "fullname", active);
+        setEnabled(prefix + "email", active);
+        setEnabled(prefix + "phonework", active);
+        setEnabled(prefix + "phonemobile", active);
+    }
+
+    callOnLoad(init);
+  </script>
+</head>
+
+<body>
+<iframe id="sidebar" src="sidebar.html" frameborder="0"></iframe>
+
+<h1>Add Customer Wizard</h1>
+
+<div id="messages">
+</div>
+
+<ul id="tablist" style="display:none;">
+  <li><a href="#" id="liBasic" class="current">Initial Details</a></li>
+  <li><a href="#" id="liContactAcct"">Accounts Contact</a></li>
+  <li><a href="#" id="liContactSales"">Sales Contact</a></li>
+  <li><a href="#" id="liContactTech"">Technical Contact</a></li>
+</ul>
+
+<div id="tabcontentcontainer" style="margin-left:30px; margin-right:30px; padding:20px; padding-top:0px;">
+
+  <div id="tabBasic" class="tabcontent">
+    <h3>Company Details</h3>
+    <p>
+      Company Name:
+      <input type="text" id="companyname" size="30"/>
+    </p>
+    <p>
+      Registered Address:
+      <br/>
+      <textarea id="address" cols="40" rows="5"></textarea>
+    </p>
+    <div style="width:400px; text-align:right;">
+      <input type="button" onclick="saveCompany()" value="Next"/>
+    </div>
+  </div>
+
+  <div id="tabContactAcct" class="tabcontent">
+    <h3>Accounts Contact</h3>
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td><input type="text" id="acctfullname" size="26"/></td>
+      </tr>
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="acctemail" size="30"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="acctphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="acctphonemobile" size="20"/></td>
+      </tr>
+    </table>
+    <br/>
+    <div style="width:400px; text-align:right;">
+      <input type="button" onclick="saveContactAcct()" value="Next"/>
+    </div>
+  </div>
+
+  <div id="tabContactSales" class="tabcontent">
+    <h3>Sales Contact</h3>
+
+    <input type="radio" id="salesusecontactnull" name="salesusecontact" value="null" onclick="enableContactDetails('sales')"/>Use account contact.
+    <br />
+    <input type="radio" id="salesusecontactused" name="salesusecontact" value="used" onclick="enableContactDetails('sales')"/>Use the following contact:
+    <br />
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td>
+          <input type="text" id="salesfullname" size="26"/>
+        </td>
+      </tr>
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="salesemail" size="30"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="salesphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="salesphonemobile" size="20"/></td>
+      </tr>
+    </table>
+    <br/>
+    <div style="width:400px; text-align:right;">
+      <input type="button" onclick="saveContactSales()" value="Next"/>
+    </div>
+  </div>
+
+  <div id="tabContactTech" class="tabcontent">
+    <h3>Technical Contact</h3>
+
+    <input type="radio" id="techusecontactnull" name="techusecontact" value="null" onclick="enableContactDetails('tech')"/>Use account contact.
+    <br />
+    <input type="radio" id="techusecontactused" name="techusecontact" value="used" onclick="enableContactDetails('tech')"/>Use the following contact:
+    <br />
+    <table>
+      <tr>
+        <td>Full Name:</td>
+        <td>
+          <input type="text" id="techfullname" size="26"/>
+        </td>
+      </tr>
+      <tr>
+        <td>E-Mail:</td>
+        <td><input type="text" id="techemail" size="30"/></td>
+      </tr>
+      <tr>
+        <td>Work Phone:</td>
+        <td><input type="text" id="techphonework"/ size="20"></td>
+      </tr>
+      <tr>
+        <td>Mobile Phone:</td>
+        <td><input type="text" id="techphonemobile" size="20"/></td>
+      </tr>
+    </table>
+    <br/>
+    <div style="width:400px; text-align:right;">
+      <input type="button" onclick="saveContactTech();" value="Finish"/>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
