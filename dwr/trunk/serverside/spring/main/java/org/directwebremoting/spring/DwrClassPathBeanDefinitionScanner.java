@@ -52,13 +52,13 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
     @Override
     protected void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
     {
-        super.registerBeanDefinition(definitionHolder, registry);
         try
         {
             Class<?> beanDefinitionClass = ClassUtils.forName(definitionHolder.getBeanDefinition().getBeanClassName());
             RemoteProxy annotation = beanDefinitionClass.getAnnotation(RemoteProxy.class);
             if (annotation != null)
             {
+                super.registerBeanDefinition(definitionHolder, registry);
                 String javascript = annotation.name();
                 if (log.isInfoEnabled())
                 {
