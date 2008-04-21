@@ -41,7 +41,7 @@ public class Corporations
     }
 
     /**
-     * @return
+     * @return A randomly changed corporation
      */
     public Corporation getNextChangedCorporation()
     {
