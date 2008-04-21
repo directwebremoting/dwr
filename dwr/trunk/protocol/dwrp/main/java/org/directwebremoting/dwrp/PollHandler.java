@@ -375,11 +375,6 @@ public class PollHandler implements Handler
     protected int maxWaitAfterWrite = -1;
 
     /**
-     * Are we using plain javascript or html wrapped javascript
-     */
-    protected boolean plain;
-
-    /**
      * Accessor for the PageNormalizer.
      * @param pageNormalizer The new PageNormalizer
      */
@@ -452,6 +447,12 @@ public class PollHandler implements Handler
      * How we abstract away container specific logic
      */
     protected ContainerAbstraction containerAbstraction = null;
+
+    /**
+     * Are we using plain javascript or html wrapped javascript.
+     * This is set by the constructor
+     */
+    protected boolean plain;
 
     /**
      * The log stream
