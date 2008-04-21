@@ -522,7 +522,7 @@ if (typeof this['dwr'] == 'undefined') {
     }
 
     dwr.engine._debug("Reverse Ajax poll failed (retries=" + dwr.engine._pollRetries + "). Trying again in " + dwr.engine._retryIntervals[index] + "s: " + ex.name + " : " + ex.message);
-    setTimeout(dwr.engine._poll(), 1000 * dwr.engine._retryIntervals[index]);
+    setTimeout(dwr.engine._poll, 1000 * dwr.engine._retryIntervals[index]);
 
     dwr.engine._pollRetries++;
   };
@@ -1311,7 +1311,7 @@ if (typeof this['dwr'] == 'undefined') {
 
         // If the poll resources are still there, come back again
         if (dwr.engine._pollReq) {
-          setTimeout(dwr.engine.transport.xhr.checkCometPoll(), dwr.engine._pollCometInterval);
+          setTimeout(dwr.engine.transport.xhr.checkCometPoll, dwr.engine._pollCometInterval);
         }
       },
 
@@ -1527,7 +1527,7 @@ if (typeof this['dwr'] == 'undefined') {
         }
 
         if (dwr.engine.transport.iframe.outstandingIFrames.length > 0) {
-          setTimeout(dwr.engine.transport.iframe.checkCometPoll(), dwr.engine._pollCometInterval);
+          setTimeout(dwr.engine.transport.iframe.checkCometPoll, dwr.engine._pollCometInterval);
         }
       }
 
@@ -1658,7 +1658,7 @@ if (typeof this['dwr'] == 'undefined') {
         handlers:[{
           callback:function(pause) {
             dwr.engine._pollRetries = 0;
-            setTimeout(dwr.engine._poll(), pause);
+            setTimeout(dwr.engine._poll, pause);
           }
         }],
         isPoll:true,
