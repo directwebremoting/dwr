@@ -23,28 +23,53 @@
     <display-name>DWR Servlet</display-name>
     <description>Direct Web Remoter Servlet</description>
     <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+
+    <!-- This should NEVER be present in live -->
     <init-param>
       <param-name>debug</param-name>
       <param-value>true</param-value>
     </init-param>
+
+    <!-- Remove this unless you want to use active reverse ajax -->
     <init-param>
       <param-name>activeReverseAjaxEnabled</param-name>
       <param-value>true</param-value>
     </init-param>
+
+    <!-- By default DWR creates application scope objects when they are first
+    used. This creates them when the app-server is started -->
     <init-param>
       <param-name>initApplicationScopeCreatorsAtStartup</param-name>
       <param-value>true</param-value>
     </init-param>
-    <!--
+
+    <!-- WARNING: allowing JSON connections bypasses much of the security
+    protection that DWR gives you. Take this out if security is important -->
+    <init-param>
+      <param-name>jsonEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- data: URLs are good for small images, but is slower, and could OOM for
+    larger images. Take this out for anything but small images -->
+    <init-param>
+      <param-name>preferDataUrlSchema</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- This enables full streaming mode. It's probably better to leave this
+    out if you are running across the internet -->
     <init-param>
       <param-name>maxWaitAfterWrite</param-name>
       <param-value>-1</param-value>
     </init-param>
-    <init-param>
-      <param-name>org.directwebremoting.extend.ServerLoadMonitor</param-name>
-      <param-value>org.directwebremoting.impl.PollingServerLoadMonitor</param-value>
-    </init-param>
+
+    <!--
+    For more information on these parameters, see:
+    - http://getahead.org/dwr/server/servlet
+    - http://getahead.org/dwr/reverse-ajax/configuration
     -->
+
     <load-on-startup>1</load-on-startup>
   </servlet>
 
