@@ -90,7 +90,7 @@ public class OutputAlarm extends BasicAlarm implements Alarm
          */
         public boolean addScript(ScriptBuffer script)
         {
-            if (maxWaitAfterWrite == 0)
+            if (maxWaitAfterWrite <= 0)
             {
                 raiseAlarm();
             }
