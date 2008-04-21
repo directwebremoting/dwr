@@ -218,9 +218,16 @@ public class StartupUtil
      */
     public static void setupDefaultContainer(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
+        log.debug("Setup: Getting parameters from defaults.properties:");
         setupDefaults(container);
+
+        log.debug("Setup: Getting parameters from ServletConfig:");
         setupFromServletConfig(container, servletConfig);
+
+        log.debug("Setup: Resolving multiple implementations:");
         resolveMultipleImplementations(container, servletConfig);
+
+        log.debug("Setup: Autowire beans");
         container.setupFinished();
     }
 
@@ -238,6 +245,8 @@ public class StartupUtil
         resolveMultipleImplementation(container, Compressor.class);
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
+        log.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
+
         for (String abstractionImplName : abstractionImplNames.split(" "))
         {
             try
@@ -260,11 +269,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.debug("Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
             }
         }
 
@@ -281,6 +290,8 @@ public class StartupUtil
     protected static void resolveMultipleImplementation(DefaultContainer container, Class<?> toResolve)
     {
         String abstractionImplNames = container.getParameter(toResolve.getName());
+        log.debug("- Selecting a " + toResolve.getSimpleName() + " from " + abstractionImplNames);
+
         for (String abstractionImplName : abstractionImplNames.split(" "))
         {
             try
@@ -288,7 +299,7 @@ public class StartupUtil
                 Class<?> abstractionImpl = Class.forName(abstractionImplName);
                 if (!toResolve.isAssignableFrom(abstractionImpl))
                 {
-                    log.error("Can't cast: " + abstractionImpl.getName() + " to " + toResolve.getName());
+                    log.error("  - Can't cast: " + abstractionImpl.getName() + " to " + toResolve.getName());
                 }
 
                 abstractionImpl.newInstance();
@@ -298,11 +309,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.debug("Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
             }
         }
     }

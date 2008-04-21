@@ -125,11 +125,11 @@ public class DefaultContainer extends AbstractContainer implements Container
         {
             if (value instanceof String)
             {
-                log.debug("Adding IoC setting: " + askFor + "=" + value);
+                log.debug("- value: " + askFor + " = " + value);
             }
             else
             {
-                log.debug("Adding IoC implementation: " + askFor + "=" + value.getClass().getName());
+                log.debug("- impl:  " + askFor + " = " + value.getClass().getName());
             }
         }
 
@@ -163,13 +163,13 @@ public class DefaultContainer extends AbstractContainer implements Container
         for (Entry<String, Object> entry : beans.entrySet())
         {
             // Class type = (Class) entry.getKey();
-            Object ovalue = entry.getValue();
+            Object bean = entry.getValue();
 
-            if (!(ovalue instanceof String))
+            if (!(bean instanceof String))
             {
-                log.debug("Trying to autowire: " + ovalue.getClass().getName());
+                log.debug("- autowire: " + bean.getClass().getName());
 
-                Method[] methods = ovalue.getClass().getMethods();
+                Method[] methods = bean.getClass().getMethods();
                 methods:
                 for (Method setter : methods)
                 {
@@ -186,8 +186,8 @@ public class DefaultContainer extends AbstractContainer implements Container
                         {
                             if (propertyType.isAssignableFrom(setting.getClass()))
                             {
-                                log.debug("- autowire-by-name: " + name + "=" + setting);
-                                invoke(setter, ovalue, setting);
+                                log.debug("  - by name: " + name + " = " + setting);
+                                invoke(setter, bean, setting);
 
                                 continue methods;
                             }
@@ -197,8 +197,8 @@ public class DefaultContainer extends AbstractContainer implements Container
                                 {
                                     Object value = LocalUtil.simpleConvert((String) setting, propertyType);
 
-                                    log.debug("- autowire-by-name: " + name + "=" + value);
-                                    invoke(setter, ovalue, value);
+                                    log.debug("  - by name: " + name + " = " + value);
+                                    invoke(setter, bean, value);
                                 }
                                 catch (IllegalArgumentException ex)
                                 {
@@ -213,13 +213,13 @@ public class DefaultContainer extends AbstractContainer implements Container
                         Object value = beans.get(propertyType.getName());
                         if (value != null)
                         {
-                            log.debug("- autowire-by-type: " + name + "=" + value.getClass().getName());
-                            invoke(setter, ovalue, value);
+                            log.debug("  - by type: " + name + " = " + value.getClass().getName());
+                            invoke(setter, bean, value);
 
                             continue methods;
                         }
 
-                        log.debug("- skipped autowire: " + name);
+                        log.debug("  - no properties for: " + name);
                     }
                 }
             }
@@ -243,15 +243,15 @@ public class DefaultContainer extends AbstractContainer implements Container
         }
         catch (IllegalArgumentException ex)
         {
-            log.error("- Internal error: " + ex.getMessage());
+            log.error("  - Internal error: " + ex.getMessage());
         }
         catch (IllegalAccessException ex)
         {
-            log.error("- Permission error: " + ex.getMessage());
+            log.error("  - Permission error: " + ex.getMessage());
         }
         catch (InvocationTargetException ex)
         {
-            log.error("- Exception during auto-wire: ", ex.getTargetException());
+            log.error("  - Exception during auto-wire: ", ex.getTargetException());
         }
     }
 
