@@ -4,7 +4,7 @@
   <id>dwr</id>
   <groupId>org.directwebremoting</groupId>
   <name>Direct Web Remoting</name>
-  <currentVersion>2.0.3</currentVersion>
+  <currentVersion>2.0.4</currentVersion>
   <package>org.directwebremoting</package>
   <package>uk.ltd.getahead.dwr</package>
   <developers>
