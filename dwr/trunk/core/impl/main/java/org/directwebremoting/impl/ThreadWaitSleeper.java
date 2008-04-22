@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.impl;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.directwebremoting.extend.Sleeper;
 
 /**
@@ -29,23 +31,22 @@ public class ThreadWaitSleeper implements Sleeper
      */
     public void goToSleep(Runnable onAwakening)
     {
-        synchronized (sleepLock)
+        try
         {
-            try
-            {
-                while (!wakeUpCalled)
-                {
-                    sleepLock.wait();
-                }
-            }
-            catch (InterruptedException ex)
-            {
-                Thread.interrupted();
-            }
-            finally
-            {
-                onAwakening.run();
-            }
+            latch.await();
+        }
+        catch (InterruptedException ex)
+        {
+            // We could pass the exception up the tree, but different sleepers
+            // do very different things, when going to sleep (including
+            // returning immediately and throwing a continuation exception)
+            // So propagating the exception just confuses and already confusing
+            // situation, without achieving anything.
+            Thread.interrupted();
+        }
+        finally
+        {
+            onAwakening.run();
         }
     }
 
@@ -54,35 +55,8 @@ public class ThreadWaitSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        synchronized (wakeUpCalledLock)
-        {
-            if (wakeUpCalled)
-            {
-                return;
-            }
-
-            wakeUpCalled = true;
-        }
-
-        synchronized (sleepLock)
-        {
-            sleepLock.notifyAll();
-        }
+        latch.countDown();
     }
 
-    /**
-     * All operations that involve going to sleep of waking up must hold this
-     * lock before they take action.
-     */
-    private Object wakeUpCalledLock = new Object();
-
-    /**
-     * Has wakeUp been called?
-     */
-    private boolean wakeUpCalled = false;
-
-    /**
-     * The object to lock on
-     */
-    private Object sleepLock = new Object();
+    private final CountDownLatch latch = new CountDownLatch(1);
 }
