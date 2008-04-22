@@ -72,15 +72,15 @@ public class ThreadWaitSleeper implements Sleeper
      * All operations that involve going to sleep of waking up must hold this
      * lock before they take action.
      */
-    private Object wakeUpCalledLock = new Object();
+    private final Object wakeUpCalledLock = new Object();
 
     /**
      * Has wakeUp been called?
      */
-    private boolean wakeUpCalled = false;
+    private transient boolean wakeUpCalled = false;
 
     /**
      * The object to lock on
      */
-    private Object sleepLock = new Object();
+    private final Object sleepLock = new Object();
 }
