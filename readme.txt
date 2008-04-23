@@ -20,7 +20,7 @@ repository:
 - library: Source .zip files referred to from DWR jar files
 - battleships: A multi-player web game that can be built in an hour
 
-DWR is primarily build using ant. The important ant targets are:
+DWR is primarily built using ant. The important ant targets are:
 - clean: Removes target files and .DS_Store files left around by OSX
 - standard: Build a set of output .zip files for distribution
 - war: Create a clean unpacked war file for tomcat/jetty/etc
@@ -37,7 +37,7 @@ The modules are grouped into 5 areas: core, protocol, serverside, ui, noncla
 - core: The heart of DWR
 - protocol: A set of ways of talking to the network
 - serverside: Integrations with various server-side technologies
-- io: Integrations with various user interface technologies
+- ui: Integrations with various user interface technologies
 - noncla: Any code for which we do not have a distribution agreement
 
 Each module may contain a number of source trees. One for test, one for demos,
