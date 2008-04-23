@@ -61,7 +61,7 @@ class DwrGuiceUtil
      * Thread-locally pushes a servlet context. Call {@link #popServletContext}
      * in a finally block when calling this method.
      */
-    static void pushServletContext(ServletContext context)
+    public static void pushServletContext(ServletContext context)
     {
         servletContexts.get().addFirst(context);
     }
@@ -70,7 +70,7 @@ class DwrGuiceUtil
      * Pops a thread-locally stashed servlet context. Call this in
      * a finally block when {@link #pushServletContext} is called.
      */
-    static void popServletContext()
+    public static void popServletContext()
     {
         servletContexts.get().removeFirst();
     }
