@@ -47,11 +47,14 @@ public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
 		mappings.put("/interface/**", handler);
 		mappings.put("/call/**", handler);
 		mappings.put("/test/**", handler);
+                mappings.put("/download/**", handler);
 		if (log.isDebugEnabled())
 		{
-			log.debug("[engine.js] mapped to dwrController");
-			log.debug("[util.js] mapped to dwrController");
-			log.debug("Interface beans and calls mapped to dwrController");
+			log.info("[engine.js] mapped to dwrController");
+			log.info("[util.js] mapped to dwrController");
+			log.info("Interface beans and calls (/interface/*, /call/*) mapped to dwrController");
+			log.info("/test/* has been mapped to dwrController");
+			log.info("/download/* has been mapped to dwrController");
 		}
 		setUrlMap(mappings);
 		super.initApplicationContext();
