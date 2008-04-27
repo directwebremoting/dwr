@@ -18,42 +18,81 @@ package org.directwebremoting.guice;
 import com.google.inject.Injector;
 
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 
 import javax.servlet.ServletContext;
 
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import static org.directwebremoting.guice.DwrGuiceServletContextListener.getPublishedInjector;
 
 
 /**
  * Utilities for making Injector and ServletContext instances available.
  * @author Tim Peierls [tim at peierls dot net]
  */
-class DwrGuiceUtil
+public class DwrGuiceUtil
 {
     /**
      * Returns the Injector instance published in the current servlet context.
      */
-    static Injector getInjector()
+    public static Injector getInjector()
     {
-        return getPublishedInjector(getServletContext());
+        return DwrGuiceServletContextListener.getPublishedInjector(getServletContext());
     }
 
     /**
-     * Gets the servlet context from the current web context, if one exists,
-     * otherwise gets it from the thread-local stash.
+     * Gets the servlet context from the thread-local stash, if any,
+     * otherwise from the current web context, if one exists,
+     * otherwise null.
      */
-    static ServletContext getServletContext()
+    public static ServletContext getServletContext()
     {
+        LinkedList<ServletContext> sclist = servletContexts.get();
+        if (!sclist.isEmpty())
+        {
+            return sclist.getFirst();
+        }
+
         WebContext webcx = WebContextFactory.get();
         if (webcx != null)
         {
             return webcx.getServletContext();
         }
-        else
+
+        return null;
+    }
+
+    /**
+     * Executes the given Runnable with the thread-locally stashed servlet context
+     * set to the given value.
+     */
+    public static void withServletContext(ServletContext servletContext, Runnable runnable)
+    {
+        pushServletContext(servletContext);
+        try
         {
-            return servletContexts.get().getFirst();
+            runnable.run();
+        }
+        finally
+        {
+            popServletContext();
+        }
+    }
+
+    /**
+     * Executes the given Callable with the thread-locally stashed servlet context
+     * set to the given value, and returns the result.
+     */
+    public static <T> T withServletContext(ServletContext servletContext, Callable<T> callable) throws Exception
+    {
+        pushServletContext(servletContext);
+        try
+        {
+            return callable.call();
+        }
+        finally
+        {
+            popServletContext();
         }
     }
 
@@ -61,7 +100,7 @@ class DwrGuiceUtil
      * Thread-locally pushes a servlet context. Call {@link #popServletContext}
      * in a finally block when calling this method.
      */
-    public static void pushServletContext(ServletContext context)
+    private static void pushServletContext(ServletContext context)
     {
         servletContexts.get().addFirst(context);
     }
@@ -70,7 +109,7 @@ class DwrGuiceUtil
      * Pops a thread-locally stashed servlet context. Call this in
      * a finally block when {@link #pushServletContext} is called.
      */
-    public static void popServletContext()
+    private static void popServletContext()
     {
         servletContexts.get().removeFirst();
     }

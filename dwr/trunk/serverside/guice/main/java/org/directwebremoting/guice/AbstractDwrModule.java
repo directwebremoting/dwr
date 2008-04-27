@@ -180,9 +180,10 @@ public abstract class AbstractDwrModule extends AbstractModule
      */
     protected void bindAnnotatedClasses(Class<?>... classes)
     {
-        bind(new TypeLiteral<List<Class<?>>>(){})
+        List classesList = asList(classes);
+        bind(List.class)
             .annotatedWith(new InitParamImpl(CLASSES))
-            .toInstance(asList(classes));
+            .toInstance(classesList);
 
     }
 }

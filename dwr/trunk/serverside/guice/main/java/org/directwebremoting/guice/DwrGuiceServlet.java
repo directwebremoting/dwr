@@ -15,8 +15,13 @@
  */
 package org.directwebremoting.guice;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -29,14 +34,6 @@ import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-
-import static org.directwebremoting.guice.DwrGuiceUtil.getInjector;
-import static org.directwebremoting.guice.DwrGuiceUtil.popServletContext;
-import static org.directwebremoting.guice.DwrGuiceUtil.pushServletContext;
 import static org.directwebremoting.guice.ParamName.ACTIVE_REVERSE_AJAX_ENABLED;
 import static org.directwebremoting.guice.ParamName.ALLOW_GET_FOR_SAFARI;
 import static org.directwebremoting.guice.ParamName.ALLOW_SCRIPT_TAG_REMOTING;
@@ -60,6 +57,7 @@ import static org.directwebremoting.guice.ParamName.SESSION_COOKIE_NAME;
 import static org.directwebremoting.guice.ParamName.WELCOME_FILES;
 import static org.directwebremoting.impl.StartupUtil.INIT_CUSTOM_CONFIGURATOR;
 
+
 /**
  * An extension of the basic
  * {@link org.directwebremoting.servlet.DwrServlet DwrServlet}
@@ -74,41 +72,51 @@ public class DwrGuiceServlet extends DwrServlet
      * {@code servletConfig} to make these values accessible to the
      * standard DWR servlet configuration machinery.
      */
-    @Override public void init(ServletConfig servletConfig) throws ServletException
+    @Override public void init(final ServletConfig servletConfig) throws ServletException
     {
         // Save this for later use by destroy.
         this.servletContext = servletConfig.getServletContext();
 
         // Set the current context thread-locally so our internal classes can
         // look up the Injector and use it in turn to look up further objects.
-        pushServletContext(this.servletContext);
         try
         {
-            // Since ServletConfig is immutable, we use a modifiable
-            // decoration of the real servlet configuration and pass
-            // that to the init method of the superclass.
-            ModifiableServletConfig config = new ModifiableServletConfig(servletConfig);
+            DwrGuiceUtil.withServletContext(this.servletContext, new Callable<Void>()
+            {
+                public Void call() throws ServletException
+                {
+                    // Since ServletConfig is immutable, we use a modifiable
+                    // decoration of the real servlet configuration and pass
+                    // that to the init method of the superclass.
+                    ModifiableServletConfig config = new ModifiableServletConfig(servletConfig);
 
-            // Apply settings configured at bind-time.
-            setInitParameters(config);
+                    // Apply settings configured at bind-time.
+                    setInitParameters(config);
 
-            // Use our internal manager classes to replace and delegate to
-            // any user-specified or default implementations, after adding
-            // additional creators and converters registered at bind-time.
-            configureDelegatedTypes(config);
+                    // Use our internal manager classes to replace and delegate to
+                    // any user-specified or default implementations, after adding
+                    // additional creators and converters registered at bind-time.
+                    configureDelegatedTypes(config);
 
-            // Normal DwrServlet initialization happens here using the
-            // modified ServletConfig instead of the one we were passed.
-            super.init(config);
+                    // Normal DwrServlet initialization happens here using the
+                    // modified ServletConfig instead of the one we were passed.
+                    DwrGuiceServlet.super.init(config);
 
-            // Objects with (non-global) application scope are initialized
-            // eagerly.
-            initApplicationScoped();
+                    // Objects with (non-global) application scope are initialized
+                    // eagerly.
+                    initApplicationScoped();
+
+                    return null;
+                }
+            });
         }
-        finally
+        catch (ServletException e)
         {
-            // Clean up the ThreadLocal we just used.
-            popServletContext();
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new AssertionError("can't happen");
         }
     }
 
@@ -118,24 +126,24 @@ public class DwrGuiceServlet extends DwrServlet
      */
     @Override public void destroy()
     {
-        pushServletContext(this.servletContext);
-        try
+        ServletContext servletContext = this.servletContext;
+        this.servletContext = null;
+
+        DwrGuiceUtil.withServletContext(servletContext, new Runnable()
         {
-            // Closeable objects with (non-global) application scope are closed.
-            List<Exception> exceptions = destroyApplicationScoped();
-
-            super.destroy();
-
-            for (Exception ex : exceptions)
+            public void run()
             {
-                log.warn("During servlet shutdown", ex);
+                // Closeable objects with (non-global) application scope are closed.
+                List<Exception> exceptions = destroyApplicationScoped();
+
+                DwrGuiceServlet.super.destroy();
+
+                for (Exception ex : exceptions)
+                {
+                    log.warn("During servlet shutdown", ex);
+                }
             }
-        }
-        finally
-        {
-            popServletContext();
-            this.servletContext = null;
-        }
+        });
     }
 
     /**
@@ -145,9 +153,8 @@ public class DwrGuiceServlet extends DwrServlet
      */
     private void setInitParameters(ModifiableServletConfig config)
     {
-        Injector injector = getInjector();
         InjectedConfig cfg = new InjectedConfig(config);
-        injector.injectMembers(cfg);
+        DwrGuiceUtil.getInjector().injectMembers(cfg);
         cfg.setParameters();
     }
 
@@ -225,7 +232,7 @@ public class DwrGuiceServlet extends DwrServlet
 
         @Inject(optional=true) Configurator configurator = null;
 
-        @Inject(optional=true) @InitParam(CLASSES) List<Class<?>> classes = null;
+        @Inject(optional=true) @InitParam(CLASSES) List classes = null;
 
         private final ModifiableServletConfig config;
     }
@@ -254,7 +261,7 @@ public class DwrGuiceServlet extends DwrServlet
 
     private static void initApplicationScoped()
     {
-        Injector injector = getInjector();
+        Injector injector = DwrGuiceUtil.getInjector();
         for (Key<?> key : DwrScopes.APPLICATION.getKeysInScope())
         {
             // Eagerly create application-scoped object.
@@ -270,8 +277,11 @@ public class DwrGuiceServlet extends DwrServlet
     }
 
 
-    static String classListToString(List<Class<?>> classList)
+    static String classListToString(List rawClassList)
     {
+        @SuppressWarnings("unchecked")
+        List<Class<?>> classList = (List<Class<?>>) rawClassList;
+
         StringBuilder buf = new StringBuilder();
         int count = 0;
         for (Class<?> cls : classList)
