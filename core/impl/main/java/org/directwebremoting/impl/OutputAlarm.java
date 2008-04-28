@@ -101,7 +101,7 @@ public class OutputAlarm extends BasicAlarm implements Alarm
         {
             // log.debug("Output alarm went off. Additional wait of " + maxWaitAfterWrite);
 
-            if (maxWaitAfterWrite == 0)
+            if (maxWaitAfterWrite <= 0)
             {
                 raiseAlarm();
             }
