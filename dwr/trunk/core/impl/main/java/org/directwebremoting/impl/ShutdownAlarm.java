@@ -83,7 +83,7 @@ public class ShutdownAlarm extends BasicAlarm implements Alarm
         }
 
         /**
-         * We neeed to be able to say if we have been shutdown
+         * We need to be able to say if we have been shutdown
          */
         boolean shutdown = false;
     };
