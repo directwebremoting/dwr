@@ -147,9 +147,8 @@ public abstract class BaseScriptConduit extends ScriptConduit
         }
         catch (IOException ex)
         {
-            // This is likely to be because the user has gone away. Maybe
-            // we should do something clever like remove the script session?
-            log.debug("Error writing to HTTP response:" + ex);
+            // This is likely to be because the user has gone away.
+            log.debug("Error calling response.flushBuffer:" + ex);
             alarm.raiseAlarm();
             return false;
         }
