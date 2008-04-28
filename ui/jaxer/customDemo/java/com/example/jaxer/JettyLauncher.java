@@ -38,7 +38,7 @@ public class JettyLauncher
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
-        server.addHandler(new WebAppContext("jaxer/web","/demoServer"));
+        server.addHandler(new WebAppContext("ui/jaxer/customDemo/web", "/demoServer"));
 
         server.start();
         server.join();
