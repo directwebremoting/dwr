@@ -15,16 +15,18 @@
  */
 package org.directwebremoting.guice.util;
 
+import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.matcher.Matcher;
 import static com.google.inject.matcher.Matchers.subclassesOf;
 import static com.google.inject.name.Names.named;
 
 import static org.directwebremoting.guice.util.DeclaredBy.declaredBy;
 import static org.directwebremoting.guice.util.Numbers.numbered;
-import static org.directwebremoting.guice.util.OutermostCallInterceptor.outermostCall;
+import static org.directwebremoting.guice.util.OutermostCallInterceptor.outermostCallWrapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -38,20 +40,19 @@ import org.aopalliance.intercept.MethodInterceptor;
 
 
 /**
- * An extension of Guice's AbstractModule that provides support for member injection of
- * instances constructed at bind-time, e.g., the module itself and MethodInterceptors
+ * An extension of Guice's {@link com.google.inject.AbstractModule AbstractModule}
+ * that provides support for member injection of instances constructed at bind-time:
+ * the module itself and
+ * {@link org.aopalliance.intercept.MethodInterceptor MethodInterceptor} instances
  * constructed before injection.
- * <p>
- * It would be nice if there were a way to call registerForInjection automatically;
- * for now if you have to remember to call it with no arguments to get the self-injection
- * behavior, unless it is called implicitly, e.g., by bindInterceptor.
  * @author Tim Peierls [tim at peierls dot net]
  */
 public abstract class AbstractModule extends com.google.inject.AbstractModule
 {
     /**
-     * Variant of {@link AbstractModule#bindInterceptor} intercepting non-nested calls
-     * to instances of a given type (or of a subclass of that type).
+     * Variant of {@link AbstractModule#bindInterceptor bindInterceptor} intercepting non-nested calls
+     * to instances of a given type (or of a subclass of that type), allowing
+     * constructor-injection of interceptors described by class.
      */
     public final void bindInterceptor(Class<?> type,
                                       Class<?>... classes)
@@ -59,12 +60,27 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         bindInterceptor(
             subclassesOf(type),
             declaredBy(type),
-            outermostCall(),
+            outermostCallWrapper(),
             classes);
     }
 
     /**
-     * Variant of {@link #bindInterceptor} that allows constructor-injection of
+     * Variant of {@link AbstractModule#bindInterceptor bindInterceptor} intercepting non-nested calls
+     * to instances of a given type (or of a subclass of that type), allowing
+     * constructor-injection of interceptors described by {@link com.google.inject.Key Key}.
+     */
+    public final void bindInterceptor(Class<?> type,
+                                      Key<?>... keys)
+    {
+        bindInterceptor(
+            subclassesOf(type),
+            declaredBy(type),
+            outermostCallWrapper(),
+            keys);
+    }
+
+    /**
+     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
      * interceptors described by class.
      */
     public void bindInterceptor(Matcher<? super Class<?>> classMatcher,
@@ -75,8 +91,8 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor} that allows constructor-injection of
-     * interceptors described by Key.
+     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
+     * interceptors described by {@link com.google.inject.Key Key}.
      */
     public void bindInterceptor(Matcher<? super Class<?>> classMatcher,
                                 Matcher<? super Method> methodMatcher,
@@ -86,7 +102,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor} that allows constructor-injection of
+     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
      * interceptors described by class, each wrapped by a method interceptor wrapper.
      */
     public void bindInterceptor(Matcher<? super Class<?>> classMatcher,
@@ -116,7 +132,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor} that allows constructor-injection of
+     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
      * interceptors described by Key, each wrapped by a method interceptor wrapper.
      */
     public void bindInterceptor(Matcher<? super Class<?>> classMatcher,
@@ -171,7 +187,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
 
     /**
      * Arranges for this module to be field and method injected when
-     * the Injector is created; idempotent.
+     * the Injector is created. It is safe to call this method more than once.
      */
     protected void registerForInjection()
     {
@@ -186,7 +202,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
      */
     protected <T> void registerForInjection(T... objects)
     {
-        ensureSelfInjection();
+        ensureSelfInjection(binder());
 
         if (objects != null)
         {
@@ -200,6 +216,33 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         }
     }
 
+    /**
+     * Automatically registers {@code module} for injection if
+     * it is an {@link AbstractModule AbstractModule} (like {@code this}).
+     */
+    @Override
+    protected void install(Module module)
+    {
+        if (module instanceof AbstractModule)
+        {
+            final AbstractModule abstractModule = (AbstractModule) module;
+            Module wrapper = new Module()
+            {
+                public void configure(Binder binder)
+                {
+                    binder.install(abstractModule);
+                    abstractModule.ensureSelfInjection(binder);
+                }
+            };
+            super.install(wrapper);
+        }
+        else
+        {
+            super.install(module);
+        }
+    }
+
+
     @Inject private void injectRegisteredObjects(Injector injector)
     {
         for (Object injectee : registeredForInjection.keySet())
@@ -208,11 +251,12 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         }
     }
 
-    private void ensureSelfInjection()
+    private void ensureSelfInjection(Binder binder)
     {
         if (ensuredSelfInjection.compareAndSet(false, true))
         {
-            bind(AbstractModule.class)
+            binder
+                .bind(AbstractModule.class)
                 .annotatedWith(numbered(unique.incrementAndGet()))
                 .toInstance(this);
         }

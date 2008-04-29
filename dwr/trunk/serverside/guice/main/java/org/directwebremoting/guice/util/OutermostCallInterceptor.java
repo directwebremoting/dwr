@@ -22,7 +22,8 @@ import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * Provides static decorator method for restricting interception to
- * outermost of several nested matching join points.
+ * the outermost of several nested matching join points. Also provides
+ * corresponding MethodInterceptor wrapper method.
  * @author Tim Peierls [tim at peierls dot net]
  */
 public class OutermostCallInterceptor implements MethodInterceptor
@@ -30,13 +31,13 @@ public class OutermostCallInterceptor implements MethodInterceptor
     /**
      * For passing to bindInterceptor to wrap injected MethodInterceptors.
      */
-    public static MethodInterceptorWrapper outermostCall()
+    public static MethodInterceptorWrapper outermostCallWrapper()
     {
         return new MethodInterceptorWrapper()
         {
             public MethodInterceptor wrap(MethodInterceptor methodInterceptor)
             {
-                return new OutermostCallInterceptor(methodInterceptor);
+                return outermostCall(methodInterceptor);
             }
         };
     }

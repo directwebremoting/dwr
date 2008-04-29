@@ -33,7 +33,7 @@ import com.google.inject.Injector;
 /**
  * Not for subclassing directly; this is a common base for two different approaches
  * to {@code Injector} creation and configuration, {@link DwrGuiceServletContextListener}
- * and {@link CustomInjectorDwrGuiceServletContextListener}.
+ * and {@link CustomInjectorServletContextListener}.
  * @author Tim Peierls [tim at peierls dot net]
  */
 public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwrModule implements ServletContextListener

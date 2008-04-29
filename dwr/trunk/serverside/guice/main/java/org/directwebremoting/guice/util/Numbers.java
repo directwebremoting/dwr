@@ -16,7 +16,7 @@
 package org.directwebremoting.guice.util;
 
 /**
- * Produces a Numbered instances for a given value.
+ * Produces a Numbered instance for a given value.
  * @author Tim Peierls [tim at peierls dot net]
  */
 public final class Numbers
