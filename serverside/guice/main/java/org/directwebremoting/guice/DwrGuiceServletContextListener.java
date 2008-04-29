@@ -26,7 +26,7 @@ import org.directwebremoting.guice.util.AbstractModule;
 
 /**
  * Register a concrete subclass of this as a servlet context listener to
- * configure an {@link Injector} with this as the only {@link Module}
+ * configure an {@link Injector} with this as the only {@link com.google.inject.Module}
  * and stash it in the servlet context.
  * @author Tim Peierls [tim at peierls dot net]
  */
