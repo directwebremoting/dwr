@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.guice;
 
+import com.google.inject.Module;
 import com.google.inject.Scope;
 import com.google.inject.binder.ConstantBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
@@ -27,6 +28,7 @@ import static java.util.Arrays.asList;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.guice.util.AbstractModule;
+import org.directwebremoting.util.LocalUtil;
 import static org.directwebremoting.guice.ParamName.CLASSES;
 
 
@@ -46,25 +48,43 @@ public abstract class AbstractDwrModule extends AbstractModule
     protected abstract void configure();
 
     /**
-     * Configure DWR scopes and bindings for servlet-related types;
-     * incompatible with Guice's ServletModule because their
-     * bindings for request, response, and session conflict.
+     * Configure DWR scopes and bindings for servlet-related types.
+     * If {@link #bindPotentiallyConflictingTypes} has been
+     * called previously for this module, this method is equivalent
+     * to calling {@link #bindDwrScopes(boolean) bindDwrScopes}
+     * with the value passed to {@link #bindPotentiallyConflictingTypes}.
+     * Otherwise this module will include bindings that might conflict
+     * with those provided by Guice's ServletModule <strong>only</strong>
+     * if ServletModule is not found in the current class loader.
+     * <p>Idempotent within current thread.</p>
      */
     protected void bindDwrScopes()
     {
-        install(new DwrGuiceServletModule(true));
+        if (this.bindPotentiallyConflictingTypes == null)
+        {
+            bindDwrScopes(!guiceServletModuleExists());
+        }
+        else
+        {
+            bindDwrScopes(this.bindPotentiallyConflictingTypes);
+        }
     }
 
     /**
      * Configure DWR scopes and bindings for servlet-related types,
-     * specifying whether to include bindings that conflict with those
-     * provided by Guice's ServletModule.
+     * specifying explicitly whether to include bindings that might
+     * conflict with those provided by Guice's ServletModule.
+     * <p>Idempotent within current thread.</p>
      * @param bindPotentiallyConflictingTypes whether to bind request, response,
      *     and session types (risking conflict with Guice)
      */
     protected void bindDwrScopes(boolean bindPotentiallyConflictingTypes)
     {
-        install(new DwrGuiceServletModule(bindPotentiallyConflictingTypes));
+        if (!boundDwrScopes.get())
+        {
+            boundDwrScopes.set(true);
+            install(new DwrGuiceServletModule(bindPotentiallyConflictingTypes));
+        }
     }
 
     /**
@@ -187,5 +207,41 @@ public abstract class AbstractDwrModule extends AbstractModule
             .toInstance(asList(classes));
     }
 
+    /**
+     * Call this method before configuration to explicitly determine the behavior
+     * of {@link #bindDwrScopes()}. If not called, the default behavior is to bind
+     * the potentially conflicting types only if the Guice ServletModule is not found
+     * in the classloader.
+     */
+    protected final void bindPotentiallyConflictingTypes(boolean bindPotentiallyConflictingTypes)
+    {
+        this.bindPotentiallyConflictingTypes = bindPotentiallyConflictingTypes;
+    }
+
+    volatile Boolean bindPotentiallyConflictingTypes = null;
+
+
     private static final AtomicLong unique = new AtomicLong();
+
+    private static final ThreadLocal<Boolean> boundDwrScopes = new ThreadLocal<Boolean>()
+    {
+        protected Boolean initialValue()
+        {
+            return false;
+        }
+    };
+
+
+    private static boolean guiceServletModuleExists()
+    {
+        try
+        {
+            LocalUtil.classForName("com.google.inject.servlet.ServletModule");
+            return true;
+        }
+        catch (ClassNotFoundException e)
+        {
+            return false;
+        }
+    }
 }
