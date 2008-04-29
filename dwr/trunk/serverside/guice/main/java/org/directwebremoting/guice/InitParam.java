@@ -33,4 +33,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @interface InitParam
 {
     ParamName value();
+    long id() default 0L;
 }

@@ -33,6 +33,14 @@ import org.directwebremoting.WebContextFactory;
 public class DwrGuiceUtil
 {
     /**
+     * The key under which a provided Injector is stashed in a ServletContext.
+     * The name is prefixed by the package to avoid conflicting with other
+     * listeners using the same technique.
+     */
+    public static final String INJECTOR = "org.directwebremoting.guice.Injector";
+
+
+    /**
      * Returns the Injector instance published in the current servlet context.
      */
     public static Injector getInjector()

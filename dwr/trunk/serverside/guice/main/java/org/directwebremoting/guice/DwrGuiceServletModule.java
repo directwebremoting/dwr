@@ -30,7 +30,6 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 
@@ -52,7 +51,7 @@ import static org.directwebremoting.guice.DwrScopes.SESSION;
  * </p>
  * @author Tim Peierls [tim at peierls dot net]
  */
-class DwrGuiceServletModule extends AbstractModule
+class DwrGuiceServletModule extends AbstractDwrModule
 {
     /**
      * Creates a module to configure DWR scopes and bindings;

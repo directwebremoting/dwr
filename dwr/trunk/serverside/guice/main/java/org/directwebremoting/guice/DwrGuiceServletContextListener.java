@@ -17,10 +17,11 @@ package org.directwebremoting.guice;
 
 import java.util.prefs.Preferences;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+
+import org.directwebremoting.guice.util.AbstractModule;
 
 
 /**
@@ -84,6 +85,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrGuiceSer
 
         return stage;
     }
+
 
     /** The name of the node to examine for a STAGE property. */
     private static final Class<?> PACKAGE = DwrGuiceServletContextListener.class;

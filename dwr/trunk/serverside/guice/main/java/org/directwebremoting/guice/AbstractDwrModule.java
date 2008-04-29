@@ -15,23 +15,25 @@
  */
 package org.directwebremoting.guice;
 
-import java.util.List;
-
-import org.directwebremoting.AjaxFilter;
-import org.directwebremoting.extend.Converter;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
+import com.google.inject.Scope;
 import com.google.inject.binder.ConstantBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import static java.util.Arrays.asList;
 
+import org.directwebremoting.AjaxFilter;
+import org.directwebremoting.extend.Converter;
+import org.directwebremoting.guice.util.AbstractModule;
 import static org.directwebremoting.guice.ParamName.CLASSES;
 
+
 /**
- * An extension of {@link AbstractModule} that adds DWR configuration methods,
- * in conjunction with {@link DwrGuiceServlet}.
+ * An extension of the enhanced {@link AbstractModule} from the util
+ * subpackage that adds DWR configuration methods when used in conjunction
+ * with {@link DwrGuiceServlet}.
  * @author Tim Peierls [tim at peierls dot net]
  */
 public abstract class AbstractDwrModule extends AbstractModule
@@ -148,7 +150,7 @@ public abstract class AbstractDwrModule extends AbstractModule
     protected LinkedBindingBuilder<AjaxFilter> bindFilter(String scriptName)
     {
         return bind(AjaxFilter.class)
-            .annotatedWith(new FilteringImpl(scriptName));
+            .annotatedWith(new FilteringImpl(scriptName, unique.incrementAndGet()));
     }
 
     /**
@@ -157,7 +159,7 @@ public abstract class AbstractDwrModule extends AbstractModule
     protected LinkedBindingBuilder<AjaxFilter> bindGlobalFilter()
     {
         return bind(AjaxFilter.class)
-            .annotatedWith(new FilteringImpl());
+            .annotatedWith(new FilteringImpl("", unique.incrementAndGet()));
     }
 
     /**
@@ -180,10 +182,10 @@ public abstract class AbstractDwrModule extends AbstractModule
      */
     protected void bindAnnotatedClasses(Class<?>... classes)
     {
-        List classesList = asList(classes);
         bind(List.class)
-            .annotatedWith(new InitParamImpl(CLASSES))
-            .toInstance(classesList);
-
+            .annotatedWith(new InitParamImpl(CLASSES, unique.incrementAndGet()))
+            .toInstance(asList(classes));
     }
+
+    private static final AtomicLong unique = new AtomicLong();
 }
