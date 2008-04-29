@@ -38,7 +38,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrGuiceSer
     @Override
     protected final Injector createInjector()
     {
-        return Guice.createInjector(getStage(), this);
+        return Guice.createInjector(getStage(), new DwrScopeBinder(this));
     }
 
     /**
@@ -84,6 +84,28 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrGuiceSer
         }
 
         return stage;
+    }
+
+
+    /**
+     * Copies the Boolean that determines the behavior of {@link #bindDwrScope()}
+     * from another module and calls that method during configuration.
+     */
+    private static class DwrScopeBinder extends AbstractDwrModule
+    {
+        DwrScopeBinder(AbstractDwrModule module)
+        {
+            this.bindPotentiallyConflictingTypes = module.bindPotentiallyConflictingTypes;
+            this.module = module;
+        }
+
+        protected void configure()
+        {
+            bindDwrScopes();
+            install(module);
+        }
+
+        final AbstractDwrModule module;
     }
 
 
