@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
@@ -27,35 +26,10 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AjaxFilterManager;
-import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
-import static org.directwebremoting.guice.ParamName.ACTIVE_REVERSE_AJAX_ENABLED;
-import static org.directwebremoting.guice.ParamName.ALLOW_GET_FOR_SAFARI;
-import static org.directwebremoting.guice.ParamName.ALLOW_SCRIPT_TAG_REMOTING;
-import static org.directwebremoting.guice.ParamName.CLASSES;
-import static org.directwebremoting.guice.ParamName.CROSS_DOMAIN_SESSION_SECURITY;
-import static org.directwebremoting.guice.ParamName.DEBUG;
-import static org.directwebremoting.guice.ParamName.DISCONNECTED_TIME;
-import static org.directwebremoting.guice.ParamName.IGNORE_LAST_MODIFIED;
-import static org.directwebremoting.guice.ParamName.MAX_CALL_COUNT;
-import static org.directwebremoting.guice.ParamName.MAX_POLL_HITS_PER_SECOND;
-import static org.directwebremoting.guice.ParamName.MAX_WAITING_THREADS;
-import static org.directwebremoting.guice.ParamName.MAX_WAIT_AFTER_WRITE;
-import static org.directwebremoting.guice.ParamName.NORMALIZE_INCLUDES_QUERY_STRING;
-import static org.directwebremoting.guice.ParamName.OVERRIDE_PATH;
-import static org.directwebremoting.guice.ParamName.POLL_AND_COMET_ENABLED;
-import static org.directwebremoting.guice.ParamName.POST_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.PRE_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.SCRIPT_COMPRESSED;
-import static org.directwebremoting.guice.ParamName.SCRIPT_SESSION_TIMEOUT;
-import static org.directwebremoting.guice.ParamName.SESSION_COOKIE_NAME;
-import static org.directwebremoting.guice.ParamName.WELCOME_FILES;
-import static org.directwebremoting.impl.StartupUtil.INIT_CUSTOM_CONFIGURATOR;
 
 
 /**
@@ -72,7 +46,8 @@ public class DwrGuiceServlet extends DwrServlet
      * {@code servletConfig} to make these values accessible to the
      * standard DWR servlet configuration machinery.
      */
-    @Override public void init(final ServletConfig servletConfig) throws ServletException
+    @Override
+    public void init(final ServletConfig servletConfig) throws ServletException
     {
         // Save this for later use by destroy.
         this.servletContext = servletConfig.getServletContext();
@@ -116,7 +91,8 @@ public class DwrGuiceServlet extends DwrServlet
         }
         catch (Exception e)
         {
-            throw new AssertionError("can't happen");
+            // Can't happen:
+            throw new AssertionError("unexpected exception: " + e);
         }
     }
 
@@ -124,7 +100,8 @@ public class DwrGuiceServlet extends DwrServlet
      * Closes any {@code Closeable} application-scoped objects.
      * IO exceptions are collected but ignored.
      */
-    @Override public void destroy()
+    @Override
+    public void destroy()
     {
         ServletContext servletContext = this.servletContext;
         this.servletContext = null;
@@ -157,86 +134,6 @@ public class DwrGuiceServlet extends DwrServlet
         DwrGuiceUtil.getInjector().injectMembers(cfg);
         cfg.setParameters();
     }
-
-    private static class InjectedConfig
-    {
-        InjectedConfig(ModifiableServletConfig config)
-        {
-            this.config = config;
-        }
-
-        void setParameter(ParamName paramName, Object value)
-        {
-            if (value != null)
-            {
-                config.setInitParameter(paramName.getName(), value.toString());
-            }
-        }
-
-        void setParameters()
-        {
-            setParameter(ALLOW_GET_FOR_SAFARI,            allowGetForSafariButMakeForgeryEasier);
-            setParameter(CROSS_DOMAIN_SESSION_SECURITY,   crossDomainSessionSecurity);
-            setParameter(ALLOW_SCRIPT_TAG_REMOTING,       allowScriptTagRemoting);
-            setParameter(DEBUG,                           debug);
-            setParameter(SCRIPT_SESSION_TIMEOUT,          scriptSessionTimeout);
-            setParameter(MAX_CALL_COUNT,                  maxCallCount);
-            setParameter(ACTIVE_REVERSE_AJAX_ENABLED,     activeReverseAjaxEnabled);
-            setParameter(MAX_WAIT_AFTER_WRITE,            maxWaitAfterWrite);
-            setParameter(DISCONNECTED_TIME,               disconnectedTime);
-            setParameter(POLL_AND_COMET_ENABLED,          pollAndCometEnabled);
-            setParameter(MAX_WAITING_THREADS,             maxWaitingThreads);
-            setParameter(MAX_POLL_HITS_PER_SECOND,        maxPollHitsPerSecond);
-            setParameter(PRE_STREAM_WAIT_TIME,            preStreamWaitTime);
-            setParameter(POST_STREAM_WAIT_TIME,           postStreamWaitTime);
-            setParameter(IGNORE_LAST_MODIFIED,            ignoreLastModified);
-            setParameter(SCRIPT_COMPRESSED,               scriptCompressed);
-            setParameter(SESSION_COOKIE_NAME,             sessionCookieName);
-            setParameter(WELCOME_FILES,                   welcomeFiles);
-            setParameter(NORMALIZE_INCLUDES_QUERY_STRING, normalizeIncludesQueryString);
-            setParameter(OVERRIDE_PATH,                   overridePath);
-
-            if (configurator != null)
-            {
-                // InternalConfigurator knows how to look up the configurator
-                // instance again and delegate to it.
-                config.setInitParameter(INIT_CUSTOM_CONFIGURATOR, InternalConfigurator.class.getName());
-            }
-
-            if (classes != null)
-            {
-                config.setInitParameter(CLASSES.getName(), classListToString(classes));
-            }
-        }
-
-        @Inject(optional=true) @InitParam(ALLOW_GET_FOR_SAFARI)            Boolean allowGetForSafariButMakeForgeryEasier = null;
-        @Inject(optional=true) @InitParam(CROSS_DOMAIN_SESSION_SECURITY)   Boolean crossDomainSessionSecurity = null;
-        @Inject(optional=true) @InitParam(ALLOW_SCRIPT_TAG_REMOTING)       Boolean allowScriptTagRemoting = null;
-        @Inject(optional=true) @InitParam(DEBUG)                           Boolean debug = null;
-        @Inject(optional=true) @InitParam(SCRIPT_SESSION_TIMEOUT)          Long    scriptSessionTimeout = null;
-        @Inject(optional=true) @InitParam(MAX_CALL_COUNT)                  Integer maxCallCount = null;
-        @Inject(optional=true) @InitParam(ACTIVE_REVERSE_AJAX_ENABLED)     Boolean activeReverseAjaxEnabled = null;
-        @Inject(optional=true) @InitParam(MAX_WAIT_AFTER_WRITE)            Long    maxWaitAfterWrite = null;
-        @Inject(optional=true) @InitParam(DISCONNECTED_TIME)               Long    disconnectedTime = null;
-        @Inject(optional=true) @InitParam(POLL_AND_COMET_ENABLED)          Boolean pollAndCometEnabled = null;
-        @Inject(optional=true) @InitParam(MAX_WAITING_THREADS)             Integer maxWaitingThreads = null;
-        @Inject(optional=true) @InitParam(MAX_POLL_HITS_PER_SECOND)        Integer maxPollHitsPerSecond = null;
-        @Inject(optional=true) @InitParam(PRE_STREAM_WAIT_TIME)            Long    preStreamWaitTime = null;
-        @Inject(optional=true) @InitParam(POST_STREAM_WAIT_TIME)           Long    postStreamWaitTime = null;
-        @Inject(optional=true) @InitParam(IGNORE_LAST_MODIFIED)            Boolean ignoreLastModified = null;
-        @Inject(optional=true) @InitParam(SCRIPT_COMPRESSED)               Boolean scriptCompressed = null;
-        @Inject(optional=true) @InitParam(SESSION_COOKIE_NAME)             String  sessionCookieName = null;
-        @Inject(optional=true) @InitParam(WELCOME_FILES)                   String  welcomeFiles = null;
-        @Inject(optional=true) @InitParam(NORMALIZE_INCLUDES_QUERY_STRING) Boolean normalizeIncludesQueryString = null;
-        @Inject(optional=true) @InitParam(OVERRIDE_PATH)                   String  overridePath = null;
-
-        @Inject(optional=true) Configurator configurator = null;
-
-        @Inject(optional=true) @InitParam(CLASSES) List classes = null;
-
-        private final ModifiableServletConfig config;
-    }
-
 
     private void configureDelegatedTypes(ModifiableServletConfig config)
     {
@@ -277,25 +174,6 @@ public class DwrGuiceServlet extends DwrServlet
     }
 
 
-    static String classListToString(List rawClassList)
-    {
-        @SuppressWarnings("unchecked")
-        List<Class<?>> classList = (List<Class<?>>) rawClassList;
-
-        StringBuilder buf = new StringBuilder();
-        int count = 0;
-        for (Class<?> cls : classList)
-        {
-            if (count++ > 0)
-            {
-                buf.append(", ");
-            }
-            buf.append(cls.getName());
-        }
-        return buf.toString();
-    }
-
-
     /**
      * Used to stash context for later use by destroy().
      */
@@ -320,5 +198,7 @@ public class DwrGuiceServlet extends DwrServlet
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(DwrGuiceServlet.class);
+    private static final org.apache.commons.logging.Log log =
+                         org.apache.commons.logging.LogFactory.getLog
+                         (DwrGuiceServlet.class);
 }

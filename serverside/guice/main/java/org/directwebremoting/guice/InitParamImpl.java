@@ -22,16 +22,26 @@ class InitParamImpl implements InitParam
 {
     public InitParamImpl(ParamName value)
     {
-        if (value == null)
-        {
-            throw new NullPointerException("@InitParam");
-        }
+        assert value != null;
         this.value = value;
+        this.id = 0L;
+    }
+
+    public InitParamImpl(ParamName value, long id)
+    {
+        assert value != null;
+        this.value = value;
+        this.id = id;
     }
 
     public ParamName value()
     {
         return this.value;
+    }
+
+    public long id()
+    {
+        return this.id;
     }
 
     public Class<? extends Annotation> annotationType()
@@ -48,21 +58,23 @@ class InitParamImpl implements InitParam
         }
 
         InitParam that = (InitParam) t;
-        return this.value.equals(that.value());
+        return this.value.equals(that.value()) && this.id() == that.id();
     }
 
     @Override
     public int hashCode()
     {
         // Annotation spec sez:
-        return 127 * "value".hashCode() ^ value.hashCode();
+        return (127 * "value".hashCode() ^ value.hashCode())
+             + (127 * "id".hashCode() ^ (int)(id ^ (id >>> 32)));
     }
 
     @Override
     public String toString()
     {
-        return "@" + InitParam.class.getName() + "(value=" + value + ")";
+        return String.format("@%s(value=%s, id=%d)", InitParam.class.getName(), value, id);
     }
 
     private final ParamName value;
+    private final long id;
 }

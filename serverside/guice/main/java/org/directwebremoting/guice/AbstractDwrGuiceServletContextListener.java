@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.guice;
 
+import static org.directwebremoting.guice.DwrGuiceUtil.INJECTOR;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,10 +59,12 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
         List<Exception> exceptions = new ArrayList<Exception>();
+
         DwrScopes.GLOBAL.closeAll(new ExceptionLoggingCloseableHandler(exceptions));
+
         for (Exception e : exceptions)
         {
-            log.warn("During context destroy, closing globally-scoped Closeables: " + e, e);
+            log.warn("During context destroy, closing GLOBAL-scoped Closeables: " + e, e);
         }
     }
 
@@ -83,7 +87,7 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
      * Subclasses can use this during stage determination and binding to
      * read values from the current servlet context.
      */
-    protected ServletContext getServletContext()
+    protected final ServletContext getServletContext()
     {
         return DwrGuiceUtil.getServletContext();
     }
@@ -99,8 +103,10 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
         if (injector == null)
         {
             throw new IllegalStateException("Cannot find Injector in servlet context."
-                + " You need to register a concrete extension of "
+                + " You need to register a concrete extension of either "
                 + DwrGuiceServletContextListener.class.getName()
+                + " or "
+                + CustomInjectorServletContextListener.class.getName()
                 + " as a servlet context listener in your web.xml.");
         }
 
@@ -111,15 +117,6 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
     {
         servletContext.setAttribute(INJECTOR, injector);
     }
-
-
-    /**
-     * The key under which a provided Injector is stashed in a ServletContext.
-     * The name is prefixed by the package to avoid conflicting with other
-     * listeners using the same technique.
-     */
-    private static final String INJECTOR =
-        DwrGuiceServletContextListener.class.getPackage().getName() + ".Injector";
 
 
     /**

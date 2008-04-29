@@ -33,4 +33,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @interface Filtering
 {
     String value();
+    long id();
 }

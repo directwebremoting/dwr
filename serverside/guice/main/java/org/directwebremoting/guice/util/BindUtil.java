@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
+package org.directwebremoting.guice.util;
 
 import com.google.inject.Binder;
 import com.google.inject.Inject;
@@ -27,10 +27,42 @@ import java.lang.reflect.InvocationTargetException;
 import static java.lang.reflect.Modifier.isStatic;
 
 /**
+ * Binding utilities for creating ad hoc providers. These come in two flavors,
+ * constructor and factory method. In both cases, you can specify additional
+ * methods to inject after creation by chaining calls to
+ * {@link BindingProvider#injecting injecting(methodName, paramKeys)}.
+ * Each method has two variants, one with a {@code Binder} parameter and one
+ * without. The former reports construction errors via the binder (so more than
+ * one error can be reported), the latter throws a runtime exception immediately,
+ * preventing further error reporting.
+ *
+ * <p> Some examples:
+ * <pre>
+ *   bind(SomeInterface.class)
+ *       .toProvider(
+ *           .fromConstructor(LegacyImpl.class,
+ *               Key.get(String.class, MyAnnotation.class))
+ *           .injecting("configure", Key.get(Configuration.class)));
+ * </pre>
+ * This binds {@code SomeInterface} to a provider that uses the
+ * {@code LegacyImpl} constructor with a single String parameter.
+ * That parameter is injected as if it had been marked with {@code @MyAnnotation}.
+ * It also calls the  {@code LegacyImpl.configure} method with an injected
+ * instance of {@code Configuration}.
+ * <pre>
+ *   bind(SomeInterface.class)
+ *       .toProvider(
+ *           .fromFactoryMethod(SomeInterface.class,
+ *               LegacyFactory.class, "newSomeInterface",
+ *               Key.get(String.class, MyAnnotation.class)));
+ * </pre>
+ * This binds {@code SomeInterface} to a provider that calls a factory method
+ * {@code newSomeInterface} of {@code LegacyFactory} with a single string parameter,
+ * which is injected as if it were marked with {@code @MyAnnotation}. If the
+ * method is not static, an instance of {@code LegacyFactory} is created by injection
+ * and used to call the method.
  * @author Tim Peierls [tim at peierls dot net]
- * @deprecated Use {@link org.directwebremoting.guice.util.BindUtil}
  */
-@Deprecated
 public class BindUtil
 {
     /**
