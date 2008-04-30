@@ -113,29 +113,7 @@
  *   run-time value, create a concrete extension of
  *   {@link org.directwebremoting.guice.AbstractContextScope}.
  * </p>
- * <p>
- *   This example illustrates:
- *   <ul>
- *     <li>two ways to define remoted objects,
- *       <ol>
- *         <li>calling {@link org.directwebremoting.guice.AbstractDwrModule#bindRemotedAs(String,Class) bindRemotedAs} and</li>
- *         <li>annotating with {@link org.directwebremoting.annotations.RemoteProxy};</li>
- *       </ol>
- *     </li>
- *     <li>two ways to define conversions,
- *       <ol>
- *         <li>using {@link org.directwebremoting.guice.AbstractDwrModule#bindConversion(Class) bindConversion} and</li>
- *         <li>using a custom {@link org.directwebremoting.extend.Configurator};</li>
- *       </ol>
- *     </li>
- *     <li>how to register annotated classes at bind-time;</li>
- *     <li>how to bind a script name to an {@link org.directwebremoting.AjaxFilter}; and</li>
- *     <li>how to set a DWR parameter
- *         ({@link org.directwebremoting.guice.ParamName#DEBUG DEBUG}, in this case) at bind-time.</li>
- *   </ul>
- *   It does not use an {@code <init-param>} directive, and it doesn't have
- *   a {@code dwr.xml}.
- * </p>
+ * <p>For example:</p>
  * <pre>
  *    public final class MyServletContextListener extends DwrGuiceServletContextListener
  *    {
@@ -144,6 +122,10 @@
  *            bindRemotedAs("Hello", HelloService.class)
  *                .to(HelloServiceImpl.class)
  *                .in(ApplicationScoped.class);
+ *
+ *            bindInterceptor(
+ *                HelloService.class,
+ *                AuthenticationInterceptor.class);
  *
  *            bindFilter("Hello")
  *                .to(TraceFilter.class);
@@ -158,7 +140,9 @@
  *            );
  *
  *            // When converting HelloRecord, use existing converter for HelloRecordImpl.
- *            bindConversion(HelloRecord.class, HelloRecordImpl.class);
+ *            bindConversion(
+ *                HelloRecord.class,
+ *                HelloRecordImpl.class);
  *
  *            bindConversion(DateTime.class)
  *                .toInstance(DateTimeConverter.get("yyyy-MM-dd hh:mm a"));
@@ -178,10 +162,38 @@
  *    }
  * </pre>
  * <p>
+ *   This example illustrates:
+ *   <ul>
+ *     <li>two ways to define remoted objects,
+ *       <ol>
+ *         <li>calling {@link org.directwebremoting.guice.AbstractDwrModule#bindRemotedAs(String,Class) bindRemotedAs} and</li>
+ *         <li>annotating with {@link org.directwebremoting.annotations.RemoteProxy};</li>
+ *       </ol>
+ *     </li>
+ *     <li>two ways to define conversions,
+ *       <ol>
+ *         <li>using {@link org.directwebremoting.guice.AbstractDwrModule#bindConversion(Class) bindConversion} and</li>
+ *         <li>using a custom {@link org.directwebremoting.extend.Configurator};</li>
+ *       </ol>
+ *     </li>
+ *     <li>two ways to intercept remote method calls,
+ *       <ol>
+ *         <li>binding a MethodInterceptor with
+ *           {@link org.directwebremoting.guice.util.AbstractModule#bindInterceptor(Class,Class[]) bindInterceptor(Class<?>, Class<?>...)}
+ *           and</li>
+ *         <li>binding a script name to an {@link org.directwebremoting.AjaxFilter},</li>
+ *       </ol>
+ *     <li>how to register annotated classes at bind-time; and</li>
+ *     <li>how to set a DWR parameter
+ *         ({@link org.directwebremoting.guice.ParamName#DEBUG DEBUG}, in this case) at bind-time.</li>
+ *   </ul>
+ *   It does not use an {@code <init-param>} directive, and it doesn't have
+ *   a {@code dwr.xml}.
+ * </p>
+ * <p>
  *   Note that because application scope is larger than script session scope,
- *   {@code HelloServiceImpl} has an injected constructor (not shown here)
- *   that takes a {@code Provider<MessageService>} rather than a plain
- *   {@code MessageService}.
+ *   {@code HelloServiceImpl} would have an injected constructor (not shown here)
+ *   taking a {@code Provider<MessageService>} rather than a plain {@code MessageService}.
  * </p>
  * <p>
  *   There are several classes in this package with names that start with {@code Internal}.
