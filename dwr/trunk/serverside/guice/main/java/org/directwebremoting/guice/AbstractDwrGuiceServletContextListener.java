@@ -95,6 +95,7 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
 
     /**
      * Returns the Injector instance installed in the given ServletContext.
+     * @param servletContext the servlet context from which to get the injector
      */
     protected static Injector getPublishedInjector(ServletContext servletContext)
     {
@@ -113,6 +114,11 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
         return injector;
     }
 
+    /**
+     * Stores the Injector instance in the given ServletContext.
+     * @param servletContext the servlet context in which to store the injector
+     * @param injector the injector to store
+     */
     protected static void publishInjector(ServletContext servletContext, Injector injector)
     {
         servletContext.setAttribute(INJECTOR, injector);
