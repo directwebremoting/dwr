@@ -195,7 +195,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Arranges for this module and each of the given objects (if any)
+     * Arranges for this module and each of the given objects
      * to be field and method injected when the Injector is created.
      * It is safe to call this method more than once, and it is safe
      * to call it more than once on the same object(s).
@@ -217,8 +217,10 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Automatically registers {@code module} for injection if
-     * it is an {@link AbstractModule AbstractModule} (like {@code this}).
+     * Overrides {@link com.google.inject.AbstractModule#install AbstractModule.install}
+     * to automatically register {@code module} for injection if it is an
+     * {@link AbstractModule AbstractModule}, in addition to the standard behavior of
+     * arranging for {@code module} to be configured during injector creation.
      */
     @Override
     protected void install(Module module)
