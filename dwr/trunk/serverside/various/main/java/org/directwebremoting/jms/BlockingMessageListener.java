@@ -55,7 +55,8 @@ public class BlockingMessageListener implements MessageListener
         }
         catch (InterruptedException ex)
         {
-            Thread.interrupted();
+            // restore interrupt flag
+            Thread.currentThread().interrupt();
         }
 
         return message;
