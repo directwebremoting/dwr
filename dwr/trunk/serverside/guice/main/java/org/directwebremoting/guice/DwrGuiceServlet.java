@@ -31,6 +31,8 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
 
+import static org.directwebremoting.guice.util.ContextCloseHandlers.newExceptionLoggingCloseableHandler;
+
 
 /**
  * An extension of the basic
@@ -169,7 +171,7 @@ public class DwrGuiceServlet extends DwrServlet
     private static List<Exception> destroyApplicationScoped()
     {
         final List<Exception> exceptions = new ArrayList<Exception>();
-        DwrScopes.APPLICATION.closeAll(new ExceptionLoggingCloseableHandler(exceptions));
+        DwrScopes.APPLICATION.closeAll(newExceptionLoggingCloseableHandler(exceptions));
         return exceptions;
     }
 

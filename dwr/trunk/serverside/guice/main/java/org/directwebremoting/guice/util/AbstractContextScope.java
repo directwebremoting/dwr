@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
+package org.directwebremoting.guice.util;
+
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.util.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,17 +25,11 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.google.inject.Key;
-import com.google.inject.Provider;
-import com.google.inject.util.ToStringBuilder;
-
 import static java.util.Collections.synchronizedList;
 
-import static org.directwebremoting.guice.AbstractContextScope.State.CLOSED;
-import static org.directwebremoting.guice.AbstractContextScope.State.OPEN;
+import static org.directwebremoting.guice.util.AbstractContextScope.State.CLOSED;
+import static org.directwebremoting.guice.util.AbstractContextScope.State.OPEN;
+
 
 /**
  * Partial implementation of {@link ContextScope}. Concrete implementations
@@ -74,22 +72,12 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
      */
     public <T> Provider<T> scope(final Key<T> key, final Provider<T> creator)
     {
-        if (log.isDebugEnabled())
-        {
-            log.debug(String.format("scope %s: adding key %s with creator %s", scopeName, key, creator));
-        }
-
         scopedKeys.add(key);
         final String name = key.toString();
         return new Provider<T>()
         {
             public T get()
             {
-                if (log.isDebugEnabled())
-                {
-                    log.debug(String.format("scope %s: getting key %s with creator %s", scopeName, key, creator));
-                }
-
                 C context = getContext(key);
                 R registry = registryFor(context);
                 InstanceProvider<T> future = AbstractContextScope.this.get(registry, key, name);
@@ -269,9 +257,4 @@ public abstract class AbstractContextScope<C, R> implements ContextScope<C>, Con
     private final List<Key<?>> scopedKeys = synchronizedList(new ArrayList<Key<?>>());
 
     private final ConcurrentMap<C, State> contexts = new ConcurrentHashMap<C, State>();
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(AbstractContextScope.class);
 }

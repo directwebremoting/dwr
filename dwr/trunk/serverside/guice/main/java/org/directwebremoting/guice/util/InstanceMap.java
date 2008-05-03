@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
+package org.directwebremoting.guice.util;
+
+import java.util.concurrent.ConcurrentMap;
+
+import com.google.inject.Key;
 
 /**
- * A partially implemented handler for objects contained in contexts that
- * are closing. Concrete extensions of this class only have to define
- * {@code close} and have a constructor that calls {@code super(T.class)}.
+ * A specialization of ConcurrentMap with keys of type {@code Key<T>} and
+ * values of type {@code InstanceProvider<T>}.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public abstract class AbstractContextCloseHandler<T> implements ContextCloseHandler<T>
+public interface InstanceMap<T> extends ConcurrentMap<Key<T>, InstanceProvider<T>>
 {
-    protected AbstractContextCloseHandler(Class<T> type)
-    {
-        this.type = type;
-    }
-
-    public abstract void close(T object) throws Exception;
-
-    public Class<T> type()
-    {
-        return type;
-    }
-
-    private final Class<T> type;
 }

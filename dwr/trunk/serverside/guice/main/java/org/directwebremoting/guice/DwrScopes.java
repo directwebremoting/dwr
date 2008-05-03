@@ -21,9 +21,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 
+import org.directwebremoting.guice.util.AbstractSimpleContextScope;
+import org.directwebremoting.guice.util.ContextScope;
 import static org.directwebremoting.guice.DwrGuiceUtil.getServletContext;
 
 /**

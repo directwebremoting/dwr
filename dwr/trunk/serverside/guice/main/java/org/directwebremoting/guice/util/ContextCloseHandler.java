@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
-
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.google.inject.Key;
+package org.directwebremoting.guice.util;
 
 /**
- * Implementation of {@link InstanceMap} in terms of {@code ConcurrentHashMap}.
+ * Called for each instance in a context when the context is closed.
  * @author Tim Peierls [tim at peierls dot net]
  */
-class InstanceMapImpl<T> extends ConcurrentHashMap<Key<T>, InstanceProvider<T>> implements InstanceMap<T>
+public interface ContextCloseHandler<T>
 {
+    /**
+     * Action to take when the context containing {@code object} is closed.
+     */
+    void close(T object) throws Exception;
+
+    /**
+     * The type of objects handled by this handler.
+     */
+    Class<T> type();
 }
