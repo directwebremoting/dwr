@@ -27,6 +27,8 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.directwebremoting.guice.util.ContextCloseHandlers.newExceptionLoggingCloseableHandler;
+
 import com.google.inject.Injector;
 
 
@@ -60,7 +62,7 @@ public abstract class AbstractDwrGuiceServletContextListener extends AbstractDwr
     {
         List<Exception> exceptions = new ArrayList<Exception>();
 
-        DwrScopes.GLOBAL.closeAll(new ExceptionLoggingCloseableHandler(exceptions));
+        DwrScopes.GLOBAL.closeAll(newExceptionLoggingCloseableHandler(exceptions));
 
         for (Exception e : exceptions)
         {

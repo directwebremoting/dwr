@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
-
-import com.google.inject.Key;
-import com.google.inject.Scope;
+package org.directwebremoting.guice.util;
 
 /**
- * Thrown by Providers returned by
- * {@link com.google.inject.Scope#scope scope(Key, Provider)}
- * when they cannot locate a resource needed to resolve a key.
+ * A partially implemented handler for objects contained in contexts that
+ * are closing. Concrete extensions of this class only have to define
+ * {@code close} and have a constructor that calls {@code super(T.class)}.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public class OutOfScopeException extends RuntimeException
+public abstract class AbstractContextCloseHandler<T> implements ContextCloseHandler<T>
 {
-    public OutOfScopeException(Scope scope, Key<?> key, Throwable cause)
+    protected AbstractContextCloseHandler(Class<T> type)
     {
-        super(String.format(
-            "Not in scope %s for key %s: caused by %s",
-            scope, key, cause
-        ), cause);
+        this.type = type;
     }
+
+    public abstract void close(T object) throws Exception;
+
+    public Class<T> type()
+    {
+        return type;
+    }
+
+    private final Class<T> type;
 }

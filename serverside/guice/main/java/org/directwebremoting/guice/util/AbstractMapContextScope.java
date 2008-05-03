@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
+package org.directwebremoting.guice.util;
+
+import com.google.inject.Key;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import com.google.inject.Key;
 
 /**
  * A specialization of {@link AbstractContextScope} using a concurrent map
@@ -34,7 +34,7 @@ public abstract class AbstractMapContextScope<C> extends AbstractContextScope<C,
         super(type, scopeName);
     }
 
-    @Override 
+    @Override
     public abstract C get();
 
     //

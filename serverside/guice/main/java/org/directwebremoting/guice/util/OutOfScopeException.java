@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Tim Peierls
+ * Copyright 2008 Tim Peierls
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.guice;
-
-import java.util.concurrent.ConcurrentMap;
+package org.directwebremoting.guice.util;
 
 import com.google.inject.Key;
+import com.google.inject.Scope;
 
 /**
- * A specialization of ConcurrentMap with keys of type {@code Key<T>} and 
- * values of type {@code InstanceProvider<T>}.
+ * Thrown by Providers returned by
+ * {@link com.google.inject.Scope#scope scope(Key, Provider)}
+ * when they cannot locate a resource needed to resolve a key.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public interface InstanceMap<T> extends ConcurrentMap<Key<T>, InstanceProvider<T>>
+public class OutOfScopeException extends RuntimeException
 {
+    public OutOfScopeException(Scope scope, Key<?> key, Throwable cause)
+    {
+        super(String.format(
+            "Not in scope %s for key %s: caused by %s",
+            scope, key, cause
+        ), cause);
+    }
 }
