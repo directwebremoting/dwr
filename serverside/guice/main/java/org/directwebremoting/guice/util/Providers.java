@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import static java.lang.reflect.Modifier.isStatic;
 
 /**
- * Binding utilities for creating ad hoc providers. These come in two flavors,
+ * Utilities for creating ad hoc providers. These come in two flavors,
  * constructor and factory method. In both cases, you can specify additional
  * methods to inject after creation by chaining calls to
  * {@link BindingProvider#injecting injecting(methodName, paramKeys)}.
@@ -63,7 +63,7 @@ import static java.lang.reflect.Modifier.isStatic;
  * and used to call the method.
  * @author Tim Peierls [tim at peierls dot net]
  */
-public class BindUtil
+public class Providers
 {
     /**
      * For fluent-style decoration with one or more method bindings when
@@ -390,5 +390,10 @@ public class BindUtil
 
         private final Method method;
         private final Key<?> factoryKey;
+    }
+
+    private Providers()
+    {
+        throw new AssertionError("uninstantiable");
     }
 }
