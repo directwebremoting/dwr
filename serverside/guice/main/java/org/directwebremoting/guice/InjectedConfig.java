@@ -158,4 +158,5 @@ class InjectedConfig
             buf.append(cls.getName());
         }
         return buf.toString();
-    }}
+    }
+}
