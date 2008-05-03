@@ -18,6 +18,8 @@ package org.directwebremoting.guice;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.directwebremoting.convert.BaseV20Converter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
@@ -62,7 +64,7 @@ class InternalConverter extends BaseV20Converter implements Converter
     {
         try
         {
-            return provider.get().convertInbound(type.asSubclass(paramType), data, inctx);
+            return getConverter().convertInbound(type.asSubclass(paramType), data, inctx);
         }
         catch (ClassCastException e)
         {
@@ -77,7 +79,7 @@ class InternalConverter extends BaseV20Converter implements Converter
     {
         try
         {
-            return provider.get().convertOutbound(type.cast(data), outctx);
+            return getConverter().convertOutbound(type.cast(data), outctx);
         }
         catch (ClassCastException e)
         {
@@ -91,10 +93,26 @@ class InternalConverter extends BaseV20Converter implements Converter
     @Override
     public void setConverterManager(ConverterManager mgr)
     {
-        provider.get().setConverterManager(mgr);
+        this.converterManager = mgr;
     }
+
+
+    private Converter getConverter()
+    {
+        Converter converter = provider.get();
+        if (calledSetConverterManager.compareAndSet(false, true))
+        {
+            converter.setConverterManager(converterManager);
+        }
+        return converter;
+    }
+
 
     private final Class<?> type;
 
     private final Provider<Converter> provider;
+
+    private final AtomicBoolean calledSetConverterManager = new AtomicBoolean();
+
+    private volatile ConverterManager converterManager;
 }
