@@ -33,10 +33,9 @@ Jaxer.dwr.requireUtil = function() {
  * Each resource is the name of a Java class prefixed with details about how it
  * is to be instantiated. In the initial release, only 'new' is supported
  * although it is envisaged that support for other creators like spring/guice
- * will be added shortly. There is a special value of 'util' that will give
- * access to the dwr.util classes
+ * will be added shortly.
  * <p>Example usage:
- * <code>Jaxer.dwr.createNew("java.io.File");</code>
+ * <code>Jaxer.dwr.configureAccess("java.io.File");</code>
  * @param {string} varargs list of resources to import
  */
 Jaxer.dwr.configureAccess = function(className) {
