@@ -30,182 +30,25 @@ import org.directwebremoting.ScriptSession;
 public final class ScriptProxy
 {
     /**
-     * Call a named function with no parameters.
-     * @param funcName The name of the function to call
-     */
-    public static void addFunctionCall(String funcName)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("();");
-        addScript(script);
-    }
-
-    /**
      * Call a named function with one parameter.
      * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
+     * @param params The parameters to the above function
      */
-    public static void addFunctionCall(String funcName, Object param1)
+    public static void addFunctionCall(String funcName, Object... params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(");");
-        addScript(script);
-    }
+        script.appendScript(funcName).appendScript("(");
 
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(");");
-        addScript(script);
-    }
+        for (int i = 0; i < params.length; i++)
+        {
+            if (i != 0)
+            {
+                script.appendScript(",");
+            }
+            script.appendData(params[i]);
+        }
 
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2, Object param3)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(",")
-              .appendData(param5)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(",")
-              .appendData(param5)
-              .appendScript(",")
-              .appendData(param6)
-              .appendScript(");");
-        addScript(script);
-    }
-
-    /**
-     * Call a named function with one parameter.
-     * @param funcName The name of the function to call
-     * @param param1 The first parameter to the above function
-     * @param param2 The second parameter to the above function
-     * @param param3 The third parameter to the above function
-     * @param param4 The fourth parameter to the above function
-     * @param param5 The fifth parameter to the above function
-     * @param param6 The sixth parameter to the above function
-     * @param param7 The seventh parameter to the above function
-     */
-    public static void addFunctionCall(String funcName, Object param1, Object param2, Object param3, Object param4, Object param5, Object param6, Object param7)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName)
-              .appendScript("(")
-              .appendData(param1)
-              .appendScript(",")
-              .appendData(param2)
-              .appendScript(",")
-              .appendData(param3)
-              .appendScript(",")
-              .appendData(param4)
-              .appendScript(",")
-              .appendData(param5)
-              .appendScript(",")
-              .appendData(param6)
-              .appendScript(",")
-              .appendData(param7)
-              .appendScript(");");
+        script.appendScript(");");
         addScript(script);
     }
 
