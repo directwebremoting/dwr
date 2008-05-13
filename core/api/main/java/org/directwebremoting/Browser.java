@@ -26,9 +26,25 @@ public class Browser
     public static void withPage(String page, Runnable task)
     {
         Collection<ScriptSession> sessions = ServerContextFactory.get().getScriptSessionsByPage(page);
-        target.set(sessions);
-        task.run();
-        target.remove();
+        withSessions(sessions, task);
+    }
+
+    public static void withPageFiltered(String page, ScriptSessionFilter filter, Runnable task)
+    {
+        Collection<ScriptSession> sessions = ServerContextFactory.get().getScriptSessionsByPage(page);
+        withSessions(filter(sessions, filter), task);
+    }
+
+    public static void withAllSessions(Runnable task)
+    {
+        Collection<ScriptSession> sessions = ServerContextFactory.get().getAllScriptSessions();
+        withSessions(sessions, task);
+    }
+
+    public static void withAllSessionsFiltered(ScriptSessionFilter filter, Runnable task)
+    {
+        Collection<ScriptSession> all = ServerContextFactory.get().getAllScriptSessions();
+        withSessions(filter(all, filter), task);
     }
 
     public static void withSessions(Collection<ScriptSession> sessions, Runnable task)
@@ -38,13 +54,16 @@ public class Browser
         target.remove();
     }
 
+    public static void withSessionsFiltered(ScriptSessionFilter filter, Collection<ScriptSession> sessions, Runnable task)
+    {
+        withSessions(filter(sessions, filter), task);
+    }
+
     public static void withSession(ScriptSession session, Runnable task)
     {
         Collection<ScriptSession> sessions = new ArrayList<ScriptSession>();
         sessions.add(session);
-        target.set(sessions);
-        task.run();
-        target.remove();
+        withSessions(sessions, task);
     }
 
     public static Collection<ScriptSession> getTargetSessions()
@@ -64,6 +83,20 @@ public class Browser
         }
 
         throw new IllegalStateException("No current UI to manipulate. See org.directwebremoting.Browser to set one.");
+    }
+
+    private static Collection<ScriptSession> filter(Collection<ScriptSession> start, ScriptSessionFilter filter)
+    {
+        Collection<ScriptSession> use = new ArrayList<ScriptSession>();
+        for (ScriptSession session : start)
+        {
+            if (filter.match(session))
+            {
+                use.add(session);
+            }
+        }
+
+        return use;
     }
 
     private static final ThreadLocal<Collection<ScriptSession>> target = new ThreadLocal<Collection<ScriptSession>>();
