@@ -88,7 +88,7 @@ public class WideOpenCreatorManager extends DefaultCreatorManager
                 // this code is tied to the new creator. Yeulch
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("class", className);
-                params.put("scope", "application");
+                params.put("scope", "script");
 
                 LocalUtil.setParams(creator, params, ignore);
                 creator.setProperties(params);
