@@ -18,6 +18,8 @@ package org.directwebremoting.extend;
 import java.util.Collection;
 import java.util.Map;
 
+import org.directwebremoting.io.RawData;
+
 /**
  * A class to manage the converter types and the instantiated class name matches.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -70,7 +72,7 @@ public interface ConverterManager
     /**
      * Check if we can coerce the given type
      * @param paramType The type to check
-     * @return true iff <code>paramType</code> is coercable
+     * @return true iff <code>paramType</code> is convertible
      */
     boolean isConvertable(Class<?> paramType);
 
@@ -81,13 +83,26 @@ public interface ConverterManager
      * @param data The string version of the object
      * @param inctx The map of data that we are working on
      * @param incc The context of this type conversion
-     * @return The coerced object or null if the object could not be coerced
+     * @return The convertible object
      * @throws MarshallException If the conversion failed for some reason
      */
-    Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException;
+    <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException;
 
     /**
-     * Convert an object into a Javavscript representation of the same.
+     * RawData is something of a special case for conversion - it's designed to
+     * be converted outside of the normal automatic conversion process when the
+     * type can't be known until later. This method helps us with those cases
+     * without exposing too much of what {@link RawData} holds.
+     * @param <T>
+     * @param paramType The type we wish to convert to
+     * @param data The RawData object holding data to be converted
+     * @return The convertible object
+     * @throws MarshallException If the conversion failed for some reason
+     */
+    <T> T convertInbound(Class<T> paramType, RawData data) throws MarshallException;
+
+    /**
+     * Convert an object into a Javascript representation of the same.
      * This method is for use by converters wishing to recurse into some object.
      * @param data The object to convert
      * @param converted The list of converted objects so far

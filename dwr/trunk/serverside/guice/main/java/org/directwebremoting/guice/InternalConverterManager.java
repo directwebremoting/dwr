@@ -29,6 +29,7 @@ import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.io.RawData;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -105,9 +106,17 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.TypeHintContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws MarshallException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws MarshallException
     {
         return converterManager.convertInbound(paramType, iv, inctx, incc);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.io.RawData)
+     */
+    public <T> T convertInbound(Class<T> paramType, RawData data) throws MarshallException
+    {
+        return converterManager.convertInbound(paramType, data);
     }
 
     /* (non-Javadoc)

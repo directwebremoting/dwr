@@ -32,8 +32,8 @@ import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.impl.DefaultCallbackHelper;
-import org.directwebremoting.io.RealRawData;
 
 /**
  * Various functions exported by DWR to help us with various book-keeping

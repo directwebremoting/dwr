@@ -34,7 +34,9 @@ import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.io.RawData;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;
 
@@ -127,7 +129,8 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException
+    @SuppressWarnings("unchecked")
+    public <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException
     {
         Object converted = inctx.getConverted(data, paramType);
         if (converted == null)
@@ -168,7 +171,20 @@ public class DefaultConverterManager implements ConverterManager
             inctx.popContext();
         }
 
-        return converted;
+        return (T) converted;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.io.RawData)
+     */
+    public <T> T convertInbound(Class<T> paramType, RawData rawData) throws MarshallException
+    {
+        RealRawData realRawData = (RealRawData) rawData;
+        InboundContext context = realRawData.getInboundContext();
+        InboundVariable inboundVariable = realRawData.getInboundVariable();
+        TypeHintContext typeHintContext = null;//new TypeHintContext(converterManager, null, 0);
+
+        return convertInbound(paramType, inboundVariable, context, typeHintContext);
     }
 
     /* (non-Javadoc)
