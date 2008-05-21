@@ -81,7 +81,7 @@ public class EnginePrivate extends ScriptProxy
     }
 
     /**
-     * Call the dwr.engine.remote.handleServerException() in the browser
+     * Call dwr.engine.remote.handleServerException() in the browser
      * @param batchId The identifier of the batch that we are handling a response for
      * @param ex The exception from which we make a reply
      * @return The script to send to the browser
@@ -105,7 +105,40 @@ public class EnginePrivate extends ScriptProxy
     }
 
     /**
-     * Call the dwr.engine.remote.pollCometDisabled() in the browser
+     * Call dwr.engine.remote.executeFunction() in the browser
+     * @param id The registered function name
+     * @param params The data to pass to the function
+     * @return The script to send to the browser
+     */
+    public static ScriptBuffer getRemoteExecuteFunctionScript(String id, Object[] params)
+    {
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendScript("dwr.engine.remote.executeFunction").appendScript("(").appendScript(id);
+
+        for (int i = 0; i < params.length; i++)
+        {
+            script.appendScript(",");
+            script.appendData(params[i]);
+        }
+
+        script.appendScript(");");
+        return script;
+    }
+
+    /**
+     * Call dwr.engine.remote.closeFunction() in the browser
+     * @param id The registered function name
+     * @return The script to send to the browser
+     */
+    public static ScriptBuffer getRemoteCloseFunctionScript(String id)
+    {
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendCall("dwr.engine.remote.closeFunction", id);
+        return script;
+    }
+
+    /**
+     * Call dwr.engine.remote.pollCometDisabled() in the browser
      * @param batchId The identifier of the batch that we are handling a response for
      * @return The script to send to the browser
      */
