@@ -30,7 +30,6 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A class to manage the types of creators and the instantiated creators.
@@ -104,7 +103,8 @@ public class DefaultCreatorManager implements CreatorManager
         Creator other = creators.get(scriptName);
         if (other != null)
         {
-            throw new IllegalArgumentException(Messages.getString("DefaultCreatorManager.DuplicateName", scriptName, other.getType().getName(), creator));
+            log.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
+            throw new IllegalArgumentException("Duplicate name found. See logs for details.");
         }
 
         // Check that it can at least tell us what type of thing we will be getting
@@ -213,14 +213,15 @@ public class DefaultCreatorManager implements CreatorManager
                 buffer.append(' ');
             }
 
+            log.error("Class not found: '" + scriptName + "'");
             log.warn(buffer.toString());
-            throw new SecurityException(Messages.getString("DefaultCreatorManager.MissingName", scriptName));
+            throw new SecurityException("Class not found");
         }
 
         if (creator.isHidden() && !includeHidden)
         {
             log.warn("Attempt made to get hidden class with name: " + scriptName + " while includeHidden=false");
-            throw new SecurityException(Messages.getString("DefaultCreatorManager.MissingName", scriptName));
+            throw new SecurityException("Class not found");
         }
 
         return creator;
