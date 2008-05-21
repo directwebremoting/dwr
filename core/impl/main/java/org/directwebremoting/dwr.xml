@@ -40,6 +40,7 @@
     <converter id="context" class="org.directwebremoting.convert.ContextConverter"/>
     <converter id="stringWrapper" class="org.directwebremoting.convert.StringWrapperConverter"/>
     <converter id="raw" class="org.directwebremoting.convert.RawConverter"/>
+    <converter id="function" class="org.directwebremoting.convert.JavascriptFunctionConverter"/>
 
     <converter id="jsx3uri" class="jsx3.net.URIResolverConverter"/>
     <converter id="jsx3doc" class="jsx3.xml.CdfDocumentConverter"/>
@@ -50,6 +51,7 @@
     <convert converter="null" match="java.lang.Void"/>
 
     <convert converter="miniException" match="java.lang.Throwable"/>
+    <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
 
     <convert converter="primitive" match="boolean"/>
     <convert converter="primitive" match="byte"/>
@@ -125,6 +127,8 @@
 
     <convert converter="jsx3uri" match="jsx3.net.URIResolver"/>
     <convert converter="jsx3doc" match="jsx3.xml.CdfDocument"/>
+
+    <convert converter="function" match="org.directwebremoting.io.JavascriptFunction"/>
 
     <create creator="new" javascript="__System" scope="application">
       <param name="class" value="org.directwebremoting.export.System"/>
