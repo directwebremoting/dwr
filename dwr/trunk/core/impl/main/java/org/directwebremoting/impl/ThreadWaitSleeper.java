@@ -42,7 +42,7 @@ public class ThreadWaitSleeper implements Sleeper
             // returning immediately and throwing a continuation exception)
             // So propagating the exception just confuses and already confusing
             // situation, without achieving anything.
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
         }
         finally
         {
