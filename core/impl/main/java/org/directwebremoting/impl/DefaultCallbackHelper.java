@@ -27,8 +27,8 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.io.RealRawData;
 import org.directwebremoting.proxy.Callback;
 import org.directwebremoting.util.IdGenerator;
 

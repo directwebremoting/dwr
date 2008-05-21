@@ -18,11 +18,8 @@ package org.directwebremoting.event;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.Hub;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
-import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.io.RealRawData;
+import org.directwebremoting.extend.RealRawData;
 
 /**
  * An MessageEvent is fired to a set of {@link MessageListener}s by the DWR
@@ -89,11 +86,7 @@ public class DefaultMessageEvent implements MessageEvent
             // TODO: Move over to use of ConversionException
             try
             {
-                InboundContext context = rawData.getInboundContext();
-                InboundVariable inboundVariable = rawData.getInboundVariable();
-                TypeHintContext typeHintContext = null;//new TypeHintContext(converterManager, null, 0);
-    
-                return (T) converterManager.convertInbound(asType, inboundVariable, context, typeHintContext);
+                return converterManager.convertInbound(asType, rawData);
             }
             catch (MarshallException ex)
             {
