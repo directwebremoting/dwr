@@ -43,20 +43,6 @@
       <param-value>true</param-value>
     </init-param>
 
-    <!-- WARNING: allowing JSON connections bypasses much of the security
-    protection that DWR gives you. Take this out if security is important -->
-    <init-param>
-      <param-name>jsonEnabled</param-name>
-      <param-value>true</param-value>
-    </init-param>
-
-    <!-- data: URLs are good for small images, but is slower, and could OOM for
-    larger images. Take this out for anything but small images -->
-    <init-param>
-      <param-name>preferDataUrlSchema</param-name>
-      <param-value>true</param-value>
-    </init-param>
-
     <!-- This enables full streaming mode. It's probably better to leave this
     out if you are running across the internet -->
     <init-param>
