@@ -30,7 +30,6 @@ import org.directwebremoting.impl.DefaultContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.util.ClassUtils;
 
@@ -41,7 +40,7 @@ import org.springframework.util.ClassUtils;
  * @author Bram Smeets
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class SpringContainer extends DefaultContainer implements Container, BeanFactoryAware, InitializingBean
+public class SpringContainer extends DefaultContainer implements Container, BeanFactoryAware
 {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
@@ -138,12 +137,9 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         return Collections.unmodifiableCollection(names);
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception
-    {
-        callInitializingBeans();
+    @Override
+    protected void callInitializingBeans() {
+        callInitializingBeans(super.getBeanNames());
     }
 
     /**

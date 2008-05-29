@@ -18,7 +18,6 @@ package org.directwebremoting.spring;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -29,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
-import org.directwebremoting.impl.ContainerMap;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
@@ -186,22 +184,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
         // Use a fake servlet config as Spring 1.x does not provide ServletConfigAware functionality
         // Now only allow Controller to be configured using parameters
-        
-        // We should remove adding the ContainerMap here, but that will break anyone 
-        // who has used the spring container to configure the DwrController e.g:
-        // <bean name="pollAndCometEnabled" class="java.lang.String">
-        //     <constructor-arg index="0"><value>true</value></constructor-arg>
-        // </bean>
-        // TODO: Decide if we want to get rid of this
-        ContainerMap containerMap = new ContainerMap(container, true);
-        for (Entry<String, Object> entry : containerMap.entrySet())
-        {
-            Object value = entry.getValue();
-            if (value instanceof String)
-            {
-                configParams.put(entry.getKey(), (String) value);
-            }
-        }
         configParams.put("debug", "" + debug);
 
         servletConfig = new FakeServletConfig(name, servletContext, configParams);
