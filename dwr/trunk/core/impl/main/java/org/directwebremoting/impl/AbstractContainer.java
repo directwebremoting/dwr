@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.impl;
 
+import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
@@ -34,10 +35,14 @@ public abstract class AbstractContainer implements Container
      */
     protected void callInitializingBeans()
     {
-        for (String name : getBeanNames())
+        callInitializingBeans(getBeanNames());
+    }
+
+    protected void callInitializingBeans(Collection<String> beanNames)
+    {
+        for (String name : beanNames)
         {
             Object bean = getBean(name);
-
             if (bean instanceof InitializingBean)
             {
                 InitializingBean startMeUp = (InitializingBean) bean;
