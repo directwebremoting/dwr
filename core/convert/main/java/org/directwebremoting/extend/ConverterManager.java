@@ -18,6 +18,7 @@ package org.directwebremoting.extend;
 import java.util.Collection;
 import java.util.Map;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.io.RawData;
 
 /**
@@ -84,9 +85,9 @@ public interface ConverterManager
      * @param inctx The map of data that we are working on
      * @param incc The context of this type conversion
      * @return The convertible object
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException;
+    <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws ConversionException;
 
     /**
      * RawData is something of a special case for conversion - it's designed to
@@ -97,9 +98,9 @@ public interface ConverterManager
      * @param paramType The type we wish to convert to
      * @param data The RawData object holding data to be converted
      * @return The convertible object
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    <T> T convertInbound(Class<T> paramType, RawData data) throws MarshallException;
+    <T> T convertInbound(Class<T> paramType, RawData data) throws ConversionException;
 
     /**
      * Convert an object into a Javascript representation of the same.
@@ -107,9 +108,9 @@ public interface ConverterManager
      * @param data The object to convert
      * @param converted The list of converted objects so far
      * @return A Javascript string version of the object
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    OutboundVariable convertOutbound(Object data, OutboundContext converted) throws MarshallException;
+    OutboundVariable convertOutbound(Object data, OutboundContext converted) throws ConversionException;
 
     /**
      * We don't know enough from a method signature like setUsers(Set s) to be

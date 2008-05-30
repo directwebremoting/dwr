@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.ConversionException;
 
 /**
  * An implementation of {@link Property} that simply uses stored values.
@@ -64,7 +64,7 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    public Object getValue(Object bean) throws MarshallException
+    public Object getValue(Object bean) throws ConversionException
     {
         return value;
     }
@@ -72,7 +72,7 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    public void setValue(Object bean, Object value) throws MarshallException
+    public void setValue(Object bean, Object value) throws ConversionException
     {
         log.warn("Attempt to setValue() on plain property.");
     }

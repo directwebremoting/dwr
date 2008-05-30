@@ -25,9 +25,9 @@ import java.util.Map;
 
 import net.sf.hibernate.Hibernate;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 
 /**
@@ -40,7 +40,7 @@ public class H2BeanConverter extends BeanConverter implements Converter
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)
      */
     @Override
-    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         Class<?> clazz = Hibernate.getClass(example);
         try
@@ -81,7 +81,7 @@ public class H2BeanConverter extends BeanConverter implements Converter
         }
         catch (Exception ex)
         {
-            throw new MarshallException(clazz, ex);
+            throw new ConversionException(clazz, ex);
         }
     }
 

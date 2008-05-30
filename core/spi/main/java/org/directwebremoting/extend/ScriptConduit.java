@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 
 /**
@@ -88,9 +89,9 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
      * @param script The script to execute
      * @return true if this ScriptConduit handled the script.
      * @throws IOException If this conduit is broken and should not be used
-     * @throws MarshallException If objects in the script can not be marshalled
+     * @throws ConversionException If objects in the script can not be marshalled
      */
-    public abstract boolean addScript(ScriptBuffer script) throws IOException, MarshallException;
+    public abstract boolean addScript(ScriptBuffer script) throws IOException, ConversionException;
 
     /**
      * Is this conduit a fake one for tracking things, or does it represent a

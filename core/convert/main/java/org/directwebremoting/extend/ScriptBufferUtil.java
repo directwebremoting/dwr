@@ -18,6 +18,7 @@ package org.directwebremoting.extend;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 
 /**
@@ -38,9 +39,9 @@ public class ScriptBufferUtil
      * @param buffer The source of the script data
      * @param converterManager How we convert script variable to Javascript
      * @return Some Javascript to be eval()ed by a browser.
-     * @throws MarshallException If an error happens during parameter marshalling
+     * @throws ConversionException If an error happens during parameter marshalling
      */
-    public static String createOutput(ScriptBuffer buffer, ConverterManager converterManager) throws MarshallException
+    public static String createOutput(ScriptBuffer buffer, ConverterManager converterManager) throws ConversionException
     {
         return createOutput(buffer, converterManager, false);
     }
@@ -51,9 +52,9 @@ public class ScriptBufferUtil
      * @param converterManager How we convert script variable to Javascript
      * @param jsonOutput Are we doing strict JSON output?
      * @return Some Javascript to be eval()ed by a browser.
-     * @throws MarshallException If an error happens during parameter marshalling
+     * @throws ConversionException If an error happens during parameter marshalling
      */
-    public static String createOutput(ScriptBuffer script, ConverterManager converterManager, boolean jsonOutput) throws MarshallException
+    public static String createOutput(ScriptBuffer script, ConverterManager converterManager, boolean jsonOutput) throws ConversionException
     {
         OutboundContext context = new OutboundContext(jsonOutput);
         List<OutboundVariable> scriptParts = new ArrayList<OutboundVariable>();

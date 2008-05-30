@@ -28,10 +28,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.event.ScriptSessionBindingEvent;
 import org.directwebremoting.event.ScriptSessionBindingListener;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
 
@@ -325,7 +325,7 @@ public class DefaultScriptSession implements RealScriptSession
                         break;
                     }
                 }
-                catch (MarshallException ex)
+                catch (ConversionException ex)
                 {
                     log.warn("Failed to convert data. Dropping Javascript: " + script, ex);
                     it.remove();

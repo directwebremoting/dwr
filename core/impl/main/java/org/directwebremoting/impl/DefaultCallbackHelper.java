@@ -18,6 +18,7 @@ package org.directwebremoting.impl;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -26,7 +27,6 @@ import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.proxy.Callback;
@@ -67,10 +67,10 @@ public class DefaultCallbackHelper implements CallbackHelper
      * which executes a {@link Callback} which has been 
      * @param key
      * @param data
-     * @throws MarshallException
+     * @throws ConversionException
      */
     @SuppressWarnings("unchecked")
-    public static <T> void executeCallback(String key, RealRawData data) throws MarshallException
+    public static <T> void executeCallback(String key, RealRawData data) throws ConversionException
     {
         WebContext webContext = WebContextFactory.get();
         ScriptSession session = webContext.getScriptSession();
@@ -99,7 +99,7 @@ public class DefaultCallbackHelper implements CallbackHelper
         }
         catch (Exception ex)
         {
-            throw new MarshallException(type, ex);
+            throw new ConversionException(type, ex);
         }
     }
 

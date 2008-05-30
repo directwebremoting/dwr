@@ -18,11 +18,11 @@ package org.directwebremoting.convert;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -43,7 +43,7 @@ public class DOM4JConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = LocalUtil.decode(data.getValue());
 
@@ -61,29 +61,29 @@ public class DOM4JConverter extends BaseV20Converter implements Converter
                 return doc.getRootElement();
             }
 
-            throw new MarshallException(paramType);
+            throw new ConversionException(paramType);
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         try
         {
             // Using XSLT to convert to a stream. Setup the source
             if (!(data instanceof Node))
             {
-                throw new MarshallException(data.getClass());
+                throw new ConversionException(data.getClass());
             }
 
             Node node = (Node) data;
@@ -106,13 +106,13 @@ public class DOM4JConverter extends BaseV20Converter implements Converter
 
             return ov;
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(data.getClass(), ex);
+            throw new ConversionException(data.getClass(), ex);
         }
     }
 }

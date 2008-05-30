@@ -23,13 +23,13 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.mapped.BeanEx;
 import org.directwebremoting.convert.mapped.ObjectEx;
 import org.directwebremoting.convert.mapped.ObjectForceEx;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.impl.SingletonContainer;
@@ -380,11 +380,11 @@ public class AllConverterTest
         }
         catch (Exception ex)
         {
-            Assert.assertEquals(explanation, ex.getClass(), MarshallException.class);
+            Assert.assertEquals(explanation, ex.getClass(), ConversionException.class);
         }
     }
 
-    public void assertOutboundConversion(Object input, String expected) throws MarshallException
+    public void assertOutboundConversion(Object input, String expected) throws ConversionException
     {
         ConverterManager converterManager = singletonContainer.getConverterManager();
         OutboundContext ctx = new OutboundContext(false);

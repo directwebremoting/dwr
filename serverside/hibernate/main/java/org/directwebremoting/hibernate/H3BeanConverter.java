@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.PlainProperty;
 import org.directwebremoting.extend.Property;
 import org.hibernate.Hibernate;
@@ -45,7 +45,7 @@ public class H3BeanConverter extends BeanConverter implements Converter
      * @see org.directwebremoting.convert.BeanConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)
      */
     @Override
-    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         Class<?> clazz = getClass(example);
 
@@ -123,7 +123,7 @@ public class H3BeanConverter extends BeanConverter implements Converter
         }
         catch (Exception ex)
         {
-            throw new MarshallException(clazz, ex);
+            throw new ConversionException(clazz, ex);
         }
     }
 

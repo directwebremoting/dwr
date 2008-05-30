@@ -18,7 +18,7 @@ package org.directwebremoting.extend;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.ConversionException;
 
 /**
  * An implementation of {@link Property} that proxies to a {@link Field}
@@ -53,7 +53,7 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    public Object getValue(Object bean) throws MarshallException
+    public Object getValue(Object bean) throws ConversionException
     {
         try
         {
@@ -61,14 +61,14 @@ public class FieldProperty implements Property
         }
         catch (Exception ex)
         {
-            throw new MarshallException(bean.getClass(), ex);
+            throw new ConversionException(bean.getClass(), ex);
         }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    public void setValue(Object bean, Object value) throws MarshallException
+    public void setValue(Object bean, Object value) throws ConversionException
     {
         try
         {
@@ -76,7 +76,7 @@ public class FieldProperty implements Property
         }
         catch (Exception ex)
         {
-            throw new MarshallException(bean.getClass(), ex);
+            throw new ConversionException(bean.getClass(), ex);
         }
     }
 

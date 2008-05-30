@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
@@ -35,7 +36,6 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
@@ -97,7 +97,7 @@ public class JsonCallHandler implements Handler
                     // nervous about sending the exception to the client, but we
                     // want to avoid silently dying so we need to do something.
                     writeData(out, ex);
-                    log.error("--MarshallException: message=" + ex.toString());
+                    log.error("--ConversionException: message=" + ex.toString());
                 }
             }
         }
@@ -180,7 +180,7 @@ public class JsonCallHandler implements Handler
         {
             inboundContext.dereference();
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             log.warn("Dereferencing exception", ex);
             throw new JsonCallException("Error dereferencing call. See logs for more details.");
@@ -198,7 +198,7 @@ public class JsonCallHandler implements Handler
             {
                 params[j] = converterManager.convertInbound(paramType, param, inboundContext, incc);
             }
-            catch (MarshallException ex)
+            catch (ConversionException ex)
             {
                 log.warn("Marshalling exception. Param " + j + ", ", ex);
                 throw new JsonCallException("Error marshalling parameters. See logs for more details.");
@@ -223,9 +223,9 @@ public class JsonCallHandler implements Handler
             String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
             out.println(output);
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
-            log.warn("--MarshallException: class=" + ex.getConversionType().getName(), ex);
+            log.warn("--ConversionException: class=" + ex.getConversionType().getName(), ex);
 
             ScriptBuffer buffer = new ScriptBuffer();
             buffer.appendData(ex);
@@ -235,9 +235,9 @@ public class JsonCallHandler implements Handler
                 String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
                 out.println(output);
             }
-            catch (MarshallException ex1)
+            catch (ConversionException ex1)
             {
-                log.error("--Nested MarshallException: Is there an exception handler registered? class=" + ex.getConversionType().getName(), ex);
+                log.error("--Nested ConversionException: Is there an exception handler registered? class=" + ex.getConversionType().getName(), ex);
             }
         }
     }

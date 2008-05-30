@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.extend;
 
+import org.directwebremoting.ConversionException;
+
 /**
  * An interface for converting types from a string to some other type.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -37,9 +39,9 @@ public interface Converter
      * @param data The data to convert
      * @param inctx The map of data that we are working on
      * @return The converted data, or null if the conversion was not possible
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException;
+    Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException;
 
     /**
      * Return a javascript string that defines the variable named varName to
@@ -53,7 +55,7 @@ public interface Converter
      * @param data The data to convert
      * @param outctx A collection of objects already converted and the results
      * @return The OutboundVariable that represents the data to convert
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException;
+    OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException;
 }

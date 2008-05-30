@@ -19,7 +19,7 @@ import java.beans.PropertyDescriptor;
 
 import net.sf.hibernate.LazyInitializationException;
 
-import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 
@@ -44,7 +44,7 @@ public class H2PropertyDescriptorProperty extends PropertyDescriptorProperty
      * @see org.directwebremoting.impl.PropertyDescriptorProperty#getValue(java.lang.Object)
      */
     @Override
-    public Object getValue(Object bean) throws MarshallException
+    public Object getValue(Object bean) throws ConversionException
     {
         try
         {
@@ -56,7 +56,7 @@ public class H2PropertyDescriptorProperty extends PropertyDescriptorProperty
         }
         catch (Exception ex)
         {
-            throw new MarshallException(bean.getClass(), ex);
+            throw new ConversionException(bean.getClass(), ex);
         }
     }
 }

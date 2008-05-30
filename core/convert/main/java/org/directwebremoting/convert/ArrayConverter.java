@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ArrayJsonOutboundVariable;
 import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
 import org.directwebremoting.extend.CollectionOutboundVariable;
@@ -31,7 +32,6 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.ProtocolConstants;
@@ -55,11 +55,11 @@ public class ArrayConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         if (!paramType.isArray())
         {
-            throw new MarshallException(paramType);
+            throw new ConversionException(paramType);
         }
 
         String value = data.getValue();
@@ -103,11 +103,11 @@ public class ArrayConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         if (!data.getClass().isArray())
         {
-            throw new MarshallException(data.getClass());
+            throw new ConversionException(data.getClass());
         }
 
         CollectionOutboundVariable ov;

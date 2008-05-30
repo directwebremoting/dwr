@@ -15,10 +15,10 @@
  */
 package org.directwebremoting.convert;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -35,7 +35,7 @@ public class PrimitiveConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = data.getValue().trim();
 
@@ -45,11 +45,11 @@ public class PrimitiveConverter extends BaseV20Converter implements Converter
         }
         catch (NumberFormatException ex)
         {
-            throw new MarshallException(paramType, Messages.getString("PrimitiveConverter.FormatError", value));
+            throw new ConversionException(paramType, Messages.getString("PrimitiveConverter.FormatError", value));
         }
         catch (IllegalArgumentException ex)
         {
-            throw new MarshallException(paramType);
+            throw new ConversionException(paramType);
         }
     }
 

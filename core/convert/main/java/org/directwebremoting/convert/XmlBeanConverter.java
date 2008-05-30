@@ -28,10 +28,10 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.directwebremoting.extend.ProtocolConstants;
@@ -49,7 +49,7 @@ public class XmlBeanConverter extends BeanConverter
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
     @Override
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws ConversionException
     {
         String value = iv.getValue();
 
@@ -63,12 +63,12 @@ public class XmlBeanConverter extends BeanConverter
 
         if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
         {
-            throw new MarshallException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
         }
 
         if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            throw new MarshallException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
         }
 
         value = value.substring(1, value.length() - 1);
@@ -97,7 +97,7 @@ public class XmlBeanConverter extends BeanConverter
             if (factory == null)
             {
                 logger.error("XmlObject.Factory method not found for Class [" + paramType.toString() + "]");
-                throw new MarshallException(paramType, "XmlObject.Factory method not found");
+                throw new ConversionException(paramType, "XmlObject.Factory method not found");
             }
 
             Class<?>[] emptyArglist = new Class[0];
@@ -163,13 +163,13 @@ public class XmlBeanConverter extends BeanConverter
 
             return bean;
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 
@@ -177,13 +177,13 @@ public class XmlBeanConverter extends BeanConverter
      * @see org.directwebremoting.convert.BeanConverter#getPropertyMapFromClass(java.lang.Class, boolean, boolean)
      */
     @Override
-    public Map<String, Property> getPropertyMapFromClass(Class<?> paramType, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromClass(Class<?> paramType, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         try
         {
             if (!XmlObject.class.isAssignableFrom(paramType))
             {
-                throw new MarshallException(paramType, "class (" + paramType.getName() + ") not assignable from XmlObject");
+                throw new ConversionException(paramType, "class (" + paramType.getName() + ") not assignable from XmlObject");
             }
 
             Class<?> beanInterface;
@@ -250,7 +250,7 @@ public class XmlBeanConverter extends BeanConverter
         }
         catch (IntrospectionException ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
 
     }

@@ -19,8 +19,8 @@ import java.beans.PropertyDescriptor;
 
 import javax.servlet.ServletContext;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.hibernate.Hibernate;
@@ -50,7 +50,7 @@ public class H3PropertyDescriptorProperty extends PropertyDescriptorProperty
      * @see org.directwebremoting.impl.PropertyDescriptorProperty#getValue(java.lang.Object)
      */
     @Override
-    public Object getValue(Object bean) throws MarshallException
+    public Object getValue(Object bean) throws ConversionException
     {
         if (!(bean instanceof HibernateProxy))
         {

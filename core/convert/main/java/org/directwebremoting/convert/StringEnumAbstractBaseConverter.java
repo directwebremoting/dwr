@@ -3,10 +3,10 @@ package org.directwebremoting.convert;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -17,7 +17,7 @@ public class StringEnumAbstractBaseConverter extends BaseV20Converter implements
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws ConversionException
     {
         String value = LocalUtil.decode(iv.getValue());
 
@@ -28,26 +28,26 @@ public class StringEnumAbstractBaseConverter extends BaseV20Converter implements
 
             if (bean == null)
             {
-                throw new MarshallException(paramType, "unknown enum value (" + value + ")");
+                throw new ConversionException(paramType, "unknown enum value (" + value + ")");
             }
 
             return bean;
         }
         catch (NoSuchMethodException e)
         {
-            throw new MarshallException(paramType, e);
+            throw new ConversionException(paramType, e);
         }
         catch (IllegalArgumentException e)
         {
-            throw new MarshallException(paramType, e);
+            throw new ConversionException(paramType, e);
         }
         catch (IllegalAccessException e)
         {
-            throw new MarshallException(paramType, e);
+            throw new ConversionException(paramType, e);
         }
         catch (InvocationTargetException e)
         {
-            throw new MarshallException(paramType, e);
+            throw new ConversionException(paramType, e);
         }
     }
 
