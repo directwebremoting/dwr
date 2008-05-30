@@ -17,6 +17,28 @@ package org.directwebremoting.datasync;
 
 public class SortCriteria
 {
-    String attribute;
-    boolean descending;
+    public SortCriteria(String attribute, boolean descending)
+    {
+        this.attribute = attribute;
+        this.descending = descending;
+    }
+
+    public String getAttribute()
+    {
+        return attribute;
+    }
+
+    public boolean isDescending()
+    {
+        return descending;
+    }
+
+    public boolean isAscending()
+    {
+        return !descending;
+    }
+
+    private String attribute;
+
+    private boolean descending;
 }

@@ -2,9 +2,9 @@
 
 /*
 Each test must conform to the following:
-- Its name must be test*
+- Its name must begin 'test'
 - If the test is lengthy and asynchronous, the test should call delayNextTest(N)
-  where N is a delay in milliseconds, before the next test starts
+  where N is a delay in milliseconds before the next test should start
 - If the test is asynchronous, it should call expectDelayedResult(X) and then
   call completedDelayedResult(X) at some later time
 - xUnit assert...() functions are available to halt execution
@@ -16,7 +16,7 @@ Each test must conform to the following:
   will be considered a failure until this happens.
   Otherwise the test passes ;-)
 */
-http://www.helephant.com/Article.aspx?ID=675
+// http://www.helephant.com/Article.aspx?ID=675
 
 function testScopeAndArgs() {
   var args = [ 1, "two" ];

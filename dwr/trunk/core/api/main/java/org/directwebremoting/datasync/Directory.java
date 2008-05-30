@@ -16,7 +16,6 @@
 package org.directwebremoting.datasync;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +23,41 @@ import java.util.Map;
  */
 public class Directory
 {
+    /**
+     * Register a StoreProvider for access by the outside world
+     * @param storeId The id by which the store can be reached
+     * @param provider The store provider that holds the Map of data
+     */
+    public static void register(String storeId, StoreProvider provider)
+    {
+        providers.put(storeId, provider);
+    }
+
+    /**
+     * Remove the registration of a StoreProvider
+     * @param storeId The id by which the store can be reached
+     */
+    public static void unregister(String storeId)
+    {
+        providers.remove(storeId);
+    }
+
+    /**
+     * Look up the StoreProvider by ID.
+     * @param storeId The id by which the store can be reached
+     * @return The found StoreProvider or null if one is not found.
+     */
+    public static StoreProvider getRegistration(String storeId)
+    {
+        return providers.get(storeId);
+    }
+
+    /**
+     * Internal map of stores
+     */
+    private static Map<String, StoreProvider> providers = new HashMap<String, StoreProvider>();
+
+    /*
     public static <V> Map<String, V> register(String storeId, Map<String, V> data, List<SortCriteria> defaultSort, Class<V> valueType)
     {
         stores.put(storeId, data);
@@ -34,7 +68,6 @@ public class Directory
     {
         @SuppressWarnings("unchecked")
         Map<String, V> store = (Map<String, V>) stores.get(storeId);
-        /*
 
         for (SortCriteria criteria : sort)
         {
@@ -64,7 +97,6 @@ public class Directory
 
             reply.add(data);
         }
-        */
 
         return store;
     }
@@ -75,12 +107,6 @@ public class Directory
         return (Map<String, V>) stores.get(storeId);
     }
 
-    /**
-     * @param data
-     * @param key
-     * @param value
-     * @return
-     */
     private boolean matches(Object data, String key, String value)
     {
         // TODO Auto-generated method stub
@@ -96,12 +122,9 @@ public class Directory
     public static Map<String, Map<String, ?>> stores = new HashMap<String, Map<String, ?>>();
     public static Map<String, Class<?>> valueTypes = new HashMap<String, Class<?>>();
 
-    /**
-     * @param storeId
-     * @return
-     */
     public static Class<?> getValueType(String storeId)
     {
         return valueTypes.get(storeId);
     }
+    */
 }
