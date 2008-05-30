@@ -32,7 +32,7 @@
   <!--=======================================================================-->
   <target name="war" depends="prepare" description="Create output WAR files">
     <property name="modules" value="
-      core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
+      core/api, core/impl, core/legacy, core/util,
       protocol/dwrp, protocol/json, protocol/bayeux,
       serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
       ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
@@ -148,7 +148,7 @@
     <attribute name="modules" description="The set module to compile"/>
     <attribute name="target" description="The directory into which to build"/>
     <sequential>
-      <mkdir dir="@{target}/jar"/>
+      <mkdir dir="@{target}/lib"/>
       <mkdir dir="@{target}/classes/main"/>
       <mkdir dir="@{target}/classes/test"/>
       <mkdir dir="@{target}/classes/demo"/>
@@ -167,10 +167,10 @@
     <echo message="Processing module: ${module}"/>
     <!-- copy jar files to the jar pool, to help suss the classpath -->
     <if>
-      <available file="${source.root}/${module}/jar"/>
+      <available file="${source.root}/${module}/lib"/>
       <then>
-        <copy todir="${target}/jar" verbose="true">
-          <fileset dir="${module}/jar">
+        <copy todir="${target}/lib" verbose="true">
+          <fileset dir="${module}/lib">
             <include name="**/*.jar"/>
           </fileset>
         </copy>
@@ -257,7 +257,7 @@
           <exclude name="**/package-info.java"/>
           <src path="${source.root}/${module}/customDemo/java"/>
           <classpath>
-            <fileset dir="${target}/jar" includes="**/*.jar"/>
+            <fileset dir="${target}/lib" includes="**/*.jar"/>
             <pathelement location="${target}/classes/main"/>
           </classpath>
         </javac>
@@ -284,7 +284,7 @@
         <exclude name="**/package-info.java"/>
         <sources/>
         <classpath>
-          <fileset dir="${target}/jar" includes="**/*.jar"/>
+          <fileset dir="${target}/lib" includes="**/*.jar"/>
           <pathelement location="${target}/classes/main"/>
         </classpath>
       </javac>
@@ -320,7 +320,7 @@
       <sourcepath path="${source.root}/core/api/main/java"/>
       <classpath>
         <pathelement location="${target.root}/classes/main"/>
-        <fileset dir="${target.root}/jar" includes="**/*.jar"/>
+        <fileset dir="${target.root}/lib" includes="**/*.jar"/>
       </classpath>
       <package name="org.directwebremoting.*"/>
       <footer>Copyright &#168; 2008</footer>
