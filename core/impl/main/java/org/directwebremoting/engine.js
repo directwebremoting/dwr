@@ -2067,3 +2067,52 @@ if (typeof this['dwr'] == 'undefined') {
     _subscriptions:{}
   };
 })();
+
+/**
+ * High level data-sync API for use by Widget libraries like a Dojo-Data-Store.
+ * For full documentation see org.directwebremoting.export.Data
+ */
+dwr.data = {
+  /**
+   * 
+   */
+  reason: {
+    initial:0, insert:1, update:2, remove:3
+  },
+
+  /**
+   * Notes that there is a region of a page that wishes to subscribe to server
+   * side data and registers a callback function to receive the data.
+   * @param {string} subscriptionId Page Local UID
+   * @param {string} storeId ID of server provided storage
+   * @param {Function} callback function to be called on updates
+   * @param {Object} filtering and sorting options. Includes:
+   * - start: The beginning of the region of specific interest
+   * - count: The number of items being viewed
+   * - sort: The sort criteria
+   * - query: The filter criteria
+   */
+  view: function(subscriptionId, storeId, callback, options) {
+    if (!options) options = { };
+    if (!options.start) options.start = 0;
+    if (!options.count) options.count = -1;
+    if (!options.sort) options.sort = { };
+    if (!options.query) options.query = { };
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'view', subscriptionId, storeId, callback, options.start, options.count, options.sort, options.query);
+  },
+
+  remove: function(subscriptionId) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'remove', subscriptionId);
+  },
+
+  /**
+   * Request an update to server side data
+   * @param {Object} storeId The store to update (*not* a subscriptionId)
+   * @param {Object} itemId The ID of the data to change
+   * @param {Object} data The new data object
+   */
+  update: function(storeId, itemId, data) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'update', storeId, itemId, data);
+  }
+};
+
