@@ -15,22 +15,20 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Module;
-import com.google.inject.Scope;
-import com.google.inject.binder.ConstantBindingBuilder;
-import com.google.inject.binder.LinkedBindingBuilder;
-
-import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import static java.util.Arrays.asList;
 
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.guice.util.AbstractModule;
 import org.directwebremoting.util.LocalUtil;
-import static org.directwebremoting.guice.ParamName.CLASSES;
 
+import com.google.inject.binder.ConstantBindingBuilder;
+import com.google.inject.binder.LinkedBindingBuilder;
+
+import static java.util.Arrays.*;
+
+import static org.directwebremoting.guice.ParamName.*;
 
 /**
  * An extension of the enhanced {@link AbstractModule} from the util

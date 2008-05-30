@@ -38,6 +38,11 @@ public abstract class AbstractContainer implements Container
         callInitializingBeans(getBeanNames());
     }
 
+    /**
+     * Call {@link InitializingBean#afterContainerSetup(Container)} on the named
+     * beans
+     * @param beanNames The beans to setup.
+     */
     protected void callInitializingBeans(Collection<String> beanNames)
     {
         for (String name : beanNames)

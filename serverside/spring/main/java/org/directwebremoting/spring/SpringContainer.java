@@ -137,8 +137,12 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         return Collections.unmodifiableCollection(names);
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.impl.AbstractContainer#callInitializingBeans()
+     */
     @Override
-    protected void callInitializingBeans() {
+    protected void callInitializingBeans()
+    {
         callInitializingBeans(super.getBeanNames());
     }
 
