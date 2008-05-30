@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.util;
+package org.directwebremoting.jetty;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
@@ -21,8 +21,10 @@ import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
  * Launch Jetty embedded.
+ * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
+ * http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
  */
-public class JettyTestLauncher
+public class JettyLauncher
 {
     /**
      * Sets up and runs server.
@@ -38,7 +40,7 @@ public class JettyTestLauncher
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
-        server.addHandler(new WebAppContext("core/impl/test/web","/dwr-test"));
+        server.addHandler(new WebAppContext("target/ant/web/demo","/dwr"));
 
         server.start();
         server.join();
