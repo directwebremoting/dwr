@@ -28,6 +28,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ArrayJsonOutboundVariable;
 import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
 import org.directwebremoting.extend.CollectionOutboundVariable;
@@ -37,7 +38,6 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.ProtocolConstants;
@@ -63,7 +63,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     @SuppressWarnings("unchecked")
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = data.getValue();
 
@@ -75,12 +75,12 @@ public class CollectionConverter extends BaseV20Converter implements Converter
 
         if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START))
         {
-            throw new MarshallException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_START));
+            throw new ConversionException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_START));
         }
 
         if (!value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
         {
-            throw new MarshallException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_END));
+            throw new ConversionException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_END));
         }
 
         value = value.substring(1, value.length() - 1);
@@ -133,7 +133,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
             }
             else
             {
-                throw new MarshallException(paramType);
+                throw new ConversionException(paramType);
             }
 
             // We should put the new object into the working map in case it
@@ -170,7 +170,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 
@@ -178,7 +178,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
     @SuppressWarnings("unchecked")
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         // First we need to get ourselves the collection data
         Iterator<Object> it;
@@ -193,7 +193,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
         }
         else
         {
-            throw new MarshallException(data.getClass());
+            throw new ConversionException(data.getClass());
         }
 
         // Stash this bit of data to cope with recursion

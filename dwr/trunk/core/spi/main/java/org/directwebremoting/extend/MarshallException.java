@@ -15,14 +15,15 @@
  */
 package org.directwebremoting.extend;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 
 /**
  * Something has gone wrong when we were doing some conversion.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @deprecated Use ConversionException instead
  */
-public class MarshallException extends Exception
+@Deprecated
+public class MarshallException extends ConversionException
 {
     /**
      * Default ctor
@@ -30,54 +31,26 @@ public class MarshallException extends Exception
      */
     public MarshallException(Class<?> paramType)
     {
-        super("Error marshalling type. See the logs for more details.");
-        log.warn("Failure to marshall type: " + paramType.getName());
-
-        this.paramType = paramType;
+        super(paramType);
     }
 
     /**
-     * Construct a MarshallException with an exception and a destination type
+     * Construct a ConversionException with an exception and a destination type
      * @param paramType The type we were trying to marshall
      * @param ex error stack trace
      */
     public MarshallException(Class<?> paramType, Throwable ex)
     {
-        super("Error marshalling type. See the logs for more details.", ex);
-        log.warn("Failure to marshall type: " + paramType.getName() + ". Due to: " + ex);
-
-        this.paramType = paramType;
+        super(paramType, ex);
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a ConversionException with a description message and exception
      * @param paramType The type we were trying to marshall
      * @param message error description
      */
     public MarshallException(Class<?> paramType, String message)
     {
-        super(message);
-        log.warn("Failure to marshall type: " + paramType.getName());
-
-        this.paramType = paramType;
+        super(paramType, message);
     }
-
-    /**
-     * Accessor for the type we are converting to/from
-     * @return The type we are converting to/from
-     */
-    public Class<?> getConversionType()
-    {
-        return paramType;
-    }
-
-    /**
-     * The type we are converting to/from
-     */
-    private Class<?> paramType;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(MarshallException.class);
 }

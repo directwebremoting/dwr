@@ -19,6 +19,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
+import org.directwebremoting.ConversionException;
+
 /**
  * It would be nice if {@link PropertyDescriptor}, and the various reflection
  * types like {@link Member} had a common supertype, but they don't. This is it.
@@ -42,17 +44,17 @@ public interface Property
      * Get the value of this property of the passed in java bean
      * @param bean The bean to introspect
      * @return The value assigned to this property of the passed in bean
-     * @throws MarshallException If the reflection access fails
+     * @throws ConversionException If the reflection access fails
      */
-    public Object getValue(Object bean) throws MarshallException;
+    public Object getValue(Object bean) throws ConversionException;
 
     /**
      * Set the value of this property of the passed in java bean
      * @param bean The bean to introspect
      * @param value The value assigned to this property of the passed in bean
-     * @throws MarshallException If the reflection access fails
+     * @throws ConversionException If the reflection access fails
      */
-    public void setValue(Object bean, Object value) throws MarshallException;
+    public void setValue(Object bean, Object value) throws ConversionException;
 
     /**
      * This is a nasty hack - {@link TypeHintContext} needs a {@link Method}.

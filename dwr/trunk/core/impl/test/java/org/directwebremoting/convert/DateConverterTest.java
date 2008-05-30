@@ -21,9 +21,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.junit.Ignore;
@@ -49,7 +49,7 @@ public class DateConverterTest
         assertEquals("", result.getBuildCode());
     }
 
-    @Test(expected = MarshallException.class)
+    @Test(expected = ConversionException.class)
     public void convertOutboundFail() throws Exception
     {
         // try to convert a non-date object
@@ -86,7 +86,7 @@ public class DateConverterTest
     }
 
     @Ignore
-    @Test(expected = MarshallException.class)
+    @Test(expected = ConversionException.class)
     public void testConvertInboundFail() throws Exception
     {
         InboundContext ctx = new InboundContext();

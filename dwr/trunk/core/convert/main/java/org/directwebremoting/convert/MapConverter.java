@@ -23,13 +23,13 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.MapOutboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ObjectJsonOutboundVariable;
 import org.directwebremoting.extend.ObjectNonJsonOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -58,7 +58,7 @@ public class MapConverter implements Converter
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     @SuppressWarnings("unchecked")
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = data.getValue();
 
@@ -128,7 +128,7 @@ public class MapConverter implements Converter
                 int colonpos = token.indexOf(ProtocolConstants.INBOUND_MAP_ENTRY);
                 if (colonpos == -1)
                 {
-                    throw new MarshallException(paramType, Messages.getString("MapConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
+                    throw new ConversionException(paramType, Messages.getString("MapConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
                 }
 
                 // Convert the value part of the token by splitting it into the
@@ -157,13 +157,13 @@ public class MapConverter implements Converter
 
             return map;
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 
@@ -171,7 +171,7 @@ public class MapConverter implements Converter
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
     @SuppressWarnings("unchecked")
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         // First we just collect our converted children
         //noinspection unchecked

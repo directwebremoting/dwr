@@ -24,12 +24,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -130,7 +130,7 @@ public class DefaultConverterManager implements ConverterManager
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
     @SuppressWarnings("unchecked")
-    public <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws MarshallException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws ConversionException
     {
         Object converted = inctx.getConverted(data, paramType);
         if (converted == null)
@@ -155,7 +155,7 @@ public class DefaultConverterManager implements ConverterManager
 
             if (converter == null)
             {
-                throw new MarshallException(paramType, Messages.getString("DefaultConverterManager.MissingConverter", paramType));
+                throw new ConversionException(paramType, Messages.getString("DefaultConverterManager.MissingConverter", paramType));
             }
 
             // We only think about doing a null conversion ourselves once we are
@@ -177,7 +177,7 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.io.RawData)
      */
-    public <T> T convertInbound(Class<T> paramType, RawData rawData) throws MarshallException
+    public <T> T convertInbound(Class<T> paramType, RawData rawData) throws ConversionException
     {
         RealRawData realRawData = (RealRawData) rawData;
         InboundContext context = realRawData.getInboundContext();
@@ -190,7 +190,7 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext converted) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext converted) throws ConversionException
     {
         if (data == null)
         {
@@ -264,9 +264,9 @@ public class DefaultConverterManager implements ConverterManager
      * @param paramType The class that we are converting to
      * @param javascriptClassName The type name as passed in from the client
      * @return The Converter that matches this request (if any)
-     * @throws MarshallException IF marshalling fails
+     * @throws ConversionException IF marshalling fails
      */
-    protected Converter getNamedConverter(Class<?> paramType, String javascriptClassName) throws MarshallException
+    protected Converter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
     {
         // Locate a converter for this JavaScript classname
         for (Map.Entry<String, Converter> entry : converters.entrySet())
@@ -297,7 +297,7 @@ public class DefaultConverterManager implements ConverterManager
                     }
                     catch (ClassNotFoundException ex)
                     {
-                        throw new MarshallException(paramType, ex);
+                        throw new ConversionException(paramType, ex);
                     }
                 }
             }

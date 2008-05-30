@@ -15,11 +15,11 @@
  */
 package jsx3.net;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BaseV20Converter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -32,12 +32,12 @@ public class URIResolverConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         URIResolver reply = URIResolver.toURIResolver(paramType.toString());
         if (reply == null)
         {
-            throw new MarshallException(paramType);
+            throw new ConversionException(paramType);
         }
 
         return reply;
@@ -46,7 +46,7 @@ public class URIResolverConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         URIResolver resolver = (URIResolver) data;
         return new NonNestedOutboundVariable(resolver.constant);

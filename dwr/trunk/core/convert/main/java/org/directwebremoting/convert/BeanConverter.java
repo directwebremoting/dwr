@@ -22,9 +22,9 @@ import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.directwebremoting.extend.TypeHintContext;
@@ -38,7 +38,7 @@ public class BeanConverter extends BasicObjectConverter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)
      */
-    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         return getPropertyMapFromClass(example.getClass(), readRequired, writeRequired);
     }
@@ -46,7 +46,7 @@ public class BeanConverter extends BasicObjectConverter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMap(java.lang.Class, boolean, boolean)
      */
-    public Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         try
         {
@@ -87,7 +87,7 @@ public class BeanConverter extends BasicObjectConverter implements Converter
         }
         catch (IntrospectionException ex)
         {
-            throw new MarshallException(type, ex);
+            throw new ConversionException(type, ex);
         }
     }
 

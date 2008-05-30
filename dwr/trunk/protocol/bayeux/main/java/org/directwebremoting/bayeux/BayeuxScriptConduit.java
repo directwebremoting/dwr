@@ -17,9 +17,9 @@ package org.directwebremoting.bayeux;
 
 import java.io.IOException;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 
@@ -44,7 +44,7 @@ public class BayeuxScriptConduit extends ScriptConduit
      * @see org.directwebremoting.extend.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
     @Override
-    public boolean addScript(ScriptBuffer script) throws IOException, MarshallException
+    public boolean addScript(ScriptBuffer script) throws IOException, ConversionException
     {
         builder.append(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
         return true;

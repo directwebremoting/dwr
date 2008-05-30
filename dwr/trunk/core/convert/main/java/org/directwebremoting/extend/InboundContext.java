@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.directwebremoting.ConversionException;
 
 /**
  * InboundContext is the context for set of inbound conversions.
@@ -34,9 +35,9 @@ public final class InboundContext
     /**
      * When we are sure we have finished parsing the input, we can begin to
      * fix all cross-references.
-     * @throws MarshallException If cross-references don't add up
+     * @throws ConversionException If cross-references don't add up
      */
-    public void dereference() throws MarshallException
+    public void dereference() throws ConversionException
     {
         for (InboundVariable variable : variables.values())
         {

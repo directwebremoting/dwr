@@ -26,13 +26,13 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.JsonModeMarshallException;
 import org.directwebremoting.extend.MapOutboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.ObjectJsonOutboundVariable;
 import org.directwebremoting.extend.ObjectNonJsonOutboundVariable;
@@ -55,7 +55,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = data.getValue();
 
@@ -67,12 +67,12 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
 
         if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
         {
-            throw new MarshallException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
         }
 
         if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            throw new MarshallException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
         }
 
         value = value.substring(1, value.length() - 1);
@@ -147,13 +147,13 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
 
             return bean;
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 
@@ -172,7 +172,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         // Where we collect out converted children
         Map<String, OutboundVariable> ovs = new TreeMap<String, OutboundVariable>();
@@ -208,13 +208,13 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
                 ovs.put(name, nested);
             }
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            throw new MarshallException(data.getClass(), ex);
+            throw new ConversionException(data.getClass(), ex);
         }
 
         ov.setChildren(ovs);
@@ -368,9 +368,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
      * @param paramType The type we are converting to
      * @param value The input string
      * @return A Map of the tokens in the string
-     * @throws MarshallException If the marshalling fails
+     * @throws ConversionException If the marshalling fails
      */
-    protected static Map<String, String> extractInboundTokens(Class<?> paramType, String value) throws MarshallException
+    protected static Map<String, String> extractInboundTokens(Class<?> paramType, String value) throws ConversionException
     {
         Map<String, String> tokens = new HashMap<String, String>();
         StringTokenizer st = new StringTokenizer(value, ProtocolConstants.INBOUND_MAP_SEPARATOR);
@@ -387,7 +387,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             int colonpos = token.indexOf(ProtocolConstants.INBOUND_MAP_ENTRY);
             if (colonpos == -1)
             {
-                throw new MarshallException(paramType, Messages.getString("BeanConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
+                throw new ConversionException(paramType, Messages.getString("BeanConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
             }
 
             String key = token.substring(0, colonpos).trim();

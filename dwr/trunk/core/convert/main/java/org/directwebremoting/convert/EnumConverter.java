@@ -17,10 +17,10 @@ package org.directwebremoting.convert;
 
 import java.lang.reflect.Method;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -35,7 +35,7 @@ public class EnumConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String value = LocalUtil.decode(data.getValue());
 
@@ -45,7 +45,7 @@ public class EnumConverter extends BaseV20Converter implements Converter
             Object reply = getter.invoke(paramType, value);
             if (reply == null)
             {
-                throw new MarshallException(paramType);
+                throw new ConversionException(paramType);
             }
             return reply;
         }
@@ -53,11 +53,11 @@ public class EnumConverter extends BaseV20Converter implements Converter
         {
             // We would like to have done: if (!paramType.isEnum())
             // But this catch block has the same effect
-            throw new MarshallException(paramType);
+            throw new ConversionException(paramType);
         }
         catch (Exception ex)
         {
-            throw new MarshallException(paramType, ex);
+            throw new ConversionException(paramType, ex);
         }
     }
 

@@ -19,10 +19,10 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.util.MimeConstants;
@@ -100,7 +100,7 @@ public class Html4kScriptConduit extends BaseScriptConduit
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
     @Override
-    public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, MarshallException
+    public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, ConversionException
     {
         String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
 

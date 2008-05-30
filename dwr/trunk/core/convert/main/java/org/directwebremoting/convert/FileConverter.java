@@ -23,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.Container;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.ContainerUtil;
 import org.directwebremoting.extend.Converter;
@@ -35,7 +36,6 @@ import org.directwebremoting.extend.ImageIOFileGenerator;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.InputStreamFileGenerator;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -55,7 +55,7 @@ public class FileConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         FormField formField = data.getFormField();
         if (paramType == FileTransfer.class)
@@ -74,17 +74,17 @@ public class FileConverter extends BaseV20Converter implements Converter
             }
             catch (IOException ex)
             {
-                throw new MarshallException(paramType, ex);
+                throw new ConversionException(paramType, ex);
             }
         }
 
-        throw new MarshallException(paramType, Messages.getString("MarshallException.FileFailure", paramType));
+        throw new ConversionException(paramType, Messages.getString("ConversionException.FileFailure", paramType));
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object object, OutboundContext outboundContext) throws MarshallException
+    public OutboundVariable convertOutbound(Object object, OutboundContext outboundContext) throws ConversionException
     {
         if (object == null)
         {
@@ -112,7 +112,7 @@ public class FileConverter extends BaseV20Converter implements Converter
             }
             else
             {
-                throw new MarshallException(object.getClass());
+                throw new ConversionException(object.getClass());
             }
 
             Container container = WebContextFactory.get().getContainer();
@@ -133,7 +133,7 @@ public class FileConverter extends BaseV20Converter implements Converter
         }
         catch (IOException ex)
         {
-            throw new MarshallException(getClass(), ex);
+            throw new ConversionException(getClass(), ex);
         }
     }
 

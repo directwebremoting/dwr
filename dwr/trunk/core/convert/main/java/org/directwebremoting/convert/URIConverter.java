@@ -20,10 +20,10 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -39,7 +39,7 @@ public class URIConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         String uriString = LocalUtil.decode(data.getValue());
         try
@@ -56,7 +56,7 @@ public class URIConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         URI uri = (URI) data;
         String escaped = JavascriptUtil.escapeJavaScript(uri.toString());

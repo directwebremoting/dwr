@@ -20,10 +20,10 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.FieldProperty;
 import org.directwebremoting.extend.InboundContext;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
 
@@ -45,7 +45,7 @@ public class ObjectConverter extends BasicObjectConverter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)
      */
-    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromObject(Object example, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         Class<?> clazz = example.getClass();
         return getPropertyMapFromClass(clazz, readRequired, writeRequired);

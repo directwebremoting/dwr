@@ -34,7 +34,7 @@ public class ConversionException extends RuntimeException
     }
 
     /**
-     * Construct a MarshallException with an exception and a destination type
+     * Construct a ConversionException with an exception and a destination type
      * @param paramType The type we were trying to marshall
      * @param ex error stack trace
      */
@@ -44,7 +44,7 @@ public class ConversionException extends RuntimeException
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a ConversionException with a description message and exception
      * @param paramType The type we were trying to marshall
      * @param message error description
      */
@@ -54,7 +54,7 @@ public class ConversionException extends RuntimeException
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a ConversionException with a description message and exception
      * @param paramType The type we were trying to marshall
      * @param message error description
      */

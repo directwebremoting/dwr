@@ -15,8 +15,8 @@
  */
 package uk.ltd.getahead.dwr.compat;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 
@@ -32,7 +32,7 @@ public abstract class BaseV10Converter implements Converter
     /* (non-Javadoc)
      * @see uk.ltd.getahead.dwr.Converter#convertOutbound(java.lang.Object, uk.ltd.getahead.dwr.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
         // We'll implement this properly if someone needs it
         /*
@@ -57,7 +57,7 @@ public abstract class BaseV10Converter implements Converter
      * @param data The data to convert
      * @param outctx Objects already converted and the results
      * @return The OutboundVariable that represents the data to convert
-     * @throws MarshallException If the conversion failed for some reason
+     * @throws ConversionException If the conversion failed for some reason
      */
-    public abstract String convertOutbound(Object data, String varname, OutboundContext outctx) throws MarshallException;
+    public abstract String convertOutbound(Object data, String varname, OutboundContext outctx) throws ConversionException;
 }

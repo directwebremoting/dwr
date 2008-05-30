@@ -15,13 +15,13 @@
  */
 package org.directwebremoting.convert;
 
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DefaultJavascriptFunction;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 
@@ -34,7 +34,7 @@ public class JavascriptFunctionConverter extends BaseV20Converter implements Con
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws MarshallException
+    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
     {
         ScriptSession session = WebContextFactory.get().getScriptSession();
         String id = data.getValue();
@@ -45,8 +45,8 @@ public class JavascriptFunctionConverter extends BaseV20Converter implements Con
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
-        throw new MarshallException(data.getClass(), "JavascriptFunctions can not be passed to a browser");
+        throw new ConversionException(data.getClass(), "JavascriptFunctions can not be passed to a browser");
     }
 }

@@ -20,12 +20,12 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.dwrp.DefaultConverterManager;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.TypeHintContext;
@@ -35,7 +35,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 
-import static org.directwebremoting.guice.DwrGuiceUtil.getInjector;
+import static org.directwebremoting.guice.DwrGuiceUtil.*;
 
 /**
  * Extends an existing converter manager with an injected list of converters
@@ -106,7 +106,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.TypeHintContext)
      */
-    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws MarshallException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws ConversionException
     {
         return converterManager.convertInbound(paramType, iv, inctx, incc);
     }
@@ -114,7 +114,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.io.RawData)
      */
-    public <T> T convertInbound(Class<T> paramType, RawData data) throws MarshallException
+    public <T> T convertInbound(Class<T> paramType, RawData data) throws ConversionException
     {
         return converterManager.convertInbound(paramType, data);
     }
@@ -122,7 +122,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object object, OutboundContext outctx) throws MarshallException
+    public OutboundVariable convertOutbound(Object object, OutboundContext outctx) throws ConversionException
     {
         return converterManager.convertOutbound(object, outctx);
     }

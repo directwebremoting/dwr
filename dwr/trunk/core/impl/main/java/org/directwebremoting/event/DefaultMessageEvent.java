@@ -18,7 +18,6 @@ package org.directwebremoting.event;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.Hub;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.RealRawData;
 
 /**
@@ -83,15 +82,7 @@ public class DefaultMessageEvent implements MessageEvent
         }
         else
         {
-            // TODO: Move over to use of ConversionException
-            try
-            {
-                return converterManager.convertInbound(asType, rawData);
-            }
-            catch (MarshallException ex)
-            {
-                throw new ConversionException(ex.getConversionType(), ex.getMessage());
-            }
+            return converterManager.convertInbound(asType, rawData);
         }
     }
 

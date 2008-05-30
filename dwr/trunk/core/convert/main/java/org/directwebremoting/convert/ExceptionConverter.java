@@ -19,7 +19,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Map;
 
-import org.directwebremoting.extend.MarshallException;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.PlainProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
@@ -34,7 +34,7 @@ public class ExceptionConverter extends BeanConverter
      * @see org.directwebremoting.convert.BasicBeanConverter#getPropertyDescriptors(java.lang.Class, boolean, boolean)
      */
     @Override
-    public Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired) throws MarshallException
+    public Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired) throws ConversionException
     {
         Map<String, Property> descriptors = super.getPropertyMapFromClass(type, readRequired, writeRequired);
         descriptors.put("javaClassName", new PlainProperty("javaClassName", type.getName()));
@@ -48,7 +48,7 @@ public class ExceptionConverter extends BeanConverter
         }
         catch (IntrospectionException ex)
         {
-            throw new MarshallException(type, ex);
+            throw new ConversionException(type, ex);
         }
 
         return descriptors;

@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.json.InvalidJsonException;
 import org.directwebremoting.json.JsonArray;
 import org.directwebremoting.json.JsonBoolean;
@@ -71,9 +72,9 @@ public final class InboundVariable
      * for it, it fixes some bug, but I can't remember what right now) However
      * the referenced variable may not exist yet, so the de-referencing may
      * fail, requiring us to have another go later.
-     * @throws MarshallException If cross-references don't add up
+     * @throws ConversionException If cross-references don't add up
      */
-    public void dereference() throws MarshallException
+    public void dereference() throws ConversionException
     {
         int maxDepth = 0;
 
@@ -82,7 +83,7 @@ public final class InboundVariable
             InboundVariable cd = context.getInboundVariable(formField.getString());
             if (cd == null)
             {
-                throw new MarshallException(getClass(), Messages.getString("InboundVariable.MissingVariable", formField.getString()));
+                throw new ConversionException(getClass(), Messages.getString("InboundVariable.MissingVariable", formField.getString()));
             }
 
             type = cd.type;
@@ -96,7 +97,7 @@ public final class InboundVariable
             maxDepth++;
             if (maxDepth > 20)
             {
-                throw new MarshallException(getClass(), "Max depth exceeded when dereferencing " + formField.getString());
+                throw new ConversionException(getClass(), "Max depth exceeded when dereferencing " + formField.getString());
             }
         }
 

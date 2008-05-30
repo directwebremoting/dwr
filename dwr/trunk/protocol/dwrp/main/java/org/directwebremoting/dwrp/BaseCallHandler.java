@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
@@ -40,7 +41,6 @@ import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.RealScriptSession;
@@ -232,7 +232,7 @@ public abstract class BaseCallHandler implements Handler
             {
                 inctx.dereference();
             }
-            catch (MarshallException ex)
+            catch (ConversionException ex)
             {
                 log.warn("Marshalling exception", ex);
 
@@ -254,7 +254,7 @@ public abstract class BaseCallHandler implements Handler
                     TypeHintContext incc = new TypeHintContext(converterManager, method, j);
                     params[j] = converterManager.convertInbound(paramType, param, inctx, incc);
                 }
-                catch (MarshallException ex)
+                catch (ConversionException ex)
                 {
                     log.warn("Marshalling exception", ex);
 
@@ -378,11 +378,11 @@ public abstract class BaseCallHandler implements Handler
                 // Since we can no longer do output we just log and end
                 log.error("--Output Error: batchId[" + batchId + "] message[" + ex.toString() + ']', ex);
             }
-            catch (MarshallException ex)
+            catch (ConversionException ex)
             {
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                 addScriptHandleExceptions(conduit, script);
-                log.warn("--MarshallException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
+                log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
             }
             catch (Exception ex)
             {
@@ -391,7 +391,7 @@ public abstract class BaseCallHandler implements Handler
                 // want to avoid silently dying so we need to do something.
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                 addScriptHandleExceptions(conduit, script);
-                log.error("--MarshallException: batchId=" + batchId + " message=" + ex.toString());
+                log.error("--ConversionException: batchId=" + batchId + " message=" + ex.toString());
             }
         }
 
@@ -432,7 +432,7 @@ public abstract class BaseCallHandler implements Handler
         {
             conduit.addScript(script);
         }
-        catch (MarshallException ex)
+        catch (ConversionException ex)
         {
             log.warn("Error marshalling exception. Is the exception converter configured?");
         }
@@ -504,7 +504,7 @@ public abstract class BaseCallHandler implements Handler
          * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
          */
         @Override
-        public boolean addScript(ScriptBuffer script) throws IOException, MarshallException
+        public boolean addScript(ScriptBuffer script) throws IOException, ConversionException
         {
             sendScript(out, ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
             return true;
