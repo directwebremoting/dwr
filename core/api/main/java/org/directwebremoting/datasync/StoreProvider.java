@@ -1,0 +1,67 @@
+/*
+ * Copyright 2005 Joe Walker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.directwebremoting.datasync;
+
+import org.directwebremoting.io.RawData;
+
+/**
+ * A StoreProvider is something like a {@link java.util.Map} where the API
+ * revolves around getting blocks of entries rather than individual entries and
+ * it gives you the ability to subscribe to those blocks of data to ask for
+ * change updates. These are the types of changes that you would expect from an
+ * interface designed for remote access.
+ * <p>Implementing the {@link StoreProvider} interface is likely to be hard for
+ * many applications. You are advised to begin by extending the
+ * {@link AbstractStoreProvider} helper class.
+ * <p>In place of {@link java.util.Map.Entry}, StoreProvider uses
+ * {@link org.directwebremoting.io.Item}s as it's way to connect objects with
+ * their primary keys.
+ * @author Joe Walker [joe at getahead dot ltd dot uk]
+ */
+public interface StoreProvider
+{
+    /**
+     * Similar to {@link java.util.Map#put} in adding items to a Store.
+     * A value of null is equivalent to removing the item from the store.
+     * Part of the function of put is to convert the data stored in
+     * {@link RawData} into alterations to data in the store. This boiler plate
+     * code is implemented in {@link AbstractStoreProvider}.
+     * <p>See notes on {@link org.directwebremoting.io.Item#getItemId}
+     * @param itemId The key (or some mapping) to it.
+     * @param data
+     */
+    void put(String itemId, RawData data);
+
+    /**
+     * Extract the data referred to by the given region.
+     * @param region A set of filter and sort criteria to restrict the fetched data
+     */
+    MatchedItems view(StoreRegion region);
+
+    /**
+     * Extract the data referred to by the given region, and request to stay
+     * updated to changes in the region.
+     * @param region A set of filter and sort criteria to restrict the fetched data
+     * @return Data that matches the filtering specified in the region.
+     */
+    MatchedItems subscribe(StoreRegion region, StoreChangeListener li);
+
+    /**
+     * Remove the declaration of interest previously expressed.
+     * @param subscription The listener that should no longer be notified
+     */
+    void unsubscribe(StoreChangeListener subscription);
+}
