@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * JsonModeMarshallException is a hint to the conversion process that
  * we are trying to convert in JSON mode, but we've discovered recursive data.
- * <p>So this is officially very nasty, because we are
+ * TODO: This should probably be called JsonConversionException or similar
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class JsonModeMarshallException extends RuntimeException
@@ -39,7 +39,7 @@ public class JsonModeMarshallException extends RuntimeException
     }
 
     /**
-     * Construct a MarshallException with an exception and a destination type
+     * Construct a JsonModeMarshallException with an exception and a destination type
      * @param paramType The type we were trying to marshall
      * @param ex error stack trace
      */
@@ -52,7 +52,7 @@ public class JsonModeMarshallException extends RuntimeException
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a JsonModeMarshallException with a description message and exception
      * @param paramType The type we were trying to marshall
      * @param message error description
      */

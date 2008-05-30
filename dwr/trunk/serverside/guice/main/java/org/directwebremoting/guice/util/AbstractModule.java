@@ -15,29 +15,27 @@
  */
 package org.directwebremoting.guice.util;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.matcher.Matcher;
-import static com.google.inject.matcher.Matchers.subclassesOf;
-import static com.google.inject.name.Names.named;
-
-import static org.directwebremoting.guice.util.DeclaredBy.declaredBy;
-import static org.directwebremoting.guice.util.Numbers.numbered;
-import static org.directwebremoting.guice.util.OutermostCallInterceptor.outermostCallWrapper;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.aopalliance.intercept.MethodInterceptor;
 
+import com.google.inject.Binder;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.matcher.Matcher;
+
+import static org.directwebremoting.guice.util.DeclaredBy.*;
+import static org.directwebremoting.guice.util.Numbers.*;
+import static org.directwebremoting.guice.util.OutermostCallInterceptor.*;
+
+import static com.google.inject.matcher.Matchers.*;
 
 /**
  * An extension of Guice's {@link com.google.inject.AbstractModule AbstractModule}
@@ -229,7 +227,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
                 }
                 else // type instanceof Class
                 {
-                    Class cls = (Class) type;
+                    Class<?> cls = (Class<?>) type;
                     if (!MethodInterceptor.class.isAssignableFrom(cls))
                     {
                         addError("bindInterceptor: %s does not implement MethodInterceptor", cls.getName());
@@ -316,7 +314,6 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
             super.install(module);
         }
     }
-
 
     @Inject private void injectRegisteredObjects(Injector injector)
     {

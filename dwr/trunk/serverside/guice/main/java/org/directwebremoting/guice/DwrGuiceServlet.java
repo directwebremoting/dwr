@@ -33,7 +33,6 @@ import org.directwebremoting.servlet.DwrServlet;
 
 import static org.directwebremoting.guice.util.ContextCloseHandlers.newExceptionLoggingCloseableHandler;
 
-
 /**
  * An extension of the basic
  * {@link org.directwebremoting.servlet.DwrServlet DwrServlet}

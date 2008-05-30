@@ -29,7 +29,7 @@ public class ServerException extends Exception
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a ServerException with a description message and exception
      * @param message error description
      */
     public ServerException(String message)
@@ -38,7 +38,7 @@ public class ServerException extends Exception
     }
 
     /**
-     * Construct a MarshallException with a description message and exception
+     * Construct a ServerException with a description message and exception
      * @param message error description
      * @param ex error stack trace
      */
@@ -48,7 +48,7 @@ public class ServerException extends Exception
     }
 
     /**
-     * Construct a MarshallException with an exception
+     * Construct a ServerException with an exception
      * @param ex error stack trace
      */
     public ServerException(Throwable ex)

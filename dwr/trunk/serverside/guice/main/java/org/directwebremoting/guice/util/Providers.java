@@ -15,16 +15,17 @@
  */
 package org.directwebremoting.guice.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import static java.lang.reflect.Modifier.isStatic;
+import static java.lang.reflect.Modifier.*;
 
 /**
  * Utilities for creating ad hoc providers. These come in two flavors,
