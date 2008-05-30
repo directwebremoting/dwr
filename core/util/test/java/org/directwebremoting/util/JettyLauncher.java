@@ -21,6 +21,8 @@ import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
  * Launch Jetty embedded.
+ * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
+ * http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
  */
 public class JettyLauncher
 {
