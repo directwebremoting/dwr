@@ -1,0 +1,88 @@
+
+Make DWR ask for a scriptSessionID on first connect and do it in ordered mode.
+
+json support
+
+Export of static members. (Juliano Fernandes Schroeder)
+    i added to DefaultRemoter the following code that adds String and Integer static finals to the js interface.
+    (note that i'm no king of reflection)
+    String init = EnginePrivate.getEngineInitScript(actualPath);
+        buffer.append(init);
+
+        buffer.append("if (" + scriptName + " == null) var " + scriptName + " = {};\n");
+        buffer.append(scriptName + "._path = '" + actualPath + "';\n\n");
+        
+        buffer.append("//Class constants\n");        
+        Field[] fields = creator.getType().getFields();
+        for (int i = 0; i < fields.length; i++)
+        {
+            Field field = fields[i]; 
+            String fieldName = field.getName();
+            
+            // Is it on the list of banned names
+            if (JavascriptUtil.isReservedWord (fieldName))
+            {
+                continue;
+            }
+            
+            String jsField;
+            try
+            {
+                jsField = getFieldJS(scriptName,field);
+                buffer.append(jsField);
+            }
+            catch (Exception ex)
+            {
+                buffer.append("/*Something wrong defining the static field " + fieldName + ": \n");
+                buffer.append("  ").append(ex.getMessage()).append("*/\n");
+            }            
+        }
+        buffer.append("\n");
+
+        Method[] methods = creator.getType().getMethods();
+        for (int i = 0; i < methods.length; i++)
+        {
+            Method method = methods[i];
+            String methodName = method.getName();
+            ...
+        }
+        ...
+    }
+
+    /**
+     * Generates Javascript for a given public static Java field
+     * @param scriptName  Name of the Javascript file, sans ".js" suffix
+     * @param field Target field
+     * @return Javascript constant representing the field
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     * @throws IllegalArgumentException 
+     */
+    private String getFieldJS(String scriptName, Field field) throws Exception        
+    {
+        StringBuffer buffer = new StringBuffer(); 
+
+        String fieldName = field.getName();
+        buffer.append(scriptName).append(".").append(fieldName).append(" = "); 
+
+        if (field.getType().equals(String.class))
+        {            
+            String fieldValue = (String) field.get(null);
+            buffer.append("\"").append(fieldValue).append("\";"); 
+        }
+        if (field.getType().equals(Integer.class))
+        {
+            Integer fieldValue = (Integer) field.get(null);
+            buffer.append(fieldValue).append(";");
+        }        
+
+        buffer.append("\n");
+
+        return buffer.toString();
+    }
+
+    Of course this is incomplete and probably not right, at least it converts the String and Integer public static finals to javascript. 
+    I got lazy to make it work in an inteligent way for all static fields. If you could suggest me something i'd appreciate, i'm no good with reflections.
+
+    
