@@ -30,69 +30,70 @@ import javax.servlet.ServletContext;
  * Wraps an existing ServletConfig, allowing changes to be made to the existing initParams.
  * @author Tim Peierls [tim at peierls dot net]
  */
-class ModifiableServletConfig implements ServletConfig 
+class ModifiableServletConfig implements ServletConfig
 {
-    ModifiableServletConfig(ServletConfig servletConfig) 
+    ModifiableServletConfig(ServletConfig servletConfig)
     {
         this.servletConfig = servletConfig;
     }
 
-    public String getInitParameter(String name) 
+    public String getInitParameter(String name)
     {
-        if (overrides.containsKey(name)) 
+        if (overrides.containsKey(name))
         {
             return overrides.get(name);
-        } 
-        else 
+        }
+        else
         {
             return servletConfig.getInitParameter(name);
         }
     }
 
-    public Enumeration getInitParameterNames() 
+    public Enumeration<String> getInitParameterNames()
     {
         Set<String> names = new HashSet<String>();
-        Enumeration enumeration = servletConfig.getInitParameterNames();
-        while (enumeration.hasMoreElements()) 
+        @SuppressWarnings("unchecked")
+        Enumeration<String> enumeration = servletConfig.getInitParameterNames();
+        while (enumeration.hasMoreElements())
         {
-            names.add(enumeration.nextElement().toString());
+            names.add(enumeration.nextElement());
         }
         names.addAll(overrides.keySet());
         return toEnumeration(names.iterator());
     }
 
-    public ServletContext getServletContext() 
+    public ServletContext getServletContext()
     {
         return servletConfig.getServletContext();
     }
 
-    public String getServletName() 
+    public String getServletName()
     {
         return servletConfig.getServletName();
     }
 
-    public void setInitParameter(String name, String value) 
+    public void setInitParameter(String name, String value)
     {
         overrides.put(name, value);
     }
 
-    private static <E> Enumeration<E> toEnumeration(final Iterator<E> iterator) 
+    private static <E> Enumeration<E> toEnumeration(final Iterator<E> iterator)
     {
-        return new Enumeration<E>() 
+        return new Enumeration<E>()
         {
-            public boolean hasMoreElements() 
+            public boolean hasMoreElements()
             {
                 return iterator.hasNext();
             }
-            
-            public E nextElement() 
+
+            public E nextElement()
             {
                 return iterator.next();
             }
         };
     }
-    
+
     private final ServletConfig servletConfig;
-    
+
     private final Map<String, String> overrides = synchronizedMap(new HashMap<String, String>());
 }

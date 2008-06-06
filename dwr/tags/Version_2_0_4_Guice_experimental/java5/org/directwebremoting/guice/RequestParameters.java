@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @BindingAnnotation
-public @interface RequestParameters 
+public @interface RequestParameters
 {
 }
