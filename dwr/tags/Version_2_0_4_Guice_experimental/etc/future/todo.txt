@@ -1,0 +1,11 @@
+
+
+When processing creators and checking session, call request.isRequestedSessionIdValid() and warn if false
+
+----
+
+Update Missing Javascript Functions page to include link to "dwr/".
+Fix DWR URL in section below.
+
+----
+
