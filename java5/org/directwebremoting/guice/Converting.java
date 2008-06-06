@@ -15,13 +15,13 @@
  */
 package org.directwebremoting.guice;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import com.google.inject.BindingAnnotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marks classes to be converted by DWR.
@@ -33,6 +33,6 @@ import static java.lang.annotation.ElementType.TYPE;
 @interface Converting
 {
     String match() default "";
-    Class type() default Void.class;
-    Class impl() default Void.class;
+    Class<?> type() default Void.class;
+    Class<?> impl() default Void.class;
 }
