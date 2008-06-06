@@ -1,0 +1,205 @@
+### Eclipse Workspace Patch 1.0
+#P dwr
+Index: java/org/directwebremoting/engine.js
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/engine.js,v
+retrieving revision 1.88
+diff -u -r1.88 engine.js
+--- java/org/directwebremoting/engine.js	6 Mar 2007 16:58:54 -0000	1.88
++++ java/org/directwebremoting/engine.js	8 Mar 2007 16:23:04 -0000
+@@ -157,6 +157,24 @@
+ };
+ 
+ /**
++ * Turn server notification of page unload on and off
++ * @param notify true or false depending on if we want to turn unload on or off
++ * @see getahead.org/dwr/browser/engine/options
++ */
++dwr.engine.setNotifyServerOnPageUnload = function(notify) {
++  if (notify == dwr.engine._isNotifyServerOnPageUnload) return;
++  if (notify) {
++    if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
++    else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
++  }
++  else {
++    if (window.removeEventListener) window.removeEventListener('unload', dwr.engine._unloader, false);
++    else if (window.detachEvent) window.detachEvent('onunload', dwr.engine._unloader);
++  }
++  dwr.engine._isNotifyServerOnPageUnload = notify;
++}
++
++/**
+  * Set the preferred polling type.
+  * @param newPollType One of dwr.engine.XMLHttpRequest or dwr.engine.IFrame
+  * @see getahead.org/dwr/browser/engine/options
+@@ -348,6 +366,35 @@
+ dwr.engine._partialResponseYes = 1;
+ dwr.engine._partialResponseFlush = 2;
+ 
++/** Are we doing page unloading? */
++dwr.engine._isNotifyServerOnPageUnload = false;
++
++/** @private If we have used reverse ajax then we try to tell the server we are gone */
++dwr.engine._unloader = function() {
++  dwr.engine._debug("calling unloader for: " + dwr.engine._getScriptSessionId());
++  var batch = {
++    map:{
++      callCount:1,
++      page:window.location.pathname + window.location.search,
++      httpSessionId:dwr.engine._getJSessionId(),
++      scriptSessionId:dwr.engine._getScriptSessionId(),
++      'c0-scriptName':'__System',
++      'c0-methodName':'pageUnloaded',
++      'c0-id':0
++    },
++    paramCount:0, isPoll:false, async:true,
++    headers:{}, preHooks:[], postHooks:[],
++    rpcType:dwr.engine.IFrame, //dwr.engine._rpcType,
++    httpMethod:dwr.engine._httpMethod,
++    timeout:dwr.engine._timeout,
++    errorHandler:null, warningHandler:null, textHtmlHandler:null,
++    path:dwr.engine._defaultPath,
++    handlers:[{ exceptionHandler:null, callback:null }]
++  };
++  dwr.engine._sendData(batch);
++  dwr.engine.setNotifyServerOnPageUnload(false);
++};
++
+ /**
+  * @private Send a request. Called by the Javascript interface stub
+  * @param path part of URL after the host and before the exec bit without leading or trailing /s
+@@ -607,9 +654,14 @@
+ 
+   var exec = response.substring(firstStartTag + 13, lastEndTag);
+ 
+-  dwr.engine._receivedBatch = batch;
+-  dwr.engine._eval(exec);
+-  dwr.engine._receivedBatch = null;
++  try {
++    dwr.engine._receivedBatch = batch;
++    dwr.engine._eval(exec);
++    dwr.engine._receivedBatch = null;
++  }
++  catch (ex) {
++    dwr.engine._handleError(batch, ex);
++  }
+ };
+ 
+ /** @private Actually send the block of data in the batch object. */
+Index: java/org/directwebremoting/dwr.xml
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/dwr.xml,v
+retrieving revision 1.11
+diff -u -r1.11 dwr.xml
+--- java/org/directwebremoting/dwr.xml	11 Nov 2006 12:44:30 -0000	1.11
++++ java/org/directwebremoting/dwr.xml	8 Mar 2007 16:23:03 -0000
+@@ -109,6 +109,10 @@
+     <convert converter="servlet" match="javax.servlet.http.HttpServletResponse"/>
+     <convert converter="servlet" match="javax.servlet.http.HttpSession"/>
+ 
++    <create creator="new" javascript="__System" scope="application">
++      <param name="class" value="org.directwebremoting.export.System"/>
++    </create>
++
+   </allow>
+ 
+ </dwr>
+Index: web/index.html
+===================================================================
+RCS file: /cvs/dwr/web/index.html,v
+retrieving revision 1.57
+diff -u -r1.57 index.html
+--- web/index.html	21 Feb 2007 13:24:29 -0000	1.57
++++ web/index.html	8 Mar 2007 16:23:04 -0000
+@@ -15,6 +15,7 @@
+         return;
+       }
+       dwr.util.useLoadingMessage();
++      dwr.engine.setNotifyServerOnPageUnload(true);
+       // Turn on the generic error div
+       $("error").style.display = "block";
+       // Load a message from the server
+Index: java/org/directwebremoting/impl/DefaultAccessControl.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/impl/DefaultAccessControl.java,v
+retrieving revision 1.11
+diff -u -r1.11 DefaultAccessControl.java
+--- java/org/directwebremoting/impl/DefaultAccessControl.java	7 Mar 2007 12:56:13 -0000	1.11
++++ java/org/directwebremoting/impl/DefaultAccessControl.java	8 Mar 2007 16:23:04 -0000
+@@ -296,7 +296,10 @@
+      */
+     protected void assertIsClassDwrInternal(Creator creator)
+     {
+-        if (creator.getType().getName().startsWith(PACKAGE_DWR_DENY))
++        String name = creator.getType().getName();
++
++        // Access to org.directwebremoting is denied except for .export
++        if (name.startsWith(PACKAGE_DWR_DENY) && !name.startsWith(PACKAGE_DWR_ALLOW))
+         {
+             throw new SecurityException(Messages.getString("DefaultAccessControl.DeniedCoreDWR"));
+         }
+@@ -356,4 +359,9 @@
+      * My package name, so we can ban DWR classes from being created or marshalled
+      */
+     protected static final String PACKAGE_DWR_DENY = "org.directwebremoting.";
++
++    /**
++     * My package name, so we can ban DWR classes from being created or marshalled
++     */
++    protected static final String PACKAGE_DWR_ALLOW = "org.directwebremoting.export.";
+ }
+Index: java/org/directwebremoting/export/System.java
+===================================================================
+RCS file: java/org/directwebremoting/export/System.java
+diff -N java/org/directwebremoting/export/System.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ java/org/directwebremoting/export/System.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,48 @@
++/*
++ * Copyright 2005 Joe Walker
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package org.directwebremoting.export;
++
++import org.directwebremoting.ScriptSession;
++import org.directwebremoting.WebContext;
++import org.directwebremoting.WebContextFactory;
++import org.directwebremoting.util.Logger;
++
++/**
++ * Various functions exported by DWR to help us with various book-keeping
++ * duties.
++ * @author Joe Walker [joe at getahead dot ltd dot uk]
++ */
++public class System
++{
++    /**
++     * Call {@link ScriptSession#invalidate()} on the {@link ScriptSession}
++     * that called this method.
++     * Used by the page unloader.
++     */
++    public void pageUnloaded()
++    {
++        WebContext wctx = WebContextFactory.get();
++        ScriptSession scriptSession = wctx.getScriptSession();
++
++        log.debug("scriptSession.invalidate() on " + scriptSession.getId());
++        scriptSession.invalidate();
++    }
++
++    /**
++     * The log stream
++     */
++    private static final Logger log = Logger.getLogger(System.class);
++}

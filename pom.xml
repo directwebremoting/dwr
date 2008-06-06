@@ -7,7 +7,7 @@
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
   <packaging>jar</packaging>
-  <version>3.0.M1</version>
+  <version>2.0.4</version>
   <name>Direct Web Remoting</name>
   <url>http://getahead.org/dwr</url>
 
@@ -182,24 +182,6 @@
         <version>1.2.9</version>
       </dependency>
 
-      <dependency>
-        <groupId>com.google.code.guice</groupId>
-        <artifactId>guice</artifactId>
-        <version>1.0</version>
-      </dependency>
-
-       <dependency>
-         <groupId>org.mortbay.jetty</groupId>
-         <artifactId>cometd</artifactId>
-         <version>6.1.4</version>
-        </dependency>
-
-        <dependency>
-         <groupId>xmlbeans</groupId>
-         <artifactId>xmlbeans</artifactId>
-         <version>2.2.0</version>
-        </dependency>
-
     </dependencies>
 
   </dependencyManagement>
@@ -286,23 +268,7 @@
       <optional>true</optional>
     </dependency>
 
-    <dependency>
-      <groupId>com.google.code.guice</groupId>
-      <artifactId>guice</artifactId>
-      <optional>true</optional>
-    </dependency>
 
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>cometd</artifactId>
-     </dependency>
-        
-     <dependency>
-       <groupId>xmlbeans</groupId>
-       <artifactId>xmlbeans</artifactId>
-       <optional>true</optional>
-     </dependency>
-        
     <!-- Testing dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -324,7 +290,9 @@
     <directory>target/maven2</directory>
     <outputDirectory>target/maven2/classes</outputDirectory>
     <testOutputDirectory>target/maven2/test-classes</testOutputDirectory>
+
     <sourceDirectory>java</sourceDirectory>
+
     <resources>
       <!--  Include spring.handler and spring.schemas files  -->
       <resource>
@@ -360,31 +328,12 @@
     </testResources>
 
     <plugins>
-        <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <source>1.5</source>
-              <target>1.5</target>
-            </configuration>
-          </plugin>
-
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>add-source</id>
-                <phase>generate-sources</phase>
-                <goals>
-                  <goal>add-source</goal>
-                </goals>
-                <configuration>
-                  <sources>
-                    <source>${basedir}/java</source>
-                  </sources>
-                </configuration>
-              </execution>
-            </executions>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
       </plugin>
 
       <plugin>
