@@ -16,7 +16,6 @@
 package org.directwebremoting.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.Logger;
-import org.directwebremoting.util.MimeConstants;
 
 /**
  * Handles an exception occuring during the request disptaching.
@@ -40,7 +38,8 @@ public class ExceptionHandler implements Handler
         // Allow Jetty RequestRetry exception to propogate to container
         Continuation.rethrowIfContinuation(cause);
 
-        log.warn("Error: " + cause);
+        log.warn("Unhandled Exception", cause);
+
         if (cause instanceof SecurityException && log.isDebugEnabled())
         {
             log.debug("- User Agent: " + request.getHeader(HttpConstants.HEADER_USER_AGENT));
@@ -57,10 +56,7 @@ public class ExceptionHandler implements Handler
             // use that much. I would have used something unassigned like 506+
             // But that could cause future problems and might not get through
             // proxies and the like
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            response.setContentType(MimeConstants.MIME_HTML);
-            PrintWriter out = response.getWriter();
-            out.println(cause.getMessage());
+            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Error. Details logged to the console");
         }
         catch (Exception ex)
         {
