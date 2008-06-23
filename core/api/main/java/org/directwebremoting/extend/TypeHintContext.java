@@ -21,15 +21,18 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * {@link TypeHintContext} should probably be called TypeHint. Its a way to
- * provide help to the converter in describing what types it should be
- * converting to.
- * Something to hold the method, paramNo and index together as an object
- * that can be a key in a Map.
+ * {@link TypeHintContext} is a way to provide help to the converter in
+ * describing what types it should be converting to.
+ * Since Java does generics by erasure, the runtime type information isn't
+ * available. However static type information is available. So while we can't
+ * tell from a Class object what the parameterized types are, we can get the
+ * information from the parameters to a method. The issue is that deep down in
+ * the guts of a conversion process we have no idea what the method context is.
+ * This class provides the means to retrieve this context.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class TypeHintContext
@@ -42,25 +45,26 @@ public class TypeHintContext
      */
     public TypeHintContext(ConverterManager converterManager, Method method, int parameterNumber)
     {
-        if (method == null)
-        {
-            throw new IllegalArgumentException("The method can not be null");
-        }
-
         this.converterManager = converterManager;
         this.method = method;
         this.parameterNumber = parameterNumber;
 
-        Type[] types = method.getGenericParameterTypes();
-
-        if (types != null && types.length > 0)
+        if (method != null)
         {
-            if (parameterNumber >= types.length)
+            Type[] types = method.getGenericParameterTypes();
+            if (types != null && types.length > 0)
             {
-                throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
-            }
+                if (parameterNumber >= types.length)
+                {
+                    throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+                }
 
-            this.parameterType = types[parameterNumber];
+                this.parameterType = types[parameterNumber];
+            }
+            else
+            {
+                this.parameterType = null;
+            }
         }
         else
         {
@@ -170,7 +174,14 @@ public class TypeHintContext
     @Override
     public int hashCode()
     {
-        return method.hashCode() + parameterNumber + parameterNumberTree.hashCode();
+        if (method == null)
+        {
+            return parameterNumber + parameterNumberTree.hashCode();
+        }
+        else
+        {
+            return method.hashCode() + parameterNumber + parameterNumberTree.hashCode();
+        }
     }
 
     /* (non-Javadoc)
@@ -196,9 +207,19 @@ public class TypeHintContext
 
         TypeHintContext that = (TypeHintContext) obj;
 
-        if (!this.method.equals(that.method))
+        if (this.method == null)
         {
-            return false;
+            if (that.method != null)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!this.method.equals(that.method))
+            {
+                return false;
+            }
         }
 
         if (this.parameterNumber != that.parameterNumber)
@@ -221,8 +242,15 @@ public class TypeHintContext
         {
             StringBuffer buffer = new StringBuffer();
 
-            buffer.append(method.getName());
-            buffer.append('(');
+            if (method == null)
+            {
+                buffer.append("UnknownMethod");
+            }
+            else
+            {
+                buffer.append(method.getDeclaringClass().getName() + "." + method.getName());
+            }
+            buffer.append("(param#=");
             buffer.append(parameterNumber);
 
             for (Integer i : parameterNumberTree)
@@ -247,7 +275,7 @@ public class TypeHintContext
     /**
      * When we can't work out a parameterized type, then we can ask here
      */
-    private ConverterManager converterManager;
+    private final ConverterManager converterManager;
 
     /**
      * Calculating toString could be costly, so we cache it

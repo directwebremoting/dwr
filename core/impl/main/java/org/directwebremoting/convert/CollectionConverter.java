@@ -36,13 +36,11 @@ import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.util.Messages;
 
 /**
  * An implementation of Converter for Collections of Strings.
@@ -63,7 +61,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     @SuppressWarnings("unchecked")
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         String value = data.getValue();
 
@@ -73,21 +71,17 @@ public class CollectionConverter extends BaseV20Converter implements Converter
             return null;
         }
 
-        if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START))
+        if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START) || !value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
         {
-            throw new ConversionException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_START));
-        }
-
-        if (!value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
-        {
-            throw new ConversionException(paramType, Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_END));
+            log.warn("Expected collection while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
         value = value.substring(1, value.length() - 1);
 
         try
         {
-            TypeHintContext icc = inctx.getCurrentTypeHintContext();
+            TypeHintContext icc = data.getContext().getCurrentTypeHintContext();
 
             TypeHintContext subthc = icc.createChildContext(0);
             Class<?> subtype = subthc.getExtraTypeInfo();
@@ -138,7 +132,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
 
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.
-            inctx.addConverted(data, paramType, col);
+            data.getContext().addConverted(data, paramType, col);
 
             StringTokenizer st = new StringTokenizer(value, ProtocolConstants.INBOUND_ARRAY_SEPARATOR);
             int size = st.countTokens();
@@ -153,7 +147,7 @@ public class CollectionConverter extends BaseV20Converter implements Converter
                 InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
                 nested.dereference();
 
-                Object output = converterManager.convertInbound(subtype, nested, inctx, subthc);
+                Object output = converterManager.convertInbound(subtype, nested, subthc);
                 col.add(output);
             }
 

@@ -17,7 +17,6 @@ package org.directwebremoting.convert;
 
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -39,7 +38,7 @@ public class NullConverter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx)
+    public Object convertInbound(Class<?> paramType, InboundVariable data)
     {
         return null;
     }

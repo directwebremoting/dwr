@@ -57,10 +57,10 @@ public interface Property
     public void setValue(Object bean, Object value) throws ConversionException;
 
     /**
-     * This is a nasty hack - {@link TypeHintContext} needs a {@link Method}.
+     * This is a nasty hack - {@link TypeInfo} needs a {@link Method}.
      * If you are implementing this and not proxying to a {@link PropertyDescriptor}
      * then you can probably return <code>null</code>.
-     * We should probably refactor {@link TypeHintContext} to use {@link Property}
+     * We should probably refactor {@link TypeInfo} to use {@link Property}
      * @return A setter method if one is available, or null otherwise
      */
     public Method getSetter();

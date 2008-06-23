@@ -33,7 +33,6 @@ import org.directwebremoting.extend.FileGenerator;
 import org.directwebremoting.extend.FileTransferFileGenerator;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ImageIOFileGenerator;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.InputStreamFileGenerator;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -55,7 +54,7 @@ public class FileConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         FormField formField = data.getFormField();
         if (paramType == FileTransfer.class)

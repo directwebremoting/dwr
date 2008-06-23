@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -17,7 +16,7 @@ public class StringEnumAbstractBaseConverter extends BaseV20Converter implements
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable iv) throws ConversionException
     {
         String value = LocalUtil.decode(iv.getValue());
 

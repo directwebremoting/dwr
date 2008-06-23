@@ -18,7 +18,6 @@ package jsx3.xml;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BaseV20Converter;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -34,10 +33,8 @@ public class CdfDocumentConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable iv) throws ConversionException
     {
-        // String value = LocalUtil.decode(iv.getValue());
-
         try
         {
             throw new ConversionException(paramType);

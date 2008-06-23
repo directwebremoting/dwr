@@ -55,7 +55,7 @@ public class ArrayConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         if (!paramType.isArray())
         {
@@ -81,7 +81,7 @@ public class ArrayConverter extends BaseV20Converter implements Converter
 
         // We should put the new object into the working map in case it
         // is referenced later nested down in the conversion process.
-        inctx.addConverted(data, paramType, array);
+        data.getContext().addConverted(data, paramType, array);
         InboundContext incx = data.getLookup();
 
         for (int i = 0; i < size; i++)
@@ -93,7 +93,7 @@ public class ArrayConverter extends BaseV20Converter implements Converter
 
             InboundVariable nested = new InboundVariable(incx, null, splitType, splitValue);
             nested.dereference();
-            Object output = converterManager.convertInbound(componentType, nested, inctx, inctx.getCurrentTypeHintContext());
+            Object output = converterManager.convertInbound(componentType, nested, data.getContext().getCurrentTypeHintContext());
             Array.set(array, i, output);
         }
 

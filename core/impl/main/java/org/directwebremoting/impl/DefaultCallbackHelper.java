@@ -25,7 +25,6 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
@@ -64,10 +63,7 @@ public class DefaultCallbackHelper implements CallbackHelper
 
     /**
      * The reverse of {@link CallbackHelperFactory#saveCallback(Callback, Class)}
-     * which executes a {@link Callback} which has been 
-     * @param key
-     * @param data
-     * @throws ConversionException
+     * which executes a {@link Callback} which has been called by the browser
      */
     @SuppressWarnings("unchecked")
     public static <T> void executeCallback(String key, RealRawData data) throws ConversionException
@@ -85,10 +81,9 @@ public class DefaultCallbackHelper implements CallbackHelper
         {
             Method method = Callback.class.getMethod("dataReturned", type);
 
-            InboundContext inctx = data.getInboundContext();
             TypeHintContext incc = new TypeHintContext(converterManager, method, 0);
             InboundVariable iv = data.getInboundVariable();
-            Object callbackData  = converterManager.convertInbound(type, iv, inctx, incc);
+            Object callbackData  = converterManager.convertInbound(type, iv, incc);
 
             Map<String, Callback<T>> callbackMap = (Map<String, Callback<T>>) session.getAttribute(KEY_TYPE);
             Callback<T> callback = callbackMap.remove(key);

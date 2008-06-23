@@ -354,7 +354,7 @@ public class AllConverterTest
             try
             {
                 InboundVariable iv = new InboundVariable(ctx, null, "type", input);
-                Object result = converterManager.convertInbound(convertTo, iv, ctx, null);
+                Object result = converterManager.convertInbound(convertTo, iv, null);
                 Assert.assertEquals(explanation, result, expected);
             }
             catch (Exception ex)
@@ -375,7 +375,7 @@ public class AllConverterTest
         try
         {
             InboundVariable iv = new InboundVariable(ctx, null, "type", input);
-            converterManager.convertInbound(convertTo, iv, ctx, null);
+            converterManager.convertInbound(convertTo, iv, null);
             Assert.fail();
         }
         catch (Exception ex)

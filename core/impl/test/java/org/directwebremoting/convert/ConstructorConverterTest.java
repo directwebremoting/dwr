@@ -15,13 +15,13 @@
  */
 package org.directwebremoting.convert;
 
-import static org.junit.Assert.*;
-
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * The tests for the <code>ConstructorConverter</code> class.
@@ -39,7 +39,7 @@ public class ConstructorConverterTest
         InboundContext ctx = new InboundContext();
         InboundVariable iv = new InboundVariable(ctx, null, "type", "value");
 
-        Object result = converter.convertInbound(String.class, iv, ctx);
+        Object result = converter.convertInbound(String.class, iv);
 
         assertNotNull(result);
         assertTrue(result instanceof String);

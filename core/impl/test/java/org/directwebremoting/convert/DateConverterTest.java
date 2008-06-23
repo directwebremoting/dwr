@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.convert;
 
-import static org.junit.Assert.*;
-
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -28,6 +26,8 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * The tests for the <code>DateConverter</code> class.
@@ -62,25 +62,25 @@ public class DateConverterTest
         InboundContext ctx = new InboundContext();
         InboundVariable iv = new InboundVariable(ctx, null, "type", "null");
 
-        Object result = converter.convertInbound(Date.class, iv, ctx);
+        Object result = converter.convertInbound(Date.class, iv);
         assertNull(result);
 
         iv = new InboundVariable(ctx, null, "type", "1104534000000");
-        result = converter.convertInbound(Date.class, iv, ctx);
+        result = converter.convertInbound(Date.class, iv);
 
         assertNotNull(result);
         assertTrue(result instanceof Date);
         assertEquals(new Date(1104534000000L), result);
 
-        result = converter.convertInbound(java.sql.Date.class, iv, ctx);
+        result = converter.convertInbound(java.sql.Date.class, iv);
         assertNotNull(result);
         assertTrue(result instanceof java.sql.Date);
 
-        result = converter.convertInbound(Time.class, iv, ctx);
+        result = converter.convertInbound(Time.class, iv);
         assertNotNull(result);
         assertTrue(result instanceof Time);
 
-        result = converter.convertInbound(Timestamp.class, iv, ctx);
+        result = converter.convertInbound(Timestamp.class, iv);
         assertNotNull(result);
         assertTrue(result instanceof Timestamp);
     }
@@ -93,6 +93,6 @@ public class DateConverterTest
         InboundVariable iv = new InboundVariable(ctx, null, "type", "null");
 
         // try to convert a non-supported type
-        converter.convertInbound(String.class, iv, ctx);
+        converter.convertInbound(String.class, iv);
     }
 }

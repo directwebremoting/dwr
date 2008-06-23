@@ -82,12 +82,10 @@ public interface ConverterManager
      * Designed for use with converters that have a working map passed to them
      * @param paramType The type that you want the object to be
      * @param data The string version of the object
-     * @param inctx The map of data that we are working on
-     * @param incc The context of this type conversion
      * @return The convertible object
      * @throws ConversionException If the conversion failed for some reason
      */
-    <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws ConversionException;
+    <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext thc) throws ConversionException;
 
     /**
      * RawData is something of a special case for conversion - it's designed to

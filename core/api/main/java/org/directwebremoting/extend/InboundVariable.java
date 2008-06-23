@@ -67,6 +67,14 @@ public final class InboundVariable
     }
 
     /**
+     * Accessor of the context of the variable: the other related variables
+     */
+    public InboundContext getContext()
+    {
+        return context;
+    }
+
+    /**
      * Attempt to de-reference an inbound variable.
      * We try de-referencing as soon as possible (why? there is a good reason
      * for it, it fixes some bug, but I can't remember what right now) However

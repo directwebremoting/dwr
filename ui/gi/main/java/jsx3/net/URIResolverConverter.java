@@ -18,7 +18,6 @@ package jsx3.net;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BaseV20Converter;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -32,7 +31,7 @@ public class URIResolverConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         URIResolver reply = URIResolver.toURIResolver(paramType.toString());
         if (reply == null)
