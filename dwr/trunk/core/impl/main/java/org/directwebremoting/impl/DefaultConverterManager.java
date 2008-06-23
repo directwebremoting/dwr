@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.dwrp;
+package org.directwebremoting.impl;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +39,6 @@ import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.RawData;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A class to manage the converter types and the instantiated class name matches.
@@ -130,9 +130,11 @@ public class DefaultConverterManager implements ConverterManager
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
     @SuppressWarnings("unchecked")
-    public <T> T convertInbound(Class<T> paramType, InboundVariable data, InboundContext inctx, TypeHintContext incc) throws ConversionException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext incc) throws ConversionException
     {
-        Object converted = inctx.getConverted(data, paramType);
+        InboundContext context = data.getContext();
+
+        Object converted = context.getConverted(data, paramType);
         if (converted == null)
         {
             Converter converter = null;
@@ -155,7 +157,8 @@ public class DefaultConverterManager implements ConverterManager
 
             if (converter == null)
             {
-                throw new ConversionException(paramType, Messages.getString("DefaultConverterManager.MissingConverter", paramType));
+                log.error("Missing converter. Context of conversion: " + incc);
+                throw new ConversionException(paramType, "No converter found for '" + paramType + "'");
             }
 
             // We only think about doing a null conversion ourselves once we are
@@ -166,9 +169,9 @@ public class DefaultConverterManager implements ConverterManager
                 return null;
             }
 
-            inctx.pushContext(incc);
-            converted = converter.convertInbound(paramType, data, inctx);
-            inctx.popContext();
+            context.pushContext(incc);
+            converted = converter.convertInbound(paramType, data);
+            context.popContext();
         }
 
         return (T) converted;
@@ -180,11 +183,10 @@ public class DefaultConverterManager implements ConverterManager
     public <T> T convertInbound(Class<T> paramType, RawData rawData) throws ConversionException
     {
         RealRawData realRawData = (RealRawData) rawData;
-        InboundContext context = realRawData.getInboundContext();
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = null;//new TypeHintContext(converterManager, null, 0);
+        TypeHintContext typeHintContext = new TypeHintContext(this, null, 0);
 
-        return convertInbound(paramType, inboundVariable, context, typeHintContext);
+        return convertInbound(paramType, inboundVariable, typeHintContext);
     }
 
     /* (non-Javadoc)
@@ -209,7 +211,7 @@ public class DefaultConverterManager implements ConverterManager
         Converter converter = getConverter(data);
         if (converter == null)
         {
-            String message = Messages.getString("DefaultConverterManager.MissingConverter", data.getClass().getName());
+            String message = "No converter found for '" + data.getClass().getName() + "'";
             log.error(message);
             return new ErrorOutboundVariable(message);
         }
@@ -222,7 +224,7 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setExtraTypeInfo(TypeHintContext thc, Class<?> type)
     {
-        extraTypeInfoMap.put(thc, type);
+        //extraTypeInfoMap.put(thc, type);
     }
 
     /* (non-Javadoc)
@@ -231,6 +233,15 @@ public class DefaultConverterManager implements ConverterManager
     public Class<?> getExtraTypeInfo(TypeHintContext thc)
     {
         return extraTypeInfoMap.get(thc);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#setTypeInfo(java.lang.reflect.Method, int, int, java.lang.Class)
+     */
+    public void setTypeInfo(Method method, int i, int j, Class<?> clazz)
+    {
+        TypeHintContext thc = new TypeHintContext(this, method, i).createChildContext(j);
+        this.setExtraTypeInfo(thc, clazz);
     }
 
     /* (non-Javadoc)
@@ -432,9 +443,82 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /**
+     * This serves as a composite key for a Map so we can store type information
+     * against a specific generic parameter context
+     */
+    public static class ManualTypeInfoContext
+    {
+        /**
+         * @param method
+         * @param parameterNumber
+         * @param genericPath
+         */
+        public ManualTypeInfoContext(Method method, int parameterNumber, int[] genericPath)
+        {
+            this.method = method;
+            this.parameterNumber = parameterNumber;
+            this.genericPath = genericPath;
+        }
+
+        private Method method;
+        private int parameterNumber;
+        private int[] genericPath;
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode()
+        {
+            return method.hashCode() + parameterNumber + genericPath.hashCode();
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (obj == this)
+            {
+                return true;
+            }
+
+            if (!this.getClass().equals(obj.getClass()))
+            {
+                return false;
+            }
+
+            ManualTypeInfoContext that = (ManualTypeInfoContext) obj;
+
+            if (!this.method.equals(that.method))
+            {
+                return false;
+            }
+
+            if (this.parameterNumber != that.parameterNumber)
+            {
+                return false;
+            }
+
+            if (!this.genericPath.equals(that.genericPath))
+            {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    /**
      * Where we store real type information behind generic types
      */
-    protected Map<TypeHintContext, Class<?>> extraTypeInfoMap = new HashMap<TypeHintContext, Class<?>>();
+    protected Map<ManualTypeInfoContext, Class<?>> extraTypeInfoMap = new HashMap<ManualTypeInfoContext, Class<?>>();
 
     /**
      * The list of the available converters

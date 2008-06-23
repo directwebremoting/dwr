@@ -38,7 +38,6 @@ import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * An implementation of Converter for Maps.
@@ -58,7 +57,7 @@ public class MapConverter implements Converter
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     @SuppressWarnings("unchecked")
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         String value = data.getValue();
 
@@ -68,14 +67,10 @@ public class MapConverter implements Converter
             return null;
         }
 
-        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
+        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            throw new IllegalArgumentException(Messages.getString("MapConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
-        }
-
-        if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
-        {
-            throw new IllegalArgumentException(Messages.getString("MapConverter.FormatError", ProtocolConstants.INBOUND_MAP_END));
+            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
         value = value.substring(1, value.length() - 1);
@@ -101,7 +96,7 @@ public class MapConverter implements Converter
             }
 
             // Get the extra type info
-            TypeHintContext thc = inctx.getCurrentTypeHintContext();
+            TypeHintContext thc = data.getContext().getCurrentTypeHintContext();
 
             TypeHintContext keyThc = thc.createChildContext(0);
             Class<?> keyType = keyThc.getExtraTypeInfo();
@@ -111,7 +106,7 @@ public class MapConverter implements Converter
 
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.
-            inctx.addConverted(data, paramType, map);
+            data.getContext().addConverted(data, paramType, map);
             InboundContext incx = data.getLookup();
 
             // Loop through the property declarations
@@ -128,7 +123,7 @@ public class MapConverter implements Converter
                 int colonpos = token.indexOf(ProtocolConstants.INBOUND_MAP_ENTRY);
                 if (colonpos == -1)
                 {
-                    throw new ConversionException(paramType, Messages.getString("MapConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
+                    throw new ConversionException(paramType, "Missing " + ProtocolConstants.INBOUND_MAP_ENTRY + " in object description: {1}" + token);
                 }
 
                 // Convert the value part of the token by splitting it into the
@@ -139,7 +134,7 @@ public class MapConverter implements Converter
                 String splitIvType = splitIv[ConvertUtil.INBOUND_INDEX_TYPE];
                 InboundVariable valIv = new InboundVariable(incx, null, splitIvType, splitIvValue);
                 valIv.dereference();
-                Object val = converterManager.convertInbound(valType, valIv, inctx, valThc);
+                Object val = converterManager.convertInbound(valType, valIv, valThc);
 
                 // Keys (unlike values) do not have type info passed with them
                 // Could we have recursive key? - I don't think so because keys
@@ -150,7 +145,7 @@ public class MapConverter implements Converter
                 InboundVariable keyIv = new InboundVariable(incx, null, ProtocolConstants.TYPE_STRING, keyStr);
                 keyIv.dereference();
 
-                Object key = converterManager.convertInbound(keyType, keyIv, inctx, keyThc);
+                Object key = converterManager.convertInbound(keyType, keyIv, keyThc);
 
                 map.put(key, val);
             }

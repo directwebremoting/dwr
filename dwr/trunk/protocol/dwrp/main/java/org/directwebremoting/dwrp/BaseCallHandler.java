@@ -220,8 +220,6 @@ public abstract class BaseCallHandler implements Handler
                 continue callLoop;
             }
 
-            call.setMethod(method);
-
             // Check this method is accessible
             Creator creator = creatorManager.getCreator(call.getScriptName(), true);
             accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
@@ -252,7 +250,7 @@ public abstract class BaseCallHandler implements Handler
                     Class<?> paramType = method.getParameterTypes()[j];
                     InboundVariable param = inctx.getParameter(callNum, j);
                     TypeHintContext incc = new TypeHintContext(converterManager, method, j);
-                    params[j] = converterManager.convertInbound(paramType, param, inctx, incc);
+                    params[j] = converterManager.convertInbound(paramType, param, incc);
                 }
                 catch (ConversionException ex)
                 {
@@ -362,7 +360,8 @@ public abstract class BaseCallHandler implements Handler
                     ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                     conduit.addScript(script);
 
-                    log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']');
+                    // TODO: Are there any reasons why we should be logging here (and in the ConversionException hendler)
+                    //log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']');
                 }
                 else
                 {
@@ -382,7 +381,7 @@ public abstract class BaseCallHandler implements Handler
             {
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                 addScriptHandleExceptions(conduit, script);
-                log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
+                //log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
             }
             catch (Exception ex)
             {

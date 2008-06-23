@@ -15,19 +15,18 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BaseV20Converter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Specialized converter implementation that uses a Provider to
@@ -60,11 +59,11 @@ class InternalConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> typeInfo, InboundVariable data) throws ConversionException
     {
         try
         {
-            return getConverter().convertInbound(type.asSubclass(paramType), data, inctx);
+            return getConverter().convertInbound(typeInfo, data);
         }
         catch (ClassCastException e)
         {

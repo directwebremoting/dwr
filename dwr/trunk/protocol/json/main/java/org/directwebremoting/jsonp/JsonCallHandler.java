@@ -196,7 +196,7 @@ public class JsonCallHandler implements Handler
 
             try
             {
-                params[j] = converterManager.convertInbound(paramType, param, inboundContext, incc);
+                params[j] = converterManager.convertInbound(paramType, param, incc);
             }
             catch (ConversionException ex)
             {

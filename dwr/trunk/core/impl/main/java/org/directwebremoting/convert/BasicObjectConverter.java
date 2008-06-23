@@ -17,7 +17,6 @@ package org.directwebremoting.convert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -42,7 +41,6 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * BasicObjectConverter is a parent to {@link BeanConverter} and
@@ -55,7 +53,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
         String value = data.getValue();
 
@@ -65,14 +63,10 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             return null;
         }
 
-        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
+        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
-        }
-
-        if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
-        {
-            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
         value = value.substring(1, value.length() - 1);
@@ -93,11 +87,11 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             // is referenced later nested down in the conversion process.
             if (instanceType != null)
             {
-                inctx.addConverted(data, instanceType, bean);
+                data.getContext().addConverted(data, instanceType, bean);
             }
             else
             {
-                inctx.addConverted(data, paramType, bean);
+                data.getContext().addConverted(data, paramType, bean);
             }
 
             Map<String, Property> properties = getPropertyMapFromObject(bean, false, true);
@@ -112,22 +106,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
                 Property property = properties.get(key);
                 if (property == null)
                 {
-                    log.warn("Missing java bean property to match javascript property: " + key + ". For causes see debug level logs:");
-
-                    log.debug("- The javascript may be refer to a property that does not exist");
-                    log.debug("- You may be missing the correct setter: set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "()");
-                    log.debug("- The property may be excluded using include or exclude rules.");
-
-                    StringBuffer all = new StringBuffer();
-                    for (Iterator<String> pit = properties.keySet().iterator(); pit.hasNext();)
-                    {
-                        all.append(pit.next());
-                        if (pit.hasNext())
-                        {
-                            all.append(',');
-                        }
-                    }
-                    log.debug("Fields exist for (" + all + ").");
+                    log.warn("Missing setter: " + paramType.getName() + ".set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "() to match javascript property: " + key + ". Check include/exclude rules and overloaded methods.");
                     continue;
                 }
 
@@ -139,9 +118,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
 
                 InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
                 nested.dereference();
-                TypeHintContext incc = createTypeHintContext(inctx, property);
+                TypeHintContext incc = createTypeHintContext(data.getContext(), property);
 
-                Object output = converterManager.convertInbound(propType, nested, inctx, incc);
+                Object output = converterManager.convertInbound(propType, nested, incc);
                 property.setValue(bean, output);
             }
 
@@ -158,9 +137,9 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     }
 
     /**
-     * {@link #convertInbound(Class, InboundVariable, InboundContext)} needs to
-     * create a {@link TypeHintContext} for the {@link Property} it is
-     * converting so that the type guessing system can do its work.
+     * {@link #convertInbound} needs to create a {@link TypeHintContext} for the
+     * {@link Property} it is converting so that the type guessing system can do
+     * its work.
      * <p>The method of generating a {@link TypeHintContext} is different for
      * the {@link BeanConverter} and the {@link ObjectConverter}.
      * @param inctx The parent context
@@ -230,7 +209,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     {
         if (inclusions != null)
         {
-            throw new IllegalArgumentException(Messages.getString("BeanConverter.OnlyIncludeOrExclude"));
+            throw new IllegalArgumentException("Can't have both inclusions and exclusions for a Converter");
         }
 
         exclusions = new ArrayList<String>();
@@ -257,7 +236,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
     {
         if (exclusions != null)
         {
-            throw new IllegalArgumentException(Messages.getString("BeanConverter.OnlyIncludeOrExclude"));
+            throw new IllegalArgumentException("Can't have both inclusions and exclusions for a Converter");
         }
 
         inclusions = new ArrayList<String>();
@@ -387,7 +366,7 @@ public abstract class BasicObjectConverter extends BaseV20Converter implements N
             int colonpos = token.indexOf(ProtocolConstants.INBOUND_MAP_ENTRY);
             if (colonpos == -1)
             {
-                throw new ConversionException(paramType, Messages.getString("BeanConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
+                throw new ConversionException(paramType, "Missing " + ProtocolConstants.INBOUND_MAP_ENTRY + " in object description: " + token);
             }
 
             String key = token.substring(0, colonpos).trim();

@@ -51,7 +51,6 @@
     <convert converter="null" match="java.lang.Void"/>
 
     <convert converter="miniException" match="java.lang.Throwable"/>
-    <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
 
     <convert converter="primitive" match="boolean"/>
     <convert converter="primitive" match="byte"/>
@@ -91,10 +90,6 @@
     <convert converter="array" match="[C"/>
     <convert converter="array" match="[L*"/>
 
-    <convert converter="context" match="org.directwebremoting.proxy.io.Context"/>
-    <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
-    <convert converter="raw" match="org.directwebremoting.io.RawData"/>
-
     <!--
     The catch for the next 2 is that we really mean java.util.Collection<String>
     and java.util.Map<String, String> but we need to do more work before this
@@ -121,17 +116,36 @@
     <convert converter="servlet" match="javax.servlet.http.HttpServletResponse"/>
     <convert converter="servlet" match="javax.servlet.http.HttpSession"/>
 
-    <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
     <convert converter="file" match="java.io.InputStream"/>
     <convert converter="file" match="java.awt.image.BufferedImage"/>
 
     <convert converter="jsx3uri" match="jsx3.net.URIResolver"/>
     <convert converter="jsx3doc" match="jsx3.xml.CdfDocument"/>
 
+    <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
+    <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
+    <convert converter="bean" match="org.directwebremoting.io.Item"/>
     <convert converter="function" match="org.directwebremoting.io.JavascriptFunction"/>
+    <convert converter="raw" match="org.directwebremoting.io.RawData"/>
+    <convert converter="bean" match="org.directwebremoting.io.StoreRegion"/>
+    <!--
+      TODO: enable constructor injection?
+      <param name="useConstructor" value="int start, int count, List sortCriteria, Map filter"/>
+    -->
+    <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
+
+    <!--
+    <convert converter="context" match="org.directwebremoting.proxy.io.Context"/>
+    -->
 
     <create creator="new" javascript="__System" scope="application">
+      <!-- ExportUtil.isSystemClass assumes the name __System -->
       <param name="class" value="org.directwebremoting.export.System"/>
+      <param name="hidden" value="true"/>
+    </create>
+
+    <create creator="new" javascript="__Data" scope="application">
+      <param name="class" value="org.directwebremoting.export.Data"/>
       <param name="hidden" value="true"/>
     </create>
 

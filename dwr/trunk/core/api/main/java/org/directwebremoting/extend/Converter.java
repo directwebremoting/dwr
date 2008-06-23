@@ -37,11 +37,10 @@ public interface Converter
      * so we take the assumption that anything wrong is someone hacking.
      * @param paramType The type to convert to
      * @param data The data to convert
-     * @param inctx The map of data that we are working on
      * @return The converted data, or null if the conversion was not possible
      * @throws ConversionException If the conversion failed for some reason
      */
-    Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException;
+    Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException;
 
     /**
      * Return a javascript string that defines the variable named varName to

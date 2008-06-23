@@ -21,14 +21,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.dwrp.DefaultConverterManager;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.impl.DefaultConverterManager;
 import org.directwebremoting.io.RawData;
 
 import com.google.inject.Injector;
@@ -106,9 +105,9 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.TypeHintContext)
      */
-    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, InboundContext inctx, TypeHintContext incc) throws ConversionException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, TypeHintContext incc) throws ConversionException
     {
-        return converterManager.convertInbound(paramType, iv, inctx, incc);
+        return converterManager.convertInbound(paramType, iv, incc);
     }
 
     /* (non-Javadoc)

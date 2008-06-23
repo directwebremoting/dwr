@@ -17,7 +17,6 @@ package org.directwebremoting.convert;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -37,9 +36,9 @@ public class RawConverter extends BaseV20Converter implements Converter
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
-    public Object convertInbound(Class<?> paramType, InboundVariable data, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
-        return new RealRawData(data, inctx);
+        return new RealRawData(data, data.getContext());
     }
 
     /* (non-Javadoc)

@@ -17,7 +17,6 @@ package org.directwebremoting.convert;
 
 import org.directwebremoting.convert.test.MyBeanImpl;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -27,10 +26,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Bram Smeets
@@ -66,7 +62,7 @@ public class BeanConverterTest
     public void convertInboundWithNull() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, null, "null");
-        Object result = converter.convertInbound(null, var, null);
+        Object result = converter.convertInbound(null, var);
         assertNull(result);
     }
 
@@ -75,7 +71,7 @@ public class BeanConverterTest
     {
         // test with missing map start in the variable value
         InboundVariable var = new InboundVariable(null, null, null, "value");
-        converter.convertInbound(null, var, null);
+        converter.convertInbound(null, var);
     }
 
     @Test(expected = Exception.class)
@@ -83,23 +79,22 @@ public class BeanConverterTest
     {
         // test with missing map end in the variable value
         InboundVariable var = new InboundVariable(null, null, null, "{ value");
-        converter.convertInbound(null, var, null);
+        converter.convertInbound(null, var);
     }
 
     @Test
     public void convertInbound() throws Exception
     {
         // also test with an instance type
-        InboundContext ctx = new InboundContext();
         InboundVariable var = new InboundVariable(null, null, "type", "{ property: bla }");
         converter.setInstanceType(MyBeanImpl.class);
 
         EasyMock.expect(manager.convertInbound(EasyMock.eq(String.class),
-                EasyMock.isA(InboundVariable.class), EasyMock.eq(ctx),
+                EasyMock.isA(InboundVariable.class),
                 EasyMock.isA(TypeHintContext.class))).andReturn("bla");
         EasyMock.replay(manager);
 
-        Object result = converter.convertInbound(Object.class, var, ctx);
+        Object result = converter.convertInbound(Object.class, var);
         assertNotNull(result);
         assertTrue(result instanceof MyBeanImpl);
         MyBeanImpl bean = (MyBeanImpl) result;
@@ -111,35 +106,35 @@ public class BeanConverterTest
     @Test(expected = Exception.class)
     public void convertInboundNullPointerException() throws Exception
     {
-        converter.convertInbound(null, null, null);
+        converter.convertInbound(null, null);
     }
 
     @Test(expected = Exception.class)
     public void convertInboundNullPointerException2() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, null, (String) null);
-        converter.convertInbound(null, var, null);
+        converter.convertInbound(null, var);
     }
 
     @Test(expected = Exception.class)
     public void convertInboundIllegalArgumentException() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, null, "value");
-        converter.convertInbound(null, var, null);
+        converter.convertInbound(null, var);
     }
 
     @Test(expected = Exception.class)
     public void convertInboundMarshallException() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, null, "{ value }");
-        converter.convertInbound(null, var, null);
+        converter.convertInbound(null, var);
     }
 
     @Test(expected = Exception.class)
     public void convertInboundMarshallException2() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, null, "{ value }");
-        converter.convertInbound(Object.class, var, null);
+        converter.convertInbound(Object.class, var);
     }
 
     @Test(expected = Exception.class)
@@ -147,27 +142,25 @@ public class BeanConverterTest
     {
         InboundVariable var = new InboundVariable(null, null, null, "{ value }");
         // TODO: this is an error due to a null pointer exception in hashcode of InboundVariable. This should be fixed!
-        converter.convertInbound(Object.class, var, new InboundContext());
+        converter.convertInbound(Object.class, var);
     }
 
     @Test(expected = Exception.class)
     public void convertInboundMarshallException4() throws Exception
     {
         InboundVariable var = new InboundVariable(null, null, "type", "{ value }");
-        converter.convertInbound(Object.class, var, new InboundContext());
+        converter.convertInbound(Object.class, var);
     }
 
     @Test
     public void convertInboundExceptions() throws Exception
     {
-        InboundContext ctx = new InboundContext();
-
         InboundVariable var = new InboundVariable(null, null, "type", "{ value: , }");
-        Object result = converter.convertInbound(Object.class, var, ctx);
+        Object result = converter.convertInbound(Object.class, var);
         assertNotNull(result);
 
         var = new InboundVariable(null, null, "type", "{ value: , }");
-        result = converter.convertInbound(Object.class, var, ctx);
+        result = converter.convertInbound(Object.class, var);
         assertNotNull(result);
     }
 

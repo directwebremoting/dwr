@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ConvertUtil;
-import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
@@ -49,9 +48,9 @@ public class XmlBeanConverter extends BeanConverter
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
     @Override
-    public Object convertInbound(Class<?> paramType, InboundVariable iv, InboundContext inctx) throws ConversionException
+    public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
-        String value = iv.getValue();
+        String value = data.getValue();
 
         logger.debug("handling variable (" + value + ") for class (" + paramType.getName() + ")");
 
@@ -106,11 +105,11 @@ public class XmlBeanConverter extends BeanConverter
 
             if (instanceType != null)
             {
-                inctx.addConverted(iv, instanceType, bean);
+                data.getContext().addConverted(data, instanceType, bean);
             }
             else
             {
-                inctx.addConverted(iv, paramType, bean);
+                data.getContext().addConverted(data, paramType, bean);
             }
 
             Map<String, Property> properties = getPropertyMapFromClass(paramType, false, true);
@@ -152,12 +151,12 @@ public class XmlBeanConverter extends BeanConverter
                 String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
                 String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
 
-                InboundVariable nested = new InboundVariable(iv.getLookup(), null, splitType, splitValue);
+                InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
                 nested.dereference();
 
-                TypeHintContext incc = createTypeHintContext(inctx, property);
+                TypeHintContext incc = createTypeHintContext(data.getContext(), property);
 
-                Object output = converterManager.convertInbound(propType, nested, inctx, incc);
+                Object output = converterManager.convertInbound(propType, nested, incc);
                 property.setValue(bean, output);
             }
 
