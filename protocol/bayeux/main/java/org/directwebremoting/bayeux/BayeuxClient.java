@@ -37,6 +37,7 @@ import org.directwebremoting.extend.ScriptConduit;
 import dojox.cometd.Bayeux;
 import dojox.cometd.Client;
 import dojox.cometd.Listener;
+import dojox.cometd.Message;
 
 /**
  * @author Greg Wilkins [gregw at webtide dot com]
@@ -50,22 +51,19 @@ public class BayeuxClient implements Listener
 
         // At this point BayeuxClient is fully initialized so it is safe to
         // allow other classes to see and use us.
-        //noinspection ThisEscapedInObjectConstruction
-        this.client = bayeux.newClient("dwr", this);
-        bayeux.subscribe("/dwr", client);
+        bayeux.getChannel("/dwr", true).subscribe(client);
     }
 
     /* (non-Javadoc)
-     * @see dojox.cometd.Listener#deliver(dojox.cometd.Client, java.lang.String, java.lang.Object, java.lang.String)
+     * @see dojox.cometd.MessageListener#deliver(dojox.cometd.Client, dojox.cometd.Client, dojox.cometd.Message)
      */
-    public void deliver(Client fromClient, String toChannel, Object message, String msgId)
+    public void deliver(Client fromClient, Client toClient, Message message)
     {
         try
         {
             @SuppressWarnings("unchecked")
-            Map<String, Object> msgParams = (Map<String, Object>) message;
-            Map<String, FormField> fileParams = new HashMap<String, FormField>(msgParams.size());
-            for (Map.Entry<String, Object> entry : msgParams.entrySet())
+            Map<String, FormField> fileParams = new HashMap<String, FormField>(message.size());
+            for (Map.Entry<String, Object> entry : message.entrySet())
             {
                 String param = (String) entry.getValue();
                 FormField formField = new FormField(param);
@@ -111,7 +109,7 @@ public class BayeuxClient implements Listener
 
             String output = conduit.toString();
             log.debug("<< "+output);
-            bayeux.publish(client, "/dwr/"+fromClient.getId(), output, calls.getBatchId());
+            bayeux.getChannel("/dwr" + fromClient.getId(), true).publish(client, output, calls.getBatchId());
         }
         catch (Exception ex)
         {
