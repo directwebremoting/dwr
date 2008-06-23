@@ -88,7 +88,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrGuiceSer
 
 
     /**
-     * Copies the Boolean that determines the behavior of {@link #bindDwrScope()}
+     * Copies the Boolean that determines the behavior of {@link #bindDwrScopes()}
      * from another module and calls that method during configuration.
      */
     private static class DwrScopeBinder extends AbstractDwrModule
@@ -99,6 +99,7 @@ public abstract class DwrGuiceServletContextListener extends AbstractDwrGuiceSer
             this.module = module;
         }
 
+        @Override
         protected void configure()
         {
             bindDwrScopes();

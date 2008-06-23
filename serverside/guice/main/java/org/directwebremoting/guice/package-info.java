@@ -111,7 +111,7 @@
  * <p>
  *   For creating your own scopes where the instance injected depends on some
  *   run-time value, create a concrete extension of
- *   {@link org.directwebremoting.guice.AbstractContextScope}.
+ *   {@link org.directwebremoting.guice.util.AbstractContextScope}.
  * </p>
  * <p>For example:</p>
  * <pre>

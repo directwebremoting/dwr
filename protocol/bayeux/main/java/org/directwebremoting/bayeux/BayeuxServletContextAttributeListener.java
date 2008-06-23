@@ -75,7 +75,7 @@ public class BayeuxServletContextAttributeListener implements ServletContextAttr
                 {
                     log.debug("container=" + container);
                     log.debug("beans=" + container.getBeanNames());
-                    Remoter r = (Remoter) container.getBean("org.directwebremoting.extend.Remoter");
+                    Remoter r = container.getBean(Remoter.class);
                     if (r != null)
                     {
                         remoter = r;
@@ -86,7 +86,7 @@ public class BayeuxServletContextAttributeListener implements ServletContextAttr
                         log.debug("remoter=" + remoter);
                     }
 
-                    ConverterManager c = (ConverterManager) container.getBean("org.directwebremoting.extend.ConverterManager");
+                    ConverterManager c = container.getBean(ConverterManager.class);
                     if (c != null)
                     {
                         converterManager = c;
@@ -97,7 +97,7 @@ public class BayeuxServletContextAttributeListener implements ServletContextAttr
                         log.debug("converterManager=" + converterManager);
                     }
 
-                    PlainCallHandler p = (PlainCallHandler) container.getBean("org.directwebremoting.dwrp.PlainCallHandler");
+                    PlainCallHandler p = container.getBean(PlainCallHandler.class);
                     if (p != null)
                     {
                         this.plainCallHandler = p;

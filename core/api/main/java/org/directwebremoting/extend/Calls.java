@@ -80,6 +80,15 @@ public class Calls implements Iterable<Call>
 
     private String batchId = null;
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "Calls[id=" + batchId + ":" + calls + "]";
+    }
+
     /**
      * The collection of Calls that we should execute
      */
