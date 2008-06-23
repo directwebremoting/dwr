@@ -52,12 +52,12 @@ public abstract class AbstractDwrModule extends AbstractModule
      * the potentially conflicting types only if the Guice ServletModule is not found
      * in the classloader. That is usually the right behavior; it should not often be
      * necessary to call this method.
-     * @param bindPotentiallyConflictingTypes whether to bind request, response, and
+     * @param newBindPotentiallyConflictingTypes whether to bind request, response, and
      *   session types to DWR scopes without qualifying with an annotation
      */
-    protected final void bindPotentiallyConflictingTypes(boolean bindPotentiallyConflictingTypes)
+    protected final void bindPotentiallyConflictingTypes(boolean newBindPotentiallyConflictingTypes)
     {
-        this.bindPotentiallyConflictingTypes = bindPotentiallyConflictingTypes;
+        this.bindPotentiallyConflictingTypes = newBindPotentiallyConflictingTypes;
     }
 
     /**
@@ -87,19 +87,19 @@ public abstract class AbstractDwrModule extends AbstractModule
      * Configure DWR scopes and bindings for servlet-related types,
      * specifying explicitly whether to include bindings that might
      * conflict with those provided by Guice's ServletModule.
-     * The {@link #bindDwrScopes variant} of this method that takes
+     * The {@link #bindDwrScopes() variant} of this method that takes
      * no arguments usually does the right; it should not often be
      * necessary to call this method.
      * <p>Idempotent within current thread.</p>
-     * @param bindPotentiallyConflictingTypes whether to bind request, response,
+     * @param newBindPotentiallyConflictingTypes whether to bind request, response,
      *     and session types (risking conflict with Guice)
      */
-    protected void bindDwrScopes(boolean bindPotentiallyConflictingTypes)
+    protected void bindDwrScopes(boolean newBindPotentiallyConflictingTypes)
     {
         if (!boundDwrScopes.get())
         {
             boundDwrScopes.set(true);
-            install(new DwrGuiceServletModule(bindPotentiallyConflictingTypes));
+            install(new DwrGuiceServletModule(newBindPotentiallyConflictingTypes));
         }
     }
 
@@ -231,7 +231,7 @@ public abstract class AbstractDwrModule extends AbstractModule
 
 
     /**
-     * Used to determine what value {@link #bindDwrScopes bindDwrScopes()}
+     * Used to determine what value {@link #bindDwrScopes() bindDwrScopes()}
      * passes to {@link #bindDwrScopes(boolean) bindDwrScopes(boolean)}.
      * If null, the result of calling {@code !guiceServletModuleExists()}
      * is used.
@@ -243,6 +243,7 @@ public abstract class AbstractDwrModule extends AbstractModule
 
     private static final ThreadLocal<Boolean> boundDwrScopes = new ThreadLocal<Boolean>()
     {
+        @Override
         protected Boolean initialValue()
         {
             return false;

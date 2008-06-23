@@ -61,6 +61,22 @@ public class DefaultJavascriptFunction implements JavascriptFunction
         close();
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "browser[" + session.getId() + "].functions[" + id + "](...)";
+    }
+
+    /**
+     * The browser window that owns this function
+     */
     private ScriptSession session;
+
+    /**
+     * The id into the function cache
+     */
     private String id;
 }

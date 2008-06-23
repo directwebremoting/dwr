@@ -68,7 +68,8 @@ public abstract class AbstractContainer implements Container
         }
         catch (ClassCastException ex)
         {
-            log.error("ClassCastException: Asked for implementation of " + type.getName() + " but the container has a type of " + bean.getClass().getName());
+            log.error("ClassCastException: Asked for implementation of " + type.getName() + " but the container has a type " + bean.getClass().getName());
+            log.error("  - calling toString() on returned bean gives: " + bean);
             throw ex;
         }
     }

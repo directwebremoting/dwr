@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Injector;
-
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
@@ -25,6 +23,7 @@ import javax.servlet.ServletContext;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 
+import com.google.inject.Injector;
 
 /**
  * Utilities for making Injector and ServletContext instances available.
@@ -45,7 +44,7 @@ public class DwrGuiceUtil
      */
     public static Injector getInjector()
     {
-        return DwrGuiceServletContextListener.getPublishedInjector(getServletContext());
+        return AbstractDwrGuiceServletContextListener.getPublishedInjector(getServletContext());
     }
 
     /**

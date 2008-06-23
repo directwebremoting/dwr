@@ -103,7 +103,7 @@ public class YahooJSCompressor implements Compressor
     /**
      * ErrorReporter implementation required by the YUI Compressor compress.
      */
-    protected class YahooJSErrorReporter implements ErrorReporter
+    protected static class YahooJSErrorReporter implements ErrorReporter
     {
         public void warning(String message, String sourceName, int line, String lineSource, int lineOffset)
         {
@@ -163,13 +163,13 @@ public class YahooJSCompressor implements Compressor
 
     // Default values for the parameters that can be configured for this Compressor in case they
     // are not specified.
-    private static final Boolean DEFAULT_MUNGE = new Boolean(false);
+    private static final Boolean DEFAULT_MUNGE = Boolean.FALSE;
 
-    private static final Boolean DEFAULT_VERBOSE = new Boolean(false);
+    private static final Boolean DEFAULT_VERBOSE = Boolean.FALSE;
 
     private static final Integer DEFAULT_LINEBREAK = new Integer(20000);
 
-    private static final Boolean DEFAULT_PRESERVE_ALL_SEMICOLONS = new Boolean(false);
+    private static final Boolean DEFAULT_PRESERVE_ALL_SEMICOLONS = Boolean.FALSE;
 
-    private static final Boolean DEFAULT_DISABLE_OPTIMIZATIONS = new Boolean(false);
+    private static final Boolean DEFAULT_DISABLE_OPTIMIZATIONS = Boolean.FALSE;
 }

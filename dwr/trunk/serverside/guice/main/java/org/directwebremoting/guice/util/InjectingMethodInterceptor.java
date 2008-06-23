@@ -36,9 +36,9 @@ class InjectingMethodInterceptor implements MethodInterceptor
         this.key = key;
     }
 
-    @Inject void injectInterceptor(Injector injector)
+    @Inject void injectInterceptor(Injector newInjector)
     {
-        this.injector = injector;
+        this.injector = newInjector;
     }
 
     public Object invoke(MethodInvocation invocation) throws Throwable

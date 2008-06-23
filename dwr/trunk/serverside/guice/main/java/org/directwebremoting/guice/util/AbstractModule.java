@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.aopalliance.intercept.MethodInterceptor;
 
 import com.google.inject.Binder;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.matcher.Matcher;
@@ -43,13 +41,13 @@ import static com.google.inject.matcher.Matchers.*;
  * including {@link com.google.inject.AbstractModule AbstractModule} itself and
  * {@link org.aopalliance.intercept.MethodInterceptor MethodInterceptor} instances
  * constructed at bind-time.
- * <p>In addition, there are {@link #bindInterceptor bindInterceptor} variants
+ * <p>In addition, there are {@link #bindInterceptor(Class, Class...) bindInterceptor} variants
  * that arrange for the interceptors to be constructor-injected, that can wrap each interceptor
  * with extra common behavior, and that intercept all calls to methods declared by a given type.
- * These variants all call {@link #registerForInjection registerForInjection}, so there is
+ * These variants all call {@link #registerForInjection() registerForInjection}, so there is
  * no need to call it explicitly when using these methods (though it's harmless to do so).</p>
  * <p>The {@code Class<?>} and {@code Key<?>} arguments in the
- * {@link #bindInterceptor bindInterceptor} variants really should
+ * {@link #bindInterceptor(Class, Class...) bindInterceptor} variants really should
  * be {@code Class<? extends MethodInterceptor>} and {@code Key<? extends MethodInterceptor>},
  * but this would cause compile-time warnings on every use.</p>
  * @author Tim Peierls [tim at peierls dot net]
@@ -123,8 +121,8 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
 
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
-     * interceptors described by class.
+     * Variant of {@link #bindInterceptor(Class, Class...)} that allows
+     * constructor-injection of interceptors described by class.
      * @param classMatcher matches classes the interception should apply to.
      *   For example: {@code only(Runnable.class)}.
      * @param methodMatcher matches methods the interception should apply to.
@@ -141,8 +139,9 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
-     * interceptors described by {@link com.google.inject.Key Key}.
+     * Variant of {@link #bindInterceptor(Class, Class...) bindInterceptor} that
+     * allows constructor-injection of interceptors described by
+     * {@link com.google.inject.Key Key}.
      * @param classMatcher matches classes the interception should apply to.
      *   For example: {@code only(Runnable.class)}.
      * @param methodMatcher matches methods the interception should apply to.
@@ -160,8 +159,9 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
 
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
-     * interceptors described by class, each wrapped by a method interceptor wrapper.
+     * Variant of {@link #bindInterceptor(Class, Class...) bindInterceptor} that
+     * allows constructor-injection of interceptors described by class, each
+     * wrapped by a method interceptor wrapper.
      * @param classMatcher matches classes the interception should apply to.
      *   For example: {@code only(Runnable.class)}.
      * @param methodMatcher matches methods the interception should apply to.
@@ -198,8 +198,9 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} that allows constructor-injection of
-     * interceptors described by Key, each wrapped by a method interceptor wrapper.
+     * Variant of {@link #bindInterceptor(Class, Class...) bindInterceptor} that
+     * allows constructor-injection of interceptors described by Key, each
+     * wrapped by a method interceptor wrapper.
      * @param classMatcher matches classes the interception should apply to.
      *   For example: {@code only(Runnable.class)}.
      * @param methodMatcher matches methods the interception should apply to.
@@ -246,7 +247,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
 
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} intercepting
+     * Variant of {@link #bindInterceptor(Class, Class...) bindInterceptor} intercepting
      * non-nested calls to instances of a given type (or of a subclass of that type),
      * allowing constructor-injection of interceptors described by class.
      * @param targetType the type for which method calls are to be intercepted
@@ -265,7 +266,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
     }
 
     /**
-     * Variant of {@link #bindInterceptor bindInterceptor} intercepting
+     * Variant of {@link #bindInterceptor(Class, Class...) bindInterceptor} intercepting
      * non-nested calls to instances of a given type (or of a subclass of that type),
      * allowing constructor-injection of interceptors described by
      * {@link com.google.inject.Key Key}.
@@ -315,6 +316,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         }
     }
 
+    /* TODO: Not used, should we get rid of this?
     @Inject private void injectRegisteredObjects(Injector injector)
     {
         for (Object injectee : registeredForInjection.keySet())
@@ -322,6 +324,7 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
             injector.injectMembers(injectee);
         }
     }
+    */
 
     private void ensureSelfInjection(Binder binder)
     {

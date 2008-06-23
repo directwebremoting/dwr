@@ -68,7 +68,7 @@ public class Providers
 {
     /**
      * For fluent-style decoration with one or more method bindings when
-     * using {@link BindUtil#fromConstructor(Class, Key...)}.
+     * using {@link #fromConstructor(Class, Key...)}.
      */
     public interface BindingProvider<T> extends Provider<T>
     {

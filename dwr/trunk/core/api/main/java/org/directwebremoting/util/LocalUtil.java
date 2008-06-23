@@ -206,6 +206,47 @@ public final class LocalUtil
     }
 
     /**
+     * A helper for implementing {@link Object#equals(Object)} when some of your
+     * members could be null. Returns true if both objects are null, or if
+     * neither object is null, but object1.equals(object2) returns true.
+     * Otherwise returns false.
+     * @param object1 The first object to compare.
+     * @param object2 The second object to compare.
+     * @return True if the objects are both null or {@link #equals(Object)}
+     */
+    public static boolean equals(Object object1, Object object2)
+    {
+        if (object1 == null)
+        {
+            return object2 == null;
+        }
+
+        return object1.equals(object2);
+    }
+
+    /**
+     * {@link java.util.Comparator#compare(Object, Object)} demands that the
+     * return is 1, 0, -1. This helps implement that. 
+     * @param diff The result of some subtraction.
+     * @return 1, 0, -1
+     */
+    public static final int shrink(long diff)
+    {
+        if (diff > 0)
+        {
+            return 1;
+        }
+        if (diff < 0)
+        {
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    /**
      * @param type The class to de-primitivize
      * @return The non-primitive version of the class
      */
@@ -941,4 +982,29 @@ public final class LocalUtil
      * The log stream
      */
     private static final Log log = LogFactory.getLog(LocalUtil.class);
+
+    /**
+     * Utility to find a getter and return it's value from an object.
+     * If Java had the option to temporarily do dynamic typing there would be
+     * no need for this.
+     * @param pojo The POJO to extract some data from.
+     * @param propertyName The name of the property form which we form a getter
+     * name by upper-casing the first letter (in the EN locale) and prefixing
+     * with 'get'
+     * @return The value of property
+     * @throws NoSuchMethodException If the getter was missing
+     * @throws SecurityException If the getter was not accessible
+     * @throws IllegalArgumentException If something else went wrong
+     * @throws IllegalAccessException If something else went wrong
+     * @throws InvocationTargetException If something else went wrong
+     */
+    public static Object getProperty(Object pojo, String propertyName) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+    {
+        Class<? extends Object> real = pojo.getClass();
+    
+        String getterName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
+        
+        Method method = real.getMethod(getterName);
+        return method.invoke(pojo);
+    }
 }

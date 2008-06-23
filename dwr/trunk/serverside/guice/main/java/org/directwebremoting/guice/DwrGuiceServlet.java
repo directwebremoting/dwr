@@ -104,10 +104,10 @@ public class DwrGuiceServlet extends DwrServlet
     @Override
     public void destroy()
     {
-        ServletContext servletContext = this.servletContext;
+        ServletContext localContext = this.servletContext;
         this.servletContext = null;
 
-        DwrGuiceUtil.withServletContext(servletContext, new Runnable()
+        DwrGuiceUtil.withServletContext(localContext, new Runnable()
         {
             public void run()
             {
