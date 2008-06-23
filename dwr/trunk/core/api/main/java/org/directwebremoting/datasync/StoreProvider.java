@@ -16,6 +16,7 @@
 package org.directwebremoting.datasync;
 
 import org.directwebremoting.io.RawData;
+import org.directwebremoting.io.StoreRegion;
 
 /**
  * A StoreProvider is something like a {@link java.util.Map} where the API
@@ -31,7 +32,7 @@ import org.directwebremoting.io.RawData;
  * their primary keys.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface StoreProvider
+public interface StoreProvider<T>
 {
     /**
      * Similar to {@link java.util.Map#put} in adding items to a Store.
@@ -41,9 +42,24 @@ public interface StoreProvider
      * code is implemented in {@link AbstractStoreProvider}.
      * <p>See notes on {@link org.directwebremoting.io.Item#getItemId}
      * @param itemId The key (or some mapping) to it.
-     * @param data
+     * @param data Data from the web to be converted and added to the store
      */
     void put(String itemId, RawData data);
+
+    /**
+     * Similar to {@link java.util.Map#put} in adding items to a Store.
+     * A value of null is equivalent to removing the item from the store.
+     * @param itemId The key (or some mapping) to it.
+     * @param value The new object to be added to the store
+     */
+    void put(String itemId, T value);
+
+    /**
+     * Similar to {@link java.util.Map#get} in fetching items from a Store.
+     * @param itemId The ID of the item to fetch
+     * @return The matched item, or null if it was not found
+     */
+    T get(String itemId);
 
     /**
      * Extract the data referred to by the given region.
@@ -57,11 +73,12 @@ public interface StoreProvider
      * @param region A set of filter and sort criteria to restrict the fetched data
      * @return Data that matches the filtering specified in the region.
      */
-    MatchedItems subscribe(StoreRegion region, StoreChangeListener li);
+    MatchedItems subscribe(StoreRegion region, StoreChangeListener<T> li);
 
     /**
      * Remove the declaration of interest previously expressed.
+     * @param region A set of filter and sort criteria to restrict the fetched data
      * @param subscription The listener that should no longer be notified
      */
-    void unsubscribe(StoreChangeListener subscription);
+    void unsubscribe(StoreRegion region, StoreChangeListener<T> subscription);
 }

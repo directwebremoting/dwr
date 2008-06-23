@@ -655,6 +655,15 @@ if (typeof this['dwr'] == 'undefined') {
       }
     },
 
+    handleFunctionCall:function(id, args) {
+      var func = dwr.engine.serialize.remoteFunctions[id];
+      func.apply(window, args);
+    },
+
+    handleFunctionClose:function(id) {
+      delete dwr.engine.serialize.remoteFunctions.id;
+    },
+
     /**
      * Called by the server: Handle an exception for a call
      * @private
@@ -791,6 +800,16 @@ if (typeof this['dwr'] == 'undefined') {
     ],
 
     /**
+     * A holder for functions that we have serialized for remote calling.
+     */
+    remoteFunctions:{},
+
+    /**
+     * The ID of the next function that we serialize
+     */
+    funcId:0,
+
+    /**
      * Convert a text representation of XML into a DOM tree
      * @param {String} xml An xml string
      */
@@ -826,7 +845,7 @@ if (typeof this['dwr'] == 'undefined') {
      * @param data The data to be marshalled
      * @param name The name of the data being marshalled
      */
-    convert:function(batch, referto, data, name) {
+    convert:function(batch, referto, data, name, depth) {
       if (data == null) {
         batch.map[name] = "null:null";
         return;
@@ -851,7 +870,7 @@ if (typeof this['dwr'] == 'undefined') {
         else if (data instanceof Boolean) batch.map[name] = "Boolean:" + data;
         else if (data instanceof Number) batch.map[name] = "Number:" + data;
         else if (data instanceof Date) batch.map[name] = "Date:" + data.getTime();
-        else if (data && data.join) batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name);
+        else if (data && data.join) batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name, depth + 1);
         else if (data && data.tagName && data.tagName.toLowerCase() == "input" && data.type && data.type.toLowerCase() == "file") {
           batch.fileUpload = true;
           batch.map[name] = data;
@@ -860,15 +879,21 @@ if (typeof this['dwr'] == 'undefined') {
           // This check for an HTML is not complete, but is there a better way?
           // Maybe we should add: data.hasChildNodes typeof "function" == true
           if (data.nodeName && data.nodeType) {
-            batch.map[name] = dwr.engine.serialize.convertXml(batch, referto, data, name);
+            batch.map[name] = dwr.engine.serialize.convertXml(batch, referto, data, name, depth + 1);
           }
           else {
-            batch.map[name] = dwr.engine.serialize.convertObject(batch, referto, data, name);
+            batch.map[name] = dwr.engine.serialize.convertObject(batch, referto, data, name, depth + 1);
           }
         }
         break;
       case "function":
-        // We just ignore functions.
+        // Ignore functions unless they are directly passed in
+        if (depth == 0) {
+          var funcId = "f" + dwr.engine.serialize.funcId;
+          dwr.engine.serialize.remoteFunctions[funcId] = data;
+          batch.map[name] = "function:" + funcId;
+          dwr.engine.serialize.funcId++;
+        }
         break;
       default:
         dwr.engine._handleWarning(null, { name:"dwr.engine.unexpectedType", message:"Unexpected type: " + typeof data + ", attempting default converter." });
@@ -882,7 +907,7 @@ if (typeof this['dwr'] == 'undefined') {
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertArray:function(batch, referto, data, name) {
+    convertArray:function(batch, referto, data, name, depth) {
       if (dwr.engine.isIE <= 7) {
         // Use array joining on IE1-7 (fastest)
         var buf = ["Array:["];
@@ -890,7 +915,7 @@ if (typeof this['dwr'] == 'undefined') {
           if (i != 0) buf.push(",");
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[i], childName);
+          dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
           buf.push("reference:");
           buf.push(childName);
         }
@@ -904,7 +929,7 @@ if (typeof this['dwr'] == 'undefined') {
           if (i != 0) reply += ",";
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[i], childName);
+          dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
           reply += "reference:";
           reply += childName;
         }
@@ -919,7 +944,7 @@ if (typeof this['dwr'] == 'undefined') {
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertObject:function(batch, referto, data, name) {
+    convertObject:function(batch, referto, data, name, depth) {
       // treat objects as an associative arrays
       var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data) + ":{";
       var element;
@@ -927,7 +952,7 @@ if (typeof this['dwr'] == 'undefined') {
         if (typeof data[element] != "function") {
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[element], childName);
+          dwr.engine.serialize.convert(batch, referto, data[element], childName, depth + 1);
           reply += encodeURIComponent(element) + ":reference:" + childName + ", ";
         }
       }
@@ -945,7 +970,7 @@ if (typeof this['dwr'] == 'undefined') {
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertXml:function(batch, referto, data, name) {
+    convertXml:function(batch, referto, data, name, depth) {
       var output;
       if (window.XMLSerializer) output = new XMLSerializer().serializeToString(data);
       else if (data.toXml) output = data.toXml;
@@ -1735,7 +1760,7 @@ if (typeof this['dwr'] == 'undefined') {
       batch.map[prefix + "id"] = batch.map.callCount;
       var converted = [];
       for (i = 0; i < args.length; i++) {
-        dwr.engine.serialize.convert(batch, converted, args[i], prefix + "param" + i);
+        dwr.engine.serialize.convert(batch, converted, args[i], prefix + "param" + i, 0);
       }
     },
 
@@ -2086,33 +2111,50 @@ dwr.data = {
    * @param {string} subscriptionId Page Local UID
    * @param {string} storeId ID of server provided storage
    * @param {Function} callback function to be called on updates
-   * @param {Object} filtering and sorting options. Includes:
+   * @param {Object} region filtering and sorting options. Includes:
    * - start: The beginning of the region of specific interest
    * - count: The number of items being viewed
    * - sort: The sort criteria
    * - query: The filter criteria
    */
-  view: function(subscriptionId, storeId, callback, options) {
-    if (!options) options = { };
-    if (!options.start) options.start = 0;
-    if (!options.count) options.count = -1;
-    if (!options.sort) options.sort = { };
-    if (!options.query) options.query = { };
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'view', subscriptionId, storeId, callback, options.start, options.count, options.sort, options.query);
+  view: function(subscriptionId, storeId, callback, region) {
+    if (!region) region = { };
+    if (!region.start) region.start = 0;
+    if (!region.count) region.count = -1;
+    if (!region.sort) region.sort = [];
+    if (!region.query) region.query = {};
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'view', subscriptionId, storeId, callback, region, null);
   },
 
-  remove: function(subscriptionId) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'remove', subscriptionId);
+  /**
+   * As dwr.data.view() except that it also registers the client to receive
+   * updates via reverse ajax.
+   */
+  subscribe: function(subscriptionId, storeId, callback, region) {
+    if (!region) region = { };
+    if (!region.start) region.start = 0;
+    if (!region.count) region.count = -1;
+    if (!region.sort) region.sort = [];
+    if (!region.query) region.query = {};
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'subscribe', subscriptionId, storeId, callback, region, null);
+  },
+
+  /**
+   * Undo the action of dwr.data.subscribe()
+   * @param {string} subscriptionId Page Local UID previously used in a call to subscribe
+   */
+  unsubscribe: function(subscriptionId) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', subscriptionId, null);
   },
 
   /**
    * Request an update to server side data
-   * @param {Object} storeId The store to update (*not* a subscriptionId)
-   * @param {Object} itemId The ID of the data to change
+   * @param {String} storeId The store to update (*not* a subscriptionId)
+   * @param {String} itemId The ID of the data to change
    * @param {Object} data The new data object
    */
   update: function(storeId, itemId, data) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, 'Data', 'update', storeId, itemId, data);
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', storeId, itemId, data, null);
   }
 };
 

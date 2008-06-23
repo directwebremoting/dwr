@@ -21,8 +21,8 @@ import java.util.Map;
  * Analogous to a {@link java.util.Map.Entry} that we use to pass objects that
  * have been stored in a {@link org.directwebremoting.datasync.StoreProvider} to
  * the Internet.
- * TODO: Consider if we should add a timestamp to this so we can add some sort
- * of pessimistic locking to updates
+ * TODO: Consider if we should add version field to this so we can add some sort
+ * of pessimistic locking to updates.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Item
@@ -66,6 +66,38 @@ public class Item
     public Object getData()
     {
         return data;
+    }
+
+    /**
+     * Items need labels to support dojo.data.api.Read.getLabel()
+     * By default we just use the itemId, however if the data implements
+     * {@link ExposeToStringToTheOutside} then consider {@link Object#toString()}
+     * to be safe for Internet use.
+     * @return A label for this object
+     */
+    public String getLabel()
+    {
+        if (data instanceof ExposeToStringToTheOutside)
+        {
+            return data.toString();
+        }
+        else
+        {
+            return itemId;
+        }
+    }
+
+    /**
+     * A marker interface to indicate that {@link Object#toString()} does not
+     * have any information in it that you don't want to be exposed to the
+     * Internet.
+     */
+    public static interface ExposeToStringToTheOutside
+    {
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+        String toString();
     }
 
     /* (non-Javadoc)

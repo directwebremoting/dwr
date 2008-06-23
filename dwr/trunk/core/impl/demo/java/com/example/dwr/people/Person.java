@@ -15,132 +15,44 @@
  */
 package com.example.dwr.people;
 
-import org.directwebremoting.Security;
+import org.directwebremoting.io.Item;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Person
+public class Person implements Item.ExposeToStringToTheOutside
 {
-    /**
-     * @return the address
-     */
-    public String getAddress()
+    public Person()
     {
-        return address;
     }
 
-    /**
-     * @param address the address to set
-     */
-    public void setAddress(String address)
+    public Person(String name, String address, int age, boolean male)
     {
-        this.address = Security.escapeHtml(address);
+        this.name = name;
+        this.address = address;
+        this.age = age;
+        this.male = male;
     }
 
-    /**
-     * @return the id
-     */
-    public int getId()
-    {
-        return id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    private String name;
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id)
-    {
-        this.id = id;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    private String address;
 
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    private String phoneNumber;
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = Security.escapeHtml(name);
-    }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+    private int age;
 
-    /**
-     * @return the salary
-     */
-    public float getSalary()
-    {
-        return salary;
-    }
-
-    /**
-     * @param salary the salary to set
-     */
-    public void setSalary(float salary)
-    {
-        this.salary = salary;
-    }
-
-    /**
-     * @return the phoneNumber
-     */
-    public String getPhoneNumber()
-    {
-        return phoneNumber;
-    }
-
-    /**
-     * @param phoneNumber the phoneNumber to set
-     */
-    public void setPhoneNumber(String phoneNumber)
-    {
-        this.phoneNumber = phoneNumber;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
-
-        if (obj == this)
-        {
-            return true;
-        }
-
-        if (!this.getClass().equals(obj.getClass()))
-        {
-            return false;
-        }
-
-        Person that = (Person) obj;
-
-        if (this.id != that.id)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode()
-    {
-        return 5924 + id;
-    }
+    public boolean isMale() { return male; }
+    public void setMale(boolean male) { this.male = male; }
+    private boolean male;
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -148,12 +60,6 @@ public class Person
     @Override
     public String toString()
     {
-        return "Person[id=" + id + ",name=" + name + "]";
+        return name;
     }
-
-    private String name;
-    private String address;
-    private String phoneNumber;
-    private float salary;
-    private int id;
 }

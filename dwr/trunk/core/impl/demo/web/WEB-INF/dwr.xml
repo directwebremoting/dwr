@@ -11,6 +11,7 @@
       <param name="delay" value="200"/>
     </filter>
     -->
+    <filter class="org.directwebremoting.filter.AuditLogAjaxFilter"/>
 
     <!-- intro - for the test on index.html -->
     <create creator="new">
@@ -37,7 +38,7 @@
     </create>
 
     <!-- people -->
-    <create creator="new" scope="script">
+    <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.people.People"/>
     </create>
     <convert match="com.example.dwr.people.Person" javascript="Person" converter="bean"/>
