@@ -20,13 +20,13 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.util.LocalUtil;
@@ -241,17 +241,13 @@ public class DefaultContainer extends AbstractContainer implements Container
         {
             setter.invoke(bean, value);
         }
-        catch (IllegalArgumentException ex)
-        {
-            log.error("  - Internal error: " + ex.getMessage());
-        }
-        catch (IllegalAccessException ex)
-        {
-            log.error("  - Permission error: " + ex.getMessage());
-        }
         catch (InvocationTargetException ex)
         {
             log.error("  - Exception during auto-wire: ", ex.getTargetException());
+        }
+        catch (Exception ex)
+        {
+            log.error("  - Error calling setter: " + setter, ex);
         }
     }
 

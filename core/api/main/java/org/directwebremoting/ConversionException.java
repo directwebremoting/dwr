@@ -15,9 +15,6 @@
  */
 package org.directwebremoting;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Something has gone wrong when we were doing some conversion.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -61,8 +58,6 @@ public class ConversionException extends RuntimeException
     public ConversionException(Class<?> paramType, String message, Throwable ex)
     {
         super(message != null ? message : "Error marshalling data. See the logs for more details.", ex);
-
-        log.warn("Error marshalling: " + paramType.getName());
         this.paramType = paramType;
     }
 
@@ -79,9 +74,4 @@ public class ConversionException extends RuntimeException
      * The type we are converting to/from
      */
     private Class<?> paramType;
-
-    /**
-     * The log stream
-     */
-    private static Log log = LogFactory.getLog(ConversionException.class);
 }

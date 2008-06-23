@@ -126,10 +126,7 @@ public class StartupUtil
      */
     public static void logStartup(ServletConfig config)
     {
-        log.info("DWR Version " + VersionUtil.getLabel() + " starting.");
-        log.info("- Servlet Engine: " + config.getServletContext().getServerInfo());
-        log.info("- Java Version:   " + System.getProperty("java.version"));
-        log.info("- Java Vendor:    " + System.getProperty("java.vendor"));
+        log.info("Starting: DWR v" + VersionUtil.getLabel() + " running on " + config.getServletContext().getServerInfo() + " with java v" + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
     }
 
     /**
