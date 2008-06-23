@@ -33,19 +33,19 @@ import org.mortbay.util.Scanner;
  * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
  * @author Joe Walker [joe at getahead dot org]
  */
-public class JettyTestLauncher
+public class JettyDemoLauncher
 {
     /**
      * Path (can be relative) to the web application (aka context)
      * This directory should contain a WEB-INF/web.xml file
      */
-    public static final String CONTEXT_HOME = "target/ant/web/test";
+    public static final String CONTEXT_HOME = "target/ant/web/demo";
 
     /**
      * URL component to which we deploy the application, which goes something
      * like this: http://example.com/CONTEXT_PATH/path_to_something_in_the_webapp
      */
-    public static final String CONTEXT_PATH = "/dwr-test";
+    public static final String CONTEXT_PATH = "/dwr";
 
     /**
      * The port to listen on
@@ -59,7 +59,7 @@ public class JettyTestLauncher
      */
     public static void main(String[] args) throws Exception
     {
-        JettyTestLauncher launcher = new JettyTestLauncher(CONTEXT_HOME, CONTEXT_PATH, PORT);
+        JettyDemoLauncher launcher = new JettyDemoLauncher(CONTEXT_HOME, CONTEXT_PATH, PORT);
         launcher.start();
     }
 
@@ -69,7 +69,7 @@ public class JettyTestLauncher
      * @param contextPath See comments for {@link #CONTEXT_PATH}
      */
     @SuppressWarnings("unchecked")
-    public JettyTestLauncher(String contextHome, final String contextPath, int port)
+    public JettyDemoLauncher(String contextHome, final String contextPath, int port)
     {
         server = new Server();
 
@@ -99,7 +99,7 @@ public class JettyTestLauncher
         scanner.setScanDirs(scanList);
         scanner.setReportExistingFilesOnStartup(false);
 
-        Log.info("#### Initializing context: " + contextPath);
+        Log.info("#### Initializing context: " + contextPath + " from " + contextRoot.getAbsolutePath());
         final WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
 
         server.addHandler(context);
