@@ -17,11 +17,12 @@ package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.util.Messages;
 
 /**
  * Call is a POJO to encapsulate the information required to make a single java
@@ -136,67 +137,152 @@ public class Call
     {
         if (scriptName == null)
         {
-            throw new IllegalArgumentException(Messages.getString("JsonCallMarshaller.MissingClassParam"));
+            throw new IllegalArgumentException("Missing class parameter");
         }
 
         if (methodName == null)
         {
-            throw new IllegalArgumentException(Messages.getString("JsonCallMarshaller.MissingMethodParam"));
+            throw new IllegalArgumentException("Missing method parameter");
         }
 
         // Get a list of the available matching methods with the coerced
         // parameters that we will use to call it if we choose to use
         // that method.
         Creator creator = creatorManager.getCreator(scriptName, true);
-        List<Method> available = new ArrayList<Method>();
+        List<Method> allMethods = new ArrayList<Method>();
+        allMethods.addAll(Arrays.asList(creator.getType().getMethods()));
 
-        methods:
-        for (Method methodOptions : creator.getType().getMethods())
+        // Remove all methods that don't have a matching name
+        for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
         {
-            // Check method name and access
-            if (methodOptions.getName().equals(methodName))
+            if (!it.next().getName().equals(methodName))
             {
-                // Check number of parameters
-                if (methodOptions.getParameterTypes().length == inctx.getParameterCount())
-                {
-                    // Clear the previous conversion attempts (the param types
-                    // will probably be different)
-                    inctx.clearConverted();
-
-                    // Check parameter types
-                    for (int j = 0; j < methodOptions.getParameterTypes().length; j++)
-                    {
-                        Class<?> paramType = methodOptions.getParameterTypes()[j];
-                        if (!converterManager.isConvertable(paramType))
-                        {
-                            // Give up with this method and try the next
-                            continue methods;
-                        }
-                    }
-
-                    available.add(methodOptions);
-                }
+                it.remove();
             }
         }
 
-        // Pick a method to call
-        if (available.size() > 1)
+        if (allMethods.size() == 0)
         {
-            log.warn("Warning multiple matching methods. Using first match.");
+            // Not even a name match
+            log.warn("No method called '" + methodName + "' found in " + creator.getType());
+            throw new IllegalArgumentException("Method name not found. See logs for details");            
         }
 
-        if (available.isEmpty())
+        if (allMethods.size() == 1)
         {
-            String name = scriptName + '.' + methodName;
-            String error = Messages.getString("JsonCallMarshaller.UnknownMethod", name);
-            log.warn("Marshalling exception: " + error);
+            // Check the params of the single name match
+            Method methodOption = allMethods.get(0);
+            if (!parameterTypesCorrect(converterManager, inctx, methodOption))
+            {
+                throw new IllegalArgumentException("Parameter not convertible. See logs for details");
+            }
+            method = methodOption;
+        }
+        else
+        {
+            // First weed out the methods with the wrong number of parameters
+            for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
+            {
+                // Check number of parameters
+                Method methodOption = it.next();
+                if (methodOption.getParameterTypes().length != inctx.getParameterCount())
+                {
+                    it.remove();
+                }
+            }
 
-            throw new IllegalArgumentException("No available method. See logs for more details.");
+            if (allMethods.size() == 0)
+            {
+                // None have the right number of parameters
+                log.warn("Multiple methods called '" + methodName + "' found. But none had " + inctx.getParameterCount() + " parameters.");
+                throw new IllegalArgumentException("Method not found. See logs for details");
+            }
+
+            if (allMethods.size() == 1)
+            {
+                // Only one match, check and use if we can
+                Method methodOption = allMethods.get(0);
+                if (!parameterTypesCorrect(converterManager, inctx, methodOption))
+                {
+                    throw new IllegalArgumentException("Parameter not convertible. See logs for details");
+                }
+
+                method = methodOption;
+            }
+            else
+            {
+                // Many available weed out the ones with params that don't match
+                for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
+                {
+                    Method methodOption = it.next();
+                    if (!parameterTypesCorrect(converterManager, inctx, methodOption))
+                    {
+                        it.remove();
+                    }
+                }
+
+                if (allMethods.size() == 0)
+                {
+                    // None have the right parameters
+                    log.warn("Multiple methods called '" + methodName + "' found. But none had all parameters convertible.");
+                    throw new IllegalArgumentException("Method not found. See logs for details");
+                }
+
+                if (allMethods.size() > 1)
+                {
+                    // Randomly use the first, but warn
+                    log.warn("Warning multiple matching methods. Using first match.");
+                }
+
+                method = allMethods.get(0);                
+            }
+        }
+    }
+
+    /**
+     * @param converterManager
+     * @param inctx
+     * @param methodOption
+     */
+    private boolean parameterTypesCorrect(ConverterManager converterManager, InboundContext inctx, Method methodOption)
+    {
+        // Only one option - we're checking not selecting
+        // Check parameter types
+        for (int i = 0; i < methodOption.getParameterTypes().length; i++)
+        {
+            Class<?> paramType = methodOption.getParameterTypes()[i];
+            if (!converterManager.isConvertable(paramType))
+            {
+                log.warn(scriptName + '.' + methodName + "(), parameter #" + i + " is not convertable.");
+                log.warn("You might need to add a <convert converter='bean' match='" + paramType.getCanonicalName() + "'/> to dwr.xml");
+                log.warn("See: http://getahead.org/dwr/server/dwrxml/converters/bean for more info.");
+                return false;
+            }
+
+            if (i > inctx.getParameterCount() && paramType.isPrimitive())
+            {
+                log.warn(scriptName + '.' + methodName + "(), parameter #" + i + " is not primitive, and no data supplied.");
+                return false;
+            }
         }
 
-        // At the moment we are just going to take the first match, for a
-        // later increment we might pick the best implementation
-        method = available.get(0);
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        try
+        {
+            return scriptName + "." + methodName + "(...)";
+        }
+        catch (Exception ex)
+        {
+            return "Call(undefined)";
+        }
     }
 
     private String callId = null;

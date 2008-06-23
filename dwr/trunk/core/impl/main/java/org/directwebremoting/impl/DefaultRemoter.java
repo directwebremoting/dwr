@@ -47,6 +47,7 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
+import org.directwebremoting.filter.LogAjaxFilter;
 import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
@@ -389,6 +390,10 @@ public class DefaultRemoter implements Remoter
      */
     public Reply execute(Call call)
     {
+        // We set this up here because if something goes wrong we want to know
+        // if there are any LogAjaxFilter implementations to provide any logging
+        List<AjaxFilter> filters = null;
+
         try
         {
             Method method = call.getMethod();
@@ -497,20 +502,6 @@ public class DefaultRemoter implements Remoter
                     buffer.append(scope);
                 }
                 buffer.append(". ");
-
-                // It would be good to debug the params but it's not easy
-                //buffer.append("Call params (");
-                //for (int j = 0; j < inctx.getParameterCount(callNum); j++)
-                //{
-                //    if (j != 0)
-                //    {
-                //        buffer.append(", ");
-                //    }
-                //    InboundVariable param = inctx.getParameter(callNum, j);
-                //    buffer.append(param.toString());
-                //}
-                //buffer.append(") ");
-
                 buffer.append("id=");
                 buffer.append(call.getCallId());
 
@@ -518,7 +509,7 @@ public class DefaultRemoter implements Remoter
             }
 
             // Execute the filter chain method.toString()
-            List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
+            filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
             final Iterator<AjaxFilter> it = filters.iterator();
 
             AjaxFilterChain chain = new AjaxFilterChain()
@@ -541,7 +532,10 @@ public class DefaultRemoter implements Remoter
         }
         catch (SecurityException ex)
         {
-            log.debug("Security Exception: ", ex);
+            if (!filtersIncludeLogging(filters))
+            {
+                log.warn("Security Exception: " + ex.getMessage());
+            }
 
             // If we are in live mode, then we don't even say what went wrong
             if (debug)
@@ -557,18 +551,53 @@ public class DefaultRemoter implements Remoter
         {
             // Allow Jetty RequestRetry exception to propagate to container
             Continuation.rethrowIfContinuation(ex);
-
-            log.debug("Method execution failed: ", ex.getTargetException());
+            debugException(filters, ex.getTargetException());
             return new Reply(call.getCallId(), null, ex.getTargetException());
         }
         catch (Exception ex)
         {
             // Allow Jetty RequestRetry exception to propagate to container
             Continuation.rethrowIfContinuation(ex);
-
-            log.debug("Method execution failed: ", ex);
+            debugException(filters, ex);
             return new Reply(call.getCallId(), null, ex);
         }
+    }
+
+    /**
+     * Do logging output if there are no logging filters and add a note of
+     * explanation the first time
+     * @param filters The configured filters
+     * @param ex The exception saying what broke
+     */
+    private void debugException(List<AjaxFilter> filters, Throwable ex)
+    {
+        if (debug && !filtersIncludeLogging(filters))
+        {
+            if (!givenAuditLogHint)
+            {
+                log.debug("No logging filters defined. Minimal execption logging. For more detail add <filter class='org.directwebremoting.filter.AuditLogAjaxFilter'/> to dwr.xml");
+                givenAuditLogHint = true;
+            }
+            log.debug("Method execution failed: ", ex);
+        }
+    }
+
+    /**
+     * A quick check to see if we are already doing some form of logging
+     * @param filters The list of configured filters
+     * @return true if we are logging
+     */
+    private boolean filtersIncludeLogging(List<AjaxFilter> filters)
+    {
+        for (AjaxFilter element : filters)
+        {
+            if (element instanceof LogAjaxFilter)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -655,6 +684,11 @@ public class DefaultRemoter implements Remoter
     {
         this.debug = debug;
     }
+
+    /**
+     * Have we given the hint about {@link org.directwebremoting.filter.AuditLogAjaxFilter}
+     */
+    protected boolean givenAuditLogHint = false;
 
     /**
      * Are we in debug-mode and therefore more helpful at the expense of security?
