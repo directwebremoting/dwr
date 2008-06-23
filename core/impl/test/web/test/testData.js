@@ -29,12 +29,15 @@ function testDataSimple() {
 
   // It's not vital to de-register, however it can help to tidy up server side
   // resources. widgetCallback will not be called
-  dwr.data.unsubscribe('widgetA', null);
+  setTimeout(function() {
+    //dwr.data.unsubscribe('widgetA');
+  }, 4000);
 }
 
 function widgetCallback(subscriptionId, reason, data, matchCount) {
-  dwr.engine._debug("widgetCallback: subscriptionId=" + subscriptionId + ", reason=" + reason + ", data.length=" + data.length + ", matchCount=" + matchCount);
+  var reasons = [ "initial", "insert", "update", "remove" ];
+  dwr.engine._debug("widgetCallback: subscriptionId=" + subscriptionId + ", reason=" + reasons[reason] + ", data.length=" + data.length + ", matchCount=" + matchCount);
   for (var i = 0; i < data.length; i++) {
-    dwr.engine._debug("  - array[" + i + "].key=" + data[i].key + ", array[" + i + "].data=" + data[i].data);
+    dwr.engine._debug("  - array[" + i + "].itemId=" + data[i].itemId + ", array[" + i + "].data=" + dwr.util.toDescriptiveString(data[i].data));
   }
 }

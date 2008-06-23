@@ -15,17 +15,19 @@
  */
 package org.directwebremoting.datasync;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.io.Item;
+import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.RealRawData;
+import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.io.RawData;
+import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Pair;
 
 /**
  * Some methods to help implementors create {@link StoreProvider}s. It is
@@ -33,34 +35,48 @@ import org.directwebremoting.io.Item;
  * from this class in case it can provide some form of backwards compatibility.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class AbstractStoreProvider implements StoreProvider
+public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
 {
+    public AbstractStoreProvider(Class<T> type)
+    {
+        this.type = type;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.datasync.StoreProvider#put(java.lang.String, org.directwebremoting.io.RawData)
+     */
+    public void put(String itemId, RawData rawData)
+    {
+        T value = convert(rawData);
+        put(itemId, value);
+    }
+
     /**
      * Return true iff the <code>value</code> passed in contains a property
-     * by the name of each and every key in the <code>filter</code>, and where
+     * by the name of each and every key in the <code>query</code>, and where
      * the string value (using {@link #toString()}) of the property is equal to
      * the value from the <code>filter</code> map.
      * @param pojo The object to be tested to see if it matches
-     * @param filter The set of property/matches to test the value against
+     * @param query The set of property/matches to test the value against
      * @return True if the value contains properties that match the filter
      */
-    protected boolean passesFilter(Object pojo, Map<String, String> filter)
+    protected static boolean passesFilter(Object pojo, Map<String, String> query)
     {
-        if (filter == null || filter.size() == 0)
+        if (query == null || query.size() == 0)
         {
             return true;
         }
 
         try
         {
-            for (Map.Entry<String, String> entry : filter.entrySet())
+            for (Map.Entry<String, String> entry : query.entrySet())
             {
                 String testProperty = entry.getKey();
                 String testValue = entry.getValue();
 
                 try
                 {
-                    String realValue = getProperty(pojo, testProperty).toString();
+                    String realValue = LocalUtil.getProperty(pojo, testProperty).toString();
                     if (!testValue.equals(realValue.toString()))
                     {
                         return false;
@@ -82,88 +98,64 @@ public abstract class AbstractStoreProvider implements StoreProvider
     }
 
     /**
-     * Take a list of Items and apply a set of sort criteria
-     * @param matches The list of items to sort
-     * @param sort The sort criteria
+     * Convert from {@link RawData} to the type that this {@link StoreProvider}
+     * supports.
+     * @param rawData The data from the Internet
+     * @return An object of the type supported by this store
      */
-    protected void sort(List<Item> matches, final List<SortCriteria> sort)
+    protected T convert(RawData rawData)
     {
-        Collections.sort(matches, new Comparator<Item>()
+        if (converterManager == null)
         {
-            @SuppressWarnings("unchecked")
-            public int compare(Item item1, Item item2)
-            {
-                Object object1 = item1.getData();
-                Object object2 = item2.getData();
+            converterManager = ServerContextFactory.get().getContainer().getBean(ConverterManager.class);
+        }
 
-                if (object1.getClass() != object2.getClass())
-                {
-                    log.warn("Classes don't match. Results could be unpredictable: " + object1.getClass() + " / " + object2.getClass());
-                }
+        RealRawData realRawData = (RealRawData) rawData;
+        InboundVariable inboundVariable = realRawData.getInboundVariable();
+        TypeHintContext typeHintContext = new TypeHintContext(converterManager, null, 0);
 
-                try
-                {
-                    for (SortCriteria criteria : sort)
-                    {
-                        Object value1 = getProperty(object1, criteria.getAttribute());
-                        Object value2 = getProperty(object2, criteria.getAttribute());
-
-                        if (value1 instanceof Comparable)
-                        {
-                            Comparable comp1 = (Comparable) value1;
-                            Comparable comp2 = (Comparable) value2;
-
-                            int comparison;
-                            if (criteria.isDescending())
-                            {
-                                comparison = comp2.compareTo(comp1);
-                            }
-                            else
-                            {
-                                comparison = comp1.compareTo(comp2);
-                            }
-
-                            if (comparison != 0)
-                            {
-                                return comparison;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.warn("Failure while sorting objects", ex);
-                }
-
-                return 0;
-            }
-        });
+        T value = converterManager.convertInbound(type, inboundVariable, typeHintContext);
+        return value;
     }
 
     /**
-     * Utility to find a getter and return it's value from an object.
-     * If Java had the option to temporarily do dynamic typing there would be
-     * no need for this.
-     * @param pojo The POJO to extract some data from.
-     * @param propertyName The name of the property form which we form a getter
-     * name by upper-casing the first letter (in the EN locale) and prefixing
-     * with 'get'
-     * @return The value of property
-     * @throws NoSuchMethodException If the getter was missing
-     * @throws SecurityException If the getter was not accessible
-     * @throws IllegalArgumentException If something else went wrong
-     * @throws IllegalAccessException If something else went wrong
-     * @throws InvocationTargetException If something else went wrong
+     * A PairComparator is a way to proxy comparisons to the 'value' of a
+     * String, Object paring.
+     * @author Joe Walker [joe at getahead dot ltd dot uk]
      */
-    public static Object getProperty(Object pojo, String propertyName) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+    protected static class PairComparator<T> implements Comparator<Pair<String, T>>
     {
-        Class<? extends Object> real = pojo.getClass();
+        /**
+         * @param proxy The value object comparator
+         */
+        protected PairComparator(Comparator<T> proxy)
+        {
+            this.proxy = proxy;
+        }
 
-        String getterName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
-        
-        Method method = real.getMethod(getterName);
-        return method.invoke(pojo);
+        /* (non-Javadoc)
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        public int compare(Pair<String, T> p1, Pair<String, T> p2)
+        {
+            return proxy.compare(p1.right, p2.right);
+        }
+
+        /**
+         * The comparator that we proxy to
+         */
+        private final Comparator<T> proxy;
     }
+
+    /**
+     * The type that this StoreProvider uses
+     */
+    protected final Class<T> type;
+
+    /**
+     * Cached converterManager so we don't look it up every time
+     */
+    protected ConverterManager converterManager;
 
     /**
      * The log stream

@@ -16,12 +16,16 @@
 package com.example.dwr.people;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.datasync.Directory;
+import org.directwebremoting.datasync.MapStoreProvider;
 
 import com.example.dwr.util.RandomData;
 
@@ -32,31 +36,45 @@ import com.example.dwr.util.RandomData;
 public class People
 {
     /**
-     * Pre-populate with random people
+     * Pre-populate with 50 random people
      */
     public People()
     {
-        init(5);
+        this(50);
+    }
+
+    /**
+     * Pre-populate with <code>count</code> random people
+     */
+    public People(int count)
+    {
+        people = createCrowd(count);
+        MapStoreProvider<Person> provider = new MapStoreProvider<Person>(people, Person.class);
+
+        log.debug("Registering StoreProvider 'testServerData'");
+        Directory.register("testServerData", provider);
     }
 
     /**
      * 
      */
-    public void init(int count)
+    public Map<String, Person> createCrowd(int count)
     {
+        Map<String, Person> reply = new HashMap<String, Person>();
         for (int i = 0; i < count; i++)
         {
-            people.add(getRandomPerson());
+            reply.put(getNextId(), getRandomPerson());
         }
+        return reply;
     }
 
     /**
      * Accessor for the current list of people
      * @return the current list of people
      */
-    public List<Person> getAllPeople()
+    public Collection<Person> getAllPeople()
     {
-        return people;
+        return people.values();
     }
 
     /**
@@ -67,7 +85,7 @@ public class People
     {
         List<Person> reply = new ArrayList<Person>();
         Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        for (Person person : people)
+        for (Person person : people.values())
         {
             if (regex.matcher(person.getName()).find())
             {
@@ -82,26 +100,25 @@ public class People
      * Insert a person into the set of people
      * @param person The person to add or update
      */
-    public void setPerson(Person person)
+    public void setPerson(String id, Person person)
     {
         log.debug("Adding person: " + person);
-        if (person.getId() == -1)
+        if (id == null)
         {
-            person.setId(getNextId());
+            id = getNextId();
         }
 
-        people.remove(person);
-        people.add(person);
+        people.put(id, person);
     }
 
     /**
      * Delete a person from the set of people
-     * @param person The person to delete
+     * @param id The id of the person to delete
      */
-    public void deletePerson(Person person)
+    public void deletePerson(String id)
     {
-        log.debug("Removing person: " + person);
-        people.remove(person);
+        log.debug("Removing person with id: " + id);
+        people.remove(id);
         debug();
     }
 
@@ -112,12 +129,10 @@ public class People
     public static Person getRandomPerson()
     {
         Person person = new Person();
-        person.setId(getNextId());
         person.setName(RandomData.getFullName());
         String[] addressAndNumber = RandomData.getAddressAndNumber();
         person.setAddress(addressAndNumber[0]);
         person.setPhoneNumber(addressAndNumber[1]);
-        person.setSalary(RandomData.getSalary());
         return person;
     }
 
@@ -126,7 +141,7 @@ public class People
      */
     protected void debug()
     {
-        for (Person person : people)
+        for (Person person : people.values())
         {
             log.debug(person.toString());
         }
@@ -136,9 +151,9 @@ public class People
      * Get the next unique ID in a thread safe way
      * @return a unique id
      */
-    public static synchronized int getNextId()
+    public static synchronized String getNextId()
     {
-        return nextId++;
+        return "P" + (nextId++);
     }
 
     /**
@@ -149,7 +164,7 @@ public class People
     /**
      * the current list of people
      */
-    private List<Person> people =  Collections.synchronizedList(new ArrayList<Person>());
+    private final Map<String, Person> people;
 
     /**
      * The log stream

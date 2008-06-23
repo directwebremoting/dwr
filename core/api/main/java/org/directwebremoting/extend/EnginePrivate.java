@@ -113,15 +113,7 @@ public class EnginePrivate extends ScriptProxy
     public static ScriptBuffer getRemoteExecuteFunctionScript(String id, Object[] params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendScript("dwr.engine.remote.executeFunction").appendScript("(").appendScript(id);
-
-        for (int i = 0; i < params.length; i++)
-        {
-            script.appendScript(",");
-            script.appendData(params[i]);
-        }
-
-        script.appendScript(");");
+        script.appendCall("dwr.engine.remote.handleFunctionCall", id, params);
         return script;
     }
 
@@ -133,7 +125,7 @@ public class EnginePrivate extends ScriptProxy
     public static ScriptBuffer getRemoteCloseFunctionScript(String id)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.closeFunction", id);
+        script.appendCall("dwr.engine.remote.handleFunctionClose", id);
         return script;
     }
 

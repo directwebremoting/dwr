@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.ltd.uk/dwr/dwr20.dtd">
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.ltd.uk/dwr/dwr30.dtd">
 
 <dwr>
 
   <allow>
+
+    <filter class="org.directwebremoting.filter.AuditLogAjaxFilter"/>
 
     <!-- stress -->
     <create creator="new" javascript="Settings" scope="application">
@@ -32,6 +34,8 @@
     <convert converter="object" javascript="ObjA" match="com.example.dwr.marshall.ObjA">
       <param name="force" value="true"/>
     </convert>
+
+    <convert converter="bean" match="com.example.dwr.setup.Person"/>
 
     <convert converter="exception" match="java.lang.NullPointerException"/>
     <convert converter="exception" match="org.xml.sax.SAXParseException"/>
