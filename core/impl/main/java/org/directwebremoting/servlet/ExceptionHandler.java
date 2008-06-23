@@ -16,16 +16,14 @@
 package org.directwebremoting.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.util.Continuation;
-import org.directwebremoting.util.MimeConstants;
 
 /**
  * Handles an exception occurring during the request dispatching.
@@ -44,15 +42,6 @@ public class ExceptionHandler implements Handler
         log.warn("Error: " + cause);
         log.debug("Debug for stack trace:", cause);
 
-        if (cause instanceof SecurityException && log.isDebugEnabled())
-        {
-            log.debug("- User Agent: " + request.getHeader(HttpConstants.HEADER_USER_AGENT));
-            log.debug("- Remote IP:  " + request.getRemoteAddr());
-            log.debug("- Request URL:" + request.getRequestURL());
-            log.debug("- Query:      " + request.getQueryString());
-            log.debug("- Method:     " + request.getMethod());
-        }
-
         try
         {
             // We are going to act on this in engine.js so we are hoping that
@@ -60,10 +49,7 @@ public class ExceptionHandler implements Handler
             // use that much. I would have used something unassigned like 506+
             // But that could cause future problems and might not get through
             // proxies and the like
-            response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
-            response.setContentType(MimeConstants.MIME_HTML);
-            PrintWriter out = response.getWriter();
-            out.println(cause.getMessage());
+            response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Error. Details logged to the console");
         }
         catch (Exception ex)
         {
