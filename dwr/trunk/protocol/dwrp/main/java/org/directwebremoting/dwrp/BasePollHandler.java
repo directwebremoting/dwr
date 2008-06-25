@@ -31,7 +31,6 @@ import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.RealScriptSession;
@@ -55,12 +54,12 @@ import org.directwebremoting.util.MimeConstants;
  * while editing the other.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PollHandler implements Handler
+public class BasePollHandler extends BaseDwrpHandler
 {
     /**
      * @param plain Are we using plain javascript or html wrapped javascript
      */
-    public PollHandler(boolean plain)
+    public BasePollHandler(boolean plain)
     {
         this.plain = plain;
     }
@@ -104,6 +103,10 @@ public class PollHandler implements Handler
             return;
         }
 
+        // Security checks first, once we've parsed the input
+        checkGetAllowed(batch);
+        checkNotCsrfAttack(request, batch);
+
         // Check to see that the page and script session id are valid
         RealWebContext webContext = (RealWebContext) WebContextFactory.get();
         String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
@@ -114,15 +117,6 @@ public class PollHandler implements Handler
         {
             log.error("Polling and Comet are disabled. To enable them set the init-param activeReverseAjaxEnabled to true. See http://getahead.org/dwr/server/servlet for more.");
             String script = EnginePrivate.getRemotePollCometDisabledScript(batch.getBatchId());
-            sendErrorScript(response, script);
-            return;
-        }
-
-        // Complain if GET is disallowed
-        if (batch.isGet() && !allowGetForSafariButMakeForgeryEasier)
-        {
-            // Send a batch exception to the server because the parse failed
-            String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batch.getBatchId(), new SecurityException("GET Disallowed"));
             sendErrorScript(response, script);
             return;
         }
@@ -344,19 +338,6 @@ public class PollHandler implements Handler
     protected boolean activeReverseAjaxEnabled = false;
 
     /**
-     * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
-     */
-    public void setAllowGetForSafariButMakeForgeryEasier(boolean allowGetForSafariButMakeForgeryEasier)
-    {
-        this.allowGetForSafariButMakeForgeryEasier = allowGetForSafariButMakeForgeryEasier;
-    }
-
-    /**
-     * By default we disable GET, but this hinders old Safaris
-     */
-    protected boolean allowGetForSafariButMakeForgeryEasier = false;
-
-    /**
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicated that we do not do early
      * closing after writes.
@@ -457,5 +438,5 @@ public class PollHandler implements Handler
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(PollHandler.class);
+    protected static final Log log = LogFactory.getLog(BasePollHandler.class);
 }

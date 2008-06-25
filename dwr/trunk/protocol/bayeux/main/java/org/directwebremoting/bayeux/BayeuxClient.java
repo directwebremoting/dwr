@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.dwrp.Batch;
+import org.directwebremoting.dwrp.CallBatch;
 import org.directwebremoting.dwrp.PlainCallHandler;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
@@ -35,6 +35,7 @@ import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptConduit;
 
 import dojox.cometd.Bayeux;
+import dojox.cometd.Channel;
 import dojox.cometd.Client;
 import dojox.cometd.Listener;
 import dojox.cometd.Message;
@@ -51,7 +52,8 @@ public class BayeuxClient implements Listener
 
         // At this point BayeuxClient is fully initialized so it is safe to
         // allow other classes to see and use us.
-        bayeux.getChannel("/dwr", true).subscribe(client);
+        Channel channel = bayeux.getChannel("/dwr", true);
+        channel.subscribe(client);
     }
 
     /* (non-Javadoc)
@@ -70,7 +72,7 @@ public class BayeuxClient implements Listener
                 fileParams.put(entry.getKey(), formField);
             }
 
-            Batch batch = new Batch(fileParams);
+            CallBatch batch = new CallBatch(fileParams, false);
             Calls calls = plainCallHandler.marshallInbound(batch);
 
             log.debug("Calls="+calls);
@@ -109,7 +111,8 @@ public class BayeuxClient implements Listener
 
             String output = conduit.toString();
             log.debug("<< "+output);
-            bayeux.getChannel("/dwr" + fromClient.getId(), true).publish(client, output, calls.getBatchId());
+            Channel channel = bayeux.getChannel("/dwr" + fromClient.getId(), true);
+            channel.publish(client, output, calls.getBatchId());
         }
         catch (Exception ex)
         {
