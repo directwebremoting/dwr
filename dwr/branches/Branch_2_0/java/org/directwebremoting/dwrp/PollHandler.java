@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -93,6 +94,9 @@ public class PollHandler implements Handler
             sendErrorScript(response, script);
             return;
         }
+
+        String bodySessionId = batch.getHttpSessionId();
+        checkNotCsrfAttack(request, bodySessionId);
 
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)
@@ -208,6 +212,49 @@ public class PollHandler implements Handler
     }
 
     /**
+     * Check that this request is not subject to a CSRF attack
+     * @param request The original browser's request
+     * @param bodySessionId The session id 
+     */
+    private void checkNotCsrfAttack(HttpServletRequest request, String bodySessionId)
+    {
+        // A check to see that this isn't a csrf attack
+        // http://en.wikipedia.org/wiki/Cross-site_request_forgery
+        // http://www.tux.org/~peterw/csrf.txt
+        if (request.isRequestedSessionIdValid() && request.isRequestedSessionIdFromCookie())
+        {
+            String headerSessionId = request.getRequestedSessionId();
+            if (headerSessionId.length() > 0)
+            {
+                // Normal case; if same session cookie is supplied by DWR and
+                // in HTTP header then all is ok
+                if (headerSessionId.equals(bodySessionId))
+                {
+                    return;
+                }
+
+                // Weblogic adds creation time to the end of the incoming
+                // session cookie string (even for request.getRequestedSessionId()).
+                // Use the raw cookie instead
+                Cookie[] cookies = request.getCookies();
+                for (int i = 0; i < cookies.length; i++)
+                {
+                    Cookie cookie = cookies[i];
+                    if (cookie.getName().equals(sessionCookieName) &&
+                            cookie.getValue().equals(bodySessionId))
+                    {
+                        return;
+                    }
+                }
+
+                // Otherwise error
+                log.error("A request has been denied as a potential CSRF attack.");
+                throw new SecurityException("Session Error");
+            }
+        }
+    }
+
+    /**
      * Create the correct type of ScriptConduit depending on the request.
      * @param batch The parsed request
      * @param response Conduits need a response to write to
@@ -296,6 +343,15 @@ public class PollHandler implements Handler
     }
 
     /**
+     * Alter the session cookie name from the default JSESSIONID.
+     * @param sessionCookieName the sessionCookieName to set
+     */
+    public void setSessionCookieName(String sessionCookieName)
+    {
+        this.sessionCookieName = sessionCookieName;
+    }
+
+    /**
      * Use {@link #setActiveReverseAjaxEnabled(boolean)}
      * @param pollAndCometEnabled Are we doing full reverse ajax
      * @deprecated Use {@link #setActiveReverseAjaxEnabled(boolean)}
@@ -332,6 +388,11 @@ public class PollHandler implements Handler
     {
         this.maxWaitAfterWrite = maxWaitAfterWrite;
     }
+
+    /**
+     * The session cookie name
+     */
+    protected String sessionCookieName = "JSESSIONID";
 
     /**
      * Are we doing full reverse ajax

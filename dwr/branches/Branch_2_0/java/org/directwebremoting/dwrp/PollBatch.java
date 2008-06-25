@@ -54,6 +54,7 @@ public class PollBatch
 
         batchId = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_BATCHID);
         scriptId = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
+        httpSessionId = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID);
         String page = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_PAGE);
         String prString = extractParameter(parameters, ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE);
         partialResponse = PartialResponse.fromOrdinal(prString);
@@ -127,6 +128,14 @@ public class PollBatch
         return scriptSession;
     }
 
+    /**
+     * @return
+     */
+    public String getHttpSessionId()
+    {
+        return httpSessionId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -159,6 +168,11 @@ public class PollBatch
      * A quick string for debug purposes
      */
     private String debug;
+
+    /**
+     * The HTTP session from which this came
+     */
+    private final String httpSessionId;
 
     /**
      * The script session backing the script id
