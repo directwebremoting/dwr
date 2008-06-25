@@ -31,7 +31,7 @@ public interface ServerLoadMonitor
 
     /**
      * Controller for poll times.
-     * <p>TODO: We should probably get rid of this and leave it to PollHandler?
+     * <p>TODO: We should probably get rid of this and leave it to BasePollHandler?
      * @return How long should this client wait until it next polls?
      */
     int getDisconnectedTime();

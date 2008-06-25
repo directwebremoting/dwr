@@ -20,10 +20,7 @@ import org.directwebremoting.proxy.ScriptProxy;
 import org.directwebremoting.util.JavascriptUtil;
 
 /**
- * An abstraction of the DWREngine Javascript class for use by
- * {@link org.directwebremoting.dwrp.BaseCallHandler},
- * {@link org.directwebremoting.dwrp.PollHandler} and a few others that need
- * to call internal functions in engine.js
+ * An abstraction of the DWREngine Javascript class.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class EnginePrivate extends ScriptProxy

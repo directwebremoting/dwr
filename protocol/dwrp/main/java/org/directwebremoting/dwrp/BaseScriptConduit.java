@@ -34,7 +34,7 @@ import org.directwebremoting.util.DebuggingPrintWriter;
 /**
  * A ScriptConduit that works with the parent Marshaller.
  * In some ways this is nasty because it has access to essentially private parts
- * of PollHandler, however there is nowhere sensible to store them
+ * of BasePollHandler, however there is nowhere sensible to store them
  * within that class, so this is a hacky simplification.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */

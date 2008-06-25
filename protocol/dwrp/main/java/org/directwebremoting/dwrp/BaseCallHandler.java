@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +37,6 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.FormField;
-import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.PageNormalizer;
@@ -64,7 +62,7 @@ import org.directwebremoting.util.Messages;
  * while editing the other.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class BaseCallHandler implements Handler
+public abstract class BaseCallHandler extends BaseDwrpHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -91,18 +89,11 @@ public abstract class BaseCallHandler implements Handler
     public Calls convertToCalls(HttpServletRequest request) throws ServerException
     {
         RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-        Batch batch = new Batch(request);
+        CallBatch batch = new CallBatch(request);
 
-        if (!allowGetForSafariButMakeForgeryEasier && batch.isGet())
-        {
-            log.error("GET is disallowed because it makes request forgery easier. See http://getahead.org/dwr/security/allowGetForSafariButMakeForgeryEasier for more details.");
-            throw new SecurityException("GET Disalowed");
-        }
-
-        if (crossDomainSessionSecurity)
-        {
-            checkNotCsrfAttack(request, batch);
-        }
+        // Security checks first, once we've parsed the input
+        checkGetAllowed(batch);
+        checkNotCsrfAttack(request, batch);
 
         // Save the batch so marshallException can get at a batch id
         request.setAttribute(ATTRIBUTE_BATCH, batch);
@@ -110,51 +101,9 @@ public abstract class BaseCallHandler implements Handler
         String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
         webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
 
-        // Various bits of the Batch need to be stashed away places
+        // Various bits of the CallBatch need to be stashed away places
         storeParsedRequest(request, webContext, batch);
         return marshallInbound(batch);
-    }
-
-    /**
-     * Check that this request is not subject to a CSRF attack
-     * @param request The original browser's request
-     * @param batch The data that we've parsed from the request body
-     */
-    private void checkNotCsrfAttack(HttpServletRequest request, Batch batch)
-    {
-        // A check to see that this isn't a csrf attack
-        // http://en.wikipedia.org/wiki/Cross-site_request_forgery
-        // http://www.tux.org/~peterw/csrf.txt
-        if (request.isRequestedSessionIdValid() && request.isRequestedSessionIdFromCookie())
-        {
-            String headerSessionId = request.getRequestedSessionId();
-            if (headerSessionId.length() > 0)
-            {
-                String bodySessionId = batch.getHttpSessionId();
-
-                // Normal case; if same session cookie is supplied by DWR and
-                // in HTTP header then all is ok
-                if (headerSessionId.equals(bodySessionId))
-                {
-                    return;
-                }
-
-                // Weblogic adds creation time to the end of the incoming
-                // session cookie string (even for request.getRequestedSessionId()).
-                // Use the raw cookie instead
-                for (Cookie cookie : request.getCookies())
-                {
-                    if (cookie.getName().equals(sessionCookieName) && cookie.getValue().equals(bodySessionId))
-                    {
-                        return;
-                    }
-                }
-
-                // Otherwise error
-                log.error("A request has been denied as a potential CSRF attack.");
-                throw new SecurityException("CSRF Security Error");
-            }
-        }
     }
 
     /**
@@ -163,7 +112,7 @@ public abstract class BaseCallHandler implements Handler
      * @return The function calls to make
      */
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-    public Calls marshallInbound(Batch batch)
+    public Calls marshallInbound(CallBatch batch)
     {
         Calls calls = batch.getCalls();
 
@@ -271,15 +220,15 @@ public abstract class BaseCallHandler implements Handler
     }
 
     /**
-     * Build a Batch and put it in the request
+     * Build a CallBatch and put it in the request
      * @param request Where we store the parsed data
      * @param webContext We need to notify others of some of the data we find
      * @param batch The parsed data to store
      */
-    private void storeParsedRequest(HttpServletRequest request, RealWebContext webContext, Batch batch)
+    private void storeParsedRequest(HttpServletRequest request, RealWebContext webContext, CallBatch batch)
     {
         // Remaining parameters get put into the request for later consumption
-        Map<String, FormField> paramMap = batch.getSpareParameters();
+        Map<String, FormField> paramMap = batch.getExtraParameters();
         if (!paramMap.isEmpty())
         {
             for (Map.Entry<String, FormField> entry : paramMap.entrySet())
@@ -404,7 +353,7 @@ public abstract class BaseCallHandler implements Handler
     {
         response.setContentType(getOutboundMimeType());
         PrintWriter out = response.getWriter();
-        Batch batch = (Batch) request.getAttribute(ATTRIBUTE_BATCH);
+        CallBatch batch = (CallBatch) request.getAttribute(ATTRIBUTE_BATCH);
 
         String batchId;
         if (batch != null && batch.getCalls() != null)
@@ -563,47 +512,6 @@ public abstract class BaseCallHandler implements Handler
      * Are we outputting in JSON mode?
      */
     protected boolean jsonOutput = false;
-
-    /**
-     * Alter the session cookie name from the default JSESSIONID.
-     * @param sessionCookieName the sessionCookieName to set
-     */
-    public void setSessionCookieName(String sessionCookieName)
-    {
-        this.sessionCookieName = sessionCookieName;
-    }
-
-    /**
-     * The session cookie name
-     */
-    protected String sessionCookieName = "JSESSIONID";
-
-    /**
-     * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
-     */
-    public void setAllowGetForSafariButMakeForgeryEasier(boolean allowGetForSafariButMakeForgeryEasier)
-    {
-        this.allowGetForSafariButMakeForgeryEasier = allowGetForSafariButMakeForgeryEasier;
-    }
-
-    /**
-     * By default we disable GET, but this hinders old Safaris
-     */
-    private boolean allowGetForSafariButMakeForgeryEasier = false;
-
-    /**
-     * To we perform cross-domain session security checks?
-     * @param crossDomainSessionSecurity the cross domain session security setting
-     */
-    public void setCrossDomainSessionSecurity(boolean crossDomainSessionSecurity)
-    {
-        this.crossDomainSessionSecurity = crossDomainSessionSecurity;
-    }
-
-    /**
-     * To we perform cross-domain session security checks?
-     */
-    protected boolean crossDomainSessionSecurity = true;
 
     /**
      * Accessor for the PageNormalizer.
