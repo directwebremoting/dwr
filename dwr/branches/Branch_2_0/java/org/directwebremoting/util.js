@@ -736,18 +736,18 @@ dwr.util.setValues = function(data, options) {
   var prefix = "";
   if (options && options.prefix) prefix = options.prefix;
   if (options && options.idPrefix) prefix = options.idPrefix;
-  dwr.util._setValuesRecursive(data, prefix);
+  dwr.util._setValuesRecursive(data, prefix, options);
 };
 
 /**
  * @private Recursive helper for setValues()
  */
-dwr.util._setValuesRecursive = function(data, idpath) {
+dwr.util._setValuesRecursive = function(data, idpath, options) {
   // Array containing objects -> add "[n]" to prefix and make recursive call
   // for each item object
   if (dwr.util._isArray(data) && data.length > 0 && dwr.util._isObject(data[0])) {
     for (var i = 0; i < data.length; i++) {
-      dwr.util._setValuesRecursive(data[i], idpath+"["+i+"]");
+      dwr.util._setValuesRecursive(data[i], idpath+"["+i+"]", options);
     }
   }
   // Object (not array) -> handle nested object properties
@@ -757,7 +757,7 @@ dwr.util._setValuesRecursive = function(data, idpath) {
       // Object (not array), or array containing objects -> call ourselves recursively
       if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop]) 
           || dwr.util._isArray(data[prop]) && data[prop].length > 0 && dwr.util._isObject(data[prop][0])) {
-        dwr.util._setValuesRecursive(data[prop], subidpath);
+        dwr.util._setValuesRecursive(data[prop], subidpath, options);
       }
       // Functions -> skip
       else if (typeof data[prop] == "function") {
@@ -768,7 +768,7 @@ dwr.util._setValuesRecursive = function(data, idpath) {
       else {
         // Are there any elements with that id or name
         if (dwr.util.byId(subidpath) != null || document.getElementsByName(subidpath).length >= 1) {
-          dwr.util.setValue(subidpath, data[prop]);
+          dwr.util.setValue(subidpath, data[prop], options);
         }
       }
     }
