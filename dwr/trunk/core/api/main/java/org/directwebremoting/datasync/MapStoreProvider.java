@@ -28,6 +28,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.directwebremoting.io.Item;
+import org.directwebremoting.io.SortCriterion;
 import org.directwebremoting.io.StoreRegion;
 import org.directwebremoting.util.Pair;
 
@@ -147,11 +148,13 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
      */
     private MatchedItems selectMatchedItems(SortedSet<Pair<String, T>> sortedData, int start, int count)
     {
+        log.debug("Selecting data from " + sortedData.size() + " items, starting at " + start + " for " + count + " items.");
+
         List<Item> matches = new ArrayList<Item>();
         int i = 0;
         for (Pair<String, T> pair : sortedData)
         {
-            if (i >= count && count != -1)
+            if (i >= (start + count) && count != -1)
             {
                 break;
             }

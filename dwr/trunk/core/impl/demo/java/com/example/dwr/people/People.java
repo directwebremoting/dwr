@@ -40,7 +40,7 @@ public class People
      */
     public People()
     {
-        this(50);
+        this(100000);
     }
 
     /**

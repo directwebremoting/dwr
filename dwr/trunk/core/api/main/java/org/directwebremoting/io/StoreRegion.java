@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.directwebremoting.datasync.SortCriterion;
 import org.directwebremoting.datasync.StoreProvider;
 import org.directwebremoting.util.LocalUtil;
 
