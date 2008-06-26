@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.datasync;
+package org.directwebremoting.io;
 
 import org.directwebremoting.util.LocalUtil;
 
@@ -45,6 +45,14 @@ public class SortCriterion
     }
 
     /**
+     * @deprecated We will make this class immutable soon. Use the full constructor
+     */
+    @Deprecated
+    public SortCriterion()
+    {
+    }
+
+    /**
      * The attribute points to a data member within the data to be sorted.
      * If the data is a {@link java.util.Map} this will be a key. If the data
      * is a Pojo, it will be a property.
@@ -53,6 +61,15 @@ public class SortCriterion
     public String getAttribute()
     {
         return attribute;
+    }
+
+    /**
+     * @deprecated This class will become immutable soon
+     */
+    @Deprecated
+    public void setAttribute(String attribute)
+    {
+        this.attribute = attribute;
     }
 
     /**
@@ -70,6 +87,15 @@ public class SortCriterion
     public boolean isAscending()
     {
         return !descending;
+    }
+
+    /**
+     * @deprecated This class will become immutable soon
+     */
+    @Deprecated
+    public void setDescending(boolean descending)
+    {
+        this.descending = descending;
     }
 
     /* (non-Javadoc)
@@ -118,12 +144,14 @@ public class SortCriterion
     }
 
     /**
+     * TODO: Make this field final when we have constructor injection
      * @see #getAttribute
      */
-    private final String attribute;
+    private String attribute;
 
     /**
+     * TODO: Make this field final when we have constructor injection
      * @see #isDescending
      */
-    private final boolean descending;
+    private boolean descending;
 }

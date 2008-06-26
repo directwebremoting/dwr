@@ -132,6 +132,7 @@
       TODO: enable constructor injection?
       <param name="useConstructor" value="int start, int count, List sortCriteria, Map filter"/>
     -->
+    <convert converter="bean" match="org.directwebremoting.io.SortCriterion"/>
     <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
 
     <!--

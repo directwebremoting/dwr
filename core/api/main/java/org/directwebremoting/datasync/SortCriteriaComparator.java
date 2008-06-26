@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.io.SortCriterion;
 import org.directwebremoting.util.LocalUtil;
 
 /**
