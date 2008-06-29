@@ -1112,11 +1112,12 @@ dwr.engine._serializeAll = function(batch, referto, data, name) {
     batch.map[name] = "string:" + encodeURIComponent(data);
     break;
   case "object":
-    if (data instanceof String) batch.map[name] = "String:" + encodeURIComponent(data);
-    else if (data instanceof Boolean) batch.map[name] = "Boolean:" + data;
-    else if (data instanceof Number) batch.map[name] = "Number:" + data;
-    else if (data instanceof Date) batch.map[name] = "Date:" + data.getTime();
-    else if (data && data.join) batch.map[name] = dwr.engine._serializeArray(batch, referto, data, name);
+    var objstr = Object.prototype.toString.call(data);
+    if (objstr == "[object String]") batch.map[name] = "String:" + encodeURIComponent(data);
+    else if (objstr == "[object Boolean]") batch.map[name] = "Boolean:" + data;
+    else if (objstr == "[object Number]") batch.map[name] = "Number:" + data;
+    else if (objstr == "[object Date]") batch.map[name] = "Date:" + data.getTime();
+    else if (objstr == "[object Array]") batch.map[name] = dwr.engine._serializeArray(batch, referto, data, name);
     else batch.map[name] = dwr.engine._serializeObject(batch, referto, data, name);
     break;
   case "function":
@@ -1194,7 +1195,7 @@ dwr.engine._getObjectClassName = function(obj) {
   // browsers successfully match to the wrong class in the 
   // Object.toString() test we will do later
   if (obj && obj.constructor) {
-	for (var errorname in dwr.engine._errorClasses) {
+    for (var errorname in dwr.engine._errorClasses) {
       if (obj.constructor == dwr.engine._errorClasses[errorname]) return errorname;
     }
   }
