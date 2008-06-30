@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
+    <exclude-output />
+    <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
+    <content url="file://$MODULE_DIR$/../../protocol/json">
+      <sourceFolder url="file://$MODULE_DIR$/../../protocol/json/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="core-api" />
+    <orderEntryProperties />
+  </component>
+</module>
+
