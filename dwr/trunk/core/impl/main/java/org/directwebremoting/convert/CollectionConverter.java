@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ArrayJsonOutboundVariable;
 import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.CollectionOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
@@ -46,7 +47,7 @@ import org.directwebremoting.extend.TypeHintContext;
  * An implementation of Converter for Collections of Strings.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class CollectionConverter extends BaseV20Converter implements Converter
+public class CollectionConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.ConverterManager)

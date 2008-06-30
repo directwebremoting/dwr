@@ -18,6 +18,7 @@ package org.directwebremoting.convert;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DefaultJavascriptFunction;
 import org.directwebremoting.extend.InboundVariable;
@@ -28,7 +29,7 @@ import org.directwebremoting.extend.OutboundVariable;
  * A Converter for {@link org.directwebremoting.io.JavascriptFunction}s
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JavascriptFunctionConverter extends BaseV20Converter implements Converter
+public class JavascriptFunctionConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)

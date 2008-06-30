@@ -15,7 +15,7 @@
  */
 package org.directwebremoting.spring;
 
-import org.directwebremoting.create.AbstractCreator;
+import org.directwebremoting.extend.AbstractCreator;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;

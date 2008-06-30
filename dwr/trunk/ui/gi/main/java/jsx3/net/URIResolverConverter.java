@@ -16,7 +16,7 @@
 package jsx3.net;
 
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.convert.BaseV20Converter;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -26,7 +26,7 @@ import org.directwebremoting.extend.OutboundVariable;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class URIResolverConverter extends BaseV20Converter implements Converter
+public class URIResolverConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
