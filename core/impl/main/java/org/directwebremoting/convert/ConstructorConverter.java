@@ -17,6 +17,7 @@ package org.directwebremoting.convert;
 
 import java.lang.reflect.Constructor;
 
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -28,7 +29,7 @@ import org.directwebremoting.util.JavascriptUtil;
  * An implementation of Converter for anything with a string constructor.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ConstructorConverter extends BaseV20Converter implements Converter
+public class ConstructorConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

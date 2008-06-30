@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.convert;
+package org.directwebremoting.extend;
 
-import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.ConverterManager;
 
 /**
  * A way to migrate from the DWRv2.0 Converter style to something in the future.
  * Inheriting from this is advised to help with forwards compatibility.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class BaseV20Converter implements Converter
+public abstract class AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#setConverterManager(org.directwebremoting.ConverterManager)

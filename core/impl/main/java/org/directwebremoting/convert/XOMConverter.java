@@ -23,6 +23,7 @@ import nu.xom.Element;
 import nu.xom.Node;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InboundVariable;
@@ -35,7 +36,7 @@ import org.directwebremoting.util.LocalUtil;
  * An implementation of Converter for DOM objects.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class XOMConverter extends BaseV20Converter implements Converter
+public class XOMConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

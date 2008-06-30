@@ -17,6 +17,7 @@ package org.directwebremoting.create;
 
 import java.lang.reflect.Method;
 
+import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Messages;

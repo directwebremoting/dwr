@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -32,7 +33,7 @@ import org.directwebremoting.extend.ProtocolConstants;
  * An implementation of Converter for Dates.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DateConverter extends BaseV20Converter implements Converter
+public class DateConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

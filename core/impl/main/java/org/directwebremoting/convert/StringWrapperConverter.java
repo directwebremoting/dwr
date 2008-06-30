@@ -16,6 +16,7 @@
 package org.directwebremoting.convert;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -26,7 +27,7 @@ import org.directwebremoting.extend.OutboundVariable;
  * An implementation of Converter for Strings.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class StringWrapperConverter extends BaseV20Converter implements Converter
+public class StringWrapperConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

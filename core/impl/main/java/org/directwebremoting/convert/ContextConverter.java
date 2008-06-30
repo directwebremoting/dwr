@@ -16,6 +16,7 @@
 package org.directwebremoting.convert;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -27,7 +28,7 @@ import org.directwebremoting.proxy.io.Context;
  * An implementation of Converter for Context helper objects for ScriptProxies.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ContextConverter extends BaseV20Converter implements Converter
+public class ContextConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

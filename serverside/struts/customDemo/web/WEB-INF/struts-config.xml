@@ -29,13 +29,4 @@
 
   <message-resources parameter="com.example.dwr.MessageResources" null="false" />
 
-  <plug-in className="org.apache.struts.tiles.TilesPlugin" >
-    <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
-    <set-property property="moduleAware" value="true"/>
-  </plug-in>
-
-  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
-  </plug-in>
-
 </struts-config>

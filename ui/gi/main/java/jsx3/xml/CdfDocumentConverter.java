@@ -16,7 +16,7 @@
 package jsx3.xml;
 
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.convert.BaseV20Converter;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -28,7 +28,7 @@ import org.directwebremoting.util.JavascriptUtil;
  * An implementation of Converter for DOM objects.
  * @author Joe Walker [joe at eireneh dot com]
  */
-public class CdfDocumentConverter extends BaseV20Converter implements Converter
+public class CdfDocumentConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

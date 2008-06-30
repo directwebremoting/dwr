@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.Container;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ContainerUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DataUrlDownloadManager;
@@ -49,7 +50,7 @@ import org.directwebremoting.util.UserAgent;
  * Files come from an &lt;input type=&quot;file&quot;/&gt; on the client.
  * @author Lance Semmens [uklance at gmail dot com]
  */
-public class FileConverter extends BaseV20Converter implements Converter
+public class FileConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)

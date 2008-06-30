@@ -18,7 +18,7 @@ package org.directwebremoting.guice;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.convert.BaseV20Converter;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
@@ -34,7 +34,7 @@ import com.google.inject.Provider;
  * {@link InternalConverterManager}.
  * @author Tim Peierls [tim at peierls dot net]
  */
-class InternalConverter extends BaseV20Converter implements Converter
+class InternalConverter extends AbstractConverter implements Converter
 {
     /**
      * Only used to satisfy bindings for the two-arg {@code bindConversion}

@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
@@ -48,7 +49,7 @@ import org.directwebremoting.util.LocalUtil;
  * and instanceTypes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class BasicObjectConverter extends BaseV20Converter implements NamedConverter
+public abstract class BasicObjectConverter extends AbstractConverter implements NamedConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

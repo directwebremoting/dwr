@@ -27,7 +27,7 @@ import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.create.AbstractCreator;
+import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.LocalUtil;

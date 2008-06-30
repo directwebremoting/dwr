@@ -16,6 +16,7 @@
 package org.directwebremoting.convert;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -31,7 +32,7 @@ import org.directwebremoting.io.RawData;
  * converter manager.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class RawConverter extends BaseV20Converter implements Converter
+public class RawConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)

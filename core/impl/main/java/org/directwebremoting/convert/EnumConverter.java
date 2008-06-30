@@ -18,6 +18,7 @@ package org.directwebremoting.convert;
 import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -29,7 +30,7 @@ import org.directwebremoting.util.LocalUtil;
  * Converter for Enums
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class EnumConverter extends BaseV20Converter implements Converter
+public class EnumConverter extends AbstractConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
