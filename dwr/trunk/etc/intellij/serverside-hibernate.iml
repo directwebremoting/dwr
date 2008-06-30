@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <datasource-map>
+          <unit-entry name="test/java/hibernate2.cfg.xml" />
+        </datasource-map>
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../../serverside/hibernate/test/java/hibernate2.cfg.xml" optional="false" version="3.0" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
+    <exclude-output />
+    <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
+    <content url="file://$MODULE_DIR$/../../serverside/hibernate">
+      <sourceFolder url="file://$MODULE_DIR$/../../serverside/hibernate/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../serverside/hibernate/test/java" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="serverside-hibernate" level="project" />
+    <orderEntry type="module" module-name="core-api" />
+    <orderEntryProperties />
+  </component>
+</module>
+
