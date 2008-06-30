@@ -308,7 +308,7 @@
   </macrodef>
 
   <!--=======================================================================-->
-  <target name="source">
+  <target name="package" depends="standard">
     <mkdir dir="${target.root}/javadoc"/>
     <javadoc access="public"
         author="true"
