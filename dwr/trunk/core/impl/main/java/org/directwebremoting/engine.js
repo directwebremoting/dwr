@@ -389,7 +389,7 @@ if (typeof this['dwr'] == 'undefined') {
   /** For debugging when something unexplained happens. */
   dwr.engine._warningHandler = dwr.engine.defaultWarningHandler;
 
-  /** Undocumented intercepters - do not use */
+  /** Undocumented interceptors - do not use */
   dwr.engine._postSeperator = "\n";
   dwr.engine._defaultInterceptor = function(data) { return data; };
   dwr.engine._urlRewriteHandler = dwr.engine._defaultInterceptor;
@@ -447,7 +447,7 @@ if (typeof this['dwr'] == 'undefined') {
   }
 
   /**
-   * Send a request. Called by the Javascript interface stub
+   * Send a request. Called by the JavaScript interface stub
    * @private
    * @param path part of URL after the host and before the exec bit without leading or trailing /s
    * @param scriptName The class to execute
