@@ -112,7 +112,6 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#view(org.directwebremoting.datasync.StoreRegion)
      */
-    @SuppressWarnings("unchecked")
     public MatchedItems view(StoreRegion region)
     {
         Index index = getIndex(region);
@@ -240,7 +239,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
              * @see java.util.AbstractMap#entrySet()
              */
             @Override
-            public Set<Map.Entry<String, T>> entrySet()
+            public Set<Entry<String, T>> entrySet()
             {
                 return new AbstractSet<Entry<String, T>>()
                 {
@@ -248,7 +247,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                      * @see java.util.AbstractCollection#iterator()
                      */
                     @Override
-                    public Iterator<Map.Entry<String, T>> iterator()
+                    public Iterator<Entry<String, T>> iterator()
                     {
                         return original.index.entrySet().iterator();
                     }
@@ -435,12 +434,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
          */
         private boolean isRelevant(T t)
         {
-            if (query == null || query.size() == 0)
-            {
-                return true;
-            }
-
-            return passesFilter(t, query);
+            return query == null || query.isEmpty() || passesFilter(t, query);
         }
 
         /* (non-Javadoc)

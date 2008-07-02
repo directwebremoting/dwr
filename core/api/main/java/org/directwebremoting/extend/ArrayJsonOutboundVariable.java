@@ -46,14 +46,14 @@ public class ArrayJsonOutboundVariable extends JsonNestedOutboundVariable implem
      * brother {@link ArrayNonJsonOutboundVariable}.
      * @return A JSON string that represents the set of {@link OutboundVariable}s
      */
-    protected static String createJsonString(Collection<OutboundVariable> children)
+    protected static String createJsonString(Collection<OutboundVariable> childList)
     {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[");
 
         boolean first = true;
-        for (OutboundVariable child : children)
+        for (OutboundVariable child : childList)
         {
             if (!first)
             {

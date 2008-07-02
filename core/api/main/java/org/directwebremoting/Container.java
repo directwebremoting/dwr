@@ -26,10 +26,10 @@ public interface Container
 {
     /**
      * Get an instance of a bean of a given name (usually name=class name).
-     * @param name The type to get an instance of
+     * @param id The type to get an instance of
      * @return The object of the given type, or null if the object does not exist
      */
-    Object getBean(String name);
+    Object getBean(String id);
 
     /**
      * Get an instance of a bean of a given type

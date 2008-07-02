@@ -130,7 +130,7 @@ public class DefaultConverterManager implements ConverterManager
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
     @SuppressWarnings("unchecked")
-    public <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext incc) throws ConversionException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext thc) throws ConversionException
     {
         InboundContext context = data.getContext();
 
@@ -157,7 +157,7 @@ public class DefaultConverterManager implements ConverterManager
 
             if (converter == null)
             {
-                log.error("Missing converter. Context of conversion: " + incc);
+                log.error("Missing converter. Context of conversion: " + thc);
                 throw new ConversionException(paramType, "No converter found for '" + paramType + "'");
             }
 
@@ -169,7 +169,7 @@ public class DefaultConverterManager implements ConverterManager
                 return null;
             }
 
-            context.pushContext(incc);
+            context.pushContext(thc);
             converted = converter.convertInbound(paramType, data);
             context.popContext();
         }
@@ -224,7 +224,7 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setExtraTypeInfo(TypeHintContext thc, Class<?> type)
     {
-        //extraTypeInfoMap.put(thc, type);
+        extraTypeInfoMap.put(thc, type);
     }
 
     /* (non-Javadoc)
@@ -443,82 +443,9 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /**
-     * This serves as a composite key for a Map so we can store type information
-     * against a specific generic parameter context
-     */
-    public static class ManualTypeInfoContext
-    {
-        /**
-         * @param method
-         * @param parameterNumber
-         * @param genericPath
-         */
-        public ManualTypeInfoContext(Method method, int parameterNumber, int[] genericPath)
-        {
-            this.method = method;
-            this.parameterNumber = parameterNumber;
-            this.genericPath = genericPath;
-        }
-
-        private Method method;
-        private int parameterNumber;
-        private int[] genericPath;
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode()
-        {
-            return method.hashCode() + parameterNumber + genericPath.hashCode();
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            if (obj == this)
-            {
-                return true;
-            }
-
-            if (!this.getClass().equals(obj.getClass()))
-            {
-                return false;
-            }
-
-            ManualTypeInfoContext that = (ManualTypeInfoContext) obj;
-
-            if (!this.method.equals(that.method))
-            {
-                return false;
-            }
-
-            if (this.parameterNumber != that.parameterNumber)
-            {
-                return false;
-            }
-
-            if (!this.genericPath.equals(that.genericPath))
-            {
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    /**
      * Where we store real type information behind generic types
      */
-    protected Map<ManualTypeInfoContext, Class<?>> extraTypeInfoMap = new HashMap<ManualTypeInfoContext, Class<?>>();
+    protected Map<TypeHintContext, Class<?>> extraTypeInfoMap = new HashMap<TypeHintContext, Class<?>>();
 
     /**
      * The list of the available converters

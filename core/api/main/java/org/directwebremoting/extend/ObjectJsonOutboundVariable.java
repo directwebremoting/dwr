@@ -47,13 +47,13 @@ public class ObjectJsonOutboundVariable extends JsonNestedOutboundVariable imple
      * brother {@link ObjectNonJsonOutboundVariable}.
      * @return A JSON string that represents the set of {@link OutboundVariable}s
      */
-    protected static String createJsonString(Map<String, OutboundVariable> children)
+    protected static String createJsonString(Map<String, OutboundVariable> childList)
     {
         StringBuffer buffer = new StringBuffer();
         buffer.append('{');
 
         boolean first = true;
-        for (Map.Entry<String, OutboundVariable> entry : children.entrySet())
+        for (Map.Entry<String, OutboundVariable> entry : childList.entrySet())
         {
             String name = entry.getKey();
             OutboundVariable nested = entry.getValue();

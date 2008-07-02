@@ -58,5 +58,8 @@ public class ThreadWaitSleeper implements Sleeper
         latch.countDown();
     }
 
+    /**
+     * Ensure that once woken up we don't sleep
+     */
     private final CountDownLatch latch = new CountDownLatch(1);
 }

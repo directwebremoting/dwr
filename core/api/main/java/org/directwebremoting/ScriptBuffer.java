@@ -203,7 +203,7 @@ public class ScriptBuffer
      * Do not use it without understanding the implications for future proofing.
      * @return The list of parts of the final output script
      */
-    public List<? extends Object> getParts()
+    public List<?> getParts()
     {
         return parts;
     }

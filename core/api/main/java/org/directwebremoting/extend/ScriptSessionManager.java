@@ -93,5 +93,5 @@ public interface ScriptSessionManager
      * automatically becomes invalid and is recycled.
      * The default is 5mins
      */
-    static final long DEFAULT_TIMEOUT_MILLIS = 5 * 60 * 1000;
+    static final long DEFAULT_TIMEOUT_MILLIS = 5L * 60L * 1000L;
 }

@@ -17,8 +17,6 @@ package org.directwebremoting.extend;
 
 import java.util.Collection;
 
-import org.directwebremoting.extend.JsonModeMarshallException;
-
 /**
  * A helper class for people that want to implement {@link OutboundVariable}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]

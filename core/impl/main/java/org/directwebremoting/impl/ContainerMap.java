@@ -73,7 +73,7 @@ public class ContainerMap extends AbstractMap<String, Object> implements Map<Str
      * @see java.util.AbstractMap#entrySet()
      */
     @Override
-    public Set<Map.Entry<String, Object>> entrySet()
+    public Set<Entry<String, Object>> entrySet()
     {
         init();
         return proxy.entrySet();

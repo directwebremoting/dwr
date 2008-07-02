@@ -248,7 +248,9 @@ public class TypeHintContext
             }
             else
             {
-                buffer.append(method.getDeclaringClass().getName() + "." + method.getName());
+                buffer.append(method.getDeclaringClass().getName());
+                buffer.append(".");
+                buffer.append(method.getName());
             }
             buffer.append("(param#=");
             buffer.append(parameterNumber);

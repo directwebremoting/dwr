@@ -33,11 +33,11 @@ public class DefaultAjaxFilterManager implements AjaxFilterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.AjaxFilterManager#getAjaxFilters(java.lang.String)
      */
-    public List<AjaxFilter> getAjaxFilters(String scriptname)
+    public List<AjaxFilter> getAjaxFilters(String scriptName)
     {
-        if (ExportUtil.isSystemClass(scriptname))
+        if (ExportUtil.isSystemClass(scriptName))
         {
-            return Collections.<AjaxFilter>emptyList();
+            return Collections.emptyList();
         }
 
         // PERFORMANCE: we could probably cache the results of these if we wanted to
@@ -45,7 +45,7 @@ public class DefaultAjaxFilterManager implements AjaxFilterManager
 
         reply.addAll(global);
 
-        List<AjaxFilter> classBased = classBasedMap.get(scriptname);
+        List<AjaxFilter> classBased = classBasedMap.get(scriptName);
         if (classBased != null)
         {
             reply.addAll(classBased);
@@ -65,13 +65,13 @@ public class DefaultAjaxFilterManager implements AjaxFilterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.AjaxFilterManager#addAjaxFilter(org.directwebremoting.AjaxFilter, java.lang.String)
      */
-    public void addAjaxFilter(AjaxFilter filter, String scriptname)
+    public void addAjaxFilter(AjaxFilter filter, String scriptName)
     {
-        List<AjaxFilter> classBased = classBasedMap.get(scriptname);
+        List<AjaxFilter> classBased = classBasedMap.get(scriptName);
         if (classBased == null)
         {
             classBased = new ArrayList<AjaxFilter>();
-            classBasedMap.put(scriptname, classBased);
+            classBasedMap.put(scriptName, classBased);
         }
 
         classBased.add(filter);

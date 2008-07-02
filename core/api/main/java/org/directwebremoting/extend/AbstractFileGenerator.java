@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.extend;
 
-import org.directwebremoting.extend.FileGenerator;
-
 /**
  * A helper to aid implementing {@link FileGenerator} that takes care of the
  * filename and mimeType fields

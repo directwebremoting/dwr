@@ -76,7 +76,7 @@ public final class StoreRegion
             for (Map.Entry<String, String> entry : query.entrySet())
             {
                 String value = entry.getValue();
-                if (!value.equals("*"))
+                if (!"*".equals(value))
                 {
                     this.query.put(entry.getKey(), value);
                 }
@@ -179,7 +179,7 @@ public final class StoreRegion
             for (Map.Entry<String, String> entry : query.entrySet())
             {
                 String value = entry.getValue();
-                if (!value.equals("*"))
+                if (!"*".equals(value))
                 {
                     this.query.put(entry.getKey(), value);
                 }
