@@ -866,11 +866,12 @@ if (typeof this['dwr'] == 'undefined') {
         if (ref) {
           batch.map[name] = ref;
         }
-        else if (data instanceof String) batch.map[name] = "String:" + encodeURIComponent(data);
-        else if (data instanceof Boolean) batch.map[name] = "Boolean:" + data;
-        else if (data instanceof Number) batch.map[name] = "Number:" + data;
-        else if (data instanceof Date) batch.map[name] = "Date:" + data.getTime();
-        else if (data && data.join) batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name, depth + 1);
+        var objstr = Object.prototype.toString.call(data);
+        if (objstr == "[object String]") batch.map[name] = "String:" + encodeURIComponent(data);
+        else if (objstr == "[object Boolean]") batch.map[name] = "Boolean:" + data;
+        else if (objstr == "[object Number]") batch.map[name] = "Number:" + data;
+        else if (objstr == "[object Date]") batch.map[name] = "Date:" + data.getTime();
+        else if (objstr == "[object Array]") batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name, depth + 1);
         else if (data && data.tagName && data.tagName.toLowerCase() == "input" && data.type && data.type.toLowerCase() == "file") {
           batch.fileUpload = true;
           batch.map[name] = data;
