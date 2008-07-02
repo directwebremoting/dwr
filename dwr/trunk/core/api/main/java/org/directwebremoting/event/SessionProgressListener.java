@@ -64,7 +64,9 @@ public class SessionProgressListener implements ProgressListener
     /**
      * The progress.
      */
-    private volatile long bytesRead = 0L, contentLength = 0L, item = 0L;
+    private volatile long bytesRead = 0L;
+    private volatile long contentLength = 0L;
+    private volatile long item = 0L;
 
     /**
      * The attribute that indicates if the user wants to cancel the upload.

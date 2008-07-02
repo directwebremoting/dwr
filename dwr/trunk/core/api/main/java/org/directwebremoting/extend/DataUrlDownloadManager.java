@@ -18,8 +18,6 @@ package org.directwebremoting.extend;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.directwebremoting.extend.DownloadManager;
-import org.directwebremoting.extend.FileGenerator;
 import org.directwebremoting.util.Base64;
 
 /**

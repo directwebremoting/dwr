@@ -161,7 +161,7 @@ public class Call
             }
         }
 
-        if (allMethods.size() == 0)
+        if (allMethods.isEmpty())
         {
             // Not even a name match
             log.warn("No method called '" + methodName + "' found in " + creator.getType());
@@ -191,7 +191,7 @@ public class Call
                 }
             }
 
-            if (allMethods.size() == 0)
+            if (allMethods.isEmpty())
             {
                 // None have the right number of parameters
                 log.warn("Multiple methods called '" + methodName + "' found. But none had " + inctx.getParameterCount() + " parameters.");
@@ -221,7 +221,7 @@ public class Call
                     }
                 }
 
-                if (allMethods.size() == 0)
+                if (allMethods.isEmpty())
                 {
                     // None have the right parameters
                     log.warn("Multiple methods called '" + methodName + "' found. But none had all parameters convertible.");

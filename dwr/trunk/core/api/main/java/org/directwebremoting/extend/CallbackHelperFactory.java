@@ -25,7 +25,7 @@ public class CallbackHelperFactory
 {
     public static <T> String saveCallback(Callback<T> callback, Class<T> type)
     {
-        return CallbackHelperFactory.get().saveCallback(callback, type);
+        return get().saveCallback(callback, type);
     }
 
     /**

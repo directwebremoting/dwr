@@ -62,7 +62,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
      */
     protected static boolean passesFilter(Object pojo, Map<String, String> query)
     {
-        if (query == null || query.size() == 0)
+        if (query == null || query.isEmpty())
         {
             return true;
         }
@@ -77,7 +77,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
                 try
                 {
                     String realValue = LocalUtil.getProperty(pojo, testProperty).toString();
-                    if (!testValue.equals(realValue.toString()))
+                    if (!testValue.equals(realValue))
                     {
                         return false;
                     }

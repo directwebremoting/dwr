@@ -42,9 +42,9 @@ public interface StoreProvider<T>
      * code is implemented in {@link AbstractStoreProvider}.
      * <p>See notes on {@link org.directwebremoting.io.Item#getItemId}
      * @param itemId The key (or some mapping) to it.
-     * @param data Data from the web to be converted and added to the store
+     * @param rawData Data from the web to be converted and added to the store
      */
-    void put(String itemId, RawData data);
+    void put(String itemId, RawData rawData);
 
     /**
      * Similar to {@link java.util.Map#put} in adding items to a Store.
@@ -80,5 +80,5 @@ public interface StoreProvider<T>
      * @param region A set of filter and sort criteria to restrict the fetched data
      * @param subscription The listener that should no longer be notified
      */
-    void unsubscribe(StoreRegion region, StoreChangeListener<T> subscription);
+    void unsubscribe(StoreRegion region, StoreChangeListener<T> li);
 }

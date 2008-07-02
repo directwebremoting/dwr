@@ -182,19 +182,19 @@ public final class InboundVariable
 
         String value = getValue();
 
-        if (type.equalsIgnoreCase("boolean"))
+        if ("boolean".equalsIgnoreCase(type))
         {
             return new JsonBoolean(Boolean.parseBoolean(value));
         }
-        else if (type.equalsIgnoreCase("number"))
+        else if ("number".equalsIgnoreCase(type))
         {
             return new JsonNumber(Double.parseDouble(value));
         }
-        else if (type.equalsIgnoreCase("string"))
+        else if ("string".equalsIgnoreCase(type))
         {
             return new JsonString(value);
         }
-        else if (type.equalsIgnoreCase("date"))
+        else if ("date".equalsIgnoreCase(type))
         {
             switch (onError)
             {
@@ -204,7 +204,7 @@ public final class InboundVariable
                 return new JsonNull();
             }
         }
-        else if (type.equalsIgnoreCase("xml"))
+        else if ("xml".equalsIgnoreCase(type))
         {
             switch (onError)
             {
@@ -214,7 +214,7 @@ public final class InboundVariable
                 return new JsonNull();
             }
         }
-        else if (type.equalsIgnoreCase("array"))
+        else if ("array".equalsIgnoreCase(type))
         {
             JsonArray array = new JsonArray();
 

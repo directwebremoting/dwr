@@ -47,13 +47,13 @@ public class ConvertUtil
         if (colon == -1)
         {
             log.error("Missing : in conversion data (" + data + ')');
-            reply[ConvertUtil.INBOUND_INDEX_TYPE] = ProtocolConstants.TYPE_STRING;
-            reply[ConvertUtil.INBOUND_INDEX_VALUE] = data;
+            reply[INBOUND_INDEX_TYPE] = ProtocolConstants.TYPE_STRING;
+            reply[INBOUND_INDEX_VALUE] = data;
         }
         else
         {
-            reply[ConvertUtil.INBOUND_INDEX_TYPE] = data.substring(0, colon);
-            reply[ConvertUtil.INBOUND_INDEX_VALUE] = data.substring(colon + 1);
+            reply[INBOUND_INDEX_TYPE] = data.substring(0, colon);
+            reply[INBOUND_INDEX_VALUE] = data.substring(colon + 1);
         }
     
         return reply;

@@ -94,11 +94,11 @@ public interface ConverterManager
      * without exposing too much of what {@link RawData} holds.
      * @param <T>
      * @param paramType The type we wish to convert to
-     * @param data The RawData object holding data to be converted
+     * @param rawData The RawData object holding data to be converted
      * @return The convertible object
      * @throws ConversionException If the conversion failed for some reason
      */
-    <T> T convertInbound(Class<T> paramType, RawData data) throws ConversionException;
+    <T> T convertInbound(Class<T> paramType, RawData rawData) throws ConversionException;
 
     /**
      * Convert an object into a Javascript representation of the same.

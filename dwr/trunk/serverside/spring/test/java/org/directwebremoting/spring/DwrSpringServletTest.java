@@ -15,12 +15,8 @@
  */
 package org.directwebremoting.spring;
 
-import org.directwebremoting.WebContextFactory.WebContextBuilder;
-//import org.directwebremoting.servlet.UrlProcessor;
-import org.easymock.EasyMock;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
@@ -51,9 +47,9 @@ public class DwrSpringServletTest
     @Test
     public void mockPost() throws Exception
     {
+        /*
         BeanFactory factory = EasyMock.createMock(BeanFactory.class);
 
-        /*
         UrlProcessor processor = new UrlProcessor();
         WebContextBuilder builder = EasyMock.createMock(WebContextBuilder.class);
 
