@@ -47,7 +47,7 @@
     </init-param>
     <init-param>
       <param-name>org.directwebremoting.Container</param-name>
-      <param-value>org.directwebremoting.testimpl.TestDefaultContainer</param-value>
+      <param-value>org.directwebremoting.impl.TestDefaultContainer</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
