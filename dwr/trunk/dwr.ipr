@@ -8,6 +8,8 @@
       <customJdkName value="" />
       <maximumHeapSize value="128" />
       <properties />
+      <executeOn event="beforeRun" target="war" runConfigurationType="Application" runConfigurationName="dwr-jetty-demo" />
+      <executeOn event="beforeRun" target="war" runConfigurationType="Application" runConfigurationName="dwr-jetty-test" />
     </buildFile>
   </component>
   <component name="BuildJarProjectSettings">
