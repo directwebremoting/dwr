@@ -4,13 +4,13 @@
     <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
     <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
-    <content url="file://$MODULE_DIR$/../../protocol/dwrp">
-      <sourceFolder url="file://$MODULE_DIR$/../../protocol/dwrp/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../protocol/dwrp/test/java" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../serverside/webwork">
+      <sourceFolder url="file://$MODULE_DIR$/../../serverside/webwork/main/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="core-api" />
+    <orderEntry type="library" exported="" name="protocol-webwork" level="project" />
+    <orderEntry type="module" module-name="api" />
     <orderEntryProperties />
   </component>
 </module>

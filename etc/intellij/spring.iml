@@ -22,7 +22,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="serverside-spring" level="project" />
-    <orderEntry type="module" module-name="core-api" />
+    <orderEntry type="module" module-name="api" />
     <orderEntryProperties />
   </component>
 </module>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="web" name="Web" implicit="true">
+    <facet type="web" name="customDemo">
       <configuration>
         <descriptors>
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../serverside/struts/customDemo/web/WEB-INF/web.xml" optional="false" version="2.5" />
@@ -21,9 +21,29 @@
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
-          <containerElement type="module" name="serverside-struts">
+          <containerElement type="facet" facetId="impl/web/test">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="&lt;N/A&gt;" />
+          </containerElement>
+          <containerElement type="module" name="api">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+          <containerElement type="module" name="impl">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+          <containerElement type="module" name="struts">
             <attribute name="method" value="1" />
             <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+          <containerElement type="library" name="core-api" level="project">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="&lt;N/A&gt;" />
+          </containerElement>
+          <containerElement type="library" name="core-impl" level="project">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
           </containerElement>
           <containerElement type="library" name="serverside-struts" level="project">
             <attribute name="method" value="0" />
@@ -58,8 +78,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="serverside-struts" level="project" />
-    <orderEntry type="module" module-name="core-api" />
-    <orderEntry type="module" module-name="core-impl" />
+    <orderEntry type="module" module-name="api" />
+    <orderEntry type="module" module-name="impl" />
     <orderEntryProperties />
   </component>
 </module>

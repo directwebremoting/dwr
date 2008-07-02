@@ -4,14 +4,14 @@
     <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
     <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
-    <content url="file://$MODULE_DIR$/../../serverside/guice">
-      <sourceFolder url="file://$MODULE_DIR$/../../serverside/guice/main/java" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../serverside/various">
+      <sourceFolder url="file://$MODULE_DIR$/../../serverside/various/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../serverside/various/test/java" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="core-api" />
-    <orderEntry type="library" exported="" name="serverside-guice" level="project" />
-    <orderEntry type="module" module-name="serverside-spring" />
+    <orderEntry type="library" exported="" name="serverside-various" level="project" />
+    <orderEntry type="module" module-name="api" />
     <orderEntryProperties />
   </component>
 </module>
