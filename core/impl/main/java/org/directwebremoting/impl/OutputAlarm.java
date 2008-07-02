@@ -20,8 +20,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.extend.Alarm;
@@ -54,6 +52,8 @@ public class OutputAlarm extends BasicAlarm implements Alarm
     @Override
     public void setAlarmAction(Sleeper sleeper)
     {
+        super.setAlarmAction(sleeper);
+
         try
         {
             scriptSession.addScriptConduit(conduit);
@@ -62,8 +62,6 @@ public class OutputAlarm extends BasicAlarm implements Alarm
         {
             log.warn("Error adding monitor to script session", ex);
         }
-
-        super.setAlarmAction(sleeper);
     }
 
     /* (non-Javadoc)
@@ -137,11 +135,6 @@ public class OutputAlarm extends BasicAlarm implements Alarm
      * The script session to monitor for output
      */
     protected RealScriptSession scriptSession;
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(OutputAlarm.class);
 
     /**
      * The future result that allows us to cancel the timer
