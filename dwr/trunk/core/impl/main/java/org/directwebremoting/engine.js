@@ -2151,11 +2151,12 @@ dwr.data = {
   /**
    * Request an update to server side data
    * @param {String} storeId The store to update (*not* a subscriptionId)
-   * @param {String} itemId The ID of the data to change
-   * @param {Object} data The new data object
+   * @param {Object} items The new data object
    */
-  update: function(storeId, itemId, data) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', storeId, itemId, data, null);
+  update: function(storeId, items, onComplete, onError) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', storeId, items, {
+      callback:onComplete,
+      exceptionHandler:onError
+    });
   }
 };
-
