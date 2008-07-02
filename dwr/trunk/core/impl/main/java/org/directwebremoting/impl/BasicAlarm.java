@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.Sleeper;
 
@@ -35,6 +37,10 @@ public class BasicAlarm implements Alarm
             if (sleeper != null)
             {
                 sleeper.wakeUp();
+            }
+            else
+            {
+                log.error("raiseAlarm called before a sleeper has been set");
             }
         }
     }
@@ -66,11 +72,16 @@ public class BasicAlarm implements Alarm
     /**
      * The protection for the sleeper
      */
-    private Object sleeperLock = new Object();
+    private final Object sleeperLock = new Object();
 
     /**
      * The thread that needs to know about shutdown
      * @protectedBy(sleeperLock)
      */
     private Sleeper sleeper;
+
+    /**
+     * The log stream
+     */
+    protected static final Log log = LogFactory.getLog(BasicAlarm.class);
 }
