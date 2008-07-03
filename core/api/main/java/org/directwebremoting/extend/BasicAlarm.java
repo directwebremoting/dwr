@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.extend;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.extend.Alarm;
-import org.directwebremoting.extend.Sleeper;
 
 /**
  * An Alarm that goes off 'manually', that is to say by the calling of

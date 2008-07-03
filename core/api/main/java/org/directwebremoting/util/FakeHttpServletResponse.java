@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Juergen Hoeller
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@SuppressWarnings({"MethodNamesDifferingOnlyByCase"})
 public class FakeHttpServletResponse implements HttpServletResponse
 {
     /* (non-Javadoc)
@@ -316,7 +317,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
         locale = null;
         cookies.clear();
         headers.clear();
-        status = HttpServletResponse.SC_OK;
+        status = SC_OK;
         errorMessage = null;
     }
 
@@ -595,7 +596,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
 
     private final Map<String, List<Object>> headers = new HashMap<String, List<Object>>();
 
-    private int status = HttpServletResponse.SC_OK;
+    private int status = SC_OK;
 
     private String errorMessage = null;
 

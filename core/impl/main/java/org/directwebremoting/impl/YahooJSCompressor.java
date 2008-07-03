@@ -61,9 +61,9 @@ public class YahooJSCompressor implements Compressor
         StringReader stringReader = new StringReader(script);
         JavaScriptCompressor yuiJavaScriptCompressor = new JavaScriptCompressor(stringReader, new YahooJSErrorReporter());
         StringWriter stringWriter = new StringWriter();
-        yuiJavaScriptCompressor.compress(stringWriter, ((Integer) compressorParameters.get(PARAMETER_LINEBREAK)).intValue(), ((Boolean) compressorParameters.get(PARAMETER_MUNGE)).booleanValue(),
-                                         ((Boolean) compressorParameters.get(PARAMETER_VERBOSE)).booleanValue(), ((Boolean) compressorParameters.get(PARAMETER_PRESERVE_ALL_SEMICOLONS)).booleanValue(),
-                                         ((Boolean) compressorParameters.get(PARAMETER_DISABLE_OPTIMIZATIONS)).booleanValue());
+        yuiJavaScriptCompressor.compress(stringWriter, (Integer) compressorParameters.get(PARAMETER_LINEBREAK), (Boolean) compressorParameters.get(PARAMETER_MUNGE),
+                (Boolean) compressorParameters.get(PARAMETER_VERBOSE), (Boolean) compressorParameters.get(PARAMETER_PRESERVE_ALL_SEMICOLONS),
+                (Boolean) compressorParameters.get(PARAMETER_DISABLE_OPTIMIZATIONS));
         String compressedScript = stringWriter.toString();
         return compressedScript;
     }
@@ -167,7 +167,7 @@ public class YahooJSCompressor implements Compressor
 
     private static final Boolean DEFAULT_VERBOSE = Boolean.FALSE;
 
-    private static final Integer DEFAULT_LINEBREAK = new Integer(20000);
+    private static final Integer DEFAULT_LINEBREAK = 20000;
 
     private static final Boolean DEFAULT_PRESERVE_ALL_SEMICOLONS = Boolean.FALSE;
 

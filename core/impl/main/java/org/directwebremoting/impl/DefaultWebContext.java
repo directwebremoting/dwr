@@ -121,7 +121,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
 
         if (avoidConnectionLimitWithWindowName)
         {
-            if (windowName == null || windowName.equals(""))
+            if (windowName == null || "".equals(windowName))
             {
                 windowName = "DWR-" + generator.generateId(16);
                 ScriptBuffer script = EnginePrivate.getRemoteHandleNewWindowNameScript(windowName);
@@ -209,7 +209,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         HttpServletResponse fakeResponse = new SwallowingHttpServletResponse(realResponse, sout, realResponse.getCharacterEncoding());
 
         HttpServletRequest realRequest = getHttpServletRequest();
-        realRequest.setAttribute(WebContext.ATTRIBUTE_DWR, Boolean.TRUE);
+        realRequest.setAttribute(ATTRIBUTE_DWR, Boolean.TRUE);
 
         getServletContext().getRequestDispatcher(url).forward(realRequest, fakeResponse);
 

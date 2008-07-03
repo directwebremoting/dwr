@@ -355,84 +355,84 @@ public final class Record extends Node
     // Support methods /////////////////////////////////////////////////////////
 
     /**
-	 * @param depth
-	 * @return The string version of this record
-	 */
-	protected String toXml(int depth)
-	{
-		// Serialize the child records
-		StringBuilder buffer = new StringBuilder();
-		for (Record record : this)
-		{
-			buffer.append(Node.indent(depth));
-			buffer.append(record.toXml(depth + 1));
-			buffer.append("\n");
-		}
+     * @param depth
+     * @return The string version of this record
+     */
+    protected String toXml(int depth)
+    {
+        // Serialize the child records
+        StringBuilder buffer = new StringBuilder();
+        for (Record record : this)
+        {
+            buffer.append(Node.indent(depth));
+            buffer.append(record.toXml(depth + 1));
+            buffer.append("\n");
+        }
 
-		// Start the record tag
-		StringBuilder reply = new StringBuilder();
-		reply.append("<record jsxid=\"" + getId() + "\"");
+        // Start the record tag
+        StringBuilder reply = new StringBuilder();
+        reply.append("<record jsxid=\"" + getId() + "\"");
 
-		// Add the JSX attributes
-		createAttributeOutput(reply, "jsxdisabled", disabled);
-		createAttributeOutput(reply, "jsxdivider", divider);
-		createAttributeOutput(reply, "jsxexecute", execute);
-		createAttributeOutput(reply, "jsxgroupname", groupName);
-		createAttributeOutput(reply, "jsximage", image);
-		createAttributeOutput(reply, "jsxkeycode", keycodeString);
-		createAttributeOutput(reply, "jsxnomask", noMask);
-		createAttributeOutput(reply, "jsxselected", selected);
-		createAttributeOutput(reply, "jsxstyle", style);
-		createAttributeOutput(reply, "jsxtext", text);
-		createAttributeOutput(reply, "jsxtip", tip);
-		createAttributeOutput(reply, "jsxunselectable", unselectable);
+        // Add the JSX attributes
+        createAttributeOutput(reply, "jsxdisabled", disabled);
+        createAttributeOutput(reply, "jsxdivider", divider);
+        createAttributeOutput(reply, "jsxexecute", execute);
+        createAttributeOutput(reply, "jsxgroupname", groupName);
+        createAttributeOutput(reply, "jsximage", image);
+        createAttributeOutput(reply, "jsxkeycode", keycodeString);
+        createAttributeOutput(reply, "jsxnomask", noMask);
+        createAttributeOutput(reply, "jsxselected", selected);
+        createAttributeOutput(reply, "jsxstyle", style);
+        createAttributeOutput(reply, "jsxtext", text);
+        createAttributeOutput(reply, "jsxtip", tip);
+        createAttributeOutput(reply, "jsxunselectable", unselectable);
 
-		// Add the custom attributes
-		for (Iterator<Map.Entry<String, String>> it = attributes.entrySet().iterator(); it.hasNext();)
-		{
-			Map.Entry<String, String> entry = it.next();
-			createAttributeOutput(reply, entry.getKey(), entry.getValue());
-		}
+        // Add the custom attributes
+        for (Iterator<Map.Entry<String, String>> it = attributes.entrySet().iterator(); it.hasNext();)
+        {
+            Map.Entry<String, String> entry = it.next();
+            createAttributeOutput(reply, entry.getKey(), entry.getValue());
+        }
 
-		if (buffer.length() == 0)
-		{
-			reply.append("/>\n");
-		}
-		else
-		{
-			reply.append(">\n");
-			reply.append(buffer.toString());
-			reply.append("</record>");
-		}
+        if (buffer.length() == 0)
+        {
+            reply.append("/>\n");
+        }
+        else
+        {
+            reply.append(">\n");
+            reply.append(buffer.toString());
+            reply.append("</record>");
+        }
 
-		return reply.toString();
-	}
+        return reply.toString();
+    }
 
-	/**
-	 * @param reply
-	 */
-	private void createAttributeOutput(StringBuilder reply, String name, Object value)
-	{
-		if (value != null)
-		{
-			reply.append(" ");
-			reply.append(name);
-			reply.append("=\"");
-			reply.append(value);
-			reply.append("\"");
-		}
-	}
+    /**
+     * @param reply
+     */
+    private void createAttributeOutput(StringBuilder reply, String name, Object value)
+    {
+            if (value != null)
+            {
+                    reply.append(" ");
+                    reply.append(name);
+                    reply.append("=\"");
+                    reply.append(value);
+                    reply.append("\"");
+            }
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return toXml(0);
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+            return toXml(0);
+    }
 
-	private Boolean disabled = null;
+    private Boolean disabled = null;
     private Boolean divider = null;
     private String execute = null;
     private String groupName = null;

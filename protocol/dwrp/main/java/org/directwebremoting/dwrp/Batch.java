@@ -37,7 +37,7 @@ import org.directwebremoting.util.Messages;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class Batch
+public class Batch
 {
     /**
      * @param request
@@ -129,7 +129,7 @@ public abstract class Batch
      * @param request The servlet request to be evaluated. Must be non-null.
      * @return true if the request is multipart, false otherwise.
      */
-    public static final boolean isMultipartContent(HttpServletRequest request)
+    public static boolean isMultipartContent(HttpServletRequest request)
     {
         if (!"post".equals(request.getMethod().toLowerCase()))
         {

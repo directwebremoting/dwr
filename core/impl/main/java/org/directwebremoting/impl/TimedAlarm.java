@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.extend.BasicAlarm;
 import org.directwebremoting.util.SharedObjects;
 
 /**

@@ -19,6 +19,7 @@ import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.extend.WaitController;
+import org.directwebremoting.extend.BasicAlarm;
 
 /**
  * An Alarm that allows the system to close all connections when it is shutting

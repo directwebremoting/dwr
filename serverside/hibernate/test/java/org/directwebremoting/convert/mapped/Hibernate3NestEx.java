@@ -87,7 +87,7 @@ public class Hibernate3NestEx
         }
 
         Class<? extends Hibernate3NestEx> thisClass = this.getClass();
-        Class<? extends Object> thatClass = obj.getClass();
+        Class<?> thatClass = obj.getClass();
         if (!thisClass.isAssignableFrom(thatClass) && !thatClass.isAssignableFrom(thisClass))
         {
             return false;
@@ -115,6 +115,14 @@ public class Hibernate3NestEx
         // }
 
         return true;
+    }
+
+    public int hashCode()
+    {
+        int reply = 7423;
+        reply += (id == null) ? 382 : id.hashCode();
+        reply += (name == null) ? 423 : name.hashCode();
+        return reply;
     }
 
     private Integer id;

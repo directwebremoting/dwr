@@ -17,7 +17,6 @@ package org.directwebremoting.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.impl.DefaultContainer;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]

@@ -28,6 +28,6 @@ public class ExportUtil
      */
     public static boolean isSystemClass(String scriptName)
     {
-        return scriptName.equals("__System");
+        return "__System".equals(scriptName);
     }
 }

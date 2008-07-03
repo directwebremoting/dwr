@@ -34,7 +34,7 @@ public class BayeuxScriptConduit extends ScriptConduit
      */
     public BayeuxScriptConduit(ConverterManager converterManager, boolean jsonOutput)
     {
-        super(ScriptConduit.RANK_FAST, true);
+        super(RANK_FAST, true);
 
         this.converterManager = converterManager;
         this.jsonOutput = jsonOutput;

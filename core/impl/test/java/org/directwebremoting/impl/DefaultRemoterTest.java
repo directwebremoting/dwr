@@ -34,6 +34,7 @@ import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.Assert;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -130,10 +131,10 @@ public class DefaultRemoterTest
         verify(ajaxFilterManager);
 
         assertNotNull(result);
-        assertTrue(result.indexOf("<script type='text/javascript'>") != -1);
-        assertTrue(result.indexOf("window.parent.DWREngine._handleResponse('1',") != -1);
-        assertTrue(result.indexOf("window.parent.DWREngine._handleResponse('2',") != -1);
-        assertTrue(result.indexOf("</script>") != -1);
+        assertNotSame(result.indexOf("<script type='text/javascript'>"), -1);
+        assertNotSame(result.indexOf("window.parent.DWREngine._handleResponse('1',"), -1);
+        assertNotSame(result.indexOf("window.parent.DWREngine._handleResponse('2',"), -1);
+        assertNotSame(result.indexOf("</script>"), -1);
     }
 
     @Ignore
@@ -160,20 +161,20 @@ public class DefaultRemoterTest
         verify(accessControl);
 
         // check the response
-        assertTrue(result.indexOf("function creatorName() { }") != -1);
-        assertTrue(result.indexOf("creatorName.hashCode = function(") != -1);
-        assertTrue(result.indexOf("creatorName.getClass = function(") != -1);
-        assertTrue(result.indexOf("creatorName.wait = function(") != -1);
-        assertTrue(result.indexOf("creatorName.wait = function(") != -1);
-        assertTrue(result.indexOf("creatorName.wait = function(") != -1);
-        assertTrue(result.indexOf("creatorName.equals = function(") != -1);
-        assertTrue(result.indexOf("creatorName.notify = function(") != -1);
-        assertTrue(result.indexOf("creatorName.notifyAll = function(") != -1);
-        assertTrue(result.indexOf("creatorName.toString = function(") != -1);
-        assertTrue(result.indexOf("creatorName.testMethodWithServletParameters = function(") != -1);
+        Assert.assertNotSame(result.indexOf("function creatorName() { }"), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.hashCode = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.getClass = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.wait = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.wait = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.wait = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.equals = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.notify = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.notifyAll = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.toString = function("), -1);
+        Assert.assertNotSame(result.indexOf("creatorName.testMethodWithServletParameters = function("), -1);
 
         // make sure no entry is generated for the reserved javascript word 'namespace'
-        assertFalse(result.indexOf("creatorName.namespace = function(") != -1);
+        Assert.assertSame(result.indexOf("creatorName.namespace = function("), -1);
     }
 
     @Ignore
@@ -187,17 +188,6 @@ public class DefaultRemoterTest
 
         replay(creatorManager);
         replay(accessControl);
-
-        try
-        {
-            //Calls calls = marshaller.marshallInbound(request, null);
-            //defaultRemoter.execute(calls);
-            //fail("a security exception was expected");
-        }
-        catch (SecurityException e)
-        {
-            // do nothing, was expected
-        }
 
         verify(creatorManager);
         verify(accessControl);
@@ -236,17 +226,17 @@ public class DefaultRemoterTest
 
         // check the response
         String result = response.getContentAsString();
-        assertTrue(result.indexOf("function creatorName() { }") != -1);
-        assertFalse(result.indexOf("creatorName.hashCode = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.getClass = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.wait = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.wait = function(p0, p1, callback)") != -1);
-        assertFalse(result.indexOf("creatorName.wait = function(p0, callback)") != -1);
-        assertFalse(result.indexOf("creatorName.equals = function(p0, callback)") != -1);
-        assertFalse(result.indexOf("creatorName.notify = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.notifyAll = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.toString = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.testMethodWithServletParameters = function(callback)") != -1);
-        assertFalse(result.indexOf("creatorName.namespace = function(callback)") != -1);
+        Assert.assertNotSame(result.indexOf("function creatorName() { }"), -1);
+        Assert.assertSame(result.indexOf("creatorName.hashCode = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.getClass = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.wait = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.wait = function(p0, p1, callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.wait = function(p0, callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.equals = function(p0, callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.notify = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.notifyAll = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.toString = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.testMethodWithServletParameters = function(callback)"), -1);
+        Assert.assertSame(result.indexOf("creatorName.namespace = function(callback)"), -1);
     }
 }

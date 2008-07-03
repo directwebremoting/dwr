@@ -83,11 +83,11 @@ public class StartupUtil
             ServletConfig servletConfig = new FakeServletConfig("test", new FakeServletContext());
             ServletContext servletContext = servletConfig.getServletContext();
 
-            StartupUtil.logStartup(servletConfig);
+            logStartup(servletConfig);
 
             Container container = createAndSetupDefaultContainer(servletConfig);
 
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
+            initContainerBeans(servletConfig, servletContext, container);
             WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
 
             prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
@@ -732,7 +732,7 @@ public class StartupUtil
     }
 
     /**
-     * Get the {@link WebContextFactory.WebContextBuilder} out of the
+     * Get the {@link WebContextBuilder} out of the
      * {@link Container}, configure it (call WebContextBuilder#set()) and use it
      * to configure the {@link WebContextFactory}.
      * @param servletConfig The servlet configuration
@@ -752,7 +752,7 @@ public class StartupUtil
     }
 
     /**
-     * Get the {@link ServerContextFactory.ServerContextBuilder} out of the
+     * Get the {@link ServerContextBuilder} out of the
      * {@link Container}, configure it and use it to configure the
      * {@link ServerContextFactory}
      * @param servletConfig The servlet configuration
@@ -772,7 +772,7 @@ public class StartupUtil
     }
 
     /**
-     * Get the {@link HubFactory.HubBuilder} out of the {@link Container},
+     * Get the {@link HubBuilder} out of the {@link Container},
      * configure it and use it to configure the {@link HubFactory}
      * @param servletContext The servlet context
      * @param container The container to save in the ServletContext

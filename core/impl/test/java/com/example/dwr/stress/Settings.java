@@ -33,7 +33,7 @@ public class Settings
         {
             Object bean = container.getBean(beanName);
 
-            Class<? extends Object> beanClass = bean.getClass();
+            Class<?> beanClass = bean.getClass();
             if (beanClass == String.class)
             {
                 continue;
@@ -63,12 +63,12 @@ public class Settings
                     field.setAccessible(true);
                     field.set(bean, converted);
 
-                    reply.append("Set on " + beanClass.getName() + "\n");
+                    reply.append("Set on ").append(beanClass.getName()).append("\n");
                 }
             }
             catch (Exception ex)
             {
-                reply.append("Failed on " + beanClass.getName() + ": " + ex + "\n");
+                reply.append("Failed on ").append(beanClass.getName()).append(": ").append(ex).append("\n");
             }
         }
 
@@ -90,7 +90,7 @@ public class Settings
 
             try
             {
-                Class<? extends Object> beanClass = bean.getClass();
+                Class<?> beanClass = bean.getClass();
                 if (beanClass == String.class)
                 {
                     continue;
@@ -99,7 +99,7 @@ public class Settings
                 for (Field field : LocalUtil.getAllFields(beanClass))
                 {
                     String name = field.getName();
-                    if (name.equals("class"))
+                    if ("class".equals(name))
                     {
                         continue;
                     }

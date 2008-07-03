@@ -42,7 +42,9 @@ public class ColorUtil
             colorString = colorString.substring(0, colorString.length() - 1);
         }
     
-        int red, green, blue;
+        int red;
+        int green;
+        int blue;
         switch (colorString.length())
         {
         case 6:
