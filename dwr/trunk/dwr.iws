@@ -19,32 +19,11 @@
     <option name="historyRevisionsNumber" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" name="Default" comment="" />
+    <list default="true" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.iws" afterPath="$PROJECT_DIR$/dwr.iws" />
+    </list>
     <list name="DONT CHECK IN: development changes" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/impl/test/java/log4j.properties" afterPath="$PROJECT_DIR$/core/impl/test/java/log4j.properties" />
-    </list>
-    <list name="intellij project file update to correct build target paths" comment="intellij project file update to correct build target paths">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/jaxer.iml" afterPath="$PROJECT_DIR$/etc/intellij/jaxer.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/struts.iml" afterPath="$PROJECT_DIR$/etc/intellij/struts.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/bayeux.iml" afterPath="$PROJECT_DIR$/etc/intellij/bayeux.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/guice.iml" afterPath="$PROJECT_DIR$/etc/intellij/guice.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/various.iml" afterPath="$PROJECT_DIR$/etc/intellij/various.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/etc/intellij/dojo.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/etc/intellij/yui.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/webwork.iml" afterPath="$PROJECT_DIR$/etc/intellij/webwork.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/dwrp.iml" afterPath="$PROJECT_DIR$/etc/intellij/dwrp.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/legacy.iml" afterPath="$PROJECT_DIR$/etc/intellij/legacy.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/spring.iml" afterPath="$PROJECT_DIR$/etc/intellij/spring.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/gi.iml" afterPath="$PROJECT_DIR$/etc/intellij/gi.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/dwr.iml" afterPath="$PROJECT_DIR$/etc/intellij/dwr.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/impl.iml" afterPath="$PROJECT_DIR$/etc/intellij/impl.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/scriptaculous.iml" afterPath="$PROJECT_DIR$/etc/intellij/scriptaculous.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.iws" afterPath="$PROJECT_DIR$/dwr.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.ipr" afterPath="$PROJECT_DIR$/dwr.ipr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/hibernate.iml" afterPath="$PROJECT_DIR$/etc/intellij/hibernate.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/json.iml" afterPath="$PROJECT_DIR$/etc/intellij/json.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/all.iml" afterPath="$PROJECT_DIR$/etc/intellij/all.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/api.iml" afterPath="$PROJECT_DIR$/etc/intellij/api.iml" />
     </list>
     <list name="Updates to dojo data store" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.html" afterPath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.html" />
@@ -126,28 +105,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SpringCreatorTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java">
+      <file leaf-file-name="engine.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="28" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.84139264">
+            <state line="1025" column="22" selection-start="34982" selection-end="35000" vertical-scroll-proportion="5.4278703">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BasicAlarm.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/extend/BasicAlarm.java">
+      <file leaf-file-name="DwrStore.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ui/dojo/demo/web/widgets/DwrStore.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="16" selection-start="1208" selection-end="1208" vertical-scroll-proportion="0.3326791">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JsonObject.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonObject.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.33333334">
+            <state line="32" column="54" selection-start="1467" selection-end="1467" vertical-scroll-proportion="0.47105005">
               <folding />
             </state>
           </provider>
@@ -869,7 +839,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1852" height="1178" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="3" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889628" order="3" />
@@ -884,7 +854,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="5" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24889135" order="1" />
       <window_info id="Maven projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889628" order="6" />
-      <window_info id="Changes" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.51330376" order="9" />
+      <window_info id="Changes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.45232815" order="9" />
       <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24681087" order="11" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="2" />
       <window_info id="Struts Assistant" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32982263" order="4" />
@@ -978,13 +948,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/YahooJSCompressor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/StartupUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-9.722277">
@@ -1065,16 +1028,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js">
+    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="28" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.84139264">
+        <state line="26" column="3" selection-start="944" selection-end="944" vertical-scroll-proportion="0.13988096">
           <folding />
         </state>
       </provider>
@@ -1086,9 +1042,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonObject.java">
+    <entry file="file://$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.33333334">
+        <state line="69" column="28" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.84139264">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1025" column="22" selection-start="34982" selection-end="35000" vertical-scroll-proportion="5.4278703">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/dojo/demo/web/widgets/DwrStore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="54" selection-start="1467" selection-end="1467" vertical-scroll-proportion="0.47105005">
           <folding />
         </state>
       </provider>
