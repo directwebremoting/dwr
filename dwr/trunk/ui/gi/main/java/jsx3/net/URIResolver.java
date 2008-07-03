@@ -70,17 +70,17 @@ public class URIResolver
     {
         if (name.equals(URIResolver.DEFAULT.constant))
         {
-            return URIResolver.DEFAULT;
+            return DEFAULT;
         }
 
         if (name.equals(URIResolver.JSX.constant))
         {
-            return URIResolver.JSX;
+            return JSX;
         }
 
         if (name.equals(URIResolver.USER.constant))
         {
-            return URIResolver.USER;
+            return USER;
         }
 
         return null;

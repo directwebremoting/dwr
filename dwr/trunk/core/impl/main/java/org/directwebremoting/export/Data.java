@@ -336,7 +336,7 @@ public class Data
         {
             List<Item> items = new ArrayList<Item>();
             items.add(new Item(itemId, t));
-            Data.callInsert(callback, clientId, items);
+            callInsert(callback, clientId, items);
         }
 
         /* (non-Javadoc)
@@ -346,7 +346,7 @@ public class Data
         {
             List<Item> items = new ArrayList<Item>();
             items.add(new Item(itemId, t));
-            Data.callDelete(callback, clientId, items);
+            callDelete(callback, clientId, items);
         }
 
         /* (non-Javadoc)
@@ -356,7 +356,7 @@ public class Data
         {
             List<Item> items = new ArrayList<Item>();
             items.add(new Item(itemId, t));
-            Data.callUpdate(callback, clientId, items);
+            callUpdate(callback, clientId, items);
         }
 
         /* (non-Javadoc)

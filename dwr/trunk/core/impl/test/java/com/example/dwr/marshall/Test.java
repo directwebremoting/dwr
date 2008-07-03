@@ -53,6 +53,7 @@ import org.xml.sax.SAXParseException;
  * Methods to help unit test DWR.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@SuppressWarnings({"UnnecessaryFullyQualifiedName"})
 public class Test
 {
     public void throwNPE()
@@ -443,24 +444,24 @@ public class Test
     {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
         {
-            if (method.getName().equals("getInteger"))
+            if ("getInteger".equals(method.getName()))
             {
-                return new Integer(42);
+                return 42;
             }
 
-            if (method.getName().equals("getString"))
+            if ("getString".equals(method.getName()))
             {
                 return "Slartibartfast";
             }
 
-            if (method.getName().equals("equals"))
+            if ("equals".equals(method.getName()))
             {
-                return new Boolean(equals(args[0]));
+                return equals(args[0]);
             }
 
-            if (method.getName().equals("hashCode"))
+            if ("hashCode".equals(method.getName()))
             {
-                return new Integer(hashCode());
+                return hashCode();
             }
 
             log.error("Failed on method: " + method);

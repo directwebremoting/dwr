@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * In use, Node has a parent Node and is part of a CdfDocument.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class Node implements Iterable<Record>
+public class Node implements Iterable<Record>
 {
     /**
      * You should not be directly creating Nodes
@@ -170,55 +170,55 @@ public abstract class Node implements Iterable<Record>
         this.id = id;
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (obj == null)
-		{
-			return false;
-		}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
 
-		if (this == obj)
-		{
-			return true;
-		}
+        if (this == obj)
+        {
+            return true;
+        }
 
-		if (!(obj instanceof Node))
-		{
-			return false;
-		}
+        if (!(obj instanceof Node))
+        {
+            return false;
+        }
 
-		return super.equals(obj);
-	}
+        return super.equals(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		return 37829 + id.hashCode();
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return 37829 + id.hashCode();
+    }
 
-	/**
-	 * Local utility to create an indentation string
-	 * @param depth the number of indents that have been done
-	 * @return A string of depth <code>depth * 2</code>
-	 */
-	protected static final String indent(int depth)
-	{
-		StringBuilder reply = new StringBuilder(depth * 2);
-		for (int i = 0; i < depth; i++)
-		{
-			reply.append("  ");
-		}
-		return reply.toString();
-	}
+    /**
+     * Local utility to create an indentation string
+     * @param depth the number of indents that have been done
+     * @return A string of depth <code>depth * 2</code>
+     */
+    protected static String indent(int depth)
+    {
+        StringBuilder reply = new StringBuilder(depth * 2);
+        for (int i = 0; i < depth; i++)
+        {
+            reply.append("  ");
+        }
+        return reply.toString();
+    }
 
-	/**
+    /**
      * The JSXID of this node
      */
     protected String id;

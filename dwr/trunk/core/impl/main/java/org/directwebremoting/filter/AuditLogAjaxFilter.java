@@ -113,25 +113,25 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
     private static final List<Class<?>> toStringClasses = new ArrayList<Class<?>>();
     static
     {
-        toStringClasses.add(java.lang.Boolean.TYPE);
-        toStringClasses.add(java.lang.Character.TYPE);
-        toStringClasses.add(java.lang.Byte.TYPE);
-        toStringClasses.add(java.lang.Short.TYPE);
-        toStringClasses.add(java.lang.Integer.TYPE);
-        toStringClasses.add(java.lang.Long.TYPE);
-        toStringClasses.add(java.lang.Float.TYPE);
-        toStringClasses.add(java.lang.Double.TYPE);
-        toStringClasses.add(java.lang.Void.TYPE);
+        toStringClasses.add(Boolean.TYPE);
+        toStringClasses.add(Character.TYPE);
+        toStringClasses.add(Byte.TYPE);
+        toStringClasses.add(Short.TYPE);
+        toStringClasses.add(Integer.TYPE);
+        toStringClasses.add(Long.TYPE);
+        toStringClasses.add(Float.TYPE);
+        toStringClasses.add(Double.TYPE);
+        toStringClasses.add(Void.TYPE);
 
-        toStringClasses.add(java.lang.Boolean.class);
-        toStringClasses.add(java.lang.Character.class);
-        toStringClasses.add(java.lang.Byte.class);
-        toStringClasses.add(java.lang.Short.class);
-        toStringClasses.add(java.lang.Integer.class);
-        toStringClasses.add(java.lang.Long.class);
-        toStringClasses.add(java.lang.Float.class);
-        toStringClasses.add(java.lang.Double.class);
-        toStringClasses.add(java.lang.Void.class);
+        toStringClasses.add(Boolean.class);
+        toStringClasses.add(Character.class);
+        toStringClasses.add(Byte.class);
+        toStringClasses.add(Short.class);
+        toStringClasses.add(Integer.class);
+        toStringClasses.add(Long.class);
+        toStringClasses.add(Float.class);
+        toStringClasses.add(Double.class);
+        toStringClasses.add(Void.class);
     }
 
     /**

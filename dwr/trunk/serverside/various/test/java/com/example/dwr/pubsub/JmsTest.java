@@ -203,7 +203,7 @@ public class JmsTest
     /**
      * The route to getting to messages sent to the topic
      */
-    protected MessageConsumer topicConsumer;
+    private MessageConsumer topicConsumer;
 
     /**
      * The log stream
@@ -267,6 +267,7 @@ public class JmsTest
         }
         catch (JMSException ex)
         {
+            log.warn(ex);
         }
     }
 }

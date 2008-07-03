@@ -57,8 +57,14 @@ public class Database
         {
             try
             {
-                if (con != null) con.close();
-                if (stmt != null) stmt.close();
+                if (con != null)
+                {
+                    con.close();
+                }
+                if (stmt != null)
+                {
+                    stmt.close();
+                }
             }
             catch (SQLException ex)
             {

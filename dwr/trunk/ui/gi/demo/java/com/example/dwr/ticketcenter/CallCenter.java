@@ -61,6 +61,7 @@ public class CallCenter implements Runnable
         addRandomUnknownCall();
 
         ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
+        //noinspection ThisEscapedInObjectConstruction
         executor.scheduleAtFixedRate(this, 2, 2, TimeUnit.SECONDS);
     }
 
@@ -296,14 +297,12 @@ public class CallCenter implements Runnable
      */
     protected void removeRandomCall()
     {
-        if (calls.size() > 0)
+        if (!calls.isEmpty())
         {
-            Call removed = null;
-
             synchronized (calls)
             {
                 int toDelete = random.nextInt(calls.size());
-                removed = calls.remove(toDelete);
+                Call removed = calls.remove(toDelete);
 
                 String sessionId = removed.getHandlerId();
                 if (sessionId != null)
@@ -476,12 +475,12 @@ public class CallCenter implements Runnable
     /**
      * The set of people in our database
      */
-    protected List<Call> calls = Collections.synchronizedList(new ArrayList<Call>());
+    private final List<Call> calls = Collections.synchronizedList(new ArrayList<Call>());
 
     /**
      * Used to generate random data
      */
-    protected Random random = new Random();
+    private Random random = new Random();
 
     /**
      * The log stream

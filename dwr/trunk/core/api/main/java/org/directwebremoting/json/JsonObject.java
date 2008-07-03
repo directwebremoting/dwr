@@ -37,7 +37,7 @@ public class JsonObject extends JsonValue implements Map<String, JsonValue>
         output.append("{ ");
 
         boolean isFirst = true;
-        for (Map.Entry<String, JsonValue> entry : proxy.entrySet())
+        for (Entry<String, JsonValue> entry : proxy.entrySet())
         {
             if (isFirst)
             {

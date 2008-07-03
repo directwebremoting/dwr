@@ -83,7 +83,7 @@ public class Hibernate2Ex
         }
 
         Class<? extends Hibernate2Ex> thisClass = this.getClass();
-        Class<? extends Object> thatClass = obj.getClass();
+        Class<?> thatClass = obj.getClass();
         if (!thisClass.isAssignableFrom(thatClass) && !thatClass.isAssignableFrom(thisClass))
         {
             return false;
@@ -110,6 +110,15 @@ public class Hibernate2Ex
         }
 
         return true;
+    }
+
+    public int hashCode()
+    {
+        int reply = 7423;
+        reply += (id == null) ? 382 : id.hashCode();
+        reply += (name == null) ? 423 : name.hashCode();
+        reply += (children == null) ? 743 : children.hashCode();
+        return reply;
     }
 
     private Integer id;

@@ -190,7 +190,7 @@ public class SpringCreator extends AbstractCreator implements Creator
     @Deprecated
     public static void setXmlBeanFactory(BeanFactory factory)
     {
-        SpringCreator.overrideFactory = factory;
+        overrideFactory = factory;
     }
 
     /**
@@ -199,7 +199,7 @@ public class SpringCreator extends AbstractCreator implements Creator
      */
     public static void setOverrideBeanFactory(BeanFactory factory)
     {
-        SpringCreator.overrideFactory = factory;
+        overrideFactory = factory;
     }
 
     /**

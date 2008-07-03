@@ -20,7 +20,6 @@ import org.directwebremoting.convert.StringConverter;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.impl.DefaultConverterManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class DefaultConverterManagerTest
     @Test(expected = NullPointerException.class)
     public void convertInboundFail() throws Exception
     {
-        manager.convertInbound(null, (InboundVariable) null, null);
+        manager.convertInbound(null, null, null);
     }
 
     @Test
@@ -57,8 +56,8 @@ public class DefaultConverterManagerTest
         manager.addConverter("java.lang.String", new StringConverter());
 
         InboundContext ctx = new InboundContext();
-        InboundVariable var = new InboundVariable(ctx, "e_1", "string", "bla");
-        manager.convertInbound(String.class, var, null);
+        InboundVariable iv = new InboundVariable(ctx, "e_1", "string", "bla");
+        manager.convertInbound(String.class, iv, null);
     }
 
     @Test

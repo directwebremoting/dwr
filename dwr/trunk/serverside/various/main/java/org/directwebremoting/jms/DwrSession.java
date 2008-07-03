@@ -47,12 +47,12 @@ public class DwrSession implements Session
      */
     public DwrSession(DwrConnection connection, boolean transacted, int acknowledgeMode)
     {
-        if (transacted == true)
+        if (transacted)
         {
             throw Unsupported.noTransactions();
         }
 
-        if (acknowledgeMode != Session.AUTO_ACKNOWLEDGE)
+        if (acknowledgeMode != AUTO_ACKNOWLEDGE)
         {
             throw Unsupported.noManualAcknowledgment();
         }

@@ -28,7 +28,7 @@ import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ScriptConduit;
-import org.directwebremoting.impl.BasicAlarm;
+import org.directwebremoting.extend.BasicAlarm;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**

@@ -280,7 +280,7 @@ public class MonitorHandler implements Handler
      */
     private void digObject(PrintWriter out, IdManager ids, String name, Object object)
     {
-        Class<? extends Object> type = object.getClass();
+        Class<?> type = object.getClass();
         if (object instanceof Log)
         {
             return;

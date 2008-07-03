@@ -77,7 +77,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     protected long getLastModifiedTime()
     {
         URL url = CachingHandler.class.getResource(resource);
-        if (url.getProtocol().equals("file"))
+        if ("file".equals(url.getProtocol()))
         {
             File file = new File(url.getFile());
             return file.lastModified();

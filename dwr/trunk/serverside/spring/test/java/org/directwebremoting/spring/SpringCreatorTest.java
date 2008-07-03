@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.directwebremoting.create.test.DummyDataManager;
 import org.directwebremoting.extend.Creator;
-import org.directwebremoting.spring.SpringCreator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

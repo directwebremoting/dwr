@@ -309,7 +309,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                     conduit.addScript(script);
 
-                    // TODO: Are there any reasons why we should be logging here (and in the ConversionException hendler)
+                    // TODO: Are there any reasons why we should be logging here (and in the ConversionException handler)
                     //log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']');
                 }
                 else

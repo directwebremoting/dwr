@@ -122,8 +122,8 @@ public class DefaultRemoter implements Remoter
             absolutePath.append(request.getServerName());
 
             if (port > 0 && 
-                ((scheme.equalsIgnoreCase("http") && port != 80) || 
-                 (scheme.equalsIgnoreCase("https") && port != 443)))
+                (("http".equalsIgnoreCase(scheme) && port != 80) ||
+                 ("https".equalsIgnoreCase(scheme) && port != 443)))
             {
                 absolutePath.append(':');
                 absolutePath.append(port);
@@ -240,8 +240,11 @@ public class DefaultRemoter implements Remoter
                             paramBuffer.append('\n');
 
                             // output: if (typeof this['<class>'] != 'function') { function <class>() {
-                            paramBuffer.append("if (typeof this['" + jsClassName + "'] != 'function') {\n");
-                            paramBuffer.append("  function " + jsClassName + "() {\n");
+                            paramBuffer.append("if (typeof this['");
+                            paramBuffer.append(jsClassName);
+                            paramBuffer.append("'] != 'function') {\n");
+                            paramBuffer.append("  function ");
+                            paramBuffer.append(jsClassName).append("() {\n");
 
                             // output: this.<property> = <init-value>;
                             Class<?> mappedType;
@@ -262,7 +265,9 @@ public class DefaultRemoter implements Remoter
                                 Class<?> propType = property.getPropertyType();
 
                                 // Property name
-                                paramBuffer.append("    this." + name + " = ");
+                                paramBuffer.append("    this.");
+                                paramBuffer.append(name);
+                                paramBuffer.append(" = ");
 
                                 // Default property values
                                 if (propType.isArray())
@@ -296,7 +301,9 @@ public class DefaultRemoter implements Remoter
             catch (Exception ex)
             {
                 log.warn("Failed to create parameter declaration for " + match, ex);
-                buffer.append("// Missing parameter declaration for " + match + ". See the server logs for details.");
+                buffer.append("// Missing parameter declaration for ");
+                buffer.append(match);
+                buffer.append(". See the server logs for details.");
             }
         }
         buffer.append('\n');

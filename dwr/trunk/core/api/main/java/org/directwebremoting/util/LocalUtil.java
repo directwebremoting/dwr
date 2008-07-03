@@ -230,7 +230,7 @@ public final class LocalUtil
      * @param diff The result of some subtraction.
      * @return 1, 0, -1
      */
-    public static final int shrink(long diff)
+    public static int shrink(long diff)
     {
         if (diff > 0)
         {
@@ -400,7 +400,7 @@ public final class LocalUtil
      */
     public static void setProperty(Object object, String key, Object value) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
-        Class<? extends Object> real = object.getClass();
+        Class<?> real = object.getClass();
 
         String setterName = "set" + key.substring(0, 1).toUpperCase(Locale.ENGLISH) + key.substring(1);
 
@@ -487,7 +487,7 @@ public final class LocalUtil
 
         if (paramType == Character.class || paramType == Character.TYPE)
         {
-            value = LocalUtil.decode(value);
+            value = decode(value);
             if (value.length() == 1)
             {
                 return (T) Character.valueOf(value.charAt(0));
@@ -1000,7 +1000,7 @@ public final class LocalUtil
      */
     public static Object getProperty(Object pojo, String propertyName) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
     {
-        Class<? extends Object> real = pojo.getClass();
+        Class<?> real = pojo.getClass();
     
         String getterName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
         
