@@ -68,9 +68,9 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
+    <output url="file://$MODULE_DIR$/../../target/intellij/main" />
     <exclude-output />
-    <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
+    <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
     <content url="file://$MODULE_DIR$/../../serverside/struts">
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/struts/customDemo/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/struts/main/java" isTestSource="false" />

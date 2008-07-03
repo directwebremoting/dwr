@@ -12,9 +12,9 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../../../../target/intellij/main" />
+    <output url="file://$MODULE_DIR$/../../target/intellij/main" />
     <exclude-output />
-    <output-test url="file://$MODULE_DIR$/../../../../target/intellij/test" />
+    <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
     <content url="file://$MODULE_DIR$/../../serverside/spring">
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/spring/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/spring/test/java" isTestSource="true" />
