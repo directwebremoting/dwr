@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project relativePaths="false" version="4">
+  <component name="AnalysisUIOptions">
+    <option name="CUSTOM_SCOPE_NAME" value="Project Files" />
+    <option name="ANALYSIS_IN_BACKGROUND" value="true" />
+  </component>
   <component name="CCaseConfig">
     <option name="checkoutReserved" value="false" />
     <option name="markExternalChangeAsUpToDate" value="true" />
@@ -15,18 +19,43 @@
     <option name="historyRevisionsNumber" value="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/impl.iml" afterPath="$PROJECT_DIR$/etc/intellij/impl.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.iws" afterPath="$PROJECT_DIR$/dwr.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.ipr" afterPath="$PROJECT_DIR$/dwr.ipr" />
-    </list>
+    <list default="true" name="Default" comment="" />
     <list name="DONT CHECK IN: development changes" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/impl/test/java/log4j.properties" afterPath="$PROJECT_DIR$/core/impl/test/java/log4j.properties" />
+    </list>
+    <list name="intellij project file update to correct build target paths" comment="intellij project file update to correct build target paths">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/jaxer.iml" afterPath="$PROJECT_DIR$/etc/intellij/jaxer.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/struts.iml" afterPath="$PROJECT_DIR$/etc/intellij/struts.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/bayeux.iml" afterPath="$PROJECT_DIR$/etc/intellij/bayeux.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/guice.iml" afterPath="$PROJECT_DIR$/etc/intellij/guice.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/various.iml" afterPath="$PROJECT_DIR$/etc/intellij/various.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/etc/intellij/dojo.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/etc/intellij/yui.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/webwork.iml" afterPath="$PROJECT_DIR$/etc/intellij/webwork.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/dwrp.iml" afterPath="$PROJECT_DIR$/etc/intellij/dwrp.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/legacy.iml" afterPath="$PROJECT_DIR$/etc/intellij/legacy.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/spring.iml" afterPath="$PROJECT_DIR$/etc/intellij/spring.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/gi.iml" afterPath="$PROJECT_DIR$/etc/intellij/gi.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/dwr.iml" afterPath="$PROJECT_DIR$/etc/intellij/dwr.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/impl.iml" afterPath="$PROJECT_DIR$/etc/intellij/impl.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/scriptaculous.iml" afterPath="$PROJECT_DIR$/etc/intellij/scriptaculous.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.iws" afterPath="$PROJECT_DIR$/dwr.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dwr.ipr" afterPath="$PROJECT_DIR$/dwr.ipr" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/hibernate.iml" afterPath="$PROJECT_DIR$/etc/intellij/hibernate.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/json.iml" afterPath="$PROJECT_DIR$/etc/intellij/json.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/all.iml" afterPath="$PROJECT_DIR$/etc/intellij/all.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/etc/intellij/api.iml" afterPath="$PROJECT_DIR$/etc/intellij/api.iml" />
+    </list>
+    <list name="Updates to dojo data store" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.html" afterPath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.js" afterPath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/DwrStore.js" afterPath="$PROJECT_DIR$/ui/dojo/demo/web/widgets/DwrStore.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js" afterPath="$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js" />
     </list>
     <ignored path="dwr.iws" />
     <ignored path=".idea/workspace.xml" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="ChangesViewManager" flattened_view="false" show_ignored="false" />
   <component name="Commander">
     <leftPanel />
     <rightPanel />
@@ -97,10 +126,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestDefaultContainer.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/impl/test/java/org/directwebremoting/testimpl/TestDefaultContainer.java">
+      <file leaf-file-name="SpringCreatorTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="13" selection-start="849" selection-end="849" vertical-scroll-proportion="0.17910448">
+            <state line="69" column="28" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.84139264">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BasicAlarm.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/extend/BasicAlarm.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="40" column="16" selection-start="1208" selection-end="1208" vertical-scroll-proportion="0.3326791">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JsonObject.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonObject.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="39" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.33333334">
               <folding />
             </state>
           </provider>
@@ -132,36 +179,15 @@
     <option name="LAST_EDITED_MODULE_NAME" />
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
+  <component name="NamedScopeManager">
+    <scope name="Core" pattern="file[api]:main/java/org//*||file[impl]:main//*||file[bayeux]:main//*||file[dwrp]:main//*||file[json]:main//*||file[dwr]:main//*" />
+  </component>
   <component name="PackagesPane">
     <subPane>
       <PATH>
         <PATH_ELEMENT>
           <option name="myItemId" value="dwr" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="dwr" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="org.directwebremoting" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="dwr" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="org.directwebremoting" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="testimpl" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
         </PATH_ELEMENT>
       </PATH>
     </subPane>
@@ -185,6 +211,40 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="dwr" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="dwr" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="ui" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleGroupNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="dwr" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="protocol" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleGroupNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="dwr" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="noncla" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleGroupNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="all" />
+          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
         </PATH_ELEMENT>
       </PATH>
       <PATH>
@@ -269,46 +329,20 @@
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
         </PATH_ELEMENT>
       </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="dwr" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="core" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleGroupNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="api" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/Users/joe/Projects/directwebremoting/dwr/core/api" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/Users/joe/Projects/directwebremoting/dwr/core/api/main" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="PsiDirectory:/Users/joe/Projects/directwebremoting/dwr/core/api/main/java" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-      </PATH>
     </subPane>
   </component>
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="PackagesPane" proportions="0.11111111" version="1" splitterProportion="0.5">
-      <flattenPackages ProjectPane="true" />
-      <showMembers />
+    <navigator currentView="ProjectPane" proportions="0.6568915" version="1" splitterProportion="0.5">
+      <flattenPackages Scope="true" PackagesPane="true" ProjectPane="true" />
+      <showMembers ProjectPane="false" />
       <showModules PackagesPane="false" />
       <showLibraryContents PackagesPane="false" />
       <hideEmptyPackages ProjectPane="true" />
-      <abbreviatePackageNames />
-      <showStructure ProjectPane="false" J2EEPane="false" Scope="false" PackagesPane="false" Favorites="false" />
+      <abbreviatePackageNames ProjectPane="false" />
+      <showStructure ProjectPane="true" J2EEPane="false" Scope="false" PackagesPane="false" Favorites="false" />
       <autoscrollToSource ProjectPane="true" />
       <autoscrollFromSource ProjectPane="true" />
       <sortByType />
@@ -333,8 +367,125 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.directwebremoting.extend" />
       <recent name="org.directwebremoting.impl" />
     </key>
+  </component>
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="7/2/08 11:17 PM" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+            <PATH vcs="svn" revision="2120">$PROJECT_DIR$/etc/netbeans/nbproject/project.properties</PATH>
+            <PATH vcs="svn" revision="2120">$PROJECT_DIR$/etc/netbeans/nbproject</PATH>
+            <PATH vcs="svn" revision="2120">$PROJECT_DIR$/etc/netbeans</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+            <PATH vcs="svn" revision="2120">$PROJECT_DIR$/etc/netbeans/nbproject/private</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+          <PATH>$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/OutputAlarm.java</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/ShutdownAlarm.java</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/TimedAlarm.java</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/test/java/log4j.properties</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/test/java/org/directwebremoting/impl/DefaultConverterManagerTest.java</PATH>
+          <PATH>$PROJECT_DIR$/core/impl/test/java/org/directwebremoting/impl/TestDefaultContainer.java</PATH>
+          <PATH>$PROJECT_DIR$/dwr.ipr</PATH>
+          <PATH>$PROJECT_DIR$/dwr.iws</PATH>
+          <PATH>$PROJECT_DIR$/etc/intellij/dwrp.iml</PATH>
+          <PATH>$PROJECT_DIR$/etc/intellij/gi.iml</PATH>
+          <PATH>$PROJECT_DIR$/etc/intellij/hibernate.iml</PATH>
+          <PATH>$PROJECT_DIR$/protocol/dwrp/main/java/org/directwebremoting/dwrp/BaseScriptConduit.java</PATH>
+          <PATH>$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java</PATH>
+          <PATH>$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.html</PATH>
+          <PATH>$PROJECT_DIR$/ui/dojo/demo/web/widgets/dojo-demo.js</PATH>
+          <PATH>$PROJECT_DIR$/ui/dojo/demo/web/widgets/DwrStore.js</PATH>
+          <PATH>$PROJECT_DIR$/ui/gi/demo/java/com/example/dwr/ticketcenter/CallCenter.java</PATH>
+          <PATH>$PROJECT_DIR$/ui/gi/test/web/hubtest.html</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+          <PATH vcs="svn" revision="2120">$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/engine.js</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+          <PATH>$PROJECT_DIR$/core/api/main/java/org/directwebremoting/extend/BasicAlarm.java</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+          <PATH>$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/BasicAlarm.java</PATH>
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
   </component>
   <component name="RunManager" selected="Application.dwr-jetty-test">
     <configuration default="true" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
@@ -355,6 +506,9 @@
         <value defaultName="wholeProject" />
       </option>
       <envs />
+      <method>
+        <option name="Make" value="true" />
+      </method>
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
       <module name="" />
@@ -380,6 +534,35 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
+      <method>
+        <option name="Make" value="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG" enabled="false" merge="false">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="ADDITIONAL_CLASS_PATH" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="wholeProject" />
+      </option>
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
       <method>
         <option name="Make" value="true" />
       </method>
@@ -437,6 +620,136 @@
     </configuration>
   </component>
   <component name="ScopeViewComponent">
+    <subPane subId="Core">
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="ui">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="dwr">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="dwr">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="java">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="protocol">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="protocol">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="dwrp">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="dwrp">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="java">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="org/directwebremoting/dwrp">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="core">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="impl">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="impl">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="java">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="core">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="impl">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="impl">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="java">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="org/directwebremoting/impl">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT USER_OBJECT="Root">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="core">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="api">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="api">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT USER_OBJECT="java">
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="" />
+        </PATH_ELEMENT>
+      </PATH>
+    </subPane>
     <subPane subId="Problems" />
     <subPane subId="Production">
       <PATH>
@@ -523,7 +836,7 @@
   <component name="StructureViewFactory">
     <option name="AUTOSCROLL_MODE" value="true" />
     <option name="AUTOSCROLL_FROM_SOURCE" value="false" />
-    <option name="ACTIVE_ACTIONS" value="" />
+    <option name="ACTIVE_ACTIONS" value="VISIBILITY_SORTER" />
   </component>
   <component name="SvnConfiguration">
     <option name="USER" value="" />
@@ -559,32 +872,32 @@
     <editor active="false" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="3" />
-      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290788" order="3" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24815498" order="7" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2863485" order="0" />
-      <window_info id="Find" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32933578" order="1" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24916759" order="1" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32841328" order="8" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" order="6" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889628" order="3" />
+      <window_info id="TODO" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24792013" order="10" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30487806" order="0" />
+      <window_info id="Find" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24556541" order="8" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24889135" order="1" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32841328" order="4" />
+      <window_info id="Inspection" active="false" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39745012" order="5" x="597" y="62" width="696" height="1084" />
       <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="4" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="9" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="5" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="5" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24916759" order="1" />
-      <window_info id="Maven projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290788" order="6" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3099631" order="10" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24723247" order="2" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24889135" order="1" />
+      <window_info id="Maven projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889628" order="6" />
+      <window_info id="Changes" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.51330376" order="9" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24681087" order="11" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="2" />
-      <window_info id="Struts Assistant" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="3" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39984882" order="0" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" order="4" />
-      <window_info id="IDEtalk Messages" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28079912" order="7" x="752" y="643" width="879" height="340" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32841328" order="11" />
-      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="12" />
-      <window_info id="SVN Properties" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32933578" order="13" />
+      <window_info id="Struts Assistant" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32982263" order="4" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3531042" order="0" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" order="2" />
+      <window_info id="IDEtalk Messages" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2804878" order="7" x="752" y="643" width="879" height="340" />
+      <window_info id="Version Control" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32815966" order="6" />
+      <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="6" />
+      <window_info id="SVN Properties" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32933578" order="7" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" order="0" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="2" />
-      <window_info id="EJB" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="3" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="5" />
+      <window_info id="EJB" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="1" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" order="3" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -595,7 +908,7 @@
     <option name="PERFORM_EDIT_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="IntelliJ project files" />
+    <option name="LAST_COMMIT_MESSAGE" value="intellij project file update to correct build target paths" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_FILE_COMMIT" value="false" />
@@ -612,6 +925,11 @@
     <MESSAGE value="intellij project file updates to use project groups and export main project files" />
     <MESSAGE value="Write updates for DWR Dojo data store" />
     <MESSAGE value="IntelliJ project files" />
+    <MESSAGE value="Unnecessary package name: just use impl" />
+    <MESSAGE value="Further tweaking of intellij project files" />
+    <MESSAGE value="2nd part of fix to remove unecessary package" />
+    <MESSAGE value="Minor changes prompted by intellij inspections" />
+    <MESSAGE value="intellij project file update to correct build target paths" />
   </component>
   <component name="VssConfiguration">
     <option name="CLIENT_PATH" value="" />
@@ -660,58 +978,89 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/util/BrowserDetect.java">
+    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/YahooJSCompressor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="13" selection-start="1883" selection-end="1883" vertical-scroll-proportion="0.33242506">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/util/Base64.java">
+    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/StartupUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="13" selection-start="3524" selection-end="3524" vertical-scroll-proportion="0.33242506">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-9.722277">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/proxy/Callback.java">
+    <entry file="file://$PROJECT_DIR$/core/impl/main/java/org/directwebremoting/impl/ShutdownAlarm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="22" selection-start="1051" selection-end="1051" vertical-scroll-proportion="0.20862308">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/proxy/CodeBlock.java">
+    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/util/LocalUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="13" selection-start="874" selection-end="874" vertical-scroll-proportion="0.1839237">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/proxy/ScriptProxy.java">
+    <entry file="file://$PROJECT_DIR$/protocol/bayeux/main/java/org/directwebremoting/bayeux/BayeuxScriptConduit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="13" selection-start="1052" selection-end="1052" vertical-scroll-proportion="0.2294854">
+        <state line="36" column="0" selection-start="1202" selection-end="1202" vertical-scroll-proportion="0.3326791">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/proxy/io/Context.java">
+    <entry file="file://$PROJECT_DIR$/protocol/dwrp/main/java/org/directwebremoting/dwrp/BaseCallHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="13" selection-start="1053" selection-end="1053" vertical-scroll-proportion="0.24523161">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-3.6378803">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonArray.java">
+    <entry file="file://$PROJECT_DIR$/protocol/dwrp/main/java/org/directwebremoting/dwrp/BaseScriptConduit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="30" selection-start="740" selection-end="740" vertical-scroll-proportion="0.06355932">
+        <state line="30" column="0" selection-start="1113" selection-end="1113" vertical-scroll-proportion="0.3326791">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/InvalidJsonException.java">
+    <entry file="file://$PROJECT_DIR$/protocol/dwrp/main/java/org/directwebremoting/dwrp/Batch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="707" selection-end="707" vertical-scroll-proportion="0.12711865">
+        <state line="131" column="0" selection-start="4369" selection-end="4369" vertical-scroll-proportion="0.3326791">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/gi/demo/java/com/example/dwr/ticketcenter/CallCenter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/gi/main/java/jsx3/net/URIResolver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="0" selection-start="2677" selection-end="2677" vertical-scroll-proportion="1.0598626">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/gi/main/java/jsx3/xml/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/gi/test/web/hubtest.html">
+      <provider editor-type-id="HtmlPreview">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -723,51 +1072,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/impl/test/java/log4j.properties">
+    <entry file="file://$PROJECT_DIR$/serverside/spring/test/java/org/directwebremoting/spring/SpringCreatorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="69" column="28" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.84139264">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/extend/AbstractFileGenerator.java">
+    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/extend/BasicAlarm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="49" selection-start="265" selection-end="265" vertical-scroll-proportion="0.25">
+        <state line="40" column="16" selection-start="1208" selection-end="1208" vertical-scroll-proportion="0.3326791">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
+    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/json/JsonObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="141" selection-end="141" vertical-scroll-proportion="0.08108108">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/impl/test/java/org/directwebremoting/jetty/JettyTestLauncher.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="13" selection-start="1186" selection-end="1186" vertical-scroll-proportion="0.2173913">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/api/main/java/org/directwebremoting/AjaxFilterChain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="17" selection-start="911" selection-end="911" vertical-scroll-proportion="0.23715416">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dwr.iws">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/impl/test/java/org/directwebremoting/testimpl/TestDefaultContainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="13" selection-start="849" selection-end="849" vertical-scroll-proportion="0.17910448">
+        <state line="39" column="0" selection-start="1305" selection-end="1305" vertical-scroll-proportion="0.33333334">
           <folding />
         </state>
       </provider>
