@@ -364,6 +364,11 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             batchId = null;
         }
 
+        if (debug)
+        {
+            log.warn("Exception while processing batch", ex);
+        }
+
         sendOutboundScriptPrefix(out, batchId);
         String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batchId, ex);
         out.print(script);
@@ -462,6 +467,20 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
          */
         private final PrintWriter out;
     }
+
+    /**
+     * Set the debug status
+     * @param debug The new debug setting
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
+     * Are we in debug mode?
+     */
+    protected boolean debug = false;
 
     /**
      * Setter for the remoter
