@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
@@ -37,23 +37,6 @@ import org.directwebremoting.util.LocalUtil;
  */
 public class DefaultCreatorManager implements CreatorManager
 {
-    /**
-     * Set the debug status
-     * @param debug The new debug setting
-     */
-    public void setDebug(boolean debug)
-    {
-        this.debug = debug;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.CreatorManager#isDebug()
-     */
-    public boolean isDebug()
-    {
-        return debug;
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#addCreatorType(java.lang.String, java.lang.String)
      */
@@ -227,6 +210,11 @@ public class DefaultCreatorManager implements CreatorManager
         return creator;
     }
 
+    /**
+     * The list of the available creators
+     */
+    protected Map<String, Class<? extends Creator>> creatorTypes = new HashMap<String, Class<? extends Creator>>();
+
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#setCreators(java.util.Map)
      */
@@ -234,6 +222,33 @@ public class DefaultCreatorManager implements CreatorManager
     {
         this.creators = creators;
     }
+
+    /**
+     * The list of the configured creators
+     */
+    protected Map<String, Creator> creators = new HashMap<String, Creator>();
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.CreatorManager#isDebug()
+     */
+    public boolean isDebug()
+    {
+        return debug;
+    }
+
+    /**
+     * Set the debug status
+     * @param debug The new debug setting
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
+     * Are we in debug mode?
+     */
+    protected boolean debug = false;
 
     /**
      * Do we do full-create on startup?
@@ -254,26 +269,6 @@ public class DefaultCreatorManager implements CreatorManager
     }
 
     /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DefaultCreatorManager.class);
-
-    /**
-     * The list of the available creators
-     */
-    protected Map<String, Class<? extends Creator>> creatorTypes = new HashMap<String, Class<? extends Creator>>();
-
-    /**
-     * The list of the configured creators
-     */
-    protected Map<String, Creator> creators = new HashMap<String, Creator>();
-
-    /**
-     * Are we in debug mode?
-     */
-    protected boolean debug = false;
-
-    /**
      * Do we do full-create on startup?
      */
     protected boolean initApplicationScopeCreatorsAtStartup = false;
@@ -283,4 +278,9 @@ public class DefaultCreatorManager implements CreatorManager
      * @see DefaultCreatorManager#addCreator(String, String, Map)
      */
     protected static List<String> ignore = Arrays.asList("creator", "class");
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(DefaultCreatorManager.class);
 }

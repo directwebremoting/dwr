@@ -63,12 +63,18 @@ public class Hibernate3sEx
         this.children = child;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString()
     {
         return "Hibernate3Ex[id=" + getId() + ",name=" + getName() + ",children=" + getChildren().size() + "]";
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj)
     {
@@ -112,6 +118,10 @@ public class Hibernate3sEx
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
     public int hashCode()
     {
         int reply = 7423;
