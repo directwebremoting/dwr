@@ -188,6 +188,7 @@ if (!dojo._hasResource["DwrStore"]) {
      * called by the client side of the DWR store
      */
     _callback: function(/*object*/ request, /*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
+console.info("_callback", request, subscriptionId, reason, viewedMatches, totalMatchCount);
       var scope = request.scope || dojo.global;
 
       var aborted = false;
@@ -230,7 +231,7 @@ if (!dojo._hasResource["DwrStore"]) {
 
         case dwr.data.reason.update:
           if (dojo.isFunction(request.onSet)) {
-            // TODO: Notifications from the server are more corse grained than this
+            // TODO: Notifications from the server are more course grained than this
             // We probably need to loop and call this for every attribute?
             request.onSet.call(item, attribute, oldValue, newValue);
           }
@@ -301,7 +302,7 @@ if (!dojo._hasResource["DwrStore"]) {
     },
 
     /** @see dojo.data.api.Read.close */
-    close: function(/*dojo.data.api.Request|keywordArgs|null*/ request) {
+    close: function(/*dojo.data.api.Request*/ request) {
       this._entries = {};
       this._updated = {};
       if (this._subscribe) {
@@ -362,57 +363,56 @@ if (!dojo._hasResource["DwrStore"]) {
 
     /** @see dojo.data.api.Notification.onSet */
     onSet: function(/*item*/ item, /*string*/ attribute, /*object|array*/ oldValue, /*object|array*/ newValue) {
-console.log("onSet", item, attribute, oldValue, newValue);
+console.info("onSet", item, attribute, oldValue, newValue);
       // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onNew */
     onNew: function(/*item*/ newItem, /*object?*/ parentInfo) {
-console.log("onNew", newItem, parentInfo);
-      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onDelete */
     onDelete: function(/*item*/ deletedItem) {
-console.log("onDelete", deletedItem);
-      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onDelete */
-    newItem: function(/*object?*/ keywordArgs, /*object?*/ parentInfo) {
-console.log("newItem", keywordArgs, parentInfo);
+    newItem: function(/*object?*/ data, /*object?*/ parentInfo) {
       var entry = {
         itemId:-1,
         $id:DwrStore.prototype.autoIdPrefix + this._nextLocalId,
-        data:{},
+        data:data,
         $label:"",
         isDeleted:false,
         isDirty:true,
-        updates:{}
+        updates:data
       };
       this._nextLocalId++;
-      for (var attribute in keywordArgs) {
-        entry.updates[attribute] = keywordArgs[attribute];
-      }
       this._entries[entry.$id] = entry;
       this._updated[entry.$id] = entry;
+
+      if (dojo.isFunction(this.onNew)) {
+        this.onNew(entry.$id, null);
+      }
+
       return entry.$id;
     },
 
     /** @see dojo.data.api.Notification.onDelete */
     deleteItem: function(/*item*/ item) {
-console.log("deleteItem", item);
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to deleteItem()");
       delete this._entries[entry.$id];
       entry.isDeleted = true;
       this._updated[entry.$id] = entry;
-      return true;
+
+      if (dojo.isFunction(this.onDelete)) {
+        this.onDelete(entry.$id);
+      }
     },
 
     /** @see dojo.data.api.Notification.setValue */
     setValue: function(/*item*/ item, /*string*/ attribute, /*anything*/ value) {
-console.log("setValue", item, attribute, value);
+console.info("setValue", item, attribute, value);
       if (value === undefined) throw new Error("value is undefined");
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
@@ -421,12 +421,15 @@ console.log("setValue", item, attribute, value);
       entry.updates[attribute] = value;
       entry.isDirty = true;
       this._updated[entry.$id] = entry;
-      return true;
+
+      if (dojo.isFunction(this.onSet)) {
+        this.onSet(entry.$id, attribute, entry.data[attribute], value);
+      }
     },
 
     /** @see dojo.data.api.Notification.setValues */
-    setValues: function(/*item*/ id, /*string*/ attribute, /*array*/ values) {
-console.log("setValues", id, attribute, values);
+    setValues: function(/*item*/ item, /*string*/ attribute, /*array*/ values) {
+console.info("setValues", item, attribute, values);
       if (!dojo.isArray(values)) throw new Error("value is not an array");
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
@@ -435,12 +438,15 @@ console.log("setValues", id, attribute, values);
       entry.updates[attribute] = values;
       entry.isDirty = true;
       this._updated[entry.$id] = entry;
-      return true;
+
+      if (dojo.isFunction(this.onSet)) {
+        this.onSet(entry.$id, attribute, entry.data[attribute], values);
+      }
     },
 
     /** @see dojo.data.api.Notification.unsetAttribute */
-    unsetAttribute: function(/*item*/ id, /*string*/ attribute) {
-console.log("unsetAttribute", id, attribute);
+    unsetAttribute: function(/*item*/ item, /*string*/ attribute) {
+console.info("unsetAttribute", item, attribute);
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to unsetAttribute()");
@@ -448,12 +454,15 @@ console.log("unsetAttribute", id, attribute);
       entry.updates[attribute] = null;
       entry.isDirty = true;
       this._updated[entry.$id] = entry;
-      return true;
+
+      if (dojo.isFunction(this.onSet)) {
+        this.onSet(entry.$id, attribute, entry.data[attribute], null);
+      }
     },
 
     /** @see dojo.data.api.Notification.save */
     save: function(/*object*/ keywordArgs) {
-console.log("save", keywordArgs);
+console.info("save", keywordArgs);
       var entriesToSend = [];
       for (var id in this._updated) {
         var entry = this._updated[id];
@@ -475,7 +484,7 @@ console.log("save", keywordArgs);
 
     /** @see dojo.data.api.Notification.revert */
     revert: function() {
-console.log("revert");
+console.info("revert");
       for (var id in this._entries) {
         var entry = this._entries[id];
         entry.isDeleted = false;
@@ -488,7 +497,7 @@ console.log("revert");
 
     /** @see dojo.data.api.Notification.isDirty */
     isDirty: function(/*item?*/ item) {
-console.log("isDirty", item);
+console.info("isDirty", item);
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to isDirty()");
       return entry.isDirty;
