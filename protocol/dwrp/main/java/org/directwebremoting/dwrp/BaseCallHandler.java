@@ -29,11 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.FormField;
@@ -60,6 +58,7 @@ import org.directwebremoting.util.Messages;
  * This class works in concert with CallScriptConduit, they should be
  * considered closely related and it is important to understand what one does
  * while editing the other.
+ * TODO: Double check that getting rid of the check with accessControl is right
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class BaseCallHandler extends BaseDwrpHandler
@@ -170,8 +169,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             }
 
             // Check this method is accessible
-            Creator creator = creatorManager.getCreator(call.getScriptName(), true);
-            accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
+            //Creator creator = creatorManager.getCreator(call.getScriptName(), true);
+            //accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
 
             // We are now sure we have the set of input lined up. They may
             // cross-reference so we do the de-referencing all in one go.
@@ -559,15 +558,15 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * Accessor for the security manager
      * @param accessControl The accessControl to set.
      */
-    public void setAccessControl(AccessControl accessControl)
-    {
-        this.accessControl = accessControl;
-    }
+    //public void setAccessControl(AccessControl accessControl)
+    //{
+    //    this.accessControl = accessControl;
+    //}
 
     /**
      * The security manager
      */
-    protected AccessControl accessControl = null;
+    //protected AccessControl accessControl = null;
 
     /**
      * How we stash away the results of the request parse
