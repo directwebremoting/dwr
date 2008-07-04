@@ -4,26 +4,34 @@ if (!dojo._hasResource["DwrStore"]) {
   dojo.provide("DwrStore");
 
   /**
-   * The params object contains a number of
-   * @param {String} storeId The id of StoreProvider as provided to DWR in
-   * org.directwebremoting.datasync.Directory.register(storeId, store);
-   * @param {Object} params An optional set of customizations to how the data
-   * is fetched from the store. The options are:
-   * - query: A set of name/value pairs used to filter the matching items. The
-   *          implementation is StoreProvider defined, however the general
-   *          pattern is to include items which have attributes named by each
-   *          query name and where the value of the item's attribute is equal to
-   *          the query value. Other stores implement queryOptions, the common
-   *          use-case being to allow ignoreCase:true|false. With DwrStore,
-   *          this is StoreProvider defined.
-   *          If query is null or an empty object, no filtering will be done
-   *          and all data will be included.
-   * - subscribe: The DwrStore implements dojo.data.api.Notification but will
-   *          only send updates if subscribe=true. The updates will be sent in a
-   *          timely manner iff dwr.engine.setActiveReverseAjax=true.
+   * An implementation of all 4 DataStore APIs
+   * TODO: Consider support for queryOptions (see fetch)
+   * TODO: Consider caching attributes for dojo.data.api.Read.getAttributes
+   * Since we're generally going to be storing sets of homogeneous objects
+   * we might pass an official attribute list across the wire and cache it
+   * TODO: Something more formal about errors in _callback()?
+   * TODO: I only discovered from reading the QueryReadStore that the param
+   * passed into fetch() is a dojo.data.api.Request. I'm assuming that the same
+   * is true for fetchItemByIdentity()
    */
   dojo.declare("DwrStore", null, {
-    constructor: function(/* string */ storeId, params) {
+
+    // A unique identifier for this store.
+    _nextGlobalSubscriptionId: 0,
+
+    // When we need to generate a local $id from a call to newItem()
+    autoIdPrefix:"_auto_",
+
+    /**
+     * @param {String} storeId The id of StoreProvider as provided to DWR in
+     * org.directwebremoting.datasync.Directory.register(storeId, store);
+     * @param {Object} params An optional set of customizations to how the data
+     * is fetched from the store. The options are:
+     * - subscribe: The DwrStore implements dojo.data.api.Notification but will
+     *          only send updates if subscribe=true. The updates will be sent in a
+     *          timely manner iff dwr.engine.setActiveReverseAjax=true.
+     */
+    constructor: function(/*string*/ storeId, /*object*/ params) {
       if (storeId == null || typeof storeId != "string") {
         throw new Error("storeId is null or not a string");
       }
@@ -33,67 +41,79 @@ if (!dojo._hasResource["DwrStore"]) {
 
       if (params == null) params = { };
 
-      this._query = params.query || { };
-      this._subscribe = params.subscribe || false;
+      this._subscribe = params.subscribe;
 
       // Important: you'll need to know this to grok the rest of the file.
-      // We implement the data store concept of an 'item' as:
-      //   { itemId:"some-id", data:{...}, label:"..." }
-      // The ID is some primary key derivative, the data is what you would
-      // expect DWR to return as the data converted from Javaland, and the
-      // label is like java.lang.Object.toString.
-      // See org.directwebremoting.io.Item and dojo.data.api.Read.getLabel
+      // We store data in a set of entries. What we give to the outside as an
+      // 'item' is actually just a string aka the id of each entry.
+      // Each entry is:
+      // { $id:.., $label:.., data:.., updates:.., isDeleted:.., isDirty:.. }
+      // $id and $label have $ prefixes because they are partially exposed
+      // - itemId: primary key derivative, set to what the server gives us.
+      //   If this entry was loaded from the server then $id == itemId
+      // - $id: key that is exposed to the client. different to itemId if this
+      //   item came from newItem() when we didn't have time to ask for a new ID
+      // - $label: is like java.lang.Object.toString. For more details see
+      //   org.directwebremoting.io.Item and dojo.data.api.Read.getLabel
+      // - data: is what you would expect DWR to return from Java-Land
+      // - updates: data that has been altered locally, but not save()d yet
+      // - isDeleted: Has this item been deleted?
+      // - isDirty: Has this item been updated?
+      // The first 3 are sent from the server, the second 3 are client side only
 
-      // TODO: Consider caching attributes for dojo.data.api.Read.getAttributes
-      // Since we're generally going to be storing sets of homogeneous objects
-      // we might pass an offical attribute list across the wire and cache it
+      // We store items against their itemIds in here. Currently the former is
+      // going to grow and grow. When do we need to clear it out?
+      this._entries = {};
+      this._updated = {};
 
-      // TODO: Add label and itemId as attributes. They're special as they are
-      // not part of the data, but various things assume that they are
-
-      // We store items against their itemIds in here
-      this._data = {};
+      // We need to generate unique local ids for newItem();
+      this._nextLocalId = 0;
     },
-
-    // A unique identifier for this store.
-    _nextGlobalSubscriptionId: 0,
-
-    // There are lots of checks that we are supposed to make, that are costly
-    _pedantic: false,
 
     /** @see dojo.data.api.Read.getFeatures */
     getFeatures: function() {
       return {
-        // 'dojo.data.api.Write': true,
-        // 'dojo.data.api.Notification': true,
+        'dojo.data.api.Write': true,
+        'dojo.data.api.Notification': true,
         'dojo.data.api.Identity': true,
         'dojo.data.api.Read': true
       };
     },
 
+    /**
+     * Get the entry as indexed by the given id.
+     * @param id The id of the item (and hence it's data)
+     */
+    _getAttributeValue: function(/*string*/ id, /*string*/ attribute, /*anything*/ defaultValue) {
+      var entry = this._entries[id];
+      if (entry == null) throw new Error("non item");
+      if (attribute == "$id") return entry.$id;
+      if (attribute == "$label") return entry.$label;
+      var value = entry.updates[attribute];
+      if (value === undefined) value = entry.data[attribute];
+      if (value === undefined) value = defaultValue;
+      return value;
+    },
+
     /** @see dojo.data.api.Read.getValue */
-    getValue: function(/* item */ item, /* attribute-name-string */ attribute, /* value? */ defaultValue) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getValue()");
-      var reply = item.data[attribute];
-      if (reply === undefined) return defaultValue;
-      return (dojo.isArray(reply)) ? null : reply;
+    getValue: function(/*item*/ id, /*string*/ attribute, /*anything*/ defaultValue) {
+      var value = this._getAttributeValue(id, attribute, defaultValue);
+      return (dojo.isArray(value)) ? null : value;
     },
 
     /** @see dojo.data.api.Read.getValues */
-    getValues: function(/* item */ item, /* attribute-name-string */ attribute) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getValues()");
-      var reply = item.data[attribute];
-      return (dojo.isArray(reply)) ? reply : [ reply ];
+    getValues: function(/*item*/ id, /*string*/ attribute) {
+      var value = this._getAttributeValue(id, attribute, []);
+      return (dojo.isArray(value)) ? value : [ value ];
     },
 
     /** @see dojo.data.api.Read.getAttributes */
-    getAttributes: function(/* item */ item) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getAttributes()");
-      // TODO: I can't use dojo.map to iterate over the properties of an assoc array?!
-      /* return dojo.map(item.data, function(item, index) { return index; }); */
-      var attributes = [];
-      for (var attributeName in item.data) {
-        if (typeof item.data[attributeName] != "function") {
+    getAttributes: function(/*item*/ id) {
+      var entry = this._entries[id];
+      if (entry == null) throw new Error("non item passed to getAttributes()");
+      var attributes = [ '$id', '$label' ];
+      for (var attributeName in entry.data) {
+        if (typeof entry.data[attributeName] != "function") {
           attributes.push(attributeName);
         }
       }
@@ -101,59 +121,41 @@ if (!dojo._hasResource["DwrStore"]) {
     },
 
     /** @see dojo.data.api.Read.hasAttribute */
-    hasAttribute: function(/* item */ item, /* attribute-name-string */ attribute) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to hasAttribute()");
-      var reply = item.data[attribute];
-      return reply !== undefined;
+    hasAttribute: function(/*item*/ id, /*string*/ attribute) {
+      var value = this._getAttributeValue(id, attribute, defaultValue);
+      return value !== undefined;
     },
 
     /** @see dojo.data.api.Read.containsValue */
-    containsValue: function(/* item */ item, /* attribute-name-string */ attribute, /* anything */ value) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to containsValue()");
-      var reply = item.data[attribute];
-      return reply == value;
+    containsValue: function(/*item*/ id, /*string*/ attribute, /*anything*/ value) {
+      var test = this._getAttributeValue(id, attribute, defaultValue);
+      return test == value;
     },
 
     /** @see dojo.data.api.Read.isItem */
-    isItem: function(/* anything */ something) {
-      if (something == null || !dojo.isObject(something)) {
-        return false;
-      }
-      if (!dojo.isString(something.itemId)) {
-        return false;
-      }
-      // TODO: for speed, we could check for !dojo.isObject(something.data) but
-      // this is covered in the lookup below, and it allows for lazy loading
-
-      // So it looks like an item, but is it one of ours?
-      return dojo.any(this._data, function(item) {
-        return item == something;
-      });
+    isItem: function(/*anything*/ something) {
+      return dojo.isString(something) && this._entries[something] != null;
     },
 
     /** @see dojo.data.api.Read.isItemLoaded */
-    isItemLoaded: function(/* anything */ something) {
-      if (!isItem(something)) return false;
-      // TODO: I'm not sure that we are going lazy loading like this, but just in case
-      return something.data != null;
+    isItemLoaded: function(/*anything*/ something) {
+      var entry = this._entries[something];
+      return entry != null && entry.data != null;
     },
 
     /** @see dojo.data.api.Read.loadItem */
-    loadItem: function(/* object */ keywordArgs) {
+    loadItem: function(/*object*/ keywordArgs) {
       // We're not doing lazy loading at this level.
-      return;
+      return true;
     },
 
     /** @see dojo.data.api.Read.fetch */
-    fetch: function(/* object */ request) {
-      // TODO: I only discovered from reading the QueryReadStore that the param
-      // passed in here is a dojo.data.api.Request
+    fetch: function(/*object*/ request) {
       request = request || {};
       if (!request.store) {
           request.store = this;
       }
 
-      // TODO: maybe we should support these. Where are they used?
       if (request.queryOptions != null) {
         console.log("queryOptions is not currently supported by DwrStore");
       }
@@ -167,8 +169,7 @@ if (!dojo._hasResource["DwrStore"]) {
       };
 
       // The parameters to this callback are defined by DWR
-      // TODO: Is there any advantage in using dojo.hitch?
-      var callback = function(/* string */ subscriptionId, /* integer */ reason, /* array */ viewedMatches, /* integer */ totalMatchCount) {
+      var callback = function(/*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
         request.store._callback(request, subscriptionId, reason, viewedMatches, totalMatchCount);
       };
 
@@ -186,7 +187,7 @@ if (!dojo._hasResource["DwrStore"]) {
      * This function is called by a closure in DwrStore.fetch which is in turn
      * called by the client side of the DWR store
      */
-    _callback: function(/* object */ request, /* string */ subscriptionId, /* integer */ reason, /* array */ viewedMatches, /* integer */ totalMatchCount) {
+    _callback: function(/*object*/ request, /*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
       var scope = request.scope || dojo.global;
 
       var aborted = false;
@@ -198,26 +199,37 @@ if (!dojo._hasResource["DwrStore"]) {
         }
       };
 
-      // TODO: We should probably sort out something more formal about errors
       if (viewedMatches == null) {
         if (dojo.isFunction(request.onError)) {
-          request.onError.call(scope, { /* TODO: something better than nothing */ }, request);
+          request.onError.call(scope, { /* something is better than nothing? */ }, request);
         }
         return;
       }
 
+      // Cache the data
+      dojo.forEach(viewedMatches, function(entry) {
+        entry.updates = {};
+        entry.isDeleted = false;
+        entry.isDirty = false;
+        entry.$id = entry.itemId;
+        request.store._entries[entry.$id] = entry;
+      });
+
       switch (reason) {
         case dwr.data.reason.insert:
-          if (dojo.isFunction(this.onNew)) {
-            // TODO: Notifications from the server are more corse grained than this
-            // We probably need to loop and call this for every attribute?
+          // This is part of Notification so the methods are on the store
+          if (dojo.isFunction(request.store.onNew)) {
             var parentInfo = null; // The DWR store is not hierarchical
-            request.onNew.call(newItem, parentInfo);
+            dojo.forEach(viewedMatches, function(entry) {
+              if (!aborted) {
+                request.store.onNew.call(scope, entry, request);
+              }
+            });
           }
           break;
 
         case dwr.data.reason.update:
-          if (dojo.isFunction(this.onSet)) {
+          if (dojo.isFunction(request.onSet)) {
             // TODO: Notifications from the server are more corse grained than this
             // We probably need to loop and call this for every attribute?
             request.onSet.call(item, attribute, oldValue, newValue);
@@ -247,7 +259,7 @@ if (!dojo._hasResource["DwrStore"]) {
           break;
 
         case dwr.data.reason.remove:
-          if (dojo.isFunction(this.onDelete)) {
+          if (dojo.isFunction(request.onDelete)) {
             // TODO: What do we know about deleted items?
             request.onDelete.call(deletedItem);
           }
@@ -259,9 +271,9 @@ if (!dojo._hasResource["DwrStore"]) {
           }
 
           if (dojo.isFunction(request.onItem)) {
-            dojo.forEach(viewedMatches, function(item) {
+            dojo.forEach(viewedMatches, function(entry) {
               if (!aborted) {
-                request.onItem.call(scope, item, request);
+                request.onItem.call(scope, entry.$id, request);
               }
             });
           }
@@ -277,7 +289,11 @@ if (!dojo._hasResource["DwrStore"]) {
               request.onComplete.call(scope, null, request);
             }
             else {
-              request.onComplete.call(scope, viewedMatches, request);
+              var all = [];
+              dojo.forEach(viewedMatches, function(entry) {
+                all.push(entry.$id);
+              });
+              request.onComplete.call(scope, all, request);
             }
           }
           break;
@@ -285,49 +301,45 @@ if (!dojo._hasResource["DwrStore"]) {
     },
 
     /** @see dojo.data.api.Read.close */
-    close: function(/*dojo.data.api.Request || keywordArgs || null */ request) {
-      // TODO: what cleanup do we need to do?
+    close: function(/*dojo.data.api.Request|keywordArgs|null*/ request) {
+      this._entries = {};
+      this._updated = {};
+      if (this._subscribe) {
+        dwr.data.unsubscribe(this._subscriptionId);
+      }
     },
 
     /** @see dojo.data.api.Read.getLabel */
-    getLabel: function(/* item */ item) {
+    getLabel: function(/*item*/ id) {
       // org.directwebremoting.io.Item exposes Object#toString as a label on
-      // our items if the data implements ExposeToStringToTheOutside. Otherwise
-      // it just used the itemId
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getLabel()");
-      return item.label || item.itemId;
+      // our items if the data implements ExposeToStringToTheOutside.
+      return _getAttributeValue(id, "$label");
     },
 
     /** @see dojo.data.api.Read.getLabelAttributes */
-    getLabelAttributes: function(/* item */ item) {
-      // TODO: See dojo.data.api.Read.getLabel for details.
-      return [ "label" ];
+    getLabelAttributes: function(/*item*/ id) {
+      if (!this.isItem(id)) throw new Error("non item passed to getLabelAttributes()");
+      return [ "$label" ];
     },
 
     /** @see dojo.data.api.Identity.getIdentity */
-    getIdentity: function(/* item */ item) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getIdentity()");
-      return item.itemId;
+    getIdentity: function(/*item*/ id) {
+      return _getAttributeValue(id, "$id");
     },
 
     /** @see dojo.data.api.Identity.getIdentityAttributes */
-    getIdentityAttributes: function(/* item */ item) {
-      if (this._pedantic && !isItem(item)) throw new Error("non item passed to getIdentityAttributes()");
-      return [ "itemId" ];
+    getIdentityAttributes: function(/*item*/ id) {
+      if (!this.isItem(id)) throw new Error("non item passed to getIdentityAttributes()");
+      return [ "$id" ];
     },
 
     /** @see dojo.data.api.Identity.fetchItemByIdentity */
-    fetchItemByIdentity: function(/* object */ request) {
-
-      // TODO: It's an assumption that the param here is a dojo.data.api.Request
-      // This assumption is based on symmetry with undocumented features
-      // discovered by reading QueryReadStore. See the impl of fetch() above.
+    fetchItemByIdentity: function(/*object*/ request) {
       request = request || {};
       if (!request.store) {
           request.store = this;
       }
 
-      // TODO: maybe we should support these. Where are they used?
       if (request.queryOptions != null) {
         console.log("queryOptions is not currently supported by DwrStore");
       }
@@ -339,7 +351,7 @@ if (!dojo._hasResource["DwrStore"]) {
       };
 
       // The parameters to this callback are defined by DWR
-      var callback = function(/* string */ subscriptionId, /* integer */ reason, /* array */ viewedMatches, /* integer */ totalMatchCount) {
+      var callback = function(/*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
         request.store._callback(request, subscriptionId, reason, viewedMatches, totalMatchCount);
       };
 
@@ -349,221 +361,137 @@ if (!dojo._hasResource["DwrStore"]) {
     },
 
     /** @see dojo.data.api.Notification.onSet */
-    onSet: function(/* item */ item, /* attribute-name-string */ attribute, /* object | array */ oldValue, /* object | array */ newValue) {
-      // It's up to other to override. We just need to call this from _callback()
+    onSet: function(/*item*/ item, /*string*/ attribute, /*object|array*/ oldValue, /*object|array*/ newValue) {
+console.log("onSet", item, attribute, oldValue, newValue);
+      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onNew */
-    onNew: function(/* item */ newItem, /*object?*/ parentInfo) {
-      // It's up to other to override. We just need to call this from _callback()
+    onNew: function(/*item*/ newItem, /*object?*/ parentInfo) {
+console.log("onNew", newItem, parentInfo);
+      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onDelete */
-    onDelete: function(/* item */ deletedItem) {
-      // It's up to other to override. We just need to call this from _callback()
+    onDelete: function(/*item*/ deletedItem) {
+console.log("onDelete", deletedItem);
+      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onDelete */
-    newItem: function(/* Object? */ keywordArgs, /*Object?*/ parentInfo) {
-      //  summary:
-      //      Returns a newly created item.  Sets the attributes of the new
-      //      item based on the *keywordArgs* provided.  In general, the attribute
-      //      names in the keywords become the attributes in the new item and as for
-      //      the attribute values in keywordArgs, they become the values of the attributes
-      //      in the new item.  In addition, for stores that support hierarchical item 
-      //      creation, an optional second parameter is accepted that defines what item is the parent
-      //      of the new item and what attribute of that item should the new item be assigned to.
-      //      In general, this will assume that the attribute targetted is multi-valued and a new item
-      //      is appended onto the list of values for that attribute.  
-      //
-      //  keywordArgs:
-      //      A javascript object defining the initial content of the item as a set of JavaScript 'property name: value' pairs.
-      //  parentInfo:
-      //      An optional javascript object defining what item is the parent of this item (in a hierarchical store.  Not all stores do hierarchical items), 
-      //      and what attribute of that parent to assign the new item to.  If this is present, and the attribute specified
-      //      is a multi-valued attribute, it will append this item into the array of values for that attribute.  The structure
-      //      of the object is as follows:
-      //      {
-      //          parent: someItem,
-      //          attribute: "attribute-name-string"
-      //      }
-      //
-      //  exceptions:
-      //      Throws an exception if *keywordArgs* is a string or a number or
-      //      anything other than a simple anonymous object.  
-      //      Throws an exception if the item in parentInfo is not an item from the store
-      //      or if the attribute isn't an attribute name string.
-      //  example:
-      //  |   var kermit = store.newItem({name: "Kermit", color:[blue, green]});
-      throw new Error('Unimplemented API: dojo.data.api.Write.newItem');
+    newItem: function(/*object?*/ keywordArgs, /*object?*/ parentInfo) {
+console.log("newItem", keywordArgs, parentInfo);
+      var entry = {
+        itemId:-1,
+        $id:DwrStore.prototype.autoIdPrefix + this._nextLocalId,
+        data:{},
+        $label:"",
+        isDeleted:false,
+        isDirty:true,
+        updates:{}
+      };
+      this._nextLocalId++;
+      for (var attribute in keywordArgs) {
+        entry.updates[attribute] = keywordArgs[attribute];
+      }
+      this._entries[entry.$id] = entry;
+      this._updated[entry.$id] = entry;
+      return entry.$id;
     },
 
     /** @see dojo.data.api.Notification.onDelete */
-    deleteItem: function(/* item */ item) {
-      //  summary:
-      //      Deletes an item from the store.
-      //
-      //  item: 
-      //      The item to delete.
-      //
-      //  exceptions:
-      //      Throws an exception if the argument *item* is not an item 
-      //      (if store.isItem(item) returns false).
-      //  example:
-      //  |   var success = store.deleteItem(kermit);
-      throw new Error('Unimplemented API: dojo.data.api.Write.deleteItem');
+    deleteItem: function(/*item*/ item) {
+console.log("deleteItem", item);
+      var entry = this._entries[item];
+      if (entry == null) throw new Error("non item passed to deleteItem()");
+      delete this._entries[entry.$id];
+      entry.isDeleted = true;
+      this._updated[entry.$id] = entry;
+      return true;
     },
 
     /** @see dojo.data.api.Notification.setValue */
-    setValue: function(/* item */ item, /* string */ attribute, /* almost anything */ value) {
-      //  summary:
-      //      Sets the value of an attribute on an item.
-      //      Replaces any previous value or values.
-      //
-      //  item:
-      //      The item to modify.
-      //  attribute:
-      //      The attribute of the item to change represented as a string name.
-      //  value:
-      //      The value to assign to the item.
-      //
-      //  exceptions:
-      //      Throws an exception if *item* is not an item, or if *attribute*
-      //      is neither an attribute object or a string.
-      //      Throws an exception if *value* is undefined.
-      //  example:
-      //  |   var success = store.set(kermit, "color", "green");
-      throw new Error('Unimplemented API: dojo.data.api.Write.setValue');
-      return false; // boolean
+    setValue: function(/*item*/ item, /*string*/ attribute, /*anything*/ value) {
+console.log("setValue", item, attribute, value);
+      if (value === undefined) throw new Error("value is undefined");
+      if (!attribute) throw new Error("attribute is undefined");
+      var entry = this._entries[item];
+      if (entry == null) throw new Error("non item passed to setValue()");
+
+      entry.updates[attribute] = value;
+      entry.isDirty = true;
+      this._updated[entry.$id] = entry;
+      return true;
     },
 
     /** @see dojo.data.api.Notification.setValues */
-    setValues: function(/* item */ item, /* string */ attribute, /* array */ values) {
-      //  summary:
-      //      Adds each value in the *values* array as a value of the given
-      //      attribute on the given item.
-      //      Replaces any previous value or values.
-      //      Calling store.setValues(x, y, []) (with *values* as an empty array) has
-      //      the same effect as calling store.unsetAttribute(x, y).
-      //
-      //  item:
-      //      The item to modify.
-      //  attribute:
-      //      The attribute of the item to change represented as a string name.
-      //  values:
-      //      An array of values to assign to the attribute..
-      //
-      //  exceptions:
-      //      Throws an exception if *values* is not an array, if *item* is not an
-      //      item, or if *attribute* is neither an attribute object or a string.
-      //  example:
-      //  |   var success = store.setValues(kermit, "color", ["green", "aqua"]);
-      //  |   success = store.setValues(kermit, "color", []);
-      //  |   if (success) {assert(!store.hasAttribute(kermit, "color"));}
-      throw new Error('Unimplemented API: dojo.data.api.Write.setValues');
-      return false; // boolean
+    setValues: function(/*item*/ id, /*string*/ attribute, /*array*/ values) {
+console.log("setValues", id, attribute, values);
+      if (!dojo.isArray(values)) throw new Error("value is not an array");
+      if (!attribute) throw new Error("attribute is undefined");
+      var entry = this._entries[item];
+      if (entry == null) throw new Error("non item passed to setValues()");
+
+      entry.updates[attribute] = values;
+      entry.isDirty = true;
+      this._updated[entry.$id] = entry;
+      return true;
     },
 
     /** @see dojo.data.api.Notification.unsetAttribute */
-    unsetAttribute: function(/* item */ item, /* string */ attribute) {
-      //  summary:
-      //      Deletes all the values of an attribute on an item.
-      //
-      //  item:
-      //      The item to modify.
-      //  attribute:
-      //      The attribute of the item to unset represented as a string.
-      //
-      //  exceptions:
-      //      Throws an exception if *item* is not an item, or if *attribute*
-      //      is neither an attribute object or a string.
-      //  example:
-      //  |   var success = store.unsetAttribute(kermit, "color");
-      //  |   if (success) {assert(!store.hasAttribute(kermit, "color"));}
-      throw new Error('Unimplemented API: dojo.data.api.Write.clear');
-      return false; // boolean
+    unsetAttribute: function(/*item*/ id, /*string*/ attribute) {
+console.log("unsetAttribute", id, attribute);
+      if (!attribute) throw new Error("attribute is undefined");
+      var entry = this._entries[item];
+      if (entry == null) throw new Error("non item passed to unsetAttribute()");
+
+      entry.updates[attribute] = null;
+      entry.isDirty = true;
+      this._updated[entry.$id] = entry;
+      return true;
     },
 
     /** @see dojo.data.api.Notification.save */
-    save: function(/* object */ keywordArgs) {
-      //  summary:
-      //      Saves to the server all the changes that have been made locally.
-      //      The save operation may take some time and is generally performed
-      //      in an asynchronous fashion.  The outcome of the save action is 
-      //      is passed into the set of supported callbacks for the save.
-      //   
-      //  keywordArgs:
-      //      {
-      //          onComplete: function
-      //          onError: function
-      //          scope: object
-      //      }
-      //
-      //  The *onComplete* parameter.
-      //      function();
-      //
-      //      If an onComplete callback function is provided, the callback function
-      //      will be called just once, after the save has completed.  No parameters
-      //      are generally passed to the onComplete.
-      //
-      //  The *onError* parameter.
-      //      function(errorData); 
-      //
-      //      If an onError callback function is provided, the callback function
-      //      will be called if there is any sort of error while attempting to
-      //      execute the save.  The onError function will be based one parameter, the
-      //      error.
-      //
-      //  The *scope* parameter.
-      //      If a scope object is provided, all of the callback function (
-      //      onComplete, onError, etc) will be invoked in the context of the scope
-      //      object.  In the body of the callback function, the value of the "this"
-      //      keyword will be the scope object.   If no scope object is provided,
-      //      the callback functions will be called in the context of dojo.global.  
-      //      For example, onComplete.call(scope) vs. 
-      //      onComplete.call(dojo.global)
-      //
-      //  returns:
-      //      Nothing.  Since the saves are generally asynchronous, there is 
-      //      no need to return anything.  All results are passed via callbacks.
-      //  example:
-      //  |   store.save({onComplete: onSave});
-      //  |   store.save({scope: fooObj, onComplete: onSave, onError: saveFailed});
-      throw new Error('Unimplemented API: dojo.data.api.Write.save');
+    save: function(/*object*/ keywordArgs) {
+console.log("save", keywordArgs);
+      var entriesToSend = [];
+      for (var id in this._updated) {
+        var entry = this._updated[id];
+        var toSend = {
+          itemId:entry.itemId,
+          data:entry.data
+        };
+        for (var attribute in entry.updates) {
+          toSend[attribute] = entry.updates[attribute];
+        }
+        if (entry.isDeleted) {
+          toSend.data = null;
+        }
+        entriesToSend.push(toSend);
+      }
+
+      dwr.data.update(this._storeId, entriesToSend, keywordArgs.onComplete, keywordArgs.onError);
     },
 
     /** @see dojo.data.api.Notification.revert */
     revert: function() {
-      //  summary:
-      //      Discards any unsaved changes.
-      //  description:
-      //      Discards any unsaved changes.
-      //
-      //  example:
-      //  |   var success = store.revert();
-      throw new Error('Unimplemented API: dojo.data.api.Write.revert');
-      return false; // boolean
+console.log("revert");
+      for (var id in this._entries) {
+        var entry = this._entries[id];
+        entry.isDeleted = false;
+        entry.isDirty = false;
+        entry.updates = {};
+      }
+      this._updated = {};
+      return true;
     },
 
     /** @see dojo.data.api.Notification.isDirty */
-    isDirty: function(/* item? */ item) {
-      //  summary:
-      //      Given an item, isDirty() returns true if the item has been modified 
-      //      since the last save().  If isDirty() is called with no *item* argument,  
-      //      then this function returns true if any item has been modified since
-      //      the last save().
-      //
-      //  item:
-      //      The item to check.
-      //
-      //  exceptions:
-      //      Throws an exception if isDirty() is passed an argument and the
-      //      argument is not an item.
-      //  example:
-      //  |   var trueOrFalse = store.isDirty(kermit); // true if kermit is dirty
-      //  |   var trueOrFalse = store.isDirty();       // true if any item is dirty
-      throw new Error('Unimplemented API: dojo.data.api.Write.isDirty');
-      return false; // boolean
+    isDirty: function(/*item?*/ item) {
+console.log("isDirty", item);
+      var entry = this._entries[item];
+      if (entry == null) throw new Error("non item passed to isDirty()");
+      return entry.isDirty;
     }
   });
 }
