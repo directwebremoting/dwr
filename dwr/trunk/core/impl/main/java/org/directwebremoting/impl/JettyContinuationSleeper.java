@@ -103,7 +103,7 @@ public class JettyContinuationSleeper implements Sleeper
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Sleeper#wakeUp()
+     * @see org.directwebremoting.extend.Sleeper#wakeUp()
      */
     public void wakeUp()
     {

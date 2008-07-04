@@ -19,9 +19,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * We need to keep container specific logic out of PollHandler, and other parts
- * of DWR. Each container will need an implementation of this interface, which 
- * will generally just return configurations of generic classes.
+ * We need to keep container specific logic out of BasePollHandler, and other
+ * parts of DWR. Each container will need an implementation of this interface,
+ * which will generally just return configurations of generic classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface ContainerAbstraction

@@ -27,7 +27,7 @@ import org.directwebremoting.extend.Sleeper;
 public class ThreadWaitSleeper implements Sleeper
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Sleeper#goToSleep()
+     * @see org.directwebremoting.extend.Sleeper#goToSleep(java.lang.Runnable)
      */
     public void goToSleep(Runnable onAwakening)
     {
@@ -51,7 +51,7 @@ public class ThreadWaitSleeper implements Sleeper
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Sleeper#wakeUp()
+     * @see org.directwebremoting.extend.Sleeper#wakeUp()
      */
     public void wakeUp()
     {
