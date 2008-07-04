@@ -68,7 +68,7 @@ public class GrizzlyContinuationSleeper implements Sleeper
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Sleeper#wakeUp()
+     * @see org.directwebremoting.extend.Sleeper#wakeUp()
      */
     public void wakeUp()
     {
@@ -93,15 +93,11 @@ public class GrizzlyContinuationSleeper implements Sleeper
                     {
                         try
                         {
-                            /*
-                             * Flush bytes if any first as before resuming the 
-                             * as Grizzly Comet isn't allowing writes once the
-                             * continuation is resumed. 
-                             *
-                             * This can be achieved
-                             * by using Grizzly CometHandler, which isn't exposed
-                             * with DWR.
-                             */
+                            // Flush bytes if any first as before resuming the 
+                            // as Grizzly Comet isn't allowing writes once the
+                            // continuation is resumed. 
+                            // This can be achieved using Grizzly CometHandler,
+                            // which isn't exposed with DWR.
                             onAwakening.run();
                             continuation.resume();                      
                         }
@@ -153,6 +149,9 @@ public class GrizzlyContinuationSleeper implements Sleeper
      */
     public static final String ATTRIBUTE_JETTY_CONDUIT = "org.directwebremoting.dwrp.notifyConduit";
    
+    /**
+     * Log stream
+     */
     private static final Log log = LogFactory.getLog(GrizzlyContinuationSleeper.class);
 }
 

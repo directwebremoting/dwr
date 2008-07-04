@@ -222,7 +222,7 @@ public class EngineHandler extends FileJavaScriptHandler
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicated that we do not do early
      * closing after writes.
-     * See also: org.directwebremoting.dwrp.PollHandler.maxWaitAfterWrite
+     * See also: org.directwebremoting.dwrp.BasePollHandler.maxWaitAfterWrite
      */
     private int maxWaitAfterWrite = -1;
 

@@ -20,8 +20,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.extend.Alarm;
-import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.extend.BasicAlarm;
+import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.SharedObjects;
 
 /**
@@ -39,7 +39,7 @@ public class TimedAlarm extends BasicAlarm implements Alarm
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Alarm#cancel()
+     * @see org.directwebremoting.extend.Alarm#cancel()
      */
     @Override
     public void cancel()
@@ -53,7 +53,7 @@ public class TimedAlarm extends BasicAlarm implements Alarm
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.PollHandler.Alarm#setAlarmAction(org.directwebremoting.dwrp.PollHandler.Sleeper)
+     * @see org.directwebremoting.extend.Alarm#setAlarmAction(org.directwebremoting.extend.Sleeper)
      */
     @Override
     public void setAlarmAction(Sleeper sleeper)
