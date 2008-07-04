@@ -29,5 +29,5 @@ function init() {
 dojo.addOnLoad(init);
 
 addRow = function(){
-  grid.addRow([ "Noname", "No Address", 21, false ]);
+  grid.addRow({ name:"Noname", address:"No Address", age:21, male:false });
 }
