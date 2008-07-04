@@ -78,7 +78,7 @@ public interface StoreProvider<T>
     /**
      * Remove the declaration of interest previously expressed.
      * @param region A set of filter and sort criteria to restrict the fetched data
-     * @param subscription The listener that should no longer be notified
+     * @param li The listener that should no longer be notified
      */
     void unsubscribe(StoreRegion region, StoreChangeListener<T> li);
 }
