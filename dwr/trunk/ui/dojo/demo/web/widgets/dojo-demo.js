@@ -4,28 +4,30 @@ dojo.require("dojox.grid.Grid");
 dojo.require("dojox.grid._data.model");
 dojo.require("DwrStore");
 
+var grid;
+
 function init() {
   var view = {
     cells: [[
-      { name:'Name', field:"name" },
-      { name:'Address', field:"address" },
-      { name:'Age', field:"age" },
-      { name:'Male', field:"male" }
+      { name:'Name', field:'name', width:'120px', editor:dojox.grid.editors.Input },
+      { name:'Address', field:'address', width:'200px', editor:dojox.grid.editors.Input },
+      { name:'Age', field:'age', width:'30px', editor:dojox.grid.editors.Input },
+      { name:'Male', field:'male', width:'40px', editor:dojox.grid.editors.Bool }
     ]]
   };
-  var store = new DwrStore("testServerData", { query:{}, subscribe:false });
+  var store = new DwrStore("testServerData", { subscribe:true });
 
   var model = new dojox.grid.data.DojoData();
   model.store = store;
 
-  var grid = dijit.byId("grid");
+  grid = dijit.byId("grid");
   grid.setStructure([ view ]);
   grid.setModel(model);
   grid.refresh();
-
-dwr.grid = grid;
-  //People.getAllPeople(function(people) {
-  //});
 }
 
 dojo.addOnLoad(init);
+
+addRow = function(){
+  grid.addRow([ "Noname", "No Address", 21, false ]);
+}

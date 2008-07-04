@@ -407,8 +407,9 @@ if (typeof this['dwr'] == 'undefined') {
     dwr.engine._batchQueue.length = 0;
 
     // Abort any ongoing XHRs and clear their batches
+    var batch;
     for (var batchId in dwr.engine._batches) {
-      var batch = dwr.engine._batches[batchId];
+      batch = dwr.engine._batches[batchId];
       // Only process objects that look like batches (avoid prototype additions!)
       if (batch && batch.map) {
         if (batch.req) {
@@ -421,7 +422,7 @@ if (typeof this['dwr'] == 'undefined') {
     // If we have used reverse ajax then we try to tell the server we are gone
     if (dwr.engine._isNotifyServerOnPageUnload) {
       dwr.engine._debug("calling unloader for: " + dwr.engine._scriptSessionId);
-      var batch = {
+      batch = {
         map:{
           callCount:1,
           'c0-scriptName':'__System',
@@ -493,9 +494,8 @@ if (typeof this['dwr'] == 'undefined') {
   /**
    * Poll the server to see if there is any data waiting
    * @private
-   * @param {Object} overridePath
    */
-  dwr.engine._poll = function(overridePath) {
+  dwr.engine._poll = function() {
     if (!dwr.engine._activeReverseAjax) {
       return;
     }
@@ -909,13 +909,14 @@ if (typeof this['dwr'] == 'undefined') {
      * @see dwr.engine.serialize.convert() for parameter details
      */
     convertArray:function(batch, referto, data, name, depth) {
+      var childName, i;
       if (dwr.engine.isIE <= 7) {
         // Use array joining on IE1-7 (fastest)
         var buf = ["Array:["];
-        for (var i = 0; i < data.length; i++) {
+        for (i = 0; i < data.length; i++) {
           if (i != 0) buf.push(",");
           batch.paramCount++;
-          var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+          childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
           dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
           buf.push("reference:");
           buf.push(childName);
@@ -926,10 +927,10 @@ if (typeof this['dwr'] == 'undefined') {
       else {
         // Use string concat on other browsers (fastest)
         var reply = "Array:[";
-        for (var i = 0; i < data.length; i++) {
+        for (i = 0; i < data.length; i++) {
           if (i != 0) reply += ",";
           batch.paramCount++;
-          var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
+          childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
           dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
           reply += "reference:";
           reply += childName;
@@ -1025,10 +1026,11 @@ if (typeof this['dwr'] == 'undefined') {
     getObjectClassName:function(obj) {
       // Try to find the classname by stringifying the object's constructor
       // and extract <class> from "function <class>".
+      var str, regexpmatch;
       if (obj && obj.constructor && obj.constructor.toString)
       {
-        var str = obj.constructor.toString();
-        var regexpmatch = str.match(/function\s+(\w+)/);
+        str = obj.constructor.toString();
+        regexpmatch = str.match(/function\s+(\w+)/);
         if (regexpmatch && regexpmatch.length == 2) {
           return regexpmatch[1];
         }
@@ -1046,8 +1048,8 @@ if (typeof this['dwr'] == 'undefined') {
       // Try to find the classname by calling Object.toString() on the object
       // and extracting <class> from "[object <class>]"
       if (obj) {
-        var str = Object.prototype.toString.call(obj);
-        var regexpmatch = str.match(/\[object\s+(\w+)/);
+        str = Object.prototype.toString.call(obj);
+        regexpmatch = str.match(/\[object\s+(\w+)/);
         if (regexpmatch && regexpmatch.length==2) {
           return regexpmatch[1];
         }
@@ -1076,7 +1078,7 @@ if (typeof this['dwr'] == 'undefined') {
       if (path.indexOf("http://") == 0 || path.indexOf("https://") == 0) {
         var dwrShortPath = dwr.engine._pathToDwrServlet.split("/", 3).join("/");
         var hrefShortPath = window.location.href.split("/", 3).join("/");
-        var isCrossDomain = (dwrShortPath != hrefShortPath);
+        isCrossDomain = (dwrShortPath != hrefShortPath);
       }
 
       if (batch.fileUpload) {
@@ -1249,7 +1251,7 @@ if (typeof this['dwr'] == 'undefined') {
         var req = batch.req;
         try {
           var readyState = req.readyState;
-          var notReady = (req.readyState != 4)
+          var notReady = (req.readyState != 4);
           if (notReady) {
             return;
           }
@@ -1451,6 +1453,8 @@ if (typeof this['dwr'] == 'undefined') {
           batch.iframe.setAttribute("src", request.url);
         }
         else {
+          // TODO: On firefox we can now get the values of file fields, maybe we should use this
+          // See http://soakedandsoaped.com/articles/read/firefox-3-native-ajax-file-upload
           // setting enctype via the DOM does not work in IE, create the form using innerHTML instead
           var formHtml = "<form id='dwr-form' action='" + request.url + "' target='" + idname + "' style='display:none;' method='" + batch.httpMethod + "'";
           if (batch.encType) formHtml += " enctype='" + batch.encType + "'";
@@ -1832,7 +1836,7 @@ if (typeof this['dwr'] == 'undefined') {
       var urlBuffer = [];
       urlBuffer.push(batch.path);
       urlBuffer.push(batch.mode);
-      if (batch.isPoll == true) {
+      if (batch.isPoll) {
         urlBuffer.push("ReverseAjax.dwr");
       }
       else if (batch.map.callCount == 1) {
@@ -2025,24 +2029,25 @@ if (typeof this['dwr'] == 'undefined') {
    */
   dwr.hub = {
     /**
-      * Publish some data to a given topic
-      * @param {Object} topicName The topic to publish to
-      * @param {Object} data The data to publish
-      */
+     * Publish some data to a given topic
+     * @param {Object} topicName The topic to publish to
+     * @param {Object} data The data to publish
+     */
     publish:function(topicName, data) {
       dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'publish', topicName, data, {});
     },
 
     /**
-      * Subscribe to get notifications of publish events to a given topic
-      * @param {String} topicName The topic to subscribe to
-      * @param {Function} callback The function to call when a publish happens
-      * @param {Object} scope The 'this' object on which the callback executes (optional)
-      * @param {Object} subscriberData Data that the subscriber wishes to remember (optional)
-      * @return An opaque type for use with unsubscribe
-      */
+     * Subscribe to get notifications of publish events to a given topic
+     * @param {String} topicName The topic to subscribe to
+     * @param {Function} callback The function to call when a publish happens
+     * @param {Object} scope The 'this' object on which the callback executes (optional)
+     * @param {Object} subscriberData Data that the subscriber wishes to remember (optional)
+     * @return An opaque type for use with unsubscribe
+     */
     subscribe:function(topicName, callback, scope, subscriberData) {
-      var subscription = "" + dwr.hub._subscriptionId++;
+      var subscription = "" + dwr.hub._subscriptionId;
+      dwr.hub._subscriptionId++;
       dwr.hub._subscriptions[subscription] = {
         callback:callback,
         scope:scope,
@@ -2053,11 +2058,11 @@ if (typeof this['dwr'] == 'undefined') {
     },
 
     /**
-      * Called by the server: A publish event has happened that we care about
-      * @private
-      * @param {Object} subscriptionId
-      * @param {Object} publishData
-      */
+     * Called by the server: A publish event has happened that we care about
+     * @private
+     * @param {Object} subscriptionId
+     * @param {Object} publishData
+     */
     _remotePublish:function(subscriptionId, publishData) {
       var subscriptionData = dwr.hub._subscriptions[subscriptionId];
       if (!subscriptionData) return;
@@ -2065,32 +2070,13 @@ if (typeof this['dwr'] == 'undefined') {
     },
 
     /**
-      * Subscribe to get notifications of publish events to a given topic
-      * @param {String} topicName The topic to subscribe to
-      * @param {Function} callback The function to call when a publish happens
-      * @param {Object} scope The 'this' object on which the callback executes (optional)
-      * @param {Object} subscriberData Data that the subscriber wishes to remember (optional)
-      * @return An opaque type for use with unsubscribe
-      */
-    subscribe:function(topicName, callback, scope, subscriberData) {
-      var subscription = "" + dwr.hub._subscriptionId++;
-      dwr.hub._subscriptions[subscription] = {
-        callback:callback,
-        scope:scope,
-        subscriberData:subscriberData
-      };
-      dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'subscribe', topicName, subscription, {});
-      return subscription;
-    },
-
-    /**
-      * Each time we subscribe to something, we use a unique number
-      */
+     * Each time we subscribe to something, we use a unique number
+     */
     _subscriptionId:0,
 
     /**
-      * We need to remember what we are subscribed to so we can recall the callback
-      */
+     * We need to remember what we are subscribed to so we can recall the callback
+     */
     _subscriptions:{}
   };
 })();

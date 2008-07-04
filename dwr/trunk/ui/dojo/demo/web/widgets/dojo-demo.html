@@ -21,7 +21,13 @@
 
 <h1>DWR + Dojo</h1>
 
-<div id="grid" dojoType="dojox.Grid" autoWidth="true"></div>
+<div id="grid" dojoType="dojox.Grid" autoWidth="true" defaultHeight="300px"></div>
+<div id="controls">
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="grid.removeSelectedRows()">Remove</button>&nbsp;&nbsp;&nbsp;
+    <button onclick="grid.edit.apply()">Apply</button>
+    <button onclick="grid.edit.cancel()">Cancel</button>&nbsp;&nbsp;&nbsp;
+</div>
 
 </body>
 </html>
