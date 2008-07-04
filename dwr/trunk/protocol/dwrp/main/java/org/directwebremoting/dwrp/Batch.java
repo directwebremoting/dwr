@@ -32,15 +32,17 @@ import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
+ * A Batch is a request from the client.
+ * This can be either a from a call ({@link CallBatch}) or an active reverse
+ * ajax poll ({@link PollBatch})
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Batch
 {
     /**
-     * @param request
+     * Initialize the batch from an {@link HttpServletRequest}
      */
     public Batch(HttpServletRequest request) throws ServerException
     {
@@ -61,7 +63,7 @@ public class Batch
     }
 
     /**
-     *
+     * Initialize the batch from a set of pre-parsed parameters
      */
     public Batch(Map<String, FormField> allParameters, boolean get)
     {
@@ -219,7 +221,7 @@ public class Batch
         }
         catch (Exception ex)
         {
-            throw new ServerException(Messages.getString("ParseUtil.InputReadFailed"), ex);
+            throw new ServerException("Failed to read input", ex);
         }
         finally
         {
@@ -325,7 +327,8 @@ public class Batch
             }
             else
             {
-                throw new ServerException(Messages.getString("ParseUtil.MultiValues", key));
+                log.error("Multiple values for key: " + key);
+                throw new ServerException("Multiple values for key. See console for more information");
             }
         }
 
