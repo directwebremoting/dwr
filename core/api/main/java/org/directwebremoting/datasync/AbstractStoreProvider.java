@@ -15,11 +15,14 @@
  */
 package org.directwebremoting.datasync;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.List;
-import java.util.SortedSet;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,9 +31,10 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.io.RawData;
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.MatchedItems;
+import org.directwebremoting.io.RawData;
+import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
@@ -59,7 +63,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#get(java.lang.String)
      */
-    public Item get(String itemId)
+    public Item viewItem(String itemId)
     {
         T object = getObject(itemId);
         return new Item(itemId, object);
@@ -203,6 +207,114 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     }
 
     /**
+     *
+     * @param listener
+     * @param itemIds
+     */
+    protected synchronized void setWatchedSet(StoreChangeListener<T> listener, Collection<String> itemIds)
+    {
+        clearWatchedSet(listener);
+        addWatchedSet(listener, itemIds);
+    }
+
+    /**
+     *
+     * @param listener
+     * @param itemIds
+     */
+    protected synchronized void addWatchedSet(StoreChangeListener<T> listener, Collection<String> itemIds)
+    {
+        if (itemIds == null || itemIds.isEmpty())
+        {
+            return;
+        }
+
+        watched.put(listener, itemIds);
+
+        for (String itemId : itemIds)
+        {
+            Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+            if (listeners == null)
+            {
+                listeners = new HashSet<StoreChangeListener<T>>();
+                watchers.put(itemId, listeners);
+            }
+            listeners.add(listener);
+        }
+    }
+
+    /**
+     * Unsubscribe from anything the listener was previously subscribed to
+     * @param listener
+     */
+    protected synchronized void clearWatchedSet(StoreChangeListener<T> listener)
+    {
+        Collection<String> itemIds = watched.get(listener);
+        if (itemIds != null)
+        {
+            for (String itemId : itemIds)
+            {
+                Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+                if (listeners != null)
+                {
+                    listeners.remove(listener);
+                    if (listeners.isEmpty())
+                    {
+                        watchers.remove(itemId);
+                    }
+                }
+            }
+
+            watched.remove(listener);
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemChanged(Item item, Collection<String> attributes)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemChanged(this, item, attributes);
+            }
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemAdded(Item item)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemAdded(this, item);
+            }
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemRemoved(String itemId)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemRemoved(this, itemId);
+            }
+        }
+    }
+
+    /**
      * A PairComparator is a way to proxy comparisons to the 'value' of a
      * String, Object paring.
      * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -230,6 +342,18 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
          */
         private final Comparator<T> proxy;
     }
+
+    /**
+     * A map of the itemIds in this store along with who is watching them.
+     * @protectedBy(this)
+     */
+    private final Map<String, Collection<StoreChangeListener<T>>> watchers = new HashMap<String, Collection<StoreChangeListener<T>>>();
+
+    /**
+     * A map of the itemIds in this store along with who is watching them.
+     * @protectedBy(this)
+     */
+    private final Map<StoreChangeListener<T>, Collection<String>> watched = new HashMap<StoreChangeListener<T>, Collection<String>>();
 
     /**
      * The type that this StoreProvider uses

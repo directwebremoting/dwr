@@ -26,6 +26,7 @@ if (!dojo._hasResource["DwrStore"]) {
     autoIdPrefix:"_auto_",
 
     /**
+     * Create a new data store
      * @param {String} storeId The id of StoreProvider as provided to DWR in
      * org.directwebremoting.datasync.Directory.register(storeId, store);
      * @param {Object} params An optional set of customizations to how the data
@@ -38,7 +39,8 @@ if (!dojo._hasResource["DwrStore"]) {
       if (storeId == null || typeof storeId != "string") {
         throw new Error("storeId is null or not a string");
       }
-      this.dwrCache = new dwr.data.Cache(storeId, params);
+      var listener = (params && params.subscribe) ? this : null;
+      this.dwrCache = new dwr.data.Cache(storeId, listener);
 
       // Important: you'll need to know this to grok the rest of the file.
       // We store data in a set of entries. What we give to the outside as an
@@ -68,6 +70,9 @@ if (!dojo._hasResource["DwrStore"]) {
 
       // Should we check the server for fetchItemByIdentity? I think we don't need to.
       this.fastFetchItemByIdentity = true;
+
+      // If we are doing subscription, we want to pass to the server this by reference not by value
+      this.$dwrByRef = true;
     },
 
     /** @see dojo.data.api.Read.getFeatures */
@@ -324,10 +329,11 @@ if (!dojo._hasResource["DwrStore"]) {
         console.log("Warning server changes to " + item.itemId + " override local changes");
       }
       this._importItem(item);
+      var store = this;
       if (dojo.isFunction(this.onSet)) {
         dojo.forEach(changedAttributes, function(attribute) {
-          var oldValue = this._getAttributeValue(item.itemId, attribute);
-          this.onSet.call(item.itemId, attribute, oldValue, item.data[attribute]);
+          var oldValue = store._getAttributeValue(item.itemId, attribute);
+          store.onSet.call(item.itemId, attribute, oldValue, item.data[attribute]);
         });
       }
     },

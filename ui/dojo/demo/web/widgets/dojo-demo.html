@@ -27,6 +27,7 @@
     dwrStore = new DwrStore("testServerData", { subscribe:true });
     grid = dijit.byId("grid");
     grid.setStore(dwrStore);
+    dwr.engine.setActiveReverseAjax(true);
   });
 
   addRow = function(){
