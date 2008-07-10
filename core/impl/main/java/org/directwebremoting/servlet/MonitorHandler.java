@@ -36,7 +36,6 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -53,7 +52,7 @@ public class MonitorHandler implements Handler
         if (!debug)
         {
             log.warn("Failed attempt to access test pages outside of debug mode. Set the debug init-parameter to true to enable.");
-            throw new SecurityException(Messages.getString("DefaultDebugPageGenerator.AccessDenied"));
+            throw new SecurityException("Access to debug pages is denied.");
         }
 
         response.setContentType(MimeConstants.MIME_HTML);

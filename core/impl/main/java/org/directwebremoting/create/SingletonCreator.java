@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A {@link Creator} that uses an instance method to create singletons.
@@ -45,7 +44,7 @@ public class SingletonCreator extends AbstractCreator implements Creator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname));
+            throw new IllegalArgumentException("Class not found: " + classname, ex);
         }
     }
 
@@ -61,8 +60,7 @@ public class SingletonCreator extends AbstractCreator implements Creator
         }
         catch (Exception ex)
         {
-            // JDK5: We should really be passing the exception on
-            throw new InstantiationException(Messages.getString("Creator.IllegalAccess"));
+            throw new InstantiationException(ex.getMessage());
         }
     }
 

@@ -46,11 +46,9 @@ import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
-import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.DebuggingPrintWriter;
-import org.directwebremoting.util.Messages;
 
 /**
  * A Marshaller that output plain Javascript.
@@ -59,6 +57,9 @@ import org.directwebremoting.util.Messages;
  * considered closely related and it is important to understand what one does
  * while editing the other.
  * TODO: Double check that getting rid of the check with accessControl is right
+ * TODO: This class used to not the importance of synchronizing on 'out' in
+ * marshallOutbound, and then not do it. Should we being doing it or was the
+ * note superseded?
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class BaseCallHandler extends BaseDwrpHandler
@@ -70,7 +71,24 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     {
         try
         {
-            Calls calls = convertToCalls(request);
+            RealWebContext webContext = (RealWebContext) WebContextFactory.get();
+            CallBatch batch = new CallBatch(request);
+
+            // Security checks first, once we've parsed the input
+            checkGetAllowed(batch);
+            checkNotCsrfAttack(request, batch);
+
+            // Save the batch so marshallException can get at a batch id
+            request.setAttribute(ATTRIBUTE_BATCH, batch);
+
+            String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
+            webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
+
+            // Various bits of the CallBatch need to be stashed away places
+            storeParsedRequest(request, webContext, batch);
+
+            Calls calls = marshallInbound(batch);
+
             Replies replies = remoter.execute(calls);
             marshallOutbound(replies, response);
         }
@@ -78,31 +96,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         {
             marshallException(request, response, ex);
         }
-    }
-
-    /**
-     * Take an HttpServletRequest and create from it a Calls object.
-     * @param request The input data
-     * @return A Calls object that represents the data in the request
-     */
-    public Calls convertToCalls(HttpServletRequest request) throws ServerException
-    {
-        RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-        CallBatch batch = new CallBatch(request);
-
-        // Security checks first, once we've parsed the input
-        checkGetAllowed(batch);
-        checkNotCsrfAttack(request, batch);
-
-        // Save the batch so marshallException can get at a batch id
-        request.setAttribute(ATTRIBUTE_BATCH, batch);
-
-        String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
-        webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
-
-        // Various bits of the CallBatch need to be stashed away places
-        storeParsedRequest(request, webContext, batch);
-        return marshallInbound(batch);
     }
 
     /**
@@ -157,13 +150,11 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             Method method = call.getMethod();
             if (method == null)
             {
-                String name = call.getScriptName() + '.' + call.getMethodName();
-                String error = Messages.getString("BaseCallHandler.UnknownMethod", name);
-                log.warn("Marshalling exception: " + error);
+                log.warn("No methods to match " + call.getScriptName() + '.' + call.getMethodName());
 
                 call.setMethod(null);
                 call.setParameters(null);
-                call.setException(new IllegalArgumentException(error));
+                call.setException(new IllegalArgumentException("Missing method or missing parameter converters"));
 
                 continue callLoop;
             }
@@ -256,7 +247,21 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      */
     public void marshallOutbound(Replies replies, HttpServletResponse response) throws IOException
     {
-        // Get the output stream and setup the mime type
+        RealScriptSession scriptSession = null;
+        try
+        {
+            scriptSession = (RealScriptSession) WebContextFactory.get().getScriptSession();
+        }
+        catch (SecurityException ex)
+        {
+            // If this is a call to System.pageUnloaded() or if something else
+            // has caused the ScriptSession to expire, then we shouldn't do any
+            // output, and just ignore the write. Officially there isn't
+            // anything to write to anyway.
+            return;
+        }
+
+        // Basic setup
         response.setContentType(getOutboundMimeType());
         PrintWriter out;
         if (debugScriptOutput && log.isDebugEnabled())
@@ -283,11 +288,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
         // Send the script prefix (if any)
         sendOutboundScriptPrefix(out, replies.getBatchId());
-
-        // From the call to addScriptConduit() there could be 2 threads writing
-        // to 'out' so we synchronize on 'out' to make sure there are no
-        // clashes
-        RealScriptSession scriptSession = (RealScriptSession) WebContextFactory.get().getScriptSession();
 
         out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
         scriptSession.writeScripts(conduit);

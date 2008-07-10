@@ -20,7 +20,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A simple implementation of the basic parts of Creator
@@ -117,7 +116,7 @@ public abstract class AbstractCreator implements Creator
     {
         if (!cscope.equals(SCRIPT) && !cscope.equals(PAGE) && !cscope.equals(REQUEST) && !cscope.equals(SESSION) && !cscope.equals(APPLICATION))
         {
-            throw new IllegalArgumentException(Messages.getString("AbstractCreator.IllegalScope", cscope));
+            throw new IllegalArgumentException("Illegal scope '" + cscope + "'. application, session, request, script or page required.");
         }
     }
 

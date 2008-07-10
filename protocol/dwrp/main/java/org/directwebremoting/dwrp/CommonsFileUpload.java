@@ -30,7 +30,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.directwebremoting.event.SessionProgressListener;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ServerException;
-import org.directwebremoting.util.Messages;
 
 /**
  * An implementation of {@link FileUpload} that uses Apache Commons FileUpload.
@@ -86,9 +85,9 @@ public class CommonsFileUpload implements FileUpload
             
             return map;
         }
-        catch (FileUploadException e)
+        catch (FileUploadException ex)
         {
-            throw new ServerException(Messages.getString("ParseUtil.InputReadFailed"), e);
+            throw new ServerException("Input read failed", ex);
         }
     }
 

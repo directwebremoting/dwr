@@ -15,12 +15,9 @@
  */
 package org.directwebremoting.create;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A creator that simply uses the default constructor each time it is called.
@@ -44,12 +41,11 @@ public class NewCreator extends AbstractCreator implements Creator
         }
         catch (ExceptionInInitializerError ex)
         {
-            log.warn("Class load error", ex);
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassLoadError", classname));
+            throw new IllegalArgumentException("Error loading class: " + classname, ex);
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname));
+            throw new IllegalArgumentException("Class not found: " + classname, ex);
         }
     }
 
@@ -72,8 +68,7 @@ public class NewCreator extends AbstractCreator implements Creator
         }
         catch (IllegalAccessException ex)
         {
-            // JDK5: We should really be passing the exception on
-            throw new InstantiationException(Messages.getString("Creator.IllegalAccess"));
+            throw new InstantiationException("Illegal Access to default constructor on " + clazz.getName());
         }
     }
 
@@ -94,11 +89,6 @@ public class NewCreator extends AbstractCreator implements Creator
     {
         return getType().getName();
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(NewCreator.class);
 
     /**
      * The type of the class that we are creating

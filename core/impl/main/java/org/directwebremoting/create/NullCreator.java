@@ -18,7 +18,6 @@ package org.directwebremoting.create;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A creator that simply uses the default constructor each time it is called.
@@ -38,7 +37,7 @@ public class NullCreator extends AbstractCreator implements Creator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname));
+            throw new IllegalArgumentException("Class not found: " + classname, ex);
         }
     }
 
@@ -55,7 +54,7 @@ public class NullCreator extends AbstractCreator implements Creator
      */
     public Object getInstance() throws InstantiationException
     {
-        throw new InstantiationException(Messages.getString("NullCreator.DontCallMe"));
+        throw new InstantiationException("The NullCreator was asked to create an object. It should only be used for static methods or with a pre-populated scope.");
     }
 
     private Class<?> clazz;
