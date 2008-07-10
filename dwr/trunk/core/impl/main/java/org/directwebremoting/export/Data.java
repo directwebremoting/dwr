@@ -40,11 +40,11 @@ public class Data
      * Provide access to a single item of data given its ID.
      * @param storeId The ID of the store into which we look for the item
      * @param itemId The ID of the item to retrieve from the store
-     * @param receiver The client side interface to pass async updates to.
+     * @param listener The client side interface to pass async updates to.
      * Will be <code>null</code> if no async updates are required
      * @return The found item, or null if one was not found.
      */
-    public Item viewItem(String storeId, String itemId, StoreChangeListener<Object> receiver)
+    public Item viewItem(String storeId, String itemId, StoreChangeListener<Object> listener)
     {
         StoreProvider<Object> provider = Directory.getRegistration(storeId, Object.class);
         if (provider == null)
@@ -52,13 +52,14 @@ public class Data
             throw new DwrConvertedException("clientId not found");
         }
 
-        if (receiver != null)
+        if (listener != null)
         {
-            // TODO: implement
-            throw new DwrConvertedException("subscribe to a single object not supported yet");
+            return provider.viewItem(itemId, listener);
         }
-
-        return provider.get(itemId);
+        else
+        {
+            return provider.viewItem(itemId);
+        }
     }
 
     /**
@@ -72,10 +73,10 @@ public class Data
      * the call will be ignored. This behavior may change in the future and
      * should <strong>not</strong> be relied upon.
      * @param region For field documentation see {@link StoreRegion}.
-     * @param receiver The client side interface to pass async updates to.
+     * @param listener The client side interface to pass async updates to.
      * Will be <code>null</code> if no async updates are required
      */
-    public MatchedItems viewRegion(String storeId, StoreRegion region, StoreChangeListener<Object> receiver)
+    public MatchedItems viewRegion(String storeId, StoreRegion region, StoreChangeListener<Object> listener)
     {
         StoreProvider<Object> provider = Directory.getRegistration(storeId, Object.class);
         if (provider == null)
@@ -88,14 +89,14 @@ public class Data
             region = new StoreRegion();
         }
 
-        if (receiver != null)
+        if (listener != null)
         {
-            provider.unsubscribe(receiver);
-            return provider.subscribe(region, receiver);
+            provider.unsubscribe(listener);
+            return provider.viewRegion(region, listener);
         }
         else
         {
-            return provider.view(region);
+            return provider.viewRegion(region);
         }
     }
 

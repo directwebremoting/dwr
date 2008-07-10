@@ -19,10 +19,10 @@ import java.util.List;
 
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.ItemUpdate;
+import org.directwebremoting.io.MatchedItems;
 import org.directwebremoting.io.RawData;
 import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.io.StoreRegion;
-import org.directwebremoting.io.MatchedItems;
 
 /**
  * A StoreProvider is something like a {@link java.util.Map} where the API
@@ -40,6 +40,43 @@ import org.directwebremoting.io.MatchedItems;
  */
 public interface StoreProvider<T>
 {
+    /**
+     * Similar to {@link java.util.Map#get} in fetching items from a Store.
+     * @param itemId The ID of the item to fetch
+     * @return The matched item, or null if it was not found
+     */
+    Item viewItem(String itemId);
+
+    /**
+     * Similar to {@link java.util.Map#get} in fetching items from a Store, and
+     * request to stay updated to changes in the region.
+     * @param itemId The ID of the item to fetch
+     * @param listener The listener to be notified of changes
+     * @return The matched item, or null if it was not found
+     */
+    Item viewItem(String itemId, StoreChangeListener<T> listener);
+
+    /**
+     * Extract the data referred to by the given region.
+     * @param region A set of filter and sort criteria to restrict the fetched data
+     */
+    MatchedItems viewRegion(StoreRegion region);
+
+    /**
+     * Extract the data referred to by the given region, and request to stay
+     * updated to changes in the region.
+     * @param region A set of filter and sort criteria to restrict the fetched data
+     * @param listener The listener to be notified of changes
+     * @return Data that matches the filtering specified in the region.
+     */
+    MatchedItems viewRegion(StoreRegion region, StoreChangeListener<T> listener);
+
+    /**
+     * Remove the declaration of interest previously expressed.
+     * @param listener The listener that should no longer be notified
+     */
+    void unsubscribe(StoreChangeListener<T> listener);
+
     /**
      * Similar to {@link java.util.Map#put} in adding items to a Store.
      * A value of null is equivalent to removing the item from the store.
@@ -59,33 +96,6 @@ public interface StoreProvider<T>
      * @param value The new object to be added to the store
      */
     void put(String itemId, T value);
-
-    /**
-     * Similar to {@link java.util.Map#get} in fetching items from a Store.
-     * @param itemId The ID of the item to fetch
-     * @return The matched item, or null if it was not found
-     */
-    Item get(String itemId);
-
-    /**
-     * Extract the data referred to by the given region.
-     * @param region A set of filter and sort criteria to restrict the fetched data
-     */
-    MatchedItems view(StoreRegion region);
-
-    /**
-     * Extract the data referred to by the given region, and request to stay
-     * updated to changes in the region.
-     * @param region A set of filter and sort criteria to restrict the fetched data
-     * @return Data that matches the filtering specified in the region.
-     */
-    MatchedItems subscribe(StoreRegion region, StoreChangeListener<T> li);
-
-    /**
-     * Remove the declaration of interest previously expressed.
-     * @param li The listener that should no longer be notified
-     */
-    void unsubscribe(StoreChangeListener<T> li);
 
     /**
      * Make a series of updates to items in the store.

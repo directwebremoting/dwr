@@ -130,7 +130,8 @@ public class EnginePrivate extends ScriptProxy
     /**
      * Call dwr.engine.remote.executeFunction() in the browser
      * @param id The registered function name
-     * @param params The data to pass to the function
+     * @param propertyName The name of the property to alter on the client object
+     * @param data The new value for the client object property
      * @return The script to send to the browser
      */
     public static ScriptBuffer getRemoteSetObjectScript(String id, String propertyName, Object data)

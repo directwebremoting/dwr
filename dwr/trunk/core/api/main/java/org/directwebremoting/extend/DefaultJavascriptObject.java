@@ -42,6 +42,21 @@ public class DefaultJavascriptObject implements JavascriptObject, InvocationHand
      */
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
     {
+        if (method.getName().equals("equals") && args.length == 1)
+        {
+            return equals(args[0]);
+        }
+
+        if (method.getName().equals("hashCode") && (args == null || args.length == 0))
+        {
+            return hashCode();
+        }
+
+        if (method.getName().equals("toString") && (args == null || args.length == 0))
+        {
+            return toString();
+        }
+
         ScriptBuffer script = EnginePrivate.getRemoteExecuteObjectScript(id, method.getName(), args);
         session.addScript(script);
         return null;
@@ -81,7 +96,7 @@ public class DefaultJavascriptObject implements JavascriptObject, InvocationHand
     @Override
     public String toString()
     {
-        return "browser[" + session.getId() + "].functions[" + id + "](...)";
+        return "browser[" + session.getId() + "].object[" + id + "](...)";
     }
 
     /* (non-Javadoc)

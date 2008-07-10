@@ -672,7 +672,7 @@ if (typeof this['dwr'] == 'undefined') {
      */
     handleObjectCall:function(id, methodName, args) {
       var obj = dwr.engine.serialize.remoteFunctions[id];
-      obj[methodName].apply(window, args);
+      obj[methodName].apply(obj, args);
     },
 
     /**
@@ -892,11 +892,10 @@ if (typeof this['dwr'] == 'undefined') {
         break;
       case "object":
         var ref = dwr.engine.serialize.lookup(referto, data, name);
-        if (ref) {
-          batch.map[name] = ref;
-        }
         var objstr = Object.prototype.toString.call(data);
-        if (objstr == "[object String]") batch.map[name] = "String:" + encodeURIComponent(data);
+        if (data.$dwrByRef) batch.map[name] = dwr.engine.serialize.convertByReference(batch, referto, data, name, depth + 1);
+        else if (ref != null) batch.map[name] = ref;
+        else if (objstr == "[object String]") batch.map[name] = "String:" + encodeURIComponent(data);
         else if (objstr == "[object Boolean]") batch.map[name] = "Boolean:" + data;
         else if (objstr == "[object Number]") batch.map[name] = "Number:" + data;
         else if (objstr == "[object Date]") batch.map[name] = "Date:" + data.getTime();
@@ -919,10 +918,7 @@ if (typeof this['dwr'] == 'undefined') {
       case "function":
         // Ignore functions unless they are directly passed in
         if (depth == 0) {
-          var funcId = "f" + dwr.engine.serialize.funcId;
-          dwr.engine.serialize.remoteFunctions[funcId] = data;
-          batch.map[name] = "function:" + funcId;
-          dwr.engine.serialize.funcId++;
+          batch.map[name] = dwr.engine.serialize.convertByReference(batch, referto, data, name, depth + 1);
         }
         break;
       default:
@@ -930,6 +926,18 @@ if (typeof this['dwr'] == 'undefined') {
         batch.map[name] = "default:" + data;
         break;
       }
+    },
+
+    /**
+     * Marshall an object by reference
+     * @private
+     * @see dwr.engine.serialize.convert() for parameter details
+     */
+    convertByReference:function(batch, referto, data, name, depth) {
+      var funcId = "f" + dwr.engine.serialize.funcId;
+      dwr.engine.serialize.remoteFunctions[funcId] = data;
+      dwr.engine.serialize.funcId++;
+      return "byref:" + funcId;
     },
 
     /**
@@ -971,7 +979,7 @@ if (typeof this['dwr'] == 'undefined') {
     },
 
     /**
-     * Marshall an object
+     * Marshall an object by value
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */

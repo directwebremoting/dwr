@@ -28,6 +28,9 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 
 /**
+ * A converter that works to create objects that implement some interface and
+ * proxies the method calls back to the client via a
+ * {@link org.directwebremoting.io.JavascriptObject}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class ProxyInterfaceConverter extends AbstractConverter implements Converter
