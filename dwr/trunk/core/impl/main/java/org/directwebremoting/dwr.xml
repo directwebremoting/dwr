@@ -40,7 +40,9 @@
     <converter id="context" class="org.directwebremoting.convert.ContextConverter"/>
     <converter id="stringWrapper" class="org.directwebremoting.convert.StringWrapperConverter"/>
     <converter id="raw" class="org.directwebremoting.convert.RawConverter"/>
-    <converter id="function" class="org.directwebremoting.convert.JavascriptFunctionConverter"/>
+    <converter id="proxyFunction" class="org.directwebremoting.convert.JavascriptFunctionConverter"/>
+    <converter id="proxyObject" class="org.directwebremoting.convert.JavascriptObjectConverter"/>
+    <converter id="proxyInterface" class="org.directwebremoting.convert.ProxyInterfaceConverter"/>
 
     <converter id="jsx3uri" class="jsx3.net.URIResolverConverter"/>
     <converter id="jsx3doc" class="jsx3.xml.CdfDocumentConverter"/>
@@ -125,9 +127,14 @@
     <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
     <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
     <convert converter="bean" match="org.directwebremoting.io.Item"/>
-    <convert converter="function" match="org.directwebremoting.io.JavascriptFunction"/>
+    <convert converter="bean" match="org.directwebremoting.io.ItemUpdate"/>
+    <convert converter="bean" match="org.directwebremoting.io.MatchedItems"/>
+    <convert converter="proxyFunction" match="org.directwebremoting.io.JavascriptFunction"/>
+    <convert converter="proxyObject" match="org.directwebremoting.io.JavascriptObject"/>
     <convert converter="raw" match="org.directwebremoting.io.RawData"/>
     <convert converter="bean" match="org.directwebremoting.io.StoreRegion"/>
+    <convert converter="null" match="org.directwebremoting.io.StoreChangeListener"/>
+
     <!--
       TODO: enable constructor injection?
       <param name="useConstructor" value="int start, int count, List sortCriteria, Map filter"/>

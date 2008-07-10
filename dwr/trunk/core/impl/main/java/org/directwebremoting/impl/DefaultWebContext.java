@@ -158,6 +158,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         RealScriptSession scriptSession = manager.getScriptSession(scriptSessionId, null, null);
         if (scriptSession == null)
         {
+            log.debug("Script session not valid:" + scriptSessionId);
             throw new SecurityException("Expected script session to exist");
         }
 

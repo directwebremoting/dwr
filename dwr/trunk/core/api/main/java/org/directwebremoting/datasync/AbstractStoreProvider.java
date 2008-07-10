@@ -17,6 +17,9 @@ package org.directwebremoting.datasync;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +29,8 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.RawData;
+import org.directwebremoting.io.Item;
+import org.directwebremoting.io.MatchedItems;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
@@ -50,6 +55,22 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         T value = convert(rawData);
         put(itemId, value);
     }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.datasync.StoreProvider#get(java.lang.String)
+     */
+    public Item get(String itemId)
+    {
+        T object = getObject(itemId);
+        return new Item(itemId, object);
+    }
+
+    /**
+     * Get an object from the store without an Item wrapper.
+     * @param itemId The ID of the item to fetch
+     * @return The item, or null if one was not found.
+     */
+    protected abstract T getObject(String itemId);
 
     /**
      * Return true iff the <code>value</code> passed in contains a property
@@ -98,6 +119,38 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     }
 
     /**
+     * Chop out the part we are interested in and return the data converted to
+     * a MatchedItems data set destined for the web.
+     * @param sortedData The complete set of data we're extracting from
+     * @param start The initial index to start from.
+     * @param count The number of data items to return (-1 means, to the end)
+     * @return Data for the web
+     */
+    protected static <U> MatchedItems selectMatchedItems(SortedSet<Pair<String, U>> sortedData, int start, int count)
+    {
+        log.debug("Selecting data from " + sortedData.size() + " items, starting at " + start + " for " + count + " items.");
+
+        List<Item> matches = new ArrayList<Item>();
+        int i = 0;
+        for (Pair<String, U> pair : sortedData)
+        {
+            if (i >= (start + count) && count != -1)
+            {
+                break;
+            }
+
+            if (i >= start)
+            {
+                matches.add(new Item(pair.left, pair.right));
+            }
+
+            i++;
+        }
+
+        return new MatchedItems(matches, sortedData.size());
+    }
+
+    /**
      * Convert from {@link RawData} to the type that this {@link StoreProvider}
      * supports.
      * @param rawData The data from the Internet
@@ -105,6 +158,11 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
      */
     protected T convert(RawData rawData)
     {
+        if (rawData == null)
+        {
+            return null;
+        }
+
         if (converterManager == null)
         {
             converterManager = ServerContextFactory.get().getContainer().getBean(ConverterManager.class);
@@ -115,6 +173,32 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         TypeHintContext typeHintContext = new TypeHintContext(converterManager, null, 0);
 
         T value = converterManager.convertInbound(type, inboundVariable, typeHintContext);
+        return value;
+    }
+
+    /**
+     * Convert from {@link RawData} to the type that this {@link StoreProvider}
+     * supports.
+     * @param rawData The data from the Internet
+     * @return An object of the type supported by this store
+     */
+    protected Object convert(RawData rawData, Class<?> toType)
+    {
+        if (rawData == null)
+        {
+            return null;
+        }
+
+        if (converterManager == null)
+        {
+            converterManager = ServerContextFactory.get().getContainer().getBean(ConverterManager.class);
+        }
+
+        RealRawData realRawData = (RealRawData) rawData;
+        InboundVariable inboundVariable = realRawData.getInboundVariable();
+        TypeHintContext typeHintContext = new TypeHintContext(converterManager, null, 0);
+
+        Object value = converterManager.convertInbound(toType, inboundVariable, typeHintContext);
         return value;
     }
 

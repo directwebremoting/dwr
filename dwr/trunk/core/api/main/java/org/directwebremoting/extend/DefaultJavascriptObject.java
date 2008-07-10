@@ -15,9 +15,12 @@
  */
 package org.directwebremoting.extend;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.io.JavascriptFunction;
+import org.directwebremoting.io.JavascriptObject;
 
 /**
  * Represents a callback function, passed in from a client for later execution.
@@ -26,20 +29,40 @@ import org.directwebremoting.io.JavascriptFunction;
  * execution scoping provided by {@link org.directwebremoting.Browser}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultJavascriptFunction implements JavascriptFunction
+public class DefaultJavascriptObject implements JavascriptObject, InvocationHandler
 {
-    public DefaultJavascriptFunction(ScriptSession session, String id)
+    public DefaultJavascriptObject(ScriptSession session, String id)
     {
         this.session = session;
         this.id = id;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.io.JavascriptFunction#execute(java.lang.Object[])
+     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
      */
-    public void execute(Object... params)
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
     {
-        ScriptBuffer script = EnginePrivate.getRemoteExecuteFunctionScript(id, params);
+        ScriptBuffer script = EnginePrivate.getRemoteExecuteObjectScript(id, method.getName(), args);
+        session.addScript(script);
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.io.JavascriptObject#execute(String, java.lang.Object[])
+     */
+    public void execute(String methodName, Object... params)
+    {
+        ScriptBuffer script = EnginePrivate.getRemoteExecuteObjectScript(id, methodName, params);
+        session.addScript(script);
+    }
+
+    /**
+     * Add a property to a JavaScript object. The type of the data must be
+     * convertible by DWR.
+     */
+    public void set(String propertyName, Object data)
+    {
+        ScriptBuffer script = EnginePrivate.getRemoteSetObjectScript(id, propertyName, data);
         session.addScript(script);
     }
 
@@ -50,15 +73,6 @@ public class DefaultJavascriptFunction implements JavascriptFunction
     {
         ScriptBuffer script = EnginePrivate.getRemoteCloseFunctionScript(id);
         session.addScript(script);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.io.JavascriptFunction#executeAndClose(java.lang.Object[])
-     */
-    public void executeAndClose(Object... params)
-    {
-        execute(params);
-        close();
     }
 
     /* (non-Javadoc)
@@ -86,7 +100,7 @@ public class DefaultJavascriptFunction implements JavascriptFunction
             return false;
         }
 
-        DefaultJavascriptFunction that = (DefaultJavascriptFunction) obj;
+        DefaultJavascriptObject that = (DefaultJavascriptObject) obj;
 
         if (!this.session.equals(that.session))
         {
@@ -107,19 +121,19 @@ public class DefaultJavascriptFunction implements JavascriptFunction
     @Override
     public int hashCode()
     {
-        int hash = 523;
-        hash += (id == null) ? 392 : id.hashCode();
-        hash += (session == null) ? 894 : session.hashCode();
+        int hash = 345;
+        hash += (id == null) ? 768 : id.hashCode();
+        hash += (session == null) ? 546 : session.hashCode();
         return hash;
     }
 
     /**
      * The browser window that owns this function
      */
-    private final ScriptSession session;
+    private ScriptSession session;
 
     /**
      * The id into the function cache
      */
-    private final String id;
+    private String id;
 }

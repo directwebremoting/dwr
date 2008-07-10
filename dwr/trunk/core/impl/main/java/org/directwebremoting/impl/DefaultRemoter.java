@@ -399,7 +399,7 @@ public class DefaultRemoter implements Remoter
     {
         // We set this up here because if something goes wrong we want to know
         // if there are any LogAjaxFilter implementations to provide any logging
-        List<AjaxFilter> filters = null;
+        List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
 
         try
         {
@@ -516,9 +516,7 @@ public class DefaultRemoter implements Remoter
             }
 
             // Execute the filter chain method.toString()
-            filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
             final Iterator<AjaxFilter> it = filters.iterator();
-
             AjaxFilterChain chain = new AjaxFilterChain()
             {
                 public Object doFilter(Object obj, Method meth, Object[] params) throws Exception

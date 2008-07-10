@@ -36,9 +36,9 @@ public interface RealWebContext extends WebContext
      * be totally innocent. So this method will create a new script session and
      * insert a script into the script session so that the page becomes synced
      * with the new ID at the earliest possible opportunity.
-     * @param page The URL of the current page
-     * @param scriptSessionId The session id passed in by the browser
+     * @param sentPage The URL of the current page
+     * @param sentScriptId The session id passed in by the browser
      * @param windowName Reverse Ajax uses window.name to avoid 2 connection limit
      */
-    void checkPageInformation(String page, String scriptSessionId, String windowName);
+    void checkPageInformation(String sentPage, String sentScriptId, String windowName);
 }

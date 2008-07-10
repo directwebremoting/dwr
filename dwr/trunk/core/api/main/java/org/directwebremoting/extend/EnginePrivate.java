@@ -115,6 +115,32 @@ public class EnginePrivate extends ScriptProxy
     }
 
     /**
+     * Call dwr.engine.remote.executeFunction() in the browser
+     * @param id The registered function name
+     * @param params The data to pass to the function
+     * @return The script to send to the browser
+     */
+    public static ScriptBuffer getRemoteExecuteObjectScript(String id, String methodName, Object[] params)
+    {
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendCall("dwr.engine.remote.handleObjectCall", id, methodName, params);
+        return script;
+    }
+
+    /**
+     * Call dwr.engine.remote.executeFunction() in the browser
+     * @param id The registered function name
+     * @param params The data to pass to the function
+     * @return The script to send to the browser
+     */
+    public static ScriptBuffer getRemoteSetObjectScript(String id, String propertyName, Object data)
+    {
+        ScriptBuffer script = new ScriptBuffer();
+        script.appendCall("dwr.engine.remote.handleSetCall", id, propertyName, data);
+        return script;
+    }
+
+    /**
      * Call dwr.engine.remote.closeFunction() in the browser
      * @param id The registered function name
      * @return The script to send to the browser

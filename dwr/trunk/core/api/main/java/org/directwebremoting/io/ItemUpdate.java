@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.io;
 
-import java.util.Map;
-
 /**
  * Analogous to a {@link java.util.Map.Entry} that we use to pass objects that
  * have been stored in a {@link org.directwebremoting.datasync.StoreProvider} to
@@ -25,24 +23,25 @@ import java.util.Map;
  * of pessimistic locking to updates.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Item
+public class ItemUpdate
 {
     /**
      * Create an Item with its ID and data.
      */
-    public Item(String itemId, Object data)
+    public ItemUpdate(String itemId, String attribute, RawData newValue)
     {
         this.itemId = itemId;
-        this.data = data;
+        this.attribute = attribute;
+        this.newValue = newValue;
     }
 
     /**
-     * Create an Item with its ID and data from a {@link java.util.Map.Entry}
+     * For use with setter-injection
+     * @deprecated
      */
-    public Item(Map.Entry<String, Object> entry)
+    @Deprecated
+    public ItemUpdate()
     {
-        this.itemId = entry.getKey();
-        this.data = entry.getValue();
     }
 
     /**
@@ -60,44 +59,47 @@ public class Item
     }
 
     /**
-     * The object that is referred to by the itemId.
-     * @return The real data
+     * Accessor for the primary key for this Object.
+     * @param itemId the new ID for this Item
      */
-    public Object getData()
+    public void setItemId(String itemId)
     {
-        return data;
+        this.itemId = itemId;
     }
 
     /**
-     * Items need labels to support dojo.data.api.Read.getLabel()
-     * By default we just use the itemId, however if the data implements
-     * {@link ExposeToStringToTheOutside} then consider {@link Object#toString()}
-     * to be safe for Internet use.
-     * @return A label for this object
+     * Accessor for the property that we want to change on the Object with the
+     * ID given in <code>itemId</code>.
      */
-    public String getLabel()
+    public String getAttribute()
     {
-        if (data instanceof ExposeToStringToTheOutside)
-        {
-            return data.toString();
-        }
-        else
-        {
-            return itemId;
-        }
+        return attribute;
     }
 
     /**
-     * A marker interface to indicate that {@link Object#toString()} does not
-     * have any information in it that you don't want to be exposed to the
-     * Internet.
+     * Accessor for the property that we want to change.
      */
-    public static interface ExposeToStringToTheOutside
+    public void setAttribute(String attribute)
     {
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        String toString();
+        this.attribute = attribute;
+    }
+
+    /**
+     * Accessor for the value for the <code>attribute</code> that we want to
+     * change on the Object with the ID given in <code>itemId</code>.
+     */
+    public RawData getNewValue()
+    {
+        return newValue;
+    }
+
+    /**
+     * Accessor for the value for the <code>attribute</code> that we want to
+     * change.
+     */
+    public void setNewValue(RawData newValue)
+    {
+        this.newValue = newValue;
     }
 
     /* (non-Javadoc)
@@ -130,7 +132,7 @@ public class Item
             return false;
         }
 
-        Item that = (Item) obj;
+        ItemUpdate that = (ItemUpdate) obj;
 
         if (!this.itemId.equals(that.itemId))
         {
@@ -143,10 +145,15 @@ public class Item
     /**
      * @see #getItemId
      */
-    private final String itemId;
+    private String itemId;
 
     /**
-     * @see #getData
+     * @see #getAttribute
      */
-    private final Object data;
+    private String attribute;
+
+    /**
+     * @see #getNewValue
+     */
+    private RawData newValue;
 }

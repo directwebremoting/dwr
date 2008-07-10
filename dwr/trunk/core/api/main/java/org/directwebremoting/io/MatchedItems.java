@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.datasync;
+package org.directwebremoting.io;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.directwebremoting.io.Item;
-
 /**
  * MatchedItems is simply a holder for a list of matched {@link Item}s and a
- * total match count, used by {@link StoreProvider#subscribe} and
- * {@link StoreProvider#view}
+ * total match count, used by {@link org.directwebremoting.datasync.StoreProvider#subscribe} and
+ * {@link org.directwebremoting.datasync.StoreProvider#view}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class MatchedItems
