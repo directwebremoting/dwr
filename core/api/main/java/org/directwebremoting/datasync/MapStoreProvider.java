@@ -18,8 +18,10 @@ package org.directwebremoting.datasync;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +30,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.directwebremoting.io.Item;
+import org.directwebremoting.io.ItemUpdate;
+import org.directwebremoting.io.MatchedItems;
 import org.directwebremoting.io.SortCriterion;
+import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.io.StoreRegion;
+import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
 /**
@@ -61,7 +67,6 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
      * along with some sort criteria to be used when the client does not specify
      * sorting.
      */
-    @SuppressWarnings("unchecked")
     public MapStoreProvider(Map<String, T> map, Class<T> type, List<SortCriterion> defaultCriteria)
     {
         super(type);
@@ -69,42 +74,24 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
 
         Index index = new Index(baseRegion, map);
         data.put(baseRegion, index);
-
-        // We add a dummy subscriber to make sure the data does not get GCed
-        index.addSubscriber(new StoreChangeListener()
-        {
-            public void itemAdded(StoreProvider source, String itemId, Object t) { }
-            public void itemRemoved(StoreProvider source, String itemId, Object t) { }
-            public void itemChanged(StoreProvider source, String itemId, Object t) { }
-        });
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#put(java.lang.String, java.lang.Object)
      */
-    public void put(String itemId, T value)
+    public synchronized void put(String itemId, T value)
     {
-        // TODO: update to mutate the object rather than create
-        if (value == null)
+        for (Index index : data.values())
         {
-            for (Index index : data.values())
-            {
-                index.remove(itemId);
-            }
-        }
-        else
-        {
-            for (Index index : data.values())
-            {
-                index.add(itemId, value);
-            }
+            index.put(itemId, value);
         }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.datasync.StoreProvider#get(java.lang.String)
+     * @see org.directwebremoting.datasync.AbstractStoreProvider#getObject(java.lang.String)
      */
-    public T get(String itemId)
+    @Override
+    protected synchronized T getObject(String itemId)
     {
         return data.get(baseRegion).index.get(itemId);
     }
@@ -112,7 +99,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#view(org.directwebremoting.datasync.StoreRegion)
      */
-    public MatchedItems view(StoreRegion region)
+    public synchronized MatchedItems view(StoreRegion region)
     {
         Index index = getIndex(region);
         return selectMatchedItems(index.getSortedData(), region.getStart(), region.getCount());
@@ -121,52 +108,25 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#subscribe(org.directwebremoting.datasync.StoreRegion, org.directwebremoting.datasync.StoreChangeListener)
      */
-    public MatchedItems subscribe(StoreRegion region, StoreChangeListener<T> li)
+    public synchronized MatchedItems subscribe(StoreRegion region, StoreChangeListener<T> li)
     {
         Index index = getIndex(region);
-        index.addSubscriber(li);
-        return selectMatchedItems(index.getSortedData(), region.getStart(), region.getCount());
+        MatchedItems matchedItems = selectMatchedItems(index.getSortedData(), region.getStart(), region.getCount());
+        Collection<String> itemIds = new HashSet<String>();
+        for (Item item : matchedItems.getViewedMatches())
+        {
+            itemIds.add(item.getItemId());
+        }
+        setWatchedSet(li, itemIds);
+        return matchedItems;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.datasync.StoreProvider#unsubscribe(org.directwebremoting.datasync.StoreChangeListener)
      */
-    public void unsubscribe(StoreRegion region, StoreChangeListener<T> li)
+    public synchronized void unsubscribe(StoreChangeListener<T> li)
     {
-        Index index = getIndex(region);
-        index.removeSubscriber(li);
-    }
-
-    /**
-     * Chop out the part we are interested in and return the data converted to
-     * a MatchedItems data set destined for the web.
-     * @param sortedData The complete set of data we're extracting from
-     * @param start The initial index to start from.
-     * @param count The number of data items to return (-1 means, to the end)
-     * @return Data for the web
-     */
-    private MatchedItems selectMatchedItems(SortedSet<Pair<String, T>> sortedData, int start, int count)
-    {
-        log.debug("Selecting data from " + sortedData.size() + " items, starting at " + start + " for " + count + " items.");
-
-        List<Item> matches = new ArrayList<Item>();
-        int i = 0;
-        for (Pair<String, T> pair : sortedData)
-        {
-            if (i >= (start + count) && count != -1)
-            {
-                break;
-            }
-
-            if (i >= start)
-            {
-                matches.add(new Item(pair.left, pair.right));
-            }
-
-            i++;
-        }
-
-        return new MatchedItems(matches, sortedData.size());
+        setWatchedSet(li, null);
     }
 
     /**
@@ -175,7 +135,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
      * @param region The region to be viewed (we ignore start/end)
      * @return An index that we can use to get a sorted data cache
      */
-    protected Index getIndex(StoreRegion region)
+    protected synchronized Index getIndex(StoreRegion region)
     {
         if (region == null)
         {
@@ -202,12 +162,62 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         return index;
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.datasync.StoreProvider#update(java.util.List)
+     */
+    public synchronized void update(List<ItemUpdate> changes) throws SecurityException
+    {
+        // First off group the changes by ID so we can fire updates together
+        Map<String, List<ItemUpdate>> groupedChanges = new HashMap<String, List<ItemUpdate>>();
+        for (ItemUpdate itemUpdate : changes)
+        {
+            List<ItemUpdate> itemChanges = groupedChanges.get(itemUpdate.getItemId());
+            if (itemChanges == null)
+            {
+                itemChanges = new ArrayList<ItemUpdate>();
+                groupedChanges.put(itemUpdate.getItemId(), itemChanges);
+            }
+            itemChanges.add(itemUpdate);
+        }
+
+        // Make the changes to each item in one go
+        for (Map.Entry<String, List<ItemUpdate>> entry : groupedChanges.entrySet())
+        {
+            T t = getObject(entry.getKey());
+            Collection<String> changedAttributes = new HashSet<String>();
+
+            for (ItemUpdate itemUpdate : changes)
+            {
+                String attribute = itemUpdate.getAttribute();
+                Class<?> convertTo = LocalUtil.getPropertyType(t.getClass(), attribute);
+                Object value = convert(itemUpdate.getNewValue(), convertTo);
+
+                try
+                {
+                    LocalUtil.setProperty(t, attribute, value);
+                    changedAttributes.add(attribute);
+                }
+                catch (SecurityException ex)
+                {
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecurityException(ex);
+                }
+            }
+
+            Item item = new Item(entry.getKey(), t);
+            fireItemChanged(item, changedAttributes);
+        }
+    }
+
     /**
      * Get access to the contained data as a {@link Map}.
      * TODO: This is probably very inefficient - optimize
      * @return An implementation of Map that affect this {@link StoreProvider}
      */
-    public Map<String, T> asMap()
+    public synchronized Map<String, T> asMap()
     {
         final Index original = data.get(baseRegion);
 
@@ -219,7 +229,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
             @Override
             public T put(String itemId, T value)
             {
-                T old = MapStoreProvider.this.get(itemId);
+                T old = getObject(itemId);
                 MapStoreProvider.this.put(itemId, value);
                 return old;
             }
@@ -230,7 +240,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
             @Override
             public T remove(Object itemId)
             {
-                T old = MapStoreProvider.this.get((String) itemId);
+                T old = MapStoreProvider.this.getObject((String) itemId);
                 MapStoreProvider.this.put((String) itemId, (T) null);
                 return old;
             }
@@ -267,7 +277,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                     @Override
                     public boolean add(Entry<String, T> entry)
                     {
-                        T t = MapStoreProvider.this.get(entry.getKey());
+                        T t = getObject(entry.getKey());
                         MapStoreProvider.this.put(entry.getKey(), entry.getValue());
                         return t != null;
                     }
@@ -280,7 +290,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                     {
                         @SuppressWarnings("unchecked")
                         Entry<String, T> entry = (Entry<String, T>) o;
-                        T old = MapStoreProvider.this.get(entry.getKey());
+                        T old = getObject(entry.getKey());
                         MapStoreProvider.this.put(entry.getKey(), (T) null);
                         return old != null;
                     }
@@ -293,7 +303,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
      * @see java.lang.Object#toString()
      */
     @Override
-    public String toString()
+    public synchronized String toString()
     {
         Index original = data.get(baseRegion);
         return "MapStoreProvider[type=" + type.getSimpleName() + ",entries=" + original.index.size() + ",indexes=" + data.size() + "]";
@@ -319,7 +329,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
 
             for (Map.Entry<String, T> entry : map.entrySet())
             {
-                add(entry.getKey(), entry.getValue());
+                put(entry.getKey(), entry.getValue());
             }
         }
 
@@ -336,7 +346,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
 
             for (Pair<String, T> pair : original.sortedData)
             {
-                add(pair);
+                put(pair);
             }
         }
 
@@ -372,61 +382,63 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         {
             T t = index.remove(itemId);
             sortedData.remove(new Pair<String, T>(itemId, t));
-
-            for (StoreChangeListener<T> li : subscribers)
-            {
-                li.itemRemoved(MapStoreProvider.this, itemId, t);
-            }
+            fireItemRemoved(itemId);
         }
 
         /**
          * Add an item thats already in a pair
          */
-        public void add(Pair<String, T> pair)
+        public void put(Pair<String, T> pair)
         {
+            if (pair.right == null)
+            {
+                remove(pair.left);
+                return;
+            }
+
             if (isRelevant(pair.right))
             {
+                boolean existing = index.containsKey(pair.left);
                 sortedData.add(pair);
                 index.put(pair.left, pair.right);
 
-                for (StoreChangeListener<T> li : subscribers)
+                if (existing)
                 {
-                    li.itemAdded(MapStoreProvider.this, pair.left, pair.right);
+                    fireItemChanged(new Item(pair.left, pair.right), null);
+                }
+                else
+                {
+                    fireItemAdded(new Item(pair.left, pair.right));
                 }
             }
         }
 
         /**
-         * Add a entry by separate objects
+         * Add an entry by separate objects
          */
-        public void add(String itemId, T t)
+        public void put(String itemId, T t)
         {
+            if (t == null)
+            {
+                remove(itemId);
+                return;
+            }
+
             if (isRelevant(t))
             {
+                boolean existing = index.containsKey(itemId);
                 sortedData.add(new Pair<String, T>(itemId, t));
                 index.put(itemId, t);
 
-                for (StoreChangeListener<T> li : subscribers)
+                if (existing)
                 {
-                    li.itemAdded(MapStoreProvider.this, itemId, t);
+                    fireItemChanged(new Item(itemId, t), null);
+                }
+                else
+                {
+                    fireItemAdded(new Item(itemId, t));
                 }
             }
-        }
-
-        /**
-         * Add a change subscriber
-         */
-        public void addSubscriber(StoreChangeListener<T> li)
-        {
-            subscribers.add(li);
-        }
-
-        /**
-         * Remove a change subscriber
-         */
-        public void removeSubscriber(StoreChangeListener<T> li)
-        {
-            subscribers.remove(li);
         }
 
         /**
@@ -443,13 +455,8 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         @Override
         public String toString()
         {
-            return "Map.Index[sortedData.size=" + sortedData.size() + ",index.size=" + index.size() + ",subscribers.size=" + subscribers.size() + ",sort=" + sort + ",query=" + query + "]";
+            return "Map.Index[sortedData.size=" + sortedData.size() + ",index.size=" + index.size() + ",sort=" + sort + ",query=" + query + "]";
         }
-
-        /**
-         * The people that want to know about changes
-         */
-        private final List<StoreChangeListener<T>> subscribers = new ArrayList<StoreChangeListener<T>>();
 
         /**
          * The data sorted by object according to our sort criteria
@@ -473,13 +480,113 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
     }
 
     /**
+     *
+     * @param li
+     * @param itemIds
+     */
+    protected synchronized void setWatchedSet(StoreChangeListener<T> li, Collection<String> itemIds)
+    {
+        // Unsubscribe from anything the listener was previously subscribed to
+        for (String itemId : watched.get(li))
+        {
+            Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+            if (listeners != null)
+            {
+                listeners.remove(li);
+                if (listeners.isEmpty())
+                {
+                    watchers.remove(itemId);
+                }
+            }
+        }
+
+        if (itemIds == null || itemIds.isEmpty())
+        {
+            watched.remove(li);
+        }
+        else
+        {
+            watched.put(li, itemIds);
+            for (String itemId : itemIds)
+            {
+                Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+                if (listeners != null)
+                {
+                    listeners = new HashSet<StoreChangeListener<T>>();
+                    watchers.put(itemId, listeners);
+                }
+                listeners.add(li);
+            }
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemChanged(Item item, Collection<String> attributes)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemChanged(this, item, attributes);
+            }
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemAdded(Item item)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemAdded(this, item);
+            }
+        }
+    }
+
+    /**
+     * Cause a listener update
+     */
+    protected synchronized void fireItemRemoved(String itemId)
+    {
+        Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+        if (listeners != null)
+        {
+            for (StoreChangeListener<T> listener : listeners)
+            {
+                listener.itemRemoved(this, itemId);
+            }
+        }
+    }
+
+    /**
+     * A map of the itemIds in this store along with who is watching them.
+     * @protectedBy(this)
+     */
+    protected final Map<String, Collection<StoreChangeListener<T>>> watchers = new HashMap<String, Collection<StoreChangeListener<T>>>();
+
+    /**
+     * A map of the itemIds in this store along with who is watching them.
+     * @protectedBy(this)
+     */
+    protected final Map<StoreChangeListener<T>, Collection<String>> watched = new HashMap<StoreChangeListener<T>, Collection<String>>();
+
+    /**
      * There will always be at least one entry in the {@link #data} map with
-     * this key
+     * this key.
+     * @protectedBy(this)
      */
     protected final StoreRegion baseRegion;
 
     /**
      * We actually store a number of indexes to the real data.
+     * @protectedBy(this)
      */
     protected final Map<StoreRegion, Index> data = new HashMap<StoreRegion, Index>();
 }

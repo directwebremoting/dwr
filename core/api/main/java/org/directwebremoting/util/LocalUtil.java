@@ -15,9 +15,9 @@
  */
 package org.directwebremoting.util;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.io.Closeable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,8 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Various utilities, stuff that we're still surprised isn't in the JDK, and
@@ -441,6 +441,63 @@ public final class LocalUtil
         }
 
         throw new NoSuchMethodException("Failed to find a property called: " + key + " on " + object.getClass().getName());
+    }
+
+    /**
+     * Set a property on an object using reflection
+     * @param real The object type to find the setter on
+     * @param key The name of the property to set.
+     */
+    public static Class<?> getPropertyType(Class<?> real, String key)
+    {
+        // Because getters can't be overloaded, we start by reflecting a getter
+        String getterName = "get" + key.substring(0, 1).toUpperCase(Locale.ENGLISH) + key.substring(1);
+        try
+        {
+            // Can we work with whatever type we were given?
+            Method method = real.getMethod(getterName);
+            return method.getReturnType();
+        }
+        catch (NoSuchMethodException ex)
+        {
+            // No getters
+        }
+
+        // Next we try for a unique setter
+        String setterName = "set" + key.substring(0, 1).toUpperCase(Locale.ENGLISH) + key.substring(1);
+        List<Class<?>> available = new ArrayList<Class<?>>();
+        for (Method setter : real.getMethods())
+        {
+            if (setter.getName().equals(setterName) && setter.getParameterTypes().length == 1)
+            {
+                available.add(setter.getParameterTypes()[0]);
+            }
+        }
+        if (available.isEmpty())
+        {
+            log.debug("Failed to find a setter called: " + setterName + " on " + real.getName());
+            return null;
+        }
+        if (available.size() == 1)
+        {
+            return available.get(0);
+        }
+
+        // So there are multiple setters. We can still look for a field
+        Field[] fields = getAllFields(real);
+        for (Field field : fields)
+        {
+            if (field.getName().equals(key))
+            {
+                // Maybe there are several fields with the same name in an
+                // inheritance hierarchy. And maybe the users get what they
+                // deserve if that's happening ;-)
+                return field.getType();
+            }
+        }
+
+        // Just because there were no matching fields doesn't mean we can't guess
+        return available.get(0);
     }
 
     /**

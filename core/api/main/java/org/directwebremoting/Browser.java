@@ -18,6 +18,8 @@ package org.directwebremoting;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.directwebremoting.io.JavascriptObject;
+
 /**
  * A collection of APIs that manage reverse ajax APIs.
  * <p>See {@link #withAllSessions} for a menu of the various different with*
@@ -174,6 +176,24 @@ public class Browser
         }
 
         return use;
+    }
+
+    /**
+     * If a browser passes an object or function to DWR then DWR may need to
+     * release the reference that DWR keeps. If the server-side manifestation of
+     * this object is a proxy implemented interface, then there is no place for
+     * a close method, so this function allows you to close proxy implemented
+     * interfaces.
+     * @param proxy An proxy created interface implementation from a browser
+     * that we no longer need.
+     */
+    public static void close(Object proxy)
+    {
+        if (proxy instanceof JavascriptObject)
+        {
+            JavascriptObject dproxy = (JavascriptObject) proxy;
+            dproxy.close();
+        }
     }
 
     /**

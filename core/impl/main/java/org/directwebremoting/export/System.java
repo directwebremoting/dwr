@@ -61,7 +61,7 @@ public class System
         WebContext wctx = WebContextFactory.get();
         ScriptSession scriptSession = wctx.getScriptSession();
 
-        log.debug("scriptSession.invalidate(): " + scriptSession.getId());
+        log.debug("pageUnloaded is invalidating scriptSession: " + scriptSession.getId());
         scriptSession.invalidate();
     }
 

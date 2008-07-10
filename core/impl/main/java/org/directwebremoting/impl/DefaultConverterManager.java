@@ -132,6 +132,11 @@ public class DefaultConverterManager implements ConverterManager
     @SuppressWarnings("unchecked")
     public <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext thc) throws ConversionException
     {
+        if (data == null)
+        {
+            return null;
+        }
+
         InboundContext context = data.getContext();
 
         Object converted = context.getConverted(data, paramType);
@@ -158,7 +163,7 @@ public class DefaultConverterManager implements ConverterManager
             if (converter == null)
             {
                 log.error("Missing converter. Context of conversion: " + thc);
-                throw new ConversionException(paramType, "No converter found for '" + paramType + "'");
+                throw new ConversionException(paramType, "No converter found inbound for '" + paramType.getName() + "'");
             }
 
             // We only think about doing a null conversion ourselves once we are

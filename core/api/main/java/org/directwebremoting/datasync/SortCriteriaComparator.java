@@ -32,6 +32,25 @@ public class SortCriteriaComparator<T> implements Comparator<T>
     @SuppressWarnings("unchecked")
     public int compare(T object1, T object2)
     {
+        if (object1 == null)
+        {
+            if (object2 == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        else
+        {
+            if (object2 == null)
+            {
+                return 1;
+            }
+        }
+
         if (object1.getClass() != object2.getClass())
         {
             log.warn("Classes don't match. Results could be unpredictable: " + object1.getClass() + " / " + object2.getClass());

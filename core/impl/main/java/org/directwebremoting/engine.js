@@ -655,13 +655,42 @@ if (typeof this['dwr'] == 'undefined') {
       }
     },
 
+    /**
+     * Called by the server when a JavascriptFunction is executed
+     * @param id The ID of the serialized function
+     * @param args The arguments to pass to the function
+     */
     handleFunctionCall:function(id, args) {
       var func = dwr.engine.serialize.remoteFunctions[id];
       func.apply(window, args);
     },
 
+    /**
+     * Called by the server when a JavascriptFunction is executed
+     * @param id The ID of the serialized function
+     * @param args The arguments to pass to the function
+     */
+    handleObjectCall:function(id, methodName, args) {
+      var obj = dwr.engine.serialize.remoteFunctions[id];
+      obj[methodName].apply(window, args);
+    },
+
+    /**
+     * Called by the server when a JavascriptFunction is executed
+     * @param propertyName The ID of the serialized function
+     * @param data The arguments to pass to the function
+     */
+    handleSetCall:function(id, propertyName, data) {
+      var obj = dwr.engine.serialize.remoteFunctions[id];
+      obj[propertyName] = data;
+    },
+
+    /**
+     * Called by the server when a JavascriptFunction is closed
+     * @param id The ID of the serialized function
+     */
     handleFunctionClose:function(id) {
-      delete dwr.engine.serialize.remoteFunctions.id;
+      delete dwr.engine.serialize.remoteFunctions[id];
     },
 
     /**
@@ -2086,64 +2115,97 @@ if (typeof this['dwr'] == 'undefined') {
  * For full documentation see org.directwebremoting.export.Data
  */
 dwr.data = {
+
   /**
-   * 
+   * This is just documentation that defines how the listener parameter must act
+   * in order to receive asynchronous updates
    */
-  reason: {
-    initial:0, insert:1, update:2, remove:3
+  StoreChangeListener:{
+    /**
+     * Something has removed an item from the store
+     * @param {StoreProvider} source The store from which it was moved
+     * @param {string} itemId The ID of the item
+     */
+    itemRemoved:function(source, itemId) { },
+  
+    /**
+     * Something has added an item to the store
+     * @param {StoreProvider} source The store from which it was moved
+     * @param {Item} item The thing that has changed
+     */
+    itemAdded:function(source, item) { },
+  
+    /**
+     * Something has updated an item in the store
+     * @param {StoreProvider} source The store from which it was moved
+     * @param {Item} item The thing that has changed
+     * @param {string[]} changedAttributes A list of changed attributes. If null then
+     * you should assume that everything has changed
+     */
+    itemChanged:function(source, item, changedAttributes) { }
   },
 
   /**
+   * Create a cache object containing the functions to interact with a server
+   * side StoreProvider
+   * @param {string} storeId ID of server provided storage
+   * @param {dwr.data.StoreChangeListener} listener See server documentation
+   * This is likely to be true if dwr.engine.activeReverseAjax == true
+   */
+  Cache:function(storeId, listener) {
+    this.storeId = storeId;
+    this.listener = listener;
+  }
+};
+
+(function() {
+  /**
    * Notes that there is a region of a page that wishes to subscribe to server
    * side data and registers a callback function to receive the data.
-   * @param {string} subscriptionId Page Local UID
-   * @param {string} storeId ID of server provided storage
-   * @param {Function} callback function to be called on updates
    * @param {Object} region filtering and sorting options. Includes:
    * - start: The beginning of the region of specific interest
    * - count: The number of items being viewed
    * - sort: The sort criteria
    * - query: The filter criteria
+   * @param {function|object} callbackObj A standard DWR callback object
+   * @return 
    */
-  view: function(subscriptionId, storeId, callback, region) {
+  dwr.data.Cache.prototype.viewRegion = function(region, callbackObj) {
     if (!region) region = { };
     if (!region.start) region.start = 0;
     if (!region.count) region.count = -1;
     if (!region.sort) region.sort = [];
     if (!region.query) region.query = {};
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'view', subscriptionId, storeId, callback, region, null);
-  },
+
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewRegion', this.storeId, region, this.listener, callbackObj);
+  };
 
   /**
-   * As dwr.data.view() except that it also registers the client to receive
-   * updates via reverse ajax.
+   * As dwr.data.Cache.viewRegion() except that we only want to see a single item.
+   * @param {string} itemId ID of object within the given store
+   * @param {function|object} callbackObj A standard DWR callback object
    */
-  subscribe: function(subscriptionId, storeId, callback, region) {
-    if (!region) region = { };
-    if (!region.start) region.start = 0;
-    if (!region.count) region.count = -1;
-    if (!region.sort) region.sort = [];
-    if (!region.query) region.query = {};
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'subscribe', subscriptionId, storeId, callback, region, null);
-  },
+  dwr.data.Cache.prototype.viewItem = function(itemId, callbackObj) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewItem', this.storeId, itemId, this.listener, callbackObj);
+  };
 
   /**
-   * Undo the action of dwr.data.subscribe()
-   * @param {string} subscriptionId Page Local UID previously used in a call to subscribe
+   * Undo the action of dwr.data.view()
+   * @param {function|object} callbackObj A standard DWR callback object
    */
-  unsubscribe: function(subscriptionId) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', subscriptionId, null);
-  },
+  dwr.data.Cache.prototype.unsubscribe = function(callbackObj) {
+    if (this.listener) {
+      return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', this.storeId, this.listener, callbackObj);
+    }
+  };
 
   /**
    * Request an update to server side data
-   * @param {String} storeId The store to update (*not* a subscriptionId)
-   * @param {Object} items The new data object
+   * @param {Object} items An array of update descriptions
+   * @param {function|object} callbackObj A standard DWR callback object
    */
-  update: function(storeId, items, onComplete, onError) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', storeId, items, {
-      callback:onComplete,
-      exceptionHandler:onError
-    });
-  }
-};
+  dwr.data.Cache.prototype.update = function(items, callbackObj) {
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', this.storeId, items, callbackObj);
+  };
+
+})();

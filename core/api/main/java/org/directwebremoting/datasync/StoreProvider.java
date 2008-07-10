@@ -15,8 +15,14 @@
  */
 package org.directwebremoting.datasync;
 
+import java.util.List;
+
+import org.directwebremoting.io.Item;
+import org.directwebremoting.io.ItemUpdate;
 import org.directwebremoting.io.RawData;
+import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.io.StoreRegion;
+import org.directwebremoting.io.MatchedItems;
 
 /**
  * A StoreProvider is something like a {@link java.util.Map} where the API
@@ -59,7 +65,7 @@ public interface StoreProvider<T>
      * @param itemId The ID of the item to fetch
      * @return The matched item, or null if it was not found
      */
-    T get(String itemId);
+    Item get(String itemId);
 
     /**
      * Extract the data referred to by the given region.
@@ -77,8 +83,14 @@ public interface StoreProvider<T>
 
     /**
      * Remove the declaration of interest previously expressed.
-     * @param region A set of filter and sort criteria to restrict the fetched data
      * @param li The listener that should no longer be notified
      */
-    void unsubscribe(StoreRegion region, StoreChangeListener<T> li);
+    void unsubscribe(StoreChangeListener<T> li);
+
+    /**
+     * Make a series of updates to items in the store.
+     * @param changes A list of item IDs along with the attributes to change
+     * and the values to change to
+     */
+    void update(List<ItemUpdate> changes);
 }

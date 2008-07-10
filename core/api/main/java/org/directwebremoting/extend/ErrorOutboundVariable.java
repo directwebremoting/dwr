@@ -25,7 +25,7 @@ import org.directwebremoting.util.LocalUtil;
 public class ErrorOutboundVariable extends NonNestedOutboundVariable
 {
     /**
-     * Default ctor that leaves blank (not null) members
+     * Default ctor that leaves blank members
      * @param errorMessage Some message for the developer to see.
      */
     public ErrorOutboundVariable(String errorMessage)
@@ -48,7 +48,7 @@ public class ErrorOutboundVariable extends NonNestedOutboundVariable
 
         if (debug)
         {
-            return "## CONVERSION ERROR: " + errorMessage + " ##";
+            return "null /* " + errorMessage.replace("*/", "* /") + " */";
         }
         else
         {

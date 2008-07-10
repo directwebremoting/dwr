@@ -97,6 +97,15 @@ public class PropertyDescriptorProperty implements Property
         return descriptor.getWriteMethod();
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "PropertyDescriptorProperty[" + descriptor.getName() + "=" + descriptor.getPropertyType() + "]";
+    }
+
     /**
      * The PropertyDescriptor that we are proxying to
      */

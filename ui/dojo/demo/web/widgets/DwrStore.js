@@ -13,11 +13,14 @@ if (!dojo._hasResource["DwrStore"]) {
    * TODO: I only discovered from reading the QueryReadStore that the param
    * passed into fetch() is a dojo.data.api.Request. I'm assuming that the same
    * is true for fetchItemByIdentity()
+   * TODO: do we need to check that we don't have prototype polution?
+   * save() and (maybe) other functions do 'for(a in b) {...}' without checking
+   * that b[a] isn't a function.
+   * TODO: The logic for the call to onComplete in the callback in simpleFetch
+   * is different to our implementation.I thought that I'd followed the spec.
+   * Either I can't read, or the author of simpleFetch can't read, wibble.
    */
   dojo.declare("DwrStore", null, {
-
-    // A unique identifier for this store.
-    _nextGlobalSubscriptionId: 0,
 
     // When we need to generate a local $id from a call to newItem()
     autoIdPrefix:"_auto_",
@@ -35,13 +38,7 @@ if (!dojo._hasResource["DwrStore"]) {
       if (storeId == null || typeof storeId != "string") {
         throw new Error("storeId is null or not a string");
       }
-      this._storeId = storeId;
-      this._subscriptionId = "sid" + DwrStore.prototype._nextGlobalSubscriptionId;
-      DwrStore.prototype._nextGlobalSubscriptionId++;
-
-      if (params == null) params = { };
-
-      this._subscribe = params.subscribe;
+      this.dwrCache = new dwr.data.Cache(storeId, params);
 
       // Important: you'll need to know this to grok the rest of the file.
       // We store data in a set of entries. What we give to the outside as an
@@ -68,6 +65,9 @@ if (!dojo._hasResource["DwrStore"]) {
 
       // We need to generate unique local ids for newItem();
       this._nextLocalId = 0;
+
+      // Should we check the server for fetchItemByIdentity? I think we don't need to.
+      this.fastFetchItemByIdentity = true;
     },
 
     /** @see dojo.data.api.Read.getFeatures */
@@ -122,13 +122,13 @@ if (!dojo._hasResource["DwrStore"]) {
 
     /** @see dojo.data.api.Read.hasAttribute */
     hasAttribute: function(/*item*/ id, /*string*/ attribute) {
-      var value = this._getAttributeValue(id, attribute, defaultValue);
+      var value = this._getAttributeValue(id, attribute, undefined);
       return value !== undefined;
     },
 
     /** @see dojo.data.api.Read.containsValue */
     containsValue: function(/*item*/ id, /*string*/ attribute, /*anything*/ value) {
-      var test = this._getAttributeValue(id, attribute, defaultValue);
+      var test = this._getAttributeValue(id, attribute, undefined);
       return test == value;
     },
 
@@ -152,9 +152,8 @@ if (!dojo._hasResource["DwrStore"]) {
     /** @see dojo.data.api.Read.fetch */
     fetch: function(/*object*/ request) {
       request = request || {};
-      if (!request.store) {
-          request.store = this;
-      }
+      var store = this;
+      var scope = request.scope || dojo.global;
 
       if (request.queryOptions != null) {
         console.log("queryOptions is not currently supported by DwrStore");
@@ -164,157 +163,76 @@ if (!dojo._hasResource["DwrStore"]) {
         count:request.count,
         start:request.start,
         query:request.query,
-        queryOptions:request.queryOptions,
         sort:request.sort
       };
 
-      // The parameters to this callback are defined by DWR
-      var callback = function(/*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
-        request.store._callback(request, subscriptionId, reason, viewedMatches, totalMatchCount);
-      };
+      var callbackObj = {
+        callback:function(matchedItems) {
+          var aborted = false;
+          var originalAbort = request.abort;
+          request.abort = function() {
+            aborted = true;
+            if (dojo.isFunction(originalAbort)) {
+              originalAbort.call(request);
+            }
+          };
 
-      if (this._subscribe) {
-        dwr.data.subscribe(this._subscriptionId, this._storeId, callback, region);
-      }
-      else {
-        dwr.data.view(this._subscriptionId, this._storeId, callback, region);
-      }
+          dojo.forEach(matchedItems.viewedMatches, store._importItem, store);
 
-      return request;
-    },
-
-    /**
-     * This function is called by a closure in DwrStore.fetch which is in turn
-     * called by the client side of the DWR store
-     */
-    _callback: function(/*object*/ request, /*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
-console.info("_callback", request, subscriptionId, reason, viewedMatches, totalMatchCount);
-      var scope = request.scope || dojo.global;
-
-      var aborted = false;
-      var originalAbort = request.abort;
-      request.abort = function() {
-        aborted = true;
-        if (dojo.isFunction(originalAbort)) {
-          originalAbort.call(request);
-        }
-      };
-
-      if (viewedMatches == null) {
-        if (dojo.isFunction(request.onError)) {
-          request.onError.call(scope, { /* something is better than nothing? */ }, request);
-        }
-        return;
-      }
-
-      // Cache the data
-      dojo.forEach(viewedMatches, function(entry) {
-        entry.updates = {};
-        entry.isDeleted = false;
-        entry.isDirty = false;
-        entry.$id = entry.itemId;
-        request.store._entries[entry.$id] = entry;
-      });
-
-      switch (reason) {
-        case dwr.data.reason.insert:
-          // This is part of Notification so the methods are on the store
-          if (dojo.isFunction(request.store.onNew)) {
-            var parentInfo = null; // The DWR store is not hierarchical
-            dojo.forEach(viewedMatches, function(entry) {
-              if (!aborted) {
-                request.store.onNew.call(scope, entry, request);
-              }
-            });
-          }
-          break;
-
-        case dwr.data.reason.update:
-          if (dojo.isFunction(request.onSet)) {
-            // TODO: Notifications from the server are more course grained than this
-            // We probably need to loop and call this for every attribute?
-            request.onSet.call(item, attribute, oldValue, newValue);
-          }
-          //  summary:
-          //      This function is called any time an item is modified via setValue, setValues, unsetAttribute, etc.  
-          //  description:
-          //      This function is called any time an item is modified via setValue, setValues, unsetAttribute, etc.  
-          //      Its purpose is to provide a hook point for those who wish to monitor actions on items in the store 
-          //      in a simple manner.  The general expected usage is to dojo.connect() to the store's 
-          //      implementation and be called after the store function is called.
-          //  item:
-          //      The item being modified.
-          //  attribute:
-          //      The attribute being changed represented as a string name.
-          //  oldValue:
-          //      The old value of the attribute.  In the case of single value calls, such as setValue, unsetAttribute, etc,
-          //      this value will be generally be an atomic value of some sort (string, int, etc, object).  In the case of 
-          //      multi-valued attributes, it will be an array.
-          //  newValue:
-          //      The new value of the attribute.  In the case of single value calls, such as setValue, this value will be 
-          //      generally be an atomic value of some sort (string, int, etc, object).  In the case of multi-valued attributes, 
-          //      it will be an array.  In the case of unsetAttribute, the new value will be 'undefined'.
-          //
-          //  returns:
-          //      Nothing.
-          break;
-
-        case dwr.data.reason.remove:
-          if (dojo.isFunction(request.onDelete)) {
-            // TODO: What do we know about deleted items?
-            request.onDelete.call(deletedItem);
-          }
-          break;
-
-        case dwr.data.reason.initial:
           if (dojo.isFunction(request.onBegin)) {
-            request.onBegin.call(scope, totalMatchCount, request);
+            request.onBegin.call(scope, matchedItems.totalMatchCount, request);
           }
 
           if (dojo.isFunction(request.onItem)) {
-            dojo.forEach(viewedMatches, function(entry) {
+            dojo.forEach(matchedItems.viewedMatches, function(entry) {
               if (!aborted) {
                 request.onItem.call(scope, entry.$id, request);
               }
             });
           }
 
-          var startIndex = request.start ? request.start : 0;
-          var endIndex = request.count ? (startIndex + request.count) : items.length;
-
           if (dojo.isFunction(request.onComplete) && !aborted) {
-            // TODO: The logic for this in simpleFetch is different to this.
-            // I thought that I'd followed the spec. Either I can't read, or the
-            // author of simpleFetch can't read, or things have moved on.
             if (dojo.isFunction(request.onItem)) {
               request.onComplete.call(scope, null, request);
             }
             else {
               var all = [];
-              dojo.forEach(viewedMatches, function(entry) {
+              dojo.forEach(matchedItems.viewedMatches, function(entry) {
                 all.push(entry.$id);
               });
               request.onComplete.call(scope, all, request);
             }
           }
-          break;
+        },
+
+        errorHandler:function(msg, ex) {
+          if (dojo.isFunction(request.onError)) {
+            request.onError(ex);
+          }
         }
+      };
+
+      this.dwrCache.viewRegion(region, callbackObj);
+
+      return request;
     },
 
     /** @see dojo.data.api.Read.close */
     close: function(/*dojo.data.api.Request*/ request) {
       this._entries = {};
       this._updated = {};
-      if (this._subscribe) {
-        dwr.data.unsubscribe(this._subscriptionId);
-      }
+      this.dwrCache.unsubscribe({
+        exceptionHandler:function(msg, ex) {
+          console.error(ex);
+        }
+      });
     },
 
     /** @see dojo.data.api.Read.getLabel */
     getLabel: function(/*item*/ id) {
       // org.directwebremoting.io.Item exposes Object#toString as a label on
       // our items if the data implements ExposeToStringToTheOutside.
-      return _getAttributeValue(id, "$label");
+      return this._getAttributeValue(id, "$label");
     },
 
     /** @see dojo.data.api.Read.getLabelAttributes */
@@ -325,7 +243,8 @@ console.info("_callback", request, subscriptionId, reason, viewedMatches, totalM
 
     /** @see dojo.data.api.Identity.getIdentity */
     getIdentity: function(/*item*/ id) {
-      return _getAttributeValue(id, "$id");
+      // We could just return id, however we should be checking validity, which this does
+      return this._getAttributeValue(id, "$id");
     },
 
     /** @see dojo.data.api.Identity.getIdentityAttributes */
@@ -336,35 +255,85 @@ console.info("_callback", request, subscriptionId, reason, viewedMatches, totalM
 
     /** @see dojo.data.api.Identity.fetchItemByIdentity */
     fetchItemByIdentity: function(/*object*/ request) {
-      request = request || {};
-      if (!request.store) {
-          request.store = this;
+      var scope = request.scope || dojo.global;
+      var itemId = request.identity.toString();
+      var store = this;
+
+      if (this.fastFetchItemByIdentity) {
+        if (dojo.isFunction(request.onItem)) {
+          request.onItem.call(scope, itemId);
+        }
       }
-
-      if (request.queryOptions != null) {
-        console.log("queryOptions is not currently supported by DwrStore");
+      else {
+        this.dwrCache.viewItem(itemId, {
+          callback: function(entry) {
+            entry.updates = {};
+            entry.isDeleted = false;
+            entry.isDirty = false;
+            entry.$id = entry.itemId;
+            store._entries[entry.$id] = entry;
+            delete store._updated[entry.$id];
+            if (dojo.isFunction(request.onItem)) {
+              request.onItem.call(scope, data);
+            }
+          },
+          exceptionHandler: function(msg, ex) {
+            if (dojo.isFunction(request.onError)) {
+              request.onError.call(scope, ex);
+            }
+          }
+        });
       }
-
-      var region = {
-        count:1,
-        start:1,
-        query:{ itemId:request.identity.toString }
-      };
-
-      // The parameters to this callback are defined by DWR
-      var callback = function(/*string*/ subscriptionId, /*integer*/ reason, /*array*/ viewedMatches, /*integer*/ totalMatchCount) {
-        request.store._callback(request, subscriptionId, reason, viewedMatches, totalMatchCount);
-      };
-
-      dwr.data.view(this._subscriptionId, this._storeId, callback, region);
 
       return request;
     },
 
+    /**
+     * Utility to take an item as passed by DWR and place it as an entry into
+     * the local cache
+     */
+    _importItem: function(/*item*/ item) {
+      item.updates = {};
+      item.isDeleted = false;
+      item.isDirty = false;
+      item.$id = item.itemId;
+      this._entries[item.$id] = item;
+      delete this._updated[item.$id];
+    },
+
+    /** @see dwr.data.StoreChangeListener.itemRemoved */
+    itemRemoved:function(/*StoreProvider*/ source, /*string*/ itemId) {
+      delete this._entries[itemId];
+      delete this._updated[itemId];
+      if (dojo.isFunction(this.onDelete)) {
+        this.onDelete.call(itemId);
+      }
+    },
+
+    /** @see dwr.data.StoreChangeListener.itemAdded */
+    itemAdded:function(/*StoreProvider*/ source, /*Item*/ item) {
+      this._importItem(item);
+      if (dojo.isFunction(this.onNew)) {
+        this.onNew.call(item.itemId, null);
+      }
+    },
+
+    /** @see dwr.data.StoreChangeListener.itemChanged */
+    itemChanged:function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
+      if (this._updated[item.itemId]) {
+        console.log("Warning server changes to " + item.itemId + " override local changes");
+      }
+      this._importItem(item);
+      if (dojo.isFunction(this.onSet)) {
+        dojo.forEach(changedAttributes, function(attribute) {
+          var oldValue = this._getAttributeValue(item.itemId, attribute);
+          this.onSet.call(item.itemId, attribute, oldValue, item.data[attribute]);
+        });
+      }
+    },
+
     /** @see dojo.data.api.Notification.onSet */
     onSet: function(/*item*/ item, /*string*/ attribute, /*object|array*/ oldValue, /*object|array*/ newValue) {
-console.info("onSet", item, attribute, oldValue, newValue);
-      // It's up to others to override. We just need to call this from _callback()
     },
 
     /** @see dojo.data.api.Notification.onNew */
@@ -375,7 +344,7 @@ console.info("onSet", item, attribute, oldValue, newValue);
     onDelete: function(/*item*/ deletedItem) {
     },
 
-    /** @see dojo.data.api.Notification.onDelete */
+    /** @see dojo.data.api.Write.newItem */
     newItem: function(/*object?*/ data, /*object?*/ parentInfo) {
       var entry = {
         itemId:-1,
@@ -397,7 +366,7 @@ console.info("onSet", item, attribute, oldValue, newValue);
       return entry.$id;
     },
 
-    /** @see dojo.data.api.Notification.onDelete */
+    /** @see dojo.data.api.Write.onDelete */
     deleteItem: function(/*item*/ item) {
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to deleteItem()");
@@ -410,9 +379,8 @@ console.info("onSet", item, attribute, oldValue, newValue);
       }
     },
 
-    /** @see dojo.data.api.Notification.setValue */
+    /** @see dojo.data.api.Write.setValue */
     setValue: function(/*item*/ item, /*string*/ attribute, /*anything*/ value) {
-console.info("setValue", item, attribute, value);
       if (value === undefined) throw new Error("value is undefined");
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
@@ -427,9 +395,8 @@ console.info("setValue", item, attribute, value);
       }
     },
 
-    /** @see dojo.data.api.Notification.setValues */
+    /** @see dojo.data.api.Write.setValues */
     setValues: function(/*item*/ item, /*string*/ attribute, /*array*/ values) {
-console.info("setValues", item, attribute, values);
       if (!dojo.isArray(values)) throw new Error("value is not an array");
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
@@ -444,9 +411,8 @@ console.info("setValues", item, attribute, values);
       }
     },
 
-    /** @see dojo.data.api.Notification.unsetAttribute */
+    /** @see dojo.data.api.Write.unsetAttribute */
     unsetAttribute: function(/*item*/ item, /*string*/ attribute) {
-console.info("unsetAttribute", item, attribute);
       if (!attribute) throw new Error("attribute is undefined");
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to unsetAttribute()");
@@ -460,31 +426,43 @@ console.info("unsetAttribute", item, attribute);
       }
     },
 
-    /** @see dojo.data.api.Notification.save */
+    /** @see dojo.data.api.Write.save */
     save: function(/*object*/ keywordArgs) {
-console.info("save", keywordArgs);
       var entriesToSend = [];
-      for (var id in this._updated) {
-        var entry = this._updated[id];
-        var toSend = {
-          itemId:entry.itemId,
-          data:entry.data
-        };
-        for (var attribute in entry.updates) {
-          toSend[attribute] = entry.updates[attribute];
-        }
+      for (var itemId in this._updated) {
+        var entry = this._updated[itemId];
         if (entry.isDeleted) {
-          toSend.data = null;
+          entriesToSend.push({
+            itemId:itemId,
+            attribute:"$delete"
+          });
         }
-        entriesToSend.push(toSend);
+        if (entry.isNew) {
+          entriesToSend.push({
+            itemId:itemId,
+            attribute:"$create"
+          });
+        }
+        else {
+          for (var attribute in entry.updates) {
+            entriesToSend.push({
+              itemId:itemId,
+              attribute:attribute,
+              newValue:entry.updates[attribute]
+            });
+          }
+        }
       }
 
-      dwr.data.update(this._storeId, entriesToSend, keywordArgs.onComplete, keywordArgs.onError);
+      this.dwrCache.update(entriesToSend, {
+        callback:keywordArgs.onComplete,
+        exceptionHandler:function(msg, ex) { keywordArgs.onError(ex); },
+        scope:keywordArgs.scope
+      });
     },
 
-    /** @see dojo.data.api.Notification.revert */
+    /** @see dojo.data.api.Write.revert */
     revert: function() {
-console.info("revert");
       for (var id in this._entries) {
         var entry = this._entries[id];
         entry.isDeleted = false;
@@ -495,9 +473,8 @@ console.info("revert");
       return true;
     },
 
-    /** @see dojo.data.api.Notification.isDirty */
+    /** @see dojo.data.api.Write.isDirty */
     isDirty: function(/*item?*/ item) {
-console.info("isDirty", item);
       var entry = this._entries[item];
       if (entry == null) throw new Error("non item passed to isDirty()");
       return entry.isDirty;
