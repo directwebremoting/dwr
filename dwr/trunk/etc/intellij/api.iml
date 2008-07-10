@@ -10,6 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="core-api" level="project" />
+    <orderEntry type="library" name="core-impl" level="project" />
     <orderEntryProperties />
   </component>
 </module>

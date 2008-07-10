@@ -135,9 +135,6 @@
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <option name="DEPLOY_AFTER_MAKE" value="0" />
-    <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/core/impl/test/web/WEB-INF/web.xml" />
-    </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -1087,7 +1084,6 @@
         </inspection_tool>
         <inspection_tool class="CommaExpressionJS" level="WARNING" enabled="true" />
         <inspection_tool class="ConfusingPlusesOrMinusesJS" level="WARNING" enabled="true" />
-        <inspection_tool class="IncrementDecrementResultUsedJS" level="WARNING" enabled="true" />
         <inspection_tool class="ReplaceAllDot" level="WARNING" enabled="true" />
         <inspection_tool class="CastConflictsWithInstanceof" level="WARNING" enabled="true" />
         <inspection_tool class="MisspelledCompareTo" level="WARNING" enabled="true" />
@@ -1268,6 +1264,20 @@
         <inspection_tool class="ThisExpressionReferencesGlobalObjectJS" level="WARNING" enabled="false" />
         <inspection_tool class="JSUnusedLocalSymbols" level="WARNING" enabled="false" />
         <inspection_tool class="CheckTagEmptyBody" level="INFO" enabled="true" />
+        <inspection_tool class="HtmlUnknownAttribute" level="WARNING" enabled="false">
+          <option name="myValues">
+            <value>
+              <list size="5">
+                <item index="0" class="java.lang.String" itemvalue="type" />
+                <item index="1" class="java.lang.String" itemvalue="wmode" />
+                <item index="2" class="java.lang.String" itemvalue="src" />
+                <item index="3" class="java.lang.String" itemvalue="width" />
+                <item index="4" class="java.lang.String" itemvalue="height" />
+              </list>
+            </value>
+          </option>
+          <option name="myCustomValuesEnabled" value="true" />
+        </inspection_tool>
       </profile>
     </profiles>
     <list size="4">
@@ -1477,6 +1487,50 @@
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/target/intellij/classes" />
+  </component>
+  <component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="dwr-jetty-test" type="Application" factoryName="Application" enabled="false" merge="false">
+      <option name="MAIN_CLASS_NAME" value="org.directwebremoting.jetty.JettyTestLauncher" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="impl" />
+      <envs />
+      <method>
+        <option name="Run Ant target" value="true" />
+        <option name="Make" value="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="dwr-jetty-demo" type="Application" factoryName="Application" enabled="false" merge="false">
+      <option name="MAIN_CLASS_NAME" value="org.directwebremoting.jetty.JettyDemoLauncher" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="impl" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="64917" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Run Ant target" value="true" />
+        <option name="Make" value="false" />
+      </method>
+    </configuration>
   </component>
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
