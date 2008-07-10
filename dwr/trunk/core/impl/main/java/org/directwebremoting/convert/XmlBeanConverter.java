@@ -35,7 +35,6 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
-import org.directwebremoting.util.Messages;
 
 /**
  * A Converter for Apache XMLBeans.
@@ -52,7 +51,7 @@ public class XmlBeanConverter extends BeanConverter
     {
         String value = data.getValue();
 
-        logger.debug("handling variable (" + value + ") for class (" + paramType.getName() + ")");
+        log.debug("handling variable (" + value + ") for class (" + paramType.getName() + ")");
 
         // If the text is null then the whole bean is null
         if (value.trim().equals(ProtocolConstants.INBOUND_NULL))
@@ -60,14 +59,10 @@ public class XmlBeanConverter extends BeanConverter
             return null;
         }
 
-        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
+        if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
-        }
-
-        if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
-        {
-            throw new ConversionException(paramType, Messages.getString("BeanConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
+            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
         value = value.substring(1, value.length() - 1);
@@ -95,7 +90,7 @@ public class XmlBeanConverter extends BeanConverter
 
             if (factory == null)
             {
-                logger.error("XmlObject.Factory method not found for Class [" + paramType.toString() + "]");
+                log.error("XmlObject.Factory method not found for Class [" + paramType.toString() + "]");
                 throw new ConversionException(paramType, "XmlObject.Factory method not found");
             }
 
@@ -121,16 +116,16 @@ public class XmlBeanConverter extends BeanConverter
                 String key = entry.getKey();
                 String val = entry.getValue();
 
-                logger.debug("token entry (" + key + ") with value (" + val + ")");
+                log.debug("token entry (" + key + ") with value (" + val + ")");
 
                 Property property = properties.get(key);
                 if (property == null)
                 {
-                    logger.warn("Missing java bean property to match javascript property: " + key + ". For causes see debug level logs:");
+                    log.warn("Missing java bean property to match javascript property: " + key + ". For causes see debug level logs:");
 
-                    logger.debug("- The javascript may be refer to a property that does not exist");
-                    logger.debug("- You may be missing the correct setter: set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "()");
-                    logger.debug("- The property may be excluded using include or exclude rules.");
+                    log.debug("- The javascript may be refer to a property that does not exist");
+                    log.debug("- You may be missing the correct setter: set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "()");
+                    log.debug("- The property may be excluded using include or exclude rules.");
 
                     StringBuffer all = new StringBuffer();
                     for (Iterator<String> pit = properties.keySet().iterator(); pit.hasNext();)
@@ -141,7 +136,7 @@ public class XmlBeanConverter extends BeanConverter
                             all.append(',');
                         }
                     }
-                    logger.debug("Fields exist for (" + all + ").");
+                    log.debug("Fields exist for (" + all + ").");
                     continue;
                 }
 
@@ -256,5 +251,8 @@ public class XmlBeanConverter extends BeanConverter
 
     private static StringEnumAbstractBaseConverter enumConverter = new StringEnumAbstractBaseConverter();
 
-    private static Log logger = LogFactory.getLog(XmlBeanConverter.class);
+    /**
+     * The log stream
+     */
+    private static Log log = LogFactory.getLog(XmlBeanConverter.class);
 }

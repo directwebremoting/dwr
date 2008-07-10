@@ -17,10 +17,9 @@ package org.directwebremoting.impl;
 
 import java.io.InputStream;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.DwrConstants;
-import org.directwebremoting.util.Messages;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -57,7 +56,7 @@ public final class DTDEntityResolver implements EntityResolver
             }
         }
 
-        throw new SAXException(Messages.getString("DTDEntityResolver.ResolveFailed", publicId, systemId));
+        throw new SAXException("Failed to resolve: publicId=" + publicId + " systemId=" + systemId);
     }
 
     /**

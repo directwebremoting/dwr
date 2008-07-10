@@ -22,13 +22,12 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -68,7 +67,7 @@ public class SpringCreator extends AbstractCreator implements Creator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", classname));
+            throw new IllegalArgumentException("Class not found: " + classname, ex);
         }
     }
 
@@ -139,19 +138,18 @@ public class SpringCreator extends AbstractCreator implements Creator
                 log.info("- Option 1. In dwr.xml, <create creator='spring' ...> add <param name='location1' value='beans.xml'/> for each spring config file.");
                 log.info("- Option 2. Use a spring org.springframework.web.context.ContextLoaderListener.");
                 log.info("- Option 3. Call SpringCreator.setOverrideBeanFactory() from your web-app");
-                throw new InstantiationException(Messages.getString("SpringCreator.MissingConfig"));
+                throw new InstantiationException("DWR can't find a spring config. See the logs for solutions");
             }
 
             return factory.getBean(beanName);
         }
-        catch (RuntimeException ex)
+        catch (InstantiationException ex)
         {
             throw ex;
         }
         catch (Exception ex)
         {
-            log.error("Error", ex);
-            throw new InstantiationException(ex.toString());
+            throw new InstantiationException("Illegal Access to default constructor on " + clazz.getName() + " due to: " + ex);
         }
     }
 

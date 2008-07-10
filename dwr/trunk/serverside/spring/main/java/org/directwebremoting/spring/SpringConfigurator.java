@@ -31,7 +31,6 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.SignatureParser;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 import org.springframework.util.StringUtils;
 
 /**
@@ -133,7 +132,7 @@ public class SpringConfigurator implements Configurator
                         }
                         else
                         {
-                            throw new IllegalArgumentException(Messages.getString("SpringConfigurator.InvalidFilter", scriptName, obj));
+                            throw new IllegalArgumentException("An invalid filter is added for script '" + scriptName + "'. It should either be the class name of the filter or an instantiated AjaxFilter, but was: '" + obj + "'.");
                         }
                     }
                 }
@@ -175,7 +174,7 @@ public class SpringConfigurator implements Configurator
             }
             catch (Exception ex)
             {
-                throw new IllegalArgumentException(Messages.getString("SpringConfigurator.ConfigureConverterError"));
+                throw new IllegalArgumentException("An error occurred while configuring the converters.");
             }
         }
 

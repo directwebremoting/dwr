@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.convert;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.Converter;
@@ -24,7 +26,6 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * Converter for all primitive types
@@ -45,7 +46,8 @@ public class PrimitiveConverter extends AbstractConverter implements Converter
         }
         catch (NumberFormatException ex)
         {
-            throw new ConversionException(paramType, Messages.getString("PrimitiveConverter.FormatError", value));
+            log.debug("Error converting " + value + " to a number.");
+            throw new ConversionException(paramType, "Format error converting number.");
         }
         catch (IllegalArgumentException ex)
         {
@@ -79,4 +81,9 @@ public class PrimitiveConverter extends AbstractConverter implements Converter
             return new NonNestedOutboundVariable(data.toString());
         }
     }
+
+    /**
+     * The log stream
+     */
+    protected static final Log log = LogFactory.getLog(PrimitiveConverter.class);
 }

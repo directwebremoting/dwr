@@ -1,3 +1,18 @@
+/*
+ * Copyright 2005 Joe Walker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.directwebremoting.create;
 
 import java.util.Properties;
@@ -9,7 +24,6 @@ import javax.naming.NamingException;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A Creator that works against EJB3 beans
@@ -71,7 +85,7 @@ public class Ejb3Creator extends AbstractCreator implements Creator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.BeanClassNotFound", className));
+            throw new IllegalArgumentException("Class not found: " + className);
         }
     }
 

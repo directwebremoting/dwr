@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
@@ -39,7 +39,6 @@ import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UtilHandler;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * A default implementation of TestPageGenerator
@@ -55,7 +54,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         if (!creatorManager.isDebug())
         {
             log.warn("Failed attempt to access test pages outside of debug mode. Set the debug init-parameter to true to enable.");
-            throw new SecurityException(Messages.getString("DefaultDebugPageGenerator.AccessDenied"));
+            throw new SecurityException("Access to debug pages is denied.");
         }
 
         StringBuffer buffer = new StringBuffer();
@@ -95,7 +94,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         if (!creatorManager.isDebug())
         {
             log.warn("Failed attempt to access test pages outside of debug mode. Set the debug init-parameter to true to enable.");
-            throw new SecurityException(Messages.getString("DefaultAccessControl.AccessDenied"));
+            throw new SecurityException("Access to debug pages is denied.");
         }
 
         String interfaceURL = root + interfaceHandlerUrl + scriptName + PathConstants.EXTENSION_JS;
@@ -302,7 +301,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
                 InputStream raw = getClass().getResourceAsStream(DwrConstants.PACKAGE + PathConstants.FILE_HELP);
                 if (raw == null)
                 {
-                    log.error(Messages.getString("DefaultProcessor.MissingHelp", PathConstants.FILE_HELP));
+                    log.error("Missing file " + PathConstants.FILE_HELP + ". Check the dwr.jar file was built to include html files.");
                     output = "<p>Failed to read help text from resource file. Check dwr.jar is built to include html files.</p>";
                 }
                 else

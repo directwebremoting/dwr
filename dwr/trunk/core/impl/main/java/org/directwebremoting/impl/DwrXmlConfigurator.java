@@ -43,7 +43,6 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.LogErrorHandler;
-import org.directwebremoting.util.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -72,7 +71,7 @@ public class DwrXmlConfigurator implements Configurator
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         if (servletContext == null)
         {
-            throw new IOException(Messages.getString("DwrXmlConfigurator.MissingServletContext"));
+            throw new IOException("Missing ServletContext");
         }
 
         InputStream in = null;
@@ -81,7 +80,7 @@ public class DwrXmlConfigurator implements Configurator
             in = servletContext.getResourceAsStream(servletResourceName);
             if (in == null)
             {
-                throw new IOException(Messages.getString("DwrXmlConfigurator.MissingConfigFile", servletResourceName));
+                throw new IOException("Missing config file: '" + servletResourceName + "'");
             }
 
             log.debug("Configuring from servlet resource: " + servletResourceName);
@@ -107,7 +106,7 @@ public class DwrXmlConfigurator implements Configurator
         InputStream in = getClass().getResourceAsStream(classResourceName);
         if (in == null)
         {
-            throw new IOException(Messages.getString("DwrXmlConfigurator.MissingConfigFile", classResourceName));
+            throw new IOException("Missing config file: '" + classResourceName + "'");
         }
 
         log.debug("Configuring from class resource: " + classResourceName);

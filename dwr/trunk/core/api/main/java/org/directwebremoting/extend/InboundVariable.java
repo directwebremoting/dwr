@@ -28,7 +28,6 @@ import org.directwebremoting.json.JsonNumber;
 import org.directwebremoting.json.JsonObject;
 import org.directwebremoting.json.JsonString;
 import org.directwebremoting.json.JsonValue;
-import org.directwebremoting.util.Messages;
 
 /**
  * A simple struct to hold data about a single converted javascript variable.
@@ -91,7 +90,7 @@ public final class InboundVariable
             InboundVariable cd = context.getInboundVariable(formField.getString());
             if (cd == null)
             {
-                throw new ConversionException(getClass(), Messages.getString("InboundVariable.MissingVariable", formField.getString()));
+                throw new ConversionException(getClass(), "Found reference to variable named '" + formField.getString() + "', but no variable of that name could be found.");
             }
 
             type = cd.type;
@@ -224,14 +223,10 @@ public final class InboundVariable
                 return new JsonNull();
             }
 
-            if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START))
+            if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START) || !value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
             {
-                throw new InvalidJsonException(Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_START));
-            }
-
-            if (!value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
-            {
-                throw new InvalidJsonException(Messages.getString("CollectionConverter.FormatError", ProtocolConstants.INBOUND_ARRAY_END));
+                log.warn("Expected collection. Passed: " + value);
+                throw new InvalidJsonException("Data conversion error. See logs for more details.");
             }
 
             value = value.substring(1, value.length() - 1);
@@ -260,14 +255,10 @@ public final class InboundVariable
                 return new JsonNull();
             }
 
-            if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START))
+            if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
             {
-                throw new InvalidJsonException(Messages.getString("MapConverter.FormatError", ProtocolConstants.INBOUND_MAP_START));
-            }
-
-            if (!value.endsWith(ProtocolConstants.INBOUND_MAP_END))
-            {
-                throw new InvalidJsonException(Messages.getString("MapConverter.FormatError", ProtocolConstants.INBOUND_MAP_END));
+                log.warn("Expected object. Passed: " + value);
+                throw new InvalidJsonException("Data conversion error. See logs for more details.");
             }
 
             value = value.substring(1, value.length() - 1);
@@ -286,7 +277,7 @@ public final class InboundVariable
                 int colonpos = token.indexOf(ProtocolConstants.INBOUND_MAP_ENTRY);
                 if (colonpos == -1)
                 {
-                    throw new InvalidJsonException(Messages.getString("MapConverter.MissingSeparator", ProtocolConstants.INBOUND_MAP_ENTRY, token));
+                    throw new InvalidJsonException("Missing separator: " + ProtocolConstants.INBOUND_MAP_ENTRY);
                 }
 
                 // Convert the value part of the token by splitting it into the

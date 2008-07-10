@@ -41,7 +41,6 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.BrowserDetect;
-import org.directwebremoting.util.Messages;
 import org.directwebremoting.util.UserAgent;
 
 /**
@@ -78,7 +77,7 @@ public class FileConverter extends AbstractConverter implements Converter
             }
         }
 
-        throw new ConversionException(paramType, Messages.getString("ConversionException.FileFailure", paramType));
+        throw new ConversionException(paramType, "File conversion is not possible for a " + paramType);
     }
 
     /* (non-Javadoc)

@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
@@ -31,7 +31,6 @@ import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * StrutsCreator
@@ -65,7 +64,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
     }
 
     /**
-     * Struts formBean to be retrived
+     * Struts formBean to be retrieved
      * @param formBean Struts bean form related.
      */
     public void setFormBean(String formBean)
@@ -122,7 +121,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException(Messages.getString("Creator.ClassNotFound", moduleConfig.findFormBeanConfig(formBean).getType()));
+            throw new IllegalArgumentException("Class not found: " + moduleConfig.findFormBeanConfig(formBean).getType(), ex);
         }
     }
 
@@ -135,7 +134,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
         ActionForm formInstance = (ActionForm) WebContextFactory.get().getSession().getAttribute(formBean);
         if (formInstance == null)
         {
-            throw new InstantiationException(Messages.getString("Creator.IllegalAccess"));
+            throw new InstantiationException("Can't find formInstance  for " + formBean);
         }
 
         return formInstance;

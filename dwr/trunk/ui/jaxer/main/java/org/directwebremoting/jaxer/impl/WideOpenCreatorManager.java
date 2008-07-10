@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.impl.DefaultCreatorManager;
 import org.directwebremoting.util.LocalUtil;
-import org.directwebremoting.util.Messages;
 
 /**
  * This is a modification of {@link DefaultCreatorManager} that attempts to do
@@ -107,7 +106,7 @@ public class WideOpenCreatorManager extends DefaultCreatorManager
         if (creator.isHidden() && !includeHidden)
         {
             log.warn("Attempt made to get hidden class with name: " + scriptName + " while includeHidden=false");
-            throw new SecurityException(Messages.getString("DefaultCreatorManager.MissingName", scriptName));
+            throw new SecurityException("Missing script name");
         }
 
         return creator;
