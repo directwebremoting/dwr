@@ -393,6 +393,12 @@ public class DwrXmlConfigurator implements Configurator
             Element include = (Element) incNodes.item(i);
             String method = include.getAttribute(ATTRIBUTE_METHOD);
             accessControl.addIncludeRule(javascript, method);
+            
+            if (include.hasAttribute(ATTRIBUTE_ROLE))
+            {
+                String role = include.getAttribute(ATTRIBUTE_ROLE);
+                accessControl.addRoleRestriction(javascript, method, role);
+            }
         }
 
         NodeList excNodes = parent.getElementsByTagName(ELEMENT_EXCLUDE);

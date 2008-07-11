@@ -158,6 +158,11 @@
         <documentation>The method to include in the list of methods allowed by the creator</documentation>
       </annotation>
     </attribute>
+    <attribute name="role" type="string">
+      <annotation>
+        <documentation>The optional role attribute</documentation>
+      </annotation>
+    </attribute>
   </complexType>
 
   <element name="exclude" type="dwr:exclude">

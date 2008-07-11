@@ -113,9 +113,11 @@ implies that the default policy is denial) OR a list of exclude elements
 <!ELEMENT include EMPTY>
 <!--
 @attr method The method to include
+@attr role The optional role attribute
 -->
 <!ATTLIST include
     method CDATA #IMPLIED
+    role CDATA #IMPLIED
 >
 
 <!--
