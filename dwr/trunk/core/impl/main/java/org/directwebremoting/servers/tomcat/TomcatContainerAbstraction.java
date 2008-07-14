@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.servers.tomcat;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.catalina.CometEvent;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
- * An abstraction of the servlet container that is specific to Grizzly
+ * An abstraction of the servlet container that is specific to Jetty
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class GrizzlyContainerAbstraction implements ContainerAbstraction
+public class TomcatContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ContainerAbstraction#isResponseCompleted(javax.servlet.http.HttpServletRequest)
@@ -41,14 +43,8 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("Sun Java System Application Server "))
-        {
-            // TODO: some number versioning
-            return true;
-        }
-
-        return false;
+        Object enabled = servletConfig.getServletContext().getAttribute(DwrCometProcessor.ATTRIBUTE_ENABLED);
+        return enabled != null && ((Boolean) enabled) == true;
     }
 
     /* (non-Javadoc)
@@ -56,7 +52,8 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
      */
     public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new GrizzlyContinuationSleeper(request);
+        CometEvent event = (CometEvent) request.getAttribute(DwrCometProcessor.ATTRIBUTE_EVENT);
+        return new TomcatContinuationSleeper(event);
     }
 
     /* (non-Javadoc)
