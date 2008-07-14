@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.servers.grizzly;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.impl.ThreadWaitSleeper;
 import org.directwebremoting.util.Continuation;
 
 /**
@@ -145,13 +146,7 @@ public class GrizzlyContinuationSleeper implements Sleeper
     protected boolean resumed = false;
 
     /**
-     * We remember the notify conduit so we can reuse it
-     */
-    public static final String ATTRIBUTE_JETTY_CONDUIT = "org.directwebremoting.dwrp.notifyConduit";
-   
-    /**
      * Log stream
      */
     private static final Log log = LogFactory.getLog(GrizzlyContinuationSleeper.class);
 }
-

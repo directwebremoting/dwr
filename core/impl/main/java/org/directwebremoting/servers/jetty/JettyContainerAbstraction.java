@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.servers.jetty;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
  * An abstraction of the servlet container that is specific to Jetty

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.impl;
+package org.directwebremoting.servers.jetty;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.impl.ThreadWaitSleeper;
 import org.directwebremoting.util.Continuation;
 
 /**
@@ -38,7 +39,7 @@ public class JettyContinuationSleeper implements Sleeper
         // At this point JettyContinuationSleeper is fully initialized so it is
         // safe to allow other classes to see and use us.
         //noinspection ThisEscapedInObjectConstruction
-        request.setAttribute(ATTRIBUTE_JETTY_CONDUIT, this);
+        request.setAttribute(ATTRIBUTE_CONDUIT, this);
     }
 
     /**
@@ -48,7 +49,7 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public static boolean isRestart(HttpServletRequest request)
     {
-        return request.getAttribute(ATTRIBUTE_JETTY_CONDUIT) != null;
+        return request.getAttribute(ATTRIBUTE_CONDUIT) != null;
     }
 
     /**
@@ -57,13 +58,13 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public static void restart(HttpServletRequest request)
     {
-        JettyContinuationSleeper sleeper = (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_JETTY_CONDUIT);
+        JettyContinuationSleeper sleeper = (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_CONDUIT);
         if (sleeper == null)
         {
             throw new IllegalStateException("No JettyContinuationSleeper in HttpServletRequest");
         }
 
-        request.removeAttribute(ATTRIBUTE_JETTY_CONDUIT);
+        request.removeAttribute(ATTRIBUTE_CONDUIT);
         sleeper.onAwakening.run();
     }
 
@@ -176,7 +177,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * We remember the notify conduit so we can reuse it
      */
-    public static final String ATTRIBUTE_JETTY_CONDUIT = "org.directwebremoting.dwrp.notifyConduit";
+    protected static final String ATTRIBUTE_CONDUIT = "org.directwebremoting.servers.jetty.notifyConduit";
 
     /**
      * The log stream
