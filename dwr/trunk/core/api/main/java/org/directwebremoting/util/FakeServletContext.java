@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +34,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Fake implementation of the ServletContext interface.
@@ -351,4 +352,41 @@ public class FakeServletContext implements ServletContext
      * The servlet context name
      */
     private String servletContextName = "FakeServletContext";
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContext#addFilter(java.lang.String, java.lang.String, java.lang.String, java.util.Map)
+     */
+    @SuppressWarnings("unused")
+    public void addFilter(String arg0, String arg1, String arg2, Map<String, String> arg3)
+    {
+        // From Servlet 3.0 from Greg
+        // TODO: we might want to delete all the servlet 3.0 preview methods
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContext#addFilterMapping(java.lang.String, java.lang.String[], java.lang.String[], java.util.EnumSet, boolean)
+     */
+    @SuppressWarnings("unused")
+    public void addFilterMapping( String arg0, String[] arg1, String[] arg2, EnumSet<?/*javax.servlet.DispatcherType*/> arg3, boolean arg4)
+    {
+        // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContext#addServlet(java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
+     */
+    @SuppressWarnings("unused")
+    public void addServlet(String arg0, String arg1, String arg2, Map<String, String> arg3, int arg4)
+    {
+        // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContext#addServletMapping(java.lang.String, java.lang.String[])
+     */
+    @SuppressWarnings("unused")
+    public void addServletMapping(String arg0, String[] arg1)
+    {
+        // From Servlet 3.0 from Greg
+    }
 }

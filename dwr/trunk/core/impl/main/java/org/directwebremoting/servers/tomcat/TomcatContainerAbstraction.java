@@ -53,7 +53,7 @@ public class TomcatContainerAbstraction implements ContainerAbstraction
     public Sleeper createSleeper(HttpServletRequest request)
     {
         CometEvent event = (CometEvent) request.getAttribute(DwrCometProcessor.ATTRIBUTE_EVENT);
-        return new TomcatContinuationSleeper(event);
+        return new TomcatSleeper(event);
     }
 
     /* (non-Javadoc)

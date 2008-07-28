@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
@@ -682,4 +683,92 @@ public class FakeHttpServletRequest implements HttpServletRequest
      * The log stream
      */
     private static final Log log = LogFactory.getLog(FakeHttpServletRequest.class);
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#complete()
+     */
+    public void complete()
+    {
+        // From Servlet 3.0 from Greg
+        // TODO: we might want to delete all the servlet 3.0 preview methods
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#getServletContext()
+     */
+    public ServletContext getServletContext()
+    {
+        // From Servlet 3.0 from Greg
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#getServletResponse()
+     */
+    public ServletResponse getServletResponse()
+    {
+        // From Servlet 3.0 from Greg
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isInitial()
+     */
+    public boolean isInitial()
+    {
+        // From Servlet 3.0 from Greg
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isResumed()
+     */
+    public boolean isResumed()
+    {
+        // From Servlet 3.0 from Greg
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isSuspended()
+     */
+    public boolean isSuspended()
+    {
+        // From Servlet 3.0 from Greg
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isTimeout()
+     */
+    public boolean isTimeout()
+    {
+        // From Servlet 3.0 from Greg
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#resume()
+     */
+    public void resume()
+    {
+        // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#suspend()
+     */
+    public void suspend()
+    {
+        // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#suspend(long)
+     */
+    @SuppressWarnings("unused")
+    public void suspend(long arg0)
+    {
+        // From Servlet 3.0 from Greg
+    }
 }

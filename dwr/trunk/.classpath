@@ -6,7 +6,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-logging-1.1.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.5.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
+	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.4.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://java.sun.com/products/servlet/2.5/docs/servlet-2_5-mr2/"/>
 		</attributes>
@@ -37,7 +37,10 @@
 			<attribute name="javadoc_location" value="http://www.mortbay.org/jetty-6/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/catalina.jar" sourcepath="/librarydwr/source/apache-tomcat-6.0.16-src.zip"/>
+	<classpathentry kind="lib" path="core/api/lib/tomcat-coyote.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/tomcat-juli.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/annotations-api.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/api/main/java"/>
 	<classpathentry kind="lib" path="core/impl/lib/bsf-2.4.0.jar" sourcepath="/librarydwr/source/bsf-src-2.4.0.zip">
 		<attributes>
@@ -122,7 +125,7 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/generated/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
-	<classpathentry kind="src" output="target/eclipse/demo/classes" path="noncla/various/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
+    <classpathentry kind="src" output="target/eclipse/demo/classes" path="noncla/various/demo/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>

@@ -19,8 +19,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.CometEvent;
 import org.apache.catalina.CometProcessor;
@@ -51,41 +49,33 @@ public class DwrCometProcessor extends DwrServlet implements CometProcessor
      */
     public void event(CometEvent event) throws IOException, ServletException
     {
-        HttpServletRequest request = event.getHttpServletRequest();
-        HttpServletResponse response = event.getHttpServletResponse();
-
         if (event.getEventType() == CometEvent.EventType.BEGIN)
         {
-            request.setAttribute(ATTRIBUTE_EVENT, event);
-            // The docs say that you're only allowed to read when it's a
-            // READ event.
-        }
-        else if (event.getEventType() == CometEvent.EventType.ERROR)
-        {
-            event.close();
-        }
-        else if (event.getEventType() == CometEvent.EventType.END)
-        {
-            event.close();
-        }
-        else if (event.getEventType() == CometEvent.EventType.READ)
-        {
-            // Does this handle blocking reads if we just carry on reading?
-            // Does anything in our implementation assume that isAvailable or
-            // isReady return false if the stream has ended (rather than just
-            // blocked)
-            service(request, response);
+            event.getHttpServletRequest().setAttribute(ATTRIBUTE_EVENT, event);
 
-            // If not we could use TomcatContainerAbstraction.isResponseCompleted
-            // to bail out if some condition set by the ERROR/END events is not
-            // satisfied.
+            service(event.getHttpServletRequest(), event.getHttpServletResponse());
+
+            Object sleep = event.getHttpServletRequest().getAttribute(ATTRIBUTE_SLEEP);
+            if (sleep == null)
+            {
+                event.close();
+            }
+        }
+        else if (event.getEventType() == CometEvent.EventType.ERROR || event.getEventType() == CometEvent.EventType.END)
+        {
+            event.close();
         }
     }
 
     /**
-     * We remember the notify conduit so we can reuse it
+     * We remember the event in the request so we can get at it again
      */
     protected static final String ATTRIBUTE_EVENT = "org.directwebremoting.servers.tomcat.event";
+
+    /**
+     * Are we ending because we're done, or just because we're thread-dropping (sleeping)
+     */
+    protected static final String ATTRIBUTE_SLEEP = "org.directwebremoting.servers.tomcat.sleep";
 
     /**
      * Declare to TomcatContainerAbstraction that we are in action

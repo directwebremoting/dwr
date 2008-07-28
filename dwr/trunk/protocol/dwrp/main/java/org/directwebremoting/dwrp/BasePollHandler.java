@@ -36,7 +36,6 @@ import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.OutputAlarm;
@@ -95,8 +94,10 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             batch = new PollBatch(request);
         }
-        catch (ServerException ex)
+        catch (Exception ex)
         {
+            log.debug("Failed to parse request", ex);
+
             // Send a batch exception to the server because the parse failed
             String script = EnginePrivate.getRemoteHandleBatchExceptionScript(null, ex);
             sendErrorScript(response, script);

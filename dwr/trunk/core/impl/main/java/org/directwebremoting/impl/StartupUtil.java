@@ -244,10 +244,16 @@ public class StartupUtil
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
         log.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 
+        abstractionImplNames = abstractionImplNames.replace(',', ' ');
         for (String abstractionImplName : abstractionImplNames.split(" "))
         {
             try
             {
+                if (abstractionImplName.trim().length() == 0)
+                {
+                    continue;
+                }
+
                 Class<ContainerAbstraction> abstractionImpl = (Class<ContainerAbstraction>) Class.forName(abstractionImplName);
                 ContainerAbstraction abstraction = abstractionImpl.newInstance();
                 if (abstraction.isNativeEnvironment(servletConfig))
@@ -289,6 +295,7 @@ public class StartupUtil
         String abstractionImplNames = container.getParameter(toResolve.getName());
         log.debug("- Selecting a " + toResolve.getSimpleName() + " from " + abstractionImplNames);
 
+        abstractionImplNames = abstractionImplNames.replace(',', ' ');
         for (String abstractionImplName : abstractionImplNames.split(" "))
         {
             try

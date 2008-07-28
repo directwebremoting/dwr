@@ -30,14 +30,6 @@ import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 public class GrizzlyContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ContainerAbstraction#isResponseCompleted(javax.servlet.http.HttpServletRequest)
-     */
-    public boolean isResponseCompleted(HttpServletRequest request)
-    {
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
@@ -53,18 +45,26 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
-     */
-    public Sleeper createSleeper(HttpServletRequest request)
-    {
-        return new GrizzlyContinuationSleeper(request);
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#getServerLoadMonitorImplementation()
      */
     public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
     {
         return ThreadDroppingServerLoadMonitor.class;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ContainerAbstraction#isResponseCompleted(javax.servlet.http.HttpServletRequest)
+     */
+    public boolean isResponseCompleted(HttpServletRequest request)
+    {
+        return false;
+    }
+ 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
+     */
+    public Sleeper createSleeper(HttpServletRequest request)
+    {
+        return new GrizzlyContinuationSleeper(request);
     }
 }
