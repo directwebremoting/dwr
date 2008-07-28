@@ -142,6 +142,17 @@ public class DefaultScriptSession implements RealScriptSession
     {
         synchronized (invalidLock)
         {
+            for (Map.Entry<String, Object> entry : attributes.entrySet())
+            {
+                Object value = entry.getValue();
+                
+                if (value instanceof ScriptSessionBindingListener)
+                {
+                    ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+                    listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
+                }
+            }
+
             invalidated = true;
             manager.invalidate(this);
         }
