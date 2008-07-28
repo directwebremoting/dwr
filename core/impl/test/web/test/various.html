@@ -8,21 +8,82 @@
   <script type='text/javascript' src='../generic.js'> </script>
   <script type='text/javascript' src='various.js'> </script>
   <script type='text/javascript' src='testMetaRemoting.js'> </script>
+  <script type='text/javascript' src='testMarshalling.js'> </script>
+  <script type='text/javascript' src='testIntegration.js'> </script>
+  <!--
   <script type='text/javascript' src='testData.js'> </script>
+  <script type='text/javascript' src='testAdvanced.js'> </script>
+  -->
   <link type="text/css" href="../generic.css" rel="stylesheet" />
   <title>DWR - Various Tests</title>
 </head>
 
-<body onload="init()">
+<body onload="init();">
 <div id="page-title">[
   <a href="http://getahead.ltd.uk/dwr/">DWR Website</a> |
   <a href="..">Web Application Index</a>
 ]</div>
 
-<h1>Various Tests</h1>
+<h1>Test Summary</h1>
 
-<ul id="buttons" class="inlineList">
-</ul>
+<table class="form grey">
+  <thead>
+    <tr>
+      <th>Test Count:</th>
+      <td id="testCount"> </td>
+    </tr>
+    <tr>
+      <th>Tests Run:</th>
+      <td id="testsRun"> </td>
+    </tr>
+    <tr>
+      <th>Tests Outstanding:</th>
+      <td id="testsOutstanding"> </td>
+    </tr>
+    <tr>
+      <th>Tests Failed:</th>
+      <td id="testsFailed"> </td>
+    </tr>
+    <tr>
+      <th>Tests Passed:</th>
+      <td id="testsPassed"> </td>
+    </tr>
+    <tr>
+      <th>Async Delay:</th>
+      <td>
+        <select id="delay">
+          <option value="0" selected="selected">0ms</option>
+          <option value="5">5ms</option>
+          <option value="10">10ms</option>
+          <option value="20">20ms</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <th>Actions:</th>
+      <td>
+        <input type="button" value="Run All" onclick="runAllTests();"/>
+      </td>
+    </tr>
+  </thead>
+</table>
+
+<h1>Test List</h1>
+
+<table class="grey">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Async</th>
+      <th>Action</th>
+      <th>Result</th>
+      <th>Scratch Space</th>
+    </tr>
+  </thead>
+  <tbody id="tests">
+  </tbody>
+</table>
 
 <div id="output">
 </div>

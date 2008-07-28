@@ -1,16 +1,6 @@
 
-function init() {
-  callOnLoad(dwr.util.useLoadingMessage);
-}
-
-function failure(message) {
-  alert(message);
-}
-
-function success(message) {
-}
-
-function testXML() {
+function testXOM() {
+  dwr.util.setValue(currentTest.scratch, "<div id='replyXOM' class='xmlReply'> </div>", { escapeHtml:false });
   XOM.getDocument("textXOM", function(data) {
     dwr.util.setValue("replyXOM", data);
     XOM.debugDocument($("replyXOM"), function(data) {
@@ -22,7 +12,10 @@ function testXML() {
       }
     });
   });
+}
 
+function testJdom() {
+  dwr.util.setValue(currentTest.scratch, "<div id='replyJDOM' class='xmlReply'> </div>", { escapeHtml:false });
   JDOM.getDocument("textJDOM", function(data) {
     dwr.util.setValue("replyJDOM", data);
     JDOM.debugDocument($("replyJDOM"), function(data) {
@@ -34,7 +27,10 @@ function testXML() {
       }
     });
   });
+}
 
+function testDom() {
+  dwr.util.setValue(currentTest.scratch, "<div id='replyDOM' class='xmlReply'> </div>", { escapeHtml:false });
   DOM.getDocument("textDOM", function(data) {
     dwr.util.setValue("replyDOM", data);
     DOM.debugDocument($("replyDOM"), function(data) {
@@ -46,7 +42,10 @@ function testXML() {
       }
     });
   });
+}
 
+function testDom4j() {
+  dwr.util.setValue(currentTest.scratch, "<div id='replyDOM4J' class='xmlReply'> </div>", { escapeHtml:false });
   DOM4J.getDocument("textDOM4J", function(data) {
     dwr.util.setValue("replyDOM4J", data);
     DOM4J.debugDocument($("replyDOM4J"), function(data) {

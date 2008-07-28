@@ -74,9 +74,9 @@
         </option>
         <option name="OTHER_INDENT_OPTIONS">
           <value>
-            <option name="INDENT_SIZE" value="4" />
+            <option name="INDENT_SIZE" value="2" />
             <option name="CONTINUATION_INDENT_SIZE" value="8" />
-            <option name="TAB_SIZE" value="8" />
+            <option name="TAB_SIZE" value="4" />
             <option name="USE_TAB_CHARACTER" value="false" />
             <option name="SMART_TABS" value="false" />
             <option name="LABEL_INDENT_SIZE" value="0" />
@@ -881,7 +881,7 @@
           <option name="m_limit" value="2" />
         </inspection_tool>
         <inspection_tool class="DefaultNotLastCaseInSwitchJS" level="WARNING" enabled="true" />
-        <inspection_tool class="DuplicateConditionJS" level="WARNING" enabled="true" />
+        <inspection_tool class="DuplicateConditionJS" level="INFO" enabled="true" />
         <inspection_tool class="IfStatementWithIdenticalBranchesJS" level="WARNING" enabled="true" />
         <inspection_tool class="ThreadDeathRethrown" level="WARNING" enabled="true" />
         <inspection_tool class="BadExceptionCaught" level="WARNING" enabled="true">
@@ -1043,17 +1043,17 @@
         </inspection_tool>
         <inspection_tool class="DollarSignInName" level="WARNING" enabled="true" />
         <inspection_tool class="FunctionNamingConventionJS" level="WARNING" enabled="true">
-          <option name="m_regex" value="[a-z][A-Za-z]*" />
+          <option name="m_regex" value="[_a-z][A-Za-z0-9]*" />
           <option name="m_minLength" value="4" />
-          <option name="m_maxLength" value="32" />
+          <option name="m_maxLength" value="40" />
         </inspection_tool>
         <inspection_tool class="ParameterNamingConventionJS" level="WARNING" enabled="true">
-          <option name="m_regex" value="[a-z][A-Za-z]*" />
+          <option name="m_regex" value="[a-z][A-Za-z0-9]*" />
           <option name="m_minLength" value="1" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
         <inspection_tool class="LocalVariableNamingConventionJS" level="WARNING" enabled="true">
-          <option name="m_regex" value="[a-z][A-Za-z]*" />
+          <option name="m_regex" value="[a-z][A-Za-z0-9]*" />
           <option name="m_minLength" value="1" />
           <option name="m_maxLength" value="32" />
         </inspection_tool>
@@ -1278,6 +1278,7 @@
           </option>
           <option name="myCustomValuesEnabled" value="true" />
         </inspection_tool>
+        <inspection_tool class="PointlessArithmeticExpressionJS" level="INFO" enabled="true" />
       </profile>
     </profiles>
     <list size="4">
@@ -1501,6 +1502,14 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="impl" />
       <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="56051" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
       <method>
         <option name="Run Ant target" value="true" />
         <option name="Make" value="false" />
