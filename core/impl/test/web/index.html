@@ -2,11 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-  <script type='text/javascript' src='../dwr/engine.js'> </script>
-  <script type='text/javascript' src='../dwr/interface/Test.js'> </script>
-  <script type='text/javascript' src='../dwr/util.js'> </script>
-  <script type='text/javascript' src='../generic.js'> </script>
-  <script type='text/javascript' src='various.js'> </script>
+  <script type='text/javascript' src='./dwr/engine.js'> </script>
+  <script type='text/javascript' src='./dwr/interface/Test.js'> </script>
+  <script type='text/javascript' src='./dwr/util.js'> </script>
+  <script type='text/javascript' src='index.js'> </script>
   <script type='text/javascript' src='testMetaRemoting.js'> </script>
   <script type='text/javascript' src='testMarshalling.js'> </script>
   <script type='text/javascript' src='testIntegration.js'> </script>
@@ -14,7 +13,7 @@
   <script type='text/javascript' src='testData.js'> </script>
   <script type='text/javascript' src='testAdvanced.js'> </script>
   -->
-  <link type="text/css" href="../generic.css" rel="stylesheet" />
+  <link type="text/css" href="index.css" rel="stylesheet" />
   <title>DWR - Various Tests</title>
 </head>
 
@@ -68,22 +67,23 @@
   </thead>
 </table>
 
-<h1>Test List</h1>
-
-<table class="grey">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Async</th>
-      <th>Action</th>
-      <th>Result</th>
-      <th>Scratch Space</th>
-    </tr>
-  </thead>
-  <tbody id="tests">
-  </tbody>
-</table>
+<div id="groupTemplate">
+  <h1 id="groupTitle">Test List</h1>
+  <table class="grey">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Delayed</th>
+        <th>Action</th>
+        <th>Result</th>
+        <th>Scratch Space</th>
+      </tr>
+    </thead>
+    <tbody id="groupTests">
+    </tbody>
+  </table>
+</div>
 
 <div id="output">
 </div>
