@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.tomcat;
+package org.directwebremoting.servers.servlet3;
 
-import java.io.IOException;
+import java.lang.reflect.Method;
 
-import org.apache.catalina.CometEvent;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
@@ -26,19 +27,14 @@ import org.directwebremoting.extend.Sleeper;
  * A Sleeper that works with Jetty Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class TomcatContinuationSleeper implements Sleeper
+public class Servlet3Sleeper implements Sleeper
 {
     /**
-     * @param event The request into which we store this as an attribute
+     * @param request The request into which we store this as an attribute
      */
-    public TomcatContinuationSleeper(CometEvent event)
+    public Servlet3Sleeper(HttpServletRequest request)
     {
-        this.event = event;
-
-        // At this point JettyContinuationSleeper is fully initialized so it is
-        // safe to allow other classes to see and use us.
-        //noinspection ThisEscapedInObjectConstruction
-        event.getHttpServletRequest().setAttribute(ATTRIBUTE_EVENT, this);
+        this.request = request;
     }
 
     /* (non-Javadoc)
@@ -48,16 +44,24 @@ public class TomcatContinuationSleeper implements Sleeper
     {
         this.onAwakening = awakening;
 
-        // We don't generally need to do anything here - just let the call
-        // to DwrCometProcessor.event end. Things end when we ask them to
-        // Except if wakeUp() was called before goToSleep() in which case we
-        // don't want to sleep, but allow the onAwakening action to run directly
-
         synchronized (wakeUpCalledLock)
         {
             if (wakeUpCalled)
             {
                 onAwakening.run();
+            }
+            else
+            {
+                // request.suspend();
+
+                try
+                {
+                    suspendMethod.invoke(request);
+                }
+                catch (Exception ex)
+                {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -76,26 +80,45 @@ public class TomcatContinuationSleeper implements Sleeper
 
             wakeUpCalled = true;
 
-            if (onAwakening != null)
-            {
-                onAwakening.run();
-            }
-
             try
             {
-                event.close();
+                // request.complete();
+
+                completeMethod.invoke(request);
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
-                log.warn("Error while closing the event", ex);
+                log.warn("Error completing comet request", ex);
             }
         }
     }
 
     /**
-     * Tomcat's container for the request/response for this transaction
+     * We want this to compile on Servlet 2.4
      */
-    private CometEvent event;
+    static
+    {
+        try
+        {
+            suspendMethod = HttpServletRequest.class.getMethod("suspend");
+            completeMethod = HttpServletRequest.class.getMethod("complete");
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * When the server supports servlet 3 ...
+     */
+    private static final Method suspendMethod;
+    private static final Method completeMethod;
+
+    /**
+     * The request object that we call suspend/resume on
+     */
+    private HttpServletRequest request;
 
     /**
      * All operations that involve going to sleep of waking up must hold this
@@ -114,12 +137,12 @@ public class TomcatContinuationSleeper implements Sleeper
     private Runnable onAwakening;
 
     /**
-     * We remember the notify conduit so we can reuse it
+     * Has the continuation been restarted already?
      */
-    protected static final String ATTRIBUTE_EVENT = "org.directwebremoting.servers.tomcat.event";
+    protected boolean resumed = false;
 
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(TomcatContinuationSleeper.class);
+    private static final Log log = LogFactory.getLog(Servlet3Sleeper.class);
 }

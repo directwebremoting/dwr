@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.standard;
+package org.directwebremoting.servers.servlet2;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +28,24 @@ import org.directwebremoting.impl.ThreadWaitSleeper;
  * An abstraction of the servlet container that just follows the standards
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class StandardContainerAbstraction implements ContainerAbstraction
+public class Servlet2ContainerAbstraction implements ContainerAbstraction
 {
+    /* (non-Javadoc)
+     * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
+     */
+    public boolean isNativeEnvironment(ServletConfig servletConfig)
+    {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.dwrp.ContainerAbstraction#getServerLoadMonitorImplementation()
+     */
+    public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
+    {
+        return DefaultServerLoadMonitor.class;
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ContainerAbstraction#isResponseCompleted(javax.servlet.http.HttpServletRequest)
      */
@@ -44,21 +60,5 @@ public class StandardContainerAbstraction implements ContainerAbstraction
     public Sleeper createSleeper(HttpServletRequest request)
     {
         return new ThreadWaitSleeper();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.ContainerAbstraction#getServerLoadMonitorImplementation()
-     */
-    public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
-    {
-        return DefaultServerLoadMonitor.class;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
-     */
-    public boolean isNativeEnvironment(ServletConfig servletConfig)
-    {
-        return true;
     }
 }

@@ -605,4 +605,30 @@ public class FakeHttpServletResponse implements HttpServletResponse
     private String forwardedUrl = null;
 
     private String includedUrl = null;
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletResponse#disable()
+     */
+    public void disable()
+    {
+        // From Servlet 3.0 from Greg
+        // TODO: we might want to delete all the servlet 3.0 preview methods
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletResponse#enable()
+     */
+    public void enable()
+    {
+        // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletResponse#isDisabled()
+     */
+    public boolean isDisabled()
+    {
+        // From Servlet 3.0 from Greg
+        return false;
+    }
 }

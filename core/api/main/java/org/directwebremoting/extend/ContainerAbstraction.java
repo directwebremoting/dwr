@@ -35,13 +35,6 @@ public interface ContainerAbstraction
     boolean isNativeEnvironment(ServletConfig servletConfig);
 
     /**
-     * Create a sleeper that is appropriate for the given servlet container
-     * @param request The Sleeper will probably need to know about the request
-     * @return A method of sending threads to sleep.
-     */
-    Sleeper createSleeper(HttpServletRequest request);
-
-    /**
      * The setup process allows the ContainerAbstraction to select a special
      * ServerLoadMonitor implementation
      * @return The ServerLoadMonitor implementation to go with this container
@@ -57,4 +50,11 @@ public interface ContainerAbstraction
      * @return true if the request is completed
      */
     boolean isResponseCompleted(HttpServletRequest request);
+
+    /**
+     * Create a sleeper that is appropriate for the given servlet container
+     * @param request The Sleeper will probably need to know about the request
+     * @return A method of sending threads to sleep.
+     */
+    Sleeper createSleeper(HttpServletRequest request);
 }

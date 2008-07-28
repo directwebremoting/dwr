@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.jetty;
+package org.directwebremoting.servers.servlet3;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -24,34 +24,17 @@ import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
- * An abstraction of the servlet container that is specific to Jetty
+ * An abstraction of the servlet container that just follows the standards
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JettyContainerAbstraction implements ContainerAbstraction
+public class Servlet3ContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("jetty-"))
-        {
-            try
-            {
-                int version = Integer.parseInt(serverInfo.substring(6, 7));
-                if (version >= 6)
-                {
-                    return true;
-                }
-            }
-            catch (NumberFormatException ex)
-            {
-                // ignore
-            }
-        }
-
-        return false;
+        return false; // servletConfig.getServletContext().getMajorVersion() >= 3;
     }
 
     /* (non-Javadoc)
@@ -67,11 +50,6 @@ public class JettyContainerAbstraction implements ContainerAbstraction
      */
     public boolean isResponseCompleted(HttpServletRequest request)
     {
-        if (JettyContinuationSleeper.isRestart(request))
-        {
-            JettyContinuationSleeper.restart(request);
-            return true;
-        }
         return false;
     }
 
@@ -80,6 +58,6 @@ public class JettyContainerAbstraction implements ContainerAbstraction
      */
     public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new JettyContinuationSleeper(request);
+        return new Servlet3Sleeper(request);
     }
 }
