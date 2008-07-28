@@ -15,8 +15,11 @@
  */
 package org.directwebremoting.util;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +27,9 @@ import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +37,7 @@ import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -327,6 +333,102 @@ public final class LocalUtil
                paramType == ServletConfig.class ||
                paramType == ServletContext.class ||
                paramType == HttpSession.class;
+    }
+
+    /**
+     * If something has gone wrong we want to know all about the request that
+     * caused the failure
+     * @param request The HttpServletRequest the borked
+     */
+    public static void debugRequest(HttpServletRequest request)
+    {
+        String queryString = (request.getQueryString() != null) ? "?" + request.getQueryString() : "";
+        String requestLine = request.getMethod() + " " + request.getRequestURL() + queryString + " " + request.getProtocol();
+
+        // The headers
+        log.debug("Reconstituted HttpServletRequest:");
+        log.debug(" " + requestLine);
+        @SuppressWarnings("unchecked")
+        Enumeration<String> headerNames = request.getHeaderNames();
+        for (String headerName : iterableizer(headerNames))
+        {
+            log.debug("  " + headerName + ": " + request.getHeader(headerName));
+        }
+
+        StringWriter buffer = new StringWriter();
+        try
+        {
+            ServletInputStream in = request.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            int length = 0;
+            while (length < 256)
+            {
+                String line = reader.readLine();
+                if (line == null)
+                {
+                    break;
+                }
+                buffer.append("\n");
+                buffer.append(line);
+                length += line.length();
+            }
+        }
+        catch (IOException ex)
+        {
+            buffer.append("[Unable to read body: " + ex + "]\n");
+        }
+        log.debug(" " + buffer);
+
+        // The attributes
+        log.debug("Attributes attached to the Request:");
+        @SuppressWarnings("unchecked")
+        Enumeration<String> attributeNames = request.getAttributeNames();
+        for (String attributeName : iterableizer(attributeNames))
+        {
+            log.debug("  " + attributeName + ": " + request.getAttribute(attributeName));
+        }
+
+        // Data parsed from the headers
+        log.debug("Security properties:");
+        log.debug("  AuthType: " + request.getAuthType());
+        log.debug("  RemoteUser: " + request.getRemoteUser());
+        log.debug("  UserPrincipal: " + request.getUserPrincipal());
+    }
+
+    /**
+     * Go Java! How many people have written this code?
+     * @param en The Enumeration that we want to iterate over
+     * @return An implementation of {@link Iterable} for use in a for each loop
+     */
+    public static <T> Iterable<T> iterableizer(final Enumeration<T> en)
+    {
+        return new Iterable<T>()
+        {
+            /* @see java.lang.Iterable#iterator() */
+            public Iterator<T> iterator()
+            {
+                return new Iterator<T>()
+                {
+                    /* @see java.util.Iterator#hasNext() */
+                    public boolean hasNext()
+                    {
+                        return en.hasMoreElements();
+                    }
+
+                    /* @see java.util.Iterator#next() */
+                    public T next()
+                    {
+                        return en.nextElement();
+                    }
+
+                    /* @see java.util.Iterator#remove() */
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
     }
 
     /**
