@@ -13,7 +13,9 @@
     <creator id="spring" class="org.directwebremoting.spring.SpringCreator"/>
     <creator id="script" class="org.directwebremoting.create.ScriptedCreator"/>
     <creator id="struts" class="org.directwebremoting.struts.StrutsCreator"/>
+    <!--
     <creator id="ejb3" class="org.directwebremoting.create.Ejb3Creator"/>
+    -->
 
     <converter id="null" class="org.directwebremoting.convert.NullConverter"/>
     <converter id="enum" class="org.directwebremoting.convert.EnumConverter"/>

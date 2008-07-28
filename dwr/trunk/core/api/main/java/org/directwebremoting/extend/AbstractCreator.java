@@ -136,6 +136,8 @@ public abstract class AbstractCreator implements Creator
 
     /**
      * Do the methods on the Creator change over time?
+     * TODO: This is only used by the dynamicReload function of ScriptedCreator
+     * we might be able to simplify several things if we remove this
      */
     private boolean cacheable = false;
 
