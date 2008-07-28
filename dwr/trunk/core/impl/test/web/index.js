@@ -1,6 +1,9 @@
 // http://www.helephant.com/Article.aspx?ID=675
 
 var tests = {};
+var groups = { 'Global':[] };
+var groupNames = [ 'Global' ];
+
 var currentTest = null;
 
 var status = { notrun:0, executing:1, asynchronous:2, pass:3, fail:4 };
@@ -27,35 +30,59 @@ function init() {
  *
  */
 function addTest(testName, test) {
+  var groupName = "Global";
+  for (var i = 0; i < groupNames.length; i++) {
+    if (testName.indexOf("test" + groupNames[i]) == 0) {
+      groupName = groupNames[i];
+    }
+  }
+
+  groups[groupName].push(testName);
   tests[testName] = test;
   test.name = testName;
   test.status = status.notrun;
 }
 
 /**
+ * 
+ */
+function createTestGroup(groupName) {
+  groupNames.push(groupName);
+  groups[groupName] = [];
+}
+
+/**
  *
  */
 function displayTestTable() {
-  var testNames = _getTestNames();
-  dwr.util.addRows("tests", testNames, [
-    function num(testName, options) { return options.rowNum + 1; },
-    function name(testName, options) { return _addSpaces(testName.substring(4)); },
-    function async(testName, options) { return "<span id='asyncReturn" + testName + "'>0</span>/<span id='asyncSent" + testName + "'>0</span>"; },
-    function action(testName, options) {
-      return "<input type='button' value='Run' onclick='runTest(\"" + testName + "\");'/>";
-    },
-    function results(testName, options) { return ""; },
-    function scratchSpace(testName, options) { return "<div id='scratch" + testName + "'></div>"; }
-  ], {
-    escapeHtml:false,
-    cellCreator:function(options) {
-      var td = document.createElement("td");
-      if (options.cellNum == 4) {
-        td.setAttribute("id", options.rowData);
+  for (var i = 0; i < groupNames.length; i++) {
+    var groupName = groupNames[i];
+    var testNames = groups[groupName];
+    testNames.sort();
+
+    dwr.util.cloneNode("groupTemplate", { idSuffix:groupName });
+    dwr.util.setValue("groupTitle" + groupName, groupName);
+    dwr.util.addRows("groupTests" + groupName, testNames, [
+      function num(testName, options) { return options.rowNum + 1; },
+      function name(testName, options) { return _addSpaces(testName.substring(4)); },
+      function async(testName, options) { return "<span id='asyncReturn" + testName + "'>0</span>/<span id='asyncSent" + testName + "'>0</span>"; },
+      function action(testName, options) {
+        return "<input type='button' value='Run' onclick='runTest(\"" + testName + "\");'/>";
+      },
+      function results(testName, options) { return ""; },
+      function scratchSpace(testName, options) { return "<div id='scratch" + testName + "'></div>"; }
+    ], {
+      escapeHtml:false,
+      cellCreator:function(options) {
+        var td = document.createElement("td");
+        if (options.cellNum == 4) {
+          td.setAttribute("id", options.rowData);
+        }
+        return td;
       }
-      return td;
-    }
-  });
+    });
+  }
+    
   var test;
   for (var testName in tests) {
     test = tests[testName];
@@ -400,22 +427,6 @@ function _recordTrace() {
  */
 function success(message) {
   _appendMessage(currentTest, message);
-}
-
-/**
- *
- */
-function runComparisonTests(compares) {
-  for (var i = 0; i < compares.length; i++) {
-    var compare = compares[i];
-
-    Test[compare.code](compare.data, {
-      callback:createDelayed(function(data) {
-        assertEqual(data, compare.data);
-      }),
-      exceptionHandler:createDelayedError()
-    });
-  }
 }
 
 /**

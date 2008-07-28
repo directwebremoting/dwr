@@ -9,8 +9,7 @@ select, textarea, input[type='text'], input[type='password'] {
   font-size:1em; padding:0px 3px; margin:0px; border:1px solid #999;
 }
 
-select, textarea, input[type='text'], input[type='password']
-{ -moz-border-radius:5px; }
+select, textarea, input[type='text'], input[type='password'] { -moz-border-radius:5px; }
 
 button, input[type='button'], input[type='submit'], input[type='cancel'] {
   font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
@@ -67,3 +66,5 @@ pre { background:#f4f4f4; padding:10px; }
   font-family:anonymous,courier,monospace; background:#EEE; padding: 5px;
   margin:20px 0px;
 }
+
+#groupTemplate { display:none; }

@@ -1,4 +1,6 @@
 
+createTestGroup("Marshall");
+
 function testMarshallByteParam() {
   runComparisonTests([
     { code:"byteParam", data:-128 },
@@ -471,4 +473,20 @@ function testMarshallDomElementParam() {
     { code:"jdomElementParam", data:testNode },
     { code:"domElementParam", data:testNode }
   ]);
+}
+
+/**
+ *
+ */
+function runComparisonTests(compares) {
+  for (var i = 0; i < compares.length; i++) {
+    var compare = compares[i];
+
+    Test[compare.code](compare.data, {
+      callback:createDelayed(function(data) {
+        assertEqual(data, compare.data);
+      }),
+      exceptionHandler:createDelayedError()
+    });
+  }
 }
