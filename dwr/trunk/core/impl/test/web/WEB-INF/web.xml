@@ -14,9 +14,6 @@
   <listener>
     <listener-class>org.directwebremoting.bayeux.BayeuxServletContextAttributeListener</listener-class>
   </listener>
-  <listener>
-    <listener-class>com.example.dwr.setup.DirectoryServletContextListener</listener-class>
-  </listener>
 
   <servlet>
     <servlet-name>dwr-invoker</servlet-name>

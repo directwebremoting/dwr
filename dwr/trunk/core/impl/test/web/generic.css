@@ -27,9 +27,9 @@ h3 { color:#000; font-size:100%; }
 h4 { color:#000; font-size:90%; }
 
 table { border-collapse:collapse; border-spacing:5px; }
-table, td, th { border:1px solid #ccc; padding:2px; }
+table, td, th { border:1px solid #ccc; padding:5px; }
 table.form th { text-align:right; font-weight:normal; }
-table.grey th { background:#eee; font-weight:normal; }
+table.grey th { background-color:#eee; font-weight:normal; }
 table.plain { border:0; }
 table.plain td { border:0; }
 table.plain th { border:0; }
