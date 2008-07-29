@@ -228,13 +228,6 @@ function testMarshallStringParam() {
   ]);
 }
 
-function testMarshallStringStringParam() {
-  runComparisonTests([
-    { code:"stringStringParam", data:"param1=' !\"#$%&\'()*+,-/0123456789' param2=':,<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ'" },
-    { code:"stringStringParam", data:"param1='[\\]^_`' param2='abcdefghijklmnopqrstuvwxyz{|}~'" }
-  ]);
-}
-
 function testMarshallBooleanArrayParam() {
   runComparisonTests([
     { code:"booleanArrayParam", data:[ ] },

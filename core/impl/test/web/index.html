@@ -6,10 +6,13 @@
   <script type='text/javascript' src='./dwr/interface/Test.js'> </script>
   <script type='text/javascript' src='./dwr/util.js'> </script>
   <script type='text/javascript' src='index.js'> </script>
-  <script type='text/javascript' src='testMetaRemoting.js'> </script>
+  <script type='text/javascript' src='testVarious.js'> </script>
+  <script type='text/javascript' src='testRemoting.js'> </script>
   <script type='text/javascript' src='testMarshalling.js'> </script>
-  <script type='text/javascript' src='testIntegration.js'> </script>
+  <script type='text/javascript' src='testError.js'> </script>
   <!--
+  <script type='text/javascript' src='testTestSuite.js'> </script>
+  <script type='text/javascript' src='testIntegration.js'> </script>
   <script type='text/javascript' src='testData.js'> </script>
   <script type='text/javascript' src='testAdvanced.js'> </script>
   -->
@@ -23,66 +26,56 @@
   <a href="..">Web Application Index</a>
 ]</div>
 
+<p style="float:right;">
+  <strong>Settings:</strong>
+  Async Delay:
+  <select id="delay">
+    <option value="0" selected="selected">0ms</option>
+    <option value="5">5ms</option>
+    <option value="10">10ms</option>
+    <option value="20">20ms</option>
+  </select>
+</p>
+
 <h1>Test Summary</h1>
 
-<table class="form grey">
+<table class="grey form">
   <thead>
     <tr>
-      <th>Test Count:</th>
-      <td id="testCount"> </td>
-    </tr>
-    <tr>
-      <th>Tests Run:</th>
-      <td id="testsRun"> </td>
-    </tr>
-    <tr>
-      <th>Tests Outstanding:</th>
-      <td id="testsOutstanding"> </td>
-    </tr>
-    <tr>
-      <th>Tests Failed:</th>
-      <td id="testsFailed"> </td>
-    </tr>
-    <tr>
-      <th>Tests Passed:</th>
-      <td id="testsPassed"> </td>
-    </tr>
-    <tr>
-      <th>Async Delay:</th>
-      <td>
-        <select id="delay">
-          <option value="0" selected="selected">0ms</option>
-          <option value="5">5ms</option>
-          <option value="10">10ms</option>
-          <option value="20">20ms</option>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <th>Actions:</th>
-      <td>
-        <input type="button" value="Run All" onclick="runAllTests();"/>
-      </td>
+      <th>Group</th>
+      <th>Run</th>
+      <th>Outstanding</th>
+      <th>Failed</th>
+      <th>Passed</th>
+      <th>Total</th>
+      <th>Actions</th>
     </tr>
   </thead>
+  <tbody id="testSummary">
+  </tbody>
 </table>
 
+<br/>
+
 <div id="groupTemplate">
-  <h1 id="groupTitle">Test List</h1>
-  <table class="grey">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Delayed</th>
-        <th>Action</th>
-        <th>Result</th>
-        <th>Scratch Space</th>
-      </tr>
-    </thead>
-    <tbody id="groupTests">
-    </tbody>
-  </table>
+  <div id="groupDetail">
+    <hr/>
+    <h2><span id="groupTitle">Group</span> Test Detail</h2>
+    <table class="grey">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Delayed</th>
+          <th>Action</th>
+          <th>Result</th>
+          <th>Scratch Space</th>
+        </tr>
+      </thead>
+      <tbody id="groupTests">
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div id="output">

@@ -579,11 +579,6 @@ public class Test
         return reply;
     }
 
-    public String stringStringParam(String param1, String param2)
-    {
-        return "param1='" + param1 + "' param2='" + param2 + "'";
-    }
-
     public String slowStringParam(String param, long delay) throws InterruptedException
     {
         log.debug("About to wait for: " + delay);

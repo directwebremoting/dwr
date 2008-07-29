@@ -1,5 +1,7 @@
 
-function testXOM() {
+createTestGroup("Integration");
+
+function testIntegrationXom() {
   dwr.util.setValue(currentTest.scratch, "<div id='replyXOM' class='xmlReply'> </div>", { escapeHtml:false });
   XOM.getDocument("textXOM", function(data) {
     dwr.util.setValue("replyXOM", data);
@@ -14,7 +16,7 @@ function testXOM() {
   });
 }
 
-function testJdom() {
+function testIntegrationJdom() {
   dwr.util.setValue(currentTest.scratch, "<div id='replyJDOM' class='xmlReply'> </div>", { escapeHtml:false });
   JDOM.getDocument("textJDOM", function(data) {
     dwr.util.setValue("replyJDOM", data);
@@ -29,7 +31,7 @@ function testJdom() {
   });
 }
 
-function testDom() {
+function testIntegrationDom() {
   dwr.util.setValue(currentTest.scratch, "<div id='replyDOM' class='xmlReply'> </div>", { escapeHtml:false });
   DOM.getDocument("textDOM", function(data) {
     dwr.util.setValue("replyDOM", data);
@@ -44,7 +46,7 @@ function testDom() {
   });
 }
 
-function testDom4j() {
+function testIntegrationDom4j() {
   dwr.util.setValue(currentTest.scratch, "<div id='replyDOM4J' class='xmlReply'> </div>", { escapeHtml:false });
   DOM4J.getDocument("textDOM4J", function(data) {
     dwr.util.setValue("replyDOM4J", data);
