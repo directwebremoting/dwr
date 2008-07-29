@@ -258,7 +258,11 @@ function updateTestResults() {
  *
  */
 function runTest(testName) {
-  currentTest = tests[testName];
+  var subTest = (currentTest != null);
+  if (!subTest) {
+    currentTest = tests[testName];
+  }
+
   _setStatus(currentTest, status.executing, true);
   dwr.util.setValue(currentTest.name, "");
 
@@ -276,7 +280,10 @@ function runTest(testName) {
   if (_getStatus(currentTest) == status.executing) {
     _setStatus(currentTest, status.pass, true);
   }
-  currentTest = null;
+
+  if (!subTest) {
+    currentTest = null;
+  }
   updateTestResults();
 }
 
@@ -284,10 +291,26 @@ function runTest(testName) {
  *
  */
 function runTestGroup(groupName) {
+  _runNextTestInGroup(groupName, 0);
+}
+
+/**
+ *
+ */
+function _runNextTestInGroup(groupName, i) {
   var testNames = groups[groupName];
-  for (var i = 0; i < testNames.length; i++) {
-    runTest(testNames[i]);
+  if (testNames == null) {
+    throw new Error("No test group called: " + groupName);
   }
+
+  if (i >= testNames.length) {
+    return;
+  }
+
+  runTest(testNames[i]);
+  setTimeout(function() {
+    _runNextTestInGroup(groupName, i + 1);
+  }, 10);
 }
 
 /**
