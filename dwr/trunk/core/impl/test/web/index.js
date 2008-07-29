@@ -376,6 +376,13 @@ function createDelayedError(func, scope) {
 /**
  *
  */
+function useHtml(html) {
+  dwr.util.setValue(currentTest.scratch, html, { escapeHtml:false });
+}
+
+/**
+ *
+ */
 function fail(message) {
   _record(currentTest, "fail", message);
   throw new Error();
