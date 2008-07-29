@@ -1,14 +1,16 @@
 
-function testNothing() {
+createTestGroup("TestSuite");
+
+function testTestSuiteNothing() {
 }
 
-function testWillFail() {
+function testTestSuiteWillFail() {
   verifyTrue(false);
   fail("This should fail");
   verifyFalse(true);
 }
 
-function testWillFailLater() {
+function testTestSuiteWillFailLater() {
   setTimeout(createDelayed(function() {
     verifyTrue(false);
     fail("This should fail");
@@ -16,19 +18,34 @@ function testWillFailLater() {
   }), 1000);
 }
 
-function testWillDelayError() {
+function testTestSuiteWillPassLater() {
+  setTimeout(createDelayed(function() {
+    verifyTrue(true);
+  }), 1000);
+}
+
+function testTestSuiteWillDelayError() {
   setTimeout(createDelayedError(function() {
     verifyTrue(false);
   }), 1000);
 }
 
-function testWillNotComplete() {
+function testTestSuiteWillNotComplete() {
   createDelayed(function() {
     verifyTrue(true);
   });
 }
 
-function testSyncAsync() {
+function testTestSuitePartialComplete() {
+  createDelayed(function() {
+    verifyTrue(true);
+  });
+  setTimeout(createDelayed(function() {
+    verifyTrue(true);
+  }), 1000);
+}
+
+function testTestSuiteSyncAsync() {
   createDelayed(function() {
     verifyTrue(true);
   })();

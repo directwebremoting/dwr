@@ -54,9 +54,8 @@ pre { background:#f4f4f4; padding:10px; }
   width:200px; text-align:right; padding-top:2px;
 }
 
-#page-title { background-color:#7272a2; border:1px solid #000000;
-  border-top:0; padding:5px; font-size:80%; line-height:1.8em;
-  position:absolute; top:0; left:0; width:100%; color:#ccc;
+#page-title { background-color:#7272a2; border-bottom:1px solid #000; color:#ccc;
+  padding:10px 0; font-size:80%; position:absolute; top:0; left:0; width:100%;
 }
 #page-title a { text-decoration:none; color:white; }
 #page-title a:hover { background-color:#7272a2; color:#ff3; }
@@ -68,3 +67,4 @@ pre { background:#f4f4f4; padding:10px; }
 }
 
 #groupTemplate { display:none; }
+.headInline { font-size:75%; font-weight:normal; }
