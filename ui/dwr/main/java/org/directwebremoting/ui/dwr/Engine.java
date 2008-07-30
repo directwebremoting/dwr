@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.proxy.dwr;
-
-import java.util.Collection;
+package org.directwebremoting.ui.dwr;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Engine is a server-side proxy that allows Java programmers to call client
@@ -27,35 +24,8 @@ import org.directwebremoting.proxy.ScriptProxy;
  * @see Util for more documenation on server-side proxies
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Engine extends ScriptProxy
+public class Engine
 {
-    /**
-     * Http thread constructor, that affects no browsers.
-     * Calls to {@link Engine#addScriptSession(ScriptSession)} or to
-     * {@link Engine#addScriptSessions(Collection)} will be needed
-     */
-    public Engine()
-    {
-    }
-
-    /**
-     * Http thread constructor that alters a single browser
-     * @param scriptSession The browser to alter
-     */
-    public Engine(ScriptSession scriptSession)
-    {
-        super(scriptSession);
-    }
-
-    /**
-     * Http thread constructor that alters a number of browsers
-     * @param scriptSessions A collection of ScriptSessions that we should act on.
-     */
-    public Engine(Collection<ScriptSession> scriptSessions)
-    {
-        super(scriptSessions);
-    }
-
     /**
      * XHR remoting type constant. See dwr.engine.set[Rpc|Poll]Type()
      */
@@ -82,7 +52,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setTimeout(")
               .appendData(timeout)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -96,7 +66,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setRpcType(")
               .appendData(newType)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -110,7 +80,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setHttpMethod(")
               .appendData(httpMethod)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -124,7 +94,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setOrdered(")
               .appendData(ordered)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -138,7 +108,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setAsync(")
               .appendData(async)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -152,7 +122,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setActiveReverseAjax(")
               .appendData(activeReverseAjax)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -166,7 +136,7 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setPollUsingComet(")
               .appendData(pollComet)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -180,6 +150,6 @@ public class Engine extends ScriptProxy
         script.appendScript("dwr.engine.setPollUsingComet(")
               .appendData(newPollType)
               .appendScript(");");
-        addScript(script);
+        ScriptProxy.addScript(script);
     }
 }

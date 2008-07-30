@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Mixin interface. Provides functionality to subclasses of jsx3.gui.Painted that allows them to publish model
@@ -32,12 +32,11 @@ public class Interactive extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Interactive(Context context, String extension, ScriptProxy scriptProxy)
+    public Interactive(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -301,7 +300,7 @@ any registered event script.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEvent", strScript, strType);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -316,8 +315,8 @@ the instance field itself and not a copy.
         String extension = "getEvents().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -337,8 +336,8 @@ the instance field itself and not a copy.
         String extension = "getEvents().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -353,7 +352,7 @@ setEvent() method or during component deserialization.
      * @param callback the JavaScript event script
      */
 
-    public void getEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
+    public void getEvent(String strType, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -371,7 +370,7 @@ setEvent() method or during component deserialization.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -380,7 +379,7 @@ setEvent() method or during component deserialization.
      * @param callback the JavaScript event script
      */
 
-    public void hasEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
+    public void hasEvent(String strType, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -398,7 +397,7 @@ setEvent() method or during component deserialization.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -417,8 +416,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -443,8 +442,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -463,8 +462,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "removeEvent(\"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -484,8 +483,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "removeEvent(\"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -503,8 +502,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "removeEvents().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -523,8 +522,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "removeEvents().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -542,7 +541,7 @@ can decide whether to consult this value or ignore it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanMove", bMovable);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -551,7 +550,7 @@ can decide whether to consult this value or ignore it.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanMove(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanMove(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -569,7 +568,7 @@ can decide whether to consult this value or ignore it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -582,7 +581,7 @@ Implementing classes can decide whether to consult this value or ignore it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanDrag", bDrag);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -592,7 +591,7 @@ dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanDrag(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanDrag(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -610,7 +609,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -623,7 +622,7 @@ this value or ignore it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanDrop", bDrop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -632,7 +631,7 @@ this value or ignore it.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanDrop(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanDrop(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -650,7 +649,7 @@ this value or ignore it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -663,7 +662,7 @@ this value or ignore it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanSpy", bSpy);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -672,7 +671,7 @@ this value or ignore it.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanSpy(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanSpy(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -690,7 +689,7 @@ this value or ignore it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -698,7 +697,7 @@ this value or ignore it.
 clicks on this object with the right button.
      */
 
-    public void getMenu(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMenu(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -716,7 +715,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -729,7 +728,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMenu", strMenu);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -744,7 +743,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -758,7 +757,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -769,7 +768,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSpyStyles", strCSS);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -797,13 +796,13 @@ function (the most recently registered) will be executed by a single keydown eve
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
+    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.ui.CodeBlock vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -842,8 +841,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -882,8 +881,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -917,13 +916,13 @@ function (the most recently registered) will be executed by a single keydown eve
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
+    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.ui.CodeBlock vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -962,8 +961,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1002,8 +1001,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

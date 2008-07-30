@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series used for a jsx3.chart.BubbleChart. A bubble series has the following fields:
@@ -32,12 +32,11 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public BubbleSeries(Context context, String extension, ScriptProxy scriptProxy)
+    public BubbleSeries(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -47,7 +46,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      */
     public BubbleSeries(String name, String seriesName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BubbleSeries", name, seriesName);
         setInitScript(script);
@@ -61,7 +60,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * @param record 
      */
 
-    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
+    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -79,7 +78,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -87,7 +86,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * @param callback magnitudeField
      */
 
-    public void getMagnitudeField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMagnitudeField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -105,7 +104,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -116,7 +115,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMagnitudeField", magnitudeField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -124,7 +123,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
      * @param record the <record/> node
      */
 
-    public void getMagnitudeValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getMagnitudeValue(jsx3.xml.Node record, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -142,7 +141,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

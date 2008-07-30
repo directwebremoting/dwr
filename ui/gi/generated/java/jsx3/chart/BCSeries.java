@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Shared functionality between BarSeries and ColumnSeries.
@@ -28,12 +28,11 @@ public class BCSeries extends jsx3.chart.Series
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public BCSeries(Context context, String extension, ScriptProxy scriptProxy)
+    public BCSeries(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +42,7 @@ public class BCSeries extends jsx3.chart.Series
      */
     public BCSeries(String name, String seriesName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BCSeries", name, seriesName);
         setInitScript(script);
@@ -56,7 +55,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param record the <record/> node
      */
 
-    public void getXValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getXValue(jsx3.xml.Node record, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -74,7 +73,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -82,7 +81,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param record the <record/> node
      */
 
-    public void getYValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getYValue(jsx3.xml.Node record, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -100,7 +99,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -108,7 +107,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param record the <record/> node
      */
 
-    public void getMinValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getMinValue(jsx3.xml.Node record, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -126,7 +125,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -134,7 +133,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param callback xField
      */
 
-    public void getXField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -152,7 +151,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -163,7 +162,7 @@ public class BCSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXField", xField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -171,7 +170,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param callback yField
      */
 
-    public void getYField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getYField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -189,7 +188,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -200,7 +199,7 @@ public class BCSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setYField", yField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -208,7 +207,7 @@ public class BCSeries extends jsx3.chart.Series
      * @param callback minField
      */
 
-    public void getMinField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMinField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -226,7 +225,7 @@ public class BCSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -237,7 +236,7 @@ public class BCSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinField", minField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

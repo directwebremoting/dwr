@@ -103,6 +103,41 @@ public class Browser
     }
 
     /**
+     * Execute a task and aim the output at all the browser windows open at the
+     * same page as the current request. No further filtering is performed.
+     * This implies that this method is only of use from a DWR created thread.
+     * To send to a subset of the browser windows viewing a page, see the
+     * {@link #withCurrentPageFiltered} method.
+     * @param task A code block to execute
+     */
+    public static void withCurrentPage(Runnable task)
+    {
+        WebContext webContext = WebContextFactory.get();
+        String page = webContext.getCurrentPage();
+        Collection<ScriptSession> sessions = webContext.getScriptSessionsByPage(page);
+
+        withSessions(sessions, task);
+    }
+
+    /**
+     * Execute a task and aim the output at a subset of the browser windows open
+     * at the same page as the current request. The filter allows you to select
+     * the set of users that will be interested in the update.
+     * This implies that this method is only of use from a DWR created thread.
+     * @param filter Used to define the set of browser windows which should
+     * receive the update.
+     * @param task A code block to execute
+     */
+    public static void withCurrentPageFiltered(ScriptSessionFilter filter, Runnable task)
+    {
+        WebContext webContext = WebContextFactory.get();
+        String page = webContext.getCurrentPage();
+        Collection<ScriptSession> sessions = webContext.getScriptSessionsByPage(page);
+
+        withSessions(sessions, task);
+    }
+
+    /**
      * Execute a task and aim the output at a specific script session. This
      * method is likely to be useful for directed updates that originate away
      * from a thread started by the browser window in question. Examples include

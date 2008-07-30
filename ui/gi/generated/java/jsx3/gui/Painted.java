@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Abstract superclass of model objects that are painted to screen.
@@ -28,12 +28,11 @@ public class Painted extends jsx3.app.Model
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Painted(Context context, String extension, ScriptProxy scriptProxy)
+    public Painted(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -42,7 +41,7 @@ public class Painted extends jsx3.app.Model
      */
     public Painted(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Painted", strName);
         setInitScript(script);
@@ -64,8 +63,8 @@ public class Painted extends jsx3.app.Model
         String extension = "getAbsolutePosition(\"" + objRoot + "\", \"" + objGUI + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -88,8 +87,8 @@ public class Painted extends jsx3.app.Model
         String extension = "getAbsolutePosition(\"" + objRoot + "\", \"" + objGUI + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -108,7 +107,7 @@ public class Painted extends jsx3.app.Model
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDynamicProperty", strName, strValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -118,7 +117,7 @@ public class Painted extends jsx3.app.Model
      * @param callback value of the property
      */
 
-    public void getDynamicProperty(String strName, org.directwebremoting.proxy.Callback<String> callback)
+    public void getDynamicProperty(String strName, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -136,7 +135,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -149,7 +148,7 @@ public class Painted extends jsx3.app.Model
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAttribute", strName, strValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -158,7 +157,7 @@ public class Painted extends jsx3.app.Model
      * @param strName the name of the property/attribute
      */
 
-    public void getAttribute(String strName, org.directwebremoting.proxy.Callback<String> callback)
+    public void getAttribute(String strName, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -176,7 +175,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -189,8 +188,8 @@ public class Painted extends jsx3.app.Model
         String extension = "getAttributes().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -209,8 +208,8 @@ public class Painted extends jsx3.app.Model
         String extension = "getAttributes().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -229,8 +228,8 @@ public class Painted extends jsx3.app.Model
         String extension = "removeAttribute(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -250,8 +249,8 @@ public class Painted extends jsx3.app.Model
         String extension = "removeAttribute(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -269,8 +268,8 @@ public class Painted extends jsx3.app.Model
         String extension = "removeAttributes().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -289,8 +288,8 @@ public class Painted extends jsx3.app.Model
         String extension = "removeAttributes().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -302,7 +301,7 @@ public class Painted extends jsx3.app.Model
      * gives focus to the on-screen VIEW for the element; returns a handle to the html/dhtml element as exposed by the native browser
      */
 
-    public void focus(org.directwebremoting.proxy.Callback<String> callback)
+    public void focus(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -320,7 +319,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -330,7 +329,7 @@ public class Painted extends jsx3.app.Model
      * @param callback IE DHTML object
      */
 
-    public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -348,7 +347,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -358,7 +357,7 @@ public class Painted extends jsx3.app.Model
      * @param callback IE DHTML object
      */
 
-    public void getRendered(jsx3.lang.Object objGUI, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRendered(jsx3.lang.Object objGUI, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -376,7 +375,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -385,7 +384,7 @@ returned HTML. This method has no effect if this object is not currently display
      * @param callback the result of calling <code>paint()</code> or <code>null</code> if this object is not displayed.
      */
 
-    public void repaint(org.directwebremoting.proxy.Callback<String> callback)
+    public void repaint(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -403,7 +402,7 @@ returned HTML. This method has no effect if this object is not currently display
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -411,7 +410,7 @@ returned HTML. This method has no effect if this object is not currently display
      * @param callback DHTML
      */
 
-    public void paint(org.directwebremoting.proxy.Callback<String> callback)
+    public void paint(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -429,7 +428,7 @@ returned HTML. This method has no effect if this object is not currently display
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -446,7 +445,7 @@ the screen does not update between steps 2 and 3.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onAfterPaint", objGUI);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -463,7 +462,7 @@ has no effect if this object is not currently painted.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintChild", objChild, bGroup, objGUI, bCascadeOnly);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -472,7 +471,7 @@ has no effect if this object is not currently painted.
      * @param callback DHTML
      */
 
-    public void paintChildren(Object[] c, org.directwebremoting.proxy.Callback<String> callback)
+    public void paintChildren(Object[] c, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -490,7 +489,7 @@ has no effect if this object is not currently painted.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -501,7 +500,7 @@ has no effect if this object is not currently painted.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "recalcBox", properties);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

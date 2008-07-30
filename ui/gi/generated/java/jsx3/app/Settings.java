@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Read-Only system settings interface.
@@ -28,12 +28,11 @@ public class Settings extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Settings(Context context, String extension, ScriptProxy scriptProxy)
+    public Settings(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -44,7 +43,7 @@ class are backed by the same XML source document.
      */
     public Settings(int intDomain, String objInstance)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Settings", intDomain, objInstance);
         setInitScript(script);
@@ -58,7 +57,7 @@ class are backed by the same XML source document.
      */
     public Settings(jsx3.xml.CdfDocument intDomain, jsx3.lang.Object objInstance)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Settings", intDomain, objInstance);
         setInitScript(script);
@@ -72,7 +71,7 @@ class are backed by the same XML source document.
      */
     public Settings(jsx3.xml.CdfDocument intDomain, String objInstance)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Settings", intDomain, objInstance);
         setInitScript(script);
@@ -86,7 +85,7 @@ class are backed by the same XML source document.
      */
     public Settings(int intDomain, jsx3.lang.Object objInstance)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Settings", intDomain, objInstance);
         setInitScript(script);
@@ -110,7 +109,7 @@ class are backed by the same XML source document.
      * @param callback the stored value.
      */
 
-    public void get(String strKey, org.directwebremoting.proxy.Callback<String> callback)
+    public void get(String strKey, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -128,7 +127,7 @@ class are backed by the same XML source document.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -141,8 +140,8 @@ class are backed by the same XML source document.
         String extension = "getNode(\"" + strKey + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

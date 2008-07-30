@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The Matrix control is the standard visual interface for the Common Data Format (CDF), providing grid and tree-grid functionality that mirrors the
@@ -33,12 +33,11 @@ public class Matrix extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Matrix(Context context, String extension, ScriptProxy scriptProxy)
+    public Matrix(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -47,7 +46,7 @@ public class Matrix extends jsx3.gui.Block
      */
     public Matrix(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Matrix", strName);
         setInitScript(script);
@@ -226,7 +225,7 @@ public class Matrix extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetMask");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -237,7 +236,7 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "repaintData");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -247,7 +246,7 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "repaintHead");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -258,14 +257,14 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doSort", intSortDir);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the name of the CDF attribute to sort on. If no value is set an empty string is returned by default.
      */
 
-    public void getSortPath(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSortPath(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -283,7 +282,7 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -295,7 +294,7 @@ on this attribute before being painted to screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortPath", strAttr);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -304,7 +303,7 @@ setSortType() or the data type of the current sort.
      * @param callback <code>jsx3.gui.Matrix.Column.TYPE_TEXT</code> or <code>jsx3.gui.Matrix.Column.TYPE_NUMBER</code>
      */
 
-    public void getSortType(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSortType(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -322,7 +321,7 @@ setSortType() or the data type of the current sort.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -334,7 +333,7 @@ the data type specific to the sort column is used for sorting.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortType", DATATYPE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -342,7 +341,7 @@ the data type specific to the sort column is used for sorting.
      * @param callback one of: jsx3.gui.Matrix.SORT_ASCENDING or jsx3.gui.Matrix.SORT_DESCENDING
      */
 
-    public void getSortDirection(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSortDirection(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -360,7 +359,7 @@ the data type specific to the sort column is used for sorting.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -371,14 +370,14 @@ the data type specific to the sort column is used for sorting.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortDirection", intSortDir);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns whether the list will render with sortable columns. If null or jsx3.Boolean.TRUE, the instance is sortable.
      */
 
-    public void getCanSort(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanSort(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -396,7 +395,7 @@ the data type specific to the sort column is used for sorting.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -407,7 +406,7 @@ the data type specific to the sort column is used for sorting.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanSort", SORT);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -416,7 +415,7 @@ the isntance will allow child columns to be reordered.
      * @param callback one of: jsx3.Boolean.TRUE or jsx3.Boolean.FALSE
      */
 
-    public void getCanReorder(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanReorder(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -434,7 +433,7 @@ the isntance will allow child columns to be reordered.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -445,7 +444,7 @@ the isntance will allow child columns to be reordered.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanReorder", REORDER);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -458,7 +457,7 @@ first cell child in the row.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focusRowById", strCdfId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -471,7 +470,7 @@ document identified by strCdfId, and the first column mapped to strAttName.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focusCellById", strCdfId, strAttName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -484,7 +483,7 @@ the element in the CDF source document identified by strCdfId, and the cell at t
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focusCellByIndex", strCdfId, intCellIndex);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -492,7 +491,7 @@ the element in the CDF source document identified by strCdfId, and the cell at t
      * @param strDefault The default value to use if null (Matrix.FOCUS_STYLE)
      */
 
-    public void getFocusStyle(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getFocusStyle(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -510,7 +509,7 @@ the element in the CDF source document identified by strCdfId, and the cell at t
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -523,7 +522,7 @@ styles that affect position, left, top, width, height, border, background-image,
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFocusStyle", strCSS);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -537,7 +536,7 @@ a call to repaint or repaintData.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetFocusContext", strId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -548,7 +547,7 @@ a call to repaint or repaintData.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "executeRecord", strRecordId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -556,7 +555,7 @@ a call to repaint or repaintData.
      * @param strDefault The default value to use if null (Matrix.SELECTION_BG)
      */
 
-    public void getSelectionBG(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getSelectionBG(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -574,7 +573,7 @@ a call to repaint or repaintData.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -585,14 +584,14 @@ a call to repaint or repaintData.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectionBG", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the collection of selected records.
      */
     @SuppressWarnings("unchecked")
-    public void getSelectedNodes(org.directwebremoting.proxy.Callback<java.util.List> callback)
+    public void getSelectedNodes(org.directwebremoting.ui.Callback<java.util.List> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -610,7 +609,7 @@ a call to repaint or repaintData.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -618,7 +617,7 @@ a call to repaint or repaintData.
      * @param callback JavaScript array of stings
      */
 
-    public void getSelectedIds(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getSelectedIds(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -636,7 +635,7 @@ a call to repaint or repaintData.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -648,7 +647,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "selectRecord", strRecordId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -659,7 +658,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deselectRecord", strRecordId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -669,7 +668,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deselectAllRecords");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -682,8 +681,8 @@ object will be converted into a CDF Record for the instance.
         String extension = "getAutoRowSession().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -702,8 +701,8 @@ object will be converted into a CDF Record for the instance.
         String extension = "getAutoRowSession().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -720,7 +719,7 @@ object will be converted into a CDF Record for the instance.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "commitAutoRowSession", objEvent, intCellIndex);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -732,7 +731,7 @@ object will be converted into a CDF Record for the instance.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "toggleItem", strRecordId, bOpen);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -743,14 +742,14 @@ object will be converted into a CDF Record for the instance.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "revealRecord", strRecordId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns whether or not this column can be resized by the user. If not set, the column will be assumed resizable
      */
 
-    public void getResizable(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getResizable(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -768,7 +767,7 @@ object will be converted into a CDF Record for the instance.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -780,7 +779,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizable", RESIZE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -788,7 +787,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getAutoRow(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getAutoRow(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -806,7 +805,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -820,7 +819,7 @@ parameter, jsx_autorow_style
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAutoRow", intBoolean);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -830,7 +829,7 @@ by strCdfId and the first column mapped to the named CDF attribute, strAttName.
      * @param strAttName attribute name on the CDF record. For example, <code>jsxtext</code>
      */
 
-    public void getContentElement(String strCdfId, String strAttName, org.directwebremoting.proxy.Callback<String> callback)
+    public void getContentElement(String strCdfId, String strAttName, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -848,7 +847,7 @@ by strCdfId and the first column mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -860,7 +859,7 @@ by strCdfId and the first column mapped to the named CDF attribute, strAttName.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -876,8 +875,8 @@ If no value is specified, a unique id is generated.
         String extension = "setXMLId(\"" + strXMLId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -899,8 +898,8 @@ If no value is specified, a unique id is generated.
         String extension = "setXMLId(\"" + strXMLId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -920,8 +919,8 @@ way of specifying the source XML document of this object.
         String extension = "setXMLString(\"" + strXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -942,8 +941,8 @@ way of specifying the source XML document of this object.
         String extension = "setXMLString(\"" + strXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -964,8 +963,8 @@ source XML document of this object.
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -987,8 +986,8 @@ source XML document of this object.
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1000,7 +999,7 @@ source XML document of this object.
      * Returns an array of all jsxid attributes in the source CDF in the order they would appear if painted on-screen
      */
 
-    public void getSortedIds(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getSortedIds(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1018,7 +1017,7 @@ source XML document of this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1026,7 +1025,7 @@ source XML document of this object.
      * @param strDefault The default value to use if null
      */
 
-    public void getSelectionModel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSelectionModel(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1044,7 +1043,7 @@ source XML document of this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1055,7 +1054,7 @@ source XML document of this object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectionModel", intType);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1063,7 +1062,7 @@ source XML document of this object.
      * @param strDefault The default value to use if null
      */
 
-    public void getRowHeight(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRowHeight(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1081,7 +1080,7 @@ source XML document of this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1097,7 +1096,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRowHeight", intHeight, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1105,7 +1104,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      */
 
-    public void getRowsPerPanel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRowsPerPanel(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1123,7 +1122,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1135,7 +1134,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRowsPerPanel", intCount, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1144,7 +1143,7 @@ Note that this is different from the number of painted panels allowed on screen 
      * @param strDefault The default value to use if null
      */
 
-    public void getPanelQueueSize(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPanelQueueSize(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1162,7 +1161,7 @@ Note that this is different from the number of painted panels allowed on screen 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1173,7 +1172,7 @@ Note that this is different from the number of painted panels allowed on screen 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPanelQueueSize", intCount);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1181,7 +1180,7 @@ Note that this is different from the number of painted panels allowed on screen 
      * @param strDefault The default value to use if null
      */
 
-    public void getReaperInterval(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getReaperInterval(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1199,7 +1198,7 @@ Note that this is different from the number of painted panels allowed on screen 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1210,7 +1209,7 @@ Note that this is different from the number of painted panels allowed on screen 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setReaperInterval", intInterval);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1220,7 +1219,7 @@ the value defined by the constant, Matrix.DEFAULT_PANEL_POOL_COUNT, will be used
      * @param strDefault The default value to use if null
      */
 
-    public void getPanelPoolSize(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPanelPoolSize(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1238,7 +1237,7 @@ the value defined by the constant, Matrix.DEFAULT_PANEL_POOL_COUNT, will be used
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1249,7 +1248,7 @@ the value defined by the constant, Matrix.DEFAULT_PANEL_POOL_COUNT, will be used
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPanelPoolSize", intCount);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1267,7 +1266,7 @@ Matrix.PAGING_STEPPED: Paint root nodes and any open descendants. Paint others a
      * @param strDefault The default value to use if null
      */
 
-    public void getPagingModel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPagingModel(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1285,7 +1284,7 @@ Matrix.PAGING_STEPPED: Paint root nodes and any open descendants. Paint others a
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1296,7 +1295,7 @@ Matrix.PAGING_STEPPED: Paint root nodes and any open descendants. Paint others a
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPagingModel", intModel);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1305,7 +1304,7 @@ the default value of jsx3.gui.Matrix.DEFAULT_HEADER_HEIGHT.
      * @param strDefault The default value to use if null
      */
 
-    public void getHeaderHeight(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getHeaderHeight(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1323,7 +1322,7 @@ the default value of jsx3.gui.Matrix.DEFAULT_HEADER_HEIGHT.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1338,7 +1337,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeaderHeight", intHeight, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1346,7 +1345,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      */
 
-    public void getScrollInfoLabel(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getScrollInfoLabel(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1364,7 +1363,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1380,7 +1379,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrollInfoLabel", strLabel);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1388,7 +1387,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
      * @param callback a non-negative number
      */
 
-    public void getScrollLeft(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getScrollLeft(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1406,7 +1405,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1417,7 +1416,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrollLeft", intScrollLeft);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1425,7 +1424,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
      * @param callback a non-negative number
      */
 
-    public void getScrollTop(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getScrollTop(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1443,7 +1442,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1455,7 +1454,7 @@ an appropriate localized value will be used. Set to an empty string to suppress 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrollTop", intScrollTop, objGUI);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1468,7 +1467,7 @@ By calling this method after the view has been restored (i.e., when display is s
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "synchronizeVScroller");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1478,7 +1477,7 @@ fully, displaying a horizontal scrollbar when necessary. In such a case, all wil
 jsx3.gui.Matrix.Column.DEFAULT_WIDTH.
      */
 
-    public void getScaleWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getScaleWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1496,7 +1495,7 @@ jsx3.gui.Matrix.Column.DEFAULT_WIDTH.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1509,14 +1508,14 @@ exceed the available width of the viewport.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScaleWidth", intBoolean);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value(s) for a border (border: solid 1px #000000)
      */
 
-    public void getHeaderBorder(org.directwebremoting.proxy.Callback<String> callback)
+    public void getHeaderBorder(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1534,7 +1533,7 @@ exceed the available width of the viewport.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1545,14 +1544,14 @@ exceed the available width of the viewport.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeaderBorder", strCSS);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value(s) for a border (border: solid 1px #000000)
      */
 
-    public void getBodyBorder(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBodyBorder(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1570,7 +1569,7 @@ exceed the available width of the viewport.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1588,8 +1587,8 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
         String extension = "setBodyBorder(\"" + strCSS + "\", \"" + bSuppressRepaint + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1613,8 +1612,8 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
         String extension = "setBodyBorder(\"" + strCSS + "\", \"" + bSuppressRepaint + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1627,7 +1626,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
 for the other selection models
      */
 
-    public void getValue(org.directwebremoting.proxy.Callback<String> callback)
+    public void getValue(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1645,7 +1644,7 @@ for the other selection models
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1653,7 +1652,7 @@ for the other selection models
      * @param callback <code>jsx3.gui.Form.STATEINVALID</code> or <code>jsx3.gui.Form.STATEVALID</code>.
      */
 
-    public void doValidate(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void doValidate(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1671,7 +1670,7 @@ for the other selection models
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1680,7 +1679,7 @@ of the rendering context will be painted on-screen.
      * @param strDefault The default value to use if null
      */
 
-    public void getRenderingModel(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRenderingModel(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1698,7 +1697,7 @@ of the rendering context will be painted on-screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1710,7 +1709,7 @@ of the rendering context will be painted on-screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRenderingModel", MODEL, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1719,7 +1718,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param strDefault The default value to use if null
      */
 
-    public void getRenderingContext(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRenderingContext(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1737,7 +1736,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1749,7 +1748,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRenderingContext", strJsxId, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1758,7 +1757,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getSuppressHScroller(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSuppressHScroller(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1776,7 +1775,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1787,7 +1786,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSuppressHScroller", intTrueFalse);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1796,7 +1795,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getSuppressVScroller(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSuppressVScroller(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1814,7 +1813,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1829,7 +1828,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSuppressVScroller", intTrueFalse, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1840,7 +1839,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
      * @param callback positive integer
      */
 
-    public void getFixedColumnIndex(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getFixedColumnIndex(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1858,7 +1857,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1869,7 +1868,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFixedColumnIndex", intIndex);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1878,7 +1877,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getRenderNavigators(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRenderNavigators(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1896,7 +1895,7 @@ the first two columns will be fixed.  Setting this value to 0 is effectively the
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1911,7 +1910,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRenderNavigators", intTrueFalse, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1920,7 +1919,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param callback URL for icon to use. If null, <code>jsx3.gui.Matrix.ICON</code> will be applied when rendered.
      */
 
-    public void getIcon(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getIcon(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1938,7 +1937,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1949,7 +1948,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setIcon", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1958,7 +1957,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param callback URL for icon. If null, <code>jsx3.gui.Matrix.ICON_MINUS</code> will be applied when rendered.
      */
 
-    public void getIconMinus(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getIconMinus(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1976,7 +1975,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1987,7 +1986,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setIconMinus", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1996,7 +1995,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param callback URL for icon to use. If null, <code>jsx3.gui.Matrix.ICON_PLUS</code> will be applied when rendered.
      */
 
-    public void getIconPlus(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getIconPlus(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2014,7 +2013,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2025,7 +2024,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setIconPlus", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2041,8 +2040,8 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
         String extension = "deleteRecord(\"" + strRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2068,8 +2067,8 @@ in the XML document, this method fails quietly.
         String extension = "insertRecordProperty(\"" + strRecordId + "\", \"" + strPropName + "\", \"" + strPropValue + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2095,8 +2094,8 @@ in the XML document, this method fails quietly.
         String extension = "insertRecordProperty(\"" + strRecordId + "\", \"" + strPropName + "\", \"" + strPropValue + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2116,7 +2115,7 @@ in the XML document, this method fails quietly.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "redrawCell", strRecordId, objColumn, bSuppressTriggers);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2130,7 +2129,7 @@ in the XML document, this method fails quietly.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "redrawMappedCells", strRecordId, strAttName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2143,7 +2142,7 @@ in the XML document, this method fails quietly.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "redrawRecord", strRecordId, intAction, bRecurse);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2155,7 +2154,7 @@ in the XML document, this method fails quietly.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -2168,7 +2167,7 @@ in the XML document, this method fails quietly.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -2189,13 +2188,13 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.proxy.CodeBlock fctCallback, String strKeys)
+    public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.ui.CodeBlock fctCallback, String strKeys)
     {
         String extension = "doKeyBinding(\"" + fctCallback + "\", \"" + strKeys + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2214,8 +2213,8 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
         String extension = "doReset().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2234,8 +2233,8 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
         String extension = "doReset().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2248,7 +2247,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
 
-    public void getDisabledBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDisabledBackgroundColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2266,7 +2265,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2274,7 +2273,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
 
-    public void getDisabledColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDisabledColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2292,7 +2291,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2301,7 +2300,7 @@ STATEENABLED.
      * @param callback <code>STATEDISABLED</code> or <code>STATEENABLED</code>.
      */
 
-    public void getEnabled(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getEnabled(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2319,7 +2318,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2327,7 +2326,7 @@ STATEENABLED.
      * @param callback plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      */
 
-    public void getKeyBinding(org.directwebremoting.proxy.Callback<String> callback)
+    public void getKeyBinding(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2345,7 +2344,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2354,7 +2353,7 @@ OPTIONAL.
      * @param callback <code>REQUIRED</code> or <code>OPTIONAL</code>.
      */
 
-    public void getRequired(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRequired(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2372,7 +2371,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2381,7 +2380,7 @@ STATEVALID.
      * @param callback <code>STATEINVALID</code> or <code>STATEVALID</code>.
      */
 
-    public void getValidationState(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getValidationState(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2399,7 +2398,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2413,8 +2412,8 @@ STATEVALID.
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2434,8 +2433,8 @@ STATEVALID.
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2454,8 +2453,8 @@ STATEVALID.
         String extension = "setDisabledColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2475,8 +2474,8 @@ STATEVALID.
         String extension = "setDisabledColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2494,7 +2493,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2509,8 +2508,8 @@ event for this control.
         String extension = "setKeyBinding(\"" + strSequence + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2531,8 +2530,8 @@ event for this control.
         String extension = "setKeyBinding(\"" + strSequence + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2551,8 +2550,8 @@ event for this control.
         String extension = "setRequired(\"" + required + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2572,8 +2571,8 @@ event for this control.
         String extension = "setRequired(\"" + required + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2592,8 +2591,8 @@ event for this control.
         String extension = "setValidationState(\"" + intState + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2613,8 +2612,8 @@ event for this control.
         String extension = "setValidationState(\"" + intState + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2630,7 +2629,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2639,7 +2638,7 @@ is destroyed.
      * @param callback <code>CLEANUPRESOURCES</code> or <code>SHARERESOURCES</code>.
      */
 
-    public void getShareResources(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getShareResources(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2657,7 +2656,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2683,8 +2682,8 @@ following actions are also taken:
         String extension = "getXML().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2716,8 +2715,8 @@ following actions are also taken:
         String extension = "getXML().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2730,7 +2729,7 @@ following actions are also taken:
      * @param callback the XML ID.
      */
 
-    public void getXMLId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2748,14 +2747,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the XML string of this object.
      */
 
-    public void getXMLString(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLString(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2773,14 +2772,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the list of XML transformers of this object.
      */
 
-    public void getXMLTransformers(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getXMLTransformers(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2798,14 +2797,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the XML URL of this object.
      */
 
-    public void getXMLURL(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLURL(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2823,14 +2822,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the XSL ID of this object.
      */
 
-    public void getXSLId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXSLId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2848,7 +2847,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2860,8 +2859,8 @@ following actions are also taken:
         String extension = "getXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2879,8 +2878,8 @@ following actions are also taken:
         String extension = "getXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2893,7 +2892,7 @@ following actions are also taken:
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void getXmlAsync(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getXmlAsync(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2911,7 +2910,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2919,7 +2918,7 @@ following actions are also taken:
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void getXmlBind(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getXmlBind(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2937,7 +2936,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2956,7 +2955,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2970,8 +2969,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParam(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2991,8 +2990,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParam(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3010,8 +3009,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3030,8 +3029,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3048,7 +3047,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -3064,8 +3063,8 @@ is destroyed.
         String extension = "setShareResources(\"" + intShare + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3087,8 +3086,8 @@ is destroyed.
         String extension = "setShareResources(\"" + intShare + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3118,8 +3117,8 @@ string of this object. This method executes the following steps:
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3150,8 +3149,8 @@ string of this object. This method executes the following steps:
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3174,7 +3173,7 @@ without throwing an error.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -3190,8 +3189,8 @@ strValue is null the parameter is removed.
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3213,8 +3212,8 @@ strValue is null the parameter is removed.
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3234,8 +3233,8 @@ data sources loaded from an XML URL.
         String extension = "setXmlAsync(\"" + bAsync + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3256,8 +3255,8 @@ data sources loaded from an XML URL.
         String extension = "setXmlAsync(\"" + bAsync + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3273,7 +3272,7 @@ the cache under the XML Id of this object changes.
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void setXmlBind(boolean bBind, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void setXmlBind(boolean bBind, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -3291,7 +3290,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -3324,8 +3323,8 @@ the this object already has a record with jsxid equal to the record to adopt
         String extension = "adoptRecord(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3364,8 +3363,8 @@ the this object already has a record with jsxid equal to the record to adopt
         String extension = "adoptRecord(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3402,8 +3401,8 @@ which the record identified by strSourceId will be placed
         String extension = "adoptRecordBefore(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3440,8 +3439,8 @@ which the record identified by strSourceId will be placed
         String extension = "adoptRecordBefore(\"" + strSourceId + "\", \"" + strRecordId + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3463,7 +3462,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "convertProperties", objProps, arrProps, bUnion);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -3477,7 +3476,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deleteRecordProperty", strRecordId, strPropName, bRedraw);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -3497,8 +3496,8 @@ objCDF.getRecordNode(strId).getAttribute("propName");
         String extension = "getRecord(\"" + strRecordId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3524,8 +3523,8 @@ objCDF.getRecordNode(strId).getAttribute("propName");
         String extension = "getRecord(\"" + strRecordId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3548,8 +3547,8 @@ redrawRecord(strRecordId, jsx3.xml.CDF.UPDATE); on this object.
         String extension = "getRecordNode(\"" + strRecordId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3585,8 +3584,8 @@ the given jsxid is inserted.
         String extension = "insertRecord(\"" + objRecord + "\", \"" + strParentRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3619,8 +3618,8 @@ there is an existing record with jsxid equal to objRecord.jsxid
         String extension = "insertRecordBefore(\"" + objRecord + "\", \"" + strSiblingRecordId + "\", \"" + bRedraw + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Node> ctor = jsx3.xml.Node.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -3646,7 +3645,7 @@ Object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "insertRecordNode", objRecordNode, strParentRecordId, bRedraw);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

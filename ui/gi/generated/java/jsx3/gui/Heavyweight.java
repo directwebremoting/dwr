@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * GUI utility class that provides a way to display HTML content on-screen in an HTML equivalent of a heavyweight container.
@@ -30,12 +30,11 @@ public class Heavyweight extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Heavyweight(Context context, String extension, ScriptProxy scriptProxy)
+    public Heavyweight(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class Heavyweight extends jsx3.lang.Object
      */
     public Heavyweight(String strId, jsx3.gui.Painted objOwner)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Heavyweight", strId, objOwner);
         setInitScript(script);
@@ -68,8 +67,8 @@ public class Heavyweight extends jsx3.lang.Object
         String extension = "GO(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -86,7 +85,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "show", bDisplay);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -96,7 +95,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "applyRatio");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -108,7 +107,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "applyRules", strAxis, intSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -118,7 +117,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "hide");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -128,7 +127,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "destroy");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -137,7 +136,7 @@ public class Heavyweight extends jsx3.lang.Object
      * @param callback Browser-Native DHTML object
      */
 
-    public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRendered(jsx3.gui.Event objGUI, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -155,7 +154,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -164,7 +163,7 @@ public class Heavyweight extends jsx3.lang.Object
      * @param callback Browser-Native DHTML object
      */
 
-    public void getRendered(String objGUI, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRendered(String objGUI, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -182,14 +181,14 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the unique id for this heavyweight instance
      */
 
-    public void getId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -207,14 +206,14 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the HTML content to display inside the HW instance on-screen
      */
 
-    public void getHTML(org.directwebremoting.proxy.Callback<String> callback)
+    public void getHTML(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -232,7 +231,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -245,7 +244,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHTML", strHTML, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -253,7 +252,7 @@ public class Heavyweight extends jsx3.lang.Object
      * Returns an object reference to the Browser Element parent to be used; if none specified, the browser BODY will be used
      */
 
-    public void getDomParent(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDomParent(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -271,7 +270,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -284,7 +283,7 @@ Note that this method must be called before setting any point rules for the hW i
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDomParent", objGUI);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -295,7 +294,7 @@ the text content.  For example, a value of .8 would mean that the width of the h
 represent 80% and the height would represent 20% of the total perimiter
      */
 
-    public void getRatio(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRatio(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -313,7 +312,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -326,7 +325,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRatio", vntRatio);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -335,7 +334,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param callback [jsx3.gui.Block.OVERFLOWSCROLL, jsx3.gui.Block.OVERFLOWHIDDEN, jsx3.gui.Block.OVERFLOWEXPAND]
      */
 
-    public void getOverflow(org.directwebremoting.proxy.Callback<String> callback)
+    public void getOverflow(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -353,7 +352,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -366,7 +365,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOverflow", strOverflow);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -380,7 +379,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVisibility", strVisibility);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -388,7 +387,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * Returns the z-index property; assumes jsx3.gui.Heavyweight.DEFAULTZINDEX if none supplied
      */
 
-    public void getZIndex(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getZIndex(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -406,7 +405,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -417,7 +416,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZIndex", intZIndex);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -425,7 +424,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param callback width (in pixels)
      */
 
-    public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -443,7 +442,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -454,7 +453,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", intWidth);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -462,7 +461,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param callback height (in pixels)
      */
 
-    public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -480,7 +479,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -493,7 +492,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", intHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -513,8 +512,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "addXRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -539,8 +538,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "addXRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -565,8 +564,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "addYRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -591,8 +590,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "addYRule(\"" + objAnchor + "\", \"" + strAnchorPoint + "\", \"" + strPoint + "\", \"" + intOff + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -616,8 +615,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "addRule(\"" + intPixel + "\", \"" + strPoint + "\", \"" + intOff + "\", \"" + strAxis + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Heavyweight> ctor = jsx3.gui.Heavyweight.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -632,7 +631,7 @@ represent 80% and the height would represent 20% of the total perimiter
      * @param strAxis character (string) representing whether the rule is for the X or Y axis. Rememeber to capitalize!
      */
 
-    public void getPositionRule(int intIndex, String strAxis, org.directwebremoting.proxy.Callback<String> callback)
+    public void getPositionRule(int intIndex, String strAxis, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -650,7 +649,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -662,8 +661,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "getPositionRules().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -681,8 +680,8 @@ represent 80% and the height would represent 20% of the total perimiter
         String extension = "getPositionRules().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -699,7 +698,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -711,7 +710,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -723,7 +722,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

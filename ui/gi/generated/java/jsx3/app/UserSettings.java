@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Read-Write per-User settings for a particular GI application (server).
@@ -30,12 +30,11 @@ public class UserSettings extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public UserSettings(Context context, String extension, ScriptProxy scriptProxy)
+    public UserSettings(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class UserSettings extends jsx3.lang.Object
      */
     public UserSettings(jsx3.app.Server objServer, int intPersistence)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new UserSettings", objServer, intPersistence);
         setInitScript(script);
@@ -69,7 +68,7 @@ public class UserSettings extends jsx3.lang.Object
      * @param callback the stored value.
      */
 
-    public void get(String strKey, org.directwebremoting.proxy.Callback<String> callback)
+    public void get(String strKey, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -87,7 +86,7 @@ public class UserSettings extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -99,7 +98,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "set", strKey, value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -111,7 +110,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "set", strKey, value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -123,7 +122,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "set", strKey, value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -135,7 +134,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "set", strKey, value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -147,7 +146,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "set", strKey, value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -158,7 +157,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "remove", strKey);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -168,7 +167,7 @@ public class UserSettings extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clear");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -179,7 +178,7 @@ is not called.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "save");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

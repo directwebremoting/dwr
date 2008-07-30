@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class is equivalent to a tab, but uses the stack metaphor; like a tab, it has one child—a block for its content; a jsx3.gui.Stack instance should only be contained by a jsx3.gui.StackGroup instance for proper rendering.
@@ -28,12 +28,11 @@ public class Stack extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Stack(Context context, String extension, ScriptProxy scriptProxy)
+    public Stack(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +42,7 @@ public class Stack extends jsx3.gui.Block
      */
     public Stack(String strName, String strCaption)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Stack", strName, strCaption);
         setInitScript(script);
@@ -88,7 +87,7 @@ public class Stack extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doShow");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -101,8 +100,8 @@ returns the first child that is not a menu or a toolbar button.
         String extension = "getContentChild().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -121,8 +120,8 @@ returns the first child that is not a menu or a toolbar button.
         String extension = "getContentChild().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -135,7 +134,7 @@ returns the first child that is not a menu or a toolbar button.
      * @param callback valid CSS property value, (i.e., red, #ffffff)
      */
 
-    public void getActiveColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getActiveColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -153,7 +152,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -166,7 +165,7 @@ returns the first child that is not a menu or a toolbar button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setActiveColor", strActiveColor);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -175,7 +174,7 @@ returns the first child that is not a menu or a toolbar button.
      * @param callback valid CSS property value, (i.e., red, #ffffff)
      */
 
-    public void getInactiveColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getInactiveColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -193,7 +192,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -206,7 +205,7 @@ returns the first child that is not a menu or a toolbar button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInactiveColor", strInactiveColor);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -214,7 +213,7 @@ returns the first child that is not a menu or a toolbar button.
      * Returns whether or not this stack is the active (expanded) stack
      */
 
-    public void isFront(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isFront(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -232,7 +231,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

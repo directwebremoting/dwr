@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints a vector polygon defined by a set of points.
@@ -28,12 +28,11 @@ public class Polygon extends jsx3.vector.Shape
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Polygon(Context context, String extension, ScriptProxy scriptProxy)
+    public Polygon(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -44,7 +43,7 @@ public class Polygon extends jsx3.vector.Shape
      */
     public Polygon(int left, int top, String points)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Polygon", left, top, points);
         setInitScript(script);
@@ -58,7 +57,7 @@ public class Polygon extends jsx3.vector.Shape
      */
     public Polygon(int left, int top, Object[] points)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Polygon", left, top, points);
         setInitScript(script);
@@ -74,7 +73,7 @@ public class Polygon extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPoints", points);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -85,7 +84,7 @@ public class Polygon extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointsAsNumberArray", points);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -96,7 +95,7 @@ public class Polygon extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointsAsString", points);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

@@ -22,7 +22,7 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
 
 /**
  * An implementation of Converter for Context helper objects for ScriptProxies.

@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The controller of the JSX architecture.
@@ -28,12 +28,11 @@ public class Server extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Server(Context context, String extension, ScriptProxy scriptProxy)
+    public Server(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class Server extends jsx3.lang.Object
      */
     public Server(String strAppPath, String objGUI, boolean bPaint, jsx3.lang.Object objEnv)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Server", strAppPath, objGUI, bPaint, objEnv);
         setInitScript(script);
@@ -97,7 +96,7 @@ EVENTSVERS
      * @param strEnvKey the key of the environment value to return
      */
 
-    public void getEnv(String strEnvKey, org.directwebremoting.proxy.Callback<String> callback)
+    public void getEnv(String strEnvKey, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -115,7 +114,7 @@ EVENTSVERS
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -127,8 +126,8 @@ EVENTSVERS
         String extension = "getSettings().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Settings> ctor = jsx3.app.Settings.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Settings> ctor = jsx3.app.Settings.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -148,8 +147,8 @@ EVENTSVERS
         String extension = "getTaskBar(\"" + objJSX + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.WindowBar> ctor = jsx3.gui.WindowBar.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.WindowBar> ctor = jsx3.gui.WindowBar.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -165,7 +164,7 @@ EVENTSVERS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "destroy");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -182,7 +181,7 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paint", objXML);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -196,7 +195,7 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -210,7 +209,7 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -249,8 +248,8 @@ parameter.
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -295,8 +294,8 @@ parameter.
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -340,8 +339,8 @@ parameter.
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -386,8 +385,8 @@ parameter.
         String extension = "loadInclude(\"" + strSrc + "\", \"" + strId + "\", \"" + strType + "\", \"" + bReload + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -403,7 +402,7 @@ parameter.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unloadInclude", strId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -419,8 +418,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "loadResource(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -442,8 +441,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "loadResource(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -460,7 +459,7 @@ The resource must be registered in the config.xml file of this application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDynamicProperty", strPropName, vntValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -470,7 +469,7 @@ The resource must be registered in the config.xml file of this application.
      * @param callback value of the property
      */
 
-    public void getDynamicProperty(String strPropName, String strToken, org.directwebremoting.proxy.Callback<String> callback)
+    public void getDynamicProperty(String strPropName, String strToken, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -488,7 +487,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -505,7 +504,7 @@ The resource must be registered in the config.xml file of this application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCookie", name, value, expires, path, domain, secure, bRaw);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -514,7 +513,7 @@ The resource must be registered in the config.xml file of this application.
      * @param bRaw 
      */
 
-    public void getCookie(String name, boolean bRaw, org.directwebremoting.proxy.Callback<String> callback)
+    public void getCookie(String name, boolean bRaw, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -532,7 +531,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -545,7 +544,7 @@ The resource must be registered in the config.xml file of this application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deleteCookie", name, path, domain);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -557,8 +556,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getRootBlock().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -576,8 +575,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getRootBlock().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -595,8 +594,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getAlertsParent().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -615,8 +614,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getAlertsParent().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -633,8 +632,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getBodyBlock().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -652,8 +651,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getBodyBlock().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -666,7 +665,7 @@ The resource must be registered in the config.xml file of this application.
     in a serialization file and the root nodes in the Component Hierarchy palette.
      */
 
-    public void getRootObjects(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getRootObjects(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -684,7 +683,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -696,8 +695,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getCache().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Cache> ctor = jsx3.app.Cache.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Cache> ctor = jsx3.app.Cache.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -715,8 +714,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getDOM().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.DOM> ctor = jsx3.app.DOM.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.DOM> ctor = jsx3.app.DOM.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -736,8 +735,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSX(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -757,8 +756,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSX(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -777,8 +776,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSXByName(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -798,8 +797,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSXByName(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -818,8 +817,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSXById(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Model> ctor = jsx3.app.Model.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -839,8 +838,8 @@ The resource must be registered in the config.xml file of this application.
         String extension = "getJSXById(\"" + strId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -859,8 +858,8 @@ in this window in order to distribute the application across multiple browser wi
         String extension = "createAppWindow(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -880,8 +879,8 @@ in this window in order to distribute the application across multiple browser wi
         String extension = "loadAppWindow(\"" + strSource + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -901,8 +900,8 @@ in this window in order to distribute the application across multiple browser wi
         String extension = "loadAppWindow(\"" + strSource + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -922,8 +921,8 @@ in this window in order to distribute the application across multiple browser wi
         String extension = "getAppWindow(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Window> ctor = jsx3.gui.Window.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -939,7 +938,7 @@ JSX object is a descendent of the root block of this server or one of its jsx3.g
      * @param callback document object
      */
 
-    public void getDocumentOf(jsx3.app.Model objJSX, org.directwebremoting.proxy.Callback<String> callback)
+    public void getDocumentOf(jsx3.app.Model objJSX, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -957,7 +956,7 @@ JSX object is a descendent of the root block of this server or one of its jsx3.g
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -967,7 +966,7 @@ this server as well as all of its jsx3.gui.Window roots.
      * @param callback DOM object
      */
 
-    public void getRenderedOf(jsx3.app.Model objJSX, org.directwebremoting.proxy.Callback<String> callback)
+    public void getRenderedOf(jsx3.app.Model objJSX, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -985,7 +984,7 @@ this server as well as all of its jsx3.gui.Window roots.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -998,7 +997,7 @@ unaffected.
      * @param callback the resolved URI.
      */
 
-    public void resolveURI(String strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void resolveURI(String strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1016,7 +1015,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1029,7 +1028,7 @@ unaffected.
      * @param callback the resolved URI.
      */
 
-    public void resolveURI(java.net.URI strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void resolveURI(java.net.URI strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1047,14 +1046,14 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getUriPrefix(org.directwebremoting.proxy.Callback<String> callback)
+    public void getUriPrefix(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1072,7 +1071,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1082,7 +1081,7 @@ unaffected.
      * @param callback the relativized URI.
      */
 
-    public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1100,7 +1099,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1110,7 +1109,7 @@ unaffected.
      * @param callback the relativized URI.
      */
 
-    public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1128,7 +1127,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1137,7 +1136,7 @@ that locale is returned. Otherwise, getDefaultLocale() is consulted, and finally
 locale.
      */
 
-    public void getLocale(org.directwebremoting.proxy.Callback<java.util.Locale> callback)
+    public void getLocale(org.directwebremoting.ui.Callback<java.util.Locale> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1155,7 +1154,7 @@ locale.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1166,7 +1165,7 @@ locale.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLocale", objLocale);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1174,7 +1173,7 @@ locale.
 setting.
      */
 
-    public void getDefaultLocale(org.directwebremoting.proxy.Callback<java.util.Locale> callback)
+    public void getDefaultLocale(org.directwebremoting.ui.Callback<java.util.Locale> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1192,7 +1191,7 @@ setting.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1203,7 +1202,7 @@ setLocale() for the server to render properly in the new locale.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reloadLocalizedResources");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1215,7 +1214,7 @@ objJSX.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "invokeHelp", objJSX);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1224,7 +1223,7 @@ objJSX.
      * @param callback the number of listeners to which the event was broadcast
      */
 
-    public void publish(jsx3.lang.Object objEvent, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void publish(jsx3.lang.Object objEvent, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1242,7 +1241,7 @@ objJSX.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1253,11 +1252,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(Object[] strEventId, org.directwebremoting.proxy.CodeBlock objHandler, String objFunction)
+    public void subscribe(Object[] strEventId, org.directwebremoting.ui.CodeBlock objHandler, String objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1268,11 +1267,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(String strEventId, org.directwebremoting.proxy.CodeBlock objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(String strEventId, org.directwebremoting.ui.CodeBlock objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1283,11 +1282,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(String strEventId, org.directwebremoting.proxy.CodeBlock objHandler, String objFunction)
+    public void subscribe(String strEventId, org.directwebremoting.ui.CodeBlock objHandler, String objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1302,7 +1301,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1317,7 +1316,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1328,11 +1327,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(Object[] strEventId, jsx3.lang.Object objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(Object[] strEventId, jsx3.lang.Object objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1347,7 +1346,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1358,11 +1357,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(String strEventId, String objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(String strEventId, String objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1373,11 +1372,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(Object[] strEventId, String objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(Object[] strEventId, String objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1388,11 +1387,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(Object[] strEventId, org.directwebremoting.proxy.CodeBlock objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(Object[] strEventId, org.directwebremoting.ui.CodeBlock objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1407,7 +1406,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1418,11 +1417,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param objHandler if an object, the instance to notify of events (objFunction is required); if a string, the JSX id of the instance to notify of events (objFunction is required), must exist in the same Server; if a function, the function to call to notify of events (objFunction ignored)
      * @param objFunction if objHandler is a string or object then the function to call on that instance. either a function or a string that is the name of a method of the instance
      */
-    public void subscribe(String strEventId, jsx3.lang.Object objHandler, org.directwebremoting.proxy.CodeBlock objFunction)
+    public void subscribe(String strEventId, jsx3.lang.Object objHandler, org.directwebremoting.ui.CodeBlock objFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1436,7 +1435,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1450,7 +1449,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1460,11 +1459,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param strEventId the event type(s).
      * @param objHandler the value of objHandler passed to subscribe
      */
-    public void unsubscribe(Object[] strEventId, org.directwebremoting.proxy.CodeBlock objHandler)
+    public void unsubscribe(Object[] strEventId, org.directwebremoting.ui.CodeBlock objHandler)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1478,7 +1477,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1488,11 +1487,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param strEventId the event type(s).
      * @param objHandler the value of objHandler passed to subscribe
      */
-    public void unsubscribe(String strEventId, org.directwebremoting.proxy.CodeBlock objHandler)
+    public void unsubscribe(String strEventId, org.directwebremoting.ui.CodeBlock objHandler)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1506,7 +1505,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1517,7 +1516,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribeAll", strEventId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1528,11 +1527,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param strOk the text of the ok button, can be false to remove button from display
      * @param objParams argument to configureAlert()
      */
-    public void alert(String strTitle, String strMessage, org.directwebremoting.proxy.CodeBlock fctOnOk, String strOk, String objParams)
+    public void alert(String strTitle, String strMessage, org.directwebremoting.ui.CodeBlock fctOnOk, String strOk, String objParams)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "alert", strTitle, strMessage, fctOnOk, strOk, objParams);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1544,7 +1543,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "configureAlert", objDialog, objParams);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1560,11 +1559,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param strNo the text of the no button
      * @param objParams argument to configureAlert()
      */
-    public void confirm(String strTitle, String strMessage, org.directwebremoting.proxy.CodeBlock fctOnOk, org.directwebremoting.proxy.CodeBlock fctOnCancel, String strOk, String strCancel, int intBtnDefault, org.directwebremoting.proxy.CodeBlock fctOnNo, String strNo, String objParams)
+    public void confirm(String strTitle, String strMessage, org.directwebremoting.ui.CodeBlock fctOnOk, org.directwebremoting.ui.CodeBlock fctOnCancel, String strOk, String strCancel, int intBtnDefault, org.directwebremoting.ui.CodeBlock fctOnNo, String strNo, String objParams)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "confirm", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, intBtnDefault, fctOnNo, strNo, objParams);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1577,11 +1576,11 @@ As of version 3.4 a string value for objHandler is deprecated.
      * @param strCancel the text of the cancel button
      * @param objParams argument to configureAlert()
      */
-    public void prompt(String strTitle, String strMessage, org.directwebremoting.proxy.CodeBlock fctOnOk, org.directwebremoting.proxy.CodeBlock fctOnCancel, String strOk, String strCancel, String objParams)
+    public void prompt(String strTitle, String strMessage, org.directwebremoting.ui.CodeBlock fctOnOk, org.directwebremoting.ui.CodeBlock fctOnCancel, String strOk, String strCancel, String objParams)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "prompt", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, objParams);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

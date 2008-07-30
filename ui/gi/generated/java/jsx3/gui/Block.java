@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class provides a container-based, object-oriented approach to creating static html objects (basically this class creates "DIV" objects).  This class is useful for creating objects as simple as 'labels' that can be placed anywhere on the screen.  The advantage to using this class instead of trying to insert static html in the html window is that it allows the given HTML string to be managed by the 'container-management' strategy employed by the JSX Architecture
@@ -28,12 +28,11 @@ public class Block extends jsx3.gui.Painted
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Block(Context context, String extension, ScriptProxy scriptProxy)
+    public Block(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -47,7 +46,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, int vntTop, String vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -64,7 +63,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, String vntTop, int vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -81,7 +80,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, String vntTop, int vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -98,7 +97,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, String vntTop, int vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -115,7 +114,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, int vntTop, String vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -132,7 +131,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, int vntTop, String vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -149,7 +148,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, int vntTop, int vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -166,7 +165,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, String vntTop, String vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -183,7 +182,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, String vntTop, String vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -200,7 +199,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, int vntTop, int vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -217,7 +216,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, String vntTop, int vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -234,7 +233,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, int vntTop, int vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -251,7 +250,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, String vntTop, String vntWidth, int vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -268,7 +267,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, int vntTop, int vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -285,7 +284,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, String vntLeft, String vntTop, String vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -302,7 +301,7 @@ public class Block extends jsx3.gui.Painted
      */
     public Block(String strName, int vntLeft, int vntTop, String vntWidth, String vntHeight, String strHTML)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Block", strName, vntLeft, vntTop, vntWidth, vntHeight, strHTML);
         setInitScript(script);
@@ -405,7 +404,7 @@ public class Block extends jsx3.gui.Painted
      * @param callback valid CSS property value, (e.g., red, #ffffff, rgb(255,0,0))
      */
 
-    public void getBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBackgroundColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -423,7 +422,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -437,7 +436,7 @@ public class Block extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackgroundColor", strColor, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -446,7 +445,7 @@ public class Block extends jsx3.gui.Painted
      * @param callback valid CSS property for the background such as:  background-image:url(x.gif);  or background-image:url(x.gif);background-repeat:no-repeat;
      */
 
-    public void getBackground(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBackground(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -464,7 +463,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -477,7 +476,7 @@ public class Block extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackground", strBG);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -485,7 +484,7 @@ public class Block extends jsx3.gui.Painted
      * Returns CSS property value(s) for a border (border: solid 1px #000000)
      */
 
-    public void getBorder(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBorder(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -503,7 +502,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -517,7 +516,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorder", strCSS, bRecalc);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -526,7 +525,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
      * @param callback valid CSS property value, (e.g., red, #ffffff, rgb(255,0,0))
      */
 
-    public void getColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -544,7 +543,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -558,7 +557,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", strColor, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -567,7 +566,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
      * @param callback valid CSS property value, (e.g., default,wait,col-resize)
      */
 
-    public void getCursor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCursor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -585,7 +584,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -597,7 +596,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCursor", strCursor, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -605,7 +604,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
      * @param callback CSS text
      */
 
-    public void getCSSOverride(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCSSOverride(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -623,7 +622,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -638,7 +637,7 @@ Instance Properties are the preferred method for applying styles.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCSSOverride", strCSS);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -646,7 +645,7 @@ Instance Properties are the preferred method for applying styles.
      * Returns the named CSS rule(s) to apply to the painted object.
      */
 
-    public void getClassName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getClassName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -664,7 +663,7 @@ Instance Properties are the preferred method for applying styles.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -679,7 +678,7 @@ Dynamic Properties are the preferred method for applying global styles.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setClassName", strClassName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -687,7 +686,7 @@ Dynamic Properties are the preferred method for applying global styles.
      * Returns the CSS display for the object; one of jsx3.gui.Block.DISPLAYNONE (display:none;) and jsx3.gui.Block.DISPLAYBLOCK (display:;)
      */
 
-    public void getDisplay(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDisplay(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -705,7 +704,7 @@ Dynamic Properties are the preferred method for applying global styles.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -719,7 +718,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDisplay", intDisplay, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -728,7 +727,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * @param callback valid CSS font-family property value
      */
 
-    public void getFontName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -746,7 +745,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -759,7 +758,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontName", strFontName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -768,7 +767,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * @param callback font-size (in pixels)
      */
 
-    public void getFontSize(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getFontSize(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -786,7 +785,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -799,7 +798,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontSize", intPixelSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -808,7 +807,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * @param callback [jsx3.gui.Block.FONTBOLD. jsx3.gui.Block.FONTNORMAL]
      */
 
-    public void getFontWeight(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontWeight(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -826,7 +825,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -839,7 +838,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontWeight", FONTWEIGHT);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -848,7 +847,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * @param callback height.
      */
 
-    public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -866,7 +865,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -879,7 +878,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", vntHeight, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -893,7 +892,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", vntHeight, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -901,7 +900,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * Returns IE tab index for setting the tabIndex property for the on-screen DHTML for the object
      */
 
-    public void getIndex(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getIndex(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -919,7 +918,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -933,7 +932,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setIndex", intIndex, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -942,7 +941,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
      * @param callback left.
      */
 
-    public void getLeft(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getLeft(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -960,7 +959,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -974,7 +973,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLeft", vntLeft, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -989,7 +988,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLeft", vntLeft, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1007,7 +1006,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1024,7 +1023,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1041,7 +1040,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1058,7 +1057,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1075,7 +1074,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1092,7 +1091,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1109,7 +1108,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1126,7 +1125,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1143,7 +1142,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1160,7 +1159,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1177,7 +1176,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1194,7 +1193,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1211,7 +1210,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1228,7 +1227,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1245,7 +1244,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1262,7 +1261,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1279,7 +1278,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1296,7 +1295,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1313,7 +1312,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1330,7 +1329,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1347,7 +1346,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1364,7 +1363,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1381,7 +1380,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1398,7 +1397,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1406,7 +1405,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
      * @param callback [left,top,width,height]
      */
 
-    public void getDimensions(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getDimensions(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1424,14 +1423,14 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value(s) for a margin (margin:4px;)
      */
 
-    public void getMargin(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMargin(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1449,7 +1448,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1465,7 +1464,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMargin", strCSS, bRecalc);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1474,7 +1473,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
      * @param callback [jsx3.gui.Block.OVERFLOWSCROLL, jsx3.gui.Block.OVERFLOWHIDDEN, jsx3.gui.Block.OVERFLOWEXPAND]
      */
 
-    public void getOverflow(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getOverflow(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1492,7 +1491,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1505,7 +1504,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOverflow", OVERFLOW);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1513,7 +1512,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
      * Returns CSS property value(s) for a padding (padding:4px;)
      */
 
-    public void getPadding(org.directwebremoting.proxy.Callback<String> callback)
+    public void getPadding(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1531,7 +1530,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1547,7 +1546,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPadding", strCSS, bRecalc);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1555,7 +1554,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
      * Returns if the instance is relatively positioned on-screen; returns one of: jsx3.gui.Block.ABSOLUTE jsx3.gui.Block.RELATIVE
      */
 
-    public void getRelativePosition(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRelativePosition(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1573,7 +1572,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1587,7 +1586,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRelativePosition", intRelative, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1597,7 +1596,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
      * @param callback valid HTML tag name
      */
 
-    public void getTagName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTagName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1615,7 +1614,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1628,7 +1627,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTagName", strTagName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1639,7 +1638,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
 <span>null</span>, which is not the same as <span/>
      */
 
-    public void getText(org.directwebremoting.proxy.Callback<String> callback)
+    public void getText(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1657,7 +1656,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1670,7 +1669,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setText", strText, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1679,7 +1678,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
      * @param callback one of: jsx3.gui.Block.ALIGNLEFT, jsx3.gui.Block.ALIGNRIGHT, jsx3.gui.Block.ALIGNCENTER
      */
 
-    public void getTextAlign(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTextAlign(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1697,7 +1696,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1709,7 +1708,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTextAlign", ALIGN);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1717,7 +1716,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
      * Returns the tooltip text to display when the object is hovered over.  Returns an empty string if null.
      */
 
-    public void getTip(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTip(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1735,7 +1734,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1748,7 +1747,7 @@ Returns reference to self to facilitate method chaining;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTip", strTip);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1757,7 +1756,7 @@ Returns reference to self to facilitate method chaining;
      * @param callback top.
      */
 
-    public void getTop(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getTop(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1775,7 +1774,7 @@ Returns reference to self to facilitate method chaining;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1789,7 +1788,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTop", vntTop, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1804,7 +1803,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTop", vntTop, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1813,7 +1812,7 @@ from its parent and only applies if this object is absolutely positioned.
      * @param callback [jsx3.gui.Block.VISIBILITYVISIBLE, jsx3.gui.Block.VISIBILITYHIDDEN]
      */
 
-    public void getVisibility(org.directwebremoting.proxy.Callback<String> callback)
+    public void getVisibility(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1831,7 +1830,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1843,7 +1842,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVisibility", VISIBILITY, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1851,7 +1850,7 @@ from its parent and only applies if this object is absolutely positioned.
      * @param callback width.
      */
 
-    public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1869,7 +1868,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1882,7 +1881,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", vntWidth, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1896,7 +1895,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", vntWidth, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -1904,7 +1903,7 @@ from its parent and only applies if this object is absolutely positioned.
      * Returns the CSS z-index property
      */
 
-    public void getZIndex(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getZIndex(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1922,7 +1921,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1934,7 +1933,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZIndex", intZIndex, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1945,7 +1944,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showMask", strMessage);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1955,7 +1954,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "hideMask");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1974,8 +1973,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2000,8 +1999,8 @@ registered event script is executed in isolation to prevent most side effects.
         String extension = "doEvent(\"" + strType + "\", \"" + objContext + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2015,7 +2014,7 @@ dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanDrag(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanDrag(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2033,7 +2032,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2041,7 +2040,7 @@ dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanDrop(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanDrop(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2059,7 +2058,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2067,7 +2066,7 @@ dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanMove(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanMove(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2085,7 +2084,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2093,7 +2092,7 @@ dragged and dropped on another container supporting drop.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
-    public void getCanSpy(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCanSpy(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2111,7 +2110,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2121,7 +2120,7 @@ setEvent() method or during component deserialization.
      * @param callback the JavaScript event script
      */
 
-    public void getEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
+    public void getEvent(String strType, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2139,7 +2138,7 @@ setEvent() method or during component deserialization.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2153,8 +2152,8 @@ the instance field itself and not a copy.
         String extension = "getEvents().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2174,8 +2173,8 @@ the instance field itself and not a copy.
         String extension = "getEvents().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2188,7 +2187,7 @@ the instance field itself and not a copy.
 clicks on this object with the right button.
      */
 
-    public void getMenu(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMenu(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2206,7 +2205,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2215,7 +2214,7 @@ clicks on this object with the right button.
      * @param callback the JavaScript event script
      */
 
-    public void hasEvent(String strType, org.directwebremoting.proxy.Callback<String> callback)
+    public void hasEvent(String strType, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -2233,7 +2232,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2266,8 +2265,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2301,13 +2300,13 @@ function (the most recently registered) will be executed by a single keydown eve
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
+    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.ui.CodeBlock vntCallback, String vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2346,8 +2345,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2381,13 +2380,13 @@ function (the most recently registered) will be executed by a single keydown eve
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.proxy.CodeBlock vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
+    public jsx3.gui.HotKey registerHotKey(org.directwebremoting.ui.CodeBlock vntCallback, int vntKey, boolean bShift, boolean bControl, boolean bAlt)
     {
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2426,8 +2425,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2466,8 +2465,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "registerHotKey(\"" + vntCallback + "\", \"" + vntKey + "\", \"" + bShift + "\", \"" + bControl + "\", \"" + bAlt + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2487,8 +2486,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "removeEvent(\"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2508,8 +2507,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "removeEvent(\"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2527,8 +2526,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "removeEvents().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2547,8 +2546,8 @@ function (the most recently registered) will be executed by a single keydown eve
         String extension = "removeEvents().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2568,8 +2567,8 @@ Implementing classes can decide whether to consult this value or ignore it.
         String extension = "setCanDrag(\"" + bDrag + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2590,8 +2589,8 @@ Implementing classes can decide whether to consult this value or ignore it.
         String extension = "setCanDrag(\"" + bDrag + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2611,8 +2610,8 @@ this value or ignore it.
         String extension = "setCanDrop(\"" + bDrop + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2633,8 +2632,8 @@ this value or ignore it.
         String extension = "setCanDrop(\"" + bDrop + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2654,8 +2653,8 @@ can decide whether to consult this value or ignore it.
         String extension = "setCanMove(\"" + bMovable + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2676,8 +2675,8 @@ can decide whether to consult this value or ignore it.
         String extension = "setCanMove(\"" + bMovable + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2697,8 +2696,8 @@ this value or ignore it.
         String extension = "setCanSpy(\"" + bSpy + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2719,8 +2718,8 @@ this value or ignore it.
         String extension = "setCanSpy(\"" + bSpy + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2749,8 +2748,8 @@ any registered event script.
         String extension = "setEvent(\"" + strScript + "\", \"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2780,8 +2779,8 @@ any registered event script.
         String extension = "setEvent(\"" + strScript + "\", \"" + strType + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2801,8 +2800,8 @@ clicks on this object with the right button. The name is a pointer by-name to a 
         String extension = "setMenu(\"" + strMenu + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Interactive> ctor = jsx3.gui.Interactive.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2823,8 +2822,8 @@ clicks on this object with the right button. The name is a pointer by-name to a 
         String extension = "setMenu(\"" + strMenu + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -2840,7 +2839,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSpyStyles", strCSS);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2854,7 +2853,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -2868,7 +2867,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

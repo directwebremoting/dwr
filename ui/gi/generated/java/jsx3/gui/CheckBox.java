@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class is a wrapper of the standard HTML checkbox.
@@ -36,12 +36,11 @@ public class CheckBox extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public CheckBox(Context context, String extension, ScriptProxy scriptProxy)
+    public CheckBox(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -56,7 +55,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, String vntTop, int vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -74,7 +73,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, String vntTop, String vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -92,7 +91,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, int vntTop, String vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -110,7 +109,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, int vntTop, String vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -128,7 +127,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, int vntTop, int vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -146,7 +145,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, int vntTop, String vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -164,7 +163,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, String vntTop, int vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -182,7 +181,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, String vntTop, String vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -200,7 +199,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, String vntTop, String vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -218,7 +217,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, String vntTop, int vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -236,7 +235,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, int vntTop, int vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -254,7 +253,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, int vntTop, int vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -272,7 +271,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, int vntTop, int vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -290,7 +289,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, int vntTop, String vntWidth, int vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -308,7 +307,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, int vntLeft, String vntTop, int vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -326,7 +325,7 @@ public class CheckBox extends jsx3.gui.Block
      */
     public CheckBox(String strName, String vntLeft, String vntTop, String vntWidth, String vntHeight, String strText, int CHECKED)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CheckBox", strName, vntLeft, vntTop, vntWidth, vntHeight, strText, CHECKED);
         setInitScript(script);
@@ -359,7 +358,7 @@ public class CheckBox extends jsx3.gui.Block
      * @param callback one of: jsx3.gui.CheckBox.CHECKED or jsx3.gui.CheckBox.UNCHECKED
      */
 
-    public void getDefaultChecked(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getDefaultChecked(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -377,7 +376,7 @@ public class CheckBox extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -389,7 +388,7 @@ public class CheckBox extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDefaultChecked", CHECKED);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -398,7 +397,7 @@ public class CheckBox extends jsx3.gui.Block
      * @param callback one of: jsx3.gui.CheckBox.CHECKED or jsx3.gui.CheckBox.UNCHECKED
      */
 
-    public void getChecked(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getChecked(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -416,7 +415,7 @@ public class CheckBox extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -429,7 +428,7 @@ deprecated 3.0 model event protocol.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setChecked", intChecked);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -438,7 +437,7 @@ deprecated 3.0 model event protocol.
      * @param callback one of: jsx3.gui.Form.STATEVALID jsx3.gui.Form.INSTATEVALID
      */
 
-    public void doValidate(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void doValidate(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -456,7 +455,7 @@ deprecated 3.0 model event protocol.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -476,13 +475,13 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @return the registered hot key.
      */
 
-    public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.proxy.CodeBlock fctCallback, String strKeys)
+    public jsx3.gui.HotKey doKeyBinding(org.directwebremoting.ui.CodeBlock fctCallback, String strKeys)
     {
         String extension = "doKeyBinding(\"" + fctCallback + "\", \"" + strKeys + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.HotKey> ctor = jsx3.gui.HotKey.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -501,8 +500,8 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
         String extension = "doReset().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -521,8 +520,8 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
         String extension = "doReset().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -535,7 +534,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
 
-    public void getDisabledBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDisabledBackgroundColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -553,7 +552,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -561,7 +560,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
      * @param callback valid CSS property value, (i.e., red, #ff0000)
      */
 
-    public void getDisabledColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDisabledColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -579,7 +578,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -588,7 +587,7 @@ STATEENABLED.
      * @param callback <code>STATEDISABLED</code> or <code>STATEENABLED</code>.
      */
 
-    public void getEnabled(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getEnabled(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -606,7 +605,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -614,7 +613,7 @@ STATEENABLED.
      * @param callback plus-delimited (e.g.,'+') key sequence such as ctrl+s or ctrl+shift+alt+h or shift+a, etc
      */
 
-    public void getKeyBinding(org.directwebremoting.proxy.Callback<String> callback)
+    public void getKeyBinding(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -632,7 +631,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -641,7 +640,7 @@ OPTIONAL.
      * @param callback <code>REQUIRED</code> or <code>OPTIONAL</code>.
      */
 
-    public void getRequired(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRequired(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -659,7 +658,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -668,7 +667,7 @@ STATEVALID.
      * @param callback <code>STATEINVALID</code> or <code>STATEVALID</code>.
      */
 
-    public void getValidationState(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getValidationState(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -686,14 +685,14 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the value of this control.
      */
 
-    public void getValue(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getValue(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -711,7 +710,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -725,8 +724,8 @@ STATEVALID.
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -746,8 +745,8 @@ STATEVALID.
         String extension = "setDisabledBackgroundColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -766,8 +765,8 @@ STATEVALID.
         String extension = "setDisabledColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -787,8 +786,8 @@ STATEVALID.
         String extension = "setDisabledColor(\"" + strColor + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -806,7 +805,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -821,8 +820,8 @@ event for this control.
         String extension = "setKeyBinding(\"" + strSequence + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -843,8 +842,8 @@ event for this control.
         String extension = "setKeyBinding(\"" + strSequence + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -863,8 +862,8 @@ event for this control.
         String extension = "setRequired(\"" + required + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -884,8 +883,8 @@ event for this control.
         String extension = "setRequired(\"" + required + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -904,8 +903,8 @@ event for this control.
         String extension = "setValidationState(\"" + intState + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -925,8 +924,8 @@ event for this control.
         String extension = "setValidationState(\"" + intState + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -945,8 +944,8 @@ event for this control.
         String extension = "setValue(\"" + vntValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -966,8 +965,8 @@ event for this control.
         String extension = "setValue(\"" + vntValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -986,8 +985,8 @@ event for this control.
         String extension = "setValue(\"" + vntValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Form> ctor = jsx3.gui.Form.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1007,8 +1006,8 @@ event for this control.
         String extension = "setValue(\"" + vntValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

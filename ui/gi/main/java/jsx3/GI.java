@@ -15,12 +15,7 @@
  */
 package jsx3;
 
-import java.util.Collection;
-
 import jsx3.app.Server;
-
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.proxy.ScriptProxy;
 
 /**
  * A Factory class to allow access to GI components in the same way that the
@@ -31,25 +26,11 @@ public class GI
 {
     /**
      * Get access to a Server instance with the given name
-     * @param scriptSessions A collection of ScriptSessions that we should act on.
      * @param name The name to get access to
      * @return A new Server proxy instance
      */
-    public static Server getServer(Collection<ScriptSession> scriptSessions, String name)
+    public static Server getServer(String name)
     {
-        ScriptProxy proxy = new ScriptProxy(scriptSessions);
-        return new Server(null, name + ".", proxy);
-    }
-
-    /**
-     * Get access to a Server instance with the given name
-     * @param scriptSession The ScriptSessions that we should act on.
-     * @param name The name to get access to
-     * @return A new Server proxy instance
-     */
-    public static Server getServer(ScriptSession scriptSession, String name)
-    {
-        ScriptProxy proxy = new ScriptProxy(scriptSession);
-        return new Server(null, name + ".", proxy);
+        return new Server(null, name + ".");
     }
 }

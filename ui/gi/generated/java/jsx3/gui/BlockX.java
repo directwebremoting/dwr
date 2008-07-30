@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints the result of an XSL transformation in an Block. A transformation is performed on the XML source document
@@ -29,12 +29,11 @@ public class BlockX extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public BlockX(Context context, String extension, ScriptProxy scriptProxy)
+    public BlockX(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -47,7 +46,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, int vntTop, String vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -63,7 +62,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, String vntTop, String vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -79,7 +78,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -95,7 +94,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, int vntTop, String vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -111,7 +110,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, int vntTop, int vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -127,7 +126,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, int vntTop, int vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -143,7 +142,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, String vntTop, int vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -159,7 +158,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, String vntTop, String vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -175,7 +174,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, int vntTop, String vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -191,7 +190,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -207,7 +206,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, int vntTop, String vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -223,7 +222,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, String vntTop, String vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -239,7 +238,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -255,7 +254,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, String vntTop, String vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -271,7 +270,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, int vntLeft, String vntTop, int vntWidth, String vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -287,7 +286,7 @@ public class BlockX extends jsx3.gui.Block
      */
     public BlockX(String strName, String vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new BlockX", strName, vntLeft, vntTop, vntWidth, vntHeight);
         setInitScript(script);
@@ -299,7 +298,7 @@ public class BlockX extends jsx3.gui.Block
      * Returns the XSL string of this object.
      */
 
-    public void getXSLString(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXSLString(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -317,7 +316,7 @@ public class BlockX extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -331,8 +330,8 @@ public class BlockX extends jsx3.gui.Block
         String extension = "setXSLString(\"" + strXSL + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -352,8 +351,8 @@ public class BlockX extends jsx3.gui.Block
         String extension = "setXSLString(\"" + strXSL + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -365,7 +364,7 @@ public class BlockX extends jsx3.gui.Block
      * Returns the XSL URL of this object.
      */
 
-    public void getXSLURL(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXSLURL(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -383,7 +382,7 @@ public class BlockX extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -397,8 +396,8 @@ public class BlockX extends jsx3.gui.Block
         String extension = "setXSLURL(\"" + strXSLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -418,8 +417,8 @@ public class BlockX extends jsx3.gui.Block
         String extension = "setXSLURL(\"" + strXSLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -435,7 +434,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -444,7 +443,7 @@ is destroyed.
      * @param callback <code>CLEANUPRESOURCES</code> or <code>SHARERESOURCES</code>.
      */
 
-    public void getShareResources(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getShareResources(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -462,7 +461,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -488,8 +487,8 @@ following actions are also taken:
         String extension = "getXML().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -521,8 +520,8 @@ following actions are also taken:
         String extension = "getXML().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -535,7 +534,7 @@ following actions are also taken:
      * @param callback the XML ID.
      */
 
-    public void getXMLId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -553,14 +552,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the XML string of this object.
      */
 
-    public void getXMLString(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLString(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -578,14 +577,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the list of XML transformers of this object.
      */
 
-    public void getXMLTransformers(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getXMLTransformers(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -603,14 +602,14 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the XML URL of this object.
      */
 
-    public void getXMLURL(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXMLURL(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -628,7 +627,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -648,8 +647,8 @@ following actions are also taken:
         String extension = "getXSL().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -675,8 +674,8 @@ following actions are also taken:
         String extension = "getXSL().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -688,7 +687,7 @@ following actions are also taken:
      * Returns the XSL ID of this object.
      */
 
-    public void getXSLId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXSLId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -706,7 +705,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -718,8 +717,8 @@ following actions are also taken:
         String extension = "getXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -737,8 +736,8 @@ following actions are also taken:
         String extension = "getXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -751,7 +750,7 @@ following actions are also taken:
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void getXmlAsync(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getXmlAsync(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -769,7 +768,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -777,7 +776,7 @@ following actions are also taken:
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void getXmlBind(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getXmlBind(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -795,7 +794,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -814,7 +813,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -828,8 +827,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParam(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -849,8 +848,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParam(\"" + strName + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -868,8 +867,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -888,8 +887,8 @@ Any methods overriding this method should begin with a call to jsxsupermix().
         String extension = "removeXSLParams().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -906,7 +905,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -918,7 +917,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -934,8 +933,8 @@ is destroyed.
         String extension = "setShareResources(\"" + intShare + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -957,8 +956,8 @@ is destroyed.
         String extension = "setShareResources(\"" + intShare + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -988,8 +987,8 @@ string of this object. This method executes the following steps:
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1020,8 +1019,8 @@ string of this object. This method executes the following steps:
         String extension = "setSourceXML(\"" + objDoc + "\", \"" + objCache + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1042,8 +1041,8 @@ If no value is specified, a unique id is generated.
         String extension = "setXMLId(\"" + strXMLId + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1065,8 +1064,8 @@ If no value is specified, a unique id is generated.
         String extension = "setXMLId(\"" + strXMLId + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1086,8 +1085,8 @@ way of specifying the source XML document of this object.
         String extension = "setXMLString(\"" + strXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1108,8 +1107,8 @@ way of specifying the source XML document of this object.
         String extension = "setXMLString(\"" + strXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1132,7 +1131,7 @@ without throwing an error.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1148,8 +1147,8 @@ source XML document of this object.
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1171,8 +1170,8 @@ source XML document of this object.
         String extension = "setXMLURL(\"" + strXMLURL + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1193,8 +1192,8 @@ strValue is null the parameter is removed.
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1216,8 +1215,8 @@ strValue is null the parameter is removed.
         String extension = "setXSLParam(\"" + strName + "\", \"" + strValue + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1237,8 +1236,8 @@ data sources loaded from an XML URL.
         String extension = "setXmlAsync(\"" + bAsync + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.Cacheable> ctor = jsx3.xml.Cacheable.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1259,8 +1258,8 @@ data sources loaded from an XML URL.
         String extension = "setXmlAsync(\"" + bAsync + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -1276,7 +1275,7 @@ the cache under the XML Id of this object changes.
      * @param callback <code>0</code> or <code>1</code>.
      */
 
-    public void setXmlBind(boolean bBind, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void setXmlBind(boolean bBind, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1294,7 +1293,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

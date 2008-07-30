@@ -16,14 +16,13 @@
 package org.directwebremoting.extend;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
 import org.directwebremoting.util.JavascriptUtil;
 
 /**
  * An abstraction of the DWREngine Javascript class.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class EnginePrivate extends ScriptProxy
+public class EnginePrivate
 {
     /**
      * Call the dwr.engine.remote.handleResponse() in the browser

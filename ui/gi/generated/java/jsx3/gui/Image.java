@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders an image.
@@ -28,12 +28,11 @@ public class Image extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Image(Context context, String extension, ScriptProxy scriptProxy)
+    public Image(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -42,7 +41,7 @@ public class Image extends jsx3.gui.Block
      * 
      */
 
-    public void getRenderedWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRenderedWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -60,14 +59,14 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getRenderedHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getRenderedHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -85,14 +84,14 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the URI of this image.
      */
 
-    public void getSrc(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSrc(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -110,7 +109,7 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -123,7 +122,7 @@ owns this object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSrc", srcSrc);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 

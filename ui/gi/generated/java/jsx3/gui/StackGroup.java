@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * similar to how a tabbed pane manages a collection of tabs, the stack group is a parent container that manages JSXStack instances
@@ -28,12 +28,11 @@ public class StackGroup extends jsx3.gui.LayoutGrid
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public StackGroup(Context context, String extension, ScriptProxy scriptProxy)
+    public StackGroup(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -42,7 +41,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
      */
     public StackGroup(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new StackGroup", strName);
         setInitScript(script);
@@ -70,7 +69,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
      * @param callback size in pixels
      */
 
-    public void getBarSize(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getBarSize(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -88,7 +87,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -101,7 +100,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBarSize", intBarSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -109,7 +108,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
      * Returns zero-based index for the tab that is active per its placement in the child JScript array
      */
 
-    public void getSelectedIndex(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSelectedIndex(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -127,7 +126,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

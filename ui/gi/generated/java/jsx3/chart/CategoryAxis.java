@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Axis type that displays a set of discrete values (categories). Usually a category corresponds to a 
@@ -29,12 +29,11 @@ public class CategoryAxis extends jsx3.chart.Axis
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public CategoryAxis(Context context, String extension, ScriptProxy scriptProxy)
+    public CategoryAxis(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      */
     public CategoryAxis(String name, boolean horizontal, boolean primary)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new CategoryAxis", name, horizontal, primary);
         setInitScript(script);
@@ -68,7 +67,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * @param callback tickAlignment, one of {'aligned','between'}
      */
 
-    public void getTickAlignment(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTickAlignment(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -86,7 +85,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -97,7 +96,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTickAlignment", tickAlignment);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -105,7 +104,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * @param callback categoryField
      */
 
-    public void getCategoryField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCategoryField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -123,7 +122,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -134,7 +133,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCategoryField", categoryField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -142,7 +141,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * @param callback paddingLow
      */
 
-    public void getPaddingLow(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getPaddingLow(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -160,7 +159,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -171,7 +170,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPaddingLow", paddingLow);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -179,7 +178,7 @@ public class CategoryAxis extends jsx3.chart.Axis
      * @param callback paddingHigh
      */
 
-    public void getPaddingHigh(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getPaddingHigh(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -197,7 +196,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -208,7 +207,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPaddingHigh", paddingHigh);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

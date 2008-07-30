@@ -15,7 +15,7 @@
  */
 package org.directwebremoting.extend;
 
-import org.directwebremoting.proxy.Callback;
+import org.directwebremoting.ui.Callback;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]

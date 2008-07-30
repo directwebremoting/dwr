@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Defines a base class for GUI controls that implement both the cross-platform box profile painting introduced in
@@ -31,12 +31,11 @@ public class Block extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Block(Context context, String extension, ScriptProxy scriptProxy)
+    public Block(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -51,8 +50,8 @@ createVector() is called to create it.
         String extension = "getCanvas().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -71,8 +70,8 @@ createVector() is called to create it.
         String extension = "getCanvas().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -101,8 +100,8 @@ rendered on screen, but without calling updateVector() directly.
         String extension = "createVector().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -132,8 +131,8 @@ rendered on screen, but without calling updateVector() directly.
         String extension = "createVector().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -158,7 +157,7 @@ CustomVector.prototype.updateVector = function(objVector) {
    recreated by calling <code>createVector()</code>.
      */
 
-    public void updateVector(jsx3.vector.Tag objVector, org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void updateVector(jsx3.vector.Tag objVector, org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -176,7 +175,7 @@ CustomVector.prototype.updateVector = function(objVector) {
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -190,8 +189,8 @@ overridden to provide a base tag of another type that Canvas.
         String extension = "createCanvas().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.vector.Tag> ctor = jsx3.vector.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -211,8 +210,8 @@ overridden to provide a base tag of another type that Canvas.
         String extension = "createCanvas().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -233,7 +232,7 @@ jsx3.gui.Event, and the native HTMLElement that defined the event handler.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintEventHandler", strEvtType, strMethod, objElm);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

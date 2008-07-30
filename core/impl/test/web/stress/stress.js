@@ -61,7 +61,7 @@ function clientPoll() {
     dwr.util.setValue("clientSkipped", clientSkipped);
   }
   else {
-    Stress.ping(clientServerReply);
+    Test.doNothing(clientServerReply);
   }
 
   clientTimeout = setTimeout(clientPoll, clientHitDelay);
@@ -99,13 +99,13 @@ function serverRamp() {
     serverRampInProgress = false;
     if (serverTimeout) clearTimeout(serverTimeout);
     dwr.engine.setActiveReverseAjax(false);
-    Stress.setPublishing(false);
+    Test.setPublishing(false);
     dwr.util.setValue("serverRamp", "Start");
   }
   else {
     // START
     serverRampInProgress = true;
-    Stress.setPublishing(true);
+    Test.setPublishing(true);
     dwr.engine.setActiveReverseAjax(true);
     dwr.util.setValue("serverRamp", "Stop");
 
@@ -115,7 +115,7 @@ function serverRamp() {
 
 function serverAdjustHitDelay() {
   var hitDelay = dwr.util.getValue("serverHitDelay");
-  Stress.setHitDelay(hitDelay);
+  Test.setHitDelay(hitDelay);
 }
 
 function serverIgnoreErrors() {

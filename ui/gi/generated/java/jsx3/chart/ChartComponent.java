@@ -16,8 +16,7 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
 
 /**
  * A base class for every logical component of a chart. A chart component exists in the DOM tree and 
@@ -29,12 +28,11 @@ public class ChartComponent extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public ChartComponent(Context context, String extension, ScriptProxy scriptProxy)
+    public ChartComponent(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +41,7 @@ public class ChartComponent extends jsx3.gui.Block
      */
     public ChartComponent(String name)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new ChartComponent", name);
         setInitScript(script);
@@ -61,8 +59,8 @@ public class ChartComponent extends jsx3.gui.Block
         String extension = "getChart().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.chart.Chart> ctor = jsx3.chart.Chart.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.chart.Chart> ctor = jsx3.chart.Chart.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -81,8 +79,8 @@ public class ChartComponent extends jsx3.gui.Block
         String extension = "getChart().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

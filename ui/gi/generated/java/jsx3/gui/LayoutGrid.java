@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class provides a way to organize a set of GUI objects in a grid. The dimensions of each cell in the grid
@@ -35,12 +35,11 @@ public class LayoutGrid extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public LayoutGrid(Context context, String extension, ScriptProxy scriptProxy)
+    public LayoutGrid(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -49,7 +48,7 @@ public class LayoutGrid extends jsx3.gui.Block
      */
     public LayoutGrid(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new LayoutGrid", strName);
         setInitScript(script);
@@ -61,7 +60,7 @@ public class LayoutGrid extends jsx3.gui.Block
      * 
      */
 
-    public void getCols(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCols(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -79,7 +78,7 @@ public class LayoutGrid extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -92,7 +91,7 @@ public class LayoutGrid extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCols", strCols, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -100,7 +99,7 @@ public class LayoutGrid extends jsx3.gui.Block
      * 
      */
 
-    public void getRows(org.directwebremoting.proxy.Callback<String> callback)
+    public void getRows(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -118,7 +117,7 @@ public class LayoutGrid extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -131,7 +130,7 @@ public class LayoutGrid extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRows", strRows, bRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 

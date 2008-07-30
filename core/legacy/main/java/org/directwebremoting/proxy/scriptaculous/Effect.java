@@ -22,10 +22,13 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.proxy.ScriptProxy;
 
 /**
- * A server side proxy the the Scriptaculous Effect class
+ * A server side proxy the the Script.aculo.us Effect class
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @author Mitch Gorman
+ * @deprecated Use org.directwebremoting.ui.scriptaculous.Effect
+ * @see org.directwebremoting.ui.scriptaculous.Effect
  */
+@Deprecated
 public class Effect extends ScriptProxy
 {
     /**

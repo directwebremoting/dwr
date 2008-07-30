@@ -15,15 +15,12 @@
  */
 package com.example.dwr.chat;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.Browser;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -44,12 +41,13 @@ public class JavascriptChat
             }
         }
 
-        WebContext wctx = WebContextFactory.get();
-        String currentPage = wctx.getCurrentPage();
-
-        Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(currentPage);
-        ScriptProxy s = new ScriptProxy(sessions);
-        s.addFunctionCall("receiveMessages", messages);
+        Browser.withCurrentPage(new Runnable()
+        {
+            public void run()
+            {
+                ScriptProxy.addFunctionCall("receiveMessages", messages);
+            }            
+        });
     }
 
     /**

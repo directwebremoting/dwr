@@ -15,14 +15,12 @@
  */
 package com.example.dwr.gidemo;
 
-import java.util.Collection;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.ui.ScriptProxy;
 import org.directwebremoting.util.SharedObjects;
 
 /**
@@ -45,18 +43,20 @@ public class Publisher implements Runnable
      */
     public void run()
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        String contextPath = serverContext.getContextPath();
+        String contextPath = ServerContextFactory.get().getContextPath();
         if (contextPath == null)
         {
             return;
         }
 
-        Collection<ScriptSession> sessions = serverContext.getScriptSessionsByPage(contextPath + "/gi/dwr-oa-gi.html");
-        ScriptProxy proxy = new ScriptProxy(sessions);
-
-        Corporation corp = corporations.getNextChangedCorporation();
-        proxy.addFunctionCall("OpenAjax.hub.publish", "gidemo.corp", corp);
+        Browser.withPage(contextPath + "/gi/dwr-oa-gi.html", new Runnable()
+        {
+            public void run()
+            {
+                Corporation corp = corporations.getNextChangedCorporation();
+                ScriptProxy.addFunctionCall("OpenAjax.hub.publish", "gidemo.corp", corp);
+            }
+        });
     }
 
     /**

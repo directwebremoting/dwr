@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.proxy.io;
+package org.directwebremoting.io;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
 
 /**
- * Context is a way for a {@link ScriptProxy} to return a value that can only be
- * realized on the client.
- * A {@link Context} allows a {@link ScriptProxy} to return something, and have
- * server side code keep track of the things it is acting on.
+ * Context is a way to return a value that can only be realized on the client.
+ * It allows us to return something, and have server side code keep track of the
+ * things it is acting on.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Context
@@ -32,11 +30,10 @@ public class Context
      * @param parent Our parent context, or null if we start from scratch
      * @param extension A string to append to the parent context
      */
-    public Context(Context parent, String extension, ScriptProxy scriptProxy)
+    public Context(Context parent, String extension)
     {
         this.parent = parent;
         this.extension = extension;
-        this.scriptProxy = scriptProxy;
     }
 
     /**
@@ -47,15 +44,6 @@ public class Context
     {
         String prefix = (parent == null) ? "" : parent.getContextPath();
         return prefix + extension;
-    }
-
-    /**
-     * Accessor for the current script proxy
-     * @return The current script proxy
-     */
-    protected ScriptProxy getScriptProxy()
-    {
-        return scriptProxy;
     }
 
     /**
@@ -75,11 +63,6 @@ public class Context
     {
         return initScript;
     }
-
-    /**
-     * A destination for the generated scripts
-     */
-    private ScriptProxy scriptProxy;
 
     /**
      * When we're stand-alone, created from 'new' someone else want the start point

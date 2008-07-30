@@ -20,7 +20,7 @@ import java.net.URL;
 
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.CallbackHelperFactory;
-import org.directwebremoting.proxy.Callback;
+import org.directwebremoting.ui.Callback;
 import org.directwebremoting.ui.ScriptProxy;
 
 /**

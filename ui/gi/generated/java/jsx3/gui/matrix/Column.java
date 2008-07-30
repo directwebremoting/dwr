@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Column control for use as a child of a jsx3.gui.Matrix class
@@ -28,12 +28,11 @@ public class Column extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Column(Context context, String extension, ScriptProxy scriptProxy)
+    public Column(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -42,7 +41,7 @@ public class Column extends jsx3.gui.Block
      */
     public Column(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Column", strName);
         setInitScript(script);
@@ -75,7 +74,7 @@ public class Column extends jsx3.gui.Block
      * @param strDefault xsl:template
      */
 
-    public void getValueTemplate(String strDefault, org.directwebremoting.proxy.Callback<String> callback)
+    public void getValueTemplate(String strDefault, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -93,7 +92,7 @@ public class Column extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -108,14 +107,14 @@ The path wildcard is as follows:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValueTemplate", TEMPLATE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Gets whether or not this column can be resized by the user. If not set, the column will be assumed resizable
      */
 
-    public void getResizable(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getResizable(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -133,7 +132,7 @@ The path wildcard is as follows:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -145,7 +144,7 @@ is set as NOT resizable, this setting is ignored and no child columns can be res
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizable", RESIZE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -154,7 +153,7 @@ this column will called to repaint to reflect the updated value
      * @param callback Comma-delimited attribute list
      */
 
-    public void getTriggers(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTriggers(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -172,7 +171,7 @@ this column will called to repaint to reflect the updated value
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -184,7 +183,7 @@ this column will called to repaint to reflect the updated value
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTriggers", strTriggers);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -192,7 +191,7 @@ this column will called to repaint to reflect the updated value
      * @param callback selection path
      */
 
-    public void getPath(org.directwebremoting.proxy.Callback<String> callback)
+    public void getPath(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -210,7 +209,7 @@ this column will called to repaint to reflect the updated value
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -224,7 +223,7 @@ However, the repaint can be suppressed to avoid unnecessary reparsing of the XSL
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPath", strPath, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -233,7 +232,7 @@ returns the value of this.getPath(). The data source of the matrix containing th
 sorted on this attribute when the matrix is sorted on this column.
      */
 
-    public void getSortPath(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSortPath(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -251,7 +250,7 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -262,7 +261,7 @@ sorted on this attribute when the matrix is sorted on this column.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortPath", strPath);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -270,7 +269,7 @@ sorted on this attribute when the matrix is sorted on this column.
      * @param callback data type for this column's data
      */
 
-    public void getDataType(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDataType(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -288,7 +287,7 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -299,7 +298,7 @@ sorted on this attribute when the matrix is sorted on this column.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDataType", DATATYPE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -307,7 +306,7 @@ sorted on this attribute when the matrix is sorted on this column.
      * @param callback one of: jsx3.gui.Matrix.Column.TYPE_TEXT, jsx3.gui.Matrix.Column.TYPE_NUMBER
      */
 
-    public void getSortDataType(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSortDataType(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -325,7 +324,7 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -336,7 +335,7 @@ sorted on this attribute when the matrix is sorted on this column.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortDataType", DATATYPE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -344,7 +343,7 @@ sorted on this attribute when the matrix is sorted on this column.
 the parent control explicitly specifies that no column should sort.
      */
 
-    public void getCanSort(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getCanSort(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -362,7 +361,7 @@ the parent control explicitly specifies that no column should sort.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -373,7 +372,7 @@ the parent control explicitly specifies that no column should sort.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanSort", SORT);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -392,7 +391,7 @@ function(element, cdfkey, matrix, column, rownumber, server) {
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -407,11 +406,11 @@ function(element, cdfkey, matrix, column, rownumber, server) {
 };
 </pre></p>
      */
-    public void setFormatHandler(org.directwebremoting.proxy.CodeBlock handler)
+    public void setFormatHandler(org.directwebremoting.ui.CodeBlock handler)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -430,7 +429,7 @@ function(element, cdfkey, matrix, column, rownumber, server) {
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -440,7 +439,7 @@ Can also return the function literal
      * @param callback named object or function literal
      */
 
-    public void getFormatHandler(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFormatHandler(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -458,7 +457,7 @@ Can also return the function literal
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -468,7 +467,7 @@ displayed (e.g., display = none), the value returned from this method will be le
 Returns null if this object is not displayed.
      */
 
-    public void getDisplayIndex(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getDisplayIndex(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -486,14 +485,14 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value for the data cell background-color.
      */
 
-    public void getCellBackgroundColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellBackgroundColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -511,7 +510,7 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -522,14 +521,14 @@ Returns null if this object is not displayed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellBackgroundColor", strColor);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value for the data cell border.
      */
 
-    public void getCellBorder(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellBorder(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -547,7 +546,7 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -562,14 +561,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellBorder", strCSS, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value for the data cell color.
      */
 
-    public void getCellColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -587,7 +586,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -598,14 +597,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellColor", strColor);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns CSS property value for the data cell cursor.
      */
 
-    public void getCellCursor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellCursor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -623,7 +622,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -634,14 +633,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellCursor", strCursor);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell font-family.
      */
 
-    public void getCellFontName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellFontName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -659,7 +658,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -670,14 +669,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontName", strFontName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell font-size.
      */
 
-    public void getCellFontSize(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCellFontSize(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -695,7 +694,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -706,14 +705,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontSize", intPixelSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell font-weight.
      */
 
-    public void getCellFontWeight(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellFontWeight(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -731,7 +730,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -742,14 +741,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontWeight", FONTWEIGHT);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell padding.
      */
 
-    public void getCellPadding(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellPadding(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -767,7 +766,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -782,14 +781,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellPadding", strCSS, bSuppressRepaint);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell text-align.
      */
 
-    public void getCellTextAlign(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellTextAlign(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -807,7 +806,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -818,14 +817,14 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellTextAlign", ALIGN);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the data cell vertical-align. If no value is provided, the data cells render top-aligned.
      */
 
-    public void getCellVAlign(org.directwebremoting.proxy.Callback<String> callback)
+    public void getCellVAlign(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -843,7 +842,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -854,7 +853,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellVAlign", VALIGN);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -862,7 +861,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
      * @param strDefault The default value to use if null
      */
 
-    public void getCellWrap(String strDefault, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCellWrap(String strDefault, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -880,7 +879,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -892,7 +891,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellWrap", WRAP);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -900,7 +899,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
      * @param strDefault The default value to use if null
      */
 
-    public void getWrap(String strDefault, org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getWrap(String strDefault, org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -918,7 +917,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -929,14 +928,14 @@ specified, the text will not wrap. Call repaint to update the VIEW
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWrap", WRAP);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the CSS property value for the header cell vertical-align. If no value is provided, the header cell render top-aligned.
      */
 
-    public void getVAlign(org.directwebremoting.proxy.Callback<String> callback)
+    public void getVAlign(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -954,7 +953,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -965,7 +964,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVAlign", VALIGN);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

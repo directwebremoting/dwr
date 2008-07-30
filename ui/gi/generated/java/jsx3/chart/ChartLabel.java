@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A chart component to render a text box. Used to render the titles of charts, legends, axes, and series.
@@ -30,12 +30,11 @@ public class ChartLabel extends jsx3.chart.ChartComponent
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public ChartLabel(Context context, String extension, ScriptProxy scriptProxy)
+    public ChartLabel(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      */
     public ChartLabel(String name, String text)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new ChartLabel", name, text);
         setInitScript(script);
@@ -78,7 +77,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * @param callback preferredWidth
      */
 
-    public void getPreferredWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPreferredWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -96,7 +95,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -107,7 +106,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPreferredWidth", preferredWidth);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -115,7 +114,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * @param callback preferredHeight
      */
 
-    public void getPreferredHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPreferredHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -133,7 +132,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -144,7 +143,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPreferredHeight", preferredHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -152,7 +151,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * @param callback alpha
      */
 
-    public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getAlpha(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -170,7 +169,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -181,7 +180,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -189,7 +188,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * @param callback borderStroke
      */
 
-    public void getBorderStroke(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBorderStroke(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -207,7 +206,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -218,7 +217,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderStroke", borderStroke);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -226,7 +225,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
      * @param callback labelRotation
      */
 
-    public void getLabelRotation(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getLabelRotation(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -244,7 +243,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -255,14 +254,14 @@ public class ChartLabel extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelRotation", labelRotation);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * whether this label is display at 90 or -90 degrees
      */
 
-    public void isRotated(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isRotated(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -280,7 +279,7 @@ public class ChartLabel extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

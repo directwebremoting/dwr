@@ -16,8 +16,8 @@
 package jsx3.lang;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * @author Joe Walker [joe at getahead dot org]
@@ -29,11 +29,10 @@ public class Object extends Context
      * All reverse ajax proxies need context to work from
      * @param parent The parent context
      * @param extension The script to take us from the parent to this object
-     * @param scriptProxy The new script proxy
      */
-    public Object(Context parent, String extension, ScriptProxy scriptProxy)
+    public Object(Context parent, String extension)
     {
-        super(parent, extension, scriptProxy);
+        super(parent, extension);
     }
 
     /**
@@ -47,6 +46,6 @@ public class Object extends Context
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript(getContextPath().replaceFirst(".$", ";"));
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 }

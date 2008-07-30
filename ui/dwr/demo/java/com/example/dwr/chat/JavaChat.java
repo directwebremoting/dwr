@@ -15,15 +15,12 @@
  */
 package com.example.dwr.chat;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.proxy.dwr.Util;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Browser;
+import org.directwebremoting.ui.dwr.Util;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -45,20 +42,19 @@ public class JavaChat
             }
         }
 
-        WebContext wctx = WebContextFactory.get();
-        String currentPage = wctx.getCurrentPage();
-
         // Clear the input box in the browser that kicked off this page only
-        Util utilThis = new Util(wctx.getScriptSession());
-        utilThis.setValue("text", "");
+        Util.setValue("text", "");
 
         // For all the browsers on the current page:
-        Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(currentPage);
-        Util utilAll = new Util(sessions);
-
-        // Clear the list and add in the new set of messages
-        utilAll.removeAllOptions("chatlog");
-        utilAll.addOptions("chatlog", messages, "text");
+        Browser.withCurrentPage(new Runnable()
+        {
+            public void run()
+            {
+                // Clear the list and add in the new set of messages
+                Util.removeAllOptions("chatlog");
+                Util.addOptions("chatlog", messages, "text");
+            }
+        });
     }
 
     /**

@@ -16,8 +16,8 @@
 package jsx3.lang;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A collection of GI system related functions.
@@ -28,12 +28,11 @@ public class System extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public System(Context context, String extension, ScriptProxy scriptProxy)
+    public System(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -43,7 +42,7 @@ public class System extends jsx3.lang.Object
      * @param strKey 
      */
 
-    public void getProperty(String strKey, org.directwebremoting.proxy.Callback<String> callback)
+    public void getProperty(String strKey, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -61,7 +60,7 @@ public class System extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -72,7 +71,7 @@ locale is determined by introspecting the browser. If all else fails the default
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getLocale");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -83,7 +82,7 @@ locale is determined by introspecting the browser. If all else fails the default
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLocale", objLocale);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -93,7 +92,7 @@ locale is determined by introspecting the browser. If all else fails the default
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reloadLocalizedResources");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -102,7 +101,7 @@ locale is determined by introspecting the browser. If all else fails the default
      * @param strTokens 
      */
 
-    public void getMessage(String strKey, jsx3.lang.Object strTokens, org.directwebremoting.proxy.Callback<String> callback)
+    public void getMessage(String strKey, jsx3.lang.Object strTokens, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -120,7 +119,7 @@ locale is determined by introspecting the browser. If all else fails the default
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -128,7 +127,7 @@ locale is determined by introspecting the browser. If all else fails the default
      * @param callback <code>"3.1.0"</code>, etc.
      */
 
-    public void getVersion(org.directwebremoting.proxy.Callback<String> callback)
+    public void getVersion(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -146,7 +145,7 @@ locale is determined by introspecting the browser. If all else fails the default
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

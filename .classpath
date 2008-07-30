@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="lib" path="core/api/lib/commons-logging-1.1.1.jar" sourcepath="/librarydwr/source/commons-logging-1.1.1-src.zip">
+	<classpathentry exported="true" kind="lib" path="core/api/lib/commons-logging-1.1.1.jar" sourcepath="/librarydwr/source/commons-logging-1.1.1-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-logging-1.1.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.4.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
+	<classpathentry exported="true" kind="lib" path="core/api/lib/servlet-api-2.4.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://java.sun.com/products/servlet/2.5/docs/servlet-2_5-mr2/"/>
 		</attributes>
@@ -126,6 +126,6 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
-    <classpathentry kind="src" output="target/eclipse/demo/classes" path="noncla/various/demo/java"/>
+	<classpathentry kind="src" output="target/eclipse/demo/classes" path="noncla/various/demo/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>

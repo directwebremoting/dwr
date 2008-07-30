@@ -16,7 +16,6 @@
 package com.example.dwr.ticketcenter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -35,11 +34,11 @@ import jsx3.xml.Record;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.proxy.browser.Window;
+import org.directwebremoting.ui.browser.Window;
 import org.directwebremoting.util.SharedObjects;
 
 import com.example.dwr.util.RandomData;
@@ -107,10 +106,8 @@ public class CallCenter implements Runnable
      */
     public void load()
     {
-        ScriptSession session = WebContextFactory.get().getScriptSession();
-        deselect(session);
-
-        update(Collections.singleton(session));
+        deselect();
+        update();
     }
 
     /**
@@ -120,13 +117,12 @@ public class CallCenter implements Runnable
     {
         // This is the ScriptSession of the agent that wishes to alert a supervisor
         ScriptSession session = WebContextFactory.get().getScriptSession();
-        Window window = new Window(session);
 
         // We store the ID of the call we are working on in the ScriptSession
         Object handlingId = session.getAttribute("handlingId");
         if (handlingId == null)
         {
-            window.alert("No call found");
+            Window.alert("No call found");
             return;
         }
 
@@ -136,7 +132,7 @@ public class CallCenter implements Runnable
             Call call = findCaller(handlingId);
             if (call == null)
             {
-                window.alert("That caller hung up, please select another");
+                Window.alert("That caller hung up, please select another");
                 return;
             }
 
@@ -151,7 +147,7 @@ public class CallCenter implements Runnable
             call.setSupervisorAlert(true);
 
             // Update the screen of the current user
-            deselect(session);
+            deselect();
 
             // Update everyone else's screen
             updateAll();
@@ -164,12 +160,11 @@ public class CallCenter implements Runnable
     public void completeHandling(Call fromWeb)
     {
         ScriptSession session = WebContextFactory.get().getScriptSession();
-        Window window = new Window(session);
 
         Object handlingId = session.getAttribute("handlingId");
         if (handlingId == null)
         {
-            window.alert("No call found");
+            Window.alert("No call found");
             return;
         }
 
@@ -178,7 +173,7 @@ public class CallCenter implements Runnable
             Call call = findCaller(handlingId);
             if (call == null)
             {
-                window.alert("That caller hung up, please select another");
+                Window.alert("That caller hung up, please select another");
                 return;
             }
 
@@ -187,7 +182,7 @@ public class CallCenter implements Runnable
             calls.remove(call);
             log.debug("Properly we should book a ticket for " + fromWeb.getPhoneNumber());
 
-            deselect(session);
+            deselect();
             updateAll();
         }
     }
@@ -198,12 +193,11 @@ public class CallCenter implements Runnable
     public void cancelHandling()
     {
         ScriptSession session = WebContextFactory.get().getScriptSession();
-        Window window = new Window(session);
 
         Object handlingId = session.getAttribute("handlingId");
         if (handlingId == null)
         {
-            window.alert("That caller hung up, please select another");
+            Window.alert("That caller hung up, please select another");
             return;
         }
 
@@ -219,7 +213,7 @@ public class CallCenter implements Runnable
             session.removeAttribute("handlingId");
             call.setHandlerId(null);
 
-            deselect(session);
+            deselect();
             updateAll();
         }
     }
@@ -230,12 +224,11 @@ public class CallCenter implements Runnable
     public void beginHandling(String id)
     {
         ScriptSession session = WebContextFactory.get().getScriptSession();
-        Window window = new Window(session);
 
         Object handlingId = session.getAttribute("handlingId");
         if (handlingId != null)
         {
-            window.alert("Please finish handling the current call before selecting another");
+            Window.alert("Please finish handling the current call before selecting another");
             return;
         }
 
@@ -245,20 +238,20 @@ public class CallCenter implements Runnable
             if (call == null)
             {
                 log.debug("Caller not found: " + id);
-                window.alert("That caller hung up, please select another");
+                Window.alert("That caller hung up, please select another");
             }
             else
             {
                 if (call.getHandlerId() != null)
                 {
-                    window.alert("That call is being handled, please select another");
+                    Window.alert("That call is being handled, please select another");
                     return;
                 }
 
                 session.setAttribute("handlingId", id);
                 call.setHandlerId(session.getId());
 
-                select(session, call);
+                select(call);
                 updateAll();
             }
         }
@@ -312,10 +305,14 @@ public class CallCenter implements Runnable
                     if (session != null)
                     {
                         session.removeAttribute("handlingId");
-
-                        Window window = new Window(session);
-                        window.alert("It appears that this caller has hung up. Please select another.");
-                        deselect(session);                    
+                        Browser.withSession(session, new Runnable()
+                        {
+                            public void run()
+                            {
+                                Window.alert("It appears that this caller has hung up. Please select another.");
+                                deselect();                    
+                            }
+                        });
                     }
                 }
 
@@ -368,22 +365,26 @@ public class CallCenter implements Runnable
      */
     protected void updateAll()
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        String contextPath = serverContext.getContextPath();
+        String contextPath = ServerContextFactory.get().getContextPath();
         if (contextPath == null)
         {
             return;
         }
 
-        Collection<ScriptSession> sessions = serverContext.getScriptSessionsByPage(contextPath + "/gi/ticketcenter.html");
-
-        update(sessions);
+        String page = contextPath + "/gi/ticketcenter.html";
+        Browser.withPage(page, new Runnable()
+        {
+            public void run()
+            {
+                update();
+            }
+        });
     }
 
     /**
-     * @param sessions
+     *
      */
-    protected void update(Collection<ScriptSession> sessions)
+    protected void update()
     {
         // Populate a CDF document with data about our calls
         CdfDocument cdfdoc = new CdfDocument("jsxroot");
@@ -393,52 +394,50 @@ public class CallCenter implements Runnable
         }
 
         // Put the CDF doc into the client side cache, and repaint the table
-        Server tc = GI.getServer(sessions, "ticketcenter");
+        Server tc = GI.getServer("ticketcenter");
         tc.getCache().setDocument("callers", cdfdoc);
         tc.getJSXByName("listCallers", Matrix.class).repaint(null);
     }
 
     /**
-     * @param session
-     * @param call
+     * 
      */
-    private void select(ScriptSession session, Call call)
+    private void select(Call call)
     {
-        Server ticketcenter = GI.getServer(session, "ticketcenter");
+        Server ticketcenter = GI.getServer("ticketcenter");
 
         ticketcenter.getJSXByName("textPhone", TextBox.class).setValue(call.getPhoneNumber());
         ticketcenter.getJSXByName("textName", TextBox.class).setValue(call.getName());
         ticketcenter.getJSXByName("textNotes", TextBox.class).setValue(call.getNotes());
         ticketcenter.getJSXByName("selectEvent", Select.class).setValue(null);
 
-        setFormEnabled(session, true);
+        setFormEnabled(true);
     }
 
     /**
      * Set the form to show no caller
-     * @param session The user that we are clearing
      */
-    private void deselect(ScriptSession session)
+    private void deselect()
     {
-        Server ticketcenter = GI.getServer(session, "ticketcenter");
+        Server ticketcenter = GI.getServer("ticketcenter");
 
         ticketcenter.getJSXByName("textPhone", TextBox.class).setValue("");
         ticketcenter.getJSXByName("textName", TextBox.class).setValue("");
         ticketcenter.getJSXByName("textNotes", TextBox.class).setValue("");
         ticketcenter.getJSXByName("selectEvent", Select.class).setValue(null);
 
-        setFormEnabled(session, false);
+        setFormEnabled(false);
     }
 
     /**
      * Disable all the elements in the form
      * @param enabled True to enable the elements/false ...
      */
-    private void setFormEnabled(ScriptSession session, boolean enabled)
+    private void setFormEnabled(boolean enabled)
     {
         int state = enabled ? Form.STATEENABLED : Form.STATEDISABLED;
 
-        Server ticketcenter = GI.getServer(session, "ticketcenter");
+        Server ticketcenter = GI.getServer("ticketcenter");
         for (String element : ELEMENTS)
         {
             ticketcenter.getJSXByName(element, TextBox.class).setEnabled(state, true);

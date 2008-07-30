@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents a vector fill, the color and gradient that fills a solid vector shape.
@@ -28,12 +28,11 @@ public class Fill extends jsx3.html.Tag
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Fill(Context context, String extension, ScriptProxy scriptProxy)
+    public Fill(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +42,7 @@ public class Fill extends jsx3.html.Tag
      */
     public Fill(int color, float alpha)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Fill", color, alpha);
         setInitScript(script);
@@ -56,7 +55,7 @@ public class Fill extends jsx3.html.Tag
      */
     public Fill(String color, float alpha)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Fill", color, alpha);
         setInitScript(script);
@@ -71,14 +70,14 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the color field, as a CSS hex string.
      */
 
-    public void getColorHtml(org.directwebremoting.proxy.Callback<String> callback)
+    public void getColorHtml(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -96,7 +95,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -107,7 +106,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -118,7 +117,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -126,7 +125,7 @@ public class Fill extends jsx3.html.Tag
      * @param callback alpha
      */
 
-    public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getAlpha(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -144,7 +143,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -155,7 +154,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -163,7 +162,7 @@ public class Fill extends jsx3.html.Tag
      * @param callback type
      */
 
-    public void getType(org.directwebremoting.proxy.Callback<String> callback)
+    public void getType(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -181,7 +180,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -192,7 +191,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", type);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -202,7 +201,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor2");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -212,7 +211,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor2Html");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -223,7 +222,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor2", color2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -234,7 +233,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor2", color2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -242,7 +241,7 @@ public class Fill extends jsx3.html.Tag
      * @param callback alpha2
      */
 
-    public void getAlpha2(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getAlpha2(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -260,7 +259,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -271,7 +270,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha2", alpha2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -279,7 +278,7 @@ public class Fill extends jsx3.html.Tag
      * @param callback angle
      */
 
-    public void getAngle(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getAngle(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -297,7 +296,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -308,7 +307,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAngle", angle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -316,7 +315,7 @@ public class Fill extends jsx3.html.Tag
      * @param callback colors
      */
 
-    public void getColors(org.directwebremoting.proxy.Callback<String> callback)
+    public void getColors(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -334,7 +333,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -345,7 +344,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColors", colors);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -361,8 +360,8 @@ public class Fill extends jsx3.html.Tag
         String extension = "valueOf(\"" + v + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.vector.Fill> ctor = jsx3.vector.Fill.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.vector.Fill> ctor = jsx3.vector.Fill.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -384,8 +383,8 @@ public class Fill extends jsx3.html.Tag
         String extension = "valueOf(\"" + v + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.vector.Fill> ctor = jsx3.vector.Fill.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.vector.Fill> ctor = jsx3.vector.Fill.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

@@ -39,7 +39,10 @@ import org.directwebremoting.proxy.ScriptProxy;
  * have been left out as not being DOM related.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @author Jorge Martin Cuervo [darthkorr at gmail dot com]
+ * @deprecated Use org.directwebremoting.ui.dwr.Util
+ * @see org.directwebremoting.ui.dwr.Util
  */
+@Deprecated
 public class Util extends ScriptProxy
 {
     /**

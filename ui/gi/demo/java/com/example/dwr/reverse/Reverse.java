@@ -15,7 +15,6 @@
  */
 package com.example.dwr.reverse;
 
-import java.util.Collection;
 import java.util.Date;
 
 import jsx3.GI;
@@ -30,8 +29,7 @@ import jsx3.gui.Select;
 import jsx3.gui.Slider;
 import jsx3.gui.TextBox;
 
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.WebContext;
+import org.directwebremoting.Browser;
 import org.directwebremoting.WebContextFactory;
 
 /**
@@ -100,10 +98,16 @@ public class Reverse
      */
     private Server getServer()
     {
-        WebContext context = WebContextFactory.get();
-        String page = context.getContextPath() + "/gi/reverse.html";
-        Collection<ScriptSession> sessions = context.getScriptSessionsByPage(page);
+        final Server[] reply = new Server[1];
+        String page = WebContextFactory.get().getContextPath() + "/gi/reverse.html";
+        Browser.withPage(page, new Runnable()
+        {
+            public void run()
+            {
+                reply[0] = GI.getServer("reverse");
+            }
+        });
 
-        return GI.getServer(sessions, "reverse");
+        return reply[0];
     }
 }
