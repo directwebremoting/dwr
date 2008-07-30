@@ -146,7 +146,7 @@
     <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
 
     <!--
-    <convert converter="context" match="org.directwebremoting.proxy.io.Context"/>
+    <convert converter="context" match="org.directwebremoting.io.Context"/>
     -->
 
     <create creator="new" javascript="__System" scope="application">

@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series for a pie chart. Draws a complete pie or ring of a doughnut. A pie series is slightly
@@ -45,12 +45,11 @@ public class PieSeries extends jsx3.chart.Series
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public PieSeries(Context context, String extension, ScriptProxy scriptProxy)
+    public PieSeries(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -60,7 +59,7 @@ public class PieSeries extends jsx3.chart.Series
      */
     public PieSeries(String name, String seriesName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new PieSeries", name, seriesName);
         setInitScript(script);
@@ -73,7 +72,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback totalAngle
      */
 
-    public void getTotalAngle(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getTotalAngle(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -91,7 +90,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -102,7 +101,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTotalAngle", totalAngle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -110,7 +109,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback startAngle
      */
 
-    public void getStartAngle(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getStartAngle(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -128,7 +127,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -139,7 +138,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStartAngle", startAngle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -147,7 +146,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback field
      */
 
-    public void getField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -165,7 +164,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -176,7 +175,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setField", field);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -184,7 +183,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param record the <record/> node
      */
 
-    public void getValue(jsx3.xml.Node record, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getValue(jsx3.xml.Node record, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -202,7 +201,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -210,7 +209,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback colors
      */
 
-    public void getColors(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getColors(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -228,7 +227,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -239,7 +238,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColors", colors);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -247,7 +246,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback labelPlacement
      */
 
-    public void getLabelPlacement(org.directwebremoting.proxy.Callback<String> callback)
+    public void getLabelPlacement(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -265,7 +264,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -276,7 +275,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelPlacement", labelPlacement);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -284,7 +283,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param callback labelOffset
      */
 
-    public void getLabelOffset(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getLabelOffset(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -302,7 +301,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -313,7 +312,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelOffset", labelOffset);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -323,7 +322,7 @@ public class PieSeries extends jsx3.chart.Series
      * @param percent 
      */
 
-    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, java.lang.Object percent, org.directwebremoting.proxy.Callback<String> callback)
+    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, java.lang.Object percent, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -341,7 +340,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A more efficient way of painting many vector rectangles of the same fill and stroke.
@@ -28,12 +28,11 @@ public class RectangleGroup extends jsx3.vector.Shape
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public RectangleGroup(Context context, String extension, ScriptProxy scriptProxy)
+    public RectangleGroup(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class RectangleGroup extends jsx3.vector.Shape
      */
     public RectangleGroup(int left, int top, int width, int height)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new RectangleGroup", left, top, width, height);
         setInitScript(script);
@@ -64,7 +63,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addRectangle", x1, y1, x2, y2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -78,7 +77,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addRelativeRectangle", x1, y1, w, h);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -88,7 +87,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearRectangles");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

@@ -1,16 +1,16 @@
 package com.example.dwr.arac;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -44,14 +44,19 @@ public class Control
      * @param id
      * @param message
      */
-    public void sendToClient(int id, String message)
+    public void sendToClient(int id, final String message)
     {
         Client client = clientsByClientId.get(new Integer(id));
         client.setLastMessaged(new Date());
 
         ScriptSession session = client.getSession();
-        ScriptProxy proxy = new ScriptProxy(session);
-        proxy.addFunctionCall("addMessage", message);
+        Browser.withSession(session, new Runnable()
+        {
+            public void run()
+            {
+                ScriptProxy.addFunctionCall("addMessage", message);
+            }
+        });
 
         serverRefresh();
     }
@@ -61,15 +66,16 @@ public class Control
      */
     public void serverRefresh()
     {
-        WebContext wctx = WebContextFactory.get();
-        String contextPath = wctx.getHttpServletRequest().getContextPath();
+        String page = WebContextFactory.get().getContextPath() + "/arac/server.html";
 
         // For all the browsers on the current page:
-        Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(contextPath + "/arac/server.html");
-        log.debug("Sending refresh to " + sessions.size() + " servers about " + clientsByClientId.size() + " clients.");
-
-        ScriptProxy proxy = new ScriptProxy(sessions);
-        proxy.addFunctionCall("buildClientTable", clientsByClientId);
+        Browser.withPage(page, new Runnable()
+        {
+            public void run()
+            {
+                ScriptProxy.addFunctionCall("buildClientTable", clientsByClientId);
+            }
+        });
     }
 
     /**

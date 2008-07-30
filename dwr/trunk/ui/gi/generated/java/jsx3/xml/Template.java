@@ -16,8 +16,8 @@
 package jsx3.xml;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Wrapper of the native browser XSLT processor.
@@ -28,12 +28,11 @@ public class Template extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Template(Context context, String extension, ScriptProxy scriptProxy)
+    public Template(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -42,7 +41,7 @@ public class Template extends jsx3.lang.Object
      */
     public Template(jsx3.xml.CdfDocument objXSL)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Template", objXSL);
         setInitScript(script);
@@ -59,7 +58,7 @@ public class Template extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setParam", strName, objValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -69,7 +68,7 @@ public class Template extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reset");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -81,7 +80,7 @@ public class Template extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setParams", objParams);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -92,7 +91,7 @@ property of this processor and returns null.
      * @param callback the result of the transformation
      */
 
-    public void transform(jsx3.xml.Node objXML, boolean bObject, org.directwebremoting.proxy.Callback<String> callback)
+    public void transform(jsx3.xml.Node objXML, boolean bObject, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -110,7 +109,7 @@ property of this processor and returns null.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -125,8 +124,8 @@ property of this processor and returns null.
         String extension = "transformToObject(\"" + objXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.xml.CdfDocument> ctor = jsx3.xml.CdfDocument.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -147,8 +146,8 @@ property of this processor and returns null.
         String extension = "transformToObject(\"" + objXML + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -168,8 +167,8 @@ description Ð a text description of the error that occurred.
         String extension = "getError().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -190,8 +189,8 @@ description Ð a text description of the error that occurred.
         String extension = "getError().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -203,7 +202,7 @@ description Ð a text description of the error that occurred.
      * Returns true if the last operation on this XML entity caused an error.
      */
 
-    public void hasError(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void hasError(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -221,7 +220,7 @@ description Ð a text description of the error that occurred.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

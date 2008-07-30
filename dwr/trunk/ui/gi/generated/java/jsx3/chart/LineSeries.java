@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series for a line chart. An line series draws a set of points connected by a line.
@@ -42,12 +42,11 @@ public class LineSeries extends jsx3.chart.Series
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public LineSeries(Context context, String extension, ScriptProxy scriptProxy)
+    public LineSeries(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -57,7 +56,7 @@ public class LineSeries extends jsx3.chart.Series
      */
     public LineSeries(String name, String seriesName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new LineSeries", name, seriesName);
         setInitScript(script);
@@ -95,7 +94,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback xField
      */
 
-    public void getXField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getXField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -113,7 +112,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -124,7 +123,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXField", xField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -132,7 +131,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback yField
      */
 
-    public void getYField(org.directwebremoting.proxy.Callback<String> callback)
+    public void getYField(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -150,7 +149,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -161,7 +160,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setYField", yField);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -169,7 +168,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback form
      */
 
-    public void getForm(org.directwebremoting.proxy.Callback<String> callback)
+    public void getForm(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -187,7 +186,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -198,7 +197,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setForm", form);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -206,7 +205,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback interpolateValues
      */
 
-    public void getInterpolateValues(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getInterpolateValues(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -224,7 +223,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -235,7 +234,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInterpolateValues", interpolateValues);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -243,7 +242,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback pointRadius
      */
 
-    public void getPointRadius(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPointRadius(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -261,7 +260,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -272,7 +271,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointRadius", pointRadius);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -285,8 +284,8 @@ public class LineSeries extends jsx3.chart.Series
         String extension = "getPointRenderer().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.chart.PointRenderer> ctor = jsx3.chart.PointRenderer.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.chart.PointRenderer> ctor = jsx3.chart.PointRenderer.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -303,7 +302,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointRenderer", pointRenderer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -311,7 +310,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback pointFill
      */
 
-    public void getPointFill(org.directwebremoting.proxy.Callback<String> callback)
+    public void getPointFill(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -329,7 +328,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -340,7 +339,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointFill", pointFill);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -348,7 +347,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback pointStroke
      */
 
-    public void getPointStroke(org.directwebremoting.proxy.Callback<String> callback)
+    public void getPointStroke(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -366,7 +365,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -377,7 +376,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointStroke", pointStroke);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -385,7 +384,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param callback pointGradient
      */
 
-    public void getPointGradient(org.directwebremoting.proxy.Callback<String> callback)
+    public void getPointGradient(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -403,7 +402,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -414,7 +413,7 @@ public class LineSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointGradient", pointGradient);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -423,7 +422,7 @@ public class LineSeries extends jsx3.chart.Series
      * @param record 
      */
 
-    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
+    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -441,7 +440,7 @@ public class LineSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

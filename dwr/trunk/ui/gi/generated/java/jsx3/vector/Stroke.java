@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents a vector line style.
@@ -28,12 +28,11 @@ public class Stroke extends jsx3.html.Tag
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Stroke(Context context, String extension, ScriptProxy scriptProxy)
+    public Stroke(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -44,7 +43,7 @@ public class Stroke extends jsx3.html.Tag
      */
     public Stroke(String color, int width, float alpha)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Stroke", color, width, alpha);
         setInitScript(script);
@@ -58,7 +57,7 @@ public class Stroke extends jsx3.html.Tag
      */
     public Stroke(int color, int width, float alpha)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Stroke", color, width, alpha);
         setInitScript(script);
@@ -71,7 +70,7 @@ public class Stroke extends jsx3.html.Tag
      * @param callback color
      */
 
-    public void getColor(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getColor(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -89,14 +88,14 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the color field, as a CSS hex string.
      */
 
-    public void getColorHtml(org.directwebremoting.proxy.Callback<String> callback)
+    public void getColorHtml(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -114,7 +113,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -125,7 +124,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -136,7 +135,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -144,7 +143,7 @@ public class Stroke extends jsx3.html.Tag
      * @param callback width
      */
 
-    public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -162,7 +161,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -173,7 +172,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", width);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -181,7 +180,7 @@ public class Stroke extends jsx3.html.Tag
      * @param callback alpha
      */
 
-    public void getAlpha(org.directwebremoting.proxy.Callback<Float> callback)
+    public void getAlpha(org.directwebremoting.ui.Callback<Float> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -199,7 +198,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -210,7 +209,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -219,7 +218,7 @@ public class Stroke extends jsx3.html.Tag
      * @param callback null if v is empty, v if v is already a VectorStroke, or otherwise a new VectorStroke created by parsing the string according to the format specified above
      */
 
-    public void valueOf(String v, org.directwebremoting.proxy.Callback<String> callback)
+    public void valueOf(String v, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -237,7 +236,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

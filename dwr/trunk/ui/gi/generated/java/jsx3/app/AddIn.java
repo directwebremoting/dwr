@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A class that represents a JSX add-in. The JSX system creates an instance of this class for every add-in that 
@@ -29,15 +29,14 @@ public class AddIn extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public AddIn(Context context, String extension, ScriptProxy scriptProxy)
+    public AddIn(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
-
+    
     /**
      * 
      */
@@ -48,7 +47,7 @@ public class AddIn extends jsx3.lang.Object
      * 
      */
 
-    public void getId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -66,14 +65,14 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -91,14 +90,14 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getDescription(org.directwebremoting.proxy.Callback<String> callback)
+    public void getDescription(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -116,14 +115,14 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getVersion(org.directwebremoting.proxy.Callback<String> callback)
+    public void getVersion(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -141,14 +140,14 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getKey(org.directwebremoting.proxy.Callback<String> callback)
+    public void getKey(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -166,7 +165,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -178,8 +177,8 @@ public class AddIn extends jsx3.lang.Object
         String extension = "getSettings().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.app.Settings> ctor = jsx3.app.Settings.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.app.Settings> ctor = jsx3.app.Settings.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -193,7 +192,7 @@ public class AddIn extends jsx3.lang.Object
      * @param strURI 
      */
 
-    public void resolveURI(java.net.URI strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void resolveURI(java.net.URI strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -211,7 +210,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -219,7 +218,7 @@ public class AddIn extends jsx3.lang.Object
      * @param strURI 
      */
 
-    public void resolveURI(String strURI, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void resolveURI(String strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -237,14 +236,14 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * 
      */
 
-    public void getUriPrefix(org.directwebremoting.proxy.Callback<String> callback)
+    public void getUriPrefix(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -262,7 +261,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -271,7 +270,7 @@ public class AddIn extends jsx3.lang.Object
      * @param bRel 
      */
 
-    public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -289,7 +288,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -298,7 +297,7 @@ public class AddIn extends jsx3.lang.Object
      * @param bRel 
      */
 
-    public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.proxy.Callback<java.net.URI> callback)
+    public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -316,7 +315,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The interface that defines the methods that affect the behavior of a composite object used as an edit mask of a
@@ -31,12 +31,11 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public BlockMask(Context context, String extension, ScriptProxy scriptProxy)
+    public BlockMask(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -49,7 +48,7 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emInit", objColumn);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -66,7 +65,7 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emBeginEdit", strValue, objTdDim, objPaneDim, objMatrix, objColumn, strRecordId, objTD);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -76,7 +75,7 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emGetValue");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -89,8 +88,8 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
         String extension = "getMaskFirstResponder().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Painted> ctor = jsx3.gui.Painted.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -109,8 +108,8 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
         String extension = "getMaskFirstResponder().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -123,7 +122,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
 the first descendant (breadth-first) that implements jsx3.gui.Form.
      */
 
-    public void getMaskValue(org.directwebremoting.proxy.Callback<String> callback)
+    public void getMaskValue(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -141,7 +140,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -153,7 +152,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMaskValue", strValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -163,7 +162,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emEndEdit");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

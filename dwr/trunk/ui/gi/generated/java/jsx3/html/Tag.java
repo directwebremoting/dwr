@@ -16,8 +16,8 @@
 package jsx3.html;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents an HTML element. Provides an object oriented way of painting to screen.
@@ -30,12 +30,11 @@ public class Tag extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Tag(Context context, String extension, ScriptProxy scriptProxy)
+    public Tag(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class Tag extends jsx3.lang.Object
      */
     public Tag(String strTagNS, String strTagName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Tag", strTagNS, strTagName);
         setInitScript(script);
@@ -61,7 +60,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "appendChild", child);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -72,7 +71,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeChild", child);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -84,7 +83,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "replaceChild", child, oldChild);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -94,7 +93,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeChildren");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -107,8 +106,8 @@ public class Tag extends jsx3.lang.Object
         String extension = "getParent().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -127,8 +126,8 @@ public class Tag extends jsx3.lang.Object
         String extension = "getParent().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -141,7 +140,7 @@ public class Tag extends jsx3.lang.Object
      * @param callback children
      */
 
-    public void getChildren(org.directwebremoting.proxy.Callback<Object[]> callback)
+    public void getChildren(org.directwebremoting.ui.Callback<Object[]> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -159,7 +158,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -167,7 +166,7 @@ public class Tag extends jsx3.lang.Object
      * @param callback id
      */
 
-    public void getId(org.directwebremoting.proxy.Callback<String> callback)
+    public void getId(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -185,7 +184,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -196,7 +195,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setId", id);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -204,7 +203,7 @@ public class Tag extends jsx3.lang.Object
      * @param callback cssClass
      */
 
-    public void getClassName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getClassName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -222,7 +221,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -233,7 +232,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setClassName", cssClass);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -244,7 +243,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setExtraStyles", extraStyles);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -254,7 +253,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "release");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -263,7 +262,7 @@ public class Tag extends jsx3.lang.Object
      * @param callback <code>true</code> to allow the append, <code>false</code> to veto.
      */
 
-    public void onAppendChild(jsx3.html.Tag child, org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void onAppendChild(jsx3.html.Tag child, org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -281,7 +280,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -290,7 +289,7 @@ public class Tag extends jsx3.lang.Object
      * @param callback <code>true</code> to allow the removal, <code>false</code> to veto.
      */
 
-    public void onRemoveChild(jsx3.html.Tag child, org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void onRemoveChild(jsx3.html.Tag child, org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -308,7 +307,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -321,7 +320,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setProperty", strName, strValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -330,7 +329,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
      * @param callback the value of the attribute.
      */
 
-    public void getProperty(String strName, org.directwebremoting.proxy.Callback<String> callback)
+    public void getProperty(String strName, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -348,7 +347,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -359,7 +358,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeProperty", strName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -372,7 +371,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStyle", strName, strValue);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -381,7 +380,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * @param callback the value of the style.
      */
 
-    public void getStyle(String strName, org.directwebremoting.proxy.Callback<String> callback)
+    public void getStyle(String strName, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -399,7 +398,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -410,7 +409,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeStyle", strName);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -418,7 +417,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * @param callback the tag name
      */
 
-    public void getTagName(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTagName(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -436,7 +435,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -444,7 +443,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
      * @param callback the tag name
      */
 
-    public void getTagNS(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTagNS(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -462,7 +461,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -471,7 +470,7 @@ This method is only available in the VML version of this class.
      * @param callback this tag serialized to HTML.
      */
 
-    public void paint(org.directwebremoting.proxy.Callback<String> callback)
+    public void paint(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -489,7 +488,7 @@ This method is only available in the VML version of this class.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -498,7 +497,7 @@ This method is only available in the SVG version of this class.
      * @param callback the native browser html element.
      */
 
-    public void paintDom(org.directwebremoting.proxy.Callback<String> callback)
+    public void paintDom(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -516,7 +515,7 @@ This method is only available in the SVG version of this class.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -527,7 +526,7 @@ override this method should begin with a call to jsxsuper().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintUpdate");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -540,8 +539,8 @@ override this method should begin with a call to jsxsuper().
         String extension = "getFirstChildOfType(\"" + type + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -560,8 +559,8 @@ override this method should begin with a call to jsxsuper().
         String extension = "getFirstChildOfType(\"" + type + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -574,13 +573,13 @@ override this method should begin with a call to jsxsuper().
      * @param type the fully-qualified class name or the class constructor function.
      */
 
-    public jsx3.html.Tag getFirstChildOfType(org.directwebremoting.proxy.CodeBlock type)
+    public jsx3.html.Tag getFirstChildOfType(org.directwebremoting.ui.CodeBlock type)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.html.Tag> ctor = jsx3.html.Tag.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -594,13 +593,13 @@ override this method should begin with a call to jsxsuper().
      * @param returnType The expected return type
      */
 
-    public <T> T getFirstChildOfType(org.directwebremoting.proxy.CodeBlock type, Class<T> returnType)
+    public <T> T getFirstChildOfType(org.directwebremoting.ui.CodeBlock type, Class<T> returnType)
     {
         String extension = "getFirstChildOfType(\"" + type + "\").";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Type of axis that displays a linear range of values.
@@ -28,12 +28,11 @@ public class LinearAxis extends jsx3.chart.Axis
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public LinearAxis(Context context, String extension, ScriptProxy scriptProxy)
+    public LinearAxis(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -44,7 +43,7 @@ public class LinearAxis extends jsx3.chart.Axis
      */
     public LinearAxis(String name, boolean horizontal, boolean primary)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new LinearAxis", name, horizontal, primary);
         setInitScript(script);
@@ -67,7 +66,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback autoAdjust
      */
 
-    public void getAutoAdjust(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getAutoAdjust(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -85,7 +84,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -96,7 +95,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAutoAdjust", autoAdjust);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -104,7 +103,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback baseAtZero
      */
 
-    public void getBaseAtZero(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void getBaseAtZero(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -122,7 +121,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -133,7 +132,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBaseAtZero", baseAtZero);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -141,7 +140,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback min
      */
 
-    public void getMin(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getMin(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -159,7 +158,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -170,7 +169,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMin", min);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -178,7 +177,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback max
      */
 
-    public void getMax(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getMax(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -196,7 +195,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -207,7 +206,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMax", max);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -215,7 +214,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback interval
      */
 
-    public void getInterval(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getInterval(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -233,7 +232,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -244,7 +243,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInterval", interval);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -253,7 +252,7 @@ public class LinearAxis extends jsx3.chart.Axis
      * @param callback coordinate along the axis
      */
 
-    public void getCoordinateFor(Integer value, org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getCoordinateFor(Integer value, org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -271,7 +270,7 @@ public class LinearAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -282,7 +281,7 @@ public class LinearAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getCoordinateForNoClip", value);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

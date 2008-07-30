@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders an IFrame.
@@ -28,12 +28,11 @@ public class IFrame extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public IFrame(Context context, String extension, ScriptProxy scriptProxy)
+    public IFrame(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -58,7 +57,7 @@ public class IFrame extends jsx3.gui.Block
 iframe, the native iframe object may not be available. In this case, this method returns null.
      */
 
-    public void getIFrame(org.directwebremoting.proxy.Callback<String> callback)
+    public void getIFrame(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -76,7 +75,7 @@ iframe, the native iframe object may not be available. In this case, this method
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -84,7 +83,7 @@ iframe, the native iframe object may not be available. In this case, this method
 iframe, the native document object may not be available. In this case, this method returns null.
      */
 
-    public void getContentDocument(org.directwebremoting.proxy.Callback<String> callback)
+    public void getContentDocument(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -102,14 +101,14 @@ iframe, the native document object may not be available. In this case, this meth
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the URI of this iframe.
      */
 
-    public void getSrc(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSrc(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -127,7 +126,7 @@ iframe, the native document object may not be available. In this case, this meth
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -140,7 +139,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSrc", srcSrc);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -148,7 +147,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
      * Returns the scroll mode of this iframe.
      */
 
-    public void getScrolling(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getScrolling(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -166,7 +165,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -178,7 +177,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrolling", intScrolling);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 

@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Allows for rendering a branch of the DOM of an application in a separate browser window.
@@ -34,12 +34,11 @@ public class Window extends jsx3.app.Model
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Window(Context context, String extension, ScriptProxy scriptProxy)
+    public Window(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -48,7 +47,7 @@ public class Window extends jsx3.app.Model
      */
     public Window(String strName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Window", strName);
         setInitScript(script);
@@ -88,7 +87,7 @@ successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the window successfully opened (probably).
      */
 
-    public void open(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void open(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -106,7 +105,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -115,7 +114,7 @@ successfully opened is to register for the DID_OPEN event.
    because of JavaScript security constraints or user interaction.
      */
 
-    public void close(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void close(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -133,7 +132,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -143,7 +142,7 @@ successfully opened is to register for the DID_OPEN event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focus");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -151,7 +150,7 @@ successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the window is open.
      */
 
-    public void isOpen(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isOpen(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -169,7 +168,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -177,7 +176,7 @@ successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the parent window is open.
      */
 
-    public void isParentOpen(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isParentOpen(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -195,7 +194,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -209,7 +208,7 @@ relative to the upper-left corner of the screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "moveTo", intOffsetLeft, intOffsetTop);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -219,7 +218,7 @@ relative to the upper-left corner of the screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "constrainToScreen");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -228,7 +227,7 @@ If the parent window is no longer open, this method returns the position relativ
 corner of the screen.
      */
 
-    public void getOffsetLeft(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getOffsetLeft(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -246,7 +245,7 @@ corner of the screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -255,7 +254,7 @@ If the parent window is no longer open, this method returns the position relativ
 corner of the screen.
      */
 
-    public void getOffsetTop(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getOffsetTop(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -273,7 +272,7 @@ corner of the screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -286,8 +285,8 @@ to the DOM, and returns it. A window will only render its first DOM child.
         String extension = "getRootBlock().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.Block> ctor = jsx3.gui.Block.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -306,8 +305,8 @@ to the DOM, and returns it. A window will only render its first DOM child.
         String extension = "getRootBlock().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -319,7 +318,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
      * Repaints the root block of this window.
      */
 
-    public void repaint(org.directwebremoting.proxy.Callback<String> callback)
+    public void repaint(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -337,7 +336,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -345,7 +344,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
 browser may render around the window content.
      */
 
-    public void getWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -363,7 +362,7 @@ browser may render around the window content.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -375,7 +374,7 @@ immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", intWidth);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -383,7 +382,7 @@ immediately.
 browser may render around the window content.
      */
 
-    public void getHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -401,7 +400,7 @@ browser may render around the window content.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -413,7 +412,7 @@ immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", intHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -423,7 +422,7 @@ browser window.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
 
-    public void isResizable(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void isResizable(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -441,7 +440,7 @@ browser window.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -452,7 +451,7 @@ browser window.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizable", bResizable);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -462,7 +461,7 @@ reflect the current state of the browser window.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
 
-    public void isScrollable(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void isScrollable(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -480,7 +479,7 @@ reflect the current state of the browser window.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -492,7 +491,7 @@ currently-open window.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrollable", bScrollable);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -503,7 +502,7 @@ will raise errors.
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
      */
 
-    public void isDependent(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void isDependent(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -521,7 +520,7 @@ will raise errors.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -532,14 +531,14 @@ will raise errors.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDependent", bDependent);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns the title of this window.
      */
 
-    public void getTitle(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTitle(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -557,7 +556,7 @@ will raise errors.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -569,7 +568,7 @@ currently open, the title will be updated immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTitle", strTitle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

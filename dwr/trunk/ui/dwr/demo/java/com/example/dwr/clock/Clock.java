@@ -15,15 +15,13 @@
  */
 package com.example.dwr.clock;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.proxy.dwr.Util;
+import org.directwebremoting.ui.dwr.Util;
 import org.directwebremoting.util.SharedObjects;
 
 /**
@@ -79,12 +77,16 @@ public class Clock implements Runnable
      * pages to demo altering one page from another
      * @param output The string to display.
      */
-    public void setClockDisplay(String output)
+    public void setClockDisplay(final String output)
     {
-        ServerContext sctx = ServerContextFactory.get();
-        Collection<ScriptSession> sessions = sctx.getScriptSessionsByPage(sctx.getContextPath() + "/clock/index.html");
-        Util pages = new Util(sessions);
-        pages.setValue("clockDisplay", output);
+        String page = ServerContextFactory.get().getContextPath() + "/clock/index.html";
+        Browser.withPage(page, new Runnable()
+        {        
+            public void run()
+            {
+                Util.setValue("clockDisplay", output);
+            }
+        });
     }
 
     /**

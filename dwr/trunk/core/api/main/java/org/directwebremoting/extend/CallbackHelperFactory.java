@@ -15,7 +15,7 @@
  */
 package org.directwebremoting.extend;
 
-import org.directwebremoting.proxy.Callback;
+import org.directwebremoting.ui.Callback;
 
 /**
  * A class to help with the use of {@link Callback}s

@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * jsx3.gui.WindowBar instances are used as the captionbar for JSXDialog and JSXAlert instances. They can contain any object type supported by the JSXBlock class. Developers will not instantiate this class (although it is possible); instead, when a new dialog is instanced, it will bind an instance of this class as a child for use as a captionbar container.
@@ -28,12 +28,11 @@ public class WindowBar extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public WindowBar(Context context, String extension, ScriptProxy scriptProxy)
+    public WindowBar(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +42,7 @@ public class WindowBar extends jsx3.gui.Block
      */
     public WindowBar(String strName, int TYPE)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new WindowBar", strName, TYPE);
         setInitScript(script);
@@ -106,7 +105,7 @@ public class WindowBar extends jsx3.gui.Block
      * @param callback one of: jsx3.gui.WindowBar.TYPECAPTION, jsx3.gui.WindowBar.TYPETOOL, jsx3.gui.WindowBar.TYPEMENU, jsx3.gui.WindowBar.TYPETASK
      */
 
-    public void getType(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getType(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -124,7 +123,7 @@ public class WindowBar extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -137,7 +136,7 @@ public class WindowBar extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", TYPE);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 

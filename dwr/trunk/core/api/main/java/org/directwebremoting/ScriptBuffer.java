@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.directwebremoting.io.StringWrapper;
-import org.directwebremoting.proxy.ScriptProxy;
 
 /**
  * A ScriptBuffer is like a StringBuffer except that it is used to create
@@ -169,7 +168,7 @@ public class ScriptBuffer
      * @param funcName The name of the function to call
      * @param params The parameters to the above function
      * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see ScriptProxy#addFunctionCall(String, Object, Object)
+     * @see org.directwebremoting.ui.ScriptProxy#addFunctionCall
      */
     public ScriptBuffer appendCall(String funcName, Object... params)
     {

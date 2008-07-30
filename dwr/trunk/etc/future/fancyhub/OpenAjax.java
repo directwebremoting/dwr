@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.PublishListener;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Util is a server-side proxy that allows Java programmers to call client
@@ -36,38 +36,9 @@ import org.directwebremoting.proxy.ScriptProxy;
  * been left out as being read functions and <code>useLoadingMessage</code> etc
  * have been left out as not being DOM related.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
- * @author Jorge Martin Cuervo [darthkorr at gmail dot com]
  */
-public class OpenAjax extends ScriptProxy
+public class OpenAjax
 {
-    /**
-     * Http thread constructor, that affects no browsers.
-     * Calls to {@link OpenAjax#addScriptSession(ScriptSession)} or to
-     * {@link OpenAjax#addScriptSessions(Collection)} will be needed  
-     */
-    public OpenAjax()
-    {
-        super();
-    }
-
-    /**
-     * Http thread constructor that alters a single browser
-     * @param scriptSession The browser to alter
-     */
-    public OpenAjax(ScriptSession scriptSession)
-    {
-        super(scriptSession);
-    }
-
-    /**
-     * Http thread constructor that alters a number of browsers
-     * @param scriptSessions A collection of ScriptSessions that we should act on.
-     */
-    public OpenAjax(Collection<ScriptSession> scriptSessions)
-    {
-        super(scriptSessions);
-    }
-
     /**
      * Publishes (broadcasts) an event based on a library-specific prefix and
      * event name.

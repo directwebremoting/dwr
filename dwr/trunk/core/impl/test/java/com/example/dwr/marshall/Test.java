@@ -42,11 +42,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.InboundContext;
-import org.directwebremoting.proxy.ScriptProxy;
+import org.directwebremoting.ui.ScriptProxy;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -90,21 +91,27 @@ public class Test
     public void slowAsync(final int wait, final String function)
     {
         WebContext context = WebContextFactory.get();
-        ScriptSession session = context.getScriptSession();
-        final ScriptProxy proxy = new ScriptProxy(session);
+        final ScriptSession session = context.getScriptSession();
 
-        new Thread() {
+        new Thread()
+        {
             @Override
             public void run()
             {
-                try
+                Browser.withSession(session, new Runnable()
                 {
-                    Thread.sleep(wait);
-                    proxy.addFunctionCall(function);
-                }
-                catch (InterruptedException ex)
-                {
-                }
+                    public void run()
+                    {
+                        try
+                        {
+                            Thread.sleep(wait);
+                            ScriptProxy.addFunctionCall(function);
+                        }
+                        catch (InterruptedException ex)
+                        {
+                        }
+                    }
+                });
             }
         }.start();
     }

@@ -16,8 +16,8 @@
 package jsx3.html;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents an HTML element that defines font styles.
@@ -30,12 +30,11 @@ public class FontTag extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public FontTag(Context context, String extension, ScriptProxy scriptProxy)
+    public FontTag(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -45,7 +44,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback fontFamily
      */
 
-    public void getFontFamily(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontFamily(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -63,7 +62,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -74,7 +73,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontFamily", fontFamily);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -82,7 +81,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback fontsize
      */
 
-    public void getFontSize(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontSize(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -100,7 +99,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -111,7 +110,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontSize", fontSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -122,7 +121,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontSize", fontSize);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -130,7 +129,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback fontStyle
      */
 
-    public void getFontStyle(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontStyle(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -148,7 +147,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -159,7 +158,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontStyle", fontStyle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -167,7 +166,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback fontWeight
      */
 
-    public void getFontWeight(org.directwebremoting.proxy.Callback<String> callback)
+    public void getFontWeight(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -185,7 +184,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -196,7 +195,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontWeight", fontWeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -204,7 +203,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback textAlign
      */
 
-    public void getTextAlign(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTextAlign(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -222,7 +221,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -233,7 +232,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTextAlign", textAlign);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -241,7 +240,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback textDecoration
      */
 
-    public void getTextDecoration(org.directwebremoting.proxy.Callback<String> callback)
+    public void getTextDecoration(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -259,7 +258,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -270,7 +269,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTextDecoration", textDecoration);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -278,7 +277,7 @@ public class FontTag extends jsx3.lang.Object
      * @param callback color
      */
 
-    public void getColor(org.directwebremoting.proxy.Callback<String> callback)
+    public void getColor(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -296,7 +295,7 @@ public class FontTag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -307,7 +306,7 @@ public class FontTag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

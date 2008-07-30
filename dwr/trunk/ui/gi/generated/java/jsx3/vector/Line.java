@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints a vector line defined by two end points.
@@ -28,12 +28,11 @@ public class Line extends jsx3.vector.Shape
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Line(Context context, String extension, ScriptProxy scriptProxy)
+    public Line(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -47,7 +46,7 @@ public class Line extends jsx3.vector.Shape
      */
     public Line(int left, int top, int x1, int y1, int x2, int y2)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Line", left, top, x1, y1, x2, y2);
         setInitScript(script);
@@ -66,7 +65,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPoints", x1, y1, x2, y2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -74,7 +73,7 @@ public class Line extends jsx3.vector.Shape
      * @param callback x1
      */
 
-    public void getX1(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getX1(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -92,7 +91,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -103,7 +102,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setX1", x1);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -111,7 +110,7 @@ public class Line extends jsx3.vector.Shape
      * @param callback y1
      */
 
-    public void getY1(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getY1(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -129,7 +128,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -140,7 +139,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setY1", y1);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -148,7 +147,7 @@ public class Line extends jsx3.vector.Shape
      * @param callback x2
      */
 
-    public void getX2(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getX2(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -166,7 +165,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -177,7 +176,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setX2", x2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -185,7 +184,7 @@ public class Line extends jsx3.vector.Shape
      * @param callback y2
      */
 
-    public void getY2(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getY2(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -203,7 +202,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -214,7 +213,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setY2", y2);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

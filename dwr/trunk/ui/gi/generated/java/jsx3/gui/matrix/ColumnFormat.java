@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A class that defines the methods required for an object to be used by Matrix.Column instances to
@@ -29,12 +29,11 @@ public class ColumnFormat extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public ColumnFormat(Context context, String extension, ScriptProxy scriptProxy)
+    public ColumnFormat(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -68,8 +67,8 @@ public class ColumnFormat extends jsx3.lang.Object
         String extension = "getInstance(\"" + strKey + "\", \"" + objColumn + "\").";
         try
         {
-            java.lang.reflect.Constructor<jsx3.gui.matrix.ColumnFormat> ctor = jsx3.gui.matrix.ColumnFormat.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.gui.matrix.ColumnFormat> ctor = jsx3.gui.matrix.ColumnFormat.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -84,7 +83,7 @@ false is returned, the formatter will not even attempt to iterate
      * @param callback true if the formatter should be called to iterate and format
      */
 
-    public void validate(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void validate(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -102,7 +101,7 @@ false is returned, the formatter will not even attempt to iterate
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -118,7 +117,7 @@ false is returned, the formatter will not even attempt to iterate
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "format", objDiv, strCDFKey, objMatrix, objMatrixColumn, intRowNumber, objServer);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

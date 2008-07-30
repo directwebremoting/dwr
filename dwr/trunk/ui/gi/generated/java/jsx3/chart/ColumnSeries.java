@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The data series type for a jsx3.chart.ColumnChart. Draws vertical columns between the x axis and a y value determined
@@ -35,12 +35,11 @@ public class ColumnSeries extends jsx3.chart.BCSeries
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public ColumnSeries(Context context, String extension, ScriptProxy scriptProxy)
+    public ColumnSeries(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -50,7 +49,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
      */
     public ColumnSeries(String name, String seriesName)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new ColumnSeries", name, seriesName);
         setInitScript(script);
@@ -68,7 +67,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
      * @param callback columnWidth
      */
 
-    public void getColumnWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getColumnWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -86,7 +85,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -97,7 +96,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColumnWidth", columnWidth);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -106,7 +105,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
      * @param record 
      */
 
-    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.proxy.Callback<String> callback)
+    public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -124,7 +123,7 @@ public class ColumnSeries extends jsx3.chart.BCSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

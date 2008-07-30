@@ -27,7 +27,10 @@ import org.directwebremoting.ScriptSession;
  * ScriptProxy also is the base class for the Java implementations of GI, Util
  * and Script.aculo.us.Effect.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @deprecated Use org.directwebremoting.ui.ScriptProxy
+ * @see org.directwebremoting.ui.ScriptProxy
  */
+@Deprecated
 public class ScriptProxy
 {
     /**

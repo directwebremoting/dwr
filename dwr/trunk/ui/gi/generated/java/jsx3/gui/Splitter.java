@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class manages layouts by providing a container that will paint its first two child GUI objects separated
@@ -30,12 +30,11 @@ public class Splitter extends jsx3.gui.Block
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Splitter(Context context, String extension, ScriptProxy scriptProxy)
+    public Splitter(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +44,7 @@ public class Splitter extends jsx3.gui.Block
      */
     public Splitter(String strName, int ORIENTATION)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Splitter", strName, ORIENTATION);
         setInitScript(script);
@@ -67,7 +66,7 @@ public class Splitter extends jsx3.gui.Block
      * Returns a valid percentage (e.g., 100.00%  23.567%) that will be applied to the on-screen element as its CSS width/height percentage
      */
 
-    public void getSubcontainer1Pct(org.directwebremoting.proxy.Callback<String> callback)
+    public void getSubcontainer1Pct(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -85,7 +84,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -98,7 +97,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSubcontainer1Pct", strSubcontainerPct, bView);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -106,7 +105,7 @@ public class Splitter extends jsx3.gui.Block
      * Returns a valid integer representing the minimum size in pixels for the container; the default minimum is 1
      */
 
-    public void getSubcontainer1Min(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSubcontainer1Min(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -124,7 +123,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -137,7 +136,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSubcontainer1Min", intMin);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -145,7 +144,7 @@ public class Splitter extends jsx3.gui.Block
      * Returns a valid integer representing the minimum size in pixels for the container; the default minimum is 8
      */
 
-    public void getSubcontainer2Min(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getSubcontainer2Min(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -163,7 +162,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -176,7 +175,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSubcontainer2Min", intMin);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -184,7 +183,7 @@ public class Splitter extends jsx3.gui.Block
      * *Returns whether the splitter layout is top-over (--) or side-by-side (|).
      */
 
-    public void getOrientation(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getOrientation(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -202,7 +201,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -215,7 +214,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOrientation", ORIENTATION);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -223,7 +222,7 @@ public class Splitter extends jsx3.gui.Block
      * Returns the URL for the image to use for the splitter handle when the splitter is rendered top over bottom (--).  When not set, Splitter.VSPLITIMAGE will be used when painted on-screen.
      */
 
-    public void getVSplitImage(org.directwebremoting.proxy.Callback<String> callback)
+    public void getVSplitImage(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -241,7 +240,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -253,7 +252,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVSplitImage", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 
@@ -261,7 +260,7 @@ public class Splitter extends jsx3.gui.Block
      * Returns the URL for the image to use for the splitter handle when the splitter is rendered side by side ( | ). When not set, Splitter.HSPLITIMAGE will be used when painted on-screen.
      */
 
-    public void getHSplitImage(org.directwebremoting.proxy.Callback<String> callback)
+    public void getHSplitImage(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -279,7 +278,7 @@ public class Splitter extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -291,7 +290,7 @@ public class Splitter extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHSplitImage", strURL);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
         return this;
     }
 

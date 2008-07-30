@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Native browser event wrapper.
@@ -28,12 +28,11 @@ public class Event extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Event(Context context, String extension, ScriptProxy scriptProxy)
+    public Event(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -303,7 +302,7 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -315,7 +314,7 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -326,7 +325,7 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribeAll", strEventId);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -334,7 +333,7 @@ public class Event extends jsx3.lang.Object
      * @param callback event type
      */
 
-    public void getType(org.directwebremoting.proxy.Callback<String> callback)
+    public void getType(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -352,7 +351,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -360,7 +359,7 @@ public class Event extends jsx3.lang.Object
      * @param callback HTML object
      */
 
-    public void srcElement(org.directwebremoting.proxy.Callback<String> callback)
+    public void srcElement(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -378,7 +377,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -386,7 +385,7 @@ public class Event extends jsx3.lang.Object
      * @param callback HTML object
      */
 
-    public void toElement(org.directwebremoting.proxy.Callback<String> callback)
+    public void toElement(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -404,7 +403,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -412,7 +411,7 @@ public class Event extends jsx3.lang.Object
      * @param callback HTML object
      */
 
-    public void fromElement(org.directwebremoting.proxy.Callback<String> callback)
+    public void fromElement(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -430,7 +429,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -438,7 +437,7 @@ public class Event extends jsx3.lang.Object
      * @param callback keycode
      */
 
-    public void keyCode(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void keyCode(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -456,7 +455,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -464,7 +463,7 @@ public class Event extends jsx3.lang.Object
      * @param callback pixel position
      */
 
-    public void clientX(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void clientX(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -482,7 +481,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -490,7 +489,7 @@ public class Event extends jsx3.lang.Object
      * @param callback pixel position
      */
 
-    public void clientY(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void clientY(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -508,7 +507,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -516,7 +515,7 @@ public class Event extends jsx3.lang.Object
      * @param callback pixel position
      */
 
-    public void getTrueX(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getTrueX(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -534,7 +533,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -542,7 +541,7 @@ public class Event extends jsx3.lang.Object
      * @param callback pixel position
      */
 
-    public void getTrueY(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getTrueY(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -560,14 +559,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the shift key was pressed.
      */
 
-    public void shiftKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void shiftKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -585,14 +584,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true the ctrl key was pressed.
      */
 
-    public void ctrlKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void ctrlKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -610,14 +609,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the alt key was pressed.
      */
 
-    public void altKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void altKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -635,14 +634,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the enter key was pressed.
      */
 
-    public void enterKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void enterKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -660,14 +659,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the space bar was pressed.
      */
 
-    public void spaceKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void spaceKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -685,14 +684,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the tab key was pressed.
      */
 
-    public void tabKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void tabKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -710,14 +709,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the right-arrow key was pressed
      */
 
-    public void rightArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void rightArrow(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -735,14 +734,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the left-arrow key was pressed.
      */
 
-    public void leftArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void leftArrow(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -760,14 +759,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the up-arrow key was pressed.
      */
 
-    public void upArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void upArrow(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -785,14 +784,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the down-arrow key was pressed.
      */
 
-    public void downArrow(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void downArrow(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -810,14 +809,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the delete key was pressed.
      */
 
-    public void deleteKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void deleteKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -835,14 +834,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the backspace key was pressed.
      */
 
-    public void backspaceKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void backspaceKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -860,14 +859,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the insert key was pressed.
      */
 
-    public void insertKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void insertKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -885,14 +884,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the home key was pressed.
      */
 
-    public void homeKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void homeKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -910,14 +909,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the end key was pressed.
      */
 
-    public void endKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void endKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -935,14 +934,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the page-up key was pressed.
      */
 
-    public void pageUpKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void pageUpKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -960,14 +959,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the page-down key was pressed.
      */
 
-    public void pageDownKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void pageDownKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -985,14 +984,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the escape key was pressed.
      */
 
-    public void escapeKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void escapeKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1010,7 +1009,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1020,7 +1019,7 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "cancelBubble");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1030,7 +1029,7 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "cancelReturn");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1040,14 +1039,14 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "cancelKey");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the left-mouse-button was clicked.
      */
 
-    public void leftButton(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void leftButton(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1065,14 +1064,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns true if the right-mouse-button was clicked.
      */
 
-    public void rightButton(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void rightButton(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1090,14 +1089,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Returns integer designating the mouse button clicked/moused-down/moused-up; 1 (left), 2 (right), and as supported.
      */
 
-    public void button(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void button(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1115,7 +1114,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -1126,14 +1125,14 @@ public class Event extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setReturn", strReturn);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Whether one of the four arrow keys was pressed.
      */
 
-    public void isArrowKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isArrowKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1151,14 +1150,14 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
      * Whether one of the 15 function keys was pressed.
      */
 
-    public void isFunctionKey(org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void isFunctionKey(org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -1176,7 +1175,7 @@ public class Event extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

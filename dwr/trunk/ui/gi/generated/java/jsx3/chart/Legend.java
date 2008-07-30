@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Chart component that renders a simple legend. A legend may contain a list of series or a list of
@@ -29,12 +29,11 @@ public class Legend extends jsx3.chart.ChartComponent
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Legend(Context context, String extension, ScriptProxy scriptProxy)
+    public Legend(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -43,7 +42,7 @@ public class Legend extends jsx3.chart.ChartComponent
      */
     public Legend(String name)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Legend", name);
         setInitScript(script);
@@ -66,7 +65,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback boxHeight
      */
 
-    public void getBoxHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getBoxHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -84,7 +83,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -95,7 +94,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBoxHeight", boxHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -103,7 +102,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback lineHeight
      */
 
-    public void getLineHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getLineHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -121,7 +120,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -132,7 +131,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLineHeight", lineHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -140,7 +139,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback labelClass
      */
 
-    public void getLabelClass(org.directwebremoting.proxy.Callback<String> callback)
+    public void getLabelClass(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -158,7 +157,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -169,7 +168,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelClass", labelClass);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -177,7 +176,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback labelStyle
      */
 
-    public void getLabelStyle(org.directwebremoting.proxy.Callback<String> callback)
+    public void getLabelStyle(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -195,7 +194,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -206,7 +205,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelStyle", labelStyle);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -214,7 +213,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback backgroundFill
      */
 
-    public void getBackgroundFill(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBackgroundFill(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -232,7 +231,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -243,7 +242,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackgroundFill", backgroundFill);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -251,7 +250,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback backgroundStroke
      */
 
-    public void getBackgroundStroke(org.directwebremoting.proxy.Callback<String> callback)
+    public void getBackgroundStroke(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -269,7 +268,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -280,7 +279,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackgroundStroke", backgroundStroke);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -288,7 +287,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback preferredWidth
      */
 
-    public void getPreferredWidth(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPreferredWidth(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -306,7 +305,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -317,7 +316,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPreferredWidth", preferredWidth);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -325,7 +324,7 @@ public class Legend extends jsx3.chart.ChartComponent
      * @param callback preferredHeight
      */
 
-    public void getPreferredHeight(org.directwebremoting.proxy.Callback<Integer> callback)
+    public void getPreferredHeight(org.directwebremoting.ui.Callback<Integer> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -343,7 +342,7 @@ public class Legend extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -354,7 +353,7 @@ public class Legend extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPreferredHeight", preferredHeight);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -366,8 +365,8 @@ public class Legend extends jsx3.chart.ChartComponent
         String extension = "getLegendTitle().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.chart.ChartLabel> ctor = jsx3.chart.ChartLabel.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.chart.ChartLabel> ctor = jsx3.chart.ChartLabel.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {

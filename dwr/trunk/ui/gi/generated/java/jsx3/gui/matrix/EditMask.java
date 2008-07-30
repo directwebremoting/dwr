@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
+import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The interface defining the methods that affect the behavior of an object used as an edit mask in a matrix column.
@@ -38,12 +38,11 @@ public class EditMask extends jsx3.lang.Object
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public EditMask(Context context, String extension, ScriptProxy scriptProxy)
+    public EditMask(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
 
@@ -57,7 +56,7 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emInit", objColumn);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -72,7 +71,7 @@ to initialize itself.
      * @param callback <code>false</code> to cancel the edit session.
      */
 
-    public void emBeginEdit(String strValue, jsx3.lang.Object objTdDim, jsx3.lang.Object objPaneDim, jsx3.gui.Matrix objMatrix, jsx3.gui.matrix.Column objColumn, String strRecordId, String objTD, org.directwebremoting.proxy.Callback<Boolean> callback)
+    public void emBeginEdit(String strValue, jsx3.lang.Object objTdDim, jsx3.lang.Object objPaneDim, jsx3.gui.Matrix objMatrix, jsx3.gui.matrix.Column objColumn, String strRecordId, String objTD, org.directwebremoting.ui.Callback<Boolean> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -90,7 +89,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -98,7 +97,7 @@ to initialize itself.
      * @param callback the edited value.
      */
 
-    public void emEndEdit(org.directwebremoting.proxy.Callback<String> callback)
+    public void emEndEdit(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -116,7 +115,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -124,7 +123,7 @@ to initialize itself.
      * @param callback the current value of the edit mask.
      */
 
-    public void emGetValue(org.directwebremoting.proxy.Callback<String> callback)
+    public void emGetValue(org.directwebremoting.ui.Callback<String> callback)
     {
         ScriptBuffer script = new ScriptBuffer();
         String callbackPrefix = "";
@@ -142,7 +141,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -152,7 +151,7 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "suspendEditSession");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -162,7 +161,7 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resumeEditSession");
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
     /**
@@ -182,8 +181,8 @@ value {String} may be null
         String extension = "emGetSession().";
         try
         {
-            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<jsx3.lang.Object> ctor = jsx3.lang.Object.class.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -209,8 +208,8 @@ value {String} may be null
         String extension = "emGetSession().";
         try
         {
-            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class, ScriptProxy.class);
-            return ctor.newInstance(this, extension, getScriptProxy());
+            java.lang.reflect.Constructor<T> ctor = returnType.getConstructor(Context.class, String.class);
+            return ctor.newInstance(this, extension);
         }
         catch (Exception ex)
         {
@@ -229,7 +228,7 @@ value {String} may be null
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "commitEditMask", objEvent, bKeepOpen);
-        getScriptProxy().addScript(script);
+        ScriptProxy.addScript(script);
     }
 
 }

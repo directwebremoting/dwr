@@ -16,8 +16,7 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.proxy.ScriptProxy;
-import org.directwebremoting.proxy.io.Context;
+import org.directwebremoting.io.Context;
 
 /**
  * Represents a grouping of vector shapes.
@@ -28,12 +27,11 @@ public class Group extends jsx3.vector.Tag
 {
     /**
      * All reverse ajax proxies need context to work from
-     * @param scriptProxy The place we are writing scripts to
      * @param context The script that got us to where we are now
      */
-    public Group(Context context, String extension, ScriptProxy scriptProxy)
+    public Group(Context context, String extension)
     {
-        super(context, extension, scriptProxy);
+        super(context, extension);
     }
 
     /**
@@ -45,7 +43,7 @@ public class Group extends jsx3.vector.Tag
      */
     public Group(int left, int top, int width, int height)
     {
-        super((Context) null, (String) null, (ScriptProxy) null);
+        super((Context) null, (String) null);
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall("new Group", left, top, width, height);
         setInitScript(script);
