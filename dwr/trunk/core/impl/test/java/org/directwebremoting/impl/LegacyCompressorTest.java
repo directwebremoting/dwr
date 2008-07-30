@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.impl;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -109,5 +111,16 @@ public class LegacyCompressorTest
         assertEquals(LegacyCompressor.stripNewlines(null), null);
 
         assertEquals(LegacyCompressor.stripNewlines("a\nb\n"), "a b \n");
+    }
+    
+    @Test
+    public void testHttp() throws IOException {
+        String http = "path.indexOf(\"http://\") == 0\n";
+        String https = "path.indexOf(\"https://\") == 0\n";
+        
+        LegacyCompressor compressor = new LegacyCompressor();
+        
+        assertEquals(http, compressor.compressJavaScript(http));
+        assertEquals(https, compressor.compressJavaScript(https));
     }
 }
