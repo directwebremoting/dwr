@@ -25,9 +25,9 @@
     <init-param>
       <param-name>classes</param-name>
       <param-value>
-      com.example.dwr.marshall.TestBean2Converter,
-      com.example.dwr.marshall.Test,
-      com.example.dwr.marshall.TestBean
+      org.example.testdwr.TestBean2Converter,
+      org.example.testdwr.Test,
+      org.example.testdwr.TestBean
       </param-value>
     </init-param>
     <init-param>

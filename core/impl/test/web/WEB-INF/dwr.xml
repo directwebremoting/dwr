@@ -12,7 +12,7 @@
       <param name="class" value="com.example.dwr.stress.Settings"/>
     </create>
     <create creator="new" javascript="Stress" scope="script">
-      <param name="class" value="com.example.dwr.stress.Stress"/>
+      <param name="class" value="org.example.testdwr.Stress"/>
     </create>
     <convert match="com.example.dwr.stress.Setting" converter="bean"/>
 
@@ -26,12 +26,12 @@
 
     <!-- test -->
     <create creator="new" javascript="Test" scope="application">
-      <param name="class" value="com.example.dwr.marshall.Test"/>
+      <param name="class" value="org.example.testdwr.Test"/>
     </create>
     <convert converter="bean" match="$Proxy*"/>
-    <convert converter="bean" match="com.example.dwr.marshall.TestBean"/>
-    <convert converter="bean" javascript="ObjB" match="com.example.dwr.marshall.ObjB"/>
-    <convert converter="object" javascript="ObjA" match="com.example.dwr.marshall.ObjA">
+    <convert converter="bean" match="org.example.testdwr.TestBean"/>
+    <convert converter="bean" javascript="ObjB" match="org.example.testdwr.ObjB"/>
+    <convert converter="object" javascript="ObjA" match="org.example.testdwr.ObjA">
       <param name="force" value="true"/>
     </convert>
 
@@ -46,7 +46,7 @@
   <signatures>
   <![CDATA[
   import java.util.*;
-  import com.example.dwr.marshall.*;
+  import org.example.testdwr.*;
 
   Test.testBeanSetParam(Set<TestBean>);
   Test.testBeanListParam(List<TestBean>);
