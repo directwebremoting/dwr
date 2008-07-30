@@ -415,7 +415,6 @@ if (typeof this['dwr'] == 'undefined') {
         if (batch.req) {
           batch.req.abort();
         }
-        dwr.engine._clearUp(batch);
       }
     }
 
