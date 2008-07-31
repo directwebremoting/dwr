@@ -156,6 +156,9 @@ function testRemotingHeaders() {
   });
 }
 
+/**
+ *
+ */
 function testRemotingTimeout() {
   Test.waitFor(3000, {
     callback:createDelayedError(),
