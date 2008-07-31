@@ -26,6 +26,14 @@ import org.apache.commons.logging.LogFactory;
  * 
  * <h2>Version number documentation</h2>
  * 
+ * <h3>Firefox</h3>
+ * <p>Quick summary:
+ * <ul>
+ * <li>Firefox 1.0.0 = Gecko/20041108 - 20050405
+ * <li>Firefox 1.0.8 = Gecko/20060410 - 20060418
+ * <li>Firefox 1.4.0 = Gecko/20050908
+ * </ul>
+ * 
  * <h3>Safari</h3>
  * <p>Quick summary:
  * <ul>
@@ -57,6 +65,10 @@ public class BrowserDetect
     public static int getConnectionLimit(HttpServletRequest request)
     {
         if (atLeast(request, UserAgent.IE, 8))
+        {
+            return 6;
+        }
+        if (atLeast(request, UserAgent.Firefox, 3))
         {
             return 6;
         }
@@ -135,6 +147,10 @@ public class BrowserDetect
             realVersion = getMajorVersionAssumingAppleWebKit(userAgent);
             break;
 
+        case Firefox:
+            realVersion = getMajorVersionAssumingFirefox(userAgent);
+            break;
+
         default:
             throw new UnsupportedOperationException("Detection of " + requiredUserAgent + " is not supported yet.");
         }
@@ -155,6 +171,21 @@ public class BrowserDetect
         }
 
         return parseNumberAtStart(userAgent.substring(webKitPos + 12));
+    }
+
+    /**
+     * Check {@link #atLeast(HttpServletRequest, UserAgent)} for
+     * {@link UserAgent#AppleWebKit}
+     */
+    private static int getMajorVersionAssumingFirefox(String userAgent)
+    {
+        int firefoxPos = userAgent.indexOf("Firefox");
+        if (firefoxPos == -1)
+        {
+            return -1;
+        }
+
+        return parseNumberAtStart(userAgent.substring(firefoxPos + 8));
     }
 
     /**
