@@ -15,7 +15,10 @@
  */
 package org.directwebremoting.ui.dwr;
 
+import java.io.InputStream;
+
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.ui.ScriptProxy;
 
 /**
@@ -42,11 +45,38 @@ public class Engine
     public static final int ScriptTag = 3;
 
     /**
+     * Send some data to the client and have the browser offer it for download
+     * @param blob The data to be downloaded
+     */
+    public static void openInDownload(byte[] blob)
+    {
+        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", blob);
+    }
+
+    /**
+     * Send some data to the client and have the browser offer it for download
+     * @param in The data to be downloaded
+     */
+    public static void openInDownload(InputStream in)
+    {
+        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", in);
+    }
+
+    /**
+     * Send some data to the client and have the browser offer it for download
+     * @param ft The data to be downloaded
+     */
+    public static void openInDownload(FileTransfer ft)
+    {
+        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", ft);
+    }
+
+    /**
      * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
      * @param timeout The time to wait in milliseconds
      * @see <a href="http://getahead.org/dwr/browser/engine/errors">Error handling documentation</a>
      */
-    public void setTimeout(int timeout)
+    public static void setTimeout(int timeout)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setTimeout(")
@@ -60,7 +90,7 @@ public class Engine
      * @param newType One of dwr.engine.XMLHttpRequest or dwr.engine.IFrame or dwr.engine.ScriptTag
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setRpcType(int newType)
+    public static void setRpcType(int newType)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setRpcType(")
@@ -74,7 +104,7 @@ public class Engine
      * @param httpMethod One of {@link #XMLHttpRequest}, {@link #IFrame} or {@link #ScriptTag}
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setHttpMethod(String httpMethod)
+    public static void setHttpMethod(String httpMethod)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setHttpMethod(")
@@ -88,7 +118,7 @@ public class Engine
      * @param ordered True to set call ordering.
      * @see <a href="http://getahead.org/dwr/browser/engine/ordering">Ordering documentation</a>
      */
-    public void setOrdered(boolean ordered)
+    public static void setOrdered(boolean ordered)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setOrdered(")
@@ -102,7 +132,7 @@ public class Engine
      * @param async False to become synchronous (not recommended)
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setAsync(boolean async)
+    public static void setAsync(boolean async)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setAsync(")
@@ -116,7 +146,7 @@ public class Engine
      * @param activeReverseAjax True/False to turn RA on/off
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setActiveReverseAjax(boolean activeReverseAjax)
+    public static void setActiveReverseAjax(boolean activeReverseAjax)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setActiveReverseAjax(")
@@ -130,7 +160,7 @@ public class Engine
      * @param pollComet True/False to use Comet where supported
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setPollUsingComet(boolean pollComet)
+    public static void setPollUsingComet(boolean pollComet)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setPollUsingComet(")
@@ -144,7 +174,7 @@ public class Engine
      * @param newPollType One of {@link #XMLHttpRequest}, {@link #IFrame} or {@link #ScriptTag}
      * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
-    public void setPollType(int newPollType)
+    public static void setPollType(int newPollType)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript("dwr.engine.setPollUsingComet(")
