@@ -1,4 +1,4 @@
-package dwr;
+package org.directwebremoting.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
