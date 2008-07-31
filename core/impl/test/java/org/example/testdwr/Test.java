@@ -48,6 +48,7 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.ui.dwr.Util;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -647,6 +648,12 @@ public class Test
         {
             return "invalidateMe() failed";
         }
+    }
+
+    public String setValue(String elementId, String value)
+    {
+        Util.setValue(elementId, value);
+        return value;
     }
 
     /**
