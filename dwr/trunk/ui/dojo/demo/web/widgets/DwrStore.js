@@ -308,6 +308,7 @@ if (!dojo._hasResource["DwrStore"]) {
 
     /** @see dwr.data.StoreChangeListener.itemRemoved */
     itemRemoved:function(/*StoreProvider*/ source, /*string*/ itemId) {
+console.log("item removed: ", itemId);
       delete this._entries[itemId];
       delete this._updated[itemId];
       if (dojo.isFunction(this.onDelete)) {
@@ -317,6 +318,7 @@ if (!dojo._hasResource["DwrStore"]) {
 
     /** @see dwr.data.StoreChangeListener.itemAdded */
     itemAdded:function(/*StoreProvider*/ source, /*Item*/ item) {
+console.log("item added: ", item);
       this._importItem(item);
       if (dojo.isFunction(this.onNew)) {
         this.onNew.call(item.itemId, null);
@@ -325,6 +327,7 @@ if (!dojo._hasResource["DwrStore"]) {
 
     /** @see dwr.data.StoreChangeListener.itemChanged */
     itemChanged:function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
+console.log("item changed: ", item, changedAttributes);
       if (this._updated[item.itemId]) {
         console.log("Warning server changes to " + item.itemId + " override local changes");
       }
