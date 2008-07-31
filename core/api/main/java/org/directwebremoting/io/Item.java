@@ -140,6 +140,15 @@ public class Item
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "Item[" + itemId + "]";
+    }
+
     /**
      * @see #getItemId
      */

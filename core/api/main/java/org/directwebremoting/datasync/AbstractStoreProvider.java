@@ -277,6 +277,8 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
         if (listeners != null)
         {
+            log.debug("Firing item changed to " + listeners.size() + " listeners. Changed: " + item);
+
             for (StoreChangeListener<T> listener : listeners)
             {
                 listener.itemChanged(this, item, attributes);
@@ -292,6 +294,8 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
         if (listeners != null)
         {
+            log.debug("Firing item added to " + listeners.size() + " listeners. Changed: " + item);
+
             for (StoreChangeListener<T> listener : listeners)
             {
                 listener.itemAdded(this, item);
@@ -307,6 +311,8 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
         if (listeners != null)
         {
+            log.debug("Firing item added to " + listeners.size() + " listeners. Changed: " + itemId);
+
             for (StoreChangeListener<T> listener : listeners)
             {
                 listener.itemRemoved(this, itemId);
