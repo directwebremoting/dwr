@@ -106,7 +106,7 @@
 	<classpathentry kind="lib" path="serverside/various/lib/jms-1.1.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/various/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/various/test/java"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.2.jar" sourcepath="jar/spring-2.5.2-sources.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.5.jar" sourcepath="/librarydwr/source/spring-sources-2.5.5.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-2.5.2.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/spring/main/java"/>
