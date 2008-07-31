@@ -40,7 +40,7 @@ public class People
      */
     public People()
     {
-        this(100000);
+        this(1000);
     }
 
     /**
@@ -133,6 +133,7 @@ public class People
         String[] addressAndNumber = RandomData.getAddressAndNumber();
         person.setAddress(addressAndNumber[0]);
         person.setPhoneNumber(addressAndNumber[1]);
+        person.setAge(RandomData.getAge());
         return person;
     }
 

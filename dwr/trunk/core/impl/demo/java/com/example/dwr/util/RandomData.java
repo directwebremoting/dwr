@@ -63,7 +63,7 @@ public class RandomData
 
     public static String getAddress()
     {
-        String housenum = (random.nextInt(99) + 1) + " ";
+        String housenum = (random.nextInt(399) + 1) + " ";
         String road1 = ROADS1[random.nextInt(ROADS1.length)];
         String road2 = ROADS2[random.nextInt(ROADS2.length)];
         int townNum = random.nextInt(TOWNS.length);
@@ -75,7 +75,7 @@ public class RandomData
     {
         String[] reply = new String[2];
 
-        String housenum = (random.nextInt(99) + 1) + " ";
+        String housenum = (random.nextInt(399) + 1) + " ";
         String road1 = ROADS1[random.nextInt(ROADS1.length)];
         String road2 = ROADS2[random.nextInt(ROADS2.length)];
         int townNum = random.nextInt(TOWNS.length);
@@ -85,6 +85,11 @@ public class RandomData
         reply[1] = getPhoneNumber(townNum < 5);
 
         return reply;
+    }
+
+    public static int getAge()
+    {
+        return random.nextInt(80);
     }
 
     public static float getSalary()
@@ -98,24 +103,34 @@ public class RandomData
     {
         "Fred", "Jim", "Shiela", "Jack", "Betty", "Jacob", "Martha", "Kelly",
         "Luke", "Matt", "Gemma", "Joe", "Ben", "Jessie", "Leanne", "Becky",
-        "William", "Jo"
+        "William", "Jo", "Jane", "Joan", "Jerry", "Jason", "Martin", "Mark",
+        "Max", "Mike", "Molly", "Sam", "Shane", "Dwane", "Diane", "Anne", "Anna",
+        "Bill",
     };
 
     private static final String[] SURNAMES =
     {
-        "Sutcliffe", "MacDonald", "Duckworth", "Smith", "Wisner", 
+        "Sutcliffe", "MacDonald", "Duckworth", "Smith", "Wisner", "Jones",
         "Nield", "Turton", "Trelfer", "Wilson", "Johnson", "Daniels",
-        "Jones", "Wilkinson", "Wilton"
+        "Jones", "Wilkinson", "Wilton", "Jackson"
     };
 
     private static final String[] ROADS1 =
     {
-        "Green", "Red", "Yellow", "Brown", "Blue", "Black", "White",
+        "Amaranth", "Apricot", "Aqua", "Aquamarine", "Beige", "Bronze", "Buff",
+        "Burgundy", "Cerise", "Chestnut", "Cobalt", "Coral", "Cream", "Cyan",
+        "Denim", "Eggplant", "Fuchsia", "Grey", "Gold", "Indigo", "Ivory",
+        "Jade", "Khaki", "Lemon", "Lilac", "Linen", "Magenta", "Magnolia",
+        "Maroon", "Mustard", "Ochre", "Olive", "Orange", "Orchid", "Peach",
+        "Pear", "Pink", "Ruby", "Scarlet", "Silver", "Sepia", "Tangerine",
+        "Taupe", "Tan", "Teal", "Torquise", "Ultramarine", "Violet", "Wheat",
+        "Green", "Red", "Yellow", "Brown", "Blue", "Black", "White", "Yellow"
     };
 
     private static final String[] ROADS2 =
     {
         "Close", "Drive", "Street", "Avenue", "Crescent", "Road", "Place",
+        "Way", "Croft", "Lane"
     };
 
     private static final String[] TOWNS =
