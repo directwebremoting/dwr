@@ -165,14 +165,14 @@ if (!dojo._hasResource["DwrStore"]) {
       }
 
       var region = {
-        count:request.count,
-        start:request.start,
-        query:request.query,
-        sort:request.sort
+        count: request.count,
+        start: request.start,
+        query: request.query,
+        sort: request.sort
       };
 
       var callbackObj = {
-        callback:function(matchedItems) {
+        callback: function(matchedItems) {
           var aborted = false;
           var originalAbort = request.abort;
           request.abort = function() {
@@ -210,7 +210,7 @@ if (!dojo._hasResource["DwrStore"]) {
           }
         },
 
-        errorHandler:function(msg, ex) {
+        errorHandler: function(msg, ex) {
           if (dojo.isFunction(request.onError)) {
             request.onError(ex);
           }
@@ -307,27 +307,26 @@ if (!dojo._hasResource["DwrStore"]) {
     },
 
     /** @see dwr.data.StoreChangeListener.itemRemoved */
-    itemRemoved:function(/*StoreProvider*/ source, /*string*/ itemId) {
-console.log("item removed: ", itemId);
+    itemRemoved: function(/*StoreProvider*/ source, /*string*/ itemId) {
       delete this._entries[itemId];
       delete this._updated[itemId];
       if (dojo.isFunction(this.onDelete)) {
-        this.onDelete.call(itemId);
+        console.log("Firing onDelete(", itemId, ")");
+        this.onDelete(itemId);
       }
     },
 
     /** @see dwr.data.StoreChangeListener.itemAdded */
-    itemAdded:function(/*StoreProvider*/ source, /*Item*/ item) {
-console.log("item added: ", item);
+    itemAdded: function(/*StoreProvider*/ source, /*Item*/ item) {
       this._importItem(item);
       if (dojo.isFunction(this.onNew)) {
-        this.onNew.call(item.itemId, null);
+        console.log("Firing onNew(", item.itemId, ", null)");
+        this.onNew(item.itemId, null);
       }
     },
 
     /** @see dwr.data.StoreChangeListener.itemChanged */
-    itemChanged:function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
-console.log("item changed: ", item, changedAttributes);
+    itemChanged: function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
       if (this._updated[item.itemId]) {
         console.log("Warning server changes to " + item.itemId + " override local changes");
       }
@@ -336,13 +335,15 @@ console.log("item changed: ", item, changedAttributes);
       if (dojo.isFunction(this.onSet)) {
         dojo.forEach(changedAttributes, function(attribute) {
           var oldValue = store._getAttributeValue(item.itemId, attribute);
-          store.onSet.call(item.itemId, attribute, oldValue, item.data[attribute]);
+          console.log("Firing onSet(", item.itemId, attribute, oldValue, item.data[attribute], ")");
+          store.onSet(item.itemId, attribute, oldValue, item.data[attribute]);
         });
       }
     },
 
     /** @see dojo.data.api.Notification.onSet */
     onSet: function(/*item*/ item, /*string*/ attribute, /*object|array*/ oldValue, /*object|array*/ newValue) {
+      console.log("Original onSet function used");
     },
 
     /** @see dojo.data.api.Notification.onNew */
@@ -350,7 +351,7 @@ console.log("item changed: ", item, changedAttributes);
     },
 
     /** @see dojo.data.api.Notification.onDelete */
-    onDelete: function(/*item*/ deletedItem) {
+    onDelete:function(/*item*/ deletedItem) {
     },
 
     /** @see dojo.data.api.Write.newItem */
