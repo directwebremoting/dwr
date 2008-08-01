@@ -4,6 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
   <script type='text/javascript' src='./dwr/engine.js'> </script>
   <script type='text/javascript' src='./dwr/interface/Test.js'> </script>
+  <script type='text/javascript' src='./dwr/interface/Recorder.js'> </script>
   <script type='text/javascript' src='./dwr/util.js'> </script>
   <script type='text/javascript' src='index.js'> </script>
   <script type='text/javascript' src='testVarious.js'> </script>
@@ -35,8 +36,8 @@
   <a href="..">Web Application Index</a>
 ]</div>
 
-<p style="float:right;">
-  <strong>Settings:</strong>
+<div style="float:right; border:1px solid #BBB; padding:5px; -moz-border-radius:5px; background:#EEE;">
+  <div style="font-weight:bold;padding-bottom:5px;">Settings</div>
   Async Delay:
   <select id="delay">
     <option value="0" selected="selected">0ms</option>
@@ -44,7 +45,10 @@
     <option value="10">10ms</option>
     <option value="20">20ms</option>
   </select>
-</p>
+  <br/>
+  <label for="report">Report when finished:</label>
+  <input id="report" type="checkbox"/>
+</div>
 
 <h1>Test Summary</h1>
 

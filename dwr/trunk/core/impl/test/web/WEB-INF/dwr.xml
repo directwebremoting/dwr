@@ -7,23 +7,6 @@
 
     <filter class="org.directwebremoting.filter.AuditLogAjaxFilter"/>
 
-    <!-- stress -->
-    <create creator="new" javascript="Settings" scope="application">
-      <param name="class" value="com.example.dwr.stress.Settings"/>
-    </create>
-    <create creator="new" javascript="Stress" scope="script">
-      <param name="class" value="org.example.testdwr.Stress"/>
-    </create>
-    <convert match="com.example.dwr.stress.Setting" converter="bean"/>
-
-    <!-- chat -->
-    <create creator="new" javascript="Control" scope="application">
-      <param name="class" value="com.example.dwr.arac.Control"/>
-    </create>
-    <convert converter="bean" match="com.example.dwr.arac.Client">
-      <param name="exclude" value="session"/>
-    </convert>
-
     <!-- test -->
     <create creator="new" javascript="Test" scope="application">
       <param name="class" value="org.example.testdwr.Test"/>
@@ -35,7 +18,11 @@
       <param name="force" value="true"/>
     </convert>
 
-    <convert converter="bean" match="com.example.dwr.setup.Person"/>
+    <!-- test -->
+    <create creator="new" javascript="Recorder" scope="application">
+      <param name="class" value="org.example.testdwr.Recorder"/>
+    </create>
+    <convert converter="bean" match="org.example.testdwr.TestResult"/>
 
     <convert converter="exception" match="java.lang.NullPointerException"/>
     <convert converter="exception" match="org.xml.sax.SAXParseException"/>

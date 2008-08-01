@@ -3,12 +3,14 @@
 var tests = {};
 var groups = { 'Global':[] };
 var groupNames = [ 'Global' ];
+var boredTimeout = null;
 
 var currentTest = null;
 
 var status = { notrun:0, executing:1, asynchronous:2, pass:3, fail:4 };
 var statusBackgrounds = [ "#EEE", "#888", "#FFA", "#8F8", "#F00" ];
 var statusColors = [ "#000", "#FFF", "#000", "#000", "#FFF" ];
+var statusNames = [ "Skipped", "Executing", "Waiting for results", "Pass", "Fail" ];
 
 /**
  *
@@ -29,7 +31,7 @@ function init() {
 /**
  *
  */
-function addTest(testName, test) {
+function addTest(testName, func) {
   var groupName = "Global";
   for (var i = 0; i < groupNames.length; i++) {
     if (testName.indexOf("test" + groupNames[i]) == 0) {
@@ -38,10 +40,13 @@ function addTest(testName, test) {
   }
 
   groups[groupName].push(testName);
-  tests[testName] = test;
-  test.name = testName;
-  test.status = status.notrun;
-  test.group = groupName;
+  tests[testName] = {
+    func: func,
+    name: testName,
+    status: status.notrun,
+    group: groupName,
+    messages: []
+  };
 }
 
 /**
@@ -187,47 +192,18 @@ function updateTestResults() {
     testCount++;
   }
 
-  var outstanding = counts[status.asynchronous] + counts[status.executing];
-  var failed = counts[status.fail];
-  var passed = counts[status.pass];
-
-  dwr.util.setValue("testCount", testCount);
-  dwr.util.setValue("testsStarted", testCount - counts[status.notrun]);
-  dwr.util.setValue("testsOutstanding", outstanding);
-  dwr.util.setValue("testsFailed", failed);
-  dwr.util.setValue("testsPassed", passed);
-
-  dwr.util.byId("testsOutstanding").style.backgroundColor = "";
-  dwr.util.byId("testsOutstanding").style.color = "";
-  dwr.util.byId("testsFailed").style.backgroundColor = "";
-  dwr.util.byId("testsFailed").style.color = "";
-  dwr.util.byId("testsPassed").style.backgroundColor = "";
-  dwr.util.byId("testsPassed").style.color = "";
-
-  if (failed > 0) {
-    dwr.util.byId("testsFailed").style.backgroundColor = statusBackgrounds[status.fail];
-    dwr.util.byId("testsFailed").style.color = statusColors[status.fail];
-  }
-  if (outstanding > 0 && failed > 0) {
-    dwr.util.byId("testsOutstanding").style.backgroundColor = statusBackgrounds[status.asynchronous];
-    dwr.util.byId("testsOutstanding").style.color = statusColors[status.asynchronous];
-  }
-  if (passed == testCount) {
-    dwr.util.byId("testsPassed").style.backgroundColor = statusBackgrounds[status.pass];
-    dwr.util.byId("testsPassed").style.color = statusColors[status.pass];
-  }
-
   for (var i = 0; i < groupNames.length; i++) {
     var groupName = groupNames[i];
     var groupCount = groups[groupName].length;
     var groupStatus = groupCounts[groupName];
 
-    outstanding = groupStatus[status.asynchronous] + groupStatus[status.executing];
-    failed = groupStatus[status.fail];
-    passed = groupStatus[status.pass];
+    var outstanding = groupStatus[status.asynchronous] + groupStatus[status.executing];
+    var failed = groupStatus[status.fail];
+    var passed = groupStatus[status.pass];
+    var started = groupCount - groupStatus[status.notrun];
 
     dwr.util.setValue("groupCount" + groupName, groupCount);
-    dwr.util.setValue("groupStarted" + groupName, groupCount - groupStatus[status.notrun]);
+    dwr.util.setValue("groupStarted" + groupName, started);
     dwr.util.setValue("groupOutstanding" + groupName, outstanding);
     dwr.util.setValue("groupFailed" + groupName, failed);
     dwr.util.setValue("groupPassed" + groupName, passed);
@@ -252,6 +228,55 @@ function updateTestResults() {
       dwr.util.byId("groupPassed" + groupName).style.color = statusColors[status.pass];
     }
   }
+
+  var outstanding = counts[status.asynchronous] + counts[status.executing];
+  var failed = counts[status.fail];
+  var passed = counts[status.pass];
+  var started = testCount - counts[status.notrun];
+
+  dwr.util.setValue("testCount", testCount);
+  dwr.util.setValue("testsStarted", started);
+  dwr.util.setValue("testsOutstanding", outstanding);
+  dwr.util.setValue("testsFailed", failed);
+  dwr.util.setValue("testsPassed", passed);
+
+  dwr.util.byId("testsOutstanding").style.backgroundColor = "";
+  dwr.util.byId("testsOutstanding").style.color = "";
+  dwr.util.byId("testsFailed").style.backgroundColor = "";
+  dwr.util.byId("testsFailed").style.color = "";
+  dwr.util.byId("testsPassed").style.backgroundColor = "";
+  dwr.util.byId("testsPassed").style.color = "";
+
+  if (failed > 0) {
+    dwr.util.byId("testsFailed").style.backgroundColor = statusBackgrounds[status.fail];
+    dwr.util.byId("testsFailed").style.color = statusColors[status.fail];
+  }
+  if (outstanding > 0 && failed > 0) {
+    dwr.util.byId("testsOutstanding").style.backgroundColor = statusBackgrounds[status.asynchronous];
+    dwr.util.byId("testsOutstanding").style.color = statusColors[status.asynchronous];
+  }
+  if (passed == testCount) {
+    dwr.util.byId("testsPassed").style.backgroundColor = statusBackgrounds[status.pass];
+    dwr.util.byId("testsPassed").style.color = statusColors[status.pass];
+  }
+
+  if (started == testCount && outstanding == 0 && dwr.util.getValue("report")) {
+    var failures = [];
+    for (var testName in tests) {
+      test = tests[testName];
+      if (test.status != status.pass) {
+        failures.push({
+          name: test.name,
+          status: test.status,
+          group: test.group,
+          messages: test.messages
+        });
+      }
+    }
+    Recorder.postResults(testCount, passed, failed, failures, function() {
+      console.log("Posted report to server");
+    });
+  }
 }
 
 /**
@@ -268,7 +293,7 @@ function runTest(testName) {
 
   var scope = currentTest.scope || window;
   try {
-    currentTest.apply(scope);
+    currentTest.func.apply(scope);
   }
   catch (ex) {
     _setStatus(currentTest, status.fail);
@@ -291,35 +316,38 @@ function runTest(testName) {
  *
  */
 function runTestGroup(groupName) {
-  _runNextTestInGroup(groupName, 0);
-}
-
-/**
- *
- */
-function _runNextTestInGroup(groupName, i) {
   var testNames = groups[groupName];
   if (testNames == null) {
     throw new Error("No test group called: " + groupName);
   }
+  var delay = dwr.util.getValue("delay");
 
-  if (i >= testNames.length) {
-    return;
+  var pauseAndRunGroup = function(groupName, i) {
+    if (i >= testNames.length) {
+      return;
+    }
+
+    runTest(testNames[i]);
+    setTimeout(function() {
+      pauseAndRunGroup(groupName, i + 1);
+    }, delay);
   }
 
-  runTest(testNames[i]);
-  setTimeout(function() {
-    _runNextTestInGroup(groupName, i + 1);
-  }, 10);
+  pauseAndRunGroup(groupName, 0);
 }
 
 /**
  *
  */
 function runAllTests() {
-  var testNames = _getTestNames();
+  var testNames = [];
+  for (var testName in tests) {
+    testNames.push(testName);
+  }
+  testNames.sort();
   var delay = dwr.util.getValue("delay");
-  var pauseAndRun = function(index) {
+
+  var pauseAndRunAll = function(index) {
     if (index >= testNames.length) {
       return;
     }
@@ -327,10 +355,11 @@ function runAllTests() {
     runTest(testName);
 
     setTimeout(function() {
-      pauseAndRun(index + 1);
+      pauseAndRunAll(index + 1);
     }, delay);
   };
-  pauseAndRun(0);
+
+  pauseAndRunAll(0);
 }
 
 /**
@@ -638,11 +667,8 @@ function _record() {
  *
  */
 function _appendMessage(test, message) {
-  var existing = dwr.util.getValue(test.name, { escapeHtml:false });
-  var output = message;
-  if (existing != null && existing.length > 0) {
-    output = existing + "<br />" + message;
-  }
+  test.messages.push(message);
+  var output = test.messages.join("<br />");
   dwr.util.setValue(test.name, output, { escapeHtml:false });
 }
 
@@ -755,15 +781,6 @@ function _addSpaces(funcName) {
   funcName = funcName.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
   funcName = funcName.replace(/([a-zA-Z])([0-9])/g, "$1 $2");
   return funcName;
-}
-
-function _getTestNames() {
-  var testNames = [];
-  for (var testName in tests) {
-    testNames.push(testName);
-  }
-  testNames.sort();
-  return testNames;
 }
 
 /*
