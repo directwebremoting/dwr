@@ -64,4 +64,17 @@ public final class ScriptProxy
             scriptSession.addScript(script);
         }
     }
+
+    /**
+     * Utility to add the given script to all known browsers.
+     * @param script The Javascript to send to the browsers
+     */
+    public static void addScript(String script)
+    {
+        Collection<ScriptSession> sessions = Browser.getTargetSessions();
+        for (ScriptSession scriptSession : sessions)
+        {
+            scriptSession.addScript(new ScriptBuffer(script));
+        }
+    }
 }
