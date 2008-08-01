@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Jaxer With DWR Remoting</title>
+
+  <!--
+  This import is only needed if you are running against a version of Jaxer from
+  before the DWR+Jaxer integration. You need this if you get the error message:
+  'Jaxer error processing request: JavaScript Error: "Jaxer.dwr is undefined"'
+
+  <script type='text/javascript' runat="server" src="frameworkPatch.js"> </script>
+  -->
+
+  <script type='text/javascript' runat="server">
+  // This line should point to your deployment of DWR
+  Jaxer.dwr.pathToDwrServlet = "http://localhost:8080/demoServer/dwr";
+  Jaxer.dwr.requireUtil();
+  Jaxer.dwr.configureAccess("com.example.jaxer.Simple");
+
+  function loadServer() {
+    var reply = Simple.sayHello('Jaxer');
+    dwr.util.setValue('replyDiv', reply);
+  }
+  </script>
+</head>
+<body onserverload="loadServer()">
+
+<p>Message from the server: <span id="replyDiv"></span></p>
+
+<p>(If you get a mesage at the top of the page along these lines: 'Jaxer error
+processing request: JavaScript Error: "Jaxer.dwr is undefined"' then you are
+probably running against an version of Jaxer from before DWR integration was
+introduced. The best solution is to upgrade, or failing that you can import
+frameworkPatch.js. See the source to this page for more.)</p>
+
+</body>
+</html>
