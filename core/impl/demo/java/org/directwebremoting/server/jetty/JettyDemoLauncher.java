@@ -15,7 +15,7 @@
  */
 package org.directwebremoting.server.jetty;
 
-import org.directwebremoting.servers.jetty.JettyLauncherBase;
+import org.directwebremoting.server.jetty.JettyLauncherBase;
 
 /**
  * Launch Jetty embedded for demoing DWR

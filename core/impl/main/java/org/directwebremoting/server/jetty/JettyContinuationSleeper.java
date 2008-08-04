@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.jetty;
+package org.directwebremoting.server.jetty;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -177,7 +177,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * We remember the notify conduit so we can reuse it
      */
-    protected static final String ATTRIBUTE_CONDUIT = "org.directwebremoting.servers.jetty.notifyConduit";
+    protected static final String ATTRIBUTE_CONDUIT = "org.directwebremoting.server.jetty.notifyConduit";
 
     /**
      * The log stream

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.servlet3;
+package org.directwebremoting.server.grizzly;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -24,17 +24,24 @@ import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
- * An abstraction of the servlet container that just follows the standards
+ * An abstraction of the servlet container that is specific to Grizzly
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Servlet3ContainerAbstraction implements ContainerAbstraction
+public class GrizzlyContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        return false; // servletConfig.getServletContext().getMajorVersion() >= 3;
+        String serverInfo = servletConfig.getServletContext().getServerInfo();
+        if (serverInfo.startsWith("Sun Java System Application Server "))
+        {
+            // TODO: some number versioning
+            return true;
+        }
+
+        return false;
     }
 
     /* (non-Javadoc)
@@ -52,12 +59,12 @@ public class Servlet3ContainerAbstraction implements ContainerAbstraction
     {
         return false;
     }
-
+ 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
     public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new Servlet3Sleeper(request);
+        return new GrizzlyContinuationSleeper(request);
     }
 }

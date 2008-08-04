@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.jetty;
+package org.directwebremoting.server.jetty;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;

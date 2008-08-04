@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.servlet3;
+package org.directwebremoting.server.servlet3;
 
 import java.lang.reflect.Method;
 

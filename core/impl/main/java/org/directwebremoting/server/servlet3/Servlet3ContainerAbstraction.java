@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.servlet2;
+package org.directwebremoting.server.servlet3;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -21,21 +21,20 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.DefaultServerLoadMonitor;
-import org.directwebremoting.impl.ThreadWaitSleeper;
+import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
  * An abstraction of the servlet container that just follows the standards
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Servlet2ContainerAbstraction implements ContainerAbstraction
+public class Servlet3ContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        return true;
+        return false; // servletConfig.getServletContext().getMajorVersion() >= 3;
     }
 
     /* (non-Javadoc)
@@ -43,7 +42,7 @@ public class Servlet2ContainerAbstraction implements ContainerAbstraction
      */
     public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
     {
-        return DefaultServerLoadMonitor.class;
+        return ThreadDroppingServerLoadMonitor.class;
     }
 
     /* (non-Javadoc)
@@ -59,6 +58,6 @@ public class Servlet2ContainerAbstraction implements ContainerAbstraction
      */
     public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new ThreadWaitSleeper();
+        return new Servlet3Sleeper(request);
     }
 }
