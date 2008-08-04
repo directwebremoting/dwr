@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="dwr" default="standard">
+<project name="dwr" default="package">
 
   <!-- For terminology, see the readme.txt file alongside this build file -->
 
@@ -24,33 +24,35 @@
     </classpath>
   </taskdef>
 
+  <!-- The modules that we are working with -->
+  <property name="modules" value="
+    core/api, core/impl, core/legacy,
+    protocol/dwrp, protocol/json, protocol/bayeux,
+    serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
+    ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
+    "/>
+  <!-- Skipped until we can get a CLA: noncla/various -->
+
   <!--=======================================================================-->
   <target name="prepare" description="Various bits of setup">
     <tstamp/>
   </target>
 
   <!--=======================================================================-->
-  <target name="war" depends="prepare" description="Create output WAR files">
-    <property name="modules" value="
-      core/api, core/impl, core/legacy,
-      protocol/dwrp, protocol/json, protocol/bayeux,
-      serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
-      ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
-      noncla/various
-      "/>
+  <target name="war" depends="prepare" description="Create exploded test/demo WAR directories">
     <build target="${target.root}" modules="${modules}"/>
     <!-- The standard dwr.jar file -->
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
     </jar>
-    <!-- The demo 'dwr.war' file, exploded -->
+    <!-- The demo 'dwr.war', exploded -->
     <copy todir="${target.root}/web/demo/WEB-INF/classes">
       <fileset dir="${target.root}/classes/demo"/>
     </copy>
     <copy todir="${target.root}/web/demo/WEB-INF/lib">
       <fileset file="${target.root}/dwr.jar"/>
     </copy>
-    <!-- The testing 'testdwr.war' file, exploded -->
+    <!-- The testing 'testdwr.war', exploded -->
     <copy todir="${target.root}/web/test/WEB-INF/classes">
       <fileset dir="${target.root}/classes/test"/>
     </copy>
@@ -60,7 +62,7 @@
   </target>
 
   <!--=======================================================================-->
-  <target name="standard" depends="war" description="Create output WAR and JAR files">
+  <target name="package" depends="war" description="Create packaged outputs: dwr.war, testdwr.war, dwr-jdk14.jar, and the source .zip">
     <!-- Run retroweaver if dwr.jar has changed since we last ran it -->
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
@@ -87,29 +89,51 @@
         <zip destfile="${target.root}/testdwr.war" basedir="${target.root}/web/test"/>
       </action>
     </if-not-uptodate>
+    <!--  -->
+    <mkdir dir="${target.root}/javadoc"/>
+    <javadoc access="public"
+        author="true"
+        destdir="${target.root}/javadoc"
+        doctitle="DWR Version ${label}"
+        use="true"
+        splitindex="true"
+        version="true">
+      <sourcepath path="${source.root}/core/api/main/java"/>
+      <classpath>
+        <pathelement location="${target.root}/classes/main"/>
+        <fileset dir="${target.root}/lib" includes="**/*.jar"/>
+      </classpath>
+      <package name="org.directwebremoting.*"/>
+      <footer>Copyright &#168; 2008</footer>
+    </javadoc>
+    <path id="dtddocpath">
+      <fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar"/>
+    </path>
+    <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath"/>
+    <mkdir dir="${target.root}/dtddoc"/>
+    <DTDDoc showHiddenTags="false"
+        showFixmeTags="false"
+        sourceDir="${source.root}/core/impl/main/java"
+        destDir="${target.root}/dtddoc"
+        docTitle = "DTDDoc's example">
+      <include name="**/*.dtd"/>
+      <exclude name="common/*.dtd"/>
+    </DTDDoc>
+    <zip destfile="${target.root}/dwr-${label}-src.zip">
+      <fileset dir="${source.root}">
+        <exclude name="target/**"/>
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+      </fileset>
+      <fileset dir="${target.root}">
+        <include name="dwr.jar"/>
+        <include name="dwr.war"/>
+      </fileset>
+      <!-- The DWR website extracts javadoc from here -->
+      <zipfileset dir="${target.root}/javadoc" prefix="javadoc"/>
+    </zip>
   </target>
-
-  <!--=======================================================================-->
-  <macrodef name="if-not-uptodate">
-    <attribute name="destfile"/>
-    <attribute name="sourcedir"/>
-    <element name="action"/>
-    <sequential>
-      <if>
-        <or>
-          <not><available file="@{destfile}"/></not>
-          <not>
-            <uptodate targetfile="@{destfile}">
-              <srcfiles dir="@{sourcedir}" includes="**/*"/>
-            </uptodate>
-          </not>
-        </or>
-        <then>
-          <action/>
-        </then>      
-      </if>
-    </sequential>
-  </macrodef>
 
   <!--=======================================================================-->
   <target name="jaxer" depends="prepare" description="Create Jaxer output files">
@@ -142,6 +166,38 @@
     <!-- Demo: Build a zip of a file to stick into jaxer/public -->
     <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/customDemo/demoRemoting"/>
   </target>
+
+  <!--=======================================================================-->
+  <target name="spring" depends="war" description="Create Spring demo outputs">
+    <copy todir="${target.root}/web/spring/demo/">
+      <fileset dir="${target.root}/web/demo/"/>
+    </copy>
+    <copy todir="${target.root}/web/spring/test/">
+      <fileset dir="${target.root}/web/test/"/>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <macrodef name="if-not-uptodate">
+    <attribute name="destfile"/>
+    <attribute name="sourcedir"/>
+    <element name="action"/>
+    <sequential>
+      <if>
+        <or>
+          <not><available file="@{destfile}"/></not>
+          <not>
+            <uptodate targetfile="@{destfile}">
+              <srcfiles dir="@{sourcedir}" includes="**/*"/>
+            </uptodate>
+          </not>
+        </or>
+        <then>
+          <action/>
+        </then>      
+      </if>
+    </sequential>
+  </macrodef>
 
   <!--=======================================================================-->
   <macrodef name="build" description="Create some distribution files from a set of modules">
@@ -308,64 +364,7 @@
   </macrodef>
 
   <!--=======================================================================-->
-  <target name="package" depends="standard">
-    <mkdir dir="${target.root}/javadoc"/>
-    <javadoc access="public"
-        author="true"
-        destdir="${target.root}/javadoc"
-        doctitle="DWR Version ${label}"
-        use="true"
-        splitindex="true"
-        version="true">
-      <sourcepath path="${source.root}/core/api/main/java"/>
-      <classpath>
-        <pathelement location="${target.root}/classes/main"/>
-        <fileset dir="${target.root}/lib" includes="**/*.jar"/>
-      </classpath>
-      <package name="org.directwebremoting.*"/>
-      <footer>Copyright &#168; 2008</footer>
-    </javadoc>
-    <path id="dtddocpath">
-      <fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar"/>
-    </path>
-    <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath"/>
-    <mkdir dir="${target.root}/dtddoc"/>
-    <DTDDoc showHiddenTags="false"
-        showFixmeTags="false"
-        sourceDir="${source.root}/core/impl/main/java"
-        destDir="${target.root}/dtddoc"
-        docTitle = "DTDDoc's example">
-      <include name="**/*.dtd"/>
-      <exclude name="common/*.dtd"/>
-    </DTDDoc>
-    <zip destfile="${target.root}/dwr-${label}-src.zip">
-      <fileset dir="${source.root}">
-        <exclude name="target/**"/>
-        <exclude name="**/*.iml"/>
-        <exclude name="**/*.ipr"/>
-        <exclude name="**/*.iws"/>
-      </fileset>
-      <fileset dir="${target.root}">
-        <include name="dwr.jar"/>
-        <include name="dwr.war"/>
-      </fileset>
-      <!-- The DWR website extracts javadoc from here -->
-      <zipfileset dir="${target.root}/javadoc" prefix="javadoc"/>
-    </zip>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="tomcat-reload" depends="war" description="Asks tomcat to re-load a DWR context">
-    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
-      <classpath>
-        <pathelement path="${tomcat.home}/lib/catalina-ant.jar"/>
-      </classpath>
-    </taskdef>
-    <reload url="${tomcat.manager.url}" username="${tomcat.username}" password="${tomcat.password}" path="${tomcat.context}"/>
-  </target>
-
-  <!--=======================================================================-->
-  <target name="clean">
+  <target name="clean" description="Remove all build targets and .DS_Store files left around by the Mac finder">
     <delete dir="${target.root}"/>
     <delete defaultexcludes="false" verbose="true" dir="${source.root}">
       <include name="**/*.DS_Store"/>
