@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.grizzly;
+package org.directwebremoting.server.grizzly;
 
 import javax.servlet.http.HttpServletRequest;
 

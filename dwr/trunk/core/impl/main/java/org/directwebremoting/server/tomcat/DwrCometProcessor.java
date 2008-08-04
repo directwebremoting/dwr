@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.tomcat;
+package org.directwebremoting.server.tomcat;
 
 import java.io.IOException;
 
@@ -70,15 +70,15 @@ public class DwrCometProcessor extends DwrServlet implements CometProcessor
     /**
      * We remember the event in the request so we can get at it again
      */
-    protected static final String ATTRIBUTE_EVENT = "org.directwebremoting.servers.tomcat.event";
+    protected static final String ATTRIBUTE_EVENT = "org.directwebremoting.server.tomcat.event";
 
     /**
      * Are we ending because we're done, or just because we're thread-dropping (sleeping)
      */
-    protected static final String ATTRIBUTE_SLEEP = "org.directwebremoting.servers.tomcat.sleep";
+    protected static final String ATTRIBUTE_SLEEP = "org.directwebremoting.server.tomcat.sleep";
 
     /**
      * Declare to TomcatContainerAbstraction that we are in action
      */
-    protected static final String ATTRIBUTE_ENABLED = "org.directwebremoting.servers.tomcat.enabled";
+    protected static final String ATTRIBUTE_ENABLED = "org.directwebremoting.server.tomcat.enabled";
 }

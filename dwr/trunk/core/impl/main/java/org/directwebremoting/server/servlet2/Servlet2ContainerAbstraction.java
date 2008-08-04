@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.grizzly;
+package org.directwebremoting.server.servlet2;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -21,27 +21,21 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
+import org.directwebremoting.impl.DefaultServerLoadMonitor;
+import org.directwebremoting.impl.ThreadWaitSleeper;
 
 /**
- * An abstraction of the servlet container that is specific to Grizzly
+ * An abstraction of the servlet container that just follows the standards
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class GrizzlyContainerAbstraction implements ContainerAbstraction
+public class Servlet2ContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("Sun Java System Application Server "))
-        {
-            // TODO: some number versioning
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /* (non-Javadoc)
@@ -49,7 +43,7 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
      */
     public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
     {
-        return ThreadDroppingServerLoadMonitor.class;
+        return DefaultServerLoadMonitor.class;
     }
 
     /* (non-Javadoc)
@@ -59,12 +53,12 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     {
         return false;
     }
- 
+
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
     public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new GrizzlyContinuationSleeper(request);
+        return new ThreadWaitSleeper();
     }
 }

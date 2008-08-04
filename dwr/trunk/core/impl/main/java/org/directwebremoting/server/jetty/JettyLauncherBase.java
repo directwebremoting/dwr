@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servers.jetty;
+package org.directwebremoting.server.jetty;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -33,7 +33,7 @@ import org.mortbay.util.Scanner;
  * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
  * @author Joe Walker [joe at getahead dot org]
  */
-public class JettyLauncherBase
+class JettyLauncherBase
 {
     /**
      * Sets up the server.
@@ -44,7 +44,7 @@ public class JettyLauncherBase
      * @param port The TCP port to listen on
      */
     @SuppressWarnings("unchecked")
-    public JettyLauncherBase(String contextHome, final String contextPath, int port)
+    protected JettyLauncherBase(String contextHome, final String contextPath, int port)
     {
         server = new Server();
 
