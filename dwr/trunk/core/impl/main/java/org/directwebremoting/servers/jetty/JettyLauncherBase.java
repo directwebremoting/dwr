@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.jetty;
+package org.directwebremoting.servers.jetty;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -33,43 +33,18 @@ import org.mortbay.util.Scanner;
  * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
  * @author Joe Walker [joe at getahead dot org]
  */
-public class JettyTestLauncher
+public class JettyLauncherBase
 {
     /**
-     * Path (can be relative) to the web application (aka context)
-     * This directory should contain a WEB-INF/web.xml file
-     */
-    public static final String CONTEXT_HOME = "target/ant/web/test";
-
-    /**
-     * URL component to which we deploy the application, which goes something
-     * like this: http://example.com/CONTEXT_PATH/path_to_something_in_the_webapp
-     */
-    public static final String CONTEXT_PATH = "/dwr-test";
-
-    /**
-     * The port to listen on
-     */
-    public static final int PORT = 8080;
-
-    /**
-     * Just create and launch an instance of Jetty
-     * @param args program args. Ignored.
-     * @throws Exception This is such a small program we ignore exceptions
-     */
-    public static void main(String[] args) throws Exception
-    {
-        JettyTestLauncher launcher = new JettyTestLauncher(CONTEXT_HOME, CONTEXT_PATH, PORT);
-        launcher.start();
-    }
-
-    /**
      * Sets up the server.
-     * @param contextHome See comments for {@link #CONTEXT_HOME}
-     * @param contextPath See comments for {@link #CONTEXT_PATH}
+     * @param contextHome Path (can be relative) to the web application
+     * (aka context) This directory should contain a WEB-INF/web.xml file
+     * @param contextPath URL component to which we deploy the application,
+     * as in: http://example.com/CONTEXT_PATH/path_in_the_webapp
+     * @param port The TCP port to listen on
      */
     @SuppressWarnings("unchecked")
-    public JettyTestLauncher(String contextHome, final String contextPath, int port)
+    public JettyLauncherBase(String contextHome, final String contextPath, int port)
     {
         server = new Server();
 
@@ -128,6 +103,8 @@ public class JettyTestLauncher
                 }
             }
         });
+
+        Log.info("Visit http://localhost:" + port + contextPath + "/ to get started.");
     }
 
     /**
