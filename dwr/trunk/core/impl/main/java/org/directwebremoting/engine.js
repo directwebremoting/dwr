@@ -645,7 +645,7 @@ if (typeof this['dwr'] == 'undefined') {
         else {
           batch.handlers[callId] = null;
           if (typeof handlers.callback == "function") {
-            handlers.callback.call(handlers.callbackScope, reply, handlers.callbackArgs);
+            handlers.callback.call(handlers.callbackScope, reply, handlers.callbackArg);
           }
         }
       }
@@ -718,7 +718,7 @@ if (typeof this['dwr'] == 'undefined') {
       }
 
       if (typeof handlers.exceptionHandler == "function") {
-        handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArgs);
+        handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
       }
       else if (typeof batch.errorHandler == "function") {
         batch.errorHandler(ex.message, ex);
@@ -1787,10 +1787,10 @@ if (typeof this['dwr'] == 'undefined') {
       dwr.engine.batch.merge(batch, callData);
       batch.handlers[batch.map.callCount] = {
         exceptionHandler:callData.exceptionHandler,
-        exceptionArgs:callData.exceptionArgs || callData.args || null,
+        exceptionArg:callData.exceptionArg || callData.arg || null,
         exceptionScope:callData.exceptionScope || callData.scope || window,
         callback:callData.callbackHandler || callData.callback,
-        callbackArgs:callData.callbackArgs || callData.args || null,      
+        callbackArg:callData.callbackArg || callData.arg || null,      
         callbackScope:callData.callbackScope || callData.scope || window          
       };
 
