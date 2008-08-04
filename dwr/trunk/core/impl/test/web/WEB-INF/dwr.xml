@@ -11,7 +11,6 @@
     <create creator="new" javascript="Test" scope="application">
       <param name="class" value="org.example.testdwr.Test"/>
     </create>
-    <convert converter="bean" match="$Proxy*"/>
     <convert converter="bean" match="org.example.testdwr.TestBean"/>
     <convert converter="bean" javascript="ObjB" match="org.example.testdwr.ObjB"/>
     <convert converter="object" javascript="ObjA" match="org.example.testdwr.ObjA">
