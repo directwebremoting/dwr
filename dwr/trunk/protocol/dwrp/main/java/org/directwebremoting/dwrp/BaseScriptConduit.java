@@ -20,15 +20,15 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ScriptConduit;
-import org.directwebremoting.extend.BasicAlarm;
+import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**
@@ -38,7 +38,7 @@ import org.directwebremoting.util.DebuggingPrintWriter;
  * within that class, so this is a hacky simplification.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class BaseScriptConduit extends ScriptConduit
+public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
 {
     /**
      * Simple ctor
@@ -47,7 +47,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public BaseScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public BaseScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
         super(RANK_SLOW, true);
 
@@ -55,6 +55,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
         this.batchId = batchId;
         this.converterManager = converterManager;
         this.jsonOutput = jsonOutput;
+        this.sleeper = sleeper;
 
         response.setContentType(getOutboundMimeType());
         out = response.getWriter();
@@ -124,6 +125,14 @@ public abstract class BaseScriptConduit extends ScriptConduit
         endStream();
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Alarm#cancel()
+     */
+    public void cancel()
+    {
+        // TODO: We shouldn't call sleeper.wakeUp(); any more
+    }
+
     /**
      * Ensure that output we have done is written to the client
      * @return true/false depending on the write status
@@ -136,7 +145,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
         if (out.checkError())
         {
             log.debug("Error writing to stream");
-            alarm.raiseAlarm();
+            sleeper.wakeUp();
             return false;
         }
 
@@ -149,7 +158,7 @@ public abstract class BaseScriptConduit extends ScriptConduit
         {
             // This is likely to be because the user has gone away.
             log.debug("Error calling response.flushBuffer:" + ex);
-            alarm.raiseAlarm();
+            sleeper.wakeUp();
             return false;
         }
     }
@@ -161,14 +170,6 @@ public abstract class BaseScriptConduit extends ScriptConduit
     public void setDebugScriptOutput(boolean debugScriptOutput)
     {
         this.debugScriptOutput = debugScriptOutput;
-    }
-
-    /**
-     * @return The Alarm that goes off if something is badly broken
-     */
-    public Alarm getErrorAlarm()
-    {
-        return alarm;
     }
 
     /**
@@ -202,9 +203,9 @@ public abstract class BaseScriptConduit extends ScriptConduit
     protected final String batchId;
 
     /**
-     * An Alarm that goes off if something is badly broken
+     * If an error happens, who wants to know?
      */
-    protected BasicAlarm alarm = new BasicAlarm();
+    protected final Sleeper sleeper;
 
     /**
      * The log stream

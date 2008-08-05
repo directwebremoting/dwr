@@ -25,6 +25,7 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ScriptBufferUtil;
+import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -50,9 +51,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public Html4kScriptConduit(HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public Html4kScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(response, batchId, converterManager, jsonOutput);
+        super(sleeper, response, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)

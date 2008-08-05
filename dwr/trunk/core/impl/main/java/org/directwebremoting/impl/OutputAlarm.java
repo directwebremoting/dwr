@@ -20,41 +20,33 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.extend.BasicAlarm;
 import org.directwebremoting.util.SharedObjects;
 
 /**
  * An Alarm that goes off whenever output happens on a {@link ScriptSession}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class OutputAlarm extends BasicAlarm implements Alarm
+public class OutputAlarm implements Alarm
 {
     /**
      * @param scriptSession The script session to monitor
      * @param maxWaitAfterWrite How long do we wait after output
      */
-    public OutputAlarm(RealScriptSession scriptSession, int maxWaitAfterWrite)
+    public OutputAlarm(Sleeper sleeper, RealScriptSession scriptSession, int maxWaitAfterWrite)
     {
+        this.sleeper = sleeper;
         this.maxWaitAfterWrite = maxWaitAfterWrite;
         this.scriptSession = scriptSession;
 
         conduit = new AlarmScriptConduit();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.Alarm#setAlarmAction(org.directwebremoting.dwrp.Sleeper)
-     */
-    @Override
-    public void setAlarmAction(Sleeper sleeper)
-    {
-        super.setAlarmAction(sleeper);
-
         try
         {
             scriptSession.addScriptConduit(conduit);
@@ -68,7 +60,6 @@ public class OutputAlarm extends BasicAlarm implements Alarm
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.Alarm#cancel()
      */
-    @Override
     public void cancel()
     {
         scriptSession.removeScriptConduit(conduit);
@@ -76,7 +67,6 @@ public class OutputAlarm extends BasicAlarm implements Alarm
         {
             future.cancel(false);
         }
-        super.cancel();
     }
 
     /**
@@ -102,7 +92,7 @@ public class OutputAlarm extends BasicAlarm implements Alarm
 
             if (maxWaitAfterWrite <= 0)
             {
-                raiseAlarm();
+                sleeper.wakeUp();
             }
             else
             {
@@ -110,7 +100,7 @@ public class OutputAlarm extends BasicAlarm implements Alarm
                 {
                     public void run()
                     {
-                        raiseAlarm();
+                        sleeper.wakeUp();
                     }
                 };
 
@@ -123,22 +113,32 @@ public class OutputAlarm extends BasicAlarm implements Alarm
     }
 
     /**
+     * The thread that needs to know about shutdown
+     */
+    private final Sleeper sleeper;
+
+    /**
      * A conduit to alert us if there is output
      */
-    protected ScriptConduit conduit = null;
+    protected final ScriptConduit conduit;
 
     /**
      * How long do we wait after output happens in case there is more output
      */
-    protected int maxWaitAfterWrite = -1;
+    protected final int maxWaitAfterWrite;
 
     /**
      * The script session to monitor for output
      */
-    protected RealScriptSession scriptSession;
+    protected final RealScriptSession scriptSession;
 
     /**
      * The future result that allows us to cancel the timer
      */
     protected ScheduledFuture<?> future;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(OutputAlarm.class);
 }
