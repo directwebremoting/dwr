@@ -20,7 +20,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.extend.Alarm;
-import org.directwebremoting.extend.BasicAlarm;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.SharedObjects;
 
@@ -28,54 +27,40 @@ import org.directwebremoting.util.SharedObjects;
  * An Alarm that goes off after a certain length of time.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class TimedAlarm extends BasicAlarm implements Alarm
+public class TimedAlarm implements Alarm
 {
     /**
      * @param waitTime How long we wait before the Alarm goes off
      */
-    public TimedAlarm(long waitTime)
+    public TimedAlarm(final Sleeper sleeper, long waitTime)
     {
-        this.waitTime = waitTime;
+        if (waitTime == 0)
+        {
+            sleeper.wakeUp();
+        }
+        else
+        {
+            Runnable runnable = new Runnable()
+            {
+                public void run()
+                {
+                    sleeper.wakeUp();
+                }
+            };
+
+            ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
+            future = executor.schedule(runnable, waitTime, TimeUnit.MILLISECONDS);
+        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Alarm#cancel()
      */
-    @Override
     public void cancel()
     {
         if (future != null)
         {
             future.cancel(false);
-        }
-
-        super.cancel();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Alarm#setAlarmAction(org.directwebremoting.extend.Sleeper)
-     */
-    @Override
-    public void setAlarmAction(Sleeper sleeper)
-    {
-        Runnable runnable = new Runnable()
-        {
-            public void run()
-            {
-                raiseAlarm();
-            }
-        };
-
-        super.setAlarmAction(sleeper);
-
-        if (waitTime == 0)
-        {
-            raiseAlarm();
-        }
-        else
-        {
-            ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
-            future = executor.schedule(runnable, waitTime, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -83,9 +68,4 @@ public class TimedAlarm extends BasicAlarm implements Alarm
      * The future result that allows us to cancel the timer
      */
     private ScheduledFuture<?> future;
-
-    /**
-     * How long do we wait for?
-     */
-    private long waitTime;
 }

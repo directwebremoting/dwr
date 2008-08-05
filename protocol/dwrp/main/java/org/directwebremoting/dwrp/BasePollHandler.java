@@ -129,24 +129,24 @@ public class BasePollHandler extends BaseDwrpHandler
         // via a ScriptConduit.
         final RealScriptSession scriptSession = (RealScriptSession) webContext.getScriptSession();
 
-        // Create a conduit depending on the type of request (from the URL)
-        final BaseScriptConduit conduit = createScriptConduit(batch, response);
-
         // So we're going to go to sleep. How do we wake up?
         Sleeper sleeper = containerAbstraction.createSleeper(request);
+
+        // Create a conduit depending on the type of request (from the URL)
+        final BaseScriptConduit conduit = createScriptConduit(sleeper, batch, response);
 
         // There are various reasons why we want to wake up and carry on ...
         final List<Alarm> alarms = new ArrayList<Alarm>();
 
         // If the conduit has an error flushing data, it needs to give up
-        alarms.add(conduit.getErrorAlarm());
+        alarms.add(conduit);
 
         // Set the system up to resume on output (perhaps with delay)
         if (batch.getPartialResponse() == PartialResponse.NO || maxWaitAfterWrite != -1)
         {
             // add an output listener to the script session that calls the
             // "wake me" method on whatever is putting us to sleep
-            alarms.add(new OutputAlarm(scriptSession, maxWaitAfterWrite));
+            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite));
         }
 
         // Use of comet depends on the type of browser and the number of current
@@ -185,19 +185,13 @@ public class BasePollHandler extends BaseDwrpHandler
         long connectedTime = slm.getConnectedTime();
         final int disconnectedTime = slm.getDisconnectedTime();
 
-        alarms.add(new TimedAlarm(connectedTime));
+        alarms.add(new TimedAlarm(sleeper, connectedTime));
 
         // We also need to wake-up if the server is being shut down
         // WARNING: This code has a non-obvious side effect - The server load
         // monitor (which hands out shutdown messages) also monitors usage by
         // looking at the number of connected alarms.
-        alarms.add(new ShutdownAlarm(serverLoadMonitor));
-
-        // Make sure that all the alarms know what to wake
-        for (Alarm alarm : alarms)
-        {
-            alarm.setAlarmAction(sleeper);
-        }
+        alarms.add(new ShutdownAlarm(sleeper, serverLoadMonitor));
 
         // Register the conduit with a script session so messages can get out.
         // This must happen late on in this method because this will cause any
@@ -246,23 +240,23 @@ public class BasePollHandler extends BaseDwrpHandler
      * @return A correctly configured conduit
      * @throws IOException If the response can't be interrogated
      */
-    private BaseScriptConduit createScriptConduit(PollBatch batch, HttpServletResponse response) throws IOException
+    private BaseScriptConduit createScriptConduit(Sleeper sleeper, PollBatch batch, HttpServletResponse response) throws IOException
     {
         BaseScriptConduit conduit;
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
         }
         else
         {
             if (batch.getPartialResponse() == PartialResponse.FLUSH)
             {
-                conduit = new Html4kScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new Html4kScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
             }
             else
             {
-                conduit = new HtmlScriptConduit(response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new HtmlScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
             }
         }
 

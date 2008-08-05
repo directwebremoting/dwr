@@ -16,7 +16,6 @@
 package org.directwebremoting.impl;
 
 import org.directwebremoting.extend.Alarm;
-import org.directwebremoting.extend.BasicAlarm;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.extend.WaitController;
@@ -29,49 +28,39 @@ import org.directwebremoting.extend.WaitController;
  * at the number of connected alarms.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ShutdownAlarm extends BasicAlarm implements Alarm
+public class ShutdownAlarm implements Alarm
 {
     /**
      * Register ourselves with the ServerLoadMonitor so we can raise an
      * Alarm if we get shutdown
      * @param serverLoadMonitor
      */
-    public ShutdownAlarm(ServerLoadMonitor serverLoadMonitor)
+    public ShutdownAlarm(Sleeper sleeper, ServerLoadMonitor serverLoadMonitor)
     {
+        this.sleeper = sleeper;
         this.serverLoadMonitor = serverLoadMonitor;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Alarm#setAlarmAction(org.directwebremoting.extend.Sleeper)
-     */
-    @Override
-    public void setAlarmAction(Sleeper sleeper)
-    {
-        serverLoadMonitor.threadWaitStarting(waitController);
-        super.setAlarmAction(sleeper);
+        this.serverLoadMonitor.threadWaitStarting(waitController);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Alarm#cancel()
      */
-    @Override
     public void cancel()
     {
         serverLoadMonitor.threadWaitEnding(waitController);
-        super.cancel();
     }
 
     /**
      * The listener to allow the ServerLoadMonitor to shut us down
      */
-    private WaitController waitController = new WaitController()
+    private final WaitController waitController = new WaitController()
     {
         /* (non-Javadoc)
          * @see org.directwebremoting.extend.WaitController#shutdown()
          */
         public void shutdown()
         {
-            raiseAlarm();
+            sleeper.wakeUp();
             shutdown = true;
         }
 
@@ -90,7 +79,12 @@ public class ShutdownAlarm extends BasicAlarm implements Alarm
     };
 
     /**
+     * The thread that needs to know about shutdown
+     */
+    private final Sleeper sleeper;
+
+    /**
      * The source of shutdown messages
      */
-    protected ServerLoadMonitor serverLoadMonitor;
+    protected final ServerLoadMonitor serverLoadMonitor;
 }

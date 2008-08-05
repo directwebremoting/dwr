@@ -2,24 +2,16 @@ package org.directwebremoting.extend;
 
 /**
  * An alarm is something that goes off at some point in the future.
- * An alarm is not primed until {@link #setAlarmAction(Sleeper)} is called.
- * {@link #setAlarmAction(Sleeper)} should only be called once before
- * {@link #cancel()} is called, and the latter should only be called once.
+ * Alarms must be constructed with a {@link Sleeper} so they can act to tell
+ * the Sleeper to awake (or not to sleep) at any time until {@link #cancel()}
+ * is called.
  * The alarm should not 'go off' after {@link #cancel()} has been called,
- * however since this is a multi-threaded environment, {@link Sleeper}s
- * should protect themselves from late calls to {@link Sleeper#wakeUp()}.
+ * however, {@link Sleeper}s should still protect themselves from late calls to
+ * {@link Sleeper#wakeUp()}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface Alarm
 {
-    /**
-     * Alarms need something to do when they go off.
-     * After this method has been called the Alarm may 'go off', once only,
-     * by calling {@link Sleeper#wakeUp()}.
-     * @param sleeper The action to awake when the alarm goes off
-     */
-    void setAlarmAction(Sleeper sleeper);
-
     /**
      * Prevent further calls to {@link Sleeper#wakeUp()}.
      * See the note about late calls above.
