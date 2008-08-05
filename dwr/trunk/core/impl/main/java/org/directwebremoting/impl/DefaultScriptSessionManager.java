@@ -65,7 +65,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         };
 
         ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
-        executor.schedule(runnable, 60, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(runnable, 60, 60, TimeUnit.SECONDS);
 
         // Maybe we need be able to cancel the executor?
         // ScheduledFuture<?> future = executor.schedule...
