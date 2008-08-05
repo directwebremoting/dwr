@@ -47,7 +47,14 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.InboundContext;
+import org.directwebremoting.io.JavascriptFunction;
 import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.util.ClasspathScanner;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -653,6 +660,67 @@ public class Test
     {
         ScriptProxy.addFunctionCall("dwr.util.setValue", elementId, value);
         return value;
+    }
+
+    /**
+     * JUnit test runner!
+     */
+    public String runAllJUnitTests(final JavascriptFunction noteProgressInScratch)
+    {
+        ClasspathScanner scanner = new ClasspathScanner("org.directwebremoting", true);
+        Set<String> classNames = scanner.getClasses();
+        Set<Class<?>> tests = new HashSet<Class<?>>();
+
+        for (Iterator<String> it = classNames.iterator(); it.hasNext();)
+        {
+            String className = it.next();
+
+            if (className.endsWith("Test"))
+            {
+                try
+                {
+                    Class<?> type = Class.forName(className);
+                    tests.add(type);
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    // ignore
+                }
+            }
+        }
+
+        JUnitCore core = new JUnitCore();
+        core.addListener(new RunListener()
+        {
+            int completed = 0;
+            int failures = 0;
+
+            @Override
+            public void testFailure(Failure failure) throws Exception
+            {
+                failures++;
+            }
+
+            @Override
+            public void testFinished(Description description) throws Exception
+            {
+                completed++;
+                noteProgressInScratch.execute();
+            }
+        });
+
+        Class<?>[] testArray = tests.toArray(new Class<?>[tests.size()]);
+        Result results = core.run(testArray);
+
+        String reply = "";
+        for (Failure failure : results.getFailures())
+        {
+            reply += "Desc: " + failure.getDescription() +
+                     "Header: " + failure.getTestHeader() +
+                     "Message: " + failure.getMessage();
+        }
+
+        return reply;
     }
 
     /**

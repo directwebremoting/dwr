@@ -7,7 +7,6 @@ import javax.servlet.ServletContext;
 
 import org.directwebremoting.AjaxFilterChain;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.convert.AllConverterTest;
 import org.directwebremoting.convert.PrimitiveConverter;
 import org.directwebremoting.convert.mapped.Hibernate2Ex;
 import org.directwebremoting.convert.mapped.Hibernate3Ex;
@@ -21,12 +20,14 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.directwebremoting.convert.AllConverterTest.*;
+
 /**
  * The tests for the <code>PrimitiveConverter</code> class.
  * @see PrimitiveConverter
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class HibernateConverterTest extends AllConverterTest
+public class HibernateConverterTest
 {
     public HibernateConverterTest() throws Exception
     {
@@ -64,6 +65,7 @@ public class HibernateConverterTest extends AllConverterTest
     }
 
     @Test
+    @Ignore
     public void hibernateBasicsConvert() throws Exception
     {
         // Checks that do not need DB access
@@ -75,6 +77,7 @@ public class HibernateConverterTest extends AllConverterTest
     }
 
     @Test
+    @Ignore
     public void hibernate3sConvert() throws Exception
     {
         Database.init();
@@ -111,6 +114,7 @@ public class HibernateConverterTest extends AllConverterTest
     }
 
     @Test
+    @Ignore
     public void hibernate3Convert() throws Exception
     {
         Database.init();
