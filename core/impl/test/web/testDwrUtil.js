@@ -1,6 +1,14 @@
 
 createTestGroup("DwrUtil");
 
+/**
+ *
+ */
+function testDwrUtilXss() {
+  assertTrue(dwr.util.containsXssRiskyCharacters("dd<"));
+  assertFalse(dwr.util.containsXssRiskyCharacters("dd"));
+}
+
 var arrayFive = [ 'One', 'Two', 'Three', 'Four', 'Five' ];
 var arrayObject = [
   { name:'One', value:'1' },

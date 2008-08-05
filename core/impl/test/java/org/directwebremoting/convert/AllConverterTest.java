@@ -328,7 +328,7 @@ public class AllConverterTest
     }
     */
 
-    public void assertInboundConversion(String input, Class<?> convertTo, Object expected)
+    public static void assertInboundConversion(String input, Class<?> convertTo, Object expected)
     {
         ConverterManager converterManager = singletonContainer.getConverterManager();
         InboundContext ctx = new InboundContext();
@@ -365,7 +365,7 @@ public class AllConverterTest
         }
     }
 
-    public void assertInboundConversionFailure(String input, Class<?> convertTo)
+    public static void assertInboundConversionFailure(String input, Class<?> convertTo)
     {
         ConverterManager converterManager = singletonContainer.getConverterManager();
         InboundContext ctx = new InboundContext();
@@ -384,7 +384,7 @@ public class AllConverterTest
         }
     }
 
-    public void assertOutboundConversion(Object input, String expected) throws ConversionException
+    public static void assertOutboundConversion(Object input, String expected) throws ConversionException
     {
         ConverterManager converterManager = singletonContainer.getConverterManager();
         OutboundContext ctx = new OutboundContext(false);
