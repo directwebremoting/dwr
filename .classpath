@@ -70,7 +70,6 @@
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/legacy/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/dwrp/main/java"/>
-	<classpathentry kind="src" output="target/eclipse/test/classes" path="protocol/dwrp/test/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/json/main/java"/>
 	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-api-0.9.20080221.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
 	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-bayeux-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
