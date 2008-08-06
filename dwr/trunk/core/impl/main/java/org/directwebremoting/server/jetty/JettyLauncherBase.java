@@ -28,12 +28,12 @@ import org.mortbay.log.Log;
 import org.mortbay.util.Scanner;
 
 /**
- * Launch Jetty embedded.
+ * Launch Jetty embedded. Do not use this outside of DWR it is not supported.
  * It's also worth looking at the Eclipse Jetty Runner as an alternative
  * http://code.google.com/p/run-jetty-run/wiki/GettingStarted
  * @author Joe Walker [joe at getahead dot org]
  */
-class JettyLauncherBase
+public class JettyLauncherBase
 {
     /**
      * Sets up the server.
@@ -44,7 +44,7 @@ class JettyLauncherBase
      * @param port The TCP port to listen on
      */
     @SuppressWarnings("unchecked")
-    protected JettyLauncherBase(String contextHome, final String contextPath, int port)
+    public JettyLauncherBase(String contextHome, final String contextPath, int port)
     {
         server = new Server();
 

@@ -100,7 +100,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/struts/main/java"/>
-	<classpathentry kind="src" output="target/eclipse/other/classes" path="serverside/struts/customDemo/java"/>
 	<classpathentry kind="lib" path="serverside/various/lib/javax.jms-1.1.jar"/>
 	<classpathentry kind="lib" path="serverside/various/lib/jms-1.1.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/various/main/java"/>
