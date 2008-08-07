@@ -214,6 +214,7 @@ public class DefaultRemoter implements Remoter
      * should be used
      * @param scriptName The script for which we are generating parameter classes
      */
+    @SuppressWarnings("unused")
     protected String createParameterDefinitions(String scriptName)
     {
         StringBuilder buffer = new StringBuilder();
@@ -238,60 +239,7 @@ public class DefaultRemoter implements Remoter
                         if (!match.contains("*"))
                         {
                             paramBuffer.append('\n');
-
-                            // output: if (typeof this['<class>'] != 'function') { function <class>() {
-                            paramBuffer.append("if (typeof this['");
-                            paramBuffer.append(jsClassName);
-                            paramBuffer.append("'] != 'function') {\n");
-                            paramBuffer.append("  function ");
-                            paramBuffer.append(jsClassName).append("() {\n");
-
-                            // output: this.<property> = <init-value>;
-                            Class<?> mappedType;
-                            try
-                            {
-                                mappedType = LocalUtil.classForName(match);
-                            }
-                            catch (ClassNotFoundException ex)
-                            {
-                                throw new IllegalArgumentException(ex.getMessage());
-                            }
-
-                            Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
-                            for (Entry<String, Property> entry : properties.entrySet())
-                            {
-                                String name = entry.getKey();
-                                Property property = entry.getValue();
-                                Class<?> propType = property.getPropertyType();
-
-                                // Property name
-                                paramBuffer.append("    this.");
-                                paramBuffer.append(name);
-                                paramBuffer.append(" = ");
-
-                                // Default property values
-                                if (propType.isArray())
-                                {
-                                    paramBuffer.append("[]");
-                                }
-                                else if (propType == boolean.class)
-                                {
-                                    paramBuffer.append("false");
-                                }
-                                else if (propType.isPrimitive())
-                                {
-                                    paramBuffer.append("0");
-                                }
-                                else
-                                {
-                                    paramBuffer.append("null");
-                                }
-
-                                paramBuffer.append(";\n");
-                            }
-
-                            paramBuffer.append("  }\n");
-                            paramBuffer.append("}\n");
+                            paramBuffer.append(createConvertedClassDefinition(match, jsClassName, boConv));
                         }
                     }
                 }
@@ -309,6 +257,112 @@ public class DefaultRemoter implements Remoter
         buffer.append('\n');
 
         return buffer.toString();
+    }
+
+    /**
+     * Create a JavaScript mapped class definition for a converted class.
+     * @param className The converted Java class to generate code for
+     * @param jsClassName The desired JavaScript class name
+     * @param boConv The converted class's converter
+     */
+    private String createConvertedClassDefinition(String className, String jsClassName, NamedConverter boConv)
+    {
+        // The desired output should follow this scheme:
+        // (1)  if (!('pkg1' in this)) this.pkg1 = {};
+        // (1)  if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
+        // (2)  if (typeof this.pkg1.pkg2.MyClass != 'function') { 
+        // (2)    this.pkg1.pkg2.MyClass = function() {
+        // (3)       this.myProp = <initial value>;
+        // (3)       ...
+        // (3)    }
+        // (4)    this.pkg1.pkg2.MyClass['$dwrClassName'] = 'pkg1.pkg2.MyClass';
+        // (5)  }
+
+        StringBuilder buf = new StringBuilder();
+        String[] parts = jsClassName.split("\\.");
+
+        // Generate (1): if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
+        String path = "";
+        for (int i = 0; i < parts.length-1; i++)
+        {
+            String leaf = parts[i];
+            buf.append("if (!('");
+            buf.append(leaf);
+            buf.append("' in this");
+            buf.append(path);
+            buf.append(")) this");
+            buf.append(path);
+            buf.append(".");
+            buf.append(leaf);
+            buf.append(" = {};\n");
+            path += "." + leaf;
+        }
+        
+        // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() { 
+        buf.append("if (typeof this.");
+        buf.append(jsClassName);
+        buf.append(" != 'function') {\n");
+        buf.append("  this.");
+        buf.append(jsClassName);
+        buf.append(" = function() {\n");
+
+        // Generate (3): this.myProp = <initial value>;
+        Class<?> mappedType;
+        try
+        {
+            mappedType = LocalUtil.classForName(className);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
+
+        Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
+        for (Entry<String, Property> entry : properties.entrySet())
+        {
+            String name = entry.getKey();
+            Property property = entry.getValue();
+            Class<?> propType = property.getPropertyType();
+
+            // Property name
+            buf.append("    this.");
+            buf.append(name);
+            buf.append(" = ");
+
+            // Default property values
+            if (propType.isArray())
+            {
+                buf.append("[]");
+            }
+            else if (propType == boolean.class)
+            {
+                buf.append("false");
+            }
+            else if (propType.isPrimitive())
+            {
+                buf.append("0");
+            }
+            else
+            {
+                buf.append("null");
+            }
+
+            buf.append(";\n");
+        }
+
+        buf.append("  }\n");
+
+        // Generate (4): this.pkg1.pkg2.MyClass['$dwrClassName'] = 'pkg1.pkg2.MyClass';
+        buf.append("  this.");
+        buf.append(jsClassName);
+        buf.append("['$dwrClassName'] = '");
+        buf.append(jsClassName);
+        buf.append("';\n");
+        
+        // Generate (5): end of definition
+        buf.append("}\n");
+        
+        return buf.toString();
     }
 
     /**
