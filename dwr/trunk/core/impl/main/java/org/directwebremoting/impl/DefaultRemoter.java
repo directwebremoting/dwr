@@ -272,11 +272,17 @@ public class DefaultRemoter implements Remoter
         // (1)  if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
         // (2)  if (typeof this.pkg1.pkg2.MyClass != 'function') { 
         // (2)    this.pkg1.pkg2.MyClass = function() {
-        // (3)       this.myProp = <initial value>;
-        // (3)       ...
+        // (3)      this.myProp = <initial value>;
+        // (3)      ...
         // (3)    }
         // (4)    this.pkg1.pkg2.MyClass['$dwrClassName'] = 'pkg1.pkg2.MyClass';
-        // (5)  }
+        // (5)    this.pkg1.pkg2.MyClass.createFromMap = function(map) {
+        // (5)      var obj = new this(); // this = MyClass 
+        // (6)      if ('myProp' in map) obj.myProp = map.myProp;
+        // (6)      ...
+        // (6)      return obj;
+        // (6)    }
+        // (7)  }
 
         StringBuilder buf = new StringBuilder();
         String[] parts = jsClassName.split("\\.");
@@ -331,21 +337,13 @@ public class DefaultRemoter implements Remoter
 
             // Default property values
             if (propType.isArray())
-            {
                 buf.append("[]");
-            }
             else if (propType == boolean.class)
-            {
                 buf.append("false");
-            }
             else if (propType.isPrimitive())
-            {
                 buf.append("0");
-            }
             else
-            {
                 buf.append("null");
-            }
 
             buf.append(";\n");
         }
@@ -359,7 +357,28 @@ public class DefaultRemoter implements Remoter
         buf.append(jsClassName);
         buf.append("';\n");
         
-        // Generate (5): end of definition
+        // Generate (5): this.pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this.pkg1.pkg2.MyClass();
+        buf.append("  this.");
+        buf.append(jsClassName);
+        buf.append(".createFromMap = function(map) {\n");
+        buf.append("    var obj = new this();\n");
+        
+        // Generate (6): if ('myProp' in map) obj.myProp = map.myProp;
+        for (Entry<String, Property> entry : properties.entrySet())
+        {
+            String name = entry.getKey();
+            buf.append("    if ('");
+            buf.append(name);
+            buf.append("' in map) obj.");
+            buf.append(name);
+            buf.append(" = map.");
+            buf.append(name);
+            buf.append(";\n");
+        }
+        buf.append("    return obj;\n");
+        buf.append("  }\n");
+        
+        // Generate (7): end of definition
         buf.append("}\n");
         
         return buf.toString();
