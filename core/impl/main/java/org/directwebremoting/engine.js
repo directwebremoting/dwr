@@ -1039,19 +1039,6 @@ if (typeof this['dwr'] == 'undefined') {
     },
 
     /**
-     * The names of classes that need special treatment
-     */
-    errorClasses:{
-      "Error":Error,
-      "EvalError":EvalError,
-      "RangeError":RangeError,
-      "ReferenceError":ReferenceError,
-      "SyntaxError":SyntaxError,
-      "TypeError":TypeError,
-      "URIError":URIError
-    },
-
-    /**
      * Returns the classname of supplied argument obj. Similar to typeof, but
      * which returns the name of the constructor that created the object rather
      * than 'object'
@@ -1060,39 +1047,11 @@ if (typeof this['dwr'] == 'undefined') {
      * @return The name of the object
      */
     getObjectClassName:function(obj) {
-      // Try to find the classname by stringifying the object's constructor
-      // and extract <class> from "function <class>".
-      var str, regexpmatch;
-      if (obj && obj.constructor && obj.constructor.toString)
-      {
-        str = obj.constructor.toString();
-        regexpmatch = str.match(/function\s+(\w+)/);
-        if (regexpmatch && regexpmatch.length == 2) {
-          return regexpmatch[1];
-        }
-      }
-
-      // Now manually test against the core Error classes, as these in some
-      // browsers successfully match to the wrong class in the
-      // Object.toString() test we will do later
-      if (obj && obj.constructor) {
-        for (var errorname in dwr.engine.serialize.errorClasses) {
-          if (obj.constructor == dwr.engine.serialize.errorClasses[errorname]) return errorname;
-        }
-      }
-
-      // Try to find the classname by calling Object.toString() on the object
-      // and extracting <class> from "[object <class>]"
-      if (obj) {
-        str = Object.prototype.toString.call(obj);
-        regexpmatch = str.match(/\[object\s+(\w+)/);
-        if (regexpmatch && regexpmatch.length==2) {
-          return regexpmatch[1];
-        }
-      }
-
-      // Supplied argument was probably not an object, but what is better?
-      return "Object";
+      // Mapped classes supply their classname as a property of the constructor function
+      if (obj.constructor && "$dwrClassName" in obj.constructor)
+        return obj.constructor["$dwrClassName"];
+      else
+        return "Object";
     }
   };
 
