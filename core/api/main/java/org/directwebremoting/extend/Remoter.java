@@ -32,6 +32,21 @@ public interface Remoter
     String generateInterfaceScript(String scriptName, String contextServletPath) throws SecurityException;
 
     /**
+     * Generate JavaScript that forms a mapped DTO class
+     * @param jsClassName The mapped JavaScript class name
+     * @return JavaScript class definition
+     * @throws SecurityException
+     */
+    String generateDtoScript(String jsClassName) throws SecurityException;
+
+    /**
+     * Generate JavaScript with all mapped DTO classes
+     * @return JavaScript class definitions
+     * @throws SecurityException
+     */
+    String generateAllDtoScripts() throws SecurityException;
+
+    /**
      * Execute a set of remote calls and generate set of reply data for later
      * conversion to whatever wire protocol we are using today.
      * @param calls The set of calls to execute

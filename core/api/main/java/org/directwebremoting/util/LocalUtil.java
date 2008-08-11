@@ -120,7 +120,7 @@ public final class LocalUtil
      * @return <code>true</code> if the CharSequence is not <code>null</code>,
      * its length is greater than 0, and it does not contain whitespace only
      * @author Partly from the Spring Framework
-     * @see java.lang.Character#isWhitespace
+     * @see java.lang.Character#isWhitespace(char)
      */
     public static boolean hasText(CharSequence str) 
     {
@@ -188,6 +188,26 @@ public final class LocalUtil
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Determines if the specified string is permissible as a Java identifier
+     * potentially prefixed with package names.
+     * It tests each segment of the string separated by "." and returns true if 
+     * all segments have non-zero length with a Java
+     * identifier start as the first character and Java identifier parts in all
+     * remaining characters.
+     * @param test the string to be tested.
+     * @return true if the string is a Java identifier, false otherwise.
+     */
+    public static boolean isJavaIdentifierWithPackage(String test)
+    {
+        String[] segments = test.split("\\.");
+        for (int i = 0; i < segments.length; i++)
+        {
+            if (!isJavaIdentifier(segments[i])) return false;
+        }
         return true;
     }
 
