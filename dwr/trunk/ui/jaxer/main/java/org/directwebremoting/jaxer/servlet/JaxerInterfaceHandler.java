@@ -49,13 +49,4 @@ public class JaxerInterfaceHandler extends InterfaceHandler
         String contextServletPath = request.getContextPath() + request.getServletPath();
         return remoter.generateInterfaceScript(scriptName, contextServletPath);
     }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return "JaxerInterfaceHandler(" + interfaceHandlerUrl + ")";
-    }
 }

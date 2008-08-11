@@ -75,6 +75,22 @@ public class DefaultRemoter implements Remoter
         return buffer.toString();
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Remoter#generateDtoScript(java.lang.String)
+     */
+    public String generateDtoScript(String jsClassName) throws SecurityException
+    {
+        return createDtoClassDefinition(jsClassName);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Remoter#generateAllDtoScripts()
+     */
+    public String generateAllDtoScripts() throws SecurityException
+    {
+        return createAllDtoClassDefinitions();
+    }
+    
     /**
      * Create a class definition string.
      * This is similar to {@link EnginePrivate#getEngineInitScript()} except
@@ -211,61 +227,94 @@ public class DefaultRemoter implements Remoter
      * currently generating a proxy for.
      * <p>Currently the <code>scriptName</code> parameter is not used, we just
      * generate the class definitions for all types, however conceptually, it
-     * should be used
+     * should be used.
      * @param scriptName The script for which we are generating parameter classes
      */
     @SuppressWarnings("unused")
     protected String createParameterDefinitions(String scriptName)
     {
+        return createAllDtoClassDefinitions();
+    }
+    
+    /**
+     * Output the class definitions for all mapped converted classes.
+     */
+    protected String createAllDtoClassDefinitions()
+    {
         StringBuilder buffer = new StringBuilder();
 
         for (String match : converterManager.getConverterMatchStrings())
         {
-            try
+            Converter conv = converterManager.getConverterByMatchString(match);
+            // We will only generate JavaScript classes for compound objects/beans
+            if (conv instanceof NamedConverter)
             {
-                StringBuilder paramBuffer = new StringBuilder();
+                NamedConverter boConv = (NamedConverter) conv;
+                String jsClassName = boConv.getJavascript();
 
-                Converter conv = converterManager.getConverterByMatchString(match);
-                // We will only generate JavaScript classes for compound objects/beans
-                if (conv instanceof NamedConverter)
+                // We need a configured JavaScript class name
+                if (jsClassName != null && !"".equals(jsClassName))
                 {
-                    NamedConverter boConv = (NamedConverter) conv;
-                    String jsClassName = boConv.getJavascript();
-
-                    // We need a configured JavaScript class name
-                    if (jsClassName != null && !"".equals(jsClassName))
+                    // Wildcard match strings are currently not supported
+                    if (!match.contains("*"))
                     {
-                        // Wildcard match strings are currently not supported
-                        if (!match.contains("*"))
-                        {
-                            paramBuffer.append('\n');
-                            paramBuffer.append(createConvertedClassDefinition(match, jsClassName, boConv));
-                        }
+                        buffer.append(createDtoClassDefinition(match, jsClassName, boConv));
+                        buffer.append('\n');
                     }
                 }
-
-                buffer.append(paramBuffer.toString());
-            }
-            catch (Exception ex)
-            {
-                log.warn("Failed to create parameter declaration for " + match, ex);
-                buffer.append("// Missing parameter declaration for ");
-                buffer.append(match);
-                buffer.append(". See the server logs for details.");
             }
         }
-        buffer.append('\n');
 
         return buffer.toString();
     }
 
     /**
-     * Create a JavaScript mapped class definition for a converted class.
-     * @param className The converted Java class to generate code for
-     * @param jsClassName The desired JavaScript class name
-     * @param boConv The converted class's converter
+     * Create a JavaScript class definition for a mapped converted class.
+     * @param jsClassName The mapped class's JavaScript class name
      */
-    private String createConvertedClassDefinition(String className, String jsClassName, NamedConverter boConv)
+    protected String createDtoClassDefinition(String jsClassName)
+    {
+        StringBuilder buf = new StringBuilder();
+        for (String match : converterManager.getConverterMatchStrings())
+        {
+            Converter conv = converterManager.getConverterByMatchString(match);
+            // We will only generate JavaScript classes for compound objects/beans
+            if (conv instanceof NamedConverter)
+            {
+                NamedConverter boConv = (NamedConverter) conv;
+                if (jsClassName.equals(boConv.getJavascript()))
+                {
+                    // Wildcard match strings are currently not supported
+                    if (!match.contains("*"))
+                    {
+                        return createDtoClassDefinition(match, jsClassName, boConv);
+                    }
+                    else
+                    {
+                        log.warn("Failed to create class definition for JS class " + jsClassName + " due to wildcard match string.");
+                        buf.append("// Missing mapped class definition for ");
+                        buf.append(jsClassName);
+                        buf.append(". See the server logs for details.\n");
+                        return buf.toString();
+                    }
+                }
+            }
+        }
+
+        log.warn("Failed to create class definition for JS class " + jsClassName + " because it was not found.");
+        buf.append("// Missing mapped class definition for ");
+        buf.append(jsClassName);
+        buf.append(". See the server logs for details.\n");
+        return buf.toString();
+    }
+
+    /**
+     * Create a JavaScript class definition for a mapped converted class.
+     * @param className The converted class's Java class name
+     * @param jsClassName The mapped class's JavaScript class name
+     * @param boConv The class's converter
+     */
+    protected String createDtoClassDefinition(String className, String jsClassName, NamedConverter boConv)
     {
         // The desired output should follow this scheme:
         // (1)  if (!('pkg1' in this)) this.pkg1 = {};
@@ -283,105 +332,116 @@ public class DefaultRemoter implements Remoter
         // (6)      return obj;
         // (6)    }
         // (7)  }
-
-        StringBuilder buf = new StringBuilder();
-        String[] parts = jsClassName.split("\\.");
-
-        // Generate (1): if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
-        String path = "";
-        for (int i = 0; i < parts.length-1; i++)
+        try 
         {
-            String leaf = parts[i];
-            buf.append("if (!('");
-            buf.append(leaf);
-            buf.append("' in this");
-            buf.append(path);
-            buf.append(")) this");
-            buf.append(path);
-            buf.append(".");
-            buf.append(leaf);
-            buf.append(" = {};\n");
-            path += "." + leaf;
+            StringBuilder buf = new StringBuilder();
+            String[] parts = jsClassName.split("\\.");
+    
+            // Generate (1): if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
+            String path = "";
+            for (int i = 0; i < parts.length-1; i++)
+            {
+                String leaf = parts[i];
+                buf.append("if (!('");
+                buf.append(leaf);
+                buf.append("' in this");
+                buf.append(path);
+                buf.append(")) this");
+                buf.append(path);
+                buf.append(".");
+                buf.append(leaf);
+                buf.append(" = {};\n");
+                path += "." + leaf;
+            }
+            
+            // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() { 
+            buf.append("if (typeof this.");
+            buf.append(jsClassName);
+            buf.append(" != 'function') {\n");
+            buf.append("  this.");
+            buf.append(jsClassName);
+            buf.append(" = function() {\n");
+    
+            // Generate (3): this.myProp = <initial value>;
+            Class<?> mappedType;
+            try
+            {
+                mappedType = LocalUtil.classForName(className);
+            }
+            catch (ClassNotFoundException ex)
+            {
+                throw new IllegalArgumentException(ex.getMessage());
+            }
+    
+            Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
+            for (Entry<String, Property> entry : properties.entrySet())
+            {
+                String name = entry.getKey();
+                Property property = entry.getValue();
+                Class<?> propType = property.getPropertyType();
+    
+                // Property name
+                buf.append("    this.");
+                buf.append(name);
+                buf.append(" = ");
+    
+                // Default property values
+                if (propType.isArray())
+                    buf.append("[]");
+                else if (propType == boolean.class)
+                    buf.append("false");
+                else if (propType.isPrimitive())
+                    buf.append("0");
+                else
+                    buf.append("null");
+    
+                buf.append(";\n");
+            }
+    
+            buf.append("  }\n");
+    
+            // Generate (4): this.pkg1.pkg2.MyClass['$dwrClassName'] = 'pkg1.pkg2.MyClass';
+            buf.append("  this.");
+            buf.append(jsClassName);
+            buf.append("['$dwrClassName'] = '");
+            buf.append(jsClassName);
+            buf.append("';\n");
+            
+            // Generate (5): this.pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this.pkg1.pkg2.MyClass();
+            buf.append("  this.");
+            buf.append(jsClassName);
+            buf.append(".createFromMap = function(map) {\n");
+            buf.append("    var obj = new this();\n");
+            
+            // Generate (6): if ('myProp' in map) obj.myProp = map.myProp;
+            for (Entry<String, Property> entry : properties.entrySet())
+            {
+                String name = entry.getKey();
+                buf.append("    if ('");
+                buf.append(name);
+                buf.append("' in map) obj.");
+                buf.append(name);
+                buf.append(" = map.");
+                buf.append(name);
+                buf.append(";\n");
+            }
+            buf.append("    return obj;\n");
+            buf.append("  }\n");
+            
+            // Generate (7): end of definition
+            buf.append("}\n");
+            return buf.toString();
         }
-        
-        // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() { 
-        buf.append("if (typeof this.");
-        buf.append(jsClassName);
-        buf.append(" != 'function') {\n");
-        buf.append("  this.");
-        buf.append(jsClassName);
-        buf.append(" = function() {\n");
-
-        // Generate (3): this.myProp = <initial value>;
-        Class<?> mappedType;
-        try
+        catch (Exception ex)
         {
-            mappedType = LocalUtil.classForName(className);
-        }
-        catch (ClassNotFoundException ex)
-        {
-            throw new IllegalArgumentException(ex.getMessage());
-        }
-
-        Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
-        for (Entry<String, Property> entry : properties.entrySet())
-        {
-            String name = entry.getKey();
-            Property property = entry.getValue();
-            Class<?> propType = property.getPropertyType();
-
-            // Property name
-            buf.append("    this.");
-            buf.append(name);
-            buf.append(" = ");
-
-            // Default property values
-            if (propType.isArray())
-                buf.append("[]");
-            else if (propType == boolean.class)
-                buf.append("false");
-            else if (propType.isPrimitive())
-                buf.append("0");
-            else
-                buf.append("null");
-
-            buf.append(";\n");
+            log.warn("Failed to create class definition for JS class " + jsClassName, ex);
+            StringBuilder buf = new StringBuilder();
+            buf.append("// Missing mapped class definition for ");
+            buf.append(jsClassName);
+            buf.append(". See the server logs for details.\n");
+            return buf.toString();
         }
 
-        buf.append("  }\n");
-
-        // Generate (4): this.pkg1.pkg2.MyClass['$dwrClassName'] = 'pkg1.pkg2.MyClass';
-        buf.append("  this.");
-        buf.append(jsClassName);
-        buf.append("['$dwrClassName'] = '");
-        buf.append(jsClassName);
-        buf.append("';\n");
-        
-        // Generate (5): this.pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this.pkg1.pkg2.MyClass();
-        buf.append("  this.");
-        buf.append(jsClassName);
-        buf.append(".createFromMap = function(map) {\n");
-        buf.append("    var obj = new this();\n");
-        
-        // Generate (6): if ('myProp' in map) obj.myProp = map.myProp;
-        for (Entry<String, Property> entry : properties.entrySet())
-        {
-            String name = entry.getKey();
-            buf.append("    if ('");
-            buf.append(name);
-            buf.append("' in map) obj.");
-            buf.append(name);
-            buf.append(" = map.");
-            buf.append(name);
-            buf.append(";\n");
-        }
-        buf.append("    return obj;\n");
-        buf.append("  }\n");
-        
-        // Generate (7): end of definition
-        buf.append("}\n");
-        
-        return buf.toString();
     }
 
     /**

@@ -22,14 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.util.LocalUtil;
 
 /**
  * A handler for interface generation requests
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class InterfaceHandler extends JavaScriptHandler
+public class InterfaceHandler extends GeneratedJavaScriptHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -58,24 +57,6 @@ public class InterfaceHandler extends JavaScriptHandler
         return remoter.generateInterfaceScript(scriptName, contextServletPath);
     }
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.CachingHandler#getLastModifiedTime()
-     */
-    @Override
-    protected long getLastModifiedTime()
-    {
-        return LocalUtil.getSystemClassloadTime();
-    }
-
-    /**
-     * Setter for the remoter
-     * @param remoter The new remoter
-     */
-    public void setRemoter(Remoter remoter)
-    {
-        this.remoter = remoter;
-    }
-
     /**
      * Setter for the URL that this handler available on
      * @param interfaceHandlerUrl the interfaceHandlerUrl to set
@@ -91,13 +72,8 @@ public class InterfaceHandler extends JavaScriptHandler
     @Override
     public String toString()
     {
-        return "InterfaceHandler(" + interfaceHandlerUrl + ")";
+        return this.getClass().getSimpleName() + "(" + interfaceHandlerUrl + ")";
     }
-
-    /**
-     * The bean to execute remote requests and generate interfaces
-     */
-    protected Remoter remoter = null;
 
     /**
      * What URL is this handler available on?
