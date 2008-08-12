@@ -548,8 +548,8 @@ dwr.util.setValue = function(ele, val, options) {
 
   // Fall back to innerHTML and friends
   if (dwr.util._shouldEscapeHtml(options) && typeof(val) == "string") {
-    if (ele.textContent) ele.textContent = val;
-    else if (ele.innerText) ele.innerText = val;
+    if ("textContent" in ele) ele.textContent = val;
+    else if ("innerText" in ele) ele.innerText = val;
     else ele.innerHTML = dwr.util.escapeHtml(val);
   }
   else {
@@ -565,7 +565,7 @@ dwr.util.setValue = function(ele, val, options) {
 dwr.util._selectListItems = function(ele, val) {
   // We deal with select list elements by selecting the matching option
   // Begin by searching through the values
-  var found  = false;
+  var found  = 0;
   var i;
   var j;
   for (i = 0; i < ele.options.length; i++) {
@@ -573,11 +573,12 @@ dwr.util._selectListItems = function(ele, val) {
     for (j = 0; j < val.length; j++) {
       if (ele.options[i].value == val[j]) {
         ele.options[i].selected = true;
+        found++;
       }
     }
   }
   // If that fails then try searching through the visible text
-  if (found) return;
+  if (found == val.length) return;
 
   for (i = 0; i < ele.options.length; i++) {
     for (j = 0; j < val.length; j++) {
