@@ -37,10 +37,10 @@ public class DefaultRemoter2Test
     @Test
     public void testGenerateInterfaceScript()
     {
-        String script = remoter.generateInterfaceScript("JDate", "/path/to/dwr/servlet");
+        String script = remoter.generateInterfaceScript("JDate", true, "/path/to/dwr/servlet");
         assertTrue(script.contains("JDate.getTimezoneOffset"));
         assertTrue(script.contains("JDate._path = '/path/to/dwr/servlet';"));
-        assertTrue(!script.contains("JDate.notfy"));
+        assertTrue(!script.contains("JDate.notify"));
     }
 
     private Container container;

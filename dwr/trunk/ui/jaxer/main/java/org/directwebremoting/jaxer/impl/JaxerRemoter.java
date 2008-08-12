@@ -32,7 +32,7 @@ public class JaxerRemoter extends DefaultRemoter
      * @see org.directwebremoting.Remoter#generateInterfaceScript(java.lang.String, java.lang.String)
      */
     @Override
-    public String generateInterfaceScript(String fullCreatorName, String contextServletPath) throws SecurityException
+    public String generateInterfaceScript(String fullCreatorName, boolean includeDto, String contextServletPath) throws SecurityException
     {
         Creator creator = creatorManager.getCreator(fullCreatorName, false);
         if (creator == null)
@@ -45,7 +45,8 @@ public class JaxerRemoter extends DefaultRemoter
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(createParameterDefinitions(scriptName));
+        if (includeDto)
+            buffer.append(createParameterDefinitions(scriptName));
         buffer.append(EnginePrivate.getEngineInitScript());
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));

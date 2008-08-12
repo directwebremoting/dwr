@@ -47,6 +47,6 @@ public class JaxerInterfaceHandler extends InterfaceHandler
         scriptName = scriptName.replace(PathConstants.EXTENSION_JS, "");
 
         String contextServletPath = request.getContextPath() + request.getServletPath();
-        return remoter.generateInterfaceScript(scriptName, contextServletPath);
+        return remoter.generateInterfaceScript(scriptName, generateDtoClasses.matches(".*\\binterface\\b.*"), contextServletPath);
     }
 }
