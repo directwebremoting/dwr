@@ -155,7 +155,7 @@ public class DefaultRemoterTest
         replay(creatorManager);
         replay(accessControl);
 
-        String result = defaultRemoter.generateInterfaceScript("creatorName", "/path");
+        String result = defaultRemoter.generateInterfaceScript("creatorName", true, "/path");
 
         verify(creatorManager);
         verify(accessControl);
