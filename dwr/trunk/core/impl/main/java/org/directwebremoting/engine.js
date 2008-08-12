@@ -985,8 +985,9 @@ if (typeof this['dwr'] == 'undefined') {
     convertObject:function(batch, referto, data, name, depth) {
       // treat objects as an associative arrays
       var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data) + ":{";
-      var element;
-      for (element in data) {
+      var elementset = (data.constructor && data.constructor.$dwrClassMembers ? data.constructor.$dwrClassMembers : data);
+	  var element;
+      for (element in elementset) {
         if (typeof data[element] != "function") {
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
@@ -1049,7 +1050,7 @@ if (typeof this['dwr'] == 'undefined') {
     getObjectClassName:function(obj) {
       // Mapped classes supply their classname as a property of the constructor function
       if (obj.constructor && "$dwrClassName" in obj.constructor)
-        return obj.constructor["$dwrClassName"];
+        return obj.constructor.$dwrClassName;
       else
         return "Object";
     }
