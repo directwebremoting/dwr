@@ -36,6 +36,12 @@ public class DtoHandler extends GeneratedJavaScriptHandler
     @Override
     protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
+        if (!generateDtoClasses.matches(".*\\bdto\\b.*"))
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return "";
+        }
+
         String jsClassName = request.getPathInfo();
 
         if (!jsClassName.startsWith(dtoHandlerUrl) || !jsClassName.endsWith(PathConstants.EXTENSION_JS))
@@ -65,6 +71,15 @@ public class DtoHandler extends GeneratedJavaScriptHandler
         this.dtoHandlerUrl = dtoHandlerUrl;
     }
 
+    /**
+     * Setter for the generator setting.
+     * @param generateDtoClasses list of enabled places to generate DTO classes in
+     */
+    public void setGenerateDtoClasses(String generateDtoClasses)
+    {
+        this.generateDtoClasses = generateDtoClasses;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -78,6 +93,11 @@ public class DtoHandler extends GeneratedJavaScriptHandler
      * What URL is this handler available on?
      */
     protected String dtoHandlerUrl;
+
+    /**
+     * List of enabled places to generate DTO classes in
+     */
+    protected String generateDtoClasses;
 
     /**
      * The log stream
