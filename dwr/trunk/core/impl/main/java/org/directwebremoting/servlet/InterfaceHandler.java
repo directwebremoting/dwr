@@ -54,7 +54,7 @@ public class InterfaceHandler extends GeneratedJavaScriptHandler
         }
 
         String contextServletPath = request.getContextPath() + request.getServletPath();
-        return remoter.generateInterfaceScript(scriptName, contextServletPath);
+        return remoter.generateInterfaceScript(scriptName, generateDtoClasses.matches(".*\\binterface\\b.*"), contextServletPath);
     }
 
     /**
@@ -66,6 +66,15 @@ public class InterfaceHandler extends GeneratedJavaScriptHandler
         this.interfaceHandlerUrl = interfaceHandlerUrl;
     }
 
+    /**
+     * Setter for the generator setting.
+     * @param generateDtoClasses list of enabled places to generate DTO classes in
+     */
+    public void setGenerateDtoClasses(String generateDtoClasses)
+    {
+        this.generateDtoClasses = generateDtoClasses;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -79,6 +88,11 @@ public class InterfaceHandler extends GeneratedJavaScriptHandler
      * What URL is this handler available on?
      */
     protected String interfaceHandlerUrl;
+
+    /**
+     * List of enabled places to generate DTO classes in
+     */
+    protected String generateDtoClasses;
 
     /**
      * The log stream

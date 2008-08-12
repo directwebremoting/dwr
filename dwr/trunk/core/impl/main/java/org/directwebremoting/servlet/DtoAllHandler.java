@@ -32,9 +32,24 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
     @Override
     protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
+        if (!generateDtoClasses.matches(".*\\bdtoall\\b.*"))
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return "";
+        }
+        
         return remoter.generateAllDtoScripts();
     }
 
+    /**
+     * Setter for the generator setting.
+     * @param generateDtoClasses list of enabled places to generate DTO classes in
+     */
+    public void setGenerateDtoClasses(String generateDtoClasses)
+    {
+        this.generateDtoClasses = generateDtoClasses;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -43,4 +58,9 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
     {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * List of enabled places to generate DTO classes in
+     */
+    protected String generateDtoClasses;
 }

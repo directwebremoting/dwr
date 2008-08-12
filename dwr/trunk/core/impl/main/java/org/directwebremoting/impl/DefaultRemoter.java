@@ -62,11 +62,12 @@ public class DefaultRemoter implements Remoter
     /* (non-Javadoc)
      * @see org.directwebremoting.Remoter#generateInterfaceScript(java.lang.String, java.lang.String)
      */
-    public String generateInterfaceScript(String scriptName, String contextServletPath) throws SecurityException
+    public String generateInterfaceScript(String scriptName, boolean includeDto, String contextServletPath) throws SecurityException
     {
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(createParameterDefinitions(scriptName));
+        if (includeDto)
+            buffer.append(createParameterDefinitions(scriptName));
         buffer.append(EnginePrivate.getEngineInitScript());
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));

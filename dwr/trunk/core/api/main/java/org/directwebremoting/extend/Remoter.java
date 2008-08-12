@@ -25,11 +25,12 @@ public interface Remoter
     /**
      * Generate some Javascript that forms an interface definition
      * @param scriptName The script to generate for
+     * @param includeDto Specifies whether mapped DTO classes should be added
      * @param contextServletPath request.contextPath + request.servletPath.
      * @return An interface javascript
      * @throws SecurityException
      */
-    String generateInterfaceScript(String scriptName, String contextServletPath) throws SecurityException;
+    String generateInterfaceScript(String scriptName, boolean includeDto, String contextServletPath) throws SecurityException;
 
     /**
      * Generate JavaScript that forms a mapped DTO class
