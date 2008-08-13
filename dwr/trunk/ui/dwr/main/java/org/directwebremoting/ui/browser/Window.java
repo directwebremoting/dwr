@@ -24,7 +24,7 @@ import org.directwebremoting.ui.Callback;
 import org.directwebremoting.ui.ScriptProxy;
 
 /**
- * 
+ * A copy of some of the functions from the Window DOM object on the server
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Window
@@ -127,19 +127,4 @@ public class Window
 
         ScriptProxy.addScript(script);
     }
-
-    /*
-     * This would be good, but it doesn't work on some browsers
-     * @param title The page to navigate to
-     *
-    public static void setTitle(String title)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendData("window.document.title = '" + title + "';");
-
-        Collection<ScriptSession> sessions = Browser.getTargetSessions();
-        ScriptProxy proxy = new ScriptProxy(sessions);
-        proxy.addScript(script);
-    }
-    */
 }
