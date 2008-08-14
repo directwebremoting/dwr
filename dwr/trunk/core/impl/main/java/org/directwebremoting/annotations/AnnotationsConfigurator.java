@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.convert.BeanConverter;
@@ -82,9 +82,15 @@ public class AnnotationsConfigurator implements Configurator
                 String classesStr = (String) data;
                 for (String element : classesStr.split(","))
                 {
+                    element = element.trim();
+                    if (element.length() == 0)
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        Class<?> clazz = LocalUtil.classForName(element.trim());
+                        Class<?> clazz = LocalUtil.classForName(element);
                         classes.add(clazz);
                     }
                     catch (Exception ex)
