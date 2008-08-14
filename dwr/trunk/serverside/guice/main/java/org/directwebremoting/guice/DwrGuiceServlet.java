@@ -15,9 +15,6 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,8 +27,12 @@ import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
+import org.directwebremoting.util.FakeServletConfig;
 
-import static org.directwebremoting.guice.util.ContextCloseHandlers.newExceptionLoggingCloseableHandler;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
+import static org.directwebremoting.guice.util.ContextCloseHandlers.*;
 
 /**
  * An extension of the basic
@@ -64,7 +65,7 @@ public class DwrGuiceServlet extends DwrServlet
                     // Since ServletConfig is immutable, we use a modifiable
                     // decoration of the real servlet configuration and pass
                     // that to the init method of the superclass.
-                    ModifiableServletConfig config = new ModifiableServletConfig(servletConfig);
+                    FakeServletConfig config = new FakeServletConfig(servletConfig);
 
                     // Apply settings configured at bind-time.
                     setInitParameters(config);
@@ -129,14 +130,14 @@ public class DwrGuiceServlet extends DwrServlet
      * Override web.xml <init-param> settings in each case that injection
      * is successful.
      */
-    private void setInitParameters(ModifiableServletConfig config)
+    private void setInitParameters(FakeServletConfig config)
     {
         InjectedConfig cfg = new InjectedConfig(config);
         DwrGuiceUtil.getInjector().injectMembers(cfg);
         cfg.setParameters();
     }
 
-    private void configureDelegatedTypes(ModifiableServletConfig config)
+    private void configureDelegatedTypes(FakeServletConfig config)
     {
         // Get the user-specified type names, if any, for CreatorManager
         // and ConverterManager and stash them (thread-locally) so that

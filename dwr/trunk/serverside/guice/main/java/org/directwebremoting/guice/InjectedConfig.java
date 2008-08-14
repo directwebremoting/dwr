@@ -15,43 +15,25 @@
  */
 package org.directwebremoting.guice;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.directwebremoting.extend.Configurator;
-import static org.directwebremoting.guice.ParamName.ACTIVE_REVERSE_AJAX_ENABLED;
-import static org.directwebremoting.guice.ParamName.ALLOW_GET_FOR_SAFARI;
-import static org.directwebremoting.guice.ParamName.ALLOW_SCRIPT_TAG_REMOTING;
-import static org.directwebremoting.guice.ParamName.CLASSES;
-import static org.directwebremoting.guice.ParamName.CROSS_DOMAIN_SESSION_SECURITY;
-import static org.directwebremoting.guice.ParamName.DEBUG;
-import static org.directwebremoting.guice.ParamName.DISCONNECTED_TIME;
-import static org.directwebremoting.guice.ParamName.IGNORE_LAST_MODIFIED;
-import static org.directwebremoting.guice.ParamName.MAX_CALL_COUNT;
-import static org.directwebremoting.guice.ParamName.MAX_POLL_HITS_PER_SECOND;
-import static org.directwebremoting.guice.ParamName.MAX_WAITING_THREADS;
-import static org.directwebremoting.guice.ParamName.MAX_WAIT_AFTER_WRITE;
-import static org.directwebremoting.guice.ParamName.NORMALIZE_INCLUDES_QUERY_STRING;
-import static org.directwebremoting.guice.ParamName.OVERRIDE_PATH;
-import static org.directwebremoting.guice.ParamName.POLL_AND_COMET_ENABLED;
-import static org.directwebremoting.guice.ParamName.POST_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.PRE_STREAM_WAIT_TIME;
-import static org.directwebremoting.guice.ParamName.SCRIPT_COMPRESSED;
-import static org.directwebremoting.guice.ParamName.SCRIPT_SESSION_TIMEOUT;
-import static org.directwebremoting.guice.ParamName.SESSION_COOKIE_NAME;
-import static org.directwebremoting.guice.ParamName.WELCOME_FILES;
-import static org.directwebremoting.impl.StartupUtil.INIT_CUSTOM_CONFIGURATOR;
+import org.directwebremoting.util.FakeServletConfig;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
+import static org.directwebremoting.guice.ParamName.*;
+import static org.directwebremoting.impl.StartupUtil.*;
 
 
 class InjectedConfig
 {
-    InjectedConfig(ModifiableServletConfig config)
+    InjectedConfig(FakeServletConfig config)
     {
         this.config = config;
     }
@@ -142,7 +124,7 @@ class InjectedConfig
 
     @Inject(optional=true) Configurator configurator = null;
 
-    private final ModifiableServletConfig config;
+    private final FakeServletConfig config;
 
 
     private static String classesToString(Collection<Class<?>> classes)
