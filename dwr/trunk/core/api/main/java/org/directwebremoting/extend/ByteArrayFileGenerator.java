@@ -16,39 +16,36 @@
 package org.directwebremoting.extend;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.directwebremoting.util.LocalUtil;
-
 /**
- * A way to convert {@link InputStream}s to files so they can be written using
- * a FileServingServlet or similar.
+ * A way to convert byte arrays to files so they can be written using a
+ * FileServingServlet or similar.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class InputStreamFileGenerator extends AbstractFileGenerator
+public class ByteArrayFileGenerator extends AbstractFileGenerator
 {
     /**
      * Setup the image to convert
-     * @param in the data to stream
+     * @param buffer the data to stream
      * @param mimeType The mime type to convert the image into
      */
-    public InputStreamFileGenerator(InputStream in, String filename, String mimeType)
+    public ByteArrayFileGenerator(byte[] buffer, String filename, String mimeType)
     {
         super(filename, mimeType);
-        this.in = in;
+        this.buffer = buffer;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.DownloadManager.FileGenerator#generateFile(java.io.OutputStream)
+     * @see org.directwebremoting.extend.FileGenerator#generateFile(java.io.OutputStream)
      */
     public void generateFile(OutputStream out) throws IOException
     {
-        LocalUtil.readFully(in, out);
+        out.write(buffer);
     }
 
     /**
-     * The stream that we are about to export
+     * The data we wish to squirt to the browser.
      */
-    protected final InputStream in;
+    private final byte[] buffer;
 }

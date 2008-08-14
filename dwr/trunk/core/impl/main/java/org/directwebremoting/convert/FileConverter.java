@@ -16,6 +16,7 @@
 package org.directwebremoting.convert;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,6 +27,7 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractConverter;
+import org.directwebremoting.extend.ByteArrayFileGenerator;
 import org.directwebremoting.extend.ContainerUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DataUrlDownloadManager;
@@ -41,6 +43,7 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.BrowserDetect;
+import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.UserAgent;
 
 /**
@@ -48,6 +51,7 @@ import org.directwebremoting.util.UserAgent;
  * supported. 
  * Files come from an &lt;input type=&quot;file&quot;/&gt; on the client.
  * @author Lance Semmens [uklance at gmail dot com]
+ * @author Joe Walker [joe at getahead dot org]
  */
 public class FileConverter extends AbstractConverter implements Converter
 {
@@ -56,25 +60,32 @@ public class FileConverter extends AbstractConverter implements Converter
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
-        FormField formField = data.getFormField();
-        if (paramType == FileTransfer.class)
+        try
         {
-            return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getInputStream());
-        }
-        else if (paramType == InputStream.class)
-        {
-            return formField.getInputStream();
-        }
-        else if (paramType == BufferedImage.class)
-        {
-            try
+            FormField formField = data.getFormField();
+            if (paramType == FileTransfer.class)
+            {
+                return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getInputStream());
+            }
+            else if (paramType == InputStream.class)
+            {
+                return formField.getInputStream();
+            }
+            else if (paramType == BufferedImage.class)
             {
                 return ImageIO.read(formField.getInputStream());
             }
-            catch (IOException ex)
+            else if (paramType.isArray() && paramType.getComponentType() == Byte.TYPE)
             {
-                throw new ConversionException(paramType, ex);
+                InputStream in = formField.getInputStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                LocalUtil.readFully(in, out);
+                return out.toByteArray();
             }
+        }
+        catch (IOException ex)
+        {
+            throw new ConversionException(paramType, ex);
         }
 
         throw new ConversionException(paramType, "File conversion is not possible for a " + paramType);
@@ -108,6 +119,11 @@ public class FileConverter extends AbstractConverter implements Converter
             {
                 FileTransfer in = (FileTransfer) object;
                 generator = new FileTransferFileGenerator(in);
+            }
+            else if (object.getClass().isArray() && object.getClass().getComponentType() == Byte.TYPE)
+            {
+                byte[] buffer = (byte[]) object;
+                generator = new ByteArrayFileGenerator(buffer, "download.dat", "binary/octet-stream");
             }
             else
             {
