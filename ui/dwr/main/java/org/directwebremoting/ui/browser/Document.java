@@ -31,7 +31,7 @@ public class Document
      */
     public static void setCookie(String name, String value)
     {
-        ScriptProxy.addFunctionCall("document.cookie = \"" + name + "=" + value + "\"");
+        ScriptProxy.addScript("document.cookie = \"" + JavascriptUtil.escapeJavaScript(name) + "=" + JavascriptUtil.escapeJavaScript(value) + "\"");
     }
 
     /**
@@ -39,14 +39,14 @@ public class Document
      */
     public static void setCookie(Cookie cookie)
     {
-        String name = cookie.getName();
-        String value = cookie.getValue();
-        String domain = cookie.getDomain() == null ? "" : ";domain=" + cookie.getDomain();
-        String path = cookie.getPath() == null ? "" : ";path=" + cookie.getPath();
+        String name = JavascriptUtil.escapeJavaScript(cookie.getName());
+        String value = JavascriptUtil.escapeJavaScript(cookie.getValue());
+        String domain = cookie.getDomain() == null ? "" : ";domain=" + JavascriptUtil.escapeJavaScript(cookie.getDomain());
+        String path = cookie.getPath() == null ? "" : ";path=" + JavascriptUtil.escapeJavaScript(cookie.getPath());
         String maxAge = cookie.getMaxAge() == -1 ? "" : ";max-age=" + cookie.getMaxAge();
-        String secure = !cookie.getSecure() ? "" : ";secure=" + cookie.getSecure();
+        String secure = !cookie.getSecure() ? "" : ";secure=true";
 
-        ScriptProxy.addFunctionCall("document.cookie = \"" + name + "=" + value + domain + path + maxAge + secure + "\"");
+        ScriptProxy.addScript("document.cookie = \"" + name + "=" + value + domain + path + maxAge + secure + "\"");
     }
 
     /**
