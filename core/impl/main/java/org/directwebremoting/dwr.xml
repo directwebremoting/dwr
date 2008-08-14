@@ -85,7 +85,7 @@
     <convert converter="url" match="java.net.URL"/>
 
     <convert converter="array" match="[Z"/>
-    <convert converter="array" match="[B"/>
+    <convert converter="file" match="[B"/>
     <convert converter="array" match="[S"/>
     <convert converter="array" match="[I"/>
     <convert converter="array" match="[J"/>
