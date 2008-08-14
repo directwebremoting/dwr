@@ -149,9 +149,8 @@ else if (document.all) {
  * Alias $ to dwr.util.byId
  * @see http://getahead.org/dwr/browser/util/$
  */
-var $;
-if (!$) {
-  $ = dwr.util.byId;
+if (this['$'] == null) {
+  this['$'] = dwr.util.byId;
 }
 
 /**
