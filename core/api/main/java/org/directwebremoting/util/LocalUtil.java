@@ -18,7 +18,9 @@ package org.directwebremoting.util;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -503,6 +505,18 @@ public final class LocalUtil
                 };
             }
         };
+    }
+
+    /**
+     * Go Java! Why do I even need to do this?
+     * @param en The Enumeration that we want to iterate over
+     * @param type For when we were given an Enumeration<?> and need an Iterator<T>
+     * @return An implementation of {@link Iterable} for use in a for each loop
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Iterable<T> iterableizer(Enumeration<?> en, Class<T> type)
+    {
+        return iterableizer((Enumeration<T>) en);
     }
 
     /**
@@ -1212,11 +1226,6 @@ public final class LocalUtil
     }
 
     /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(LocalUtil.class);
-
-    /**
      * Utility to find a getter and return it's value from an object.
      * If Java had the option to temporarily do dynamic typing there would be
      * no need for this.
@@ -1225,19 +1234,76 @@ public final class LocalUtil
      * name by upper-casing the first letter (in the EN locale) and prefixing
      * with 'get'
      * @return The value of property
-     * @throws NoSuchMethodException If the getter was missing
-     * @throws SecurityException If the getter was not accessible
-     * @throws IllegalArgumentException If something else went wrong
-     * @throws IllegalAccessException If something else went wrong
-     * @throws InvocationTargetException If something else went wrong
      */
-    public static Object getProperty(Object pojo, String propertyName) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException
+    @SuppressWarnings("unchecked")
+    public static <T> T getProperty(Object pojo, String propertyName, Class<T> type)
     {
         Class<?> real = pojo.getClass();
-    
+
         String getterName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
-        
-        Method method = real.getMethod(getterName);
-        return method.invoke(pojo);
+
+        try
+        {
+            Method method = real.getMethod(getterName);
+            if (method.getReturnType() != type)
+            {
+                log.debug("Expected type of " + real.getName() + "." + propertyName + " was " + type.getName() + " but found " + method.getReturnType().getName() + ".");
+                return null;
+            }
+            else
+            {
+                return (T) method.invoke(pojo);
+            }
+        }
+        catch (Exception ex)
+        {
+            log.debug("Failed to get property called " + propertyName + " from a " + real.getName() + ": " + ex);
+            return null;
+        }
     }
+
+    /**
+     * Read all the data from an InputStream and write it to an OutputStream
+     * @throws IOException If the read or write operations fail
+     */
+    public static void readFully(InputStream in, OutputStream out) throws IOException
+    {
+        byte[] buffer = new byte[1024];
+        while (true)
+        {
+            int length = in.read(buffer);
+            if (length == -1)
+            {
+                break;
+            }
+            out.write(buffer, 0, length);
+        }
+    }
+
+    /**
+     * Read all the data from a {@link BufferedReader} and save it in a String
+     * @throws IOException If the read or write operations fail
+     */
+    public static String readFully(BufferedReader in) throws IOException
+    {
+        StringBuffer fileBuffer = new StringBuffer();
+        while (true)
+        {
+            String line = in.readLine();
+            if (line == null)
+            {
+                break;
+            }
+    
+            fileBuffer.append(line);
+            fileBuffer.append('\n');
+        }
+    
+        return fileBuffer.toString();
+    }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(LocalUtil.class);
 }

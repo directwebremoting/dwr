@@ -306,31 +306,16 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
                 }
                 else
                 {
-                    StringBuffer fileBuffer = new StringBuffer();
-
                     BufferedReader in = new BufferedReader(new InputStreamReader(raw));
-                    while (true)
+                    try
                     {
-                        try
-                        {
-                            String line = in.readLine();
-                            if (line == null)
-                            {
-                                break;
-                            }
-
-                            fileBuffer.append(line);
-                            fileBuffer.append('\n');
-                        }
-                        catch (IOException ex)
-                        {
-                            fileBuffer.append(ex.toString());
-                            fileBuffer.append('\n');
-                            break;
-                        }
+                        output = LocalUtil.readFully(in);
                     }
-
-                    output = fileBuffer.toString();
+                    catch (IOException ex)
+                    {
+                        log.error("Failed to read help text from resource file.", ex);
+                        output = "Failed to read help text from resource file.";
+                    }
                 }
 
                 scriptCache.put(PathConstants.FILE_HELP, output);

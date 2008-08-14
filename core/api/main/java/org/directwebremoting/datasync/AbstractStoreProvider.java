@@ -99,15 +99,8 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
                 String testProperty = entry.getKey();
                 String testValue = entry.getValue();
 
-                try
-                {
-                    String realValue = LocalUtil.getProperty(pojo, testProperty).toString();
-                    if (!testValue.equals(realValue))
-                    {
-                        return false;
-                    }
-                }
-                catch (NoSuchMethodException ex)
+                String realValue = LocalUtil.getProperty(pojo, testProperty, String.class);
+                if (!testValue.equals(realValue))
                 {
                     return false;
                 }

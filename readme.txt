@@ -50,9 +50,13 @@ Tags used in source tree
 
 PERFORMANCE:
   This code is not optimal, however we are delaying tweaking until we know that
-  performance is an issue
+  performance is an issue.
 TODO:
-  Something needs completing
+  Something needs completing.
 JDK*:
   When we move the default support level from one JDK to another, we will need
-  to alter this code
+  to alter this code.
+SERVLET*:
+  When we move the default servlet spec level from one version to another, we
+  will need to alter this code.
+  

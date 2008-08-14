@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.datasync;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -31,19 +29,6 @@ public class PojoAttributeValueExtractor implements AttributeValueExtractor
      */
     public Object getValue(Object bean, String property)
     {
-        try
-        {
-            return LocalUtil.getProperty(bean, property);
-        }
-        catch (Exception ex)
-        {
-            log.error("Failed to getValue of property: " + property + ", from a instance of " + bean.getClass().getName(), ex);
-            return null;
-        }
+        return LocalUtil.getProperty(bean, property, Object.class);
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(PojoAttributeValueExtractor.class);
 }
