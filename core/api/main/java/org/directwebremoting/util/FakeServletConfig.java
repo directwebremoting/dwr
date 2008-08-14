@@ -25,7 +25,8 @@ import javax.servlet.ServletContext;
 
 /**
  * A fake implementation of ServletConfig for cases (Like inside Spring) when
- * you don't have a real one.
+ * you don't have a real one, or when you want to modify the initParameters
+ * provided by the real {@link ServletConfig}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class FakeServletConfig implements ServletConfig
@@ -48,11 +49,22 @@ public class FakeServletConfig implements ServletConfig
     {
         this.name = name;
         this.servletContext = servletContext;
-        this.initParameters = initParameters;
+        this.initParameters = (initParameters != null) ? initParameters : new HashMap<String, String>();
+    }
 
-        if (this.initParameters == null)
+    /**
+     * Copy the values from another {@link ServletConfig} so we can modify them.
+     */
+    public FakeServletConfig(ServletConfig servletConfig)
+    {
+        this.name = servletConfig.getServletName();
+        this.servletContext = servletConfig.getServletContext();
+        this.initParameters = new HashMap<String, String>();
+
+        for (String key : LocalUtil.iterableizer(servletConfig.getInitParameterNames(), String.class))
         {
-            this.initParameters = new HashMap<String, String>();
+            String value = servletConfig.getInitParameter(key);
+            initParameters.put(key, value);
         }
     }
 
@@ -70,6 +82,14 @@ public class FakeServletConfig implements ServletConfig
     public ServletContext getServletContext()
     {
         return servletContext;
+    }
+
+    /**
+     * Modify an init parameter
+     */
+    public void setInitParameter(String name, String value)
+    {
+        initParameters.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -104,10 +124,10 @@ public class FakeServletConfig implements ServletConfig
     /**
      * The servlet deployment information
      */
-    private ServletContext servletContext;
+    private final ServletContext servletContext;
 
     /**
      * Initialization parameters
      */
-    private Map<String, String> initParameters;
+    private final Map<String, String> initParameters;
 }
