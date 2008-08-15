@@ -28,7 +28,6 @@ import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.util.SharedObjects;
 
 /**
  * An Alarm that goes off whenever output happens on a {@link ScriptSession}.
@@ -40,11 +39,12 @@ public class OutputAlarm implements Alarm
      * @param scriptSession The script session to monitor
      * @param maxWaitAfterWrite How long do we wait after output
      */
-    public OutputAlarm(Sleeper sleeper, RealScriptSession scriptSession, int maxWaitAfterWrite)
+    public OutputAlarm(Sleeper sleeper, RealScriptSession scriptSession, int maxWaitAfterWrite, ScheduledThreadPoolExecutor executor)
     {
         this.sleeper = sleeper;
         this.maxWaitAfterWrite = maxWaitAfterWrite;
         this.scriptSession = scriptSession;
+        this.executor = executor;
 
         conduit = new AlarmScriptConduit();
         try
@@ -104,7 +104,6 @@ public class OutputAlarm implements Alarm
                     }
                 };
 
-                ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
                 future = executor.schedule(runnable, maxWaitAfterWrite, TimeUnit.MILLISECONDS);
             }
 
@@ -136,6 +135,12 @@ public class OutputAlarm implements Alarm
      * The future result that allows us to cancel the timer
      */
     protected ScheduledFuture<?> future;
+
+    /**
+     * How we schedule the ScriptConduit to call {@link Sleeper#wakeUp()}
+     * after {@link #maxWaitAfterWrite} millis has passed.
+     */
+    protected final ScheduledThreadPoolExecutor executor;
 
     /**
      * The log stream

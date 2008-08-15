@@ -67,7 +67,9 @@ public class DefaultRemoter implements Remoter
         StringBuilder buffer = new StringBuilder();
 
         if (includeDto)
+        {
             buffer.append(createParameterDefinitions(scriptName));
+        }
         buffer.append(EnginePrivate.getEngineInitScript());
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));
@@ -91,7 +93,7 @@ public class DefaultRemoter implements Remoter
     {
         return createAllDtoClassDefinitions();
     }
-    
+
     /**
      * Create a class definition string.
      * This is similar to {@link EnginePrivate#getEngineInitScript()} except
@@ -138,14 +140,14 @@ public class DefaultRemoter implements Remoter
             absolutePath.append("://");
             absolutePath.append(request.getServerName());
 
-            if (port > 0 && 
+            if (port > 0 &&
                 (("http".equalsIgnoreCase(scheme) && port != 80) ||
                  ("https".equalsIgnoreCase(scheme) && port != 443)))
             {
                 absolutePath.append(':');
                 absolutePath.append(port);
             }
-            
+
             absolutePath.append(request.getContextPath());
             absolutePath.append(request.getServletPath());
 
@@ -231,12 +233,11 @@ public class DefaultRemoter implements Remoter
      * should be used.
      * @param scriptName The script for which we are generating parameter classes
      */
-    @SuppressWarnings("unused")
     protected String createParameterDefinitions(String scriptName)
     {
         return createAllDtoClassDefinitions();
     }
-    
+
     /**
      * Output the class definitions for all mapped converted classes.
      */
@@ -320,7 +321,7 @@ public class DefaultRemoter implements Remoter
         // The desired output should follow this scheme:
         // (1)  if (!('pkg1' in this)) this.pkg1 = {};
         // (1)  if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
-        // (2)  if (typeof this.pkg1.pkg2.MyClass != 'function') { 
+        // (2)  if (typeof this.pkg1.pkg2.MyClass != 'function') {
         // (2)    this.pkg1.pkg2.MyClass = function() {
         // (3)      this.myProp = <initial value>;
         // (3)      ...
@@ -330,17 +331,17 @@ public class DefaultRemoter implements Remoter
         // (6)    this.pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {}; // object is placeholder for additional info in the future and also evals to true
         // (6)    ...
         // (7)    this.pkg1.pkg2.MyClass.createFromMap = function(map) {
-        // (7)      var obj = new this(); // this = MyClass = constructor function 
+        // (7)      var obj = new this(); // this = MyClass = constructor function
         // (8)      if ('myProp' in map) obj.myProp = map.myProp;
         // (8)      ...
         // (8)      return obj;
         // (8)    }
         // (9)  }
-        try 
+        try
         {
             StringBuilder buf = new StringBuilder();
             String[] parts = jsClassName.split("\\.");
-    
+
             // Generate (1): if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
             String path = "";
             for (int i = 0; i < parts.length-1; i++)
@@ -357,15 +358,15 @@ public class DefaultRemoter implements Remoter
                 buf.append(" = {};\n");
                 path += "." + leaf;
             }
-            
-            // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() { 
+
+            // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() {
             buf.append("if (typeof this.");
             buf.append(jsClassName);
             buf.append(" != 'function') {\n");
             buf.append("  this.");
             buf.append(jsClassName);
             buf.append(" = function() {\n");
-    
+
             // Generate (3): this.myProp = <initial value>;
             Class<?> mappedType;
             try
@@ -376,46 +377,54 @@ public class DefaultRemoter implements Remoter
             {
                 throw new IllegalArgumentException(ex.getMessage());
             }
-    
+
             Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
             for (Entry<String, Property> entry : properties.entrySet())
             {
                 String name = entry.getKey();
                 Property property = entry.getValue();
                 Class<?> propType = property.getPropertyType();
-    
+
                 // Property name
                 buf.append("    this.");
                 buf.append(name);
                 buf.append(" = ");
-    
+
                 // Default property values
                 if (propType.isArray())
+                {
                     buf.append("[]");
+                }
                 else if (propType == boolean.class)
+                {
                     buf.append("false");
+                }
                 else if (propType.isPrimitive())
+                {
                     buf.append("0");
+                }
                 else
+                {
                     buf.append("null");
-    
+                }
+
                 buf.append(";\n");
             }
-    
+
             buf.append("  }\n");
-    
+
             // Generate (4): this.pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
             buf.append("  this.");
             buf.append(jsClassName);
             buf.append(".$dwrClassName = '");
             buf.append(jsClassName);
             buf.append("';\n");
-            
+
             // Generate (5): this.pkg1.pkg2.MyClass.$dwrClassMembers = {};
             buf.append("  this.");
             buf.append(jsClassName);
             buf.append(".$dwrClassMembers = {};\n");
-            
+
             // Generate (6): this.pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {};
             for (Entry<String, Property> entry : properties.entrySet())
             {
@@ -432,7 +441,7 @@ public class DefaultRemoter implements Remoter
             buf.append(jsClassName);
             buf.append(".createFromMap = function(map) {\n");
             buf.append("    var obj = new this();\n");
-            
+
             // Generate (8): if ('myProp' in map) obj.myProp = map.myProp;
             for (Entry<String, Property> entry : properties.entrySet())
             {
@@ -447,7 +456,7 @@ public class DefaultRemoter implements Remoter
             }
             buf.append("    return obj;\n");
             buf.append("  }\n");
-            
+
             // Generate (9): end of definition
             buf.append("}\n");
             return buf.toString();

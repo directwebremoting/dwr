@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.ui.dwr.Util;
-import org.directwebremoting.util.SharedObjects;
 
 /**
  * A server-side clock that broadcasts the server time to any browsers that will
@@ -37,7 +36,7 @@ public class Clock implements Runnable
      */
     public Clock()
     {
-        ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
     }
 
@@ -81,7 +80,7 @@ public class Clock implements Runnable
     {
         String page = ServerContextFactory.get().getContextPath() + "/clock/index.html";
         Browser.withPage(page, new Runnable()
-        {        
+        {
             public void run()
             {
                 Util.setValue("clockDisplay", output);

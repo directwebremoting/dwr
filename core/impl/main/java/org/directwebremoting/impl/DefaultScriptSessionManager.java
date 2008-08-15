@@ -22,22 +22,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
+import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.util.IdGenerator;
-import org.directwebremoting.util.SharedObjects;
 
 /**
  * A default implementation of ScriptSessionManager.
@@ -49,12 +53,19 @@ import org.directwebremoting.util.SharedObjects;
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultScriptSessionManager implements ScriptSessionManager
+public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean, ServletContextListener
 {
     /**
      * Setup a timer that will invalidate sessions
      */
     public DefaultScriptSessionManager()
+    {
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
+     */
+    public void afterContainerSetup(Container container)
     {
         Runnable runnable = new Runnable()
         {
@@ -64,11 +75,22 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
             }
         };
 
-        ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
-        executor.scheduleWithFixedDelay(runnable, 60, 60, TimeUnit.SECONDS);
+        future = executor.scheduleWithFixedDelay(runnable, 60, 60, TimeUnit.SECONDS);
+    }
 
-        // Maybe we need be able to cancel the executor?
-        // ScheduledFuture<?> future = executor.schedule...
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     */
+    public void contextInitialized(ServletContextEvent sce)
+    {
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     */
+    public void contextDestroyed(ServletContextEvent sce)
+    {
+        future.cancel(true);
     }
 
     /* (non-Javadoc)
@@ -353,22 +375,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptSessionManager#getScriptSessionTimeout()
-     */
-    public long getScriptSessionTimeout()
-    {
-        return scriptSessionTimeout;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptSessionManager#setScriptSessionTimeout(long)
-     */
-    public void setScriptSessionTimeout(long scriptSessionTimeout)
-    {
-        this.scriptSessionTimeout = scriptSessionTimeout;
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptSessionManager#addScriptSessionListener(org.directwebremoting.event.ScriptSessionListener)
      */
     public void addScriptSessionListener(ScriptSessionListener li)
@@ -382,23 +388,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public void removeScriptSessionListener(ScriptSessionListener li)
     {
         scriptSessionListeners.remove(ScriptSessionListener.class, li);
-    }
-
-    /**
-     * Accessor for the PageNormalizer.
-     * @param pageNormalizer The new PageNormalizer
-     */
-    public void setPageNormalizer(PageNormalizer pageNormalizer)
-    {
-        this.pageNormalizer = pageNormalizer;
-    }
-
-    /**
-     * @param scriptSessionCheckTime the scriptSessionCheckTime to set
-     */
-    public void setScriptSessionCheckTime(long scriptSessionCheckTime)
-    {
-        this.scriptSessionCheckTime = scriptSessionCheckTime;
     }
 
     /**
@@ -447,6 +436,67 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSessionManager#getScriptSessionTimeout()
+     */
+    public long getScriptSessionTimeout()
+    {
+        return scriptSessionTimeout;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSessionManager#setScriptSessionTimeout(long)
+     */
+    public void setScriptSessionTimeout(long scriptSessionTimeout)
+    {
+        this.scriptSessionTimeout = scriptSessionTimeout;
+    }
+
+    /**
+     * How long do we wait before we timeout script sessions?
+     */
+    private long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
+
+    /**
+     * How we turn pages into the canonical form.
+     * @param pageNormalizer The new PageNormalizer
+     */
+    public void setPageNormalizer(PageNormalizer pageNormalizer)
+    {
+        this.pageNormalizer = pageNormalizer;
+    }
+
+    /**
+     * @see #setPageNormalizer(PageNormalizer)
+     */
+    protected PageNormalizer pageNormalizer;
+
+    /**
+     * How often do we check for script sessions that need timing out
+     */
+    public void setScriptSessionCheckTime(long scriptSessionCheckTime)
+    {
+        this.scriptSessionCheckTime = scriptSessionCheckTime;
+    }
+
+    /**
+     * @see #setScriptSessionCheckTime(long)
+     */
+    protected long scriptSessionCheckTime = DEFAULT_SESSION_CHECK_TIME;
+
+    /**
+     * How often do we check for script sessions that need timing out
+     */
+    public void setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor executor)
+    {
+        this.executor = executor;
+    }
+
+    /**
+     * @see #setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor)
+     */
+    protected ScheduledThreadPoolExecutor executor;
+
     /**
      * Use of this attribute is currently discouraged, we may make this public
      * in a later release. Until then, it may change or be removed without warning.
@@ -460,6 +510,11 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public static final String ATTRIBUTE_PAGE = "org.directwebremoting.ScriptSession.Page";
 
     /**
+     * By default we check for sessions that need expiring every 30 seconds
+     */
+    protected static final long DEFAULT_SESSION_CHECK_TIME = 30000;
+
+    /**
      * The list of current {@link ScriptSessionListener}s
      */
     protected EventListenerList scriptSessionListeners = new EventListenerList();
@@ -470,24 +525,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     private static IdGenerator generator = new IdGenerator();
 
     /**
-     * By default we check for sessions that need expiring every 30 seconds
+     * The session timeout checker function so we can shutdown cleanly
      */
-    protected static final long DEFAULT_SESSION_CHECK_TIME = 30000;
-
-    /**
-     * How we turn pages into the canonical form.
-     */
-    protected PageNormalizer pageNormalizer;
-
-    /**
-     * How long do we wait before we timeout script sessions?
-     */
-    private long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
-
-    /**
-     * How often do we check for script sessions that need timing out
-     */
-    protected long scriptSessionCheckTime = DEFAULT_SESSION_CHECK_TIME;
+    private ScheduledFuture<?> future;
 
     /**
      * We check for sessions that need timing out every
@@ -503,17 +543,17 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
 
     /**
      * Allows us to associate script sessions with http sessions.
-     * The key is an http session id, the 
+     * The key is an http session id, the
      * <p>GuardedBy("sessionLock")
      */
-    private Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
 
     /**
      * The map of all the known sessions.
      * The key is the script session id, the value is the session data
      * <p>GuardedBy("sessionLock")
      */
-    private Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
+    private final Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
 
     /**
      * The map of pages that have sessions.
@@ -521,7 +561,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
      * known to be currently visiting the page
      * <p>GuardedBy("sessionLock")
      */
-    private Map<String, Set<RealScriptSession>> pageSessionMap = new HashMap<String, Set<RealScriptSession>>();
+    private final Map<String, Set<RealScriptSession>> pageSessionMap = new HashMap<String, Set<RealScriptSession>>();
 
     /**
      * The log stream
