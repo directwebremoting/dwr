@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.directwebremoting.io.FileTransfer;
+import org.directwebremoting.io.FileTransfer.OutputStreamLoader;
 
 /**
  * An implementation of {@link FileGenerator} that uses a {@link FileTransfer}.
@@ -41,18 +42,25 @@ public class FileTransferFileGenerator implements FileGenerator
     public void generateFile(OutputStream out) throws IOException
     {
         InputStream in = fileTransfer.getInputStream();
-        byte[] buffer = new byte[1024];
-
-        while (true)
+        if (in != null)
         {
-            int length = in.read(buffer);
-
-            if (length <= 0)
+            byte[] buffer = new byte[1024];
+            while (true)
             {
-                break;
-            }
+                int length = in.read(buffer);
 
-            out.write(buffer, 0, length);
+                if (length <= 0)
+                {
+                    break;
+                }
+
+                out.write(buffer, 0, length);
+            }
+        }
+        else
+        {
+            OutputStreamLoader loader = fileTransfer.getOutputStreamLoader();
+            loader.load(out);
         }
     }
 
@@ -72,5 +80,8 @@ public class FileTransferFileGenerator implements FileGenerator
         return fileTransfer.getName();
     }
 
-    private FileTransfer fileTransfer;
+    /**
+     * The output object pass in by the user
+     */
+    private final FileTransfer fileTransfer;
 }

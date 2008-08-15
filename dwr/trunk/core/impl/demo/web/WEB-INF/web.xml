@@ -9,10 +9,7 @@
   <description>A Simple Demo DWR</description>
 
   <listener>
-    <listener-class>org.directwebremoting.servlet.EfficientShutdownServletContextAttributeListener</listener-class>
-  </listener>
-  <listener>
-    <listener-class>org.directwebremoting.servlet.EfficientShutdownServletContextListener</listener-class>
+    <listener-class>org.directwebremoting.servlet.DwrListener</listener-class>
   </listener>
 
   <servlet>
@@ -55,7 +52,7 @@
     </init-param>
 
     <!-- This enables full streaming mode. It's probably better to leave this
-    out if you are running across the internet -->
+    out if you are running across the Internet -->
     <init-param>
       <param-name>maxWaitAfterWrite</param-name>
       <param-value>-1</param-value>
