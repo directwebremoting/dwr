@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -146,7 +147,7 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             // add an output listener to the script session that calls the
             // "wake me" method on whatever is putting us to sleep
-            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite));
+            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite, executor));
         }
 
         // Use of comet depends on the type of browser and the number of current
@@ -185,7 +186,7 @@ public class BasePollHandler extends BaseDwrpHandler
         long connectedTime = slm.getConnectedTime();
         final int disconnectedTime = slm.getDisconnectedTime();
 
-        alarms.add(new TimedAlarm(sleeper, connectedTime));
+        alarms.add(new TimedAlarm(sleeper, connectedTime, executor));
 
         // We also need to wake-up if the server is being shut down
         // WARNING: This code has a non-obvious side effect - The server load
@@ -423,6 +424,19 @@ public class BasePollHandler extends BaseDwrpHandler
      * How we abstract away container specific logic
      */
     protected ContainerAbstraction containerAbstraction = null;
+
+    /**
+     * How often do we check for script sessions that need timing out
+     */
+    public void setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor executor)
+    {
+        this.executor = executor;
+    }
+
+    /**
+     * @see #setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor)
+     */
+    protected ScheduledThreadPoolExecutor executor;
 
     /**
      * Are we using plain javascript or html wrapped javascript.

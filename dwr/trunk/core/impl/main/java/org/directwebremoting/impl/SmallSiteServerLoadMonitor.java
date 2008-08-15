@@ -15,13 +15,11 @@
  */
 package org.directwebremoting.impl;
 
-import org.directwebremoting.extend.ServerLoadMonitor;
-
 /**
  * A default implementation of ServerLoadMonitor
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class SmallSiteServerLoadMonitor extends AbstractServerLoadMonitor implements ServerLoadMonitor
+public class SmallSiteServerLoadMonitor extends AbstractServerLoadMonitor
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ServerLoadMonitor#supportsStreaming()

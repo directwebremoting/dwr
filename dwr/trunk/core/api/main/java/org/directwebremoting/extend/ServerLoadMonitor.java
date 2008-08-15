@@ -58,9 +58,4 @@ public interface ServerLoadMonitor
      * @param controller An object that we can use to control the wait
      */
     void threadWaitEnding(WaitController controller);
-
-    /**
-     * Kill all available long-poll requests
-     */
-    void shutdown();
 }

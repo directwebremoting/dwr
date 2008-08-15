@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.impl;
 
-import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.WaitController;
 import org.directwebremoting.util.HitMonitor;
 
@@ -25,7 +24,7 @@ import org.directwebremoting.util.HitMonitor;
  * the disconnected time as usage increases.
  * @author Joe Walker [joe at getahead dot org]
  */
-public class ThreadDroppingServerLoadMonitor extends AbstractServerLoadMonitor implements ServerLoadMonitor
+public class ThreadDroppingServerLoadMonitor extends AbstractServerLoadMonitor
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ServerLoadMonitor#supportsStreaming()

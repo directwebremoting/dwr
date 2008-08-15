@@ -15,15 +15,14 @@
  */
 package org.directwebremoting.impl;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
-import org.directwebremoting.extend.ServerLoadMonitor;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.WaitController;
 import org.directwebremoting.util.HitMonitor;
 
 /**
  * A smart implementation of ServerLoadMonitor.
- * 
+ *
  * <p>What a browser does:</p>
  * <pre>
  *       connected disconnected connected ...
@@ -34,48 +33,48 @@ import org.directwebremoting.util.HitMonitor;
  *       [---cT---] [---dT---] [---cT---] ...
  * </pre>
  * <p>Where cT is the connectedTime and dT is the disconnectedTime.</p>
- * 
+ *
  * <p>We impose some limits: a maximum number of simultaneously connected
  * browsers <code>maxWaitingThreads</code>, and the maximum number of
  * connections per second <code>maxHitsPerSecond</code>.</p>
- * 
+ *
  * <p>We attempt to keep the actual waitingThreads and hitsPerSecond within
  * bounds by varying connectedTime and disconnectedTime.</p>
- * 
+ *
  * <p>The system is in one of 3 modes: USAGE_LOW, USAGE_HIGH and USAGE_DIGG. The
  * boundary between USAGE_LOW and USAGE_HIGH is called threadOut. The boundary
  * between USAGE_HIGH and USAGE_DIGG is called hitOut.</p>
- * 
+ *
  * <p>The system starts in USAGE_LOW mode. This mode uses constant values of
  * connectedTime=60 secs and disconnectedTime=0 secs. We could use much bigger
  * values for connectedTime (like infinite) however the servlet spec does not
  * enable servlet engines to inform us if the browser goes away so we check by
  * asking the browser to reconnect periodically.</p>
- * 
+ *
  * <p>In USAGE_LOW mode we measure the number of clients using the number of
  * concurrently connected browsers (waitingThreads), when this goes above
  * maxWaitingThreads we move into USAGE_HIGH mode.</p>
- * 
+ *
  * <p>On entering USAGE_HIGH mode, the settings (initially) change to
  * connectedTime=49 secs and disconnectedTime=1 sec. As the load increases the
  * connectedTime decreases linearly from 49 secs down to prevent the hits per
  * second from going above maxHitsPerSecond. If the connectedTime goes below
  * 1sec then the mode switches to USAGE_DIGG. If the connectedTime goes above
  * 49 secs then mode switches to USAGE_LOW.</p>
- * 
+ *
  * <p>Note: there is some danger of an overlap where the system toggles between
  * USAGE_HIGH and USAGE_LOW. We need some way to prevent this from happening.
  * </p>
- * 
+ *
  * <p>On entering USAGE_DIGG mode, the connectedTime changes to 0 secs, and the
  * disconnectedTime changes to 2 secs (to keep the round trip time at 2 secs).
  * The disconnectedTime alters to prevent the hitsPerSecond from going above
  * maxHitsPerSecond (In USAGE_HIGH mode the connectedTime was altered).
  * When the disconnectedTime would go under 2 secs, we switch back to USAGE_HIGH
- * mode.</p> 
+ * mode.</p>
  * @author Joe Walker [joe at getahead dot org]
  */
-public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implements ServerLoadMonitor
+public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ServerLoadMonitor#supportsStreaming()
@@ -144,7 +143,7 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
 
         int hitsPerSecondAtThreadOut = maxWaitingThreads / roundTripAtThreadOutSeconds;
         int hitsPerSecondAtHitOut = maxHitsPerSecond;
-        
+
         if (hitsPerSecond < hitsPerSecondAtThreadOut)
         {
             // We should probably be in USAGE_LOW mode, so we force the low
@@ -251,7 +250,7 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor implemen
     }
 
     /**
-     * 
+     *
      */
     protected static final int usageHighDisconnectedTime = 1000;
     protected static final int usageHighInitialConnectedTime = 49000;

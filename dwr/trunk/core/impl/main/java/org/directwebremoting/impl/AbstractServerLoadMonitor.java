@@ -18,18 +18,53 @@ package org.directwebremoting.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.LogFactory;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.WaitController;
 
 /**
  * A base implementation of {@link ServerLoadMonitor} that implements waiting
- * functionallity, mostly to provide {@link #shutdown()}.
+ * functionality, mostly to provide {@link ServletContextListener#contextDestroyed}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
+public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, ServletContextListener
 {
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     */
+    public void contextInitialized(ServletContextEvent sce)
+    {
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     */
+    public void contextDestroyed(ServletContextEvent sce)
+    {
+        if (shutdownCalled)
+        {
+            return;
+        }
+
+        synchronized (waitControllers)
+        {
+            List<WaitController> copy = new ArrayList<WaitController>();
+            copy.addAll(waitControllers);
+
+            for (WaitController controller : copy)
+            {
+                controller.shutdown();
+            }
+
+            log.debug(" - shutdown on: " + this);
+            shutdownCalled = true;
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ServerLoadMonitor#threadWaitStarting(org.directwebremoting.extend.WaitController)
      */
@@ -65,31 +100,6 @@ public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
             {
                 waitControllers.get(0).shutdown();
             }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ServerLoadMonitor#shutdown()
-     */
-    public void shutdown()
-    {
-        if (shutdownCalled)
-        {
-            return;
-        }
-
-        synchronized (waitControllers)
-        {
-            List<WaitController> copy = new ArrayList<WaitController>();
-            copy.addAll(waitControllers);
-
-            for (WaitController controller : copy)
-            {
-                controller.shutdown();
-            }
-
-            log.debug(" - shutdown on: " + this);
-            shutdownCalled = true;
         }
     }
 

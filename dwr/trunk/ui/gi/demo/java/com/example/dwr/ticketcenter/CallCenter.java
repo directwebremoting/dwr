@@ -39,7 +39,6 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.browser.Window;
-import org.directwebremoting.util.SharedObjects;
 
 import com.example.dwr.util.RandomData;
 
@@ -59,7 +58,7 @@ public class CallCenter implements Runnable
         addRandomUnknownCall();
         addRandomUnknownCall();
 
-        ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
         //noinspection ThisEscapedInObjectConstruction
         executor.scheduleAtFixedRate(this, 2, 2, TimeUnit.SECONDS);
     }
@@ -111,7 +110,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     public void alertSupervisor(Call fromWeb)
     {
@@ -155,7 +154,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     public void completeHandling(Call fromWeb)
     {
@@ -188,7 +187,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     public void cancelHandling()
     {
@@ -219,7 +218,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     public void beginHandling(String id)
     {
@@ -258,7 +257,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     private Call findCaller(Object attribute)
     {
@@ -286,7 +285,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     protected void removeRandomCall()
     {
@@ -310,7 +309,7 @@ public class CallCenter implements Runnable
                             public void run()
                             {
                                 Window.alert("It appears that this caller has hung up. Please select another.");
-                                deselect();                    
+                                deselect();
                             }
                         });
                     }
@@ -324,7 +323,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     protected void addRandomKnownCall()
     {
@@ -344,7 +343,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     protected void addRandomUnknownCall()
     {
@@ -400,7 +399,7 @@ public class CallCenter implements Runnable
     }
 
     /**
-     * 
+     *
      */
     private void select(Call call)
     {
@@ -479,7 +478,7 @@ public class CallCenter implements Runnable
     /**
      * Used to generate random data
      */
-    private Random random = new Random();
+    private final Random random = new Random();
 
     /**
      * The log stream

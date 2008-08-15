@@ -17,13 +17,12 @@ package org.directwebremoting.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.extend.ServerLoadMonitor;
 
 /**
  * A default implementation of ServerLoadMonitor
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PollingServerLoadMonitor extends AbstractServerLoadMonitor implements ServerLoadMonitor
+public class PollingServerLoadMonitor extends AbstractServerLoadMonitor
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ServerLoadMonitor#supportsStreaming()

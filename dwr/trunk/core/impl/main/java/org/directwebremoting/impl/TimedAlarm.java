@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.util.SharedObjects;
 
 /**
  * An Alarm that goes off after a certain length of time.
@@ -32,7 +31,7 @@ public class TimedAlarm implements Alarm
     /**
      * @param waitTime How long we wait before the Alarm goes off
      */
-    public TimedAlarm(final Sleeper sleeper, long waitTime)
+    public TimedAlarm(final Sleeper sleeper, long waitTime, ScheduledThreadPoolExecutor executor)
     {
         if (waitTime == 0)
         {
@@ -48,7 +47,6 @@ public class TimedAlarm implements Alarm
                 }
             };
 
-            ScheduledThreadPoolExecutor executor = SharedObjects.getScheduledThreadPoolExecutor();
             future = executor.schedule(runnable, waitTime, TimeUnit.MILLISECONDS);
         }
     }
@@ -60,7 +58,7 @@ public class TimedAlarm implements Alarm
     {
         if (future != null)
         {
-            future.cancel(false);
+            future.cancel(true);
         }
     }
 
