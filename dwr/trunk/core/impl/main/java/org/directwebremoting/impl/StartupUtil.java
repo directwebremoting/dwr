@@ -83,7 +83,7 @@ public class StartupUtil
             ServletConfig servletConfig = new FakeServletConfig("test", new FakeServletContext());
             ServletContext servletContext = servletConfig.getServletContext();
 
-            logStartup(servletConfig);
+            logStartup("DWR:OutOfContainer", servletConfig);
 
             Container container = createAndSetupDefaultContainer(servletConfig);
 
@@ -122,11 +122,18 @@ public class StartupUtil
 
     /**
      * Some logging so we have a good clue what we are working with.
+     * @param name The servlet name (so we can distinguish implementations)
      * @param config The servlet config
      */
-    public static void logStartup(ServletConfig config)
+    public static void logStartup(String name, ServletConfig config)
     {
-        log.info("Starting: DWR v" + VersionUtil.getLabel() + " running on " + config.getServletContext().getServerInfo() + " with java v" + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+        ServletContext servletContext = config.getServletContext();
+
+        // SERVLET24: Use getContextPath directly in 2.5
+        String contextPath = LocalUtil.getProperty(servletContext, "ContextPath", String.class);
+        contextPath = contextPath == null ? "" :  " at " + contextPath;
+
+        log.info("Starting: " + name + " v" + VersionUtil.getLabel() + " on " + servletContext.getServerInfo() + " / JDK " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor") + contextPath);
     }
 
     /**
@@ -139,7 +146,7 @@ public class StartupUtil
     public static Container createAndSetupDefaultContainer(ServletConfig servletConfig) throws ContainerConfigurationException
     {
         Container container;
-        
+
         try
         {
             String typeName = servletConfig.getInitParameter(Container.class.getName());
@@ -181,9 +188,7 @@ public class StartupUtil
      * @return An un'setup' implementation of DefaultContainer
      * @throws ContainerConfigurationException If the specified class could not be found
      * @see ServletConfig#getInitParameter(String)
-     * @deprecated Use {@link #createAndSetupDefaultContainer(ServletConfig)}
      */
-    @Deprecated
     public static DefaultContainer createDefaultContainer(ServletConfig servletConfig) throws ContainerConfigurationException
     {
         try
@@ -648,29 +653,6 @@ public class StartupUtil
         }
 
         return containers;
-    }
-
-    /**
-     * Internal use only.
-     * <p>If we detect that the server is being shutdown then we want to kill
-     * any reverse ajax threads.
-     * @param containers The list of containers to look for ServerLoadMonitors in
-     * @param title What causes this (for debug purposes)
-     */
-    public static void shutdownServerLoadMonitorsInContainerList(List<Container> containers, String title)
-    {
-        if (containers == null || containers.isEmpty())
-        {
-            log.debug("No containers to shutdown for: " + title);
-            return;
-        }
-
-        log.debug("Shutting down containers for: " + title);
-        for (Container container : containers)
-        {
-            ServerLoadMonitor monitor = container.getBean(ServerLoadMonitor.class);
-            monitor.shutdown();
-        }
     }
 
     /**

@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.impl.DefaultContainer;
@@ -107,6 +107,12 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         {
             // Spring throws on not-found, we return null.
             reply = super.getBean(id);
+        }
+        catch (IllegalStateException ex)
+        {
+            // Spring contexts can get shutdown and throw. It's not ideal to
+            // hide spring context beans, but we don't have much choice.
+            return super.getBean(id);
         }
 
         return reply;

@@ -22,16 +22,12 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.impl.StartupUtil;
-import org.directwebremoting.servlet.UrlProcessor;
+import org.directwebremoting.servlet.DwrServlet;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -53,8 +49,59 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author Bram Smeets
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DwrSpringServlet extends HttpServlet
+public class DwrSpringServlet extends DwrServlet
 {
+    /* (non-Javadoc)
+     * @see org.directwebremoting.servlet.DwrServlet#createContainer(javax.servlet.ServletConfig)
+     */
+    @Override
+    protected SpringContainer createContainer(ServletConfig servletConfig)
+    {
+        ApplicationContext appContext = getApplicationContext(servletConfig.getServletContext());
+
+        SpringContainer springContainer = new SpringContainer();
+        springContainer.setBeanFactory(appContext);
+        StartupUtil.setupDefaultContainer(springContainer, servletConfig);
+        return springContainer;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.servlet.DwrServlet#configureContainer(org.directwebremoting.Container, javax.servlet.ServletConfig)
+     */
+    @Override
+    protected void configureContainer(Container container, ServletConfig servletConfig) throws ServletException, IOException
+    {
+        // retrieve the configurators from Spring (loaded by the ContextLoaderListener)
+        try
+        {
+            ApplicationContext appContext = getApplicationContext(servletConfig.getServletContext());
+            configurators.add((Configurator) appContext.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID));
+        }
+        catch (NoSuchBeanDefinitionException ex)
+        {
+            throw new ServletException("No DWR configuration was found in your application context, make sure to define one", ex);
+        }
+
+        try
+        {
+            if (includeDefaultConfig)
+            {
+                StartupUtil.configureFromSystemDwrXml(container);
+            }
+    
+            StartupUtil.configureFromInitParams(container, servletConfig);
+            StartupUtil.configure(container, configurators);
+        }
+        catch (IOException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new ServletException(ex);
+        }
+    }
+
     /**
      * Setter for use by the Spring IoC container to tell us what Configurators
      * exist for us to configure ourselves.
@@ -77,7 +124,6 @@ public class DwrSpringServlet extends HttpServlet
 
     /**
      * Use provided application context rather than the default.
-     *
      * @param applicationContext
      */
     public void setApplicationContext(ApplicationContext applicationContext)
@@ -85,96 +131,16 @@ public class DwrSpringServlet extends HttpServlet
         this.applicationContext = applicationContext;
     }
 
-    /* (non-Javadoc)
-     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
-     */
-    @Override
-    public void init(ServletConfig servletConfig) throws ServletException
-    {
-        super.init(servletConfig);
-        ServletContext servletContext = servletConfig.getServletContext();
-
-        try
-        {
-            ApplicationContext appContext = getApplicationContext(servletContext);
-
-            container = new SpringContainer();
-            container.setBeanFactory(appContext);
-            StartupUtil.setupDefaultContainer(container, servletConfig);
-
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
-            webContextBuilder = container.getBean(WebContextBuilder.class);
-
-            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
-            StartupUtil.publishContainer(container, servletConfig);
-
-            // retrieve the configurators from Spring (loaded by the ContextLoaderListener)
-            try
-            {
-                configurators.add((Configurator) appContext.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID));
-            }
-            catch (NoSuchBeanDefinitionException ex)
-            {
-                throw new ServletException("No DWR configuration was found in your application context, make sure to define one", ex);
-            }
-
-            if (includeDefaultConfig)
-            {
-                StartupUtil.configureFromSystemDwrXml(container);
-            }
-
-            StartupUtil.configureFromInitParams(container, servletConfig);
-            StartupUtil.configure(container, configurators);
-        }
-        catch (Exception ex)
-        {
-            log.fatal("init failed", ex);
-            throw new ServletException(ex);
-        }
-        finally
-        {
-            webContextBuilder.unset();
-        }
-    }
-
     /**
      * Allow easy override when retrieving the application context. 
-     *
      * @param servletContext
      * @return the default application context.
      */
-    protected ApplicationContext getApplicationContext(ServletContext servletContext) { 
+    protected ApplicationContext getApplicationContext(ServletContext servletContext)
+    {
         return this.applicationContext == null 
                 ? WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext)
                 : this.applicationContext;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
-    {
-        doPost(req, resp);
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
-    {
-        try
-        {
-            webContextBuilder.set(request, response, getServletConfig(), getServletContext(), container);
-
-            UrlProcessor processor = container.getBean(UrlProcessor.class);
-            processor.handle(request, response);
-        }
-        finally
-        {
-            webContextBuilder.unset();
-        }
     }
 
     /**
@@ -182,16 +148,6 @@ public class DwrSpringServlet extends HttpServlet
      * the default application context will be used.
      */
     private ApplicationContext applicationContext = null;
-
-    /**
-     * DWRs IoC container (that passes stuff to Spring in this case)
-     */
-    private SpringContainer container;
-
-    /**
-     * The WebContext that keeps http objects local to a thread
-     */
-    protected WebContextBuilder webContextBuilder;
 
     /**
      * Do we prefix the list of Configurators with a default to read the system
@@ -205,7 +161,7 @@ public class DwrSpringServlet extends HttpServlet
     private List<Configurator> configurators = new ArrayList<Configurator>();
 
     /**
-     * The log stream
+     * The WebContext that keeps http objects local to a thread
      */
-    private static final Log log = LogFactory.getLog(DwrSpringServlet.class);
+    protected WebContextBuilder webContextBuilder = null;
 }
