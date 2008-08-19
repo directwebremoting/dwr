@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
-import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.impl.StartupUtil;
 
 /**
@@ -62,28 +61,20 @@ public class DwrServlet extends HttpServlet
 
         try
         {
-            // setupLogging() only needed for servlet logging if commons-logging is unavailable
-            // logStartup() just outputs some version numbers
-            StartupUtil.logStartup(servletConfig);
+            StartupUtil.logStartup(getClass().getSimpleName(), servletConfig);
 
-            // create and setup a DefaultContainer
-            container = StartupUtil.createAndSetupDefaultContainer(servletConfig);
+            container = createContainer(servletConfig);
 
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
             StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
             StartupUtil.publishContainer(container, servletConfig);
-            StartupUtil.configureContainerFully(container, servletConfig);
-        }
-        catch (ExceptionInInitializerError ex)
-        {
-            log.fatal("ExceptionInInitializerError. Nested exception:", ex.getException());
-            throw new ServletException(ex);
+            configureContainer(container, servletConfig);
         }
         catch (Exception ex)
         {
-            log.fatal("DwrServlet.init() failed", ex);
+            log.fatal("init failed", ex);
             throw new ServletException(ex);
         }
         finally
@@ -95,36 +86,44 @@ public class DwrServlet extends HttpServlet
         }
     }
 
-    /* (non-Javadoc)
-     * @see javax.servlet.GenericServlet#destroy()
+    /**
+     * Specializations of DwrServlet might have an alternate implementation
+     * of Container. This allows subclasses to override the implementation
+     * method.
+     * Part of {@link #init(ServletConfig)}.
+     * @throws ServletException Children might need to throw even if we don't
      */
-    @Override
-    public void destroy()
+    protected Container createContainer(ServletConfig servletConfig) throws ServletException
     {
-        shutdown();
-        super.destroy();
+        return StartupUtil.createAndSetupDefaultContainer(servletConfig);
     }
 
     /**
-     * Kill all comet polls.
-     * <p>Technically a servlet engine ought to call this only when all the
-     * threads are already removed, however at least Tomcat doesn't do this
-     * properly (it waits for a while and then calls destroy anyway).
-     * <p>It would be good if we could get {@link #destroy()} to call this
-     * method however destroy() is only called once all threads are done so it's
-     * too late.
+     * Specializations of DwrServlet might want to configure it differently
+     * from the default
+     * Part of {@link #init(ServletConfig)}.
      */
-    public void shutdown()
+    protected void configureContainer(Container defaultContainer, ServletConfig servletConfig) throws ServletException, IOException
     {
-        ServerLoadMonitor monitor = container.getBean(ServerLoadMonitor.class);
-        monitor.shutdown();
+        try
+        {
+            StartupUtil.configureContainerFully(defaultContainer, servletConfig);
+        }
+        catch (IOException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new ServletException(ex);
+        }
     }
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
         doPost(req, resp);
     }
@@ -133,7 +132,7 @@ public class DwrServlet extends HttpServlet
      * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
         try
         {
@@ -149,8 +148,7 @@ public class DwrServlet extends HttpServlet
     }
 
     /**
-     * Accessor for the DWR IoC container.
-     * @return DWR's IoC container
+     * Accessor for the IoC container.
      */
     public Container getContainer()
     {
@@ -165,7 +163,7 @@ public class DwrServlet extends HttpServlet
     /**
      * The WebContext that keeps http objects local to a thread
      */
-    private WebContextBuilder webContextBuilder = null;
+    protected WebContextBuilder webContextBuilder = null;
 
     /**
      * The log stream

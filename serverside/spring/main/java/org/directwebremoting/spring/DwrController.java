@@ -190,6 +190,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
         try
         {
+            StartupUtil.logStartup(getClass().getSimpleName(), servletConfig);
             StartupUtil.setupDefaultContainer(container, servletConfig);
             StartupUtil.initContainerBeans(servletConfig, servletContext, container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
