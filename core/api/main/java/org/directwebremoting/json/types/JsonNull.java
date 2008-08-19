@@ -13,14 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.io;
+package org.directwebremoting.json.types;
 
 /**
- * Sometimes DWR can't know at runtime the type of the inbound data, this class
- * allows us to defer conversion until we know more about the type we should
- * be converting to.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface RawData
+public class JsonNull extends JsonValue
 {
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.JsonValue#toExternalRepresentation()
+     */
+    @Override
+    public String toExternalRepresentation()
+    {
+        return "null";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return toExternalRepresentation();
+    }
 }

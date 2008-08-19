@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json.parse;
+package org.directwebremoting.json.simple;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,10 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.directwebremoting.json.parse.JsonDecoder;
+
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class SimpleTypesJsonDecoder implements JsonDecoder<Map<String, Object>>
+public class SimpleJsonDecoder implements JsonDecoder<Map<String, Object>>
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#getRoot()
