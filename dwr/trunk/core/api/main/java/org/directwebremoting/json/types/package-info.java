@@ -10,7 +10,5 @@ array types are implemented especially by {@link JsonObject} and
 
 @author Joe Walker [joe at getahead dot ltd dot uk]
 */
-package org.directwebremoting.json;
-import org.directwebremoting.json.types.JsonArray;
-import org.directwebremoting.json.types.JsonObject;
+package org.directwebremoting.json.types;
 
