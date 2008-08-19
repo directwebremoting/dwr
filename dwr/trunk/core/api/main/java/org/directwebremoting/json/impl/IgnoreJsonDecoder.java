@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json.parse;
+package org.directwebremoting.json.impl;
 
 import java.math.BigDecimal;
+
+import org.directwebremoting.json.parse.JsonDecoder;
 
 /**
  * A {@link JsonDecoder} that doesn't do anything, which is useful for

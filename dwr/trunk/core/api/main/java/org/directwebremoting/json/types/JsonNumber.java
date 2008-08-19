@@ -13,37 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json;
+package org.directwebremoting.json.types;
 
 /**
- * The Json version of a boolean
+ * The Json version of a Number
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JsonBoolean extends JsonValue
+public class JsonNumber extends JsonValue
 {
     /**
-     * All JsonBoolean wrap a Java boolean value
+     * All JsonNumbers wrap something stored as a double
      */
-    public JsonBoolean(boolean value)
+    public JsonNumber(int value)
     {
         this.value = value;
     }
 
     /**
-     * All JsonBoolean wrap a Java boolean value
+     * All JsonNumbers wrap something stored as a double
      */
-    public JsonBoolean(String text)
+    public JsonNumber(long value)
     {
-        value = Boolean.parseBoolean(text);
+        this.value = value;
+    }
+
+    /**
+     * All JsonNumbers wrap something stored as a double
+     */
+    public JsonNumber(double value)
+    {
+        this.value = value;
+    }
+
+    /**
+     * Parse the input string as a double
+     */
+    public JsonNumber(String text)
+    {
+        this.value = Double.parseDouble(text);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.JsonValue#getString()
+     * @see org.directwebremoting.json.JsonValue#getDouble()
      */
     @Override
-    public boolean getBoolean()
+    public double getDouble()
     {
         return value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.JsonValue#getLong()
+     */
+    @Override
+    public long getLong()
+    {
+        return (long) value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.JsonValue#getInteger()
+     */
+    @Override
+    public int getInteger()
+    {
+        return (int) value;
     }
 
     /* (non-Javadoc)
@@ -52,7 +86,7 @@ public class JsonBoolean extends JsonValue
     @Override
     public String toExternalRepresentation()
     {
-        return Boolean.toString(value);
+        return Double.toString(value);
     }
 
     /* (non-Javadoc)
@@ -67,5 +101,5 @@ public class JsonBoolean extends JsonValue
     /**
      * The string value that we wrap
      */
-    private final boolean value;
+    private final double value;
 }

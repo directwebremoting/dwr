@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json;
+package org.directwebremoting.json.types;
 
 /**
  * JsonValue allows you to hold any of the JSON types and to get a string
