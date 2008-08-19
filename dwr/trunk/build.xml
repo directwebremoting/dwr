@@ -169,11 +169,39 @@
 
   <!--=======================================================================-->
   <target name="spring" depends="war" description="Create Spring demo outputs">
-    <copy todir="${target.root}/web/spring/demo/">
-      <fileset dir="${target.root}/web/demo/"/>
+    <mkdir dir="${target.root}/web/demo-dwr-spring"/>
+    <copy todir="${target.root}/web/demo-dwr-spring/">
+      <fileset dir="${source.root}/serverside/spring/customDemo/web"/>
+      <fileset dir="${target.root}/web/demo/">
+        <exclude name="WEB-INF/web.xml"/>
+        <exclude name="WEB-INF/dwr.xml"/>
+      </fileset>
     </copy>
-    <copy todir="${target.root}/web/spring/test/">
-      <fileset dir="${target.root}/web/test/"/>
+    <mkdir dir="${target.root}/web/demo-dwr-spring/WEB-INF/classes"/>
+    <javac debug="on" includes="**/*.java" destdir="${target.root}/web/demo-dwr-spring/WEB-INF/classes">
+      <exclude name="**/package.html"/>
+      <exclude name="**/package-info.java"/>
+      <src path="${source.root}/serverside/spring/customDemo/java"/>
+      <classpath>
+        <fileset dir="${target.root}/lib" includes="**/*.jar"/>
+        <pathelement location="${target.root}/classes/main"/>
+      </classpath>
+    </javac>
+    <copy todir="${target.root}/web/demo-dwr-spring/WEB-INF/classes">
+      <fileset dir="${source.root}/serverside/spring/customDemo/java">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/package-info.java"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${target.root}/web/test-dwr-spring"/>
+    <copy todir="${target.root}/web/test-dwr-spring/">
+      <fileset dir="${source.root}/serverside/spring/customTest/web"/>
+      <fileset dir="${target.root}/web/test/">
+        <exclude name="WEB-INF/web.xml"/>
+        <exclude name="WEB-INF/dwr.xml"/>
+      </fileset>
     </copy>
   </target>
 
@@ -300,32 +328,6 @@
         </copy>
       </then>
     </if>
-    <!-- The customDemo tree -->
-    <if>
-      <available file="${source.root}/${module}/customDemo"/>
-      <then>
-        <mkdir dir="${target}/web/${module}/WEB-INF/classes"/>
-        <copy todir="${target}/web/${module}">
-          <fileset dir="${source.root}/${module}/customDemo/web"/>
-        </copy>
-        <javac debug="on" includes="**/*.java" destdir="${target}/web/${module}/WEB-INF/classes">
-          <exclude name="**/package.html"/>
-          <exclude name="**/package-info.java"/>
-          <src path="${source.root}/${module}/customDemo/java"/>
-          <classpath>
-            <fileset dir="${target}/lib" includes="**/*.jar"/>
-            <pathelement location="${target}/classes/main"/>
-          </classpath>
-        </javac>
-        <copy todir="${target}/web/${module}/WEB-INF/classes">
-          <fileset dir="${source.root}/${module}/customDemo/java">
-            <exclude name="**/*.java"/>
-            <exclude name="**/package.html"/>
-            <exclude name="**/package-info.java"/>
-          </fileset>
-        </copy>
-      </then>
-    </if>
   </target>
 
   <!--=======================================================================-->
@@ -362,6 +364,16 @@
       </copy>
     </sequential>
   </macrodef>
+
+  <!--=======================================================================-->
+  <target name="generate-json-parser" description="Re-runs javacc on the JsonParser">
+    <mkdir dir="${source.root}/protocol/json/generated/java/org/directwebremoting/json/parse/javacc"/>
+    <javacc
+        target="${source.root}/protocol/json/main/javacc/JavaccJsonParser.jj"
+        javacchome="${source.root}/protocol/json/main/javacc"
+        outputdirectory="${source.root}/protocol/json/generated/java/org/directwebremoting/json/parse/javacc"
+        />
+  </target>
 
   <!--=======================================================================-->
   <target name="clean" description="Remove all build targets and .DS_Store files left around by the Mac finder">
