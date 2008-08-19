@@ -1,0 +1,372 @@
+options
+{
+    STATIC = false;
+    UNICODE_INPUT = true;
+    JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(JavaccJsonParser)
+/*
+ * Copyright 2005 Joe Walker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.directwebremoting.json.parse.javacc;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.math.BigDecimal;
+
+import org.directwebremoting.json.parse.JsonDecoder;
+import org.directwebremoting.json.parse.JsonParseException;
+import org.directwebremoting.json.parse.JsonParser;
+
+/**
+ * Produced by JavaCC from JavaccJsonParser.jj
+ * @author Joe Walker [joe at getahead dot org]
+ */
+public class JavaccJsonParser implements JsonParser
+{
+    /**
+     * This constructor does not create a ready-to-roll parser. One of the
+     * {@link #ReInit} methods should be called first.
+     */
+    public JavaccJsonParser()
+    {
+        this(new StringReader(""));
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.parse.JsonParser#parse(java.lang.String, org.directwebremoting.json.parse.JsonDecoder)
+     */
+    public <T> T parse(Reader reader, JsonDecoder<T> decoder) throws JsonParseException
+    {
+        ReInit(reader);
+        try
+        {
+            object(decoder);
+        }
+        catch (TokenMgrError ex)
+        {
+            throw new JsonParseException(ex.getMessage());
+        }
+        return decoder.getRoot();
+    }
+}
+PARSER_END(JavaccJsonParser)
+
+SKIP:
+{
+    <[" ", "\t", "\n"]>
+}
+
+TOKEN:
+{
+    <E:["e","E"](["+","-"])?> |
+    <DIGITS:["0"-"9"]|["1"-"9"](["0"-"9"])*> |
+    <QUOTE:"\"">:STRING_STATE
+}
+
+<STRING_STATE> MORE:
+{
+    "\\" : ESC_STATE
+}
+
+<STRING_STATE> TOKEN:
+{
+    <ENDQUOTE:<QUOTE>> : DEFAULT |
+    <CHAR:~["\"","\\"]>
+}
+
+<ESC_STATE> TOKEN:
+{
+    <CNTRL_ESC:["\"","\\","/","b","f","n","r","t"]> : STRING_STATE
+}
+
+<ESC_STATE> MORE:
+{
+    "u":HEX_STATE
+}
+
+<HEX_STATE> TOKEN:
+{
+    <#HEX:["a"-"f","A"-"F","0"-"9"]> |
+    <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
+}
+
+public void object(JsonDecoder<?> decoder):
+{
+    decoder.beginObject();
+}
+{
+    "{" [ objectContents(decoder) ] "}"
+
+    {
+        decoder.endObject();
+    }
+}
+
+void objectContents(JsonDecoder<?> decoder):
+{
+}
+{
+    pair(decoder) [ "," objectContents(decoder) ]
+}
+
+void pair(JsonDecoder<?> decoder):
+{
+}
+{
+    string(decoder)
+
+    {
+        decoder.beginMember();
+    }
+
+    ":" value(decoder)
+
+    {
+        decoder.endMember();
+    }
+}
+
+void value(JsonDecoder<?> decoder):
+{
+}
+{
+    ( string(decoder) | number(decoder) | object(decoder) | array(decoder) | literal(decoder) )
+}
+
+void literal(JsonDecoder<?> decoder):
+{
+}
+{
+    (
+        "true"
+        {
+            decoder.addBoolean(true);
+        }
+    )
+    |
+    (
+        "false"
+        {
+            decoder.addBoolean(false);
+        }
+    )
+    |
+    (
+        "null"
+        {
+            decoder.addNull();
+        }
+    )
+}
+
+void array(JsonDecoder<?> decoder):
+{
+    decoder.beginArray();
+}
+{
+    "[" [ arrayContents(decoder) ] "]"
+
+    {
+        decoder.endArray();
+    }
+}
+
+void arrayContents(JsonDecoder<?> decoder):
+{
+}
+{
+    value(decoder)
+    [ "," arrayContents(decoder) ]
+}
+
+void number(JsonDecoder<?> decoder):
+{
+    String intPart = null;
+    String floatPart = null;
+    String expPart = null;
+}
+{
+    intPart = getIntPart()
+    [ floatPart = getFloatPart() ]
+    [ expPart = getExpPart() ]
+
+    {
+        if (expPart != null)
+        {
+            decoder.addNumber(new BigDecimal(intPart + floatPart + expPart));
+        }
+        else if (floatPart != null)
+        {
+            decoder.addDouble(Double.parseDouble(intPart + floatPart));
+        }
+        else
+        {
+            try
+            {
+                decoder.addInt(Integer.parseInt(intPart));
+            }
+            catch (NumberFormatException ex)
+            {
+                try
+                {
+                    decoder.addLong(Long.parseLong(intPart));
+                }
+                catch (NumberFormatException ex2)
+                {
+                    decoder.addNumber(new BigDecimal(intPart));
+                }
+            }
+        }
+    }
+}
+
+String getIntPart():
+{
+    String digits;
+    boolean negative = false;
+}
+{
+    [
+        "-"
+        {
+            negative = true;
+        }
+    ]
+    digits = getDigits()
+    {
+        if (negative)
+        {
+            return "-" + digits;
+        }
+        return digits;
+    }
+}
+
+String getFloatPart():
+{
+    String digits;
+}
+{
+    "."
+    digits = getDigits()
+
+    {
+        return "." + digits;
+    }
+}
+
+String getExpPart():
+{
+    Token t;
+    String digits;
+}
+{
+    t = <E>
+    digits = getDigits()
+
+    {
+        return t.image + digits;
+    }
+}
+
+String getDigits():
+{
+    Token t;
+}
+{
+    t = <DIGITS>
+    {
+        return t.image;
+    }
+}
+
+void string(JsonDecoder<?> decoder):
+{
+    StringBuilder builder = new StringBuilder();
+}
+{
+    <QUOTE>
+    [ getChars(builder) ]
+    <ENDQUOTE>
+
+    {
+        decoder.addString(builder.toString());
+    }
+}
+
+void getChars(StringBuilder builder):
+{
+    char c;
+}
+{
+    c = getChar()
+    [ getChars(builder) ]
+
+    {
+        builder.insert(0, c);
+    }
+}
+
+char getChar():
+{
+    Token t;
+}
+{
+    (
+        t = <CHAR> |
+        t = <CNTRL_ESC> |
+        t = <HEX_ESC>
+    )
+
+    {
+        if (t.image.length() < 2)
+        {
+            return t.image.charAt(0);
+        }
+        if (t.image.length() < 6)
+        {
+            char c = t.image.charAt(1);
+            switch (t.image.charAt(1))
+            {
+            case 'b':
+                return (char) 8;
+                break;
+            case 'f':
+                return (char) 12;
+                break;
+            case 'n':
+                return (char) 10;
+                break;
+            case 'r':
+                return (char) 13;
+                break;
+            case 't':
+                return (char) 9;
+                break;
+            default:
+                return c;
+            }
+        }
+        else
+        {
+            // hex escape code
+            int i = Integer.valueOf(t.image.substring(2,6), 16).intValue();
+            return (char) i;
+        }
+    }
+}
+

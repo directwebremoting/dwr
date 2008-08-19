@@ -22,7 +22,7 @@ package org.directwebremoting.json;
 public class JsonNumber extends JsonValue
 {
     /**
-     * All JsonStrings wrap a Java string
+     * All JsonNumbers wrap something stored as a double
      */
     public JsonNumber(int value)
     {
@@ -30,7 +30,7 @@ public class JsonNumber extends JsonValue
     }
 
     /**
-     * All JsonStrings wrap a Java string
+     * All JsonNumbers wrap something stored as a double
      */
     public JsonNumber(long value)
     {
@@ -38,11 +38,19 @@ public class JsonNumber extends JsonValue
     }
 
     /**
-     * All JsonStrings wrap a Java string
+     * All JsonNumbers wrap something stored as a double
      */
     public JsonNumber(double value)
     {
         this.value = value;
+    }
+
+    /**
+     * Parse the input string as a double
+     */
+    public JsonNumber(String text)
+    {
+        this.value = Double.parseDouble(text);
     }
 
     /* (non-Javadoc)

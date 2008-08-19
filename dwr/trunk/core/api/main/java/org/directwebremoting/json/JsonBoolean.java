@@ -16,17 +16,25 @@
 package org.directwebremoting.json;
 
 /**
- * The Json version of a String
+ * The Json version of a boolean
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class JsonBoolean extends JsonValue
 {
     /**
-     * All JsonStrings wrap a Java string
+     * All JsonBoolean wrap a Java boolean value
      */
     public JsonBoolean(boolean value)
     {
         this.value = value;
+    }
+
+    /**
+     * All JsonBoolean wrap a Java boolean value
+     */
+    public JsonBoolean(String text)
+    {
+        value = Boolean.parseBoolean(text);
     }
 
     /* (non-Javadoc)
