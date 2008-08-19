@@ -22,7 +22,6 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.io.Context;
 
 /**
  * An implementation of Converter for Context helper objects for ScriptProxies.
@@ -43,7 +42,9 @@ public class ContextConverter extends AbstractConverter implements Converter
      */
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
-        Context context = (Context) data;
+        // TODO: Do we ever actually convert this? Looking at the methods, I
+        // can't believe we do.
+        // Context context = (Context) data;
         return new NonNestedOutboundVariable(/*context.getContextPath()*/null);
     }
 }
