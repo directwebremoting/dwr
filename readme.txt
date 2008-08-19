@@ -28,10 +28,13 @@ DWR is primarily built using ant. The important ant targets are:
 - clean: Removes target files and .DS_Store files left around by OSX
 - package: Build a set of output .zip files for distribution
 - war: Create a clean unpacked war file for tomcat/jetty/etc
+
 The DWR build system can be adapted to create outputs containing different
 modules (see Terminology) so it is simple to create a dwr.jar file that
 contains exactly the modules that you need. See the 'war' target and the
 execution of the 'build' macrodef.
+
+The ant outputs are stored in dwr/target/ant.
 
 Terminology
 -----------
