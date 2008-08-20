@@ -6,6 +6,10 @@
 
 { }
 
+[]
+
+[ ]
+
 { "boolean":true }
 
 {"boolean":true}
@@ -38,4 +42,8 @@ true
 
 { "object":{ "boolean":true } }
 
-{ "object":{ "boolean":true }, array:[ 1, 2, 3], "boolean":true, "nothing":null }
+{ "object":{ "boolean":true }, "array":[ 1, 2, 3], "boolean":true, "nothing":null }
+
+[ 1, 2, 3 ]
+
+[ 1, 2, 3, "" ]

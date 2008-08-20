@@ -17,12 +17,12 @@ package org.directwebremoting;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.Builder;
+import org.directwebremoting.extend.Factory;
 
 /**
  * An accessor for the current Hub.
- * The nested {@link HubBuilder} will only be of use to system implementors.
+ * The nested {@link Builder} will only be of use to system implementors.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class HubFactory
@@ -33,13 +33,7 @@ public class HubFactory
      */
     public static Hub get()
     {
-        if (builder == null)
-        {
-            log.warn("HubBuilder is null. This probably means that DWR has not initialized properly");
-            return null;
-        }
-
-        return builder.get();
+        return factory.get();
     }
 
     /**
@@ -54,61 +48,29 @@ public class HubFactory
      */
     public static Hub get(ServletContext ctx)
     {
-        if (builder == null)
-        {
-            log.warn("HubBuilder is null. This probably means that DWR has not initialized properly");
-            return null;
-        }
-
-        return builder.get(ctx);
+        return factory.get(ctx);
     }
 
     /**
-     * Internal method to allow us to get the HubBuilder from which we
+     * Internal method to allow us to get the Builder from which we
      * will get Hub objects.
      * Do not call this method from outside of DWR.
      * @param builder The factory object (from DwrServlet)
      */
-    public static void setHubBuilder(HubBuilder builder)
+    public static void setBuilder(Builder<Hub> builder)
     {
-        HubFactory.builder = builder;
+        factory.setBuilder(builder);
     }
 
     /**
-     * The HubBuilder from which we will get Hub objects
+     * The factory helper class
      */
-    private static HubBuilder builder = null;
+    private static Factory<Hub> factory = Factory.create();
 
     /**
-     * Class to enable us to access servlet parameters.
+     * Hack to get around Generics not being implemented by erasure
      */
-    public interface HubBuilder
+    public interface HubBuilder extends Builder<Hub>
     {
-        /**
-         * Make the current webapp know what the current config/context is.
-         * This method is only for use internally to DWR.
-         * @param context The servlet context
-         */
-        void set(ServletContext context);
-
-        /**
-         * Accessor for the current Hub.
-         * For some setups DWR may not be able to discover the correct
-         * environment (i.e. ServletContext), so we need to tell it.
-         * @param context The web application environment
-         * @return The Hub that is associated with this web application
-         */
-        Hub get(ServletContext context);
-
-        /**
-         * Accessor for the current Hub
-         * @return The Hub that is associated with this web application
-         */
-        Hub get();
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(WebContextFactory.class);
 }

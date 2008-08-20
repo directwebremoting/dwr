@@ -47,13 +47,30 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         ReInit(reader);
         try
         {
-            object(decoder);
+            top(decoder);
         }
         catch (TokenMgrError ex)
         {
             throw new JsonParseException(ex.getMessage());
         }
         return decoder.getRoot();
+    }
+
+    final public void top(JsonDecoder<?> decoder) throws ParseException
+    {
+        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+        {
+        case 12:
+            object(decoder);
+            break;
+        case 19:
+            array(decoder);
+            break;
+        default:
+            jj_la1[0] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+        }
     }
 
     final public void object(JsonDecoder<?> decoder) throws ParseException
@@ -66,7 +83,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             objectContents(decoder);
             break;
         default:
-            jj_la1[0] = jj_gen;
+            jj_la1[1] = jj_gen;
         }
         jj_consume_token(13);
         decoder.endObject();
@@ -82,7 +99,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             objectContents(decoder);
             break;
         default:
-            jj_la1[1] = jj_gen;
+            jj_la1[2] = jj_gen;
         }
     }
 
@@ -118,7 +135,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             literal(decoder);
             break;
         default:
-            jj_la1[2] = jj_gen;
+            jj_la1[3] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
         }
@@ -141,7 +158,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             decoder.addNull();
             break;
         default:
-            jj_la1[3] = jj_gen;
+            jj_la1[4] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
         }
@@ -164,7 +181,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             arrayContents(decoder);
             break;
         default:
-            jj_la1[4] = jj_gen;
+            jj_la1[5] = jj_gen;
         }
         jj_consume_token(20);
         decoder.endArray();
@@ -180,7 +197,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             arrayContents(decoder);
             break;
         default:
-            jj_la1[5] = jj_gen;
+            jj_la1[6] = jj_gen;
         }
     }
 
@@ -196,7 +213,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             floatPart = getFloatPart();
             break;
         default:
-            jj_la1[6] = jj_gen;
+            jj_la1[7] = jj_gen;
         }
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
         {
@@ -204,7 +221,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             expPart = getExpPart();
             break;
         default:
-            jj_la1[7] = jj_gen;
+            jj_la1[8] = jj_gen;
         }
         if (expPart != null)
         {
@@ -245,7 +262,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             negative = true;
             break;
         default:
-            jj_la1[8] = jj_gen;
+            jj_la1[9] = jj_gen;
         }
         digits = getDigits();
         if (negative)
@@ -320,7 +337,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             getChars(builder);
             break;
         default:
-            jj_la1[9] = jj_gen;
+            jj_la1[10] = jj_gen;
         }
         jj_consume_token(ENDQUOTE);
         decoder.addString(builder.toString());
@@ -338,7 +355,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             getChars(builder);
             break;
         default:
-            jj_la1[10] = jj_gen;
+            jj_la1[11] = jj_gen;
         }
         builder.insert(0, c);
     }
@@ -358,7 +375,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             t = jj_consume_token(HEX_ESC);
             break;
         default:
-            jj_la1[11] = jj_gen;
+            jj_la1[12] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
         }
@@ -449,7 +466,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
 
     private int jj_gen;
 
-    final private int[] jj_la1 = new int[12];
+    final private int[] jj_la1 = new int[13];
 
     static private int[] jj_la1_0;
     static
@@ -459,7 +476,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
 
     private static void jj_la1_0()
     {
-        jj_la1_0 = new int[] { 0x10, 0x4000, 0x2f1018, 0x70000, 0x2f1018, 0x4000, 0x400000, 0x4, 0x200000, 0x980, 0x980, 0x980, };
+        jj_la1_0 = new int[] { 0x81000, 0x10, 0x4000, 0x2f1018, 0x70000, 0x2f1018, 0x4000, 0x400000, 0x4, 0x200000, 0x980, 0x980, 0x980, };
     }
 
     public JavaccJsonParser(java.io.InputStream stream)
@@ -481,7 +498,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -506,7 +523,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -519,7 +536,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -532,7 +549,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -544,7 +561,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -556,7 +573,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         token = new Token();
         jj_ntk = -1;
         jj_gen = 0;
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             jj_la1[i] = -1;
         }
@@ -647,7 +664,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
             la1tokens[jj_kind] = true;
             jj_kind = -1;
         }
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 13; i++)
         {
             if (jj_la1[i] == jj_gen)
             {

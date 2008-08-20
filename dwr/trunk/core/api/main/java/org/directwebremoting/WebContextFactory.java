@@ -38,7 +38,7 @@ public class WebContextFactory
     {
         if (builder == null)
         {
-            log.warn("WebContextFactory.get() returns null when accessed from outside a DWR thread. Try ServerContext.get(), or see http://getahead.org/dwr/server/javaapi");
+            log.warn("Missing WebContextBuilder. Is DWR setup properly?");
             return null;
         }
 
@@ -56,7 +56,7 @@ public class WebContextFactory
      * Do not call this method from outside of DWR.
      * @param builder The factory object (from DwrServlet)
      */
-    public static void setWebContextBuilder(WebContextBuilder builder)
+    public static void setBuilder(WebContextBuilder builder)
     {
         WebContextFactory.builder = builder;
     }

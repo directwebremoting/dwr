@@ -25,6 +25,6 @@ public class TestWebContextFactory extends WebContextFactory
 {
     public static void setWebContextBuilder(WebContextBuilder builder)
     {
-        WebContextFactory.setWebContextBuilder(builder);
+        WebContextFactory.setBuilder(builder);
     }
 }

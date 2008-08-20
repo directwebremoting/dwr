@@ -367,11 +367,11 @@
 
   <!--=======================================================================-->
   <target name="generate-json-parser" description="Re-runs javacc on the JsonParser">
-    <mkdir dir="${source.root}/protocol/json/generated/java/org/directwebremoting/json/parse/javacc"/>
+    <mkdir dir="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc"/>
     <javacc
-        target="${source.root}/protocol/json/main/javacc/JavaccJsonParser.jj"
-        javacchome="${source.root}/protocol/json/main/javacc"
-        outputdirectory="${source.root}/protocol/json/generated/java/org/directwebremoting/json/parse/javacc"
+        target="${source.root}/core/impl/main/javacc/JavaccJsonParser.jj"
+        javacchome="${source.root}/core/impl/main/javacc"
+        outputdirectory="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc"
         />
   </target>
 

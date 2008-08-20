@@ -54,7 +54,7 @@ public class JavaccJsonParser implements JsonParser
         ReInit(reader);
         try
         {
-            object(decoder);
+            top(decoder);
         }
         catch (TokenMgrError ex)
         {
@@ -102,6 +102,13 @@ TOKEN:
 {
     <#HEX:["a"-"f","A"-"F","0"-"9"]> |
     <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
+}
+
+void top(JsonDecoder<?> decoder):
+{
+}
+{
+    ( object(decoder) | array(decoder) )
 }
 
 public void object(JsonDecoder<?> decoder):

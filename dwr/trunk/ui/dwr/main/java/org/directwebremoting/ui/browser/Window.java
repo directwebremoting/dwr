@@ -57,7 +57,7 @@ public class Window
 
         if (callback != null)
         {
-            String key = CallbackHelperFactory.saveCallback(callback, Boolean.class);
+            String key = CallbackHelperFactory.get().saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -83,7 +83,7 @@ public class Window
 
         if (callback != null)
         {
-            String key = CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

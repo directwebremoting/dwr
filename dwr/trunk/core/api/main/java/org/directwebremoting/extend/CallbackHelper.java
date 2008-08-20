@@ -18,6 +18,7 @@ package org.directwebremoting.extend;
 import org.directwebremoting.ui.Callback;
 
 /**
+ * TODO: can we make this work without a factory?
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface CallbackHelper

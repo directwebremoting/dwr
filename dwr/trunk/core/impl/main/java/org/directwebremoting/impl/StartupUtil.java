@@ -33,6 +33,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
+import org.directwebremoting.Hub;
 import org.directwebremoting.HubFactory;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
@@ -43,6 +44,9 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
+import org.directwebremoting.extend.Builder;
+import org.directwebremoting.extend.CallbackHelper;
+import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.extend.Compressor;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ContainerAbstraction;
@@ -53,6 +57,10 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.ServerLoadMonitor;
+import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
+import org.directwebremoting.json.parse.JsonParser;
+import org.directwebremoting.json.parse.JsonParserFactory;
+import org.directwebremoting.json.parse.JsonParserFactory.JsonParserBuilder;
 import org.directwebremoting.servlet.DwrWebContextFilter;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UrlProcessor;
@@ -68,6 +76,55 @@ import org.xml.sax.SAXException;
  */
 public class StartupUtil
 {
+    /**
+     * Init parameter: Set a dwr.xml config file.
+     * This is only a prefix since we might have more than 1 config file.
+     */
+    public static final String INIT_CONFIG = "config";
+
+    /**
+     * Init parameter: Skip reading the default config file if none are specified.
+     */
+    public static final String INIT_SKIP_DEFAULT = "skipDefaultConfig";
+
+    /**
+     * Init parameter: If we are doing Servlet.log logging, to what level?
+     */
+    public static final String INIT_LOGLEVEL = "logLevel";
+
+    /*
+     * Init parameter: Should we publish the {@link Container} to the servlet
+     * context, and if so, under what name?
+     */
+    //public static final String INIT_PUBLISH_CONTAINER = "publishContainerAs";
+
+    /**
+     * Init parameter: If you wish to use a custom configurator, place its
+     * class name here
+     */
+    public static final String INIT_CUSTOM_CONFIGURATOR = "customConfigurator";
+
+    /**
+     * The name under which we publish all {@link Container}s.
+     */
+    public static final String ATTRIBUTE_CONTAINER_LIST = "org.directwebremoting.ContainerList";
+
+    /**
+     * We store a single ServerContext in the contextMap under this name.
+     */
+    public static final String DEFAULT_SERVERCONTEXT_NAME = "__default";
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(StartupUtil.class);
+
+    /**
+     * To enable us to get at a ServerContext if one has been defined or at
+     * all of them if several have been defined
+     */
+    private static final Map<String, ServerContext> contextMap = new HashMap<String, ServerContext>();
+
     /**
      * A way to setup DWR outside of any Containers.
      * This method can also serve as a template for in container code wanting
@@ -617,14 +674,30 @@ public class StartupUtil
         contextMap.put(name, serverContext);
         log.debug("Adding to contextMap, a serverContext called " + name);
 
-        if (contextMap.containsKey(DEFAULT_SERVERCONTEXT_NAME))
+        setSingletonServerContext(serverContext);
+    }
+
+    /**
+     * Attempt to set the singleton ServerContext, unsetting for all if
+     * there is already one
+     */
+    public static void setSingletonServerContext(ServerContext serverContext)
+    {
+        synchronized (contextMap)
         {
-            contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
-            log.debug("Multiple instances of DWR detected.");
-        }
-        else
-        {
-            contextMap.put(DEFAULT_SERVERCONTEXT_NAME, serverContext);
+            switch (contextMap.size())
+            {
+            case 0:
+                contextMap.put(DEFAULT_SERVERCONTEXT_NAME, serverContext);
+                break;
+            case 1:
+                contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
+                log.debug("Multiple instances of DWR detected.");
+                break;
+            default:
+                // There are loads of them!
+                break;
+            }
         }
     }
 
@@ -715,127 +788,24 @@ public class StartupUtil
      */
     public static void initContainerBeans(ServletConfig servletConfig, ServletContext servletContext, Container container)
     {
-        initWebContext(servletConfig, servletContext, container);
-        initServerContext(servletConfig, servletContext, container);
-        initHub(servletContext, container);
-    }
-
-    /**
-     * Get the {@link WebContextBuilder} out of the
-     * {@link Container}, configure it (call WebContextBuilder#set()) and use it
-     * to configure the {@link WebContextFactory}.
-     * @param servletConfig The servlet configuration
-     * @param servletContext The servlet context
-     * @param container The container to save in the ServletContext
-     * @return a new WebContextBuilder
-     * @deprecated Use {@link #initContainerBeans(ServletConfig, ServletContext, Container)}
-     */
-    @Deprecated
-    public static WebContextBuilder initWebContext(ServletConfig servletConfig, ServletContext servletContext, Container container)
-    {
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
-        WebContextFactory.setWebContextBuilder(webContextBuilder);
+        WebContextFactory.setBuilder(webContextBuilder);
         webContextBuilder.set(null, null, servletConfig, servletContext, container);
 
-        return webContextBuilder;
-    }
+        Builder<ServerContext> serverContextBuilder = container.getBean(ServerContextBuilder.class);
+        ServerContextFactory.setBuilder(serverContextBuilder);
+        serverContextBuilder.set(servletContext, servletConfig, servletContext, container);
 
-    /**
-     * Get the {@link ServerContextBuilder} out of the
-     * {@link Container}, configure it and use it to configure the
-     * {@link ServerContextFactory}
-     * @param servletConfig The servlet configuration
-     * @param servletContext The servlet context
-     * @param container The container to save in the ServletContext
-     * @return The newly created ServerContextBuilder
-     * @deprecated Use {@link #initContainerBeans(ServletConfig, ServletContext, Container)}
-     */
-    @Deprecated
-    public static ServerContextBuilder initServerContext(ServletConfig servletConfig, ServletContext servletContext, Container container)
-    {
-        ServerContextBuilder serverContextBuilder = container.getBean(ServerContextBuilder.class);
-        ServerContextFactory.setServerContextBuilder(serverContextBuilder);
-        serverContextBuilder.set(servletConfig, servletContext, container);
-
-        return serverContextBuilder;
-    }
-
-    /**
-     * Get the {@link HubBuilder} out of the {@link Container},
-     * configure it and use it to configure the {@link HubFactory}
-     * @param servletContext The servlet context
-     * @param container The container to save in the ServletContext
-     * @return The newly created HubBuilder
-     * @deprecated Use {@link #initContainerBeans(ServletConfig, ServletContext, Container)}
-     */
-    @Deprecated
-    public static HubBuilder initHub(ServletContext servletContext, Container container)
-    {
-        HubBuilder hubBuilder = container.getBean(HubBuilder.class);
-        HubFactory.setHubBuilder(hubBuilder);
+        Builder<Hub> hubBuilder = container.getBean(HubBuilder.class);
+        HubFactory.setBuilder(hubBuilder);
         hubBuilder.set(servletContext);
 
-        return hubBuilder;
+        Builder<JsonParser> jsonParserBuilder = container.getBean(JsonParserBuilder.class);
+        JsonParserFactory.setBuilder(jsonParserBuilder);
+        jsonParserBuilder.set(servletContext);
+
+        Builder<CallbackHelper> callbackHelperBuilder = container.getBean(CallbackHelperBuilder.class);
+        CallbackHelperFactory.setBuilder(callbackHelperBuilder);
+        callbackHelperBuilder.set(servletContext);
     }
-
-    /**
-     * We have some special logging classes to maintain an optional dependence
-     * on commons-logging. This sets the servlet for when this is not available.
-     * @param servletConfig The servlet configuration
-     * @param servlet The servlet that we are running under
-     * @deprecated Since version 2.1 DWR does not use Servlet Logging
-     */
-    @Deprecated
-    public static void setupLogging(ServletConfig servletConfig, HttpServlet servlet)
-    {
-    }
-
-    /**
-     * Init parameter: Set a dwr.xml config file.
-     * This is only a prefix since we might have more than 1 config file.
-     */
-    public static final String INIT_CONFIG = "config";
-
-    /**
-     * Init parameter: Skip reading the default config file if none are specified.
-     */
-    public static final String INIT_SKIP_DEFAULT = "skipDefaultConfig";
-
-    /**
-     * Init parameter: If we are doing Servlet.log logging, to what level?
-     */
-    public static final String INIT_LOGLEVEL = "logLevel";
-
-    /*
-     * Init parameter: Should we publish the {@link Container} to the servlet
-     * context, and if so, under what name?
-     */
-    //public static final String INIT_PUBLISH_CONTAINER = "publishContainerAs";
-
-    /**
-     * Init parameter: If you wish to use a custom configurator, place its
-     * class name here
-     */
-    public static final String INIT_CUSTOM_CONFIGURATOR = "customConfigurator";
-
-    /**
-     * The name under which we publish all {@link Container}s.
-     */
-    public static final String ATTRIBUTE_CONTAINER_LIST = "org.directwebremoting.ContainerList";
-
-    /**
-     * We store a single ServerContext in the contextMap under this name.
-     */
-    public static final String DEFAULT_SERVERCONTEXT_NAME = "__default";
-
-    /**
-     * To enable us to get at a ServerContext if one has been defined or at
-     * all of them if several have been defined
-     */
-    private static final Map<String, ServerContext> contextMap = new HashMap<String, ServerContext>();
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(StartupUtil.class);
 }

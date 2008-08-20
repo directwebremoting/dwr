@@ -91,7 +91,7 @@ public class BCChart extends jsx3.chart.CartesianChart
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -128,7 +128,7 @@ public class BCChart extends jsx3.chart.CartesianChart
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Float.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Float.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -165,7 +165,7 @@ public class BCChart extends jsx3.chart.CartesianChart
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Float.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Float.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
