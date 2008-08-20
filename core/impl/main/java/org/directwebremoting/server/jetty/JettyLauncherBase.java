@@ -53,6 +53,14 @@ public class JettyLauncherBase
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
+        /*
+        // Adding a security realm
+        HashUserRealm realm = new HashUserRealm("TestRealm");
+        realm.put("username", "password");
+        realm.addUserToRole("username", "manager");
+        server.addUserRealm(realm);
+        */
+
         final File contextRoot = new File(contextHome);
 
         File webXml = new File(contextRoot, "WEB-INF/web.xml");
