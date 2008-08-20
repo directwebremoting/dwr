@@ -56,7 +56,7 @@ public class System extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -115,7 +115,7 @@ locale is determined by introspecting the browser. If all else fails the default
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -141,7 +141,7 @@ locale is determined by introspecting the browser. If all else fails the default
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

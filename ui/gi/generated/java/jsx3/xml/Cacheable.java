@@ -254,7 +254,7 @@ is destroyed.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -423,7 +423,7 @@ string of this object. This method executes the following steps:
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -463,7 +463,7 @@ If no value is specified, a unique id is generated.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -502,7 +502,7 @@ way of specifying the source XML document of this object.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -543,7 +543,7 @@ source XML document of this object.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -583,7 +583,7 @@ data sources loaded from an XML URL.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -612,7 +612,7 @@ the cache under the XML Id of this object changes.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -709,7 +709,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -734,7 +734,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

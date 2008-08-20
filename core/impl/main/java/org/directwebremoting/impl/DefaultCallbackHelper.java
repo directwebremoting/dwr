@@ -23,7 +23,6 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.CallbackHelper;
-import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
@@ -62,7 +61,7 @@ public class DefaultCallbackHelper implements CallbackHelper
     }
 
     /**
-     * The reverse of {@link CallbackHelperFactory#saveCallback(Callback, Class)}
+     * The reverse of {@link CallbackHelper#saveCallback(Callback, Class)}
      * which executes a {@link Callback} which has been called by the browser
      */
     @SuppressWarnings("unchecked")

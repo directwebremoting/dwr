@@ -171,7 +171,7 @@ CustomVector.prototype.updateVector = function(objVector) {
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

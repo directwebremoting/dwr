@@ -154,7 +154,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      */
     public void afterPropertiesSet() throws Exception
     {
-        ApplicationContext parent = getApplicationContext().getParent(); 
+        ApplicationContext parent = getApplicationContext().getParent();
         if (parent != null)
         {
             try
@@ -176,9 +176,9 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
         if (logger.isDebugEnabled())
         {
-            logger.debug("afterPropertiesSet() called with servletContext '" + servletContext + "'");  
+            logger.debug("afterPropertiesSet() called with servletContext '" + servletContext + "'");
         }
-        
+
         Assert.notNull(servletContext, "The servlet context has not been set on the controller");
         Assert.notNull(configurators, "The required 'configurators' property should be set");
 
@@ -213,7 +213,10 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         }
         finally
         {
-            webContextBuilder.unset();
+            if (webContextBuilder != null)
+            {
+                webContextBuilder.unset();
+            }
         }
     }
 
@@ -266,8 +269,8 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         Assert.notNull(configParams, "configParams cannot be null");
         this.configParams = configParams;
     }
-    
-    
+
+
     /**
      * How is this deployed in Spring
      */
@@ -310,7 +313,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
      * <a href="http://getahead.org/dwr/server/servlet">http://getahead.org/dwr/server/servlet</a>
      */
     private Map<String, String> configParams = new HashMap<String, String>();
-    
+
     /**
      * The log stream
      */

@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +33,6 @@ import org.directwebremoting.io.MatchedItems;
 import org.directwebremoting.io.SortCriterion;
 import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.io.StoreRegion;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.jdbc.support.JdbcUtils;
 
 /**
  * This file is not supported in any way, and does not function correctly.
@@ -168,9 +167,41 @@ class SqlStoreProvider<T> extends AbstractStoreProvider<T>
         }
         catch (Exception ex)
         {
-            JdbcUtils.closeConnection(con);
-            JdbcUtils.closeStatement(stmt);
-            JdbcUtils.closeResultSet(rs);
+            if (con != null)
+            {
+                try
+                {
+                    con.close();
+                }
+                catch (SQLException ex2)
+                {
+                    log.warn("Error closing connection", ex2);
+                }
+            }
+
+            if (stmt != null)
+            {
+                try
+                {
+                    stmt.close();
+                }
+                catch (SQLException ex2)
+                {
+                    log.warn("Error closing statement", ex2);
+                }
+            }
+
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (SQLException ex2)
+                {
+                    log.warn("Error closing resultset", ex2);
+                }
+            }
         }
 
         MatchedItems reply = new MatchedItems();
@@ -179,7 +210,6 @@ class SqlStoreProvider<T> extends AbstractStoreProvider<T>
 
     protected DataSource dataSource;
 
-    @Required
     public void setDataSource(DataSource dataSource)
     {
         this.dataSource = dataSource;

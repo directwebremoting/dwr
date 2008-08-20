@@ -97,7 +97,7 @@ public class DefaultAccessControlTest
     {
         WebContextBuilder builder = new DefaultWebContextBuilder();
         builder.set(new FakeHttpServletRequest(), new FakeHttpServletResponse(), null, null, null);
-        WebContextFactory.setWebContextBuilder(builder);
+        WebContextFactory.setBuilder(builder);
 
         NewCreator creator = new NewCreator();
         creator.setClass(DefaultAccessControl.class.getName());

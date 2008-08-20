@@ -19,13 +19,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.json.impl.IgnoreJsonDecoder;
 import org.directwebremoting.json.parse.JsonParseException;
 import org.directwebremoting.json.parse.JsonParser;
-import org.directwebremoting.json.parse.javacc.JavaccJsonParser;
-import org.directwebremoting.json.simple.SimpleJsonDecoder;
+import org.directwebremoting.json.parse.JsonParserFactory;
+import org.directwebremoting.json.parse.impl.IgnoreJsonDecoder;
+import org.directwebremoting.json.parse.simple.SimpleJsonDecoder;
 
 /**
  * Various utilities to make parsing and reading JSON easier
@@ -36,25 +34,24 @@ public class JsonUtil
     /**
      * Convert the input string into a set of basic types
      */
-    public Map<String, Object> toSimpleTypes(String input) throws JsonParseException
+    public static Map<String, Object> toSimpleTypes(String input) throws JsonParseException
     {
-        log.info("testing: " + input);
         return toSimpleTypes(new StringReader(input));
     }
 
     /**
      * Convert the input document into a set of basic types
      */
-    public Map<String, Object> toSimpleTypes(Reader reader) throws JsonParseException
+    public static Map<String, Object> toSimpleTypes(Reader reader) throws JsonParseException
     {
-        JsonParser parser = new JavaccJsonParser();
+        JsonParser parser = JsonParserFactory.get();
         return parser.parse(reader, new SimpleJsonDecoder());
     }
 
     /**
      * Get a record of any errors in parsing the input string
      */
-    public String getErrors(String input)
+    public static String getErrors(String input)
     {
         return getErrors(new StringReader(input));
     }
@@ -62,11 +59,11 @@ public class JsonUtil
     /**
      * Get a record of any errors in parsing the input document
      */
-    public String getErrors(Reader reader)
+    public static String getErrors(Reader reader)
     {
         try
         {
-            JsonParser parser = new JavaccJsonParser();
+            JsonParser parser = JsonParserFactory.get();
             parser.parse(reader, new IgnoreJsonDecoder());
             return null;
         }
@@ -218,9 +215,4 @@ public class JsonUtil
         throw new InvalidJsonException("Unknown data type");
     }
     */
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(JsonUtil.class);
 }

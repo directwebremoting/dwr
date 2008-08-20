@@ -19,18 +19,16 @@ import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
 
 /**
- * A CallbackHelperBuilder that creates DefaultCallbackHelpers.
+ * A Builder that creates {@link DefaultCallbackHelper}s.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultCallbackHelperBuilder implements CallbackHelperBuilder
+public class DefaultCallbackHelperBuilder extends DefaultBuilder<CallbackHelper> implements CallbackHelperBuilder
 {
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder#get()
+    /**
+     * Initialize the DefaultBuilder with type of object to create
      */
-    public CallbackHelper get()
+    public DefaultCallbackHelperBuilder()
     {
-        return callbackHelper;
+        super(DefaultCallbackHelper.class);
     }
-
-    private CallbackHelper callbackHelper = new DefaultCallbackHelper();
 }

@@ -15,11 +15,10 @@
  */
 package org.directwebremoting;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.Builder;
+import org.directwebremoting.extend.Factory;
 
 /**
  * Accessor for the current ServerContext.
@@ -28,84 +27,49 @@ import org.apache.commons.logging.LogFactory;
 public class ServerContextFactory
 {
     /**
-     * Accessor for the current ServerContext in the normal case where there is
-     * only one DWR in the current classloader
+     * Accessor for the current ServerContext.
      * @return The current ServerContext.
      */
     public static ServerContext get()
     {
-        if (builder == null)
-        {
-            log.warn("ServerContextBuilder is null. This probably means that DWR has not initialized properly");
-            return null;
-        }
-
-        return builder.get();
+        return factory.get();
     }
 
     /**
-     * Accessor for the current ServerContext.
+     * Accessor for the current ServerContext in more complex setups.
+     * For some setups DWR may not be able to discover the correct environment
+     * (i.e. ServletContext), so we need to tell it. This generally happens if
+     * you have DWR configured twice in a single context. Unless you are writing
+     * code that someone else will configure, it is probably safe to use the
+     * simpler {@link #get()} method.
      * @param ctx The servlet context to allow us to bootstrap
      * @return The current ServerContext.
      */
     public static ServerContext get(ServletContext ctx)
     {
-        if (builder == null)
-        {
-            log.warn("ServerContextBuilder is null. This probably means that DWR has not initialized properly");
-            return null;
-        }
-
-        return builder.get(ctx);
+        return factory.get(ctx);
     }
 
     /**
-     * Internal method to allow us to get the ServerContextBuilder from which we
+     * Internal method to allow us to get the Builder from which we
      * will get ServerContext objects.
      * Do not call this method from outside of DWR.
      * @param builder The factory object (from DwrServlet)
      */
-    public static void setServerContextBuilder(ServerContextBuilder builder)
+    public static void setBuilder(Builder<ServerContext> builder)
     {
-        ServerContextFactory.builder = builder;
+        factory.setBuilder(builder);
     }
 
     /**
-     * The ServerContextBuilder from which we will get ServerContext objects
+     * The factory helper class
      */
-    private static ServerContextBuilder builder = null;
+    private static Factory<ServerContext> factory = Factory.create();
 
     /**
-     * Class to enable us to access servlet parameters.
+     * Hack to get around Generics not being implemented by erasure
      */
-    public interface ServerContextBuilder
+    public interface ServerContextBuilder extends Builder<ServerContext>
     {
-        /**
-         * Make the current webapp know what the current config/context is.
-         * This method is only for use internally to DWR.
-         * @param config The servlet configuration
-         * @param context The servlet context
-         * @param container The IoC container
-         */
-        void set(ServletConfig config, ServletContext context, Container container);
-
-        /**
-         * Accessor for the current ServerContext in the normal case where there
-         * is only one DWR in the current classloader
-         * @return The ServerContext that is associated with this web application
-         */
-        ServerContext get();
-
-        /**
-         * Accessor for the current ServerContext
-         * @param context The web application environment
-         * @return The ServerContext that is associated with this web application
-         */
-        ServerContext get(ServletContext context);
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(WebContextFactory.class);
 }

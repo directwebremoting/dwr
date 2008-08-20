@@ -75,7 +75,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -112,7 +112,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -149,7 +149,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -186,7 +186,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -223,7 +223,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -260,7 +260,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -297,7 +297,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -334,7 +334,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -371,7 +371,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -408,7 +408,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -434,7 +434,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -460,7 +460,7 @@ public class BlockTag extends jsx3.html.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

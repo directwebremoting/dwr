@@ -75,7 +75,7 @@ public class Shape extends jsx3.vector.Tag
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

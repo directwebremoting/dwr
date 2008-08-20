@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json.impl;
+package org.directwebremoting.json.parse.impl;
 
 import java.math.BigDecimal;
 

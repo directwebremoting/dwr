@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json.simple;
+package org.directwebremoting.json.parse.simple;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -95,7 +95,12 @@ public class SimpleJsonDecoder implements JsonDecoder<Map<String, Object>>
         last = stack.removeLast();
         modes.removeLast();
 
-        add(last);
+
+        // Don't add the top level object to its parent
+        if (stack.size() > 0)
+        {
+            add(last);
+        }
     }
 
     /**

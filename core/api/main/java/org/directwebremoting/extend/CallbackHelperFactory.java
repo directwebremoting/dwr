@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.extend;
 
+import javax.servlet.ServletContext;
+
 import org.directwebremoting.ui.Callback;
 
 /**
@@ -23,50 +25,47 @@ import org.directwebremoting.ui.Callback;
  */
 public class CallbackHelperFactory
 {
-    public static <T> String saveCallback(Callback<T> callback, Class<T> type)
-    {
-        return get().saveCallback(callback, type);
-    }
-
     /**
      * Accessor for the current CallbackHelper.
-     * @return The current CallbackHelper or null if the current thread was not
-     * started by DWR.
+     * @return The current CallbackHelper.
      */
     public static CallbackHelper get()
     {
-        if (builder == null)
-        {
-            return null;
-        }
-
-        return builder.get();
+        return factory.get();
     }
 
     /**
-     * Class to enable us to access servlet parameters.
+     * Accessor for the current CallbackHelper in more complex setups.
+     * For some setups DWR may not be able to discover the correct environment
+     * (i.e. ServletContext), so we need to tell it. This generally happens if
+     * you have DWR configured twice in a single context. Unless you are writing
+     * code that someone else will configure, it is probably safe to use the
+     * simpler {@link #get()} method.
+     * @param ctx The servlet context to allow us to bootstrap
+     * @return The current CallbackHelper.
      */
-    public interface CallbackHelperBuilder
+    public static CallbackHelper get(ServletContext ctx)
     {
-        /**
-         * @return The CallbackHelper that is associated with this thread
-         */
-        CallbackHelper get();
+        return factory.get(ctx);
     }
 
     /**
-     * The CallbackHelperBuilder from which we will get CallbackHelper objects
-     */
-    private static CallbackHelperBuilder builder = null;
-
-    /**
-     * Internal method to allow us to get the CallbackHelperBuilder from which we
+     * Internal method to allow us to get the Builder from which we
      * will get CallbackHelper objects.
      * Do not call this method from outside of DWR.
      * @param builder The factory object (from DwrServlet)
      */
-    public static void setCallbackHelperBuilder(CallbackHelperBuilder builder)
+    public static void setBuilder(Builder<CallbackHelper> builder)
     {
-        CallbackHelperFactory.builder = builder;
+        factory.setBuilder(builder);
+    }
+
+    private static Factory<CallbackHelper> factory = Factory.create();
+
+    /**
+     * Hack to get around Generics not being implemented by erasure
+     */
+    public interface CallbackHelperBuilder extends Builder<CallbackHelper>
+    {
     }
 }

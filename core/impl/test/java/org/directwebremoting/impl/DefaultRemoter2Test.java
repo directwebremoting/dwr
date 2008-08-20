@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Remoter;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -26,11 +27,11 @@ import static org.junit.Assert.*;
  */
 public class DefaultRemoter2Test
 {
-    public DefaultRemoter2Test() throws Exception
+    @BeforeClass
+    public static void setup()
     {
-        SingletonContainer singleton = new SingletonContainer("/org/directwebremoting/impl/dwr.xml");
-        singleton.engageThread();
-        container = singleton.getContainer();
+        TestEnvironment.engageThread();
+        container = TestEnvironment.getContainer();
         remoter = container.getBean(Remoter.class);
     }
 
@@ -43,7 +44,7 @@ public class DefaultRemoter2Test
         assertTrue(!script.contains("JDate.notify"));
     }
 
-    private Container container;
+    private static Container container;
 
-    private Remoter remoter;
+    private static Remoter remoter;
 }

@@ -124,7 +124,7 @@ public class Form extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -161,7 +161,7 @@ public class Form extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -197,7 +197,7 @@ public class Form extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Boolean.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Boolean.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -235,7 +235,7 @@ public class Form extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -260,7 +260,7 @@ public class Form extends jsx3.lang.Object
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Object[].class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Object[].class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -355,7 +355,7 @@ supported in browsers other than Microsoft Internet Explorer.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -455,7 +455,7 @@ or a default position and dimensions will be used.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

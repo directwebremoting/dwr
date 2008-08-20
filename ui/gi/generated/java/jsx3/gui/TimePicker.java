@@ -181,7 +181,7 @@ public class TimePicker extends jsx3.gui.Block
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -208,7 +208,7 @@ display if both this and showSeconds are true.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -235,7 +235,7 @@ locale.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -293,7 +293,7 @@ locale.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -329,7 +329,7 @@ locale.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -365,7 +365,7 @@ locale.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -401,7 +401,7 @@ locale.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -440,7 +440,7 @@ it returns a new date (the current day) with the time of day set.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, java.util.Date.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, java.util.Date.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -465,7 +465,7 @@ it returns a new date (the current day) with the time of day set.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -574,7 +574,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -600,7 +600,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -626,7 +626,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -653,7 +653,7 @@ STATEENABLED.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -679,7 +679,7 @@ STATEENABLED.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, String.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, String.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -706,7 +706,7 @@ OPTIONAL.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
@@ -733,7 +733,7 @@ STATEVALID.
 
         if (callback != null)
         {
-            String key = org.directwebremoting.extend.CallbackHelperFactory.saveCallback(callback, Integer.class);
+            String key = org.directwebremoting.extend.CallbackHelperFactory.get().saveCallback(callback, Integer.class);
             script.appendCall("__System.activateCallback", key, "reply");
         }
 

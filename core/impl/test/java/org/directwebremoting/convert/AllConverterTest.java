@@ -18,6 +18,7 @@ package org.directwebremoting.convert;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,8 +33,7 @@ import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.impl.SingletonContainer;
-import org.junit.AfterClass;
+import org.directwebremoting.impl.TestEnvironment;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,20 +45,15 @@ import org.junit.Test;
  */
 public class AllConverterTest
 {
-    public AllConverterTest() throws Exception
-    {
-    }
-
+    /**
+     *
+     */
     @BeforeClass
-    public static void setUp() throws Exception
+    public void setup() throws ParseException
     {
-        singletonContainer.engageThread();
-    }
+        testDate = format.parse("01-01-2005");
 
-    @AfterClass
-    public static void tearDown() throws Exception
-    {
-        singletonContainer.disengageThread();
+        TestEnvironment.engageThread();
     }
 
     @Test
@@ -330,7 +325,7 @@ public class AllConverterTest
 
     public static void assertInboundConversion(String input, Class<?> convertTo, Object expected)
     {
-        ConverterManager converterManager = singletonContainer.getConverterManager();
+        ConverterManager converterManager = TestEnvironment.getConverterManager();
         InboundContext ctx = new InboundContext();
 
         String explanation = "Convert \"" + input + "\" to " + convertTo.getName();
@@ -367,7 +362,7 @@ public class AllConverterTest
 
     public static void assertInboundConversionFailure(String input, Class<?> convertTo)
     {
-        ConverterManager converterManager = singletonContainer.getConverterManager();
+        ConverterManager converterManager = TestEnvironment.getConverterManager();
         InboundContext ctx = new InboundContext();
 
         String explanation = "Convert \"" + input + "\" to " + convertTo.getSimpleName();
@@ -386,7 +381,7 @@ public class AllConverterTest
 
     public static void assertOutboundConversion(Object input, String expected) throws ConversionException
     {
-        ConverterManager converterManager = singletonContainer.getConverterManager();
+        ConverterManager converterManager = TestEnvironment.getConverterManager();
         OutboundContext ctx = new OutboundContext(false);
 
         OutboundVariable result = converterManager.convertOutbound(input, ctx);
@@ -401,20 +396,6 @@ public class AllConverterTest
     }
 
     private static final Log log = LogFactory.getLog(AllConverterTest.class);
-
-    private static SingletonContainer singletonContainer;
     private static final DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
     private static Date testDate;
-    static
-    {
-        try
-        {
-            testDate = format.parse("01-01-2005");
-            singletonContainer = new SingletonContainer("/dwr-test.xml");
-        }
-        catch (Exception ex)
-        {
-            log.error("init failure", ex);
-        }
-    }
 }
