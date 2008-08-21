@@ -92,12 +92,6 @@ public class StartupUtil
      */
     public static final String INIT_LOGLEVEL = "logLevel";
 
-    /*
-     * Init parameter: Should we publish the {@link Container} to the servlet
-     * context, and if so, under what name?
-     */
-    //public static final String INIT_PUBLISH_CONTAINER = "publishContainerAs";
-
     /**
      * Init parameter: If you wish to use a custom configurator, place its
      * class name here
@@ -124,6 +118,12 @@ public class StartupUtil
      * all of them if several have been defined
      */
     private static final Map<String, ServerContext> contextMap = new HashMap<String, ServerContext>();
+
+    /**
+     * How many Contexts are there in this classloader that we need to
+     * distinguish? Things will be a lot harder if there is more than 1.
+     */
+    private static int foundContexts = 0;
 
     /**
      * A way to setup DWR outside of any Containers.
@@ -647,18 +647,6 @@ public class StartupUtil
     {
         ServletContext servletContext = servletConfig.getServletContext();
 
-        // TODO: Make sense of this
-        // Store this container in the servletContext so long as no-one else did
-        // INIT_PUBLISH_CONTAINER="publishContainerAs" which does not sound like
-        // a logical name. Plus what happens when there is more than one DWR?
-        /*
-        String publishName = servletConfig.getInitParameter(INIT_PUBLISH_CONTAINER);
-        if (publishName != null)
-        {
-            servletContext.setAttribute(publishName, container);
-        }
-        */
-
         // Push the container into a list that holds all the known containers
         List<Container> containers = (List<Container>) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
         if (containers == null)
@@ -670,34 +658,33 @@ public class StartupUtil
 
         // Update the list of ServerContexts
         ServerContext serverContext = ServerContextFactory.get(servletContext);
-        String name = servletConfig.getServletName();
-        contextMap.put(name, serverContext);
-        log.debug("Adding to contextMap, a serverContext called " + name);
 
-        setSingletonServerContext(serverContext);
-    }
-
-    /**
-     * Attempt to set the singleton ServerContext, unsetting for all if
-     * there is already one
-     */
-    public static void setSingletonServerContext(ServerContext serverContext)
-    {
+        // Attempt to set the singleton ServerContext, unsetting for all if
+        // there is already one
         synchronized (contextMap)
         {
-            switch (contextMap.size())
+            switch (foundContexts)
             {
             case 0:
+                // No-one has been here before - set us as the default
                 contextMap.put(DEFAULT_SERVERCONTEXT_NAME, serverContext);
                 break;
             case 1:
+                // We're second - remove the previous guy from being default
                 contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
                 log.debug("Multiple instances of DWR detected.");
                 break;
             default:
-                // There are loads of them!
+                // We're third or more - leave it that there is no default
                 break;
             }
+
+            // Whatever, record the ServerContext against our servlet name
+            String name = servletConfig.getServletName();
+            contextMap.put(name, serverContext);
+            log.debug("Adding to contextMap, a serverContext called " + name);
+
+            foundContexts++;
         }
     }
 
@@ -708,7 +695,10 @@ public class StartupUtil
      */
     public static ServerContext getSingletonServerContext()
     {
-        return contextMap.get(DEFAULT_SERVERCONTEXT_NAME);
+        synchronized (contextMap)
+        {
+            return contextMap.get(DEFAULT_SERVERCONTEXT_NAME);
+        }
     }
 
     /**
