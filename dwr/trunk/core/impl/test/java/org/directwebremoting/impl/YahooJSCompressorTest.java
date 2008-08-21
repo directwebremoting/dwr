@@ -2,12 +2,13 @@ package org.directwebremoting.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 
+import org.directwebremoting.extend.DwrConstants;
+import org.directwebremoting.servlet.UtilHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class YahooJSCompressorTest
     public void setUp()
     {
         StringBuffer scriptBuffer = new StringBuffer();
-        InputStream scriptStream = getClass().getClassLoader().getResourceAsStream("testData/util.js");
+        InputStream scriptStream = UtilHandler.class.getResourceAsStream(DwrConstants.PACKAGE + "/util.js");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(scriptStream));
         try
         {
@@ -36,10 +37,14 @@ public class YahooJSCompressorTest
         }
         finally
         {
-            try {
+            try
+            {
                 scriptStream.close();
                 bufferedReader.close();
-            } catch (Exception e1) { }
+            }
+            catch (Exception e1)
+            {
+            }
         }
         scriptToCompress = scriptBuffer.toString();
     }
@@ -47,7 +52,7 @@ public class YahooJSCompressorTest
     @After
     public void tearDown()
     {
-       scriptToCompress = null;
+        scriptToCompress = null;
     }
 
     @Test
@@ -57,11 +62,12 @@ public class YahooJSCompressorTest
         String compressedScript = yahooJsCompressor.compressJavaScript(scriptToCompress);
         try
         {
-            BufferedWriter out = new BufferedWriter(new FileWriter(new File("C:/testCompress.js")));
+            BufferedWriter out = new BufferedWriter(new StringWriter());
             out.write(compressedScript);
             out.close();
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
             System.out.println(e.getMessage());
         }
     }

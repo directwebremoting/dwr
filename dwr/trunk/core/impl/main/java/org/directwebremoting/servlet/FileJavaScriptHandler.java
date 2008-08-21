@@ -54,12 +54,12 @@ public class FileJavaScriptHandler extends JavaScriptHandler
 
         try
         {
-            raw = CachingHandler.class.getResourceAsStream(resource);
+            raw = FileJavaScriptHandler.class.getResourceAsStream(resource);
             if (raw == null)
             {
                 throw new IOException("Failed to find resource: " + resource);
             }
-    
+
             CopyUtils.copy(raw, sw);
         }
         finally
@@ -76,7 +76,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     @Override
     protected long getLastModifiedTime()
     {
-        URL url = CachingHandler.class.getResource(resource);
+        URL url = FileJavaScriptHandler.class.getResource(resource);
         if ("file".equals(url.getProtocol()))
         {
             File file = new File(url.getFile());
@@ -89,5 +89,5 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     /**
      * The name of the resource in the classpath that we read our contents from
      */
-    private String resource;
+    private final String resource;
 }

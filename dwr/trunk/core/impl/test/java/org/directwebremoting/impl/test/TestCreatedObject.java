@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.directwebremoting.impl.test;
+
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -24,16 +25,10 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @author Bram Smeets
+ * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class TestCreatedObject
 {
-    /**
-     * @param request
-     * @param response
-     * @param config
-     * @param context
-     * @param session
-     */
     public void testMethodWithServletParameters(HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context, HttpSession session)
     {
         Object ignore = request;
@@ -42,8 +37,11 @@ public class TestCreatedObject
         ignore = context;
         ignore = session;
         session = (HttpSession) ignore;
+    }
 
-        // do nothing
+    public Set<Integer> testBeanSetParam(Set<Integer> param)
+    {
+        return param;
     }
 
     /**

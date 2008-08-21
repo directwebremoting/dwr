@@ -16,6 +16,7 @@
 package org.directwebremoting.impl;
 
 import org.directwebremoting.Container;
+import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Remoter;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,9 +29,10 @@ import static org.junit.Assert.*;
 public class DefaultRemoter2Test
 {
     @BeforeClass
-    public static void setup()
+    public static void setup() throws Exception
     {
         TestEnvironment.engageThread();
+        TestEnvironment.configureFromClassResource(DwrConstants.PACKAGE + "/impl/dwr.xml");
         container = TestEnvironment.getContainer();
         remoter = container.getBean(Remoter.class);
     }
