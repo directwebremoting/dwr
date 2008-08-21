@@ -89,7 +89,6 @@ public class ClasspathScanner
     {
         Set<String> classes = new HashSet<String>();
 
-        Enumeration<URL> resources;
         try
         {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -99,7 +98,7 @@ public class ClasspathScanner
                 match = "";
             }
 
-            resources = classLoader.getResources(match + "/");
+            Enumeration<URL> resources = classLoader.getResources(match + "/");
             while (resources.hasMoreElements())
             {
                 String path = sanitizePath(resources.nextElement().getFile());

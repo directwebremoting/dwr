@@ -14,7 +14,7 @@
     </filter>
 
     <create creator="new" javascript="Test">
-      <param name="class" value="org.example.testdwr.Test"/>
+      <param name="class" value="org.directwebremoting.impl.test.TestCreatedObject"/>
     </create>
 
     <create creator="new" javascript="JDate">
@@ -26,17 +26,12 @@
       <filter class="org.example.testdwr.Logging2AjaxFilter"/>
     </create>
 
-    <create creator="new" javascript="TestBean" scope="session">
-      <param name="class" value="org.example.testdwr.TestBean"/>
-      <filter class="org.example.testdwr.RandomSecurityAjaxFilter"/>
-    </create>
-
-    <convert converter="testbean" match="org.example.testdwr.TestBean"/>
-
+    <!--
     <convert converter="bean" match="org.example.testdwr.ObjB"/>
     <convert converter="object" match="org.example.testdwr.ObjA">
       <param name="force" value="true"/>
     </convert>
+    -->
 
   </allow>
 
@@ -45,23 +40,7 @@
   import java.util.*;
   import org.example.testdwr.*;
 
-  Test.testBeanSetParam(Set<TestBean>);
-  Test.testBeanListParam(List<TestBean>);
-  Test.charTestBeanMapParam(Map<Character, TestBean>);
-
-  Test.stringStringMapParam(Map<String, String>);
-  Test.stringStringHashMapParam(HashMap<String, String>);
-  Test.stringStringTreeMapParam(TreeMap<String, String>);
-
-  Test.stringCollectionParam(Collection<String>);
-
-  Test.stringListParam(List<String>);
-  Test.stringLinkedListParam(LinkedList<String>);
-  Test.stringArrayListParam(ArrayList<String>);
-
-  Test.stringSetParam(Set<String>);
-  Test.stringHashSetParam(HashSet<String>);
-  Test.stringTreeSetParam(TreeSet<String>);
+  Test.testBeanSetParam(Set<Integer>);
   ]]>
   </signatures>
 
