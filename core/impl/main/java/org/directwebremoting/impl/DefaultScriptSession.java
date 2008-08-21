@@ -64,6 +64,8 @@ public class DefaultScriptSession implements RealScriptSession
         this.manager = manager;
         this.creationTime = System.currentTimeMillis();
         this.lastAccessedTime = creationTime;
+
+        log.debug("Created DefaultScriptSession: " + getDebugName() + " on " + page);
     }
 
     /* (non-Javadoc)
@@ -145,7 +147,7 @@ public class DefaultScriptSession implements RealScriptSession
             for (Map.Entry<String, Object> entry : attributes.entrySet())
             {
                 Object value = entry.getValue();
-                
+
                 if (value instanceof ScriptSessionBindingListener)
                 {
                     ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
@@ -432,6 +434,7 @@ public class DefaultScriptSession implements RealScriptSession
             long age = now - lastAccessedTime;
             if (age > manager.getScriptSessionTimeout())
             {
+                log.debug("Timeout: lastAccessedTime=" + lastAccessedTime + " for " + this);
                 invalidate();
             }
         }
@@ -494,7 +497,16 @@ public class DefaultScriptSession implements RealScriptSession
     @Override
     public String toString()
     {
-        return "DefaultScriptSession[id=" + id + "]";
+        // The first 4 hex digits of the id are enough for human distinction
+        return "DefaultScriptSession[id=" + getDebugName() + "]";
+    }
+
+    /**
+     * A very short name for debugging purposes
+     */
+    private String getDebugName()
+    {
+        return id.substring(0, 4);
     }
 
     /**
