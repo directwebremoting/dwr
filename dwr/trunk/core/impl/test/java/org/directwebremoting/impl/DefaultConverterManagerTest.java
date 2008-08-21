@@ -29,7 +29,7 @@ import org.junit.Test;
  */
 public class DefaultConverterManagerTest
 {
-    private DefaultConverterManager manager = new DefaultConverterManager();
+    private final DefaultConverterManager manager = new DefaultConverterManager();
 
     @Test
     public void addConverterTypeFail()
@@ -42,12 +42,6 @@ public class DefaultConverterManagerTest
 
         int after = manager.converterTypes.size();
         Assert.assertEquals(before, after);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void convertInboundFail() throws Exception
-    {
-        manager.convertInbound(null, null, null);
     }
 
     @Test

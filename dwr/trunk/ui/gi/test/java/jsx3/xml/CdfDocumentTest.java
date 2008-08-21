@@ -1,24 +1,18 @@
 package jsx3.xml;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for simple App.
  */
-public class CdfDocumentTest extends TestCase
+public class CdfDocumentTest
 {
     /**
-     * Create the test case
-     * @param testName name of the test case
+     * Rigorous Test :-)
      */
-    public CdfDocumentTest(String testName)
-    {
-        super(testName);
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
+    @Test
     public void testApp()
     {
         CdfDocument document = new CdfDocument("root");

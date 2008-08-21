@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.impl;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
 
 import org.directwebremoting.WebContextFactory;
@@ -26,7 +24,10 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Bram Smeets
@@ -34,7 +35,7 @@ import org.junit.Test;
  */
 public class DefaultAccessControlTest
 {
-    private DefaultAccessControl accessControl = new DefaultAccessControl();
+    private final DefaultAccessControl accessControl = new DefaultAccessControl();
 
     private FakeHttpServletRequest request;
 
@@ -92,6 +93,7 @@ public class DefaultAccessControlTest
         accessControl.assertIsDisplayable(creator, "className", getHashCodeMethod());
     }
 
+    @Ignore
     @Test
     public void testReasonToNotExecute() throws Exception
     {
@@ -139,7 +141,7 @@ public class DefaultAccessControlTest
     }
 
     /**
-     * 
+     *
      */
     public void someMethod()
     {
@@ -160,7 +162,7 @@ public class DefaultAccessControlTest
     }
 
     /**
-     * 
+     *
      */
     private void somePrivateMethod()
     {
