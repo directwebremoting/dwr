@@ -1,0 +1,49 @@
+# This file contains a number of valid JSON documents.
+# Documents are separated by blank lines
+# Lines beginning with '#' are considered comments, and ignored.
+
+{}
+
+{ }
+
+[]
+
+[ ]
+
+{ "boolean":true }
+
+{"boolean":true}
+
+{
+"boolean"
+:
+true
+}
+
+{
+    "boolean"
+:
+true
+}
+
+{ "boolean":false }
+
+{ "nothing":null }
+
+{ "number":0 }
+
+{ "number":1 }
+
+{ "number":1000000000000000000000000000 }
+
+{ "string":"0000000000000000000000000000" }
+
+{ "array":[ 1, 2, 3 ] }
+
+{ "object":{ "boolean":true } }
+
+{ "object":{ "boolean":true }, "array":[ 1, 2, 3], "boolean":true, "nothing":null }
+
+[ 1, 2, 3 ]
+
+[ 1, 2, 3, "" ]
