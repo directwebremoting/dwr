@@ -1,0 +1,28 @@
+
+Naming conventions for configuration.
+
+If I was starting from scratch, I think I'd go for:
+
+  <dwr>
+    <spring-service bean="springBeanName"/>
+    <new-service class="com.example.Remote"/>
+
+    <bean-dto match="com.example.Thing"/>
+    <object-dto match="com.example.Thang"/>
+  </dwr>  
+
+We could match this with Annotations:
+
+    package com.example;
+
+    @DwrService
+    public class Remote { .. }
+
+    @DwrDto
+    public class Thing { ... }
+
+
+And a fluent configurator:
+
+   .addNewService(com.example.Remote.class)
+   .addBeanDto(com.example.Thing.class)
