@@ -44,3 +44,22 @@ true
 { "object":{ "boolean":true }
 
 { "object": "boolean":true }, array:[ 1, 2, 3], "boolean":true, "nothing":null }
+
+{ { true } }
+
+[ 1, ]
+
+[ 1, 2, ]
+
+[ 1, 2, 3, ]
+
+[ 1, 2, 3, 4, ]
+
+[ ,1 ]
+
+[ ,1, 2 ]
+
+[ ,1, 2, 3 ]
+
+[ ,1, 2, 3, 4 ]
+

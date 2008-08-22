@@ -56,14 +56,14 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         return decoder.getRoot();
     }
 
-    final public void top(JsonDecoder<?> decoder) throws ParseException
+    final public void top(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
         {
         case 12:
             object(decoder);
             break;
-        case 19:
+        case 16:
             array(decoder);
             break;
         default:
@@ -73,37 +73,36 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         }
     }
 
-    final public void object(JsonDecoder<?> decoder) throws ParseException
+    final public void object(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         decoder.beginObject();
         jj_consume_token(12);
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
         {
         case QUOTE:
-            objectContents(decoder);
-            break;
-        default:
-            jj_la1[1] = jj_gen;
-        }
-        jj_consume_token(13);
-        decoder.endObject();
-    }
-
-    final public void objectContents(JsonDecoder<?> decoder) throws ParseException
-    {
-        pair(decoder);
-        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
-        {
-        case 14:
-            jj_consume_token(14);
-            objectContents(decoder);
+            pair(decoder);
+            label_1: while (true)
+            {
+                switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+                {
+                case 13:
+                    break;
+                default:
+                    jj_la1[1] = jj_gen;
+                    break label_1;
+                }
+                jj_consume_token(13);
+                pair(decoder);
+            }
             break;
         default:
             jj_la1[2] = jj_gen;
         }
+        jj_consume_token(14);
+        decoder.endObject();
     }
 
-    final public void pair(JsonDecoder<?> decoder) throws ParseException
+    final public void pair(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         string(decoder);
         decoder.beginMember();
@@ -112,7 +111,43 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         decoder.endMember();
     }
 
-    final public void value(JsonDecoder<?> decoder) throws ParseException
+    final public void array(JsonDecoder<?> decoder) throws ParseException, JsonParseException
+    {
+        decoder.beginArray();
+        jj_consume_token(16);
+        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+        {
+        case DIGITS:
+        case QUOTE:
+        case 12:
+        case 16:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+            value(decoder);
+            label_2: while (true)
+            {
+                switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+                {
+                case 13:
+                    break;
+                default:
+                    jj_la1[3] = jj_gen;
+                    break label_2;
+                }
+                jj_consume_token(13);
+                value(decoder);
+            }
+            break;
+        default:
+            jj_la1[4] = jj_gen;
+        }
+        jj_consume_token(17);
+        decoder.endArray();
+    }
+
+    final public void value(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
         {
@@ -126,82 +161,45 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         case 12:
             object(decoder);
             break;
-        case 19:
+        case 16:
             array(decoder);
             break;
-        case 16:
-        case 17:
         case 18:
+        case 19:
+        case 20:
             literal(decoder);
             break;
         default:
-            jj_la1[3] = jj_gen;
+            jj_la1[5] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
         }
     }
 
-    final public void literal(JsonDecoder<?> decoder) throws ParseException
+    final public void literal(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
         {
-        case 16:
-            jj_consume_token(16);
-            decoder.addBoolean(true);
-            break;
-        case 17:
-            jj_consume_token(17);
-            decoder.addBoolean(false);
-            break;
         case 18:
             jj_consume_token(18);
+            decoder.addBoolean(true);
+            break;
+        case 19:
+            jj_consume_token(19);
+            decoder.addBoolean(false);
+            break;
+        case 20:
+            jj_consume_token(20);
             decoder.addNull();
             break;
         default:
-            jj_la1[4] = jj_gen;
+            jj_la1[6] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
         }
     }
 
-    final public void array(JsonDecoder<?> decoder) throws ParseException
-    {
-        decoder.beginArray();
-        jj_consume_token(19);
-        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
-        {
-        case DIGITS:
-        case QUOTE:
-        case 12:
-        case 16:
-        case 17:
-        case 18:
-        case 19:
-        case 21:
-            arrayContents(decoder);
-            break;
-        default:
-            jj_la1[5] = jj_gen;
-        }
-        jj_consume_token(20);
-        decoder.endArray();
-    }
-
-    final public void arrayContents(JsonDecoder<?> decoder) throws ParseException
-    {
-        value(decoder);
-        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
-        {
-        case 14:
-            jj_consume_token(14);
-            arrayContents(decoder);
-            break;
-        default:
-            jj_la1[6] = jj_gen;
-        }
-    }
-
-    final public void number(JsonDecoder<?> decoder) throws ParseException
+    final public void number(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         String intPart = null;
         String floatPart = null;
@@ -249,9 +247,14 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
                 }
             }
         }
+
+        // This is can help to reduce memory consumption
+        intPart = null;
+        floatPart = null;
+        expPart = null;
     }
 
-    final public String getIntPart() throws ParseException
+    final public String getIntPart() throws ParseException, JsonParseException
     {
         String digits;
         boolean negative = false;
@@ -283,7 +286,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         throw new Error("Missing return statement in function");
     }
 
-    final public String getFloatPart() throws ParseException
+    final public String getFloatPart() throws ParseException, JsonParseException
     {
         String digits;
         jj_consume_token(22);
@@ -297,7 +300,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         throw new Error("Missing return statement in function");
     }
 
-    final public String getExpPart() throws ParseException
+    final public String getExpPart() throws ParseException, JsonParseException
     {
         Token t;
         String digits;
@@ -312,7 +315,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         throw new Error("Missing return statement in function");
     }
 
-    final public String getDigits() throws ParseException
+    final public String getDigits() throws ParseException, JsonParseException
     {
         Token t;
         t = jj_consume_token(DIGITS);
@@ -325,7 +328,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         throw new Error("Missing return statement in function");
     }
 
-    final public void string(JsonDecoder<?> decoder) throws ParseException
+    final public void string(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         StringBuilder builder = new StringBuilder();
         jj_consume_token(QUOTE);
@@ -476,7 +479,7 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
 
     private static void jj_la1_0()
     {
-        jj_la1_0 = new int[] { 0x81000, 0x10, 0x4000, 0x2f1018, 0x70000, 0x2f1018, 0x4000, 0x400000, 0x4, 0x200000, 0x980, 0x980, 0x980, };
+        jj_la1_0 = new int[] { 0x11000, 0x2000, 0x10, 0x2000, 0x3d1018, 0x3d1018, 0x1c0000, 0x400000, 0x4, 0x200000, 0x980, 0x980, 0x980, };
     }
 
     public JavaccJsonParser(java.io.InputStream stream)

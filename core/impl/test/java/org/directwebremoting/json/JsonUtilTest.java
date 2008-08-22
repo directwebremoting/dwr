@@ -64,123 +64,123 @@ public class JsonUtilTest
     }
 
     /**
-     * Test method for {@link org.directwebremoting.json.JsonUtil#toSimpleTypes}.
+     * Test method for {@link org.directwebremoting.json.JsonUtil#toSimpleObject}.
      */
     @Test
-    public void testToSimpleTypes() throws JsonParseException
+    public void testToSimpleObject() throws JsonParseException
     {
         HashMap<String, Object> expected = new HashMap<String, Object>();
 
-        Map<String, Object> reply = JsonUtil.toSimpleTypes("{  }");
+        Map<String, Object> reply = JsonUtil.toSimpleObject("{  }");
         assertEquals(expected, reply);
 
         expected.put("b", Boolean.TRUE);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":true }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":true }");
         assertEquals(expected, reply);
-        reply = JsonUtil.toSimpleTypes("{\"b\":true}");
+        reply = JsonUtil.toSimpleObject("{\"b\":true}");
         assertEquals(expected, reply);
-        reply = JsonUtil.toSimpleTypes("{\n\"b\":\n\ntrue\n}\n");
+        reply = JsonUtil.toSimpleObject("{\n\"b\":\n\ntrue\n}\n");
         assertEquals(expected, reply);
 
         expected.put("b", Boolean.FALSE);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":false }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":false }");
         assertEquals(expected, reply);
-        reply = JsonUtil.toSimpleTypes("{\"b\":false}");
+        reply = JsonUtil.toSimpleObject("{\"b\":false}");
         assertEquals(expected, reply);
-        reply = JsonUtil.toSimpleTypes("{\n\"b\":\n\nfalse\n}\n");
+        reply = JsonUtil.toSimpleObject("{\n\"b\":\n\nfalse\n}\n");
         assertEquals(expected, reply);
 
         expected.put("b", "b");
-        reply = JsonUtil.toSimpleTypes("{ \"b\":\"b\" }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":\"b\" }");
         assertEquals(expected, reply);
 
         expected.put("b", "{}");
-        reply = JsonUtil.toSimpleTypes("{ \"b\":\"{}\" }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":\"{}\" }");
         assertEquals(expected, reply);
 
         expected.put("b", ":");
-        reply = JsonUtil.toSimpleTypes("{ \"b\":\":\" }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":\":\" }");
         assertEquals(expected, reply);
 
         expected.put("b", "[]");
-        reply = JsonUtil.toSimpleTypes("{ \"b\":\"[]\" }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":\"[]\" }");
         assertEquals(expected, reply);
 
         expected.put("b", ",[]");
-        reply = JsonUtil.toSimpleTypes("{ \"b\":\",[]\" }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":\",[]\" }");
         assertEquals(expected, reply);
 
         expected.put("b", 1);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":1 }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":1 }");
         assertEquals(expected, reply);
 
         expected.put("b", 2);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":2 }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":2 }");
         assertEquals(expected, reply);
 
         expected.put("b", 0);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":0 }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":0 }");
         assertEquals(expected, reply);
 
         expected.put("c", true);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":0, \"c\":true }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":0, \"c\":true }");
         assertEquals(expected, reply);
 
         expected.put("c", null);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":0, \"c\":null }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":0, \"c\":null }");
         assertEquals(expected, reply);
 
         expected.put("b", null);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":null }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":null }");
         assertEquals(expected, reply);
 
         ArrayList<Object> child1 = new ArrayList<Object>();
         expected.put("c", child1);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[] }");
         assertEquals(expected, reply);
 
         child1.add(true);
         expected.put("c", child1);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true] }");
         assertEquals(expected, reply);
 
         child1.add(false);
         child1.add(null);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true,false, null] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true,false, null] }");
         assertEquals(expected, reply);
 
         HashMap<String, Object> child2 = new HashMap<String, Object>();
         child1.add(child2);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true,false, null, {}] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true,false, null, {}] }");
         assertEquals(expected, reply);
 
         child2.put("d", 1);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true,false, null, { \"d\":1}] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true,false, null, { \"d\":1}] }");
         assertEquals(expected, reply);
 
         child2.put("d", null);
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true,false, null, { \"d\":null}] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true,false, null, { \"d\":null}] }");
         assertEquals(expected, reply);
 
         child2.put("e", new ArrayList<Object>());
-        reply = JsonUtil.toSimpleTypes("{ \"b\":null, \"c\":[true,false, null, { \"d\":null, \"e\":[]}] }");
+        reply = JsonUtil.toSimpleObject("{ \"b\":null, \"c\":[true,false, null, { \"d\":null, \"e\":[]}] }");
         assertEquals(expected, reply);
 
         expected.remove("b");
-        reply = JsonUtil.toSimpleTypes("{ \"c\":[true,false, null, { \"d\":null, \"e\":[]}] }");
+        reply = JsonUtil.toSimpleObject("{ \"c\":[true,false, null, { \"d\":null, \"e\":[]}] }");
         assertEquals(expected, reply);
 
         child1.remove(0);
-        reply = JsonUtil.toSimpleTypes("{ \"c\":[false, null, { \"d\":null, \"e\":[]}] }");
+        reply = JsonUtil.toSimpleObject("{ \"c\":[false, null, { \"d\":null, \"e\":[]}] }");
         assertEquals(expected, reply);
 
         child1.remove(0);
         child1.remove(0);
-        reply = JsonUtil.toSimpleTypes("{ \"c\":[{ \"d\":null, \"e\":[]}] }");
+        reply = JsonUtil.toSimpleObject("{ \"c\":[{ \"d\":null, \"e\":[]}] }");
         assertEquals(expected, reply);
 
         child2.remove("d");
-        reply = JsonUtil.toSimpleTypes("{ \"c\":[{\"e\":[]}] }");
+        reply = JsonUtil.toSimpleObject("{ \"c\":[{\"e\":[]}] }");
         assertEquals(expected, reply);
     }
 
