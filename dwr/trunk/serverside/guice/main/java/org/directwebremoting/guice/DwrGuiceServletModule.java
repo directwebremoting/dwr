@@ -33,12 +33,8 @@ import org.directwebremoting.WebContextFactory;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 
-import static org.directwebremoting.guice.DwrGuiceUtil.getServletContext;
-import static org.directwebremoting.guice.DwrScopes.APPLICATION;
-import static org.directwebremoting.guice.DwrScopes.GLOBAL;
-import static org.directwebremoting.guice.DwrScopes.REQUEST;
-import static org.directwebremoting.guice.DwrScopes.SCRIPT;
-import static org.directwebremoting.guice.DwrScopes.SESSION;
+import static org.directwebremoting.guice.DwrGuiceUtil.*;
+import static org.directwebremoting.guice.DwrScopes.*;
 
 /**
  * Configures DWR scopes and creates bindings for commonly
@@ -240,6 +236,4 @@ class DwrGuiceServletModule extends AbstractDwrModule
             return "ServerContextProvider";
         }
     };
-
-    private final boolean bindPotentiallyConflictingTypes;
 }

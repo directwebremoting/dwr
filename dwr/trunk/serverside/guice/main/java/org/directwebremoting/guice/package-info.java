@@ -203,8 +203,8 @@
  * <p>
  *   The classes that handle DWR scopes are modeled on the classes in the
  *   {@code com.google.inject.servlet} package, but are independent of them.
- *   You do <em>not</em> need to install {@link com.google.inject.servlet.GuiceFilter GuiceFilter} and
- *   the Guice {@link com.google.inject.servlet.ServletModule ServletModule} to use the DWR scopes.
+ *   You do <em>not</em> need to install com.google.inject.servlet.GuiceFilter and
+ *   the Guice com.google.inject.servlet.ServletModule to use the DWR scopes.
  *   There is the potential for binding conflict with this module, however, so this package creates
  *   bindings for the potentially conflicting types using a special {@link org.directwebremoting.guice.Dwr @Dwr}
  *   annotation. It also makes the standard binding if the Guice servlet module is not found in the
