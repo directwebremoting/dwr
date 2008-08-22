@@ -42,10 +42,13 @@ Module: DWR is made up of a number of modules. The idea is that these modules
 are as independent as possible. Spring integration is an example of a module.
 The modules are grouped into 5 areas: core, protocol, serverside, ui, noncla
 - core: The heart of DWR
+  - api: All the important interfaces and classes for users and integrators
+  - impl: Implementations of the interface points, of use most to DWR developers
+  - legacy: For backwards compatibility
 - protocol: A set of ways of talking to the network
 - serverside: Integrations with various server-side technologies
 - ui: Integrations with various user interface technologies
-- noncla: Any code for which we do not have a distribution agreement
+- noncla: Code for which we do not have a CLA agreement
 
 Each module may contain a number of source trees. One for test, one for demos,
 one for the main sources and maybe one for generated code. The module may also
