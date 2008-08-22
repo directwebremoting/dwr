@@ -240,7 +240,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         case 34:
             return jjStopAtPos(0, 4);
         case 44:
-            return jjStopAtPos(0, 14);
+            return jjStopAtPos(0, 13);
         case 45:
             return jjStopAtPos(0, 21);
         case 46:
@@ -248,19 +248,19 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         case 58:
             return jjStopAtPos(0, 15);
         case 91:
-            return jjStopAtPos(0, 19);
+            return jjStopAtPos(0, 16);
         case 93:
-            return jjStopAtPos(0, 20);
+            return jjStopAtPos(0, 17);
         case 102:
-            return jjMoveStringLiteralDfa1_0(0x20000L);
+            return jjMoveStringLiteralDfa1_0(0x80000L);
         case 110:
-            return jjMoveStringLiteralDfa1_0(0x40000L);
+            return jjMoveStringLiteralDfa1_0(0x100000L);
         case 116:
-            return jjMoveStringLiteralDfa1_0(0x10000L);
+            return jjMoveStringLiteralDfa1_0(0x40000L);
         case 123:
             return jjStopAtPos(0, 12);
         case 125:
-            return jjStopAtPos(0, 13);
+            return jjStopAtPos(0, 14);
         default:
             return jjMoveNfa_0(0, 0);
         }
@@ -280,11 +280,11 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         switch (curChar)
         {
         case 97:
-            return jjMoveStringLiteralDfa2_0(active0, 0x20000L);
+            return jjMoveStringLiteralDfa2_0(active0, 0x80000L);
         case 114:
-            return jjMoveStringLiteralDfa2_0(active0, 0x10000L);
-        case 117:
             return jjMoveStringLiteralDfa2_0(active0, 0x40000L);
+        case 117:
+            return jjMoveStringLiteralDfa2_0(active0, 0x100000L);
         default:
             break;
         }
@@ -309,9 +309,9 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         switch (curChar)
         {
         case 108:
-            return jjMoveStringLiteralDfa3_0(active0, 0x60000L);
+            return jjMoveStringLiteralDfa3_0(active0, 0x180000L);
         case 117:
-            return jjMoveStringLiteralDfa3_0(active0, 0x10000L);
+            return jjMoveStringLiteralDfa3_0(active0, 0x40000L);
         default:
             break;
         }
@@ -336,19 +336,19 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         switch (curChar)
         {
         case 101:
-            if ((active0 & 0x10000L) != 0L)
-            {
-                return jjStopAtPos(3, 16);
-            }
-            break;
-        case 108:
             if ((active0 & 0x40000L) != 0L)
             {
                 return jjStopAtPos(3, 18);
             }
             break;
+        case 108:
+            if ((active0 & 0x100000L) != 0L)
+            {
+                return jjStopAtPos(3, 20);
+            }
+            break;
         case 115:
-            return jjMoveStringLiteralDfa4_0(active0, 0x20000L);
+            return jjMoveStringLiteralDfa4_0(active0, 0x80000L);
         default:
             break;
         }
@@ -373,9 +373,9 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         switch (curChar)
         {
         case 101:
-            if ((active0 & 0x20000L) != 0L)
+            if ((active0 & 0x80000L) != 0L)
             {
-                return jjStopAtPos(4, 17);
+                return jjStopAtPos(4, 19);
             }
             break;
         default:
@@ -834,7 +834,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
         }
     }
 
-    public static final String[] jjstrLiteralImages = { "", null, null, null, "\42", null, null, null, null, null, null, null, "\173", "\175", "\54", "\72", "\164\162\165\145", "\146\141\154\163\145", "\156\165\154\154", "\133", "\135", "\55", "\56", };
+    public static final String[] jjstrLiteralImages = { "", null, null, null, "\42", null, null, null, null, null, null, null, "\173", "\54", "\175", "\72", "\133", "\135", "\164\162\165\145", "\146\141\154\163\145", "\156\165\154\154", "\55", "\56", };
 
     public static final String[] lexStateNames = { "DEFAULT", "STRING_STATE", "ESC_STATE", "HEX_STATE", };
 

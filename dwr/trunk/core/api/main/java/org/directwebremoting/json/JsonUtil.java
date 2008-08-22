@@ -17,13 +17,16 @@ package org.directwebremoting.json;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 import org.directwebremoting.json.parse.JsonParseException;
 import org.directwebremoting.json.parse.JsonParser;
 import org.directwebremoting.json.parse.JsonParserFactory;
 import org.directwebremoting.json.parse.impl.IgnoreJsonDecoder;
-import org.directwebremoting.json.parse.simple.SimpleJsonDecoder;
+import org.directwebremoting.json.parse.impl.ReflectionJsonDecoder;
+import org.directwebremoting.json.parse.impl.SimpleArrayJsonDecoder;
+import org.directwebremoting.json.parse.impl.SimpleObjectJsonDecoder;
 
 /**
  * Various utilities to make parsing and reading JSON easier
@@ -34,18 +37,52 @@ public class JsonUtil
     /**
      * Convert the input string into a set of basic types
      */
-    public static Map<String, Object> toSimpleTypes(String input) throws JsonParseException
+    public static <T> T toReflectedTypes(Class<T> marshallInto, String input) throws JsonParseException
     {
-        return toSimpleTypes(new StringReader(input));
+        return toReflectedTypes(marshallInto, new StringReader(input));
     }
 
     /**
      * Convert the input document into a set of basic types
      */
-    public static Map<String, Object> toSimpleTypes(Reader reader) throws JsonParseException
+    public static <T> T toReflectedTypes(Class<T> marshallInto, Reader reader) throws JsonParseException
     {
         JsonParser parser = JsonParserFactory.get();
-        return parser.parse(reader, new SimpleJsonDecoder());
+        return parser.parse(reader, new ReflectionJsonDecoder<T>(marshallInto));
+    }
+
+    /**
+     * Convert the input string into a set of basic types
+     */
+    public static Map<String, Object> toSimpleObject(String input) throws JsonParseException
+    {
+        return toSimpleObject(new StringReader(input));
+    }
+
+    /**
+     * Convert the input document into a set of basic types
+     */
+    public static Map<String, Object> toSimpleObject(Reader reader) throws JsonParseException
+    {
+        JsonParser parser = JsonParserFactory.get();
+        return parser.parse(reader, new SimpleObjectJsonDecoder());
+    }
+
+    /**
+     * Convert the input string into a set of basic types
+     */
+    public static List<Object> toSimpleArray(String input) throws JsonParseException
+    {
+        return toSimpleArray(new StringReader(input));
+    }
+
+    /**
+     * Convert the input document into a set of basic types
+     */
+    public static List<Object> toSimpleArray(Reader reader) throws JsonParseException
+    {
+        JsonParser parser = JsonParserFactory.get();
+        return parser.parse(reader, new SimpleArrayJsonDecoder());
     }
 
     /**

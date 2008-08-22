@@ -22,70 +22,70 @@ import java.math.BigDecimal;
  */
 public interface JsonDecoder<T>
 {
-    T getRoot();
+    T getRoot() throws JsonParseException;
 
     /**
      *
      */
-    void beginObject();
+    void beginObject() throws JsonParseException;
 
     /**
      *
      */
-    void endObject();
+    void endObject() throws JsonParseException;
 
     /**
      *
      */
-    void beginMember();
+    void beginMember() throws JsonParseException;
 
     /**
      *
      */
-    void endMember();
+    void endMember() throws JsonParseException;
 
     /**
      *
      */
-    void beginArray();
+    void beginArray() throws JsonParseException;
 
     /**
      *
      */
-    void endArray();
+    void endArray() throws JsonParseException;
 
     /**
      * @param value
      */
-    void addString(String value);
+    void addString(String value) throws JsonParseException;
 
     /**
      * @param value
      */
-    void addNumber(BigDecimal value);
+    void addNumber(BigDecimal value) throws JsonParseException;
 
     /**
      * @param value
      */
-    void addDouble(double value);
+    void addDouble(double value) throws JsonParseException;
 
     /**
      * @param value
      */
-    void addLong(long value);
+    void addLong(long value) throws JsonParseException;
 
     /**
      * @param value
      */
-    void addInt(int value);
+    void addInt(int value) throws JsonParseException;
 
     /**
      * @param value
      */
-    void addBoolean(boolean value);
+    void addBoolean(boolean value) throws JsonParseException;
 
     /**
      *
      */
-    void addNull();
+    void addNull() throws JsonParseException;
 }

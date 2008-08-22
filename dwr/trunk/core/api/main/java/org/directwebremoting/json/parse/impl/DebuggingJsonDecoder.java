@@ -20,8 +20,12 @@ import java.math.BigDecimal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.json.parse.JsonDecoder;
+import org.directwebremoting.json.parse.JsonParseException;
 
 /**
+ * A proxy implementation of {@link JsonDecoder} which simply passes the calls
+ * on to another JsonDecoder, but outputs debug logging what happened while the
+ * parse was happening.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
@@ -34,7 +38,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#getRoot()
      */
-    public T getRoot()
+    public T getRoot() throws JsonParseException
     {
         return proxy.getRoot();
     }
@@ -42,7 +46,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginObject()
      */
-    public void beginObject()
+    public void beginObject() throws JsonParseException
     {
         if (indent.length() == 0)
         {
@@ -57,7 +61,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endObject()
      */
-    public void endObject()
+    public void endObject() throws JsonParseException
     {
         proxy.endObject();
 
@@ -73,7 +77,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginArray()
      */
-    public void beginArray()
+    public void beginArray() throws JsonParseException
     {
         log.info(indent + "[");
         increaseIndent();
@@ -84,7 +88,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endArray()
      */
-    public void endArray()
+    public void endArray() throws JsonParseException
     {
         proxy.endArray();
 
@@ -95,7 +99,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
      */
-    public void beginMember()
+    public void beginMember() throws JsonParseException
     {
         log.info(indent + ":");
         proxy.beginMember();
@@ -104,7 +108,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
      */
-    public void endMember()
+    public void endMember() throws JsonParseException
     {
         proxy.endMember();
     }
@@ -112,7 +116,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addString(java.lang.String)
      */
-    public void addString(String value)
+    public void addString(String value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addString(value);
@@ -121,7 +125,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addNumber(java.math.BigDecimal)
      */
-    public void addNumber(BigDecimal value)
+    public void addNumber(BigDecimal value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addNumber(value);
@@ -130,7 +134,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addDouble(double)
      */
-    public void addDouble(double value)
+    public void addDouble(double value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addDouble(value);
@@ -139,7 +143,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addLong(long)
      */
-    public void addLong(long value)
+    public void addLong(long value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addLong(value);
@@ -148,7 +152,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addInt(int)
      */
-    public void addInt(int value)
+    public void addInt(int value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addInt(value);
@@ -157,7 +161,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addBoolean(boolean)
      */
-    public void addBoolean(boolean value)
+    public void addBoolean(boolean value) throws JsonParseException
     {
         log.info(indent + value);
         proxy.addBoolean(value);
@@ -166,7 +170,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#addNull()
      */
-    public void addNull()
+    public void addNull() throws JsonParseException
     {
         log.info(indent + "null");
         proxy.addNull();
