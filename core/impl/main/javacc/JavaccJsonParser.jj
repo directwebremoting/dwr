@@ -104,57 +104,60 @@ TOKEN:
     <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
 }
 
-void top(JsonDecoder<?> decoder):
+void top(JsonDecoder<?> decoder) throws JsonParseException:
 {
 }
 {
     ( object(decoder) | array(decoder) )
 }
 
-public void object(JsonDecoder<?> decoder):
+public void object(JsonDecoder<?> decoder) throws JsonParseException:
 {
     decoder.beginObject();
 }
 {
-    "{" [ objectContents(decoder) ] "}"
+    "{" [ pair(decoder) ( "," pair(decoder) )* ] "}"
 
     {
         decoder.endObject();
     }
 }
 
-void objectContents(JsonDecoder<?> decoder):
-{
-}
-{
-    pair(decoder) [ "," objectContents(decoder) ]
-}
-
-void pair(JsonDecoder<?> decoder):
+void pair(JsonDecoder<?> decoder) throws JsonParseException:
 {
 }
 {
     string(decoder)
-
     {
         decoder.beginMember();
     }
 
     ":" value(decoder)
-
     {
         decoder.endMember();
     }
 }
 
-void value(JsonDecoder<?> decoder):
+void array(JsonDecoder<?> decoder) throws JsonParseException:
+{
+    decoder.beginArray();
+}
+{
+    "[" [ value(decoder) ( "," value(decoder) )* ] "]"
+
+    {
+        decoder.endArray();
+    }
+}
+
+void value(JsonDecoder<?> decoder) throws JsonParseException:
 {
 }
 {
     ( string(decoder) | number(decoder) | object(decoder) | array(decoder) | literal(decoder) )
 }
 
-void literal(JsonDecoder<?> decoder):
+void literal(JsonDecoder<?> decoder) throws JsonParseException:
 {
 }
 {
@@ -180,27 +183,7 @@ void literal(JsonDecoder<?> decoder):
     )
 }
 
-void array(JsonDecoder<?> decoder):
-{
-    decoder.beginArray();
-}
-{
-    "[" [ arrayContents(decoder) ] "]"
-
-    {
-        decoder.endArray();
-    }
-}
-
-void arrayContents(JsonDecoder<?> decoder):
-{
-}
-{
-    value(decoder)
-    [ "," arrayContents(decoder) ]
-}
-
-void number(JsonDecoder<?> decoder):
+void number(JsonDecoder<?> decoder) throws JsonParseException:
 {
     String intPart = null;
     String floatPart = null;
@@ -238,10 +221,15 @@ void number(JsonDecoder<?> decoder):
                 }
             }
         }
+
+        // This is can help to reduce memory consumption
+        intPart = null;
+        floatPart = null;
+        expPart = null;
     }
 }
 
-String getIntPart():
+String getIntPart() throws JsonParseException:
 {
     String digits;
     boolean negative = false;
@@ -263,7 +251,7 @@ String getIntPart():
     }
 }
 
-String getFloatPart():
+String getFloatPart() throws JsonParseException:
 {
     String digits;
 }
@@ -276,7 +264,7 @@ String getFloatPart():
     }
 }
 
-String getExpPart():
+String getExpPart() throws JsonParseException:
 {
     Token t;
     String digits;
@@ -290,7 +278,7 @@ String getExpPart():
     }
 }
 
-String getDigits():
+String getDigits() throws JsonParseException:
 {
     Token t;
 }
@@ -301,7 +289,7 @@ String getDigits():
     }
 }
 
-void string(JsonDecoder<?> decoder):
+void string(JsonDecoder<?> decoder) throws JsonParseException:
 {
     StringBuilder builder = new StringBuilder();
 }
