@@ -34,7 +34,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.InitializingBean;
@@ -55,13 +54,6 @@ import org.directwebremoting.util.IdGenerator;
  */
 public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean, ServletContextListener
 {
-    /**
-     * Setup a timer that will invalidate sessions
-     */
-    public DefaultScriptSessionManager()
-    {
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
      */
@@ -199,7 +191,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
     /**
      * Link a script session to a web page.
-     * <p>This allows people to call {@link ServerContext#getScriptSessionsByPage(String)}
+     * <p>This allows people to call {@link org.directwebremoting.Browser#withPage}
      * <p>This method is an ideal point to override and do something better.
      * @param scriptSession The script session to be linked to a page
      * @param page The page (un-normalized) to be linked to
@@ -399,7 +391,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         ScriptSessionEvent ev = null;
 
         Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = 0; i < listeners.length - 2; i += 2)
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
         {
             if (listeners[i] == ScriptSessionListener.class)
             {
@@ -422,7 +414,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         ScriptSessionEvent ev = null;
 
         Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = 0; i < listeners.length - 2; i += 2)
+        for (int i = listeners.length - 2; i >= 0; i -= 2)
         {
             if (listeners[i] == ScriptSessionListener.class)
             {
