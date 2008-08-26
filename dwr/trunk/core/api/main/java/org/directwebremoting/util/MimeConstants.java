@@ -37,5 +37,5 @@ public interface MimeConstants
     /**
      * MIME constant for Javascript
      */
-    public static final String MIME_JS = "text/javascript";
+    public static final String MIME_JS = "text/javascript; charset=utf-8";
 }
