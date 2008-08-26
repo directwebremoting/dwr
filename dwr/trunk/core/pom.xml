@@ -90,6 +90,8 @@
   </dependencies>
   <build>
     <sourceDirectory>api/main</sourceDirectory>
+    <outputDirectory>../target/maven2/classes</outputDirectory>
+    <testOutputDirectory>../target/maven2/test-classes</testOutputDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

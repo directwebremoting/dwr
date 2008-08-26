@@ -38,6 +38,10 @@
   
   <modules>
     <module>core</module>
+    <module>protocol/dwrp</module>
+    <module>protocol/bayeux</module>
+    <module>serverside/hibernate</module>
+    <module>serverside/spring</module>
   </modules>
   
   <repositories>
@@ -183,16 +187,38 @@
           </exclusion>
         </exclusions>
       </dependency>
+      
+      <dependency>
+        <groupId>hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>2.1.7c</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
         <version>1.1.2</version>
       </dependency>
+      
+      <!-- Spring -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring</artifactId>
-        <version>2.0</version>
+        <version>2.5.5</version>
       </dependency>
+      
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>2.5.5</version>
+      </dependency>
+      
       <dependency>
         <groupId>struts</groupId>
         <artifactId>struts</artifactId>
