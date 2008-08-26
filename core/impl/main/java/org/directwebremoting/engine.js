@@ -1329,7 +1329,7 @@ if (typeof this['dwr'] == 'undefined') {
           var req = dwr.engine._pollReq;
           var text = req.responseText;
           if (text != null) {
-              dwr.engine.transport.xhr.processCometResponse(text, req.batch);
+            dwr.engine.transport.xhr.processCometResponse(text, req.batch);
           }
         }
 
@@ -1385,7 +1385,11 @@ if (typeof this['dwr'] == 'undefined') {
           dwr.engine._receivedBatch = null;
         }
         catch (ex) {
-          dwr.engine._handleError(batch, ex);
+          // This is one of these annoying points where we might be executing
+          // while the window is being destroyed. If dwr == null, bail out.
+          if (dwr != null) {
+            dwr.engine._handleError(batch, ex);
+          }
         }
       },
 
