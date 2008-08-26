@@ -14,7 +14,6 @@
   <description>DWR Spring Integration</description>
   
   <dependencies>
-    
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
@@ -29,12 +28,21 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-    </dependency>      
+    </dependency>
   </dependencies>
   
   <build>
-    <sourceDirectory>main</sourceDirectory>
-    <outputDirectory>../../target/maven2/classes</outputDirectory>
-    <testOutputDirectory>../../target/maven2/test-classes</testOutputDirectory>
+    <directory>${project.basedir}/target</directory>
+    <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
+    <resources>
+      <!--  Include spring.handler and spring.schemas files  -->
+      <resource>
+        <directory>main/java</directory>
+        <includes>
+          <include>**/spring.*</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
+  
 </project>
