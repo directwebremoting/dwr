@@ -40,6 +40,7 @@
         <directory>main/java</directory>
         <includes>
           <include>**/spring.*</include>
+          <include>org/directwebremoting/spring/spring-dwr-2.0.xsd</include>
         </includes>
       </resource>
     </resources>
