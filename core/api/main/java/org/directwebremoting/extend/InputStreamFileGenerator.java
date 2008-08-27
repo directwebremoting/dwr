@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.CopyUtils;
 
 /**
  * A way to convert {@link InputStream}s to files so they can be written using
@@ -44,7 +44,7 @@ public class InputStreamFileGenerator extends AbstractFileGenerator
      */
     public void generateFile(OutputStream out) throws IOException
     {
-        LocalUtil.readFully(in, out);
+        CopyUtils.copy(in, out);
     }
 
     /**

@@ -43,7 +43,7 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.BrowserDetect;
-import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.CopyUtils;
 import org.directwebremoting.util.UserAgent;
 
 /**
@@ -79,7 +79,7 @@ public class FileConverter extends AbstractConverter implements Converter
             {
                 InputStream in = formField.getInputStream();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                LocalUtil.readFully(in, out);
+                CopyUtils.copy(in, out);
                 return out.toByteArray();
             }
         }

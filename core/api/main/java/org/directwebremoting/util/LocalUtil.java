@@ -18,9 +18,7 @@ package org.directwebremoting.util;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -124,7 +122,7 @@ public final class LocalUtil
      * @author Partly from the Spring Framework
      * @see java.lang.Character#isWhitespace(char)
      */
-    public static boolean hasText(CharSequence str) 
+    public static boolean hasText(CharSequence str)
     {
         if (!hasLength(str))
         {
@@ -196,7 +194,7 @@ public final class LocalUtil
     /**
      * Determines if the specified string is permissible as a Java identifier
      * potentially prefixed with package names.
-     * It tests each segment of the string separated by "." and returns true if 
+     * It tests each segment of the string separated by "." and returns true if
      * all segments have non-zero length with a Java
      * identifier start as the first character and Java identifier parts in all
      * remaining characters.
@@ -208,7 +206,10 @@ public final class LocalUtil
         String[] segments = test.split("\\.");
         for (int i = 0; i < segments.length; i++)
         {
-            if (!isJavaIdentifier(segments[i])) return false;
+            if (!isJavaIdentifier(segments[i]))
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -308,7 +309,7 @@ public final class LocalUtil
 
     /**
      * {@link java.util.Comparator#compare(Object, Object)} demands that the
-     * return is 1, 0, -1. This helps implement that. 
+     * return is 1, 0, -1. This helps implement that.
      * @param diff The result of some subtraction.
      * @return 1, 0, -1
      */
@@ -1260,46 +1261,6 @@ public final class LocalUtil
             log.debug("Failed to get property called " + propertyName + " from a " + real.getName() + ": " + ex);
             return null;
         }
-    }
-
-    /**
-     * Read all the data from an InputStream and write it to an OutputStream
-     * @throws IOException If the read or write operations fail
-     */
-    public static void readFully(InputStream in, OutputStream out) throws IOException
-    {
-        byte[] buffer = new byte[1024];
-        while (true)
-        {
-            int length = in.read(buffer);
-            if (length == -1)
-            {
-                break;
-            }
-            out.write(buffer, 0, length);
-        }
-    }
-
-    /**
-     * Read all the data from a {@link BufferedReader} and save it in a String
-     * @throws IOException If the read or write operations fail
-     */
-    public static String readFully(BufferedReader in) throws IOException
-    {
-        StringBuffer fileBuffer = new StringBuffer();
-        while (true)
-        {
-            String line = in.readLine();
-            if (line == null)
-            {
-                break;
-            }
-    
-            fileBuffer.append(line);
-            fileBuffer.append('\n');
-        }
-    
-        return fileBuffer.toString();
     }
 
     /**
