@@ -30,6 +30,8 @@ import javax.jms.Topic;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * A demo of the pub/sub side of JMS.
@@ -41,11 +43,13 @@ import org.apache.commons.logging.LogFactory;
 public class JmsTest
 {
     /**
-     * We start open
+     * TODO: write some JMS tests
      */
-    public JmsTest() throws JMSException
+    @Test
+    @Ignore
+    public void noTestsHereYet()
     {
-        open();
+        // open();
     }
 
     /**
@@ -210,7 +214,10 @@ public class JmsTest
      */
     protected static final Log log = LogFactory.getLog(JmsTest.class);
 
-    static
+    /**
+     *
+     */
+    public static void setup()
     {
         try
         {
@@ -226,7 +233,7 @@ public class JmsTest
             });
             org.directwebremoting.jms.DwrSession session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             org.directwebremoting.jms.DwrTopic topic = session.createTopic(TOPIC_NAME);
-    
+
             org.directwebremoting.jms.DwrMessageProducer topicProducer = session.createProducer(topic);
             org.directwebremoting.jms.DwrMessageConsumer topicConsumer = session.createConsumer(topic);
             topicConsumer.setMessageListener(new MessageListener()
@@ -252,16 +259,16 @@ public class JmsTest
                 }
             });
             connection.start();
-    
+
             String info = "JmsTest says nothing";
             log.info("Publishing message '" + info + "' to '" + topic.getTopicName() + "'");
-    
+
             org.directwebremoting.jms.DwrMessage message = session.createTextMessage(info);
             topicProducer.send(message);
-    
+
             topicConsumer.close();
             topicProducer.close();
-    
+
             session.close();
             connection.close();
         }

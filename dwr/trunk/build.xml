@@ -39,30 +39,32 @@
   </target>
 
   <!--=======================================================================-->
-  <target name="war" depends="prepare" description="Create exploded test/demo WAR directories">
+  <target name="jar" depends="prepare" description="Create dwr.jar">
     <build target="${target.root}" modules="${modules}"/>
-    <!-- The standard dwr.jar file -->
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
     </jar>
-    <!-- The demo 'dwr.war', exploded -->
+  </target>
+
+  <!--=======================================================================-->
+  <target name="test" depends="jar" description="Create output for import into the testing project">
+    <jar destfile="${target.root}/junitdwr.jar" compress="true">
+      <fileset dir="${target.root}/classes/test"/>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="war" depends="jar" description="Create en exploded dwr.war">
     <copy todir="${target.root}/web/demo/WEB-INF/classes">
       <fileset dir="${target.root}/classes/demo"/>
     </copy>
     <copy todir="${target.root}/web/demo/WEB-INF/lib">
       <fileset file="${target.root}/dwr.jar"/>
     </copy>
-    <!-- The testing 'testdwr.war', exploded -->
-    <copy todir="${target.root}/web/test/WEB-INF/classes">
-      <fileset dir="${target.root}/classes/test"/>
-    </copy>
-    <copy todir="${target.root}/web/test/WEB-INF/lib">
-      <fileset file="${target.root}/dwr.jar"/>
-    </copy>
   </target>
 
   <!--=======================================================================-->
-  <target name="package" depends="war" description="Create packaged outputs: dwr.war, testdwr.war, dwr-jdk14.jar, and the source .zip">
+  <target name="package" depends="war" description="Create packaged outputs: dwr.war, dwr-jdk14.jar, and the source .zip">
     <!-- Run retroweaver if dwr.jar has changed since we last ran it -->
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
@@ -83,13 +85,7 @@
         <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
       </action>
     </if-not-uptodate>
-    <!-- Rezip the test war file if it's contents have changed -->
-    <if-not-uptodate destfile="${target.root}/testdwr.war" sourcedir="${target.root}/web/test">
-      <action>
-        <zip destfile="${target.root}/testdwr.war" basedir="${target.root}/web/test"/>
-      </action>
-    </if-not-uptodate>
-    <!--  -->
+    <!-- Documentation: Javadoc and DTDDoc -->
     <mkdir dir="${target.root}/javadoc"/>
     <javadoc access="public"
         author="true"
@@ -119,6 +115,7 @@
       <include name="**/*.dtd"/>
       <exclude name="common/*.dtd"/>
     </DTDDoc>
+    <!-- Source package -->
     <zip destfile="${target.root}/dwr-${label}-src.zip">
       <fileset dir="${source.root}">
         <exclude name="target/**"/>
@@ -200,8 +197,6 @@
       <mkdir dir="@{target}/classes/demo"/>
       <mkdir dir="@{target}/web/demo/WEB-INF/classes"/>
       <mkdir dir="@{target}/web/demo/WEB-INF/lib"/>
-      <mkdir dir="@{target}/web/test/WEB-INF/classes"/>
-      <mkdir dir="@{target}/web/test/WEB-INF/lib"/>
       <foreach list="@{modules}" param="module" trim="true" target="process-module">
         <param name="target" value="@{target}"/>
       </foreach>
@@ -258,15 +253,6 @@
           </sources>
         </compile-tree>
         <compile-copy module="${module}" tree="test"/>
-      </then>
-    </if>
-    <!-- The test web tree -->
-    <if>
-      <available file="${source.root}/${module}/test/web"/>
-      <then>
-        <copy todir="${target}/web/test">
-          <fileset dir="${source.root}/${module}/test/web"/>
-        </copy>
       </then>
     </if>
     <!-- The demo tree -->
@@ -339,9 +325,11 @@
 
   <!--=======================================================================-->
   <target name="clean" description="Remove all build targets and .DS_Store files left around by the Mac finder">
-    <delete dir="${target.root}"/>
-    <delete defaultexcludes="false" verbose="true" dir="${source.root}">
-      <include name="**/*.DS_Store"/>
+    <delete verbose="true">
+      <fileset dir="${target.root}"/>
+      <fileset defaultexcludes="false" dir="${source.root}">
+        <include name="**/*.DS_Store"/>
+      </fileset>
     </delete>
   </target>
 
