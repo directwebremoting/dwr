@@ -85,6 +85,9 @@
         <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
       </action>
     </if-not-uptodate>
+    <!-- Copy over testdwr.war -->
+    <ant dir="${testdwr.home}" target="package" inheritall="false" inheritrefs="false"/>
+    <copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}"/>
     <!-- Documentation: Javadoc and DTDDoc -->
     <mkdir dir="${target.root}/javadoc"/>
     <javadoc access="public"
@@ -166,6 +169,7 @@
 
   <!--=======================================================================-->
   <macrodef name="if-not-uptodate">
+    <!-- If you change this, remember the copy in testdwr/build.xml -->
     <attribute name="destfile"/>
     <attribute name="sourcedir"/>
     <element name="action"/>
