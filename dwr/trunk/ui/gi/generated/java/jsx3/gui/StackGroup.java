@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * similar to how a tabbed pane manages a collection of tabs, the stack group is a parent container that manages JSXStack instances
@@ -87,7 +87,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -100,7 +100,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBarSize", intBarSize);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -126,7 +126,7 @@ public class StackGroup extends jsx3.gui.LayoutGrid
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

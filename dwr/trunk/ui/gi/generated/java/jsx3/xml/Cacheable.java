@@ -16,8 +16,8 @@
 package jsx3.xml;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A mixin interface that provides the following capabilities to implementing classes:
@@ -115,7 +115,7 @@ strValue is null the parameter is removed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXSLParam", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -208,7 +208,7 @@ strValue is null the parameter is removed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -220,7 +220,7 @@ strValue is null the parameter is removed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -231,7 +231,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -258,7 +258,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -272,7 +272,7 @@ is destroyed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setShareResources", intShare);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -352,8 +352,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
@@ -383,8 +383,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @param returnType The expected return type
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
@@ -427,21 +427,21 @@ string of this object. This method executes the following steps:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @return this object.
      */
     public jsx3.xml.Cacheable setXMLId(String strXMLId)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLId", strXMLId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -467,7 +467,7 @@ If no value is specified, a unique id is generated.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -480,7 +480,7 @@ way of specifying the source XML document of this object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLString", strXML);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -506,7 +506,7 @@ way of specifying the source XML document of this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -520,7 +520,7 @@ source XML document of this object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLURL", strXMLURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -547,20 +547,20 @@ source XML document of this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @return this object.
      */
     public jsx3.xml.Cacheable setXmlAsync(boolean bAsync)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXmlAsync", bAsync);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -587,14 +587,14 @@ data sources loaded from an XML URL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether this object is bound to the XML document stored in the data cache. If this object is bound to the
 cache, then the onXmlBinding() method of this object is called any time the document stored in
 the cache under the XML Id of this object changes.
-     * @param bBind 
+     * @param bBind
      * @param callback <code>0</code> or <code>1</code>.
      */
 
@@ -616,7 +616,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -635,7 +635,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -713,7 +713,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -738,7 +738,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -750,13 +750,13 @@ the server of this object) or the cache id of a XSLT document in the XML cache o
 of this object. When any transformer is loaded from a URI it is placed in the server cache under the id
 equal to its resolved URI. Any transformer that does not correspond to a valid XSLT document will be skipped
 without throwing an error.
-     * @param arrTrans 
+     * @param arrTrans
      */
     public void setXMLTransformers(Object[] arrTrans)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

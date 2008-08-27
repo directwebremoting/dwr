@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents a vector shape element.
@@ -40,7 +40,7 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * The instance initializer.
-     * @param strTagName 
+     * @param strTagName
      * @param left left position (in pixels) of the object relative to its parent container
      * @param top top position (in pixels) of the object relative to its parent container
      * @param width width (in pixels) of the object
@@ -79,7 +79,7 @@ public class Shape extends jsx3.vector.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -90,14 +90,14 @@ public class Shape extends jsx3.vector.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPath", path);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param x 
-     * @param y 
-     * @param bRel 
+     * @param x
+     * @param y
+     * @param bRel
      * @return this object.
      */
 
@@ -117,9 +117,9 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * 
-     * @param x 
-     * @param y 
-     * @param bRel 
+     * @param x
+     * @param y
+     * @param bRel
      * @param returnType The expected return type
      * @return this object.
      */
@@ -140,9 +140,9 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * 
-     * @param x 
-     * @param y 
-     * @param bRel 
+     * @param x
+     * @param y
+     * @param bRel
      * @return this object.
      */
 
@@ -162,9 +162,9 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * 
-     * @param x 
-     * @param y 
-     * @param bRel 
+     * @param x
+     * @param y
+     * @param bRel
      * @param returnType The expected return type
      * @return this object.
      */
@@ -185,15 +185,15 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * 
-     * @param cx 
-     * @param cy 
-     * @param rx 
-     * @param ry 
-     * @param x1 
-     * @param y1 
-     * @param x2 
-     * @param y2 
-     * @param bCW 
+     * @param cx
+     * @param cy
+     * @param rx
+     * @param ry
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param bCW
      * @return this object.
      */
 
@@ -213,15 +213,15 @@ public class Shape extends jsx3.vector.Tag
 
     /**
      * 
-     * @param cx 
-     * @param cy 
-     * @param rx 
-     * @param ry 
-     * @param x1 
-     * @param y1 
-     * @param x2 
-     * @param y2 
-     * @param bCW 
+     * @param cx
+     * @param cy
+     * @param rx
+     * @param ry
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param bCW
      * @param returnType The expected return type
      * @return this object.
      */
@@ -287,7 +287,7 @@ public class Shape extends jsx3.vector.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFill", fill);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -298,7 +298,7 @@ public class Shape extends jsx3.vector.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStroke", stroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -308,7 +308,7 @@ public class Shape extends jsx3.vector.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getFill");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -318,7 +318,7 @@ public class Shape extends jsx3.vector.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getStroke");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

@@ -16,7 +16,7 @@
 package org.directwebremoting.ui.scriptaculous;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.ScriptSessions;
 
 /**
  * A server side proxy the the Script.aculo.us Effect class
@@ -351,6 +351,6 @@ public class Effect
             script.appendScript(", ").appendScript(options);
         }
         script.appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 }

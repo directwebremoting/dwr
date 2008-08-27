@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A more efficient way of painting many vector rectangles of the same fill and stroke.
@@ -63,7 +63,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addRectangle", x1, y1, x2, y2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -77,7 +77,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addRelativeRectangle", x1, y1, w, h);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -87,7 +87,7 @@ public class RectangleGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearRectangles");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

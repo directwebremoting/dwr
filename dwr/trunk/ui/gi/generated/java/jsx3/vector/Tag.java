@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The base class for jsx3.vector.Group and jsx3.vector.Shape. Defines getters and setters for the shared vector
@@ -38,7 +38,7 @@ public class Tag extends jsx3.html.BlockTag
 
     /**
      * The instance initializer.
-     * @param strTagName 
+     * @param strTagName
      * @param left left position (in pixels) of the object relative to its parent container
      * @param top top position (in pixels) of the object relative to its parent container
      * @param width width (in pixels) of the object
@@ -61,18 +61,18 @@ public class Tag extends jsx3.html.BlockTag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getToolTip");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the tooltip, the text that is displayed on mouse over.
-     * @param title 
+     * @param title
      */
     public void setToolTip(String title)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setToolTip", title);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Tag extends jsx3.html.BlockTag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -109,7 +109,7 @@ public class Tag extends jsx3.html.BlockTag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRotation", rotation);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

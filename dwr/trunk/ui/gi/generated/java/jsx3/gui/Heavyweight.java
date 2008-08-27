@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * GUI utility class that provides a way to display HTML content on-screen in an HTML equivalent of a heavyweight container.
@@ -40,7 +40,7 @@ public class Heavyweight extends jsx3.lang.Object
     /**
      * instance initializer
      * @param strId id to identify this HW instance among all others; this id will be used by both jsx3.gui.Heavyweight (to index it in the hash) and by the browser as the HTML tag's "id" attribute. If no ID is passed, a unique ID will be assigned by the system and is available by calling, [object].getId();
-     * @param objOwner 
+     * @param objOwner
      */
     public Heavyweight(String strId, jsx3.gui.Painted objOwner)
     {
@@ -85,7 +85,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "show", bDisplay);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -95,19 +95,19 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "applyRatio");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * can be called if show() has been called; allows an existing HW window to re-apply its rules (used for complex layouts requiring a multi-pass)
      * @param strAxis character (string) representing whether the rule is for the X or Y axis. Rememeber to capitalize!
-     * @param intSize 
+     * @param intSize
      */
     public void applyRules(String strAxis, int intSize)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "applyRules", strAxis, intSize);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -117,7 +117,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "hide");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -127,7 +127,7 @@ public class Heavyweight extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "destroy");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -154,7 +154,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -206,7 +206,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -231,20 +231,20 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the HTML content to display inside the HW instance on-screen; returns ref to self
      * @param strHTML HTML
-     * @param bRepaint 
+     * @param bRepaint
      * @return this
      */
     public jsx3.gui.Heavyweight setHTML(String strHTML, boolean bRepaint)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHTML", strHTML, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -270,7 +270,7 @@ public class Heavyweight extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -283,7 +283,7 @@ Note that this method must be called before setting any point rules for the hW i
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDomParent", objGUI);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -312,7 +312,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -325,7 +325,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRatio", vntRatio);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -352,7 +352,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -365,7 +365,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOverflow", strOverflow);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -379,7 +379,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVisibility", strVisibility);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -405,7 +405,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -416,7 +416,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZIndex", intZIndex);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -442,7 +442,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -453,7 +453,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", intWidth);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -479,7 +479,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -492,7 +492,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", intHeight);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -649,7 +649,7 @@ represent 80% and the height would represent 20% of the total perimiter
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -698,7 +698,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -710,7 +710,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -722,7 +722,7 @@ represent 80% and the height would represent 20% of the total perimiter
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getPoint", objGUI, strPoint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

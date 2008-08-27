@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Allows for rendering a branch of the DOM of an application in a separate browser window.
@@ -81,8 +81,8 @@ public class Window extends jsx3.app.Model
 
 
     /**
-     * Opens the browser window of this window instance. Depending on security settings and popup blockers, 
-this method may or may not actually open a window. The only safe way to determine whether the window 
+     * Opens the browser window of this window instance. Depending on security settings and popup blockers,
+this method may or may not actually open a window. The only safe way to determine whether the window
 successfully opened is to register for the DID_OPEN event.
      * @param callback <code>true</code> if the window successfully opened (probably).
      */
@@ -105,7 +105,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -132,7 +132,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -142,7 +142,7 @@ successfully opened is to register for the DID_OPEN event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focus");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -168,7 +168,7 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -194,12 +194,12 @@ successfully opened is to register for the DID_OPEN event.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
-     * Moves the browser window of this window instance to a position on the screen. The arguments specify the 
-offset from the parent application window. If the parent window is no longer open, this window will be moved 
+     * Moves the browser window of this window instance to a position on the screen. The arguments specify the
+offset from the parent application window. If the parent window is no longer open, this window will be moved
 relative to the upper-left corner of the screen.
      * @param intOffsetLeft the left offset from the parent window.
      * @param intOffsetTop the top offset from the parent window.
@@ -208,7 +208,7 @@ relative to the upper-left corner of the screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "moveTo", intOffsetLeft, intOffsetTop);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -218,7 +218,7 @@ relative to the upper-left corner of the screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "constrainToScreen");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -245,7 +245,7 @@ corner of the screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -272,7 +272,7 @@ corner of the screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -336,7 +336,7 @@ to the DOM, and returns it. A window will only render its first DOM child.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -362,7 +362,7 @@ browser may render around the window content.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -374,7 +374,7 @@ immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", intWidth);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -400,7 +400,7 @@ browser may render around the window content.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -412,7 +412,7 @@ immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", intHeight);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -440,18 +440,18 @@ browser window.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether this window is resizable via user interaction. This method will not affect a currently-open window.
-     * @param bResizable 
+     * @param bResizable
      */
     public void setResizable(boolean bResizable)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizable", bResizable);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -479,19 +479,19 @@ reflect the current state of the browser window.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether this window will show scroll bars if the content outgrows the window. This method will not affect a
 currently-open window.
-     * @param bScrollable 
+     * @param bScrollable
      */
     public void setScrollable(boolean bScrollable)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrollable", bScrollable);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -520,18 +520,18 @@ will raise errors.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether this window is "dependent." This method not affect a currently-open window.
-     * @param bDependent 
+     * @param bDependent
      */
     public void setDependent(boolean bDependent)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDependent", bDependent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -556,7 +556,7 @@ will raise errors.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -568,7 +568,7 @@ currently open, the title will be updated immediately.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTitle", strTitle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

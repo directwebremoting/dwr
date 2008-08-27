@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class provides a container-based, object-oriented approach to creating static html objects (basically this class creates "DIV" objects).  This class is useful for creating objects as simple as 'labels' that can be placed anywhere on the screen.  The advantage to using this class instead of trying to insert static html in the html window is that it allows the given HTML string to be managed by the 'container-management' strategy employed by the JSX Architecture
@@ -422,7 +422,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -436,7 +436,7 @@ public class Block extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackgroundColor", strColor, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -463,7 +463,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -476,7 +476,7 @@ public class Block extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackground", strBG);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -502,7 +502,7 @@ public class Block extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -516,7 +516,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorder", strCSS, bRecalc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -543,7 +543,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -557,7 +557,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", strColor, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -584,7 +584,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -596,7 +596,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCursor", strCursor, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -622,7 +622,7 @@ together as in: border:solid 1px #989885;border-left-width:0px;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -637,7 +637,7 @@ Instance Properties are the preferred method for applying styles.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCSSOverride", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -663,7 +663,7 @@ Instance Properties are the preferred method for applying styles.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -678,7 +678,7 @@ Dynamic Properties are the preferred method for applying global styles.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setClassName", strClassName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -704,7 +704,7 @@ Dynamic Properties are the preferred method for applying global styles.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -718,7 +718,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDisplay", intDisplay, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -745,7 +745,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -758,7 +758,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontName", strFontName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -785,7 +785,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -798,7 +798,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontSize", intPixelSize);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -825,7 +825,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -838,7 +838,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFontWeight", FONTWEIGHT);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -865,7 +865,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -878,7 +878,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", vntHeight, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -892,7 +892,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", vntHeight, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -918,7 +918,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -932,7 +932,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setIndex", intIndex, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -959,7 +959,7 @@ Only those parameters listed for @DISPLAY are supported as inputs to this functi
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -973,7 +973,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLeft", vntLeft, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -988,7 +988,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLeft", vntLeft, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1006,7 +1006,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1023,7 +1023,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1040,7 +1040,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1057,7 +1057,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1074,7 +1074,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1091,7 +1091,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1108,7 +1108,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1125,7 +1125,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1142,7 +1142,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1159,7 +1159,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1176,7 +1176,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1193,7 +1193,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1210,7 +1210,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1227,7 +1227,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1244,7 +1244,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1261,7 +1261,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1278,7 +1278,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1295,7 +1295,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1312,7 +1312,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1329,7 +1329,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1346,7 +1346,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1363,7 +1363,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1380,7 +1380,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1397,7 +1397,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1423,7 +1423,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1448,7 +1448,7 @@ setLeft, setTop, etc. Any argument can be null to indicate not to update it.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1464,7 +1464,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMargin", strCSS, bRecalc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1491,7 +1491,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1504,7 +1504,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOverflow", OVERFLOW);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1530,7 +1530,7 @@ supported, but requires that pixels be designated.  For example, using <code>mar
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1546,7 +1546,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPadding", strCSS, bRecalc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1572,7 +1572,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1586,7 +1586,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRelativePosition", intRelative, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1614,7 +1614,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1627,7 +1627,7 @@ supported, but requires that pixels be designated.  For example, using <code>pad
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTagName", strTagName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1656,7 +1656,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1669,7 +1669,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setText", strText, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1696,7 +1696,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1708,7 +1708,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTextAlign", ALIGN);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1734,7 +1734,7 @@ enclosing tag with an empty string (no content): <span></span>.  To return null 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1747,7 +1747,7 @@ Returns reference to self to facilitate method chaining;
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTip", strTip);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1774,7 +1774,7 @@ Returns reference to self to facilitate method chaining;
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1788,7 +1788,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTop", vntTop, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1803,7 +1803,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTop", vntTop, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1830,7 +1830,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1842,7 +1842,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVisibility", VISIBILITY, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1868,7 +1868,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1881,7 +1881,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", vntWidth, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1895,7 +1895,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", vntWidth, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -1921,7 +1921,7 @@ from its parent and only applies if this object is absolutely positioned.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1933,7 +1933,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZIndex", intZIndex, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1944,7 +1944,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showMask", strMessage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1954,7 +1954,7 @@ from its parent and only applies if this object is absolutely positioned.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "hideMask");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2032,7 +2032,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2058,7 +2058,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2084,7 +2084,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2110,7 +2110,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2138,7 +2138,7 @@ setEvent() method or during component deserialization.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2205,7 +2205,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2232,7 +2232,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2839,7 +2839,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSpyStyles", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2853,7 +2853,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2867,7 +2867,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

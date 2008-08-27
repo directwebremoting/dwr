@@ -16,13 +16,13 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A pie chart.
 
-Series: PieSeries only. 
+Series: PieSeries only.
 Axes: No axes, it's a radial chart.
  * @author Joe Walker [joe at getahead dot org]
  * @author DRAPGEN - Dwr Reverse Ajax Proxy GENerator
@@ -79,7 +79,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -90,7 +90,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInnerRadius", innerRadius);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -116,7 +116,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -127,7 +127,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSeriesPadding", seriesPadding);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -153,7 +153,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -164,7 +164,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTotalAngle", totalAngle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -190,7 +190,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -201,7 +201,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStartAngle", startAngle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -227,7 +227,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -238,7 +238,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCategoryField", categoryField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -264,7 +264,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -275,7 +275,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColors", colors);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -301,7 +301,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -312,7 +312,7 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColorFunction", colorFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -338,7 +338,7 @@ public class PieChart extends jsx3.chart.RadialChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -349,12 +349,12 @@ public class PieChart extends jsx3.chart.RadialChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSeriesStroke", seriesStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * default coloring scheme for pie series, simply converts the default coloring scheme for series into a coloring scheme for categories
-     * @param record 
+     * @param record
      * @param index the index of the record in the data provider
      */
 

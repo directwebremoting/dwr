@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * An object-oriented interface onto a GUI button made of various image files. The class allows for an image file
@@ -53,8 +53,8 @@ public class ImageButton extends jsx3.gui.Block
      * @param strName the JSX name
      * @param vntLeft either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
      * @param vntTop either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param vntWidth
+     * @param vntHeight
      */
     public ImageButton(String strName, int vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
@@ -69,8 +69,8 @@ public class ImageButton extends jsx3.gui.Block
      * @param strName the JSX name
      * @param vntLeft either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
      * @param vntTop either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param vntWidth
+     * @param vntHeight
      */
     public ImageButton(String strName, int vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
@@ -85,8 +85,8 @@ public class ImageButton extends jsx3.gui.Block
      * @param strName the JSX name
      * @param vntLeft either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
      * @param vntTop either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param vntWidth
+     * @param vntHeight
      */
     public ImageButton(String strName, String vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
@@ -101,8 +101,8 @@ public class ImageButton extends jsx3.gui.Block
      * @param strName the JSX name
      * @param vntLeft either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
      * @param vntTop either a number (i.e, 12, 30, etc) or a number and a unit value (i.e., "25%", "36pt", etc); if a number is passed, pixels will be the assumed unit when painted to screen
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param vntWidth
+     * @param vntHeight
      */
     public ImageButton(String strName, String vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
@@ -156,20 +156,20 @@ public class ImageButton extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of the image of this image button. This is the default image that is displayed if the button
 is off or if the button is in a state for which no image URI is specified.
-     * @param strImage 
+     * @param strImage
      * @return this object
      */
     public jsx3.gui.ImageButton setImage(String strImage)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setImage", strImage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -195,20 +195,20 @@ is off or if the button is in a state for which no image URI is specified.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of the over image of this image button. This is the image that is displayed when the mouse moves
 over the image button.
-     * @param strImage 
+     * @param strImage
      * @return this object
      */
     public jsx3.gui.ImageButton setOverImage(String strImage)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOverImage", strImage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -234,20 +234,20 @@ over the image button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of the down image of this image button. This is the image that is displayed when the mouse is down
 over the image button.
-     * @param strImage 
+     * @param strImage
      * @return this object
      */
     public jsx3.gui.ImageButton setDownImage(String strImage)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDownImage", strImage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -273,20 +273,20 @@ over the image button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of the on image of this image button. This is the image that is displayed when this image button is
 of type TYPE_TOGGLE and its state is STATE_ON.
-     * @param strImage 
+     * @param strImage
      * @return this object
      */
     public jsx3.gui.ImageButton setOnImage(String strImage)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOnImage", strImage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -312,20 +312,20 @@ of type TYPE_TOGGLE and its state is STATE_ON.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of the disabled image of this image button. This is the image that is displayed when this image
 button disabled.
-     * @param strImage 
+     * @param strImage
      * @return this object
      */
     public jsx3.gui.ImageButton setDisabledImage(String strImage)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDisabledImage", strImage);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -352,7 +352,7 @@ button disabled.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -364,7 +364,7 @@ button disabled.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setState", intState);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -391,7 +391,7 @@ button disabled.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -403,7 +403,7 @@ button disabled.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", intType);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -429,20 +429,20 @@ button disabled.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether if the images of this image button are pre-fetched. Pre-fetching allows for better responsiveness
 the first time a state image is displayed.
-     * @param bFetch 
+     * @param bFetch
      * @return this object
      */
     public jsx3.gui.ImageButton setPreFetch(boolean bFetch)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPreFetch", bFetch);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -469,7 +469,7 @@ or required must be OPTIONAL to pass validation.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -566,7 +566,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -592,7 +592,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -619,7 +619,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -645,7 +645,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -672,7 +672,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -699,7 +699,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -724,7 +724,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -819,7 +819,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

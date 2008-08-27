@@ -16,8 +16,8 @@
 package jsx3.net;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class is used in conjunction with the XML Mapping Utility to provide transactional support for those services using XML-based messaging.
@@ -79,7 +79,7 @@ this document is used to simulate a typical server response
     /**
      * Event type published each time a rule with one or more restrictions fails during message generation. The following named properties are available on the event object:
 
-        
+
           rule the rule node
 
           message the message node
@@ -95,7 +95,7 @@ this document is used to simulate a typical server response
     /**
      * Event type published each time a mapping rule is used to create a node, locate a node, or map to a node.
 
-        
+
           target this jsx3.net.Service instance
 
           rule the rule node being processed
@@ -103,7 +103,7 @@ this document is used to simulate a typical server response
           action the action being performed by the rule. For example, Create Node, Map to Cache, Invalidate Node, etc.
 
           description a description of the 'action'. For example, this.eval(setValue(2));
-        
+
 
           level the log level (e.g., 'severity' level) for the message. For example, 6 would signify a 'Trace' level event.
      */
@@ -132,7 +132,7 @@ this document is used to simulate a typical server response
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -157,19 +157,19 @@ this document is used to simulate a typical server response
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URL for the rules file to use (a CXF document). This rules file will be used by the Service instance to generate, send, receive and process XML messages
-     * @param strRulesURL 
+     * @param strRulesURL
      * @return reference to self
      */
     public jsx3.net.Service setRulesURL(String strRulesURL)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRulesURL", strRulesURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -181,14 +181,14 @@ two-step process of first adding mapped content to the Body, followed by a call 
 Note that this method takes precedence over the static stub document url referenced in the rules file as well as
 any call to setOutboundStubURL. Use this method in conjunction with setOutboundStubPath to
 point to the specific location in the document where the generated message should be appended.
-     * @param objDocument 
+     * @param objDocument
      * @return reference to self
      */
     public jsx3.net.Service setOutboundStubDocument(jsx3.xml.CdfDocument objDocument)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOutboundStubDocument", objDocument);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -214,7 +214,7 @@ point to the specific location in the document where the generated message shoul
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -230,7 +230,7 @@ equivalent: <code>jsxapp://test/xml/typical.xml</code>, <b>and</b> <code>xml/typ
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOutboundStubURL", strURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -257,7 +257,7 @@ application and use its namespace. If no applications exist, the namespace will 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -288,7 +288,7 @@ application and use its namespace. If no applications exist, the namespace will 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setNamespace", namespace);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -301,7 +301,7 @@ application and use its namespace. If no applications exist, the namespace will 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setNamespace", namespace);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -328,7 +328,7 @@ application and use its namespace. If no applications exist, the namespace will 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -341,7 +341,7 @@ Overrides the static setting in the rules file.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOutboundStubPath", strPath);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -368,7 +368,7 @@ run in static mode (as defined by the Project Deployment Options).
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -384,7 +384,7 @@ then the following inputs (all of which are valid) are equivalent: <code>jsxapp:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInboundURL", strInboundURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -410,7 +410,7 @@ then the following inputs (all of which are valid) are equivalent: <code>jsxapp:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -427,7 +427,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOutboundURL", strOutboundURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -453,7 +453,7 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -465,7 +465,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setOperationName", strOperationName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -548,7 +548,7 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -560,7 +560,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setUserName", strName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -586,7 +586,7 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -598,7 +598,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setUserPass", strPass);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -660,13 +660,13 @@ to the context server. For example, if the project directory for the context ser
 
     /**
      * Sets a parsed instance of the response document as soon as it returns from the server returned from the service; otherwise null
-     * @param objXML 
+     * @param objXML
      */
     public void setInboundDocument(jsx3.xml.CdfDocument objXML)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInboundDocument", objXML);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -728,19 +728,19 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URL for the service endpoint where the request will be sent. Overrides the endpoint specified in the rules file.
-     * @param strAlternateURL 
+     * @param strAlternateURL
      * @return reference to self
      */
     public jsx3.net.Service setEndpointURL(String strAlternateURL)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEndpointURL", strAlternateURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -767,7 +767,7 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -778,7 +778,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMethod", METHOD);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -805,7 +805,7 @@ to the context server. For example, if the project directory for the context ser
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -817,7 +817,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRequestHeader", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -831,7 +831,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -846,7 +846,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -861,7 +861,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -876,7 +876,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -891,7 +891,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -906,7 +906,7 @@ to the context server. For example, if the project directory for the context ser
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTimeout", intTimeout, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -996,7 +996,7 @@ used for the transport. However, if setStatus has been called on the Service ins
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1005,13 +1005,13 @@ used for the transport. However, if setStatus has been called on the Service ins
 normal operation by forcing a valid/invalid state that affects methdods relying on the HTTP status
 such as doInboundMap.  This is particularly useful for SOAP services that provide alternate processing
 instructions and mappings when a Fault occurs as well as when running tests in Static mode.
-     * @param intStatus 
+     * @param intStatus
      */
     public void setStatus(int intStatus)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStatus", intStatus);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1036,7 +1036,7 @@ instructions and mappings when a Fault occurs as well as when running tests in S
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1045,13 +1045,13 @@ instance within which this Service instnace is running.  (NOTE: This setting is 
 Setting this value to jsx3.Boolean.FALSE, forces a test document
 to be used to simulate a "typical" server response, instead of actually sending a request to a remote service.  This is useful when setting up
 test environments as well as providing "live" interactions when the remote server may not be available.
-     * @param MODE 
+     * @param MODE
      */
     public void setMode(Boolean MODE)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMode", MODE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1065,7 +1065,7 @@ oService.doInboundMap();
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doInboundMap");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1155,7 +1155,7 @@ for best performance.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1170,7 +1170,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1185,7 +1185,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1200,7 +1200,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1215,7 +1215,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1230,7 +1230,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1245,7 +1245,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1260,7 +1260,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1275,7 +1275,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1290,7 +1290,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1305,7 +1305,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1320,7 +1320,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1335,7 +1335,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1349,7 +1349,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1363,7 +1363,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1377,7 +1377,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1391,7 +1391,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1405,7 +1405,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1419,7 +1419,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1430,7 +1430,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribeAll", strEventId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

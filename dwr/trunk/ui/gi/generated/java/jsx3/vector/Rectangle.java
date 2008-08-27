@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints a vector rectangle.
@@ -60,7 +60,7 @@ public class Rectangle extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clipToBox", obj);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -71,21 +71,21 @@ public class Rectangle extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clipToBox", obj);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Clips this rectangle to the bounds of {l1, t1, w1, h1}.
-     * @param l1 
-     * @param t1 
-     * @param w1 
-     * @param h1 
+     * @param l1
+     * @param t1
+     * @param w1
+     * @param h1
      */
     public void clipTo(int l1, int t1, int w1, int h1)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clipTo", l1, t1, w1, h1);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

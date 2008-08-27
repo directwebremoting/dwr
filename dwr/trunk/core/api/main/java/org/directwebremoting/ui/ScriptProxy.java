@@ -15,18 +15,17 @@
  */
 package org.directwebremoting.ui;
 
-import java.util.Collection;
-
-import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ScriptSessions;
 
 /**
  * Class to help people send scripts to collections of browsers.
  * ScriptProxy also is the base class for the Java implementations of GI, Util
  * and Script.aculo.us.Effect.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @deprecated
  */
+@Deprecated
 public final class ScriptProxy
 {
     /**
@@ -36,20 +35,7 @@ public final class ScriptProxy
      */
     public static void addFunctionCall(String funcName, Object... params)
     {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendScript(funcName).appendScript("(");
-
-        for (int i = 0; i < params.length; i++)
-        {
-            if (i != 0)
-            {
-                script.appendScript(",");
-            }
-            script.appendData(params[i]);
-        }
-
-        script.appendScript(");");
-        addScript(script);
+        ScriptSessions.addFunctionCall(funcName, params);
     }
 
     /**
@@ -58,11 +44,7 @@ public final class ScriptProxy
      */
     public static void addScript(ScriptBuffer script)
     {
-        Collection<ScriptSession> sessions = Browser.getTargetSessions();
-        for (ScriptSession scriptSession : sessions)
-        {
-            scriptSession.addScript(script);
-        }
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -71,10 +53,6 @@ public final class ScriptProxy
      */
     public static void addScript(String script)
     {
-        Collection<ScriptSession> sessions = Browser.getTargetSessions();
-        for (ScriptSession scriptSession : sessions)
-        {
-            scriptSession.addScript(new ScriptBuffer(script));
-        }
+        ScriptSessions.addScript(script);
     }
 }

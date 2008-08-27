@@ -16,11 +16,11 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
- * A class that represents a JSX add-in. The JSX system creates an instance of this class for every add-in that 
+ * A class that represents a JSX add-in. The JSX system creates an instance of this class for every add-in that
 is loaded.
  * @author Joe Walker [joe at getahead dot org]
  * @author DRAPGEN - Dwr Reverse Ajax Proxy GENerator
@@ -36,7 +36,7 @@ public class AddIn extends jsx3.lang.Object
         super(context, extension);
     }
 
-    
+
     /**
      * 
      */
@@ -65,7 +65,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -90,7 +90,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -115,7 +115,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -140,7 +140,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -165,7 +165,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -189,7 +189,7 @@ public class AddIn extends jsx3.lang.Object
 
     /**
      * 
-     * @param strURI 
+     * @param strURI
      */
 
     public void resolveURI(java.net.URI strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
@@ -210,12 +210,12 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strURI 
+     * @param strURI
      */
 
     public void resolveURI(String strURI, org.directwebremoting.ui.Callback<java.net.URI> callback)
@@ -236,7 +236,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -261,13 +261,13 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strURI 
-     * @param bRel 
+     * @param strURI
+     * @param bRel
      */
 
     public void relativizeURI(String strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
@@ -288,13 +288,13 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strURI 
-     * @param bRel 
+     * @param strURI
+     * @param bRel
      */
 
     public void relativizeURI(java.net.URI strURI, boolean bRel, org.directwebremoting.ui.Callback<java.net.URI> callback)
@@ -315,7 +315,7 @@ public class AddIn extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

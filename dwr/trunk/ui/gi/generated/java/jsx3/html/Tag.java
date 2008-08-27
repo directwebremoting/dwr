@@ -16,8 +16,8 @@
 package jsx3.html;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents an HTML element. Provides an object oriented way of painting to screen.
@@ -39,8 +39,8 @@ public class Tag extends jsx3.lang.Object
 
     /**
      * The instance initializer.
-     * @param strTagNS 
-     * @param strTagName 
+     * @param strTagNS
+     * @param strTagName
      */
     public Tag(String strTagNS, String strTagName)
     {
@@ -60,7 +60,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "appendChild", child);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeChild", child);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -83,7 +83,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "replaceChild", child, oldChild);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -93,7 +93,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeChildren");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -158,7 +158,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -195,7 +195,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setId", id);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -221,7 +221,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -232,7 +232,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setClassName", cssClass);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -243,7 +243,7 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setExtraStyles", extraStyles);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -253,12 +253,12 @@ public class Tag extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "release");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Called before appending a child.
-     * @param child 
+     * @param child
      * @param callback <code>true</code> to allow the append, <code>false</code> to veto.
      */
 
@@ -280,12 +280,12 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Called before removing a child.
-     * @param child 
+     * @param child
      * @param callback <code>true</code> to allow the removal, <code>false</code> to veto.
      */
 
@@ -307,7 +307,7 @@ public class Tag extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -320,7 +320,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setProperty", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -347,7 +347,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -358,7 +358,7 @@ interpreted as name/value pairs, i.e.: tag.setProperty(n1, p1, n2, p2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeProperty", strName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -371,7 +371,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStyle", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -398,7 +398,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -409,7 +409,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "removeStyle", strName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -435,7 +435,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -461,7 +461,7 @@ interpreted as name/value pairs, i.e.: tag.setStyle(n1, s1, n2, s2);.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -488,7 +488,7 @@ This method is only available in the VML version of this class.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -515,7 +515,7 @@ This method is only available in the SVG version of this class.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -526,7 +526,7 @@ override this method should begin with a call to jsxsuper().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintUpdate");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

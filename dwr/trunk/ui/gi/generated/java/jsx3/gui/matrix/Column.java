@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Column control for use as a child of a jsx3.gui.Matrix class
@@ -92,14 +92,14 @@ public class Column extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the user-defined XSL template (xsl:template) that will override the defualt template defined by Column.DEFAULT_VALUE_TEMPLATE.
 The path wildcard is as follows:
 
-        
+
           {0} this will be replaced with the result of [instance].getPath(). For example: jsxtext
      * @param TEMPLATE Either a valid xsl:template or a named system template, including: @default, @empty, @unescape, and @image
      */
@@ -107,7 +107,7 @@ The path wildcard is as follows:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValueTemplate", TEMPLATE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -132,19 +132,19 @@ The path wildcard is as follows:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether or not this column can be resized by the user. If not set, the column will be assumed resizable. Note that if the parent Matrix
 is set as NOT resizable, this setting is ignored and no child columns can be resized. Note that the header row is immediately repainted to reflect the change.
-     * @param RESIZE 
+     * @param RESIZE
      */
     public void setResizable(Boolean RESIZE)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizable", RESIZE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -171,7 +171,7 @@ this column will called to repaint to reflect the updated value
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -183,7 +183,7 @@ this column will called to repaint to reflect the updated value
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTriggers", strTriggers);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -209,7 +209,7 @@ this column will called to repaint to reflect the updated value
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -223,7 +223,7 @@ However, the repaint can be suppressed to avoid unnecessary reparsing of the XSL
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPath", strPath, bSuppressRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -250,18 +250,18 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the CDF attribute to use to sort on this column.
-     * @param strPath 
+     * @param strPath
      */
     public void setSortPath(String strPath)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortPath", strPath);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -287,7 +287,7 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -298,7 +298,7 @@ sorted on this attribute when the matrix is sorted on this column.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDataType", DATATYPE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -324,7 +324,7 @@ sorted on this attribute when the matrix is sorted on this column.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -335,7 +335,7 @@ sorted on this attribute when the matrix is sorted on this column.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortDataType", DATATYPE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -361,18 +361,18 @@ the parent control explicitly specifies that no column should sort.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether the parnet list/grid can be sorted on this column. Note that the header row is immediately repainted to reflect the change.
-     * @param SORT 
+     * @param SORT
      */
     public void setCanSort(Boolean SORT)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanSort", SORT);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -391,7 +391,7 @@ function(element, cdfkey, matrix, column, rownumber, server) {
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -410,7 +410,7 @@ function(element, cdfkey, matrix, column, rownumber, server) {
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -429,7 +429,7 @@ function(element, cdfkey, matrix, column, rownumber, server) {
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFormatHandler", handler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -457,7 +457,7 @@ Can also return the function literal
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -485,7 +485,7 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -510,7 +510,7 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -521,7 +521,7 @@ Returns null if this object is not displayed.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellBackgroundColor", strColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -546,7 +546,7 @@ Returns null if this object is not displayed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -561,7 +561,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellBorder", strCSS, bSuppressRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -586,7 +586,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -597,7 +597,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellColor", strColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -622,7 +622,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -633,7 +633,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellCursor", strCursor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -658,7 +658,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -669,7 +669,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontName", strFontName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -694,7 +694,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -705,7 +705,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontSize", intPixelSize);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -730,7 +730,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -741,7 +741,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellFontWeight", FONTWEIGHT);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -766,7 +766,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -781,7 +781,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellPadding", strCSS, bSuppressRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -806,7 +806,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -817,7 +817,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellTextAlign", ALIGN);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -842,7 +842,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -853,7 +853,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellVAlign", VALIGN);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -879,7 +879,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -891,7 +891,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellWrap", WRAP);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -917,18 +917,18 @@ specified, the text will not wrap. Call repaint to update the VIEW
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether or not the header cell will support text-wrapping. Repaints the header to immediately reflect this change.
-     * @param WRAP 
+     * @param WRAP
      */
     public void setWrap(Boolean WRAP)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWrap", WRAP);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -953,7 +953,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -964,7 +964,7 @@ specified, the text will not wrap. Call repaint to update the VIEW
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVAlign", VALIGN);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * An plot (scatter/point/bubble) chart.
@@ -99,7 +99,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -110,7 +110,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMaxPointRadius", maxPointRadius);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -136,7 +136,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -147,7 +147,7 @@ public class PlotChart extends jsx3.chart.CartesianChart
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMagnitudeMethod", magnitudeMethod);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

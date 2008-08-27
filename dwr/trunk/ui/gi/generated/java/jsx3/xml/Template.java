@@ -16,8 +16,8 @@
 package jsx3.xml;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Wrapper of the native browser XSLT processor.
@@ -37,7 +37,7 @@ public class Template extends jsx3.lang.Object
 
     /**
      * The instance initializer.
-     * @param objXSL 
+     * @param objXSL
      */
     public Template(jsx3.xml.CdfDocument objXSL)
     {
@@ -51,14 +51,14 @@ public class Template extends jsx3.lang.Object
 
     /**
      * 
-     * @param strName 
-     * @param objValue 
+     * @param strName
+     * @param objValue
      */
     public void setParam(String strName, jsx3.lang.Object objValue)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setParam", strName, objValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Template extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reset");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -80,14 +80,14 @@ public class Template extends jsx3.lang.Object
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setParams", objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Performs an XSLT merge. If an error occurs while performing the transform, this method sets the error
 property of this processor and returns null.
-     * @param objXML 
-     * @param bObject 
+     * @param objXML
+     * @param bObject
      * @param callback the result of the transformation
      */
 
@@ -109,13 +109,13 @@ property of this processor and returns null.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Performs an XSLT merge. If an error occurs while performing the transform, this method sets the error
 property of this processor and returns null.
-     * @param objXML 
+     * @param objXML
      * @return if a valid result tree is formed as a result of the transformation
      */
 
@@ -136,7 +136,7 @@ property of this processor and returns null.
     /**
      * Performs an XSLT merge. If an error occurs while performing the transform, this method sets the error
 property of this processor and returns null.
-     * @param objXML 
+     * @param objXML
      * @param returnType The expected return type
      * @return if a valid result tree is formed as a result of the transformation
      */
@@ -220,7 +220,7 @@ description Ð a text description of the error that occurred.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

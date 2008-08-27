@@ -38,7 +38,7 @@ public class Text extends jsx3.html.Tag
 
     /**
      * The instance initializer.
-     * @param strText 
+     * @param strText
      */
     public Text(String strText)
     {

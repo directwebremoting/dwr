@@ -17,7 +17,7 @@ package org.directwebremoting.ui.browser;
 
 import javax.servlet.http.Cookie;
 
-import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.util.JavascriptUtil;
 
 /**
@@ -31,7 +31,7 @@ public class Document
      */
     public static void setCookie(String name, String value)
     {
-        ScriptProxy.addScript("document.cookie = \"" + JavascriptUtil.escapeJavaScript(name) + "=" + JavascriptUtil.escapeJavaScript(value) + "\"");
+        ScriptSessions.addScript(("document.cookie = \"" + JavascriptUtil.escapeJavaScript(name) + "=" + JavascriptUtil.escapeJavaScript(value) + "\""));
     }
 
     /**
@@ -46,7 +46,7 @@ public class Document
         String maxAge = cookie.getMaxAge() == -1 ? "" : ";max-age=" + cookie.getMaxAge();
         String secure = !cookie.getSecure() ? "" : ";secure=true";
 
-        ScriptProxy.addScript("document.cookie = \"" + name + "=" + value + domain + path + maxAge + secure + "\"");
+        ScriptSessions.addScript(("document.cookie = \"" + name + "=" + value + domain + path + maxAge + secure + "\""));
     }
 
     /**
@@ -55,6 +55,6 @@ public class Document
     */
     public static void setTitle(String title)
     {
-        ScriptProxy.addScript("document.title = '" + JavascriptUtil.escapeJavaScript(title) + "';");
+        ScriptSessions.addScript(("document.title = '" + JavascriptUtil.escapeJavaScript(title) + "';"));
     }
 }

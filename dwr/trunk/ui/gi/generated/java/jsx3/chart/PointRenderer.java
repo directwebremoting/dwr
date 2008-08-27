@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Objects that implement this interface may be used in Line/Area/Point/Bubble charts to render the points that appear
@@ -42,12 +42,12 @@ public class PointRenderer extends jsx3.lang.Object
 
     /**
      * Renders the point in the bounds specified by {x1,y1} {x2,y2}.
-     * @param x1 
-     * @param y1 
-     * @param x2 
-     * @param y2 
-     * @param fill 
-     * @param stroke 
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param fill
+     * @param stroke
      */
 
     public jsx3.vector.Tag render(int x1, int y1, int x2, int y2, jsx3.vector.Fill fill, jsx3.vector.Stroke stroke)
@@ -66,12 +66,12 @@ public class PointRenderer extends jsx3.lang.Object
 
     /**
      * Renders the point in the bounds specified by {x1,y1} {x2,y2}.
-     * @param x1 
-     * @param y1 
-     * @param x2 
-     * @param y2 
-     * @param fill 
-     * @param stroke 
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param fill
+     * @param stroke
      * @param returnType The expected return type
      */
 
@@ -92,7 +92,7 @@ public class PointRenderer extends jsx3.lang.Object
     /**
      * Converts the area of the point to display to the radius of the box that it should fill. Required
    if the point renderer will be used in a plot chart.
-     * @param area 
+     * @param area
      */
 
     public void areaToRadius(Integer area, org.directwebremoting.ui.Callback<Integer> callback)
@@ -113,7 +113,7 @@ public class PointRenderer extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

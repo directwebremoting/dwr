@@ -15,34 +15,26 @@
  */
 package com.example.dwr.gidemo.bus;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Browser;
 import org.directwebremoting.HubFactory;
-import org.directwebremoting.ScriptSession;
-import org.directwebremoting.ServerContext;
-import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.WebContextFactory;
 
 /**
- * 
+ *
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Simulator implements Runnable
 {
     /**
-     * 
+     *
      */
     public Simulator()
     {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        serverContext = ServerContextFactory.get(servletContext);
         setActive(true);
     }
 
@@ -57,16 +49,16 @@ public class Simulator implements Runnable
 
             while (active)
             {
-                Collection<ScriptSession> sessions = serverContext.getScriptSessionsByPage("/dwr-gi/dwr_oa_gi.html");
+                Browser.withPage("/dwr-gi/dwr_oa_gi.html", new Runnable()
+                {
+                    public void run()
+                    {
+                        objectHolder.put("obj", getRandomObject());
+                        HubFactory.get().publish("cdf.object", objectHolder);
+                    }
+                });
 
-                objectHolder.put("obj", getRandomObject());
-                HubFactory.get().publish("cdf.object", objectHolder);
-
-                log.info("Simulator: Sent message to " + sessions.size() + " pages");
-
-                //int timeToSleep = 1000 / publishesPerSecond;
-                int timeToSleep = random.nextInt(500);
-                Thread.sleep(timeToSleep);
+                Thread.sleep(random.nextInt(500));
             }
 
             log.info("Simulator: Stopping server-side thread");
@@ -75,10 +67,10 @@ public class Simulator implements Runnable
         {
             ex.printStackTrace();
         }
-    }    
+    }
 
     /**
-     * 
+     *
      */
     private Map<String, String> getRandomObject()
     {
@@ -95,7 +87,7 @@ public class Simulator implements Runnable
     }
 
     /**
-     * 
+     *
      */
     private String getRandomNumberString()
     {
@@ -125,7 +117,7 @@ public class Simulator implements Runnable
     }
 
     /**
-     * 
+     *
      */
     public synchronized void setActive(boolean active)
     {
@@ -148,17 +140,15 @@ public class Simulator implements Runnable
         return active;
     }
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     private int attributesPerRecord = 5;
 
     private int publishesPerSecond = 1;
 
-    private ServerContext serverContext;
-
     private boolean active = false;
 
-    private Map<String, Map<String, String>> objectHolder = new HashMap<String, Map<String,String>>();
+    private final Map<String, Map<String, String>> objectHolder = new HashMap<String, Map<String,String>>();
 
     /**
      * The log stream

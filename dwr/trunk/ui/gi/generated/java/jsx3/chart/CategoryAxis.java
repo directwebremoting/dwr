@@ -16,11 +16,11 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
- * Axis type that displays a set of discrete values (categories). Usually a category corresponds to a 
+ * Axis type that displays a set of discrete values (categories). Usually a category corresponds to a
 record in the chart's data provider.
  * @author Joe Walker [joe at getahead dot org]
  * @author DRAPGEN - Dwr Reverse Ajax Proxy GENerator
@@ -85,7 +85,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -96,7 +96,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTickAlignment", tickAlignment);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -122,7 +122,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -133,7 +133,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCategoryField", categoryField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -159,7 +159,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -170,7 +170,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPaddingLow", paddingLow);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -196,7 +196,7 @@ public class CategoryAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -207,7 +207,7 @@ public class CategoryAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPaddingHigh", paddingHigh);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

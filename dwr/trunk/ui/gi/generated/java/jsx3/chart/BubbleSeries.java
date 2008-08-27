@@ -16,12 +16,12 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series used for a jsx3.chart.BubbleChart. A bubble series has the following fields:
-xField - the attribute of a record to use as the x-coordinate of points in the series, required 
+xField - the attribute of a record to use as the x-coordinate of points in the series, required
 yField - the attribute of a record to use as the y-coordinate of points in the series, required
 magnitudeField - the attribute of a record to use as the magnitude of points in the series, required
 pointRenderer - string that evals to an object that implements the renderer interface, optional
@@ -56,8 +56,8 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
 
     /**
      * The default tooltip function for this type of series.
-     * @param series 
-     * @param record 
+     * @param series
+     * @param record
      */
 
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
@@ -78,7 +78,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -104,7 +104,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -115,7 +115,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMagnitudeField", magnitudeField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -141,7 +141,7 @@ public class BubbleSeries extends jsx3.chart.PlotSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

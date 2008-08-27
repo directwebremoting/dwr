@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders a tabbed pane, which consists of a set of tabs, only one of which is visible at a time.
@@ -91,13 +91,13 @@ public class TabbedPane extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the active tab of this tabbed pane. Pass either the zero-based child index of the tab to activate or
 the tab itself.
-     * @param intIndex 
+     * @param intIndex
      * @param bRepaint if <code>true</code>, immediately updates the view to reflect the new active tab.
      * @return this object.
      */
@@ -105,14 +105,14 @@ the tab itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectedIndex", intIndex, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
     /**
      * Sets the active tab of this tabbed pane. Pass either the zero-based child index of the tab to activate or
 the tab itself.
-     * @param intIndex 
+     * @param intIndex
      * @param bRepaint if <code>true</code>, immediately updates the view to reflect the new active tab.
      * @return this object.
      */
@@ -120,7 +120,7 @@ the tab itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectedIndex", intIndex, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -147,7 +147,7 @@ the tab itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -160,7 +160,7 @@ the tab itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTabHeight", intTabHeight);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -171,18 +171,18 @@ the tab itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getShowTabs");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * whether or not to show the tabs of the tabbed pane. if false then only the content of each tab is drawn.
-     * @param intShowTabs 
+     * @param intShowTabs
      */
     public void setShowTabs(int intShowTabs)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setShowTabs", intShowTabs);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

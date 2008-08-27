@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A class that defines the methods required for an object to be used by Matrix.Column instances to
@@ -42,24 +42,24 @@ public class ColumnFormat extends jsx3.lang.Object
      * Returns a column formatter for a string key. The key may be one of the following:
 
 
-          @unescape Ð 
+          @unescape Ð
 
-          @unescape_all Ð 
+          @unescape_all Ð
 
-          @lookup Ð 
+          @lookup Ð
 
-          @datetime[,(short|medium|long|full,format)] Ð 
+          @datetime[,(short|medium|long|full,format)] Ð
 
-          @date[,(short|medium|long|full,format)] Ð 
+          @date[,(short|medium|long|full,format)] Ð
 
-          @time[,(short|medium|long|full,format)] Ð 
+          @time[,(short|medium|long|full,format)] Ð
 
-          @number[,(integer|percent|currency,format)] Ð 
+          @number[,(integer|percent|currency,format)] Ð
 
           @message,format
            Ð
-     * @param strKey 
-     * @param objColumn 
+     * @param strKey
+     * @param objColumn
      */
 
     public jsx3.gui.matrix.ColumnFormat getInstance(String strKey, jsx3.gui.matrix.Column objColumn)
@@ -101,7 +101,7 @@ false is returned, the formatter will not even attempt to iterate
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -117,7 +117,7 @@ false is returned, the formatter will not even attempt to iterate
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "format", objDiv, strCDFKey, objMatrix, objMatrixColumn, intRowNumber, objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

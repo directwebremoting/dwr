@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The base class for all charts in this package. Encapsulates common functionality shared by all charts.
@@ -85,7 +85,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -96,7 +96,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTitlePlacement", titlePlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -122,7 +122,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLegendPlacement", legendPlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -159,7 +159,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -170,7 +170,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDataPadding", dataPadding);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -196,7 +196,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -207,7 +207,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderColor", borderColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderColor", borderColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -244,7 +244,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -255,7 +255,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderWidth", borderWidth);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -281,7 +281,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -292,7 +292,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderAlpha", borderAlpha);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -318,7 +318,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -329,7 +329,7 @@ public class Chart extends jsx3.vector.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -354,12 +354,12 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the index of a series in the list of series children.
-     * @param s 
+     * @param s
      * @param callback the index or -1 if not found
      */
 
@@ -381,7 +381,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -445,7 +445,7 @@ public class Chart extends jsx3.vector.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -457,7 +457,7 @@ method from being called.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "redrawRecord");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -468,7 +468,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -495,7 +495,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -586,7 +586,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -611,7 +611,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -636,7 +636,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -661,7 +661,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -739,7 +739,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -802,7 +802,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -828,7 +828,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -847,7 +847,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -939,7 +939,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -951,7 +951,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1010,8 +1010,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
@@ -1041,8 +1041,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @param returnType The expected return type
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
@@ -1066,7 +1066,7 @@ string of this object. This method executes the following steps:
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @return this object.
      */
 
@@ -1088,7 +1088,7 @@ If no value is specified, a unique id is generated.
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @param returnType The expected return type
      * @return this object.
      */
@@ -1159,13 +1159,13 @@ the server of this object) or the cache id of a XSLT document in the XML cache o
 of this object. When any transformer is loaded from a URI it is placed in the server cache under the id
 equal to its resolved URI. Any transformer that does not correspond to a valid XSLT document will be skipped
 without throwing an error.
-     * @param arrTrans 
+     * @param arrTrans
      */
     public void setXMLTransformers(Object[] arrTrans)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1261,7 +1261,7 @@ strValue is null the parameter is removed.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @return this object.
      */
 
@@ -1282,7 +1282,7 @@ data sources loaded from an XML URL.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @param returnType The expected return type
      * @return this object.
      */
@@ -1305,7 +1305,7 @@ data sources loaded from an XML URL.
      * Sets whether this object is bound to the XML document stored in the data cache. If this object is bound to the
 cache, then the onXmlBinding() method of this object is called any time the document stored in
 the cache under the XML Id of this object changes.
-     * @param bBind 
+     * @param bBind
      * @param callback <code>0</code> or <code>1</code>.
      */
 
@@ -1327,7 +1327,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1338,13 +1338,13 @@ on-screen view of both the source and destination objects.
 This method fails quietly if any of the following conditions apply:
 
 there is no object with id equal to strSourceId
-        
+
 there is no record in the source object with jsxid equal to strRecordId
-        
+
 
           strParentRecordId is specified and there is no record in this object with
    jsxid equal to strParentRecordId
-        
+
 the this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -1378,13 +1378,13 @@ on-screen view of both the source and destination objects.
 This method fails quietly if any of the following conditions apply:
 
 there is no object with id equal to strSourceId
-        
+
 there is no record in the source object with jsxid equal to strRecordId
-        
+
 
           strParentRecordId is specified and there is no record in this object with
    jsxid equal to strParentRecordId
-        
+
 the this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -1416,13 +1416,13 @@ the this object already has a record with jsxid equal to the record to adopt
 This method fails quietly if any of the following conditions apply:
 
 there is no record with a jsxid equal to strSourceId
-        
+
 there is no record in the source object with a jsxid equal to strRecordId
-        
+
 
           strSiblingRecordId is specified and there is no record in this object with a
    jsxid equal to strParentRecordId
-        
+
 this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -1454,13 +1454,13 @@ which the record identified by strSourceId will be placed
 This method fails quietly if any of the following conditions apply:
 
 there is no record with a jsxid equal to strSourceId
-        
+
 there is no record in the source object with a jsxid equal to strRecordId
-        
+
 
           strSiblingRecordId is specified and there is no record in this object with a
    jsxid equal to strParentRecordId
-        
+
 this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -1499,7 +1499,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "convertProperties", objProps, arrProps, bUnion);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1536,7 +1536,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deleteRecordProperty", strRecordId, strPropName, bRedraw);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1660,7 +1660,7 @@ the given jsxid is inserted.
 This method fails quietly if any of the following conditions apply:
 
 there is no existing record with a jsxid equal to strSiblingRecordId
-        
+
 there is an existing record with jsxid equal to objRecord.jsxid
      * @param objRecord a JavaScript object containing property/value pairs that define the
    attributes of the XML entity to create. Note that most classes that implement this interface require that all
@@ -1705,7 +1705,7 @@ Object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "insertRecordNode", objRecordNode, strParentRecordId, bRedraw);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

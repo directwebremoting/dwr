@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series for a pie chart. Draws a complete pie or ring of a doughnut. A pie series is slightly
@@ -26,13 +26,13 @@ A pie series has the following fields:
 
 xField the attribute of a record to use as the relative size of each slice of the pie, required
 totalAngle the total angle for the series, if not set use the value from the chart
-startAngle the angle of the start of the first slice, 0 is top and increasing values go clockwise, 
+startAngle the angle of the start of the first slice, 0 is top and increasing values go clockwise,
     if not set use the value from the chart
 colors an array of string representations of vector fills to color in the slices, if not set use
     the value from the chart
-colorFunction a function that determines the color of each slice, with the signature 
+colorFunction a function that determines the color of each slice, with the signature
     function(record, index) : jsx3.vector.Fill, if not set use the value from the chart
-stroke string representation of a VectorStroke to outline the slices with, if not set use the value 
+stroke string representation of a VectorStroke to outline the slices with, if not set use the value
     from the chart
 labelPlacement where to place a label with the name of the series, relative to the series, one of
     {'top','right','bottom','left'}
@@ -90,7 +90,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -101,7 +101,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTotalAngle", totalAngle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -127,7 +127,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -138,7 +138,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStartAngle", startAngle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -164,7 +164,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -175,7 +175,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setField", field);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -201,7 +201,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -227,7 +227,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -238,7 +238,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColors", colors);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -264,7 +264,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -275,7 +275,7 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelPlacement", labelPlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -301,7 +301,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -312,14 +312,14 @@ public class PieSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelOffset", labelOffset);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * The default tooltip function for this type of series.
-     * @param series 
-     * @param record 
-     * @param percent 
+     * @param series
+     * @param record
+     * @param percent
      */
 
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, java.lang.Object percent, org.directwebremoting.ui.Callback<String> callback)
@@ -340,7 +340,7 @@ public class PieSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

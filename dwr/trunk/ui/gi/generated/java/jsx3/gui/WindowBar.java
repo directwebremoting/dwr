@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * jsx3.gui.WindowBar instances are used as the captionbar for JSXDialog and JSXAlert instances. They can contain any object type supported by the JSXBlock class. Developers will not instantiate this class (although it is possible); instead, when a new dialog is instanced, it will bind an instance of this class as a child for use as a captionbar container.
@@ -123,7 +123,7 @@ public class WindowBar extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -136,7 +136,7 @@ public class WindowBar extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", TYPE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
