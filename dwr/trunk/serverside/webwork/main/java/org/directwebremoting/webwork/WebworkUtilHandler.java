@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servlet;
+package org.directwebremoting.webwork;
 
 import org.directwebremoting.extend.DwrConstants;
+import org.directwebremoting.servlet.FileJavaScriptHandler;
 
 /**
  * A Handler that supports requests for DWRActionUtil.js
