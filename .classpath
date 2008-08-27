@@ -68,7 +68,7 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/generated/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
-    <classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/legacy/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/dwrp/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/json/main/java"/>
@@ -112,6 +112,7 @@
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/various/test/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/dwr/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="ui/dwr/demo/java"/>
+	<classpathentry kind="src" path="ui/dojo/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/scriptaculous/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="ui/gi/test/java"/>
@@ -125,6 +126,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
-	<classpathentry kind="src" output="target/eclipse/demo/classes" path="noncla/various/demo/java"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
