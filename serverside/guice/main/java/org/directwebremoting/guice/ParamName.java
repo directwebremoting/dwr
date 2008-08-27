@@ -37,7 +37,6 @@ public enum ParamName
     PRE_STREAM_WAIT_TIME                ("preStreamWaitTime"),
     POST_STREAM_WAIT_TIME               ("postStreamWaitTime"),
     IGNORE_LAST_MODIFIED                ("ignoreLastModified"),
-    SCRIPT_COMPRESSED                   ("scriptCompressed"),
     SESSION_COOKIE_NAME                 ("sessionCookieName"),
     WELCOME_FILES                       ("welcomeFiles"),
     NORMALIZE_INCLUDES_QUERY_STRING     ("normalizeIncludesQueryString"),

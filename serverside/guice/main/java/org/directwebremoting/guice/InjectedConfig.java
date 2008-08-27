@@ -85,7 +85,6 @@ class InjectedConfig
         setParameter(PRE_STREAM_WAIT_TIME,            preStreamWaitTime);
         setParameter(POST_STREAM_WAIT_TIME,           postStreamWaitTime);
         setParameter(IGNORE_LAST_MODIFIED,            ignoreLastModified);
-        setParameter(SCRIPT_COMPRESSED,               scriptCompressed);
         setParameter(SESSION_COOKIE_NAME,             sessionCookieName);
         setParameter(WELCOME_FILES,                   welcomeFiles);
         setParameter(NORMALIZE_INCLUDES_QUERY_STRING, normalizeIncludesQueryString);
@@ -116,7 +115,6 @@ class InjectedConfig
     @Inject(optional=true) @InitParam(PRE_STREAM_WAIT_TIME)            Long    preStreamWaitTime = null;
     @Inject(optional=true) @InitParam(POST_STREAM_WAIT_TIME)           Long    postStreamWaitTime = null;
     @Inject(optional=true) @InitParam(IGNORE_LAST_MODIFIED)            Boolean ignoreLastModified = null;
-    @Inject(optional=true) @InitParam(SCRIPT_COMPRESSED)               Boolean scriptCompressed = null;
     @Inject(optional=true) @InitParam(SESSION_COOKIE_NAME)             String  sessionCookieName = null;
     @Inject(optional=true) @InitParam(WELCOME_FILES)                   String  welcomeFiles = null;
     @Inject(optional=true) @InitParam(NORMALIZE_INCLUDES_QUERY_STRING) Boolean normalizeIncludesQueryString = null;
