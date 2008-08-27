@@ -13,10 +13,6 @@
   <description>DWR Core</description>
   <dependencies>
     <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-    </dependency>
-    <dependency>
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
     </dependency>
@@ -37,6 +33,16 @@
       <artifactId>jdom</artifactId>
     </dependency>
     <dependency>
+      <groupId>xom</groupId>
+      <artifactId>xom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlbeans</artifactId>
+    </dependency>
+    
+    <!-- Servlet APIs -->
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jsp-api</artifactId>
       <scope>provided</scope>
@@ -46,36 +52,7 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>opensymphony</groupId>
-      <artifactId>webwork</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>oro</groupId>
-      <artifactId>oro</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>cometd-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>cometd-bayeux</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-util</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>xom</groupId>
-      <artifactId>xom</artifactId>
-    </dependency>
+    
     <dependency>
       <groupId>com.yahoo.platform.yui</groupId>
       <artifactId>yuicompressor</artifactId>
@@ -83,14 +60,34 @@
       <version>2.2.5</version>
     </dependency>
     
+    <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xmlbeans</artifactId>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <scope>provided</scope>
     </dependency>
+    
+    <!-- Tomcat Needed for TomcatSleeper -->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>juli</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>jsp-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>        
+      </exclusions>
     </dependency>
+    
   </dependencies>
   
   <build>
