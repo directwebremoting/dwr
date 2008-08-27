@@ -47,4 +47,17 @@ public interface Container
      * @return A collection containing all the available bean names.
      */
     Collection<String> getBeanNames();
+
+    /**
+     * This should be called <em>only</em> by the controlling servlet (e.g.
+     * {@link org.directwebremoting.servlet.DwrServlet}) to request that the
+     * container wrap things up. It should be called when the context is being
+     * destroyed, however probably not on due to a call to
+     * {@link javax.servlet.http.HttpServlet#destroy()} because that is only
+     * called when all connections are closed. Instead it should be called from
+     * {@link javax.servlet.ServletContextListener#contextDestroyed}.
+     * In turn this should call contextDestroyed() on any contained objects that
+     * themselves implement {@link javax.servlet.ServletContextListener}
+     */
+    void destroy();
 }

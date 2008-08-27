@@ -24,11 +24,14 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
+import org.directwebremoting.util.FakeServletContext;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -265,6 +268,28 @@ public class DefaultContainer extends AbstractContainer implements Container
     public Collection<String> getBeanNames()
     {
         return Collections.unmodifiableCollection(beans.keySet());
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.Container#destroy()
+     */
+    public void destroy()
+    {
+        log.debug("ServletContext destroying for container: " + getClass().getSimpleName());
+
+        Collection<String> beanNames = getBeanNames();
+        for (String beanName : beanNames)
+        {
+            Object bean = getBean(beanName);
+            if (bean instanceof ServletContextListener)
+            {
+                ServletContextListener scl = (ServletContextListener) bean;
+                log.debug("- For contained bean: " + beanName);
+
+                // TODO: we don't have access to the real ServletContext. Should we try to get it?
+                scl.contextDestroyed(new ServletContextEvent(new FakeServletContext()));
+            }
+        }
     }
 
     /**
