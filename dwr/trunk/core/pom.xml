@@ -39,10 +39,12 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jsp-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>opensymphony</groupId>
@@ -63,10 +65,12 @@
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty-util</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>xom</groupId>
@@ -88,10 +92,25 @@
       <artifactId>catalina</artifactId>
     </dependency>
   </dependencies>
+  
   <build>
-    <sourceDirectory>api/main</sourceDirectory>
+    <sourceDirectory>api/main/java</sourceDirectory>
     <outputDirectory>../target/maven2/classes</outputDirectory>
     <testOutputDirectory>../target/maven2/test-classes</testOutputDirectory>
+    <resources>
+      <resource>
+          <directory>impl/main/java</directory>
+          <includes>
+            <include>**/*.properties</include>
+            <include>org/directwebremoting/*.properties</include>
+            <include>org/directwebremoting/*.js</include>
+            <include>org/directwebremoting/*.xsd</include>
+            <include>org/directwebremoting/*.dtd</include>
+            <include>org/directwebremoting/dwr.xml</include>
+            <include>org/directwebremoting/help.html</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -112,9 +131,9 @@
             </goals>
             <configuration>
               <sources>
-                <source>api/main</source>
-                <source>impl/main</source>
-                <source>legacy/main</source>
+                <source>api/main/java</source>
+                <source>impl/main/java</source>
+                <source>legacy/main/java</source>
                 <source>impl/generated/java</source>
               </sources>
             </configuration>
