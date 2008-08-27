@@ -61,7 +61,7 @@ public class System
         WebContext wctx = WebContextFactory.get();
         ScriptSession scriptSession = wctx.getScriptSession();
 
-        log.debug("pageUnloaded is invalidating scriptSession: " + scriptSession.getId());
+        log.debug("pageUnloaded is invalidating scriptSession: " + scriptSession);
         scriptSession.invalidate();
     }
 
@@ -151,7 +151,7 @@ public class System
     protected class BrowserMessageListener implements MessageListener
     {
         /**
-         * 
+         *
          */
         public BrowserMessageListener(ScriptSession session, String topic, String subscriptionId)
         {
@@ -176,7 +176,7 @@ public class System
     }
 
     /**
-     * 
+     *
      */
     private static final String ATTRIBUTE_SUBSCRIPTIONS = "org.directwebremoting.export.System.subscriptions";
 

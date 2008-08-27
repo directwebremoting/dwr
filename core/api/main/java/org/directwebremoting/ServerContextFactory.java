@@ -15,6 +15,7 @@
  */
 package org.directwebremoting;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.directwebremoting.extend.Builder;
@@ -56,7 +57,7 @@ public class ServerContextFactory
      * Do not call this method from outside of DWR.
      * @param builder The factory object (from DwrServlet)
      */
-    public static void setBuilder(Builder<ServerContext> builder)
+    public static void setBuilder(ServerContextBuilder builder)
     {
         factory.setBuilder(builder);
     }
@@ -71,5 +72,10 @@ public class ServerContextFactory
      */
     public interface ServerContextBuilder extends Builder<ServerContext>
     {
+        /**
+         * Version of {@link Builder#set(ServletContext, Object...)} with the
+         * correct parameters
+         */
+        void set(ServletContext context, ServletConfig config, Container container);
     }
 }

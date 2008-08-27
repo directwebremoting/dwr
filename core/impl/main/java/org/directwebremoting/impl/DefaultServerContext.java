@@ -20,9 +20,11 @@ import java.util.Collection;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
-import org.directwebremoting.ServerContext;
 import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ServerContext;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.servlet.UrlProcessor;
@@ -144,6 +146,25 @@ public class DefaultServerContext implements ServerContext
         return converterManager;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "DefaultServerContext[path=" + config.getServletName() + ", container=" + container.getClass().getSimpleName() + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        log.warn("Comparing ServerContexts is dangerous because DefaultWebContext inherits from DefaultServerContext. It is probably better to compare ServletContexts instead.");
+        return super.equals(obj);
+    }
+
     /**
      * The ServletConfig associated with the current request
      */
@@ -168,4 +189,9 @@ public class DefaultServerContext implements ServerContext
      * How we convert to Javascript objects
      */
     private ConverterManager converterManager = null;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(DefaultServerContext.class);
 }

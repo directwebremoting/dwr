@@ -96,7 +96,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
             scriptSession.addScript(script);
 
             // Use the new script session id not the one passed in
-            log.debug("ScriptSession re-sync: " + sentScriptId + " has become " + newSessionId);
+            log.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + sentPage);
             this.scriptSessionId = newSessionId;
             this.page = sentPage;
         }
@@ -158,7 +158,8 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         RealScriptSession scriptSession = manager.getScriptSession(scriptSessionId, null, null);
         if (scriptSession == null)
         {
-            log.debug("Script session not valid:" + scriptSessionId);
+            // TODO: We ought to have some detection mechanism rather than throwing
+            log.debug("Script session invalid (probably timed out): " + simplifyId(scriptSessionId));
             throw new SecurityException("Expected script session to exist");
         }
 
@@ -214,6 +215,39 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         getServletContext().getRequestDispatcher(url).forward(realRequest, fakeResponse);
 
         return buffer.toString();
+    }
+
+    /**
+     * ScriptSession IDs are too long to be useful to humans. We shorten them
+     * to the first 4 characters.
+     */
+    private String simplifyId(String id)
+    {
+        if (id == null)
+        {
+            return "[null]";
+        }
+
+        if (id.length() == 0)
+        {
+            return "[blank]";
+        }
+
+        if (id.length() < 4)
+        {
+            return id;
+        }
+
+        return id.substring(0, 4);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "DefaultWebContext[id=" + simplifyId(scriptSessionId) + ", page=" + page + "]";
     }
 
     /**

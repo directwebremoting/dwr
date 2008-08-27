@@ -48,7 +48,7 @@ public class DefaultBuilder<T> implements Builder<T>
             throw new RuntimeException(ex);
         }
 
-        this.attributeName = "org.directwebremoting.impl." + created.getName();
+        this.attributeName = created.getName();
     }
 
     /* (non-Javadoc)
@@ -56,10 +56,8 @@ public class DefaultBuilder<T> implements Builder<T>
      */
     public T get()
     {
-        ServerContext serverContext;
-
         // Try to get the context from the thread
-        serverContext = WebContextFactory.get();
+        ServerContext serverContext = WebContextFactory.get();
         if (serverContext == null)
         {
             // If not see if there is a singleton
