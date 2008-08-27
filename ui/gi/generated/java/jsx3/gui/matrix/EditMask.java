@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The interface defining the methods that affect the behavior of an object used as an edit mask in a matrix column.
@@ -56,18 +56,18 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emInit", objColumn);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Called whenever an edit session begins.
-     * @param strValue 
-     * @param objTdDim 
-     * @param objPaneDim 
-     * @param objMatrix 
-     * @param objColumn 
-     * @param strRecordId 
-     * @param objTD 
+     * @param strValue
+     * @param objTdDim
+     * @param objPaneDim
+     * @param objMatrix
+     * @param objColumn
+     * @param strRecordId
+     * @param objTD
      * @param callback <code>false</code> to cancel the edit session.
      */
 
@@ -89,7 +89,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -115,7 +115,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -141,7 +141,7 @@ to initialize itself.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -151,7 +151,7 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "suspendEditSession");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -161,7 +161,7 @@ to initialize itself.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resumeEditSession");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -228,7 +228,7 @@ value {String} may be null
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "commitEditMask", objEvent, bKeepOpen);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

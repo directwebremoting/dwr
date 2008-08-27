@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents a vector fill, the color and gradient that fills a solid vector shape.
@@ -70,7 +70,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -117,7 +117,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -143,7 +143,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -154,7 +154,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -180,7 +180,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -191,7 +191,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", type);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -201,7 +201,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor2");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -211,7 +211,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getColor2Html");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -222,7 +222,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor2", color2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -233,7 +233,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor2", color2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -259,7 +259,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -270,7 +270,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha2", alpha2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -296,7 +296,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -307,7 +307,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAngle", angle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -333,7 +333,7 @@ public class Fill extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -344,7 +344,7 @@ public class Fill extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColors", colors);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

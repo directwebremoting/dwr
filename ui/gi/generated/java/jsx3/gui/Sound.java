@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Class that provides an object-oriented interface for playing sounds in a GI application.
@@ -82,7 +82,7 @@ public class Sound extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -94,7 +94,7 @@ public class Sound extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setURL", strURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -121,7 +121,7 @@ public class Sound extends jsx3.gui.Painted
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Sound extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setVolume", intVolume);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -144,7 +144,7 @@ public class Sound extends jsx3.gui.Painted
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "play");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -155,7 +155,7 @@ point where it was paused.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "pause");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -165,7 +165,7 @@ point where it was paused.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "rewind");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -191,7 +191,7 @@ point where it was paused.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -217,7 +217,7 @@ point where it was paused.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -228,7 +228,7 @@ point where it was paused.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPosition", position);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -253,7 +253,7 @@ point where it was paused.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -331,7 +331,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -357,7 +357,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -383,7 +383,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -409,7 +409,7 @@ dragged and dropped on another container supporting drop.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -437,7 +437,7 @@ setEvent() method or during component deserialization.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -504,7 +504,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -531,7 +531,7 @@ clicks on this object with the right button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1138,7 +1138,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSpyStyles", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1152,7 +1152,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1166,7 +1166,7 @@ clicks on this object with the right button. The name is a pointer by-name to a 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "showSpy", strHTML, intLeft, intTop);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

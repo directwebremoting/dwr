@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class is a wrapper of the standard HTML checkbox.
@@ -376,7 +376,7 @@ public class CheckBox extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -388,7 +388,7 @@ public class CheckBox extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDefaultChecked", CHECKED);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -415,7 +415,7 @@ public class CheckBox extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -428,7 +428,7 @@ deprecated 3.0 model event protocol.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setChecked", intChecked);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -455,7 +455,7 @@ deprecated 3.0 model event protocol.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -552,7 +552,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -578,7 +578,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -605,7 +605,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -631,7 +631,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -658,7 +658,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -685,7 +685,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -710,7 +710,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -805,7 +805,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

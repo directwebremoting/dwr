@@ -19,7 +19,7 @@ import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.io.Context;
 
 /**
- * A base class for every logical component of a chart. A chart component exists in the DOM tree and 
+ * A base class for every logical component of a chart. A chart component exists in the DOM tree and
 is selectable with ctrl-click in a component editor in General Interfaceª Builder.
  * @author Joe Walker [joe at getahead dot org]
  * @author DRAPGEN - Dwr Reverse Ajax Proxy GENerator

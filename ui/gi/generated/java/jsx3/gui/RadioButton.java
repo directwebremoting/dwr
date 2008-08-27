@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A GUI control that implements a single radio button.
@@ -415,7 +415,7 @@ standard HTML radio button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -428,7 +428,7 @@ at one time.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setGroupName", strGroupName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -454,7 +454,7 @@ at one time.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -466,7 +466,7 @@ at one time.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDefaultSelected", intSelected);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -493,7 +493,7 @@ at one time.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -502,14 +502,14 @@ object if it is currently rendered on the screen. If intSelected is equal to SEL
 any other radio buttons in the radio group of this object will be unselected.
      * @param intSelected if <code>SELECTED</code> or <code>null</code>, this object is selected, otherwise it
    is unselected.
-     * @param objGUI 
+     * @param objGUI
      * @return this object.
      */
     public jsx3.gui.RadioButton setSelected(int intSelected, jsx3.lang.Object objGUI)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelected", intSelected, objGUI);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -518,7 +518,7 @@ any other radio buttons in the radio group of this object will be unselected.
 is equal to the groupName property of this radio button. The return value does not include this radio button.
 This method will only return siblings if this radio button is rendered and will only return sibling radio
 buttons that are also rendered on screen.
-     * @param bRendered 
+     * @param bRendered
      */
 
     public void getSiblings(boolean bRendered, org.directwebremoting.ui.Callback<Object[]> callback)
@@ -539,7 +539,7 @@ buttons that are also rendered on screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -566,7 +566,7 @@ equal to the value of this radio button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -579,7 +579,7 @@ equal to the value of this radio button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -606,7 +606,7 @@ equal to the value of this radio button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -617,7 +617,7 @@ equal to the value of this radio button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setGroupValue", strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -644,7 +644,7 @@ optional or if it is required and it or one of its sibling radio buttons is sele
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -741,7 +741,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -767,7 +767,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -794,7 +794,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -820,7 +820,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -847,7 +847,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -874,7 +874,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -969,7 +969,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

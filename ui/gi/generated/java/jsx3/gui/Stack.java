@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class is equivalent to a tab, but uses the stack metaphor; like a tab, it has one child—a block for its content; a jsx3.gui.Stack instance should only be contained by a jsx3.gui.StackGroup instance for proper rendering.
@@ -87,7 +87,7 @@ public class Stack extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doShow");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -152,7 +152,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -165,7 +165,7 @@ returns the first child that is not a menu or a toolbar button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setActiveColor", strActiveColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -192,7 +192,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -205,7 +205,7 @@ returns the first child that is not a menu or a toolbar button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInactiveColor", strInactiveColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -231,7 +231,7 @@ returns the first child that is not a menu or a toolbar button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

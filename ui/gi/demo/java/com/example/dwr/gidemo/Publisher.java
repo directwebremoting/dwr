@@ -19,8 +19,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Browser;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A generator of random objects to push to GI
@@ -53,7 +53,7 @@ public class Publisher implements Runnable
             public void run()
             {
                 Corporation corp = corporations.getNextChangedCorporation();
-                ScriptProxy.addFunctionCall("OpenAjax.hub.publish", "gidemo.corp", corp);
+                ScriptSessions.addFunctionCall("OpenAjax.hub.publish", "gidemo.corp", corp);
             }
         });
     }

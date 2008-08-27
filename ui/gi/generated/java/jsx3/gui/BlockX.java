@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints the result of an XSL transformation in an Block. A transformation is performed on the XML source document
@@ -316,12 +316,12 @@ public class BlockX extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the XSL string of this object.
-     * @param strXSL 
+     * @param strXSL
      * @return this object.
      */
 
@@ -341,7 +341,7 @@ public class BlockX extends jsx3.gui.Block
 
     /**
      * Sets the XSL string of this object.
-     * @param strXSL 
+     * @param strXSL
      * @param returnType The expected return type
      * @return this object.
      */
@@ -382,12 +382,12 @@ public class BlockX extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the XSL URL of this object.
-     * @param strXSLURL 
+     * @param strXSLURL
      * @return this object.
      */
 
@@ -407,7 +407,7 @@ public class BlockX extends jsx3.gui.Block
 
     /**
      * Sets the XSL URL of this object.
-     * @param strXSLURL 
+     * @param strXSLURL
      * @param returnType The expected return type
      * @return this object.
      */
@@ -434,7 +434,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -461,7 +461,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -552,7 +552,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -577,7 +577,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -602,7 +602,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -627,7 +627,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -705,7 +705,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -768,7 +768,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -794,7 +794,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -813,7 +813,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -905,7 +905,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -917,7 +917,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -976,8 +976,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
@@ -1007,8 +1007,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @param returnType The expected return type
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
@@ -1032,7 +1032,7 @@ string of this object. This method executes the following steps:
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @return this object.
      */
 
@@ -1054,7 +1054,7 @@ If no value is specified, a unique id is generated.
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @param returnType The expected return type
      * @return this object.
      */
@@ -1125,13 +1125,13 @@ the server of this object) or the cache id of a XSLT document in the XML cache o
 of this object. When any transformer is loaded from a URI it is placed in the server cache under the id
 equal to its resolved URI. Any transformer that does not correspond to a valid XSLT document will be skipped
 without throwing an error.
-     * @param arrTrans 
+     * @param arrTrans
      */
     public void setXMLTransformers(Object[] arrTrans)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1227,7 +1227,7 @@ strValue is null the parameter is removed.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @return this object.
      */
 
@@ -1248,7 +1248,7 @@ data sources loaded from an XML URL.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @param returnType The expected return type
      * @return this object.
      */
@@ -1271,7 +1271,7 @@ data sources loaded from an XML URL.
      * Sets whether this object is bound to the XML document stored in the data cache. If this object is bound to the
 cache, then the onXmlBinding() method of this object is called any time the document stored in
 the cache under the XML Id of this object changes.
-     * @param bBind 
+     * @param bBind
      * @param callback <code>0</code> or <code>1</code>.
      */
 
@@ -1293,7 +1293,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

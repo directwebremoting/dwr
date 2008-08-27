@@ -16,8 +16,8 @@
 package jsx3.html;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents an HTML element that occupies a rectangle of the screen.
@@ -39,8 +39,8 @@ public class BlockTag extends jsx3.html.Tag
 
     /**
      * The instance initializer.
-     * @param strTagNS 
-     * @param strTagName 
+     * @param strTagNS
+     * @param strTagName
      * @param left left position (in pixels) of the object relative to its parent container
      * @param top top position (in pixels) of the object relative to its parent container
      * @param width width (in pixels) of the object
@@ -79,7 +79,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -90,7 +90,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLeft", left);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -116,7 +116,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -127,7 +127,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTop", top);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -153,7 +153,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -164,7 +164,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", width);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -190,7 +190,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -201,7 +201,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeight", height);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -227,7 +227,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -238,7 +238,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMargin", margin);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -264,7 +264,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -275,7 +275,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPadding", padding);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -301,7 +301,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -312,7 +312,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPosition", position);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -338,7 +338,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -349,7 +349,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZIndex", zIndex);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -375,7 +375,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -386,7 +386,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBackgroundColor", bgcolor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -412,7 +412,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -438,7 +438,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -464,7 +464,7 @@ public class BlockTag extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -478,7 +478,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -492,7 +492,7 @@ public class BlockTag extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

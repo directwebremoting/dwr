@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders an image.
@@ -59,7 +59,7 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -84,7 +84,7 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -109,20 +109,20 @@ public class Image extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of this image. The URI can be absolute or relative from the content base of the server that
 owns this object.
-     * @param srcSrc 
+     * @param srcSrc
      * @return this object
      */
     public jsx3.gui.Image setSrc(String srcSrc)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSrc", srcSrc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 

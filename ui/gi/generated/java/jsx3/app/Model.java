@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The abstract base class that defines the JSX DOM. Instances of this class exist as nodes in a tree, each with
@@ -40,7 +40,7 @@ public class Model extends jsx3.lang.Object
     /**
      * The instance initializer.
      * @param strName a unique name distinguishing this object from all other JSX GUI objects in the JSX application
-     * @param strInstanceOf 
+     * @param strInstanceOf
      */
     public Model(String strName, String strInstanceOf)
     {
@@ -384,7 +384,7 @@ than a copy and should not be modified.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -411,7 +411,7 @@ than a copy and should not be modified.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -424,7 +424,7 @@ than a copy and should not be modified.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPersistence", intPersist);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -444,7 +444,7 @@ should be used instead to ensure that the child is removed from its current pare
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setChild", objChild, intPersist, strSourceURL, strNS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -464,13 +464,13 @@ should be used instead to ensure that the child is removed from its current pare
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setChild", objChild, intPersist, strSourceURL, strNS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
     /**
      * Hook that allows for a prospective parent DOM node to veto the adoption of a child.
-     * @param objChild 
+     * @param objChild
      * @param callback true to allow the set, false to veto
      */
 
@@ -492,13 +492,13 @@ should be used instead to ensure that the child is removed from its current pare
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Hook that allows for a prospective child DOM node to veto its adoption by a parent. This method is only called if
 the prospective parent has not already vetoed the adoption in the onSetChild() method.
-     * @param objParent 
+     * @param objParent
      * @param callback true to allow the set, false to veto
      */
 
@@ -520,7 +520,7 @@ the prospective parent has not already vetoed the adoption in the onSetChild() m
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -544,7 +544,7 @@ In general a method overriding this method should begin by calling jsxsuper.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onRemoveChild", objChild, intIndex);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -568,7 +568,7 @@ In general a method overriding this method should begin by calling jsxsuper.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onRemoveChild", objChild, intIndex);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -745,7 +745,7 @@ does not already have a DOM parent, setChild() should be used instead of this me
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "adoptChild", objChild, bRepaint, bForce);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -775,19 +775,19 @@ does not already have a DOM parent, setChild() should be used instead of this me
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Called when the server owning this DOM node changes.
-     * @param objNewServer 
-     * @param objOldServer 
+     * @param objNewServer
+     * @param objOldServer
      */
     public void onChangeServer(jsx3.app.Server objNewServer, jsx3.app.Server objOldServer)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onChangeServer", objNewServer, objOldServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1051,7 +1051,7 @@ object's parent node.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1080,7 +1080,7 @@ object's parent node.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1109,7 +1109,7 @@ object's parent node.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1179,7 +1179,7 @@ objParent parameter for access to the DOM tree.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onDestroy", objParent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1205,7 +1205,7 @@ objParent parameter for access to the DOM tree.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1231,7 +1231,7 @@ objParent parameter for access to the DOM tree.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1256,7 +1256,7 @@ objParent parameter for access to the DOM tree.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1267,7 +1267,7 @@ objParent parameter for access to the DOM tree.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setName", strName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1292,18 +1292,18 @@ objParent parameter for access to the DOM tree.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the help ID of this object.
-     * @param strId 
+     * @param strId
      */
     public void setHelpId(String strId)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHelpId", strId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1331,7 +1331,7 @@ deserializes and paints in relation to its parent DOM node.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1343,7 +1343,7 @@ deserializes and paints in relation to its parent DOM node.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLoadType", intLoadType);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1622,7 +1622,7 @@ called on this object.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1716,7 +1716,7 @@ is set when this object is bound to a DOM tree.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1869,7 +1869,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @param strXML the XML content of a JSX serialization file.
      * @param bRepaint if <code>true</code> or <code>null</code> the deserialized objects will be
    added to the parent's view via the parent object's <code>paintChild()</code> method.
-     * @param objResolver 
+     * @param objResolver
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
@@ -1893,7 +1893,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @param strXML the XML content of a JSX serialization file.
      * @param bRepaint if <code>true</code> or <code>null</code> the deserialized objects will be
    added to the parent's view via the parent object's <code>paintChild()</code> method.
-     * @param objResolver 
+     * @param objResolver
      * @param returnType The expected return type
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
@@ -1918,7 +1918,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @param strXML the XML content of a JSX serialization file.
      * @param bRepaint if <code>true</code> or <code>null</code> the deserialized objects will be
    added to the parent's view via the parent object's <code>paintChild()</code> method.
-     * @param objResolver 
+     * @param objResolver
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
      */
@@ -1942,7 +1942,7 @@ or its ancestor was loaded into the DOM with an explicit URI resolver.
      * @param strXML the XML content of a JSX serialization file.
      * @param bRepaint if <code>true</code> or <code>null</code> the deserialized objects will be
    added to the parent's view via the parent object's <code>paintChild()</code> method.
-     * @param objResolver 
+     * @param objResolver
      * @param returnType The expected return type
      * @return the deserialized object. A serialization file may specify more than one root
    object, in which case this method returns the first deserialized object.
@@ -1980,7 +1980,7 @@ times in one application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "loadAndCache", strURL, bRepaint, objCache, objResolver);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2001,7 +2001,7 @@ times in one application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "loadAndCache", strURL, bRepaint, objCache, objResolver);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2028,7 +2028,7 @@ times in one application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2040,7 +2040,7 @@ times in one application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMetaValue", strKey, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2055,7 +2055,7 @@ DOM, therefore getParent(), getServer(), getXML(), etc. return null.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onBeforeAssemble", objParent, objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2070,7 +2070,7 @@ DOM, therefore getParent(), getServer(), getXML(), etc. return null.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onAfterAssemble", objParent, objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2088,7 +2088,7 @@ This implementation of this method executes the on-after-deserialize script of t
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onAfterAttach");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2115,7 +2115,7 @@ This implementation of this method executes the on-after-deserialize script of t
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2130,7 +2130,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2145,7 +2145,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2160,7 +2160,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2175,7 +2175,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2190,7 +2190,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2205,7 +2205,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2220,7 +2220,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2235,7 +2235,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2250,7 +2250,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2265,7 +2265,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2280,7 +2280,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2295,7 +2295,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2309,7 +2309,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2323,7 +2323,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2337,7 +2337,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2351,7 +2351,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2365,7 +2365,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2379,7 +2379,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2390,7 +2390,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribeAll", strEventId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

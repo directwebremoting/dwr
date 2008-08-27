@@ -21,7 +21,7 @@ import org.directwebremoting.io.Context;
 /**
  * A bar chart.
 
-Series: BarSeries only. 
+Series: BarSeries only.
 Axes: X axis must be value axis, Y axis can be value or category axis
 
 The 'type' my be 'clustered', 'stacked', or 'stacked100', which correspond to the basic Excel-like

@@ -18,8 +18,8 @@ package org.directwebremoting.ui.dwr;
 import java.io.InputStream;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.FileTransfer;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Engine is a server-side proxy that allows Java programmers to call client
@@ -50,7 +50,7 @@ public class Engine
      */
     public static void openInDownload(byte[] blob)
     {
-        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", blob);
+        ScriptSessions.addFunctionCall("dwr.engine.openInDownload", blob);
     }
 
     /**
@@ -59,7 +59,7 @@ public class Engine
      */
     public static void openInDownload(InputStream in)
     {
-        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", in);
+        ScriptSessions.addFunctionCall("dwr.engine.openInDownload", in);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Engine
      */
     public static void openInDownload(FileTransfer ft)
     {
-        ScriptProxy.addFunctionCall("dwr.engine.openInDownload", ft);
+        ScriptSessions.addFunctionCall("dwr.engine.openInDownload", ft);
     }
 
     /**
@@ -82,7 +82,7 @@ public class Engine
         script.appendScript("dwr.engine.setTimeout(")
               .appendData(timeout)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -96,7 +96,7 @@ public class Engine
         script.appendScript("dwr.engine.setRpcType(")
               .appendData(newType)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -110,7 +110,7 @@ public class Engine
         script.appendScript("dwr.engine.setHttpMethod(")
               .appendData(httpMethod)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -124,7 +124,7 @@ public class Engine
         script.appendScript("dwr.engine.setOrdered(")
               .appendData(ordered)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -138,7 +138,7 @@ public class Engine
         script.appendScript("dwr.engine.setAsync(")
               .appendData(async)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -152,7 +152,7 @@ public class Engine
         script.appendScript("dwr.engine.setActiveReverseAjax(")
               .appendData(activeReverseAjax)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -166,7 +166,7 @@ public class Engine
         script.appendScript("dwr.engine.setPollUsingComet(")
               .appendData(pollComet)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -180,6 +180,6 @@ public class Engine
         script.appendScript("dwr.engine.setPollUsingComet(")
               .appendData(newPollType)
               .appendScript(");");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 }

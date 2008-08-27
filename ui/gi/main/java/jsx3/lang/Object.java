@@ -16,8 +16,8 @@
 package jsx3.lang;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * @author Joe Walker [joe at getahead dot org]
@@ -46,6 +46,6 @@ public class Object extends Context
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendScript(getContextPath().replaceFirst(".$", ";"));
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 }

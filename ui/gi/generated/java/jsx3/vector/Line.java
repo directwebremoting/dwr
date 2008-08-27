@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Paints a vector line defined by two end points.
@@ -65,7 +65,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPoints", x1, y1, x2, y2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -91,7 +91,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -102,7 +102,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setX1", x1);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -128,7 +128,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setY1", y1);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -165,7 +165,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -176,7 +176,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setX2", x2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -202,7 +202,7 @@ public class Line extends jsx3.vector.Shape
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -213,7 +213,7 @@ public class Line extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setY2", y2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

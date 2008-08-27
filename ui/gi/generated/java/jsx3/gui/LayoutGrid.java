@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * This class provides a way to organize a set of GUI objects in a grid. The dimensions of each cell in the grid
@@ -78,20 +78,20 @@ public class LayoutGrid extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strCols 
-     * @param bRepaint 
+     * @param strCols
+     * @param bRepaint
      * @return this object.
      */
     public jsx3.gui.LayoutGrid setCols(String strCols, boolean bRepaint)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCols", strCols, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -117,20 +117,20 @@ public class LayoutGrid extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strRows 
-     * @param bRepaint 
+     * @param strRows
+     * @param bRepaint
      * @return this object.
      */
     public jsx3.gui.LayoutGrid setRows(String strRows, boolean bRepaint)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRows", strRows, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 

@@ -16,8 +16,8 @@
 package jsx3.gui.matrix;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The interface that defines the methods that affect the behavior of a composite object used as an edit mask of a
@@ -42,30 +42,30 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
 
     /**
      * 
-     * @param objColumn 
+     * @param objColumn
      */
     public void emInit(java.lang.Object objColumn)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emInit", objColumn);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strValue 
-     * @param objTdDim 
-     * @param objPaneDim 
-     * @param objMatrix 
-     * @param objColumn 
-     * @param strRecordId 
-     * @param objTD 
+     * @param strValue
+     * @param objTdDim
+     * @param objPaneDim
+     * @param objMatrix
+     * @param objColumn
+     * @param strRecordId
+     * @param objTD
      */
     public void emBeginEdit(String strValue, java.lang.Object objTdDim, java.lang.Object objPaneDim, java.lang.Object objMatrix, java.lang.Object objColumn, String strRecordId, java.lang.Object objTD)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emBeginEdit", strValue, objTdDim, objPaneDim, objMatrix, objColumn, strRecordId, objTD);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -75,7 +75,7 @@ public class BlockMask extends jsx3.gui.matrix.EditMask
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emGetValue");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -140,19 +140,19 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the value currently stored in this edit mask. The default behavior is to set the value of
 the first descendant (breadth-first) that implements jsx3.gui.Form.
-     * @param strValue 
+     * @param strValue
      */
     public void setMaskValue(String strValue)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMaskValue", strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -162,7 +162,7 @@ the first descendant (breadth-first) that implements jsx3.gui.Form.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "emEndEdit");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

@@ -16,19 +16,19 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A data series for an area chart. An area series draws a solid polygon between the x-axis and a line
 defined by the data provider, or between a minimum line and a maximum line both defined by the data
 provider. An area series has the following properties:
 
-xField the attribute of a record to use as the x-coordinate of points defining the min and max line of 
+xField the attribute of a record to use as the x-coordinate of points defining the min and max line of
     the area, required if the x-axis is a value axis
-yField the attribute of a record to use as the y-coordinate of points defining the max line of 
+yField the attribute of a record to use as the y-coordinate of points defining the max line of
     the area, required
-minField the attribute of a record to use as the y-coordinate of points defining the min line of 
+minField the attribute of a record to use as the y-coordinate of points defining the min line of
     the area, optional
 form defines how the area is drawn, one of {'segment','step','reverseStep'}, defaults to 'segment'
 
@@ -101,7 +101,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -112,7 +112,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXField", xField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -138,7 +138,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -149,7 +149,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setYField", yField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -175,7 +175,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -186,7 +186,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinField", minField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -212,7 +212,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -223,7 +223,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setForm", form);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -249,7 +249,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -260,7 +260,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointRadius", pointRadius);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -291,7 +291,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointRenderer", pointRenderer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -317,7 +317,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -328,7 +328,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointFill", pointFill);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -354,7 +354,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -365,7 +365,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointStroke", pointStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -391,7 +391,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -402,7 +402,7 @@ public class AreaSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setPointGradient", pointGradient);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -428,7 +428,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -454,7 +454,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -480,13 +480,13 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * The default tooltip function for this type of series.
-     * @param series 
-     * @param record 
+     * @param series
+     * @param record
      */
 
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
@@ -507,7 +507,7 @@ public class AreaSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

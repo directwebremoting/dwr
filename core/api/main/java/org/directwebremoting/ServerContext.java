@@ -21,6 +21,12 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
+ * Basic information about the environment that DWR is running in. Since there
+ * is no way to work on what {@link ServletContext}s are open in the current
+ * classloader, this class provides access to information associated with a
+ * single context in which DWR is running.
+ * <p>
+ * {@link ServerContext} is accessible from {@link ServerContextFactory#get()}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface ServerContext
@@ -33,7 +39,9 @@ public interface ServerContext
      * something non null.
      * @param url The URL including 'http://', up to (but not including) '?' or '#'
      * @return A collection of all the ScriptSessions.
+     * @deprecated Use {@link Browser#withPage(String, Runnable)} instead
      */
+    @Deprecated
     Collection<ScriptSession> getScriptSessionsByPage(String url);
 
     /**
@@ -46,7 +54,9 @@ public interface ServerContext
      * timeout while you are holding a reference to it.
      * @param sessionId The script session ID to lookup
      * @return The ScriptSession for the given ID, or null if it does not exist
+     * @deprecated Use {@link Browser#withSession(String, Runnable)} instead
      */
+    @Deprecated
     ScriptSession getScriptSessionById(String sessionId);
 
     /**
@@ -57,7 +67,9 @@ public interface ServerContext
      * this reason you should check that getScriptSession(String id) returns
      * something non null.
      * @return A collection of all the ScriptSessions.
+     * @deprecated Use {@link Browser#withAllSessions(Runnable)} instead
      */
+    @Deprecated
     Collection<ScriptSession> getAllScriptSessions();
 
     /**
@@ -75,8 +87,8 @@ public interface ServerContext
     /**
      * Returns the portion of the request URI that indicates the context
      * of the request.
-     * <p>Annoyingly you can't get to this from the {@link ServletContext} so
-     * you need to cache the value from a recent HttpServletRequest.
+     * <p>Annoyingly you can't get to this from the {@link ServletContext} until
+     * servlet 2.5 you need to cache the value from a recent HttpServletRequest.
      * <p>The context path always comes first in a request URI.  The path starts
      * with a "/" character but does not end with a "/" character.
      * For servlets in the default (root) context, this method returns "".

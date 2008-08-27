@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A GUI class that allows the user to pick a color using an HSB (hue-saturation-brightness) picker.
@@ -37,11 +37,11 @@ public class ColorPicker extends jsx3.gui.Block
 
     /**
      * The instance initializer.
-     * @param strName 
-     * @param vntLeft 
-     * @param vntTop 
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param strName
+     * @param vntLeft
+     * @param vntTop
+     * @param vntWidth
+     * @param vntHeight
      */
     public ColorPicker(String strName, String vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
@@ -53,11 +53,11 @@ public class ColorPicker extends jsx3.gui.Block
 
     /**
      * The instance initializer.
-     * @param strName 
-     * @param vntLeft 
-     * @param vntTop 
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param strName
+     * @param vntLeft
+     * @param vntTop
+     * @param vntWidth
+     * @param vntHeight
      */
     public ColorPicker(String strName, String vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
@@ -69,11 +69,11 @@ public class ColorPicker extends jsx3.gui.Block
 
     /**
      * The instance initializer.
-     * @param strName 
-     * @param vntLeft 
-     * @param vntTop 
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param strName
+     * @param vntLeft
+     * @param vntTop
+     * @param vntWidth
+     * @param vntHeight
      */
     public ColorPicker(String strName, int vntLeft, int vntTop, int vntWidth, int vntHeight)
     {
@@ -85,11 +85,11 @@ public class ColorPicker extends jsx3.gui.Block
 
     /**
      * The instance initializer.
-     * @param strName 
-     * @param vntLeft 
-     * @param vntTop 
-     * @param vntWidth 
-     * @param vntHeight 
+     * @param strName
+     * @param vntLeft
+     * @param vntTop
+     * @param vntWidth
+     * @param vntHeight
      */
     public ColorPicker(String strName, int vntLeft, String vntTop, int vntWidth, int vntHeight)
     {
@@ -149,7 +149,7 @@ a 24-bit number of the form 0xRRGGBB.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -161,7 +161,7 @@ a 24-bit number of the form 0xRRGGBB.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -173,7 +173,7 @@ a 24-bit number of the form 0xRRGGBB.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -199,11 +199,11 @@ a 24-bit number of the form 0xRRGGBB.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
-     * Returns the RGB value of the currently selected color as an integer. The return value is 
+     * Returns the RGB value of the currently selected color as an integer. The return value is
 a 24-bit number of the form 0xRRGGBB.
      */
 
@@ -225,7 +225,7 @@ a 24-bit number of the form 0xRRGGBB.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -236,7 +236,7 @@ a 24-bit number of the form 0xRRGGBB.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRGB", rgb);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -262,7 +262,7 @@ a 24-bit number of the form 0xRRGGBB.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -274,7 +274,7 @@ left side.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAxis", intAxis);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -288,7 +288,7 @@ left side.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHSB", h, s, b);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -317,7 +317,7 @@ left side.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -347,7 +347,7 @@ left side.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -444,7 +444,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -470,7 +470,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -497,7 +497,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -523,7 +523,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -550,7 +550,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -577,7 +577,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -672,7 +672,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.ScriptSessions;
 
 /**
  * Util is a server-side proxy that allows Java programmers to call client
@@ -60,7 +60,7 @@ public class Util
      */
     public static void setValue(String elementId, Object value, boolean escapeHtml)
     {
-        ScriptProxy.addFunctionCall("dwr.util.setValue", elementId, value, getEscapeOptions(escapeHtml));
+        ScriptSessions.addFunctionCall("dwr.util.setValue", elementId, value, getEscapeOptions(escapeHtml));
     }
 
     /**
@@ -72,7 +72,7 @@ public class Util
      */
     public static void setValues(Map<?, ?> values, boolean escapeHtml)
     {
-        ScriptProxy.addFunctionCall("dwr.util.setValues", values, getEscapeOptions(escapeHtml));
+        ScriptSessions.addFunctionCall("dwr.util.setValues", values, getEscapeOptions(escapeHtml));
     }
 
     /**
@@ -83,7 +83,7 @@ public class Util
      */
     public static void addOptions(String elementId, String[] array)
     {
-        ScriptProxy.addFunctionCall("dwr.util.addOptions", elementId, array);
+        ScriptSessions.addFunctionCall("dwr.util.addOptions", elementId, array);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Util
      */
     public static void addOptions(String elementId, Collection<?> array, String property)
     {
-        ScriptProxy.addFunctionCall("dwr.util.addOptions", elementId, array, property);
+        ScriptSessions.addFunctionCall("dwr.util.addOptions", elementId, array, property);
     }
 
     /**
@@ -108,7 +108,7 @@ public class Util
      */
     public static void addOptions(String elementId, Collection<?> array, String valueProperty, String textProperty)
     {
-        ScriptProxy.addFunctionCall("dwr.util.addOptions", elementId, array, valueProperty, textProperty);
+        ScriptSessions.addFunctionCall("dwr.util.addOptions", elementId, array, valueProperty, textProperty);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Util
      */
     public static void removeAllOptions(String elementId)
     {
-        ScriptProxy.addFunctionCall("dwr.util.removeAllOptions", elementId);
+        ScriptSessions.addFunctionCall("dwr.util.removeAllOptions", elementId);
     }
 
     /**
@@ -152,7 +152,7 @@ public class Util
                   .appendScript(options == null ? "" : ", " + options)
                   .appendScript(");");
 
-            ScriptProxy.addScript(script);
+            ScriptSessions.addScript(script);
         }
     }
 
@@ -174,7 +174,7 @@ public class Util
      */
     public static void removeAllRows(String elementId)
     {
-        ScriptProxy.addFunctionCall("dwr.util.removeAllRows", elementId);
+        ScriptSessions.addFunctionCall("dwr.util.removeAllRows", elementId);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Util
      */
     public static void cloneNode(String elementId)
     {
-        ScriptProxy.addFunctionCall("dwr.util.cloneNode", elementId);
+        ScriptSessions.addFunctionCall("dwr.util.cloneNode", elementId);
     }
 
     /**
@@ -204,7 +204,7 @@ public class Util
               .appendScript(", idSuffix:")
               .appendData(idSuffix)
               .appendScript("});");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Util
               .appendData(elementId)
               .appendScript("); ")
               .appendScript("if (dwr.util._temp) { dwr.util._temp.parentNode.removeChild(dwr.util._temp); dwr.util._temp = null; }");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -228,7 +228,7 @@ public class Util
      */
     public static void setClassName(String elementId, String className)
     {
-        ScriptProxy.addFunctionCall("dwr.util.setClassName", elementId, className);
+        ScriptSessions.addFunctionCall("dwr.util.setClassName", elementId, className);
     }
 
     /**
@@ -238,7 +238,7 @@ public class Util
      */
     public static void addClassName(String elementId, String className)
     {
-        ScriptProxy.addFunctionCall("dwr.util.addClassName", elementId, className);
+        ScriptSessions.addFunctionCall("dwr.util.addClassName", elementId, className);
     }
 
     /**
@@ -248,7 +248,7 @@ public class Util
      */
     public static void removeClassName(String elementId, String className)
     {
-        ScriptProxy.addFunctionCall("dwr.util.removeClassName", elementId, className);
+        ScriptSessions.addFunctionCall("dwr.util.removeClassName", elementId, className);
     }
 
     /**
@@ -258,7 +258,7 @@ public class Util
      */
     public static void toggleClassName(String elementId, String className)
     {
-        ScriptProxy.addFunctionCall("dwr.util.toggleClassName", elementId, className);
+        ScriptSessions.addFunctionCall("dwr.util.toggleClassName", elementId, className);
     }
 
     /**
@@ -277,7 +277,7 @@ public class Util
               .appendScript("=")
               .appendData(value)
               .appendScript(";");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

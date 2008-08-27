@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A base class for all types of axis. Provides all the common properties as well as all rendering
@@ -96,7 +96,7 @@ public class Axis extends jsx3.chart.ChartComponent
 
     /**
      * formats labels as a percent, ie "50%"
-     * @param v 
+     * @param v
      */
 
     public void percent(Integer v, org.directwebremoting.ui.Callback<String> callback)
@@ -117,13 +117,13 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * formats labels in scientific notation, ie "5e2"
-     * @param v 
-     * @param signif 
+     * @param v
+     * @param signif
      */
 
     public void scientific(Integer v, int signif, org.directwebremoting.ui.Callback<String> callback)
@@ -144,7 +144,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -170,7 +170,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -181,7 +181,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHorizontal", horizontal);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -207,7 +207,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setShowAxis", showAxis);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -244,7 +244,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -255,7 +255,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelFunction", labelFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -281,7 +281,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -292,7 +292,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAxisStroke", axisStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -318,7 +318,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -329,7 +329,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setShowLabels", showLabels);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -355,7 +355,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -366,7 +366,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelGap", labelGap);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -377,7 +377,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelPlacement", labelPlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -403,7 +403,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -414,7 +414,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTickLength", tickLength);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -440,7 +440,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -451,7 +451,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTickPlacement", tickPlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -477,7 +477,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -488,7 +488,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setTickStroke", tickStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -514,7 +514,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -525,7 +525,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinorTickDivisions", minorTickDivisions);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -551,7 +551,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -562,7 +562,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinorTickLength", minorTickLength);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -588,7 +588,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -599,7 +599,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinorTickPlacement", minorTickPlacement);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -625,7 +625,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -636,7 +636,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinorTickStroke", minorTickStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -662,7 +662,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -673,7 +673,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelClass", labelClass);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -699,7 +699,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -710,7 +710,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelStyle", labelStyle);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -736,7 +736,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -747,7 +747,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelColor", labelColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -758,7 +758,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLabelColor", labelColor);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -784,7 +784,7 @@ public class Axis extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -795,7 +795,7 @@ public class Axis extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDisplayWidth", displayWidth);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

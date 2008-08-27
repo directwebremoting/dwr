@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Class encapsulating behavior shared by PointSeries and BubbleSeries
@@ -73,7 +73,7 @@ public class PlotSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -99,7 +99,7 @@ public class PlotSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -125,7 +125,7 @@ public class PlotSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -136,7 +136,7 @@ public class PlotSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXField", xField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -162,7 +162,7 @@ public class PlotSeries extends jsx3.chart.Series
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -173,7 +173,7 @@ public class PlotSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setYField", yField);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -204,7 +204,7 @@ public class PlotSeries extends jsx3.chart.Series
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRenderer", renderer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

@@ -168,7 +168,7 @@ public class ScriptBuffer
      * @param funcName The name of the function to call
      * @param params The parameters to the above function
      * @return this. To allow buffer.append(x).append(y).append(z);
-     * @see org.directwebremoting.ui.ScriptProxy#addFunctionCall
+     * @see org.directwebremoting.ScriptSessions#addFunctionCall
      */
     public ScriptBuffer appendCall(String funcName, Object... params)
     {

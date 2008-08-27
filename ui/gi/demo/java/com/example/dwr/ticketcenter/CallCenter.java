@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.browser.Window;
@@ -299,20 +300,15 @@ public class CallCenter implements Runnable
                 String sessionId = removed.getHandlerId();
                 if (sessionId != null)
                 {
-                    ScriptSession session = ServerContextFactory.get().getScriptSessionById(sessionId);
-
-                    if (session != null)
+                    Browser.withSession(sessionId, new Runnable()
                     {
-                        session.removeAttribute("handlingId");
-                        Browser.withSession(session, new Runnable()
+                        public void run()
                         {
-                            public void run()
-                            {
-                                Window.alert("It appears that this caller has hung up. Please select another.");
-                                deselect();
-                            }
-                        });
-                    }
+                            ScriptSessions.removeAttribute("handlingId");
+                            Window.alert("It appears that this caller has hung up. Please select another.");
+                            deselect();
+                        }
+                    });
                 }
 
                 updateAll();

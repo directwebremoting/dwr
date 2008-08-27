@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Defines a base class for GUI controls that implement both the cross-platform box profile painting introduced in
@@ -175,7 +175,7 @@ CustomVector.prototype.updateVector = function(objVector) {
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -232,7 +232,7 @@ jsx3.gui.Event, and the native HTMLElement that defined the event handler.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintEventHandler", strEvtType, strMethod, objElm);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

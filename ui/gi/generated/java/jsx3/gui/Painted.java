@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Abstract superclass of model objects that are painted to screen.
@@ -107,7 +107,7 @@ public class Painted extends jsx3.app.Model
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDynamicProperty", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -135,7 +135,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Painted extends jsx3.app.Model
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAttribute", strName, strValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -175,7 +175,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -319,7 +319,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -347,7 +347,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -375,7 +375,7 @@ public class Painted extends jsx3.app.Model
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -402,7 +402,7 @@ returned HTML. This method has no effect if this object is not currently display
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -428,7 +428,7 @@ returned HTML. This method has no effect if this object is not currently display
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -445,7 +445,7 @@ the screen does not update between steps 2 and 3.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onAfterPaint", objGUI);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -455,14 +455,14 @@ has no effect if this object is not currently painted.
      * @param objChild the child object to paint.
      * @param bGroup <code>true</code> if this method is being called iteratively over a collection of
   children. This parameter will only be <code>false</code> on the final call in the iteration.
-     * @param objGUI 
-     * @param bCascadeOnly 
+     * @param objGUI
+     * @param bCascadeOnly
      */
     public void paintChild(jsx3.gui.Painted objChild, boolean bGroup, String objGUI, boolean bCascadeOnly)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paintChild", objChild, bGroup, objGUI, bCascadeOnly);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -489,7 +489,7 @@ has no effect if this object is not currently painted.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -500,7 +500,7 @@ has no effect if this object is not currently painted.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "recalcBox", properties);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A chart component that renders a grid of lines and fills aligned with an x and y axis.
@@ -76,7 +76,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -87,7 +87,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHorizontalAbove", horizontalAbove);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -113,7 +113,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -124,7 +124,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setInForeground", inForeground);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -150,7 +150,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -161,7 +161,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBorderStroke", borderStroke);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -187,7 +187,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -198,7 +198,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFillV", fillV);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -224,7 +224,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -235,7 +235,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStrokeMajorV", strokeMajorV);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -261,7 +261,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -272,7 +272,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStrokeMinorV", strokeMinorV);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -298,7 +298,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -309,7 +309,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setFillH", fillH);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -335,7 +335,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -346,7 +346,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStrokeMajorH", strokeMajorH);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -372,7 +372,7 @@ public class GridLines extends jsx3.chart.ChartComponent
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -383,7 +383,7 @@ public class GridLines extends jsx3.chart.ChartComponent
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setStrokeMinorH", strokeMinorH);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

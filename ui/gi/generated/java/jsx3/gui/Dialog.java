@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders a dialog window. A dialog can contain other DOM objects; usually a dialog contains one child of type
@@ -141,7 +141,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doToggleState", STATE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -166,7 +166,7 @@ public class Dialog extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -197,7 +197,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doClose");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -223,7 +223,7 @@ public class Dialog extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -235,7 +235,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWindowState", STATE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -262,7 +262,7 @@ public class Dialog extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -274,7 +274,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setZMultiplier", intMultiplier);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -301,7 +301,7 @@ public class Dialog extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -313,7 +313,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setModal", intModal);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -325,7 +325,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doMaximize", objTBB);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -351,7 +351,7 @@ public class Dialog extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -363,7 +363,7 @@ public class Dialog extends jsx3.gui.Block
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResize", RESIZE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -374,14 +374,14 @@ public class Dialog extends jsx3.gui.Block
      * @param intMinY min height for the dialog when being resized
      * @param intMaxX max width for the dialog when being resized
      * @param intMaxY max heightfor the dialog when being resized
-     * @param strAfterResizeFunction 
+     * @param strAfterResizeFunction
      * @return this object
      */
     public jsx3.gui.Dialog setResizeParameters(int RESIZE, int intMinX, int intMinY, int intMaxX, int intMaxY, String strAfterResizeFunction)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setResizeParameters", RESIZE, intMinX, intMinY, intMaxX, intMaxY, strAfterResizeFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -462,7 +462,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "constrainPosition", arg);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -483,7 +483,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "constrainPosition", arg);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -493,7 +493,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "beep");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -508,7 +508,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "alert", strTitle, strMessage, fctOnOk, strOk, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -520,7 +520,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "configureAlert", objDialog, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -540,7 +540,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "confirm", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, intBtnDefault, fctOnNo, strNo, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -557,7 +557,7 @@ model event.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "prompt", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

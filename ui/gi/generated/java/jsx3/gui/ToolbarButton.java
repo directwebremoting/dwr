@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders a toolbar button.
@@ -115,7 +115,7 @@ public class ToolbarButton extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -128,7 +128,7 @@ used instead.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDisabledImage", strURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -156,7 +156,7 @@ valid because they have no state. Radio and check buttons are valid if they are 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -181,7 +181,7 @@ valid because they have no state. Radio and check buttons are valid if they are 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -194,7 +194,7 @@ before it is rendered to HTML.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setImage", strURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -221,7 +221,7 @@ before it is rendered to HTML.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -233,7 +233,7 @@ before it is rendered to HTML.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setType", TYPE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -250,7 +250,7 @@ set to on. If this is a check button, its state is toggled.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doExecute", objEvent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -276,7 +276,7 @@ button is not a radio button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -288,7 +288,7 @@ button is not a radio button.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setGroupName", strGroupName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -315,21 +315,21 @@ button is not a radio button.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets whether this toolbar button renders a visual divider on its left side. The divider is useful for
 visually separating this toolbar button from the next toolbar button to the left.
      * @param intDivider <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>.
-     * @param bRecalc 
+     * @param bRecalc
      * @return this object.
      */
     public jsx3.gui.ToolbarButton setDivider(int intDivider, boolean bRecalc)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDivider", intDivider, bRecalc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -357,7 +357,7 @@ buttons may return STATEOFF or STATEON.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -370,7 +370,7 @@ the CHANGE model event only under the deprecated 3.0 model event protocol.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setState", intState);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -468,7 +468,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -494,7 +494,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -521,7 +521,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -547,7 +547,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -574,7 +574,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -601,7 +601,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -626,7 +626,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -721,7 +721,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

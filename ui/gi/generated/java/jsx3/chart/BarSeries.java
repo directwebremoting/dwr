@@ -16,16 +16,16 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The data series type for a jsx3.chart.BarChart. Draws horizontal bars between the y axis and an x value determined
-by the data provider, or between two x values determined by the data provider. A bar series has the 
+by the data provider, or between two x values determined by the data provider. A bar series has the
 following fields:
 
 xField the attribute of a record to use as the horizontal extent of the bar, required
-yField the attribute of a record to use as the vertical midpoint of the bar, required if the y axis 
+yField the attribute of a record to use as the vertical midpoint of the bar, required if the y axis
     of the chart is a value axis
 minField the attribute of a record to use as the minimum horizontal extent of the bar, optional
  * @author Joe Walker [joe at getahead dot org]
@@ -85,7 +85,7 @@ public class BarSeries extends jsx3.chart.BCSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -96,13 +96,13 @@ public class BarSeries extends jsx3.chart.BCSeries
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBarHeight", barHeight);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * The default tooltip function for this type of series.
-     * @param series 
-     * @param record 
+     * @param series
+     * @param record
      */
 
     public void tooltip(jsx3.chart.Series series, jsx3.xml.Node record, org.directwebremoting.ui.Callback<String> callback)
@@ -123,7 +123,7 @@ public class BarSeries extends jsx3.chart.BCSeries
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

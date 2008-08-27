@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Browser;
-import org.directwebremoting.ui.ScriptProxy;
+import org.directwebremoting.ScriptSessions;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -45,15 +45,15 @@ public class JavascriptChat
         {
             public void run()
             {
-                ScriptProxy.addFunctionCall("receiveMessages", messages);
-            }            
+                ScriptSessions.addFunctionCall("receiveMessages", messages);
+            }
         });
     }
 
     /**
      * The current set of messages
      */
-    private LinkedList<Message> messages = new LinkedList<Message>();
+    private final LinkedList<Message> messages = new LinkedList<Message>();
 
     /**
      * The log stream

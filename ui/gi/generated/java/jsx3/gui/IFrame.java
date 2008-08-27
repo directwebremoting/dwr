@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Renders an IFrame.
@@ -75,7 +75,7 @@ iframe, the native iframe object may not be available. In this case, this method
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -101,7 +101,7 @@ iframe, the native document object may not be available. In this case, this meth
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -126,20 +126,20 @@ iframe, the native document object may not be available. In this case, this meth
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URI of this iframe. The URI can be absolute or relative from the content base of the server that
 owns this object. If this iframe is rendered on screen, its location is updated immediately.
-     * @param srcSrc 
+     * @param srcSrc
      * @return this object.
      */
     public jsx3.gui.IFrame setSrc(String srcSrc)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSrc", srcSrc);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -165,7 +165,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -177,7 +177,7 @@ owns this object. If this iframe is rendered on screen, its location is updated 
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setScrolling", intScrolling);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 

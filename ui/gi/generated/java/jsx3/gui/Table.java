@@ -16,8 +16,8 @@
 package jsx3.gui;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A lightweight control that displays CDF data in an HTML table.  Supports both single- and multi-selection
@@ -30,28 +30,28 @@ The Table class by default supports the following CDF attributes:
 
 
         jsxid
-      
+
 
         jsxselected
-      
+
 
         jsxstyle
-      
+
 
         jsxclass
-      
+
 
         jsximg
-      
+
 
         jsxtip
-      
+
 
         jsxunselectable
-      
+
 
         jsxexecute
-      
+
 
 This class publishes the following model events:
 
@@ -174,7 +174,7 @@ public class Table extends jsx3.gui.Block
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -200,7 +200,7 @@ for the other selection models
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -212,7 +212,7 @@ for the other selection models
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -225,7 +225,7 @@ for the other selection models
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValue", strId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
         return this;
     }
 
@@ -254,7 +254,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -265,7 +265,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "focusRowById", strCdfId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -291,7 +291,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -302,7 +302,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectionModel", intType);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -328,18 +328,18 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the URL for the image to use (as the repeating background image) to denote selection.
-     * @param strURL 
+     * @param strURL
      */
     public void setSelectionBG(String strURL)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSelectionBG", strURL);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -365,7 +365,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -391,7 +391,7 @@ by strCdfId and the first cell mapped to the named CDF attribute, strAttName.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -403,7 +403,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "selectRecord", strRecordId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -414,7 +414,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deselectRecord", strRecordId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -424,7 +424,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deselectAllRecords");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -435,7 +435,7 @@ accordingly. If this list is a multi-select list then this selection will be add
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "doSort", intSortDir);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -460,19 +460,19 @@ accordingly. If this list is a multi-select list then this selection will be add
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the name of the CDF attribute to sort on. The records in the data source of this table are sorted
 on this attribute before being painted to screen.
-     * @param strAttr 
+     * @param strAttr
      */
     public void setSortPath(String strAttr)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortPath", strAttr);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -498,7 +498,7 @@ on this attribute before being painted to screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -509,7 +509,7 @@ on this attribute before being painted to screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortType", DATATYPE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -535,7 +535,7 @@ on this attribute before being painted to screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -546,7 +546,7 @@ on this attribute before being painted to screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setSortDirection", intSortDir);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -571,7 +571,7 @@ on this attribute before being painted to screen.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -582,13 +582,13 @@ on this attribute before being painted to screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCanSort", SORT);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * This method implements redraw support by repainting the entire control.
-     * @param strRecordId 
-     * @param ACTION 
+     * @param strRecordId
+     * @param ACTION
      * @return this object
      */
 
@@ -614,7 +614,7 @@ on this attribute before being painted to screen.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "repaintHead");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -625,12 +625,12 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "repaintData");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the CSS style for the HTML row containing the column headers.
-     * @param strDefault 
+     * @param strDefault
      */
 
     public void getHeaderStyle(String strDefault, org.directwebremoting.ui.Callback<String> callback)
@@ -651,7 +651,7 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -659,18 +659,18 @@ has changed. Does not recalculate and reprofile the box profile and resulting XS
 For example: background-image:url(JSXAPPS/myproject/images/bg.gif);font-family:Arial;.
 The following CSS properties (those affecting layout and position) are not allowed: width, height,
 left, top, position, overflow, border, padding, margin.
-     * @param strCSS 
+     * @param strCSS
      */
     public void setHeaderStyle(String strCSS)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeaderStyle", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the CSS rule for the HTML row containing the column headers.
-     * @param strDefault 
+     * @param strDefault
      */
 
     public void getHeaderClass(String strDefault, org.directwebremoting.ui.Callback<String> callback)
@@ -691,7 +691,7 @@ left, top, position, overflow, border, padding, margin.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -699,13 +699,13 @@ left, top, position, overflow, border, padding, margin.
 For example: boldText titleText.
 The following CSS properties (those affecting layout and position) are not allowed for the rule: width, height,
 left, top, position, overflow, border, padding, margin.
-     * @param strRuleName 
+     * @param strRuleName
      */
     public void setHeaderClass(String strRuleName)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeaderClass", strRuleName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -730,7 +730,7 @@ left, top, position, overflow, border, padding, margin.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -738,18 +738,18 @@ left, top, position, overflow, border, padding, margin.
 apply the properties defined by this value, unless an alternate row style is used, in which case, the properties are alternated
 between this value and the value applied by setAlternateRowStyle.  Multiple properties are supported.
 For example: background-color:white;font-family:Arial;.
-     * @param strCSS 
+     * @param strCSS
      */
     public void setRowStyle(String strCSS)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRowStyle", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the CSS properties for the HTML row element(s) containing the alternating table data rows.
-     * @param strDefault 
+     * @param strDefault
      */
 
     public void getAlternateRowStyle(String strDefault, org.directwebremoting.ui.Callback<String> callback)
@@ -770,19 +770,19 @@ For example: background-color:white;font-family:Arial;.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the CSS properties for the HTML row element(s) containing the alternating table data rows. Multiple properties are supported.
 For example: background-color:red;font-family:Arial;.
-     * @param strCSS 
+     * @param strCSS
      */
     public void setAlternateRowStyle(String strCSS)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlternateRowStyle", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -807,19 +807,19 @@ For example: background-color:red;font-family:Arial;.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the CSS properties that will be inlined on every HTML cell in the body of the table. Multiple properties are supported.
 For example: text-align:right;background-color:#eeeeee;border-bottom:solid 1px #aeaeae;.
-     * @param strCSS 
+     * @param strCSS
      */
     public void setCellStyle(String strCSS)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellStyle", strCSS);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -844,7 +844,7 @@ For example: text-align:right;background-color:#eeeeee;border-bottom:solid 1px #
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -852,18 +852,18 @@ For example: text-align:right;background-color:#eeeeee;border-bottom:solid 1px #
 apply the rule defined by this value, unless an alternate row rule is used, in which case, the rule (classname) is alternated
 between this value and the value applied by setAlternateRowClass.  Multiple rules are supported.
 For example: bodyText normalText.
-     * @param strRuleName 
+     * @param strRuleName
      */
     public void setRowClass(String strRuleName)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRowClass", strRuleName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the CSS rule for the HTML row element(s) containing the alternating table data rows.
-     * @param strDefault 
+     * @param strDefault
      */
 
     public void getAlternateRowClass(String strDefault, org.directwebremoting.ui.Callback<String> callback)
@@ -884,19 +884,19 @@ For example: bodyText normalText.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the CSS rule for the HTML row element(s) containing the alternating table data rows. Multiple rules are supported.
 For example: bodyText, normalText.
-     * @param strRuleName 
+     * @param strRuleName
      */
     public void setAlternateRowClass(String strRuleName)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlternateRowClass", strRuleName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -921,25 +921,25 @@ For example: bodyText, normalText.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the CSS rule that will be applied to every HTML cell in the body of the table.
 Multiple rules are supported.  For example: boldText titleText.
-     * @param strRuleName 
+     * @param strRuleName
      */
     public void setCellClass(String strRuleName)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCellClass", strRuleName);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns whether or not the table's data cells support text-wrapping and expand vertically to display their wrapped content. If this
 property is not set, the cell content will not wrap.
-     * @param strDefault 
+     * @param strDefault
      * @param callback <code>jsx3.Boolean.TRUE</code> or <code>jsx3.Boolean.FALSE</code>
      */
 
@@ -961,7 +961,7 @@ property is not set, the cell content will not wrap.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -972,7 +972,7 @@ property is not set, the cell content will not wrap.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWrap", WRAP);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -998,7 +998,7 @@ property is not set, the cell content will not wrap.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1063,7 +1063,7 @@ property is not set, the cell content will not wrap.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1076,7 +1076,7 @@ will be passed a single XSL param (xsl:param) named attname.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setValueTemplate", TEMPLATE);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1148,7 +1148,7 @@ followed by a call to repaint (to update the view).
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1168,13 +1168,13 @@ Each record in this document defines the profile for a column in the Table.  The
     <record jsxid="a1" jsxtext="&lt;b&gt;Column 1&lt;/b&gt;" jsxpath="jsxtext"/>
     <record jsxid="a2" jsxtext="Column 2" jsxwidth="100" jsxpath="value" jsxpathtype="number"/>
   </data>
-     * @param objCDF 
+     * @param objCDF
      */
     public void setColumnProfile(jsx3.xml.CdfDocument objCDF)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColumnProfile", objCDF);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1194,13 +1194,13 @@ Each record in this document defines the profile for a column in the Table.  The
     <record jsxid="a1" jsxtext="&lt;b&gt;Column 1&lt;/b&gt;" jsxpath="jsxtext"/>
     <record jsxid="a2" jsxtext="Column 2" jsxwidth="100" jsxpath="value" jsxpathtype="number"/>
   </data>
-     * @param objCDF 
+     * @param objCDF
      */
     public void setColumnProfile(String objCDF)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColumnProfile", objCDF);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1227,7 +1227,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1239,7 +1239,7 @@ id, jsxroot, (which is the id for the root node, <data>) will be used.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setRenderingContext", strJsxId, bSuppressRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1266,12 +1266,12 @@ the default value of jsx3.gui.Table.DEFAULT_HEADER_HEIGHT.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the height of the header row in pixels. Set to zero (0) to hide the header row and only render the body rows.
-     * @param intHeight 
+     * @param intHeight
      * @param bSuppressRepaint Pass <code>true</code> to stop the default repaint from occurring.
 Typically property updates that affect the browser-specific box model (such as height) are repainted
 immediately to keep the box model abstraction in sync with the native view. However, the repaint can be
@@ -1281,7 +1281,7 @@ suppressed to avoid unnecessary reparsing of the XSLT during repeated property u
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setHeaderHeight", intHeight, bSuppressRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1378,7 +1378,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1404,7 +1404,7 @@ jsx3.gui.Window, a jsx3.gui.Dialog, or the root block of a jsx3.app.Server.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1431,7 +1431,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1457,7 +1457,7 @@ STATEENABLED.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1484,7 +1484,7 @@ OPTIONAL.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1511,7 +1511,7 @@ STATEVALID.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1606,7 +1606,7 @@ STATEVALID.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setEnabled", intEnabled, bRepaint);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1742,7 +1742,7 @@ document.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearXmlData");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1769,7 +1769,7 @@ is destroyed.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1860,7 +1860,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1885,7 +1885,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1910,7 +1910,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1935,7 +1935,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1960,7 +1960,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2023,7 +2023,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2049,7 +2049,7 @@ following actions are also taken:
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2068,7 +2068,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "onXmlBinding", objEvent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2160,7 +2160,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2172,7 +2172,7 @@ Any methods overriding this method should begin with a call to jsxsupermix().
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "resetXmlCacheData", objServer);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2231,8 +2231,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
      */
@@ -2262,8 +2262,8 @@ string of this object. This method executes the following steps:
     jsxid attribute are assigned a unique jsxid.
   If this object is an instance of jsx3.xml.CDF, convertProperties() is called
     on this object.
-     * @param objDoc 
-     * @param objCache 
+     * @param objDoc
+     * @param objCache
      * @param returnType The expected return type
      * @return the document stored in the server cache as the data source of this object. If
   transformers were run, this value will not be equal to the <code>objDoc</code> parameter.
@@ -2287,7 +2287,7 @@ string of this object. This method executes the following steps:
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @return this object.
      */
 
@@ -2309,7 +2309,7 @@ If no value is specified, a unique id is generated.
      * Sets the XML ID of this object. This value is the key under which the XML source document of this object is
 saved in the cache of the server owning this object. The developer may specify either a unique or shared value.
 If no value is specified, a unique id is generated.
-     * @param strXMLId 
+     * @param strXMLId
      * @param returnType The expected return type
      * @return this object.
      */
@@ -2380,13 +2380,13 @@ the server of this object) or the cache id of a XSLT document in the XML cache o
 of this object. When any transformer is loaded from a URI it is placed in the server cache under the id
 equal to its resolved URI. Any transformer that does not correspond to a valid XSLT document will be skipped
 without throwing an error.
-     * @param arrTrans 
+     * @param arrTrans
      */
     public void setXMLTransformers(Object[] arrTrans)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setXMLTransformers", arrTrans);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2482,7 +2482,7 @@ strValue is null the parameter is removed.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @return this object.
      */
 
@@ -2503,7 +2503,7 @@ data sources loaded from an XML URL.
     /**
      * Sets whether the XML data source of this object is loaded asynchronously. This setting only applies to
 data sources loaded from an XML URL.
-     * @param bAsync 
+     * @param bAsync
      * @param returnType The expected return type
      * @return this object.
      */
@@ -2526,7 +2526,7 @@ data sources loaded from an XML URL.
      * Sets whether this object is bound to the XML document stored in the data cache. If this object is bound to the
 cache, then the onXmlBinding() method of this object is called any time the document stored in
 the cache under the XML Id of this object changes.
-     * @param bBind 
+     * @param bBind
      * @param callback <code>0</code> or <code>1</code>.
      */
 
@@ -2548,7 +2548,7 @@ the cache under the XML Id of this object changes.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2559,13 +2559,13 @@ on-screen view of both the source and destination objects.
 This method fails quietly if any of the following conditions apply:
 
 there is no object with id equal to strSourceId
-        
+
 there is no record in the source object with jsxid equal to strRecordId
-        
+
 
           strParentRecordId is specified and there is no record in this object with
    jsxid equal to strParentRecordId
-        
+
 the this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -2599,13 +2599,13 @@ on-screen view of both the source and destination objects.
 This method fails quietly if any of the following conditions apply:
 
 there is no object with id equal to strSourceId
-        
+
 there is no record in the source object with jsxid equal to strRecordId
-        
+
 
           strParentRecordId is specified and there is no record in this object with
    jsxid equal to strParentRecordId
-        
+
 the this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -2637,13 +2637,13 @@ the this object already has a record with jsxid equal to the record to adopt
 This method fails quietly if any of the following conditions apply:
 
 there is no record with a jsxid equal to strSourceId
-        
+
 there is no record in the source object with a jsxid equal to strRecordId
-        
+
 
           strSiblingRecordId is specified and there is no record in this object with a
    jsxid equal to strParentRecordId
-        
+
 this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -2675,13 +2675,13 @@ which the record identified by strSourceId will be placed
 This method fails quietly if any of the following conditions apply:
 
 there is no record with a jsxid equal to strSourceId
-        
+
 there is no record in the source object with a jsxid equal to strRecordId
-        
+
 
           strSiblingRecordId is specified and there is no record in this object with a
    jsxid equal to strParentRecordId
-        
+
 this object already has a record with jsxid equal to the record to adopt
      * @param strSourceId <span style="text-decoration: line-through;">either the id of the source object or the</span> source object itself.
      * @param strRecordId the <code>jsxid</code> attribute of the data record in the source object to transfer.
@@ -2720,7 +2720,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "convertProperties", objProps, arrProps, bUnion);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2757,7 +2757,7 @@ the value of the property.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deleteRecordProperty", strRecordId, strPropName, bRedraw);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -2881,7 +2881,7 @@ the given jsxid is inserted.
 This method fails quietly if any of the following conditions apply:
 
 there is no existing record with a jsxid equal to strSiblingRecordId
-        
+
 there is an existing record with jsxid equal to objRecord.jsxid
      * @param objRecord a JavaScript object containing property/value pairs that define the
    attributes of the XML entity to create. Note that most classes that implement this interface require that all
@@ -2926,7 +2926,7 @@ Object.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "insertRecordNode", objRecordNode, strParentRecordId, bRedraw);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**

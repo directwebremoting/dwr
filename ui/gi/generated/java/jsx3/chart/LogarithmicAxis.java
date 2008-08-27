@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * An axis that displays a range of values logarithmically (base^n and base^(n+1) occupy same visual space).
@@ -74,7 +74,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -85,7 +85,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAutoAdjust", autoAdjust);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -111,7 +111,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -122,7 +122,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBaseAtZero", baseAtZero);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -148,7 +148,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -159,7 +159,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setShowNegativeValues", showNegativeValues);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -185,7 +185,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -196,7 +196,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMinExponent", minExponent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -222,7 +222,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -233,7 +233,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMaxExponent", maxExponent);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -259,7 +259,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -270,7 +270,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setBase", base);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -296,7 +296,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -307,7 +307,7 @@ public class LogarithmicAxis extends jsx3.chart.Axis
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setMajorDivisions", majorDivisions);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -334,18 +334,18 @@ public class LogarithmicAxis extends jsx3.chart.Axis
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * same as getCoordinateFor(), but does not clip to bounds of the axis
-     * @param value 
+     * @param value
      */
     public void getCoordinateForNoClip(java.lang.Object value)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getCoordinateForNoClip", value);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

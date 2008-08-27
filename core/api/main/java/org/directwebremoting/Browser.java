@@ -18,6 +18,9 @@ package org.directwebremoting;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.io.JavascriptObject;
 
 /**
@@ -44,7 +47,21 @@ public class Browser
      */
     public static void withAllSessions(Runnable task)
     {
-        Collection<ScriptSession> sessions = ServerContextFactory.get().getAllScriptSessions();
+        ServerContext serverContext = ServerContextFactory.get();
+        withAllSessions(serverContext, task);
+    }
+
+    /**
+     * As {@link #withAllSessions(Runnable)}, but for use when there is more
+     * than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    public static void withAllSessions(ServerContext serverContext, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getAllScriptSessions();
         withSessions(sessions, task);
     }
 
@@ -59,7 +76,21 @@ public class Browser
      */
     public static void withAllSessionsFiltered(ScriptSessionFilter filter, Runnable task)
     {
-        Collection<ScriptSession> all = ServerContextFactory.get().getAllScriptSessions();
+        ServerContext serverContext = ServerContextFactory.get();
+        withAllSessionsFiltered(serverContext, filter, task);
+    }
+
+    /**
+     * As {@link #withAllSessionsFiltered(ScriptSessionFilter, Runnable)}, but
+     * for use when there is more than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    public static void withAllSessionsFiltered(ServerContext serverContext, ScriptSessionFilter filter, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> all = sessionManager.getAllScriptSessions();
         withSessions(filter(all, filter), task);
     }
 
@@ -82,7 +113,21 @@ public class Browser
      */
     public static void withPage(String page, Runnable task)
     {
-        Collection<ScriptSession> sessions = ServerContextFactory.get().getScriptSessionsByPage(page);
+        ServerContext serverContext = ServerContextFactory.get();
+        withPage(serverContext, page, task);
+    }
+
+    /**
+     * As {@link #withPage(String, Runnable)}, but for use when there is more
+     * than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    public static void withPage(ServerContext serverContext, String page, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
         withSessions(sessions, task);
     }
 
@@ -98,7 +143,21 @@ public class Browser
      */
     public static void withPageFiltered(String page, ScriptSessionFilter filter, Runnable task)
     {
-        Collection<ScriptSession> sessions = ServerContextFactory.get().getScriptSessionsByPage(page);
+        ServerContext serverContext = ServerContextFactory.get();
+        withPageFiltered(serverContext, page, filter, task);
+    }
+
+    /**
+     * As {@link #withPageFiltered}, but for use when there is more than one copy of DWR
+     * in a ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    public static void withPageFiltered(ServerContext serverContext, String page, ScriptSessionFilter filter, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
         withSessions(filter(sessions, filter), task);
     }
 
@@ -114,7 +173,9 @@ public class Browser
     {
         WebContext webContext = WebContextFactory.get();
         String page = webContext.getCurrentPage();
-        Collection<ScriptSession> sessions = webContext.getScriptSessionsByPage(page);
+
+        ScriptSessionManager sessionManager = webContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
 
         withSessions(sessions, task);
     }
@@ -132,9 +193,11 @@ public class Browser
     {
         WebContext webContext = WebContextFactory.get();
         String page = webContext.getCurrentPage();
-        Collection<ScriptSession> sessions = webContext.getScriptSessionsByPage(page);
 
-        withSessions(sessions, task);
+        ScriptSessionManager sessionManager = webContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
+
+        withSessions(filter(sessions, filter), task);
     }
 
     /**
@@ -144,20 +207,41 @@ public class Browser
      * an instant message, or the results of a slow method invocation.
      * This method is implicit in anything called from a DWR thread, so should
      * not need to be used to send UI updates back to an originating browser.
-     * @param session The browser window to send messages to
+     * @param sessionId The {@link ScriptSession}.id of the browser window
      * @param task A code block to execute
      */
-    public static void withSession(ScriptSession session, Runnable task)
+    public static void withSession(String sessionId, Runnable task)
     {
+        ServerContext serverContext = ServerContextFactory.get();
+        withSession(serverContext, sessionId, task);
+    }
+
+    /**
+     * As {@link #withSession(String, Runnable)}, but for use when there is more
+     * than one copy of DWR in a ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    public static void withSession(ServerContext serverContext, String sessionId, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        ScriptSession session = sessionManager.getScriptSession(sessionId, null, null);
         Collection<ScriptSession> sessions = new ArrayList<ScriptSession>();
-        sessions.add(session);
+        if (session != null)
+        {
+            sessions.add(session);
+        }
+
         withSessions(sessions, task);
     }
 
     /**
      * This method discovers the sessions that are currently being targeted
-     * by browser updates. It will generally only be useful to authors of
-     * reverse ajax UI proxy APIs.
+     * by browser updates.
+     * <p>
+     * It will generally only be useful to authors of reverse ajax UI proxy
+     * APIs. Using it directly may cause scaling problems
      * @return The list of current browser windows.
      */
     public static Collection<ScriptSession> getTargetSessions()
@@ -188,9 +272,18 @@ public class Browser
      */
     private static void withSessions(Collection<ScriptSession> sessions, Runnable task)
     {
-        target.set(sessions);
-        task.run();
-        target.remove();
+        if (sessions.size() == 0)
+        {
+            log.debug("No sessions in collection, skipping execution of " + task);
+        }
+        else
+        {
+            log.debug("Executing task (" + task.getClass().getSimpleName() + ") against " + sessions.size() + " sessions.");
+
+            target.set(sessions);
+            task.run();
+            target.remove();
+        }
     }
 
     /**
@@ -235,4 +328,9 @@ public class Browser
      * ThreadLocal in which the list of sessions are stored.
      */
     private static final ThreadLocal<Collection<ScriptSession>> target = new ThreadLocal<Collection<ScriptSession>>();
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(Browser.class);
 }

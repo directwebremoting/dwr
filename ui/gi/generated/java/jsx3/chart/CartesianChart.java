@@ -16,8 +16,8 @@
 package jsx3.chart;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Base chart class for charts that render on a cartesian plane with x and y axes. Currently only supports
@@ -82,7 +82,7 @@ public class CartesianChart extends jsx3.chart.Chart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -165,7 +165,7 @@ public class CartesianChart extends jsx3.chart.Chart
 
     /**
      * Returns the range for axis, delegates to getXRange() or getYRange().
-     * @param axis 
+     * @param axis
      * @param callback [min,max] or null if no range can be found
      */
 
@@ -187,7 +187,7 @@ public class CartesianChart extends jsx3.chart.Chart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -214,7 +214,7 @@ public class CartesianChart extends jsx3.chart.Chart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -241,7 +241,7 @@ public class CartesianChart extends jsx3.chart.Chart
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

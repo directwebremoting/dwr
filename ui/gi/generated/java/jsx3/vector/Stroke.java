@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * Represents a vector line style.
@@ -88,7 +88,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -124,7 +124,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -135,7 +135,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setColor", color);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -161,7 +161,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setWidth", width);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -198,7 +198,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -209,7 +209,7 @@ public class Stroke extends jsx3.html.Tag
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setAlpha", alpha);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -236,7 +236,7 @@ public class Stroke extends jsx3.html.Tag
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

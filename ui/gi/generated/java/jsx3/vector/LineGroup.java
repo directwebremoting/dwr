@@ -16,8 +16,8 @@
 package jsx3.vector;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A more efficient way of painting many vector lines of the same color and thickness.
@@ -63,7 +63,7 @@ public class LineGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addLine", x1, y1, x2, y2);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -77,7 +77,7 @@ public class LineGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "addRelativeLine", x1, y1, dx, dy);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -87,7 +87,7 @@ public class LineGroup extends jsx3.vector.Shape
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "clearLines");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

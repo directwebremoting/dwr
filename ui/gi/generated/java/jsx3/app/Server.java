@@ -16,8 +16,8 @@
 package jsx3.app;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * The controller of the JSX architecture.
@@ -40,7 +40,7 @@ public class Server extends jsx3.lang.Object
      * @param strAppPath URL (either relative or absolute) for the application to load
      * @param objGUI the browser element (body, div, span, td, etc) into which the GI application should load
      * @param bPaint false if null; if true, the application VIEW will immediately be generated.
-     * @param objEnv 
+     * @param objEnv
      */
     public Server(String strAppPath, String objGUI, boolean bPaint, jsx3.lang.Object objEnv)
     {
@@ -60,12 +60,12 @@ public class Server extends jsx3.lang.Object
     /**
      * The subject of an event that instances of this class publish when a context help hot key is pressed
    in the context of a DOM node that has a help ID. The event has the following fields:
-   
-     
+
+
           target - the server publishing the event.
-     
+
           model - the DOM node that received the key event.
-     
+
           helpid - the help ID of the nearest ancestor of model that defines a help ID.
      */
     public static final String HELP = "help";
@@ -114,7 +114,7 @@ EVENTSVERS
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -164,7 +164,7 @@ EVENTSVERS
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "destroy");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -181,7 +181,7 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "paint", objXML);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -195,7 +195,7 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -209,26 +209,26 @@ order of actions taken by this method is:
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDimensions", left, top, width, height);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Loads an external resource into this server instance. What this method does depends on the strType
 parameter.
 
-  
+
           script - Loads a JavaScript file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           css - Loads a CSS file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           xml or xsl - Loads an XML file synchronously into the XML cache of this
       application; returns the loaded jsx3.xml.Document instance.
-  
+
           jss or ljss - Loads a dynamic properties file or localized properties bundle
       synchronously into this application; returns null.
-  
+
           services - Loads and parses a mapping rules file synchronously; returns a new instance of
       jsx3.net.Service.
      * @param strSrc the path to the resource.
@@ -261,19 +261,19 @@ parameter.
      * Loads an external resource into this server instance. What this method does depends on the strType
 parameter.
 
-  
+
           script - Loads a JavaScript file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           css - Loads a CSS file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           xml or xsl - Loads an XML file synchronously into the XML cache of this
       application; returns the loaded jsx3.xml.Document instance.
-  
+
           jss or ljss - Loads a dynamic properties file or localized properties bundle
       synchronously into this application; returns null.
-  
+
           services - Loads and parses a mapping rules file synchronously; returns a new instance of
       jsx3.net.Service.
      * @param strSrc the path to the resource.
@@ -307,19 +307,19 @@ parameter.
      * Loads an external resource into this server instance. What this method does depends on the strType
 parameter.
 
-  
+
           script - Loads a JavaScript file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           css - Loads a CSS file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           xml or xsl - Loads an XML file synchronously into the XML cache of this
       application; returns the loaded jsx3.xml.Document instance.
-  
+
           jss or ljss - Loads a dynamic properties file or localized properties bundle
       synchronously into this application; returns null.
-  
+
           services - Loads and parses a mapping rules file synchronously; returns a new instance of
       jsx3.net.Service.
      * @param strSrc the path to the resource.
@@ -352,19 +352,19 @@ parameter.
      * Loads an external resource into this server instance. What this method does depends on the strType
 parameter.
 
-  
+
           script - Loads a JavaScript file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           css - Loads a CSS file asynchronously into the memory space of the page hosting this
       application; returns null.
-  
+
           xml or xsl - Loads an XML file synchronously into the XML cache of this
       application; returns the loaded jsx3.xml.Document instance.
-  
+
           jss or ljss - Loads a dynamic properties file or localized properties bundle
       synchronously into this application; returns null.
-  
+
           services - Loads and parses a mapping rules file synchronously; returns a new instance of
       jsx3.net.Service.
      * @param strSrc the path to the resource.
@@ -402,7 +402,7 @@ parameter.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unloadInclude", strId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -459,7 +459,7 @@ The resource must be registered in the config.xml file of this application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setDynamicProperty", strPropName, vntValue);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -487,7 +487,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -498,19 +498,19 @@ The resource must be registered in the config.xml file of this application.
      * @param path path where the cookie is valid (default: path of calling document)
      * @param domain domain where the cookie is valid (default: domain of calling document)
      * @param secure valid jscript date object. for example: new Date("11:59:59 12-31-2004")
-     * @param bRaw 
+     * @param bRaw
      */
     public void setCookie(String name, String value, java.util.Date expires, String path, String domain, boolean secure, boolean bRaw)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setCookie", name, value, expires, path, domain, secure, bRaw);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the value for the Cookie with the given @name
      * @param name name of the cookie
-     * @param bRaw 
+     * @param bRaw
      */
 
     public void getCookie(String name, boolean bRaw, org.directwebremoting.ui.Callback<String> callback)
@@ -531,7 +531,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -544,7 +544,7 @@ The resource must be registered in the config.xml file of this application.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "deleteCookie", name, path, domain);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -683,7 +683,7 @@ The resource must be registered in the config.xml file of this application.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -934,7 +934,7 @@ in this window in order to distribute the application across multiple browser wi
     /**
      * Returns the browser document object containing a particular JSX object. This method inspects whether the
 JSX object is a descendent of the root block of this server or one of its jsx3.gui.Window roots.
-     * @param objJSX 
+     * @param objJSX
      * @param callback document object
      */
 
@@ -956,13 +956,13 @@ JSX object is a descendent of the root block of this server or one of its jsx3.g
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Returns the browser DOM object where a particulat JSX object renders. This method inspects the main root of
 this server as well as all of its jsx3.gui.Window roots.
-     * @param objJSX 
+     * @param objJSX
      * @param callback DOM object
      */
 
@@ -984,7 +984,7 @@ this server as well as all of its jsx3.gui.Window roots.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1015,7 +1015,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1046,7 +1046,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1071,13 +1071,13 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
      * @param strURI the URI to relativize.
-     * @param bRel 
+     * @param bRel
      * @param callback the relativized URI.
      */
 
@@ -1099,13 +1099,13 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
      * @param strURI the URI to relativize.
-     * @param bRel 
+     * @param bRel
      * @param callback the relativized URI.
      */
 
@@ -1127,7 +1127,7 @@ unaffected.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1154,18 +1154,18 @@ locale.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the locale of this server.
-     * @param objLocale 
+     * @param objLocale
      */
     public void setLocale(java.util.Locale objLocale)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLocale", objLocale);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1191,7 +1191,7 @@ setting.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1202,19 +1202,19 @@ setLocale() for the server to render properly in the new locale.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reloadLocalizedResources");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Invokes context-sensitive help as though the user had pressed the help hot key in the context of the DOM node
 objJSX.
-     * @param objJSX 
+     * @param objJSX
      */
     public void invokeHelp(jsx3.app.Model objJSX)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "invokeHelp", objJSX);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1241,7 +1241,7 @@ objJSX.
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1256,7 +1256,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1271,7 +1271,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1286,7 +1286,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1301,7 +1301,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1316,7 +1316,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1331,7 +1331,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1346,7 +1346,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1361,7 +1361,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1376,7 +1376,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1391,7 +1391,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1406,7 +1406,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1421,7 +1421,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "subscribe", strEventId, objHandler, objFunction);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1435,7 +1435,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1449,7 +1449,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1463,7 +1463,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1477,7 +1477,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1491,7 +1491,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1505,7 +1505,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribe", strEventId, objHandler);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1516,7 +1516,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "unsubscribeAll", strEventId);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1531,7 +1531,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "alert", strTitle, strMessage, fctOnOk, strOk, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1543,7 +1543,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "configureAlert", objDialog, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1563,7 +1563,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "confirm", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, intBtnDefault, fctOnNo, strNo, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -1580,7 +1580,7 @@ As of version 3.4 a string value for objHandler is deprecated.
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "prompt", strTitle, strMessage, fctOnOk, fctOnCancel, strOk, strCancel, objParams);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }

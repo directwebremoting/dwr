@@ -21,7 +21,7 @@ import org.directwebremoting.io.Context;
 /**
  * A column chart.
 
-Series: ColumnSeries only. 
+Series: ColumnSeries only.
 Axes: Y axis must be value axis, X axis can be value or category axis
 
 The 'type' my be 'clustered', 'stacked', or 'stacked100', which correspond to the basic Excel-like

@@ -16,8 +16,8 @@
 package jsx3.lang;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.io.Context;
-import org.directwebremoting.ui.ScriptProxy;
 
 /**
  * A collection of GI system related functions.
@@ -39,7 +39,7 @@ public class System extends jsx3.lang.Object
 
     /**
      * Returns a system property as specified by a JSS file loaded by the JSX runtime or an addin.
-     * @param strKey 
+     * @param strKey
      */
 
     public void getProperty(String strKey, org.directwebremoting.ui.Callback<String> callback)
@@ -60,7 +60,7 @@ public class System extends jsx3.lang.Object
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -71,18 +71,18 @@ locale is determined by introspecting the browser. If all else fails the default
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "getLocale");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * Sets the system-wide locale. This in turn affects all applications running under the JSX system.
-     * @param objLocale 
+     * @param objLocale
      */
     public void setLocale(java.lang.Object objLocale)
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "setLocale", objLocale);
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -92,13 +92,13 @@ locale is determined by introspecting the browser. If all else fails the default
     {
         ScriptBuffer script = new ScriptBuffer();
         script.appendCall(getContextPath() + "reloadLocalizedResources");
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
      * 
-     * @param strKey 
-     * @param strTokens 
+     * @param strKey
+     * @param strTokens
      */
 
     public void getMessage(String strKey, jsx3.lang.Object strTokens, org.directwebremoting.ui.Callback<String> callback)
@@ -119,7 +119,7 @@ locale is determined by introspecting the browser. If all else fails the default
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
     /**
@@ -145,7 +145,7 @@ locale is determined by introspecting the browser. If all else fails the default
             script.appendCall("__System.activateCallback", key, "reply");
         }
 
-        ScriptProxy.addScript(script);
+        ScriptSessions.addScript(script);
     }
 
 }
