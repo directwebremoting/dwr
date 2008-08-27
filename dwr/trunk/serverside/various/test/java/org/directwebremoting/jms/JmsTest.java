@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.dwr.pubsub;
+package org.directwebremoting.jms;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -168,12 +168,12 @@ public class JmsTest
     /**
      * The default implementation just hard codes a topic name
      */
-    private static final String TOPIC_NAME = "com.example.dwr.pubsub.testtopic";
+    private static final String TOPIC_NAME = "org.directwebremoting.jms.testtopic";
 
     /**
      * The default implementation just hard codes a client id
      */
-    private static final String CLIENT_ID = "com.example.dwr.pubsub.testservice";
+    private static final String CLIENT_ID = "org.directwebremoting.jms.testservice";
 
     /**
      * Are we open for business
