@@ -87,19 +87,7 @@ public class DwrListener implements ServletContextListener
 
         for (Container container : containers)
         {
-            log.debug("ServletContext destroying for container: " + container.getClass().getSimpleName());
-
-            Collection<String> beanNames = container.getBeanNames();
-            for (String beanName : beanNames)
-            {
-                Object bean = container.getBean(beanName);
-                if (bean instanceof ServletContextListener)
-                {
-                    ServletContextListener scl = (ServletContextListener) bean;
-                    log.debug("- For contained bean: " + beanName);
-                    scl.contextDestroyed(ev);
-                }
-            }
+            container.destroy();
         }
     }
 
