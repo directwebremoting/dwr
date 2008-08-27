@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>DWR + Dojo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <style type="text/css">
+    @import "dojo/dojo/resources/dojo.css";
+    @import "dojo/dijit/themes/tundra/tundra.css";
+    @import "dojo/dojox/grid/resources/Grid.css";
+    @import "dojo/dojox/grid/resources/tundraGrid.css";
+    @import "dojo-demo.css";
+  </style>
+  <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true"> </script>
+  <script type="text/javascript" src="dojo/dijit/dijit.js"> </script>
+  <script type="text/javascript" src="../dwr/DwrStore.js"> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/People.js'> </script>
+  <script type="text/javascript">
+  dojo.require("dojox.grid.DataGrid");
+  dojo.require("dojo.parser");
+  dojo.require("DwrStore");
+
+  var grid;
+  var dwrStore;
+  dojo.addOnLoad(function() {
+    dwrStore = new DwrStore("testServerData", { subscribe:true });
+    grid = dijit.byId("grid");
+    grid.setStore(dwrStore);
+    dwr.engine.setActiveReverseAjax(true);
+  });
+
+  addRow = function(){
+    grid.addRow({ name:"Noname", address:"No Address", age:21, male:false });
+  };
+  </script>
+</head>
+<body class="tundra">
+
+<h1>DWR + Dojo</h1>
+
+<table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" defaultHeight="300px">
+  <thead>
+    <tr>
+      <th field="$id" width="50px" editable="false">ID</th>
+      <th field="name" width="120px" editable="true">Name</th>
+      <th field="address" width="200px" editable="true">Address</th>
+      <th field="age" width="30px" editable="true">Age</th>
+      <th field="male" width="30px" editable="true">Male</th>
+    </tr>
+  </thead>
+</table>
+
+<div id="controls">
+  <button onclick="addRow();">Add Row</button>
+  <button onclick="grid.removeSelectedRows();">Remove</button>&nbsp;&nbsp;&nbsp;
+  <button onclick="dwrStore.save({});">Save</button>
+  <button onclick="grid.edit.cancel();">Cancel</button>
+</div>
+
+</body>
+</html>

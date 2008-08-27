@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>DWR and TIBCO General Interface</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/gi.js'> </script>
+  <script type="text/javascript" src="../dwr/interface/Corporations.js"> </script>
+  <script type="text/javascript" src='OpenAjax.js'> </script>
+  <script type="text/javascript" src='dwr-gi.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+<body onload="Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>DWR and TIBCO General Interface</h1>
+
+<p>This is a simple demonstration of integrating a GI user interface with
+Reverse Ajax. Data from DWR is published into GI with DWR's GI integration.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+
+    <div style="width:100%; height:280px;" id="gidemo">
+      <script
+          type="text/javascript"
+          src="JSX/js/JSX30.js"
+          jsxapppath="JSXAPPS/gidemo"
+          jsxlt="true"> </script>
+    </div>
+
+    <p>The stock data above is static for a dynamic version see the
+    <a href="dwr-oa-gi.html">Reverse Ajax</a> example.</p>
+
+  </div>
+
+  <div id="explainDiv">
+    <p>The HTML includes a div which loads a GI component</p>
+    
+<pre>
+&lt;div style="width:100%; height:220px;"&gt;
+  &lt;script
+      type="text/javascript"
+      src="JSX/js/JSX30.js"
+      jsxapppath="JSXAPPS/gidemo" jsxlt="true"&gt; &lt;/script&gt;
+&lt;/div&gt;
+</pre>
+
+    <p>This causes GI to render the Matrix component from config.xml and the
+    component declaration: appCanvas.xml. So far this is identical to the
+    Reverse Ajax / OpenAjax Hub example.</p>
+    
+    <p>Once these are loaded, the init function is called by GI:</p>
+
+<pre>
+function giLoaded() {
+  Corporations.getCorporations(function(corporations) {
+    var cdf = dwr.gi.toCdfDocument(countries);
+    giApp.getCache().setDocument("corporations", corporations);
+    giApp.getJSXByName('matrix').repaint();
+  });
+}
+</pre>
+
+    <p>This uses a Java method remoted by DWR - <code>Countries.getCountries()</code>
+    and a DWR/GI utility method <code>dwr.gi.toCdfDocument()</code> to convert
+    Javascript data into a GI CDF Document. We then insert this data into the
+    data cache, and tell the matrix component to repaint itself.</p>
+
+  </div>
+
+</div>
+
+</body>
+</html>

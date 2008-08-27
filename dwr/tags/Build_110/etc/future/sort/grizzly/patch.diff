@@ -1,0 +1,120 @@
+? java/org/directwebremoting/dwrp/GrizzlyContinuationSleeper.java
+Index: java/org/directwebremoting/dwrp/OutputAlarm.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/dwrp/OutputAlarm.java,v
+retrieving revision 1.6
+diff -u -r1.6 OutputAlarm.java
+--- java/org/directwebremoting/dwrp/OutputAlarm.java	30 Oct 2007 17:07:24 -0000	1.6
++++ java/org/directwebremoting/dwrp/OutputAlarm.java	22 Nov 2007 03:32:20 -0000
+@@ -71,7 +71,9 @@
+     public void cancel()
+     {
+         scriptSession.removeScriptConduit(conduit);
+-        future.cancel(false);
++        if (future != null){
++            future.cancel(false);
++        }
+         super.cancel();
+     }
+ 
+Index: java/org/directwebremoting/dwrp/PollHandler.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/dwrp/PollHandler.java,v
+retrieving revision 1.41
+diff -u -r1.41 PollHandler.java
+--- java/org/directwebremoting/dwrp/PollHandler.java	30 Oct 2007 17:07:24 -0000	1.41
++++ java/org/directwebremoting/dwrp/PollHandler.java	22 Nov 2007 03:32:20 -0000
+@@ -138,6 +138,10 @@
+         {
+             sleeper = new JettyContinuationSleeper(request);
+         }
++        else if (Continuation.isGrizzly())
++        {
++            sleeper = new GrizzlyContinuationSleeper(request);
++        }
+         else
+         {
+             sleeper = new ThreadWaitSleeper();
+Index: java/org/directwebremoting/util/Continuation.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/util/Continuation.java,v
+retrieving revision 1.6
+diff -u -r1.6 Continuation.java
+--- java/org/directwebremoting/util/Continuation.java	23 Jun 2007 19:28:28 -0000	1.6
++++ java/org/directwebremoting/util/Continuation.java	22 Nov 2007 03:32:20 -0000
+@@ -36,6 +36,14 @@
+     public Continuation(HttpServletRequest request)
+     {
+         proxy = request.getAttribute(ATTRIBUTE_JETTY_CONTINUATION);
++        if (proxy == null && isGrizzly()){
++            try{
++                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
++                Method gMethod = gContinuation.getMethod("getContinuation");
++                proxy = gMethod.invoke((Object[])null,(Object[])null);
++            } catch (Throwable t){
++            }
++        }
+     }
+ 
+     /**
+@@ -203,7 +211,12 @@
+     /**
+      * Are we using Jetty at all?
+      */
+-    protected static boolean isJetty;
++    protected static boolean isJetty = false;
++    
++    /**
++     * Are we using Grizzly at all?
++     */
++    protected static boolean isGrizzly = false;
+ 
+     /**
+      * Can we use Jetty?
+@@ -212,25 +225,42 @@
+     {
+         try
+         {
+-            continuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
++            try{
++                continuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
++                isJetty = true;
++            } 
++            catch (Exception ex) 
++            {
++                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
++                Method gMethod = gContinuation.getMethod("getContinuation");
++                continuationClass = gMethod.invoke(gMethod).getClass();
++                isGrizzly = true;
++            }
+             suspendMethod = continuationClass.getMethod("suspend", Long.TYPE);
+             resumeMethod = continuationClass.getMethod("resume");
+             getObject = continuationClass.getMethod("getObject");
+             setObject = continuationClass.getMethod("setObject", Object.class);
+-            isJetty = true;
+         }
+         catch (Exception ex)
+         {
+             isJetty = false;
+-            log.debug("No Jetty ContuniationSupport class, using standard Servlet API");
++            log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
+         }
+     }
+ 
+     /**
+-     * @return True if we have detected Continuation classes
++     * @return True if we have detected Jetty classes
+      */
+     public static boolean isJetty()
+     {
+         return isJetty;
+     }
++    
++    /**
++     * @return True if we have detected Grizzly classes
++     */
++    public static boolean isGrizzly()
++    {
++        return isGrizzly;
++    }    
+ }
