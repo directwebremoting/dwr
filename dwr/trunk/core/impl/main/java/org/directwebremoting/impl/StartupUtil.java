@@ -18,6 +18,7 @@ package org.directwebremoting.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.directwebremoting.HubFactory.HubBuilder;
 import org.directwebremoting.ServerContextFactory.ServerContextBuilder;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
+import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Builder;
@@ -56,6 +58,7 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
 import org.directwebremoting.json.parse.JsonParser;
@@ -288,6 +291,9 @@ public class StartupUtil
 
         log.debug("Setup: Autowire beans");
         container.setupFinished();
+
+        log.debug("Setup: Resolving listener implementations:");
+        resolveListenerImplementations(container, servletConfig);
     }
 
     /**
@@ -334,11 +340,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
 
@@ -354,32 +360,92 @@ public class StartupUtil
      */
     protected static void resolveMultipleImplementation(DefaultContainer container, Class<?> toResolve)
     {
-        String abstractionImplNames = container.getParameter(toResolve.getName());
-        log.debug("- Selecting a " + toResolve.getSimpleName() + " from " + abstractionImplNames);
+        String implNames = container.getParameter(toResolve.getName());
+        log.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
 
-        abstractionImplNames = abstractionImplNames.replace(',', ' ');
-        for (String abstractionImplName : abstractionImplNames.split(" "))
+        implNames = implNames.replace(',', ' ');
+        for (String implName : implNames.split(" "))
         {
+            if (implName.equals(""))
+            {
+                continue;
+            }
+
             try
             {
-                Class<?> abstractionImpl = Class.forName(abstractionImplName);
-                if (!toResolve.isAssignableFrom(abstractionImpl))
+                Class<?> impl = Class.forName(implName);
+                if (!toResolve.isAssignableFrom(impl))
                 {
-                    log.error("  - Can't cast: " + abstractionImpl.getName() + " to " + toResolve.getName());
+                    log.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
                 }
 
-                abstractionImpl.newInstance();
-                container.addParameter(toResolve.getName(), abstractionImpl.getName());
+                impl.newInstance();
+                container.addParameter(toResolve.getName(), impl.getName());
 
                 return;
             }
             catch (Exception ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex.toString());
+                log.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+            }
+        }
+    }
+
+    /**
+     * We need to add all the {@link ScriptSessionListener}s to the
+     * {@link ScriptSessionManager}.
+     * @param container The container to configure
+     * @param servletConfig Information about the environment
+     * @throws ContainerConfigurationException If we can't use a bean
+     */
+    public static void resolveListenerImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
+    {
+        ScriptSessionManager manager = container.getBean(ScriptSessionManager.class);
+
+        String implNames = container.getParameter(ScriptSessionListener.class.getName());
+        if (implNames == null)
+        {
+            log.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
+            return;
+        }
+
+        log.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
+
+        implNames = implNames.replace(',', ' ');
+        for (String implName : implNames.split(" "))
+        {
+            if (implName.equals(""))
+            {
+                continue;
+            }
+
+            try
+            {
+                Class<?> impl = Class.forName(implName);
+                if (!ScriptSessionListener.class.isAssignableFrom(impl))
+                {
+                    log.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());
+                }
+                else
+                {
+                    @SuppressWarnings("unchecked")
+                    Class<? extends ScriptSessionListener> i = (Class<? extends ScriptSessionListener>) impl;
+                    ScriptSessionListener instance = i.newInstance();
+
+                    manager.addScriptSessionListener(instance);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
+            }
+            catch (NoClassDefFoundError ex)
+            {
+                log.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
             }
         }
     }
@@ -590,7 +656,7 @@ public class StartupUtil
         // Allow all the configurators to have a go
         for (Configurator configurator : configurators)
         {
-            log.debug("** Adding config from " + configurator);
+            log.debug("Adding config from " + configurator);
             configurator.configure(container);
         }
     }
@@ -702,6 +768,28 @@ public class StartupUtil
     }
 
     /**
+     * If there is only once instance of DWR defined in a ServletContext then
+     * we can get at it using this method.
+     * @return The one-and-only ServerContext or null if there are more than 1.
+     */
+    public static Collection<ServerContext> getAllServerContexts()
+    {
+        Collection<ServerContext> reply = new ArrayList<ServerContext>();
+        synchronized (contextMap)
+        {
+            for (Map.Entry<String, ServerContext> entry : contextMap.entrySet())
+            {
+                String key = entry.getKey();
+                if (!key.equals(DEFAULT_SERVERCONTEXT_NAME))
+                {
+                    reply.add(entry.getValue());
+                }
+            }
+        }
+        return reply;
+    }
+
+    /**
      * Get a list of all known Containers for the given {@link ServletContext}
      * @param servletContext The context in which {@link Container}s are stored.
      * @return a list of published {@link Container}s.
@@ -709,13 +797,15 @@ public class StartupUtil
     @SuppressWarnings("unchecked")
     public static List<Container> getAllPublishedContainers(ServletContext servletContext)
     {
+        List<Container> reply = new ArrayList<Container>();
+
         List<Container> containers = (List<Container>) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
-        if (containers == null)
+        if (containers != null)
         {
-            containers = new ArrayList<Container>();
+            reply.addAll(containers);
         }
 
-        return containers;
+        return reply;
     }
 
     /**
@@ -782,9 +872,9 @@ public class StartupUtil
         WebContextFactory.setBuilder(webContextBuilder);
         webContextBuilder.set(null, null, servletConfig, servletContext, container);
 
-        Builder<ServerContext> serverContextBuilder = container.getBean(ServerContextBuilder.class);
+        ServerContextBuilder serverContextBuilder = container.getBean(ServerContextBuilder.class);
         ServerContextFactory.setBuilder(serverContextBuilder);
-        serverContextBuilder.set(servletContext, servletConfig, servletContext, container);
+        serverContextBuilder.set(servletContext, servletConfig, container);
 
         Builder<Hub> hubBuilder = container.getBean(HubBuilder.class);
         HubFactory.setBuilder(hubBuilder);
