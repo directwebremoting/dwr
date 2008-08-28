@@ -41,7 +41,7 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.browser.Window;
 
-import com.example.dwr.util.RandomData;
+import com.example.dwr.people.RandomData;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]

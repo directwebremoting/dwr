@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.datasync.Directory;
 import org.directwebremoting.datasync.MapStoreProvider;
 
-import com.example.dwr.util.RandomData;
 
 /**
  * A container for a set of people

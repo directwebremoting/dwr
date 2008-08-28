@@ -15,7 +15,7 @@
 
     <!-- intro - for the test on index.html -->
     <create creator="new">
-      <param name="class" value="com.example.dwr.intro.Intro"/>
+      <param name="class" value="com.example.dwr.simple.Intro"/>
     </create>
 
     <!-- address -->
@@ -45,7 +45,7 @@
 
     <!-- simple text -->
     <create creator="new">
-      <param name="class" value="com.example.dwr.simpletext.Demo"/>
+      <param name="class" value="com.example.dwr.simple.Demo"/>
     </create>
 
     <!-- resources not in this war file: java.util.Date -->
@@ -85,7 +85,7 @@
 
     <!-- file upload and download -->
     <create creator="new">
-      <param name="class" value="com.example.dwr.files.UploadDownload"/>
+      <param name="class" value="com.example.dwr.simple.UploadDownload"/>
     </create>
 
     <!-- this is a bad idea for live, but can be useful in testing -->

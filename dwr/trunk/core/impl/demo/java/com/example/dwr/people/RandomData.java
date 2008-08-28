@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.dwr.util;
+package com.example.dwr.people;
 
 import java.util.Random;
 
