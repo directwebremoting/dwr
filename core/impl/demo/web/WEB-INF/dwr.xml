@@ -34,7 +34,7 @@
 
     <!-- clock -->
     <create creator="new" scope="application">
-      <param name="class" value="com.example.dwr.clock.Clock"/>
+      <param name="class" value="com.example.dwr.chat.Clock"/>
     </create>
 
     <!-- people -->
