@@ -25,16 +25,16 @@
 
     <!-- chat -->
     <create creator="new" scope="application">
-      <param name="class" value="com.example.dwr.chat.JavascriptChat"/>
+      <param name="class" value="com.example.dwr.reverseajax.JavascriptChat"/>
     </create>
     <create creator="new" scope="application">
-      <param name="class" value="com.example.dwr.chat.JavaChat"/>
+      <param name="class" value="com.example.dwr.reverseajax.JavaChat"/>
     </create>
-    <convert converter="bean" match="com.example.dwr.chat.Message"/>
+    <convert converter="bean" match="com.example.dwr.reverseajax.Message"/>
 
     <!-- clock -->
     <create creator="new" scope="application">
-      <param name="class" value="com.example.dwr.chat.Clock"/>
+      <param name="class" value="com.example.dwr.reverseajax.Clock"/>
     </create>
 
     <!-- people -->
