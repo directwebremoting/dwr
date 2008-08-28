@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.dwr.chat;
+package com.example.dwr.reverseajax;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
