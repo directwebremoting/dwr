@@ -272,11 +272,7 @@ public class Browser
      */
     private static void withSessions(Collection<ScriptSession> sessions, Runnable task)
     {
-        if (sessions.size() == 0)
-        {
-            log.debug("No sessions in collection, skipping execution of " + task);
-        }
-        else
+        if (sessions.size() > 0)
         {
             log.debug("Executing task (" + task.getClass().getSimpleName() + ") against " + sessions.size() + " sessions.");
 
