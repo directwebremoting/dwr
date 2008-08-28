@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.servlet;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletContextEvent;
@@ -34,38 +33,11 @@ import org.directwebremoting.impl.StartupUtil;
 public class DwrListener implements ServletContextListener
 {
     /**
-     * Find all the containers that have been registered, and check all the
-     * contained beans for ones that implement {@link ServletContextListener}
-     * and pass the {@link ServletContextListener#contextDestroyed} event on.
-     * @param ev The event object to pass on
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * This happens before the DwrServlet has started so there is nothing
+     * we can do.
      */
     public void contextInitialized(ServletContextEvent ev)
     {
-        List<Container> containers = StartupUtil.getAllPublishedContainers(ev.getServletContext());
-
-        if (containers.isEmpty())
-        {
-            log.debug("No containers to shutdown");
-            return;
-        }
-
-        for (Container container : containers)
-        {
-            log.debug("ServletContext initializing for container: " + container.getClass().getSimpleName());
-
-            Collection<String> beanNames = container.getBeanNames();
-            for (String beanName : beanNames)
-            {
-                Object bean = container.getBean(beanName);
-                if (bean instanceof ServletContextListener)
-                {
-                    ServletContextListener scl = (ServletContextListener) bean;
-                    log.debug("- For contained bean: " + beanName);
-                    scl.contextInitialized(ev);
-                }
-            }
-        }
     }
 
     /**
