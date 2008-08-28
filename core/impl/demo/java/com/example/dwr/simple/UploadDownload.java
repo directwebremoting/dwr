@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.dwr.files;
+package com.example.dwr.simple;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -24,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 
 import org.directwebremoting.io.FileTransfer;
 
-import com.example.dwr.util.ColorUtil;
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
@@ -120,11 +120,57 @@ public class UploadDownload
             }
 
             g2d.setFont(new Font("SansSerif", Font.BOLD, 16));
-            g2d.setColor(ColorUtil.decodeHtmlColorString(color));
+            g2d.setColor(UploadDownload.decodeHtmlColorString(color));
             g2d.drawString(output, 5, (row + 1) * CHARS_PER_LINE);
         }
 
         return uploadImage;
+    }
+
+    /**
+     * Decode an HTML color string like '#F567BA;' into a {@link Color}
+     * @param colorString The string to decode
+     * @return The decoded color
+     * @throws IllegalArgumentException if the color sequence is not valid
+     */
+    public static Color decodeHtmlColorString(String colorString)
+    {
+        Color color;
+    
+        if (colorString.startsWith("#"))
+        {
+            colorString = colorString.substring(1);
+        }
+        if (colorString.endsWith(";"))
+        {
+            colorString = colorString.substring(0, colorString.length() - 1);
+        }
+    
+        int red;
+        int green;
+        int blue;
+        switch (colorString.length())
+        {
+        case 6:
+            red = Integer.parseInt(colorString.substring(0, 2), 16);
+            green = Integer.parseInt(colorString.substring(2, 4), 16);
+            blue = Integer.parseInt(colorString.substring(4, 6), 16);
+            color = new Color(red, green, blue);
+            break;
+        case 3:
+            red = Integer.parseInt(colorString.substring(0, 1), 16);
+            green = Integer.parseInt(colorString.substring(1, 2), 16);
+            blue = Integer.parseInt(colorString.substring(2, 3), 16);
+            color = new Color(red, green, blue);
+            break;
+        case 1:
+            red = green = blue = Integer.parseInt(colorString.substring(0, 1), 16);
+            color = new Color(red, green, blue);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid color: " + colorString);
+        }
+        return color;
     }
 
     /**
