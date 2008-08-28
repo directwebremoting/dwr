@@ -6,7 +6,6 @@
 <dwr>
 
   <init>
-    <creator id="jsf" class="org.directwebremoting.faces.JsfCreator"/>
     <creator id="none" class="org.directwebremoting.create.NullCreator"/>
     <creator id="new" class="org.directwebremoting.create.NewCreator"/>
     <creator id="pageflow" class="org.directwebremoting.beehive.PageFlowCreator"/>
@@ -14,6 +13,8 @@
     <creator id="script" class="org.directwebremoting.create.ScriptedCreator"/>
     <creator id="struts" class="org.directwebremoting.struts.StrutsCreator"/>
     <!--
+    These are now in the noncla module
+    <creator id="jsf" class="org.directwebremoting.faces.JsfCreator"/>
     <creator id="ejb3" class="org.directwebremoting.create.Ejb3Creator"/>
     -->
 

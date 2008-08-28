@@ -28,7 +28,7 @@
   <property name="modules" value="
     core/api, core/impl, core/legacy,
     protocol/dwrp, protocol/json, protocol/bayeux,
-    serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/various,
+    serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
     ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
     "/>
   <!-- Skipped until we can get a CLA: noncla/various -->
