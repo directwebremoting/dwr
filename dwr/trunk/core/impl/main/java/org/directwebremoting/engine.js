@@ -454,19 +454,13 @@ if (typeof this['dwr'] == 'undefined') {
    * @param methodName The method on said class to execute
    * @param func The callback function to which any returned data should be passed
    *       if this is null, any returned data will be ignored
-   * @param vararg_params The parameters to pass to the above class
+   * @param args The parameters to passed to the above method
    */
-  dwr.engine._execute = function(path, scriptName, methodName, vararg_params) {
+  dwr.engine._execute = function(path, scriptName, methodName, args) {
     var singleShot = false;
     if (dwr.engine._batch == null) {
       dwr.engine.beginBatch();
       singleShot = true;
-    }
-
-    // To make them easy to manipulate we copy the arguments into an args array
-    var args = [];
-    for (var i = 0; i < arguments.length - 3; i++) {
-      args[i] = arguments[i + 3];
     }
 
     var batch = dwr.engine._batch;
@@ -1734,18 +1728,24 @@ if (typeof this['dwr'] == 'undefined') {
     /**
      * Augment this batch with a new call
      * @private
-     * @param {Object} batch
-     * @param {String} scriptName
-     * @param {String} methodName
-     * @param {Object} args
      */
     addCall:function(batch, scriptName, methodName, args) {
       // From the other params, work out which is the function (or object with
       // call meta-data) and which is the call parameters
-      var callData;
+      var callData, stopAt;
       var lastArg = args[args.length - 1];
-      if (typeof lastArg == "function" || lastArg == null) callData = { callback:args.pop() };
-      else callData = args.pop();
+      if (lastArg == null || typeof lastArg == "function") {
+        callData = { callback:lastArg };
+        stopAt = args.length - 1;
+      }
+      else if (typeof lastArg == "object" && typeof lastArg.callback == "function") {
+        callData = lastArg;
+        stopAt = args.length - 1;
+      }
+      else {
+        callData = {};
+        stopAt = args.length;
+      }
 
       // Merge from the callData into the batch
       dwr.engine.batch.merge(batch, callData);
@@ -1764,7 +1764,7 @@ if (typeof this['dwr'] == 'undefined') {
       batch.map[prefix + "methodName"] = methodName;
       batch.map[prefix + "id"] = batch.map.callCount;
       var converted = [];
-      for (i = 0; i < args.length; i++) {
+      for (var i = 0; i < stopAt; i++) {
         dwr.engine.serialize.convert(batch, converted, args[i], prefix + "param" + i, 0);
       }
     },
@@ -1993,8 +1993,8 @@ if (typeof this['dwr'] == 'undefined') {
   };
 
   /**
-    * Work out what type of browser we are working on
-    */
+   * Work out what type of browser we are working on
+   */
   var userAgent = navigator.userAgent;
   var versionString = navigator.appVersion;
   var version = parseFloat(versionString);
