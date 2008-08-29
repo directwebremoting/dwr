@@ -492,38 +492,42 @@ public class DefaultRemoter implements Remoter
         {
             if (!LocalUtil.isServletClass(paramTypes[j]))
             {
-                buffer.append(" * @param {" + paramTypes[j] + "} p" + j + " a param\n");
+                buffer.append(" * @param {");
+                buffer.append(paramTypes[j]);
+                buffer.append("} p");
+                buffer.append(j);
+                buffer.append(" a param\n");
             }
         }
         buffer.append(" * @param {function|Object} callback callback function or options object\n");
         buffer.append(" */\n");
 
         // Create the function definition
-        buffer.append(scriptName + '.' + methodName + " = function(");
+        buffer.append(scriptName);
+        buffer.append('.');
+        buffer.append(methodName);
+        buffer.append(" = function(");
         for (int j = 0; j < paramTypes.length; j++)
         {
             if (!LocalUtil.isServletClass(paramTypes[j]))
             {
-                buffer.append("p" + j + ", ");
+                buffer.append("p");
+                buffer.append(j);
+                buffer.append(", ");
             }
         }
         buffer.append("callback) {\n");
 
         // The method body calls into engine.js
-        String executeFunctionName = EnginePrivate.getExecuteFunctionName();
-        buffer.append("  return " + executeFunctionName + "(" + scriptName + "._path, '" + scriptName + "', '" + methodName + "\', ");
-        for (int j = 0; j < paramTypes.length; j++)
-        {
-            if (LocalUtil.isServletClass(paramTypes[j]))
-            {
-                buffer.append("false, ");
-            }
-            else
-            {
-                buffer.append("p" + j + ", ");
-            }
-        }
-        buffer.append("callback);\n");
+        buffer.append("  return ");
+        buffer.append(EnginePrivate.getExecuteFunctionName());
+        buffer.append("(");
+        buffer.append(scriptName);
+        buffer.append("._path, '");
+        buffer.append(scriptName);
+        buffer.append("', '");
+        buffer.append(methodName);
+        buffer.append("\', arguments);\n");
         buffer.append("};\n\n");
 
         return buffer.toString();
