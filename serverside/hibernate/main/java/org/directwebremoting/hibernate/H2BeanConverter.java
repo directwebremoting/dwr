@@ -27,14 +27,13 @@ import net.sf.hibernate.Hibernate;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BeanConverter;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.Property;
 
 /**
  * BeanConverter that works with Hibernate to get BeanInfo.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class H2BeanConverter extends BeanConverter implements Converter
+public class H2BeanConverter extends BeanConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)

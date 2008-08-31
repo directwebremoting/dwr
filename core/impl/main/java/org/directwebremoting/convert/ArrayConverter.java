@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.ArrayJsonOutboundVariable;
 import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
-import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.CollectionOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
@@ -42,12 +41,11 @@ import org.directwebremoting.extend.ProtocolConstants;
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @noinspection RefusedBequest
  */
-public class ArrayConverter extends AbstractConverter implements Converter
+public class ArrayConverter implements Converter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.ConverterManager)
      */
-    @Override
     public void setConverterManager(ConverterManager converterManager)
     {
         this.converterManager = converterManager;
@@ -58,6 +56,11 @@ public class ArrayConverter extends AbstractConverter implements Converter
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         if (!paramType.isArray())
         {
             throw new ConversionException(paramType);
@@ -83,7 +86,7 @@ public class ArrayConverter extends AbstractConverter implements Converter
         // We should put the new object into the working map in case it
         // is referenced later nested down in the conversion process.
         data.getContext().addConverted(data, paramType, array);
-        InboundContext incx = data.getLookup();
+        InboundContext incx = data.getContext();
 
         for (int i = 0; i < size; i++)
         {

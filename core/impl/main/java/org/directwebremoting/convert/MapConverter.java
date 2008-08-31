@@ -59,6 +59,11 @@ public class MapConverter implements Converter
     @SuppressWarnings("unchecked")
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         String value = data.getValue();
 
         // If the text is null then the whole bean is null
@@ -107,7 +112,7 @@ public class MapConverter implements Converter
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.
             data.getContext().addConverted(data, paramType, map);
-            InboundContext incx = data.getLookup();
+            InboundContext incx = data.getContext();
 
             // Loop through the property declarations
             StringTokenizer st = new StringTokenizer(value, ",");

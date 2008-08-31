@@ -21,7 +21,6 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractConverter;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DefaultJavascriptObject;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -33,13 +32,18 @@ import org.directwebremoting.extend.OutboundVariable;
  * {@link org.directwebremoting.io.JavascriptObject}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ProxyInterfaceConverter extends AbstractConverter implements Converter
+public class ProxyInterfaceConverter extends AbstractConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable)
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         ScriptSession session = WebContextFactory.get().getScriptSession();
         String id = data.getValue();
 

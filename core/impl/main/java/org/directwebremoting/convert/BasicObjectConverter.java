@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
@@ -49,14 +48,23 @@ import org.directwebremoting.util.LocalUtil;
  * and instanceTypes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class BasicObjectConverter extends AbstractConverter implements NamedConverter
+public abstract class BasicObjectConverter implements NamedConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         String value = data.getValue();
+        if (value == null)
+        {
+            throw new NullPointerException(data.toString());
+        }
 
         // If the text is null then the whole bean is null
         if (value.trim().equals(ProtocolConstants.INBOUND_NULL))
@@ -117,7 +125,7 @@ public abstract class BasicObjectConverter extends AbstractConverter implements 
                 String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
                 String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
 
-                InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
+                InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
                 nested.dereference();
                 TypeHintContext incc = createTypeHintContext(data.getContext(), property);
 
@@ -282,9 +290,8 @@ public abstract class BasicObjectConverter extends AbstractConverter implements 
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.ConverterManager)
+     * @see org.directwebremoting.extend.Converter#setConverterManager(org.directwebremoting.extend.ConverterManager)
      */
-    @Override
     public void setConverterManager(ConverterManager converterManager)
     {
         this.converterManager = converterManager;

@@ -29,12 +29,11 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ArrayJsonOutboundVariable;
 import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
-import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.CollectionOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundVariable;
@@ -47,7 +46,7 @@ import org.directwebremoting.extend.TypeHintContext;
  * An implementation of Converter for Collections of Strings.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class CollectionConverter extends AbstractConverter implements Converter
+public class CollectionConverter extends AbstractConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.BaseV20Converter#setConverterManager(org.directwebremoting.ConverterManager)
@@ -64,6 +63,11 @@ public class CollectionConverter extends AbstractConverter implements Converter
     @SuppressWarnings("unchecked")
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         String value = data.getValue();
 
         // If the text is null then the whole bean is null
@@ -145,7 +149,7 @@ public class CollectionConverter extends AbstractConverter implements Converter
                 String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
                 String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
 
-                InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
+                InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
                 nested.dereference();
 
                 Object output = converterManager.convertInbound(subtype, nested, subthc);

@@ -49,6 +49,11 @@ public class XmlBeanConverter extends BeanConverter
     @Override
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data == null)
+        {
+            return null;
+        }
+
         String value = data.getValue();
 
         log.debug("handling variable (" + value + ") for class (" + paramType.getName() + ")");
@@ -146,7 +151,7 @@ public class XmlBeanConverter extends BeanConverter
                 String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
                 String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
 
-                InboundVariable nested = new InboundVariable(data.getLookup(), null, splitType, splitValue);
+                InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
                 nested.dereference();
 
                 TypeHintContext incc = createTypeHintContext(data.getContext(), property);
