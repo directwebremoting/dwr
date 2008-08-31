@@ -43,14 +43,27 @@ public final class InboundVariable
      * @param context How we lookup references
      * @param key The name of the variable that this was transfered as
      * @param type The type information from javascript
-     * @param fileValue The javascript variable converted to a FormField
+     * @param fileField The javascript variable converted to a FormField
      */
-    public InboundVariable(InboundContext context, String key, String type, FormField fileValue)
+    public InboundVariable(InboundContext context, String key, String type, FormField fileField)
     {
         this.context = context;
-        this.type = type;
-        this.formField = fileValue;
         this.key = key;
+        this.type = type;
+        this.formField = fileField;
+    }
+
+    /**
+     * Constructor for when we need something to represent null
+     * @param context How we lookup references
+     */
+    public InboundVariable(InboundContext context)
+    {
+        this.context = context;
+        this.key = null;
+        this.type = ProtocolConstants.INBOUND_NULL;
+        this.formField = null;
+        dereferenced = true;
     }
 
     /**
@@ -71,7 +84,7 @@ public final class InboundVariable
      */
     public void dereference() throws ConversionException
     {
-        int maxDepth = 0;
+        int depth = 0;
 
         while (ProtocolConstants.TYPE_REFERENCE.equals(type))
         {
@@ -83,33 +96,16 @@ public final class InboundVariable
 
             type = cd.type;
             formField = cd.getFormField();
-
-            // For some reason we used to leave this until the loop finished
-            // and then only set it if the key was null. I think this logic
-            // may have been broken by named objects
             key = cd.key;
 
-            maxDepth++;
-            if (maxDepth > 20)
+            depth++;
+            if (depth > 20)
             {
                 throw new ConversionException(getClass(), "Max depth exceeded when dereferencing " + formField.getString());
             }
         }
 
-        // For references without an explicit variable name, we use the
-        // name of the thing they point at
-        // if (key == null)
-        // {
-        //     key = formField.getString();
-        // }
-    }
-
-    /**
-     * @return Returns the lookup table.
-     */
-    public InboundContext getLookup()
-    {
-        return context;
+        dereferenced = true;
     }
 
     /**
@@ -176,6 +172,11 @@ public final class InboundVariable
     @Override
     public String toString()
     {
+        if (formField == null)
+        {
+            return type + ProtocolConstants.INBOUND_TYPE_SEPARATOR + "null";
+        }
+
         return type + ProtocolConstants.INBOUND_TYPE_SEPARATOR + formField.getString();
     }
 
@@ -196,6 +197,19 @@ public final class InboundVariable
         }
 
         InboundVariable that = (InboundVariable) obj;
+
+        if (!dereferenced)
+        {
+            // We shouldn't really need to do this ...
+            // dereference();
+            throw new IllegalStateException("this.equals() called before dereference()");
+        }
+
+        if (!that.dereferenced)
+        {
+            // that.dereference();
+            throw new IllegalStateException("that.equals() called before dereference()");
+        }
 
         if (!this.type.equals(that.type))
         {
@@ -221,8 +235,24 @@ public final class InboundVariable
     @Override
     public int hashCode()
     {
-        return formField.hashCode() + type.hashCode();
+        if (!dereferenced)
+        {
+            // dereference();
+            throw new IllegalStateException("hashCode() called before dereference()");
+        }
+
+        int hash = 745;
+        hash += (formField == null) ? 875 : formField.hashCode();
+        hash += (type == null) ? 346 : type.hashCode();
+        hash += (key == null) ? 768 : key.hashCode();
+        return hash;
     }
+
+    /**
+     * It's an error to store this in a Map unless we have already called
+     * {@link #dereference()}.
+     */
+    private boolean dereferenced = false;
 
     /**
      * How do be lookup references?

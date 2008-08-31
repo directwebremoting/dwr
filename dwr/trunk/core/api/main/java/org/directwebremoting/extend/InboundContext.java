@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 
 /**
@@ -85,7 +85,7 @@ public final class InboundContext
         InboundVariable cte = new InboundVariable(this, key, type, value);
         checkInboundVariable(callNum, key, cte);
     }
-    
+
     /**
      * Create an inbound file variable.
      * Usually called by a query parser to setup a list of known variables.
@@ -221,7 +221,13 @@ public final class InboundContext
                      ProtocolConstants.INBOUND_CALLNUM_SUFFIX +
                      ProtocolConstants.INBOUND_KEY_PARAM + index;
 
-        return variables.get(key);
+        InboundVariable found = variables.get(key);
+        if (found != null)
+        {
+            return found;
+        }
+
+        return nullInboundVariable;
     }
 
     /**
@@ -318,10 +324,15 @@ public final class InboundContext
     }
 
     /**
+     * A variable to use if we need to tell someone that we got nothing.
+     */
+    private final InboundVariable nullInboundVariable = new InboundVariable(this);
+
+    /**
      * The stack of pushed conversion contexts.
      * i.e. What is the context of this type conversion.
      */
-    private LinkedList<TypeHintContext> typeHintStack = new LinkedList<TypeHintContext>();
+    private final LinkedList<TypeHintContext> typeHintStack = new LinkedList<TypeHintContext>();
 
     /**
      * How many params are there?.
@@ -338,7 +349,7 @@ public final class InboundContext
     /**
      * A map of all the variables converted.
      */
-    private Map<Conversion, Object> converted = new HashMap<Conversion, Object>();
+    private final Map<Conversion, Object> converted = new HashMap<Conversion, Object>();
 
     /**
      * The log stream

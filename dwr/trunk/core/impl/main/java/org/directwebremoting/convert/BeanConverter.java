@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
@@ -33,7 +32,7 @@ import org.directwebremoting.extend.TypeHintContext;
  * Convert a Javascript associative array into a JavaBean
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class BeanConverter extends BasicObjectConverter implements Converter
+public class BeanConverter extends BasicObjectConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)

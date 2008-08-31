@@ -23,11 +23,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.convert.BeanConverter;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.PlainProperty;
 import org.directwebremoting.extend.Property;
 import org.hibernate.Hibernate;
@@ -39,7 +38,7 @@ import org.hibernate.proxy.LazyInitializer;
  * BeanConverter that works with Hibernate to get BeanInfo.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class H3BeanConverter extends BeanConverter implements Converter
+public class H3BeanConverter extends BeanConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.convert.BeanConverter#getPropertyMapFromObject(java.lang.Object, boolean, boolean)

@@ -134,7 +134,7 @@ public class DefaultConverterManager implements ConverterManager
     {
         if (data == null)
         {
-            return null;
+            throw new NullPointerException("data");
         }
 
         InboundContext context = data.getContext();
@@ -164,14 +164,6 @@ public class DefaultConverterManager implements ConverterManager
             {
                 log.error("Missing converter. Context of conversion: " + thc);
                 throw new ConversionException(paramType, "No converter found inbound for '" + paramType.getName() + "'");
-            }
-
-            // We only think about doing a null conversion ourselves once we are
-            // sure that there is a converter available. This prevents hackers
-            // from passing null to things they are not allowed to convert
-            if (data.isNull())
-            {
-                return null;
             }
 
             context.pushContext(thc);

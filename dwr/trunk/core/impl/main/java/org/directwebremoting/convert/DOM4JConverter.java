@@ -20,7 +20,6 @@ import java.io.StringWriter;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.AbstractConverter;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
@@ -38,13 +37,18 @@ import org.dom4j.io.XMLWriter;
  * An implementation of Converter for DOM objects.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DOM4JConverter extends AbstractConverter implements Converter
+public class DOM4JConverter extends AbstractConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         String value = LocalUtil.decode(data.getValue());
 
         try

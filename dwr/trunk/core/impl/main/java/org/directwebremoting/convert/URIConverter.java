@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.AbstractConverter;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
@@ -34,13 +33,18 @@ import org.directwebremoting.util.LocalUtil;
  * An implementation of Converter for Strings.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class URIConverter extends AbstractConverter implements Converter
+public class URIConverter extends AbstractConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext)
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         String uriString = LocalUtil.decode(data.getValue());
         try
         {
