@@ -76,6 +76,7 @@ public final class Logger
             }
             catch (Exception ex)
             {
+                //noinspection CallToPrintStackTrace
                 ex.printStackTrace();
                 output = new ServletLoggingOutput(base);
             }
@@ -88,7 +89,7 @@ public final class Logger
 
     private static Class<? extends LoggingOutput> defaultImplementation = CommonsLoggingOutput.class;
 
-    private static Constructor<? extends LoggingOutput> constructor;
+    private static Constructor<? extends LoggingOutput> constructor = null;
 
     private static boolean defaultTried = false;
 

@@ -40,10 +40,8 @@ public class Servlet3Sleeper implements Sleeper
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.Sleeper#goToSleep(java.lang.Runnable)
      */
-    public void goToSleep(Runnable awakening)
+    public void goToSleep(Runnable onAwakening)
     {
-        this.onAwakening = awakening;
-
         synchronized (wakeUpCalledLock)
         {
             if (wakeUpCalled)
@@ -124,17 +122,12 @@ public class Servlet3Sleeper implements Sleeper
      * All operations that involve going to sleep of waking up must hold this
      * lock before they take action.
      */
-    private Object wakeUpCalledLock = new Object();
+    private final Object wakeUpCalledLock = new Object();
 
     /**
      * Has wakeUp been called?
      */
     private boolean wakeUpCalled = false;
-
-    /**
-     * What we do when we are woken up
-     */
-    private Runnable onAwakening;
 
     /**
      * Has the continuation been restarted already?
