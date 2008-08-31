@@ -72,6 +72,7 @@ is divided into following sections:
         </condition>
         <condition property="have.sources">
             <or>
+                <available file="${src.java9.dir}"/>
                 <available file="${src.java6.dir}"/>
                 <available file="${src.java7.dir}"/>
                 <available file="${src.java8.dir}"/>
@@ -133,6 +134,7 @@ is divided into following sections:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init" name="-init-check">
+        <fail unless="src.java9.dir">Must set src.java9.dir</fail>
         <fail unless="src.java6.dir">Must set src.java6.dir</fail>
         <fail unless="src.java7.dir">Must set src.java7.dir</fail>
         <fail unless="src.java8.dir">Must set src.java8.dir</fail>
@@ -164,7 +166,7 @@ is divided into following sections:
     </target>
     <target name="-init-macrodef-javac">
         <macrodef name="javac" uri="http://www.netbeans.org/ns/j2se-project/3">
-            <attribute default="${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}" name="srcdir"/>
+            <attribute default="${src.java9.dir}:${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}" name="srcdir"/>
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}" name="classpath"/>
             <attribute default="${includes}" name="includes"/>
@@ -183,7 +185,7 @@ is divided into following sections:
             </sequential>
         </macrodef>
         <macrodef name="depend" uri="http://www.netbeans.org/ns/j2se-project/3">
-            <attribute default="${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}" name="srcdir"/>
+            <attribute default="${src.java9.dir}:${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}" name="srcdir"/>
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}" name="classpath"/>
             <sequential>
@@ -242,13 +244,13 @@ is divided into following sections:
             </sequential>
         </macrodef>
     </target>
-    <target name="-init-macrodef-nbjpda">
+    <target depends="-init-debug-args" name="-init-macrodef-nbjpda">
         <macrodef name="nbjpdastart" uri="http://www.netbeans.org/ns/j2se-project/1">
             <attribute default="${main.class}" name="name"/>
             <attribute default="${debug.classpath}" name="classpath"/>
             <attribute default="" name="stopclassname"/>
             <sequential>
-                <nbjpdastart addressproperty="jpda.address" name="@{name}" stopclassname="@{stopclassname}" transport="dt_socket">
+                <nbjpdastart addressproperty="jpda.address" name="@{name}" stopclassname="@{stopclassname}" transport="${debug-transport}">
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
@@ -279,6 +281,12 @@ is divided into following sections:
         <condition else="-Xdebug" property="debug-args-line" value="-Xdebug -Xnoagent -Djava.compiler=none">
             <istrue value="${have-jdk-older-than-1.4}"/>
         </condition>
+        <condition else="dt_socket" property="debug-transport-by-os" value="dt_shmem">
+            <os family="windows"/>
+        </condition>
+        <condition else="${debug-transport-by-os}" property="debug-transport" value="${debug.transport}">
+            <isset property="debug.transport"/>
+        </condition>
     </target>
     <target depends="-init-debug-args" name="-init-macrodef-debug">
         <macrodef name="debug" uri="http://www.netbeans.org/ns/j2se-project/3">
@@ -288,7 +296,7 @@ is divided into following sections:
             <sequential>
                 <java classname="@{classname}" dir="${work.dir}" fork="true">
                     <jvmarg line="${debug-args-line}"/>
-                    <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+                    <jvmarg value="-Xrunjdwp:transport=${debug-transport},address=${jpda.address}"/>
                     <jvmarg line="${run.jvmargs}"/>
                     <classpath>
                         <path path="@{classpath}"/>
@@ -335,6 +343,13 @@ is divided into following sections:
                 ===================
             -->
     <target depends="init" name="deps-jar" unless="no.deps"/>
+    <target depends="init,-check-automatic-build,-clean-after-automatic-build" name="-verify-automatic-build"/>
+    <target depends="init" name="-check-automatic-build">
+        <available file="${build.classes.dir}/.netbeans_automatic_build" property="netbeans.automatic.build"/>
+    </target>
+    <target depends="init" if="netbeans.automatic.build" name="-clean-after-automatic-build">
+        <antcall target="clean"/>
+    </target>
     <target depends="init,deps-jar" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
     </target>
@@ -348,6 +363,7 @@ is divided into following sections:
     <target depends="init,deps-jar,-pre-pre-compile,-pre-compile,-compile-depend" if="have.sources" name="-do-compile">
         <j2seproject3:javac/>
         <copy todir="${build.classes.dir}">
+            <fileset dir="${src.java9.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.java6.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.java7.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
             <fileset dir="${src.java8.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
@@ -362,7 +378,7 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="init,deps-jar,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
+    <target depends="init,deps-jar,-verify-automatic-build,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project." name="compile"/>
     <target name="-pre-compile-single">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
@@ -370,7 +386,7 @@ is divided into following sections:
     <target depends="init,deps-jar,-pre-pre-compile" name="-do-compile-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
         <j2seproject3:force-recompile/>
-        <j2seproject3:javac excludes="" includes="${javac.includes}" sourcepath="${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}"/>
+        <j2seproject3:javac excludes="" includes="${javac.includes}" sourcepath="${src.java9.dir}:${src.java6.dir}:${src.java7.dir}:${src.java8.dir}:${src.java3.dir}:${src.java4.dir}:${src.java5.dir}:${src.java.dir}:${src.java2.dir}"/>
     </target>
     <target name="-post-compile-single">
         <!-- Empty placeholder for easier customization. -->
@@ -504,6 +520,9 @@ is divided into following sections:
             <classpath>
                 <path path="${javac.classpath}"/>
             </classpath>
+            <fileset dir="${src.java9.dir}" excludes="${excludes}" includes="${includes}">
+                <filename name="**/*.java"/>
+            </fileset>
             <fileset dir="${src.java6.dir}" excludes="${excludes}" includes="${includes}">
                 <filename name="**/*.java"/>
             </fileset>

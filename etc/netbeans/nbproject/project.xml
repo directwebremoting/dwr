@@ -6,6 +6,7 @@
             <name>dwr</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
+                <root id="src.java9.dir" name="Generated"/>
                 <root id="src.java6.dir" name="Spring"/>
                 <root id="src.java7.dir" name="Hibernate"/>
                 <root id="src.java8.dir" name="UI"/>
