@@ -7,6 +7,7 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
       <executeOn event="beforeRun" target="war" runConfigurationType="Application" runConfigurationName="dwr-jetty-demo" />
       <executeOn event="beforeRun" target="war" runConfigurationType="Application" runConfigurationName="dwr-jetty-test" />
@@ -119,10 +120,37 @@
         <option name="WHILE_BRACE_FORCE" value="3" />
         <option name="FOR_BRACE_FORCE" value="3" />
         <option name="ENABLE_JAVADOC_FORMATTING" value="false" />
+        <ADDITIONAL_INDENT_OPTIONS fileType="java">
+          <option name="INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="8" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="js">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="8" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="xml">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="8" />
           <option name="USE_TAB_CHARACTER" value="false" />
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
@@ -171,6 +199,7 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
     <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
@@ -634,7 +663,6 @@
           </option>
           <option name="ADD_EJB_TO_ENTRIES" value="true" />
           <option name="ADD_JUNIT_TO_ENTRIES" value="true" />
-          <option name="ADD_TESTNG_TO_ENTRIES" value="true" />
         </inspection_tool>
         <inspection_tool class="CanBeFinal" level="WARNING" enabled="false">
           <option name="REPORT_CLASSES" value="false" />
@@ -684,17 +712,12 @@
         <inspection_tool class="InfiniteRecursionJS" level="WARNING" enabled="false" />
         <inspection_tool class="CheckDtdRefs" level="ERROR" enabled="false" />
         <inspection_tool class="CheckXmlFileWithXercesValidator" level="ERROR" enabled="false" />
-        <inspection_tool class="XmlWrongClosingTagName" level="ERROR" enabled="false" />
         <inspection_tool class="XmlWrongRootElement" level="ERROR" enabled="false" />
         <inspection_tool class="EmptyWebServiceClass" level="WARNING" enabled="false" />
         <inspection_tool class="OneWayWebMethod" level="ERROR" enabled="false" />
         <inspection_tool class="ImplicitlyExposedWebServiceMethods" level="INFO" enabled="false" />
         <inspection_tool class="NonJaxWsWebServices" level="WARNING" enabled="false" />
         <inspection_tool class="ValidExternallyBoundObject" level="ERROR" enabled="false" />
-        <inspection_tool class="StrutsValidatorFormInspection" level="ERROR" enabled="false" />
-        <inspection_tool class="StrutsInspection" level="ERROR" enabled="false" />
-        <inspection_tool class="StrutsTilesInspection" level="ERROR" enabled="false" />
-        <inspection_tool class="StrutsValidatorInspection" level="ERROR" enabled="false" />
         <inspection_tool class="AbstractBeanReferencesInspection" level="ERROR" enabled="false" />
         <inspection_tool class="AutowiredDependenciesInspection" level="WARNING" enabled="false" />
         <inspection_tool class="SpringBeanConstructorArgInspection" level="ERROR" enabled="false" />
@@ -714,7 +737,6 @@
         <inspection_tool class="SpringScopesInspection" level="ERROR" enabled="false" />
         <inspection_tool class="UtilSchemaInspection" level="ERROR" enabled="false" />
         <inspection_tool class="ELValidationInJSP" level="WARNING" enabled="false" />
-        <inspection_tool class="CheckJsfComponentUnderViewTag" level="INFO" enabled="false" />
         <inspection_tool class="ELSpecValidationInJSP" level="WARNING" enabled="false" />
         <inspection_tool class="DuplicateCaseLabelJS" level="WARNING" enabled="false" />
         <inspection_tool class="DuplicatePropertyOnObjectJS" level="WARNING" enabled="false" />
@@ -726,7 +748,6 @@
         <inspection_tool class="JSDeprecatedSymbols" level="INFO" enabled="false" />
         <inspection_tool class="JSDuplicatedDeclaration" level="WARNING" enabled="false" />
         <inspection_tool class="JSUndeclaredVariable" level="INFO" enabled="false" />
-        <inspection_tool class="JSShowOverridingMarkers" level="INFO" enabled="false" />
         <inspection_tool class="JSUnresolvedFunction" level="INFO" enabled="false" />
         <inspection_tool class="JSUnresolvedVariable" level="INFO" enabled="false" />
         <inspection_tool class="WebWarnings" level="WARNING" enabled="false" />
@@ -747,7 +768,6 @@
         <inspection_tool class="JpaORMDomInspection" level="ERROR" enabled="false" />
         <inspection_tool class="JpaModelErrorInspection" level="ERROR" enabled="false" />
         <inspection_tool class="JpaModelWarningInspection" level="WARNING" enabled="false" />
-        <inspection_tool class="MissedExecutable" level="WARNING" enabled="false" />
         <inspection_tool class="CheckEmptyScriptTag" level="WARNING" enabled="false" />
         <inspection_tool class="HtmlExtraClosingTag" level="ERROR" enabled="false" />
         <inspection_tool class="CheckImageSize" level="WARNING" enabled="false" />
@@ -788,14 +808,10 @@
         <inspection_tool class="DeclareParentsInspection" level="ERROR" enabled="false" />
         <inspection_tool class="SpringAopErrorsInspection" level="ERROR" enabled="false" />
         <inspection_tool class="SpringAopWarningsInspection" level="WARNING" enabled="false" />
-        <inspection_tool class="Geronimo" level="ERROR" enabled="false" />
         <inspection_tool class="Glassfish" level="ERROR" enabled="false" />
-        <inspection_tool class="JBoss" level="ERROR" enabled="false" />
-        <inspection_tool class="Weblogic" level="ERROR" enabled="false" />
         <inspection_tool class="AntDuplicateTargetsInspection" level="ERROR" enabled="false" />
         <inspection_tool class="AntDuplicateImportedTargetsInspection" level="WARNING" enabled="false" />
         <inspection_tool class="AntMissingPropertiesFileInspection" level="ERROR" enabled="false" />
-        <inspection_tool class="FacesModelInspection" level="ERROR" enabled="false" />
         <inspection_tool class="NonJREEmulationClassesInClientCode" level="ERROR" enabled="false" />
         <inspection_tool class="GwtServiceNotRegistered" level="ERROR" enabled="false" />
         <inspection_tool class="GwtInconsistentI18nInterface" level="ERROR" enabled="false" />
@@ -809,13 +825,6 @@
         <inspection_tool class="HibernateMappingDatasourceDomInspection" level="ERROR" enabled="false" />
         <inspection_tool class="HibernateConfigDomInspection" level="ERROR" enabled="false" />
         <inspection_tool class="HibernateMappingDomInspection" level="ERROR" enabled="false" />
-        <inspection_tool class="BoundFieldAssignment" level="WARNING" enabled="false" />
-        <inspection_tool class="OneButtonGroup" level="WARNING" enabled="false" />
-        <inspection_tool class="DuplicateMnemonic" level="WARNING" enabled="false" />
-        <inspection_tool class="MissingMnemonic" level="WARNING" enabled="false" />
-        <inspection_tool class="NoLabelFor" level="WARNING" enabled="false" />
-        <inspection_tool class="NoButtonGroup" level="WARNING" enabled="false" />
-        <inspection_tool class="NoScrollPane" level="WARNING" enabled="false" />
       </profile>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="DWR Project Default" />
@@ -831,7 +840,6 @@
         <inspection_tool class="AssignmentUsedAsCondition" level="WARNING" enabled="true" />
         <inspection_tool class="InstanceofThis" level="WARNING" enabled="true" />
         <inspection_tool class="AssignmentToForLoopParameterJS" level="WARNING" enabled="true" />
-        <inspection_tool class="AssignmentResultUsedJS" level="WARNING" enabled="true" />
         <inspection_tool class="FinalMethodInFinalClass" level="WARNING" enabled="true" />
         <inspection_tool class="ClassInTopLevelPackage" level="WARNING" enabled="true" />
         <inspection_tool class="ClassNameDiffersFromFileName" level="WARNING" enabled="true" />
@@ -1004,7 +1012,6 @@
           <option name="m_minLength" value="1" />
           <option name="m_maxLength" value="40" />
         </inspection_tool>
-        <inspection_tool class="MethodNameSameAsClassName" level="WARNING" enabled="true" />
         <inspection_tool class="MethodNameSameAsParentName" level="WARNING" enabled="true" />
         <inspection_tool class="MethodNamesDifferOnlyByCase" level="WARNING" enabled="true" />
         <inspection_tool class="ParameterNamingConvention" level="WARNING" enabled="true">
@@ -1248,7 +1255,6 @@
           </option>
           <option name="ADD_EJB_TO_ENTRIES" value="true" />
           <option name="ADD_JUNIT_TO_ENTRIES" value="true" />
-          <option name="ADD_TESTNG_TO_ENTRIES" value="true" />
         </inspection_tool>
         <inspection_tool class="CanBeFinal" level="WARNING" enabled="false">
           <option name="REPORT_CLASSES" value="false" />
@@ -1461,6 +1467,9 @@
     <option name="USE_CLIENT_FILTER" value="true" />
     <option name="CLIENT" value="" />
   </component>
+  <component name="ProjectDetails">
+    <option name="projectName" value="dwr" />
+  </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
@@ -1490,7 +1499,7 @@
     <output url="file://$PROJECT_DIR$/target/intellij/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="dwr-jetty-test" type="Application" factoryName="Application" enabled="false" merge="false">
+    <configuration default="false" name="dwr-jetty-test" type="Application" factoryName="Application" enabled="false" merge="false" runner="emma">
       <option name="MAIN_CLASS_NAME" value="org.directwebremoting.jetty.JettyTestLauncher" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -1515,7 +1524,7 @@
         <option name="Make" value="false" />
       </method>
     </configuration>
-    <configuration default="false" name="dwr-jetty-demo" type="Application" factoryName="Application" enabled="false" merge="false">
+    <configuration default="false" name="dwr-jetty-demo" type="Application" factoryName="Application" enabled="false" merge="false" runner="emma">
       <option name="MAIN_CLASS_NAME" value="org.directwebremoting.jetty.JettyDemoLauncher" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -1569,6 +1578,9 @@
     <option name="myTilesValidationEnabled" value="true" />
     <option name="myValidatorValidationEnabled" value="true" />
     <option name="myReportErrorsAsWarnings" value="true" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myVersion" value="123" />
   </component>
   <component name="SvnChangesBrowserSettings">
     <option name="USE_AUTHOR_FIELD" value="true" />

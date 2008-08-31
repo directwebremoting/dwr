@@ -14,8 +14,8 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/intellij/main" />
-    <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../serverside/hibernate">
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/hibernate/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/hibernate/test/java" isTestSource="true" />
@@ -25,7 +25,6 @@
     <orderEntry type="library" exported="" name="serverside-hibernate" level="project" />
     <orderEntry type="module" module-name="api" />
     <orderEntry type="module" module-name="impl" />
-    <orderEntryProperties />
   </component>
 </module>
 

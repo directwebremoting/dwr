@@ -15,7 +15,6 @@
           <setting name="JAR_URL" value="file://" />
           <setting name="JAR_ENABLED" value="false" />
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
-          <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
           <setting name="RUN_JASPER_VALIDATION" value="true" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
@@ -56,21 +55,12 @@
           </containerElement>
         </packaging>
       </configuration>
-      <facet type="struts" name="Struts">
-        <configuration>
-          <option name="myStrutsValidationEnabled" value="true" />
-          <option name="myTilesValidationEnabled" value="true" />
-          <option name="myValidatorValidationEnabled" value="true" />
-          <option name="myReportErrorsAsWarnings" value="true" />
-          <option name="mySuppressPropertiesValidation" value="false" />
-        </configuration>
-      </facet>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/intellij/main" />
-    <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../serverside/struts">
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/struts/customDemo/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/struts/main/java" isTestSource="false" />
@@ -80,7 +70,6 @@
     <orderEntry type="library" exported="" name="serverside-struts" level="project" />
     <orderEntry type="module" module-name="api" />
     <orderEntry type="module" module-name="impl" />
-    <orderEntryProperties />
   </component>
 </module>
 

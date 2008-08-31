@@ -2,13 +2,12 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/intellij/main" />
-    <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../ui/dojo" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="dwr" />
-    <orderEntryProperties />
   </component>
 </module>
 

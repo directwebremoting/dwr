@@ -13,8 +13,8 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/intellij/main" />
-    <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../serverside/spring">
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/spring/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../serverside/spring/test/java" isTestSource="true" />
@@ -23,7 +23,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="serverside-spring" level="project" />
     <orderEntry type="module" module-name="api" />
-    <orderEntryProperties />
   </component>
 </module>
 
