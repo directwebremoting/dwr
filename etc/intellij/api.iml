@@ -2,8 +2,8 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/intellij/main" />
-    <exclude-output />
     <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../core/api">
       <sourceFolder url="file://$MODULE_DIR$/../../core/api/main/java" isTestSource="false" />
     </content>
@@ -11,7 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="core-api" level="project" />
     <orderEntry type="library" name="core-impl" level="project" />
-    <orderEntryProperties />
   </component>
 </module>
 
