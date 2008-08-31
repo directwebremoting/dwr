@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
  * stream.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace"})
 public class ServletLoggingOutput implements LoggingOutput
 {
     /**
