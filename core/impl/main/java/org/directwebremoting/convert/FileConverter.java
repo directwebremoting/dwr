@@ -29,7 +29,6 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ByteArrayFileGenerator;
 import org.directwebremoting.extend.ContainerUtil;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.DataUrlDownloadManager;
 import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.extend.FileGenerator;
@@ -48,18 +47,23 @@ import org.directwebremoting.util.UserAgent;
 
 /**
  * The FileConverter can only convert inbound files, convertOutbound is not
- * supported. 
+ * supported.
  * Files come from an &lt;input type=&quot;file&quot;/&gt; on the client.
  * @author Lance Semmens [uklance at gmail dot com]
  * @author Joe Walker [joe at getahead dot org]
  */
-public class FileConverter extends AbstractConverter implements Converter
+public class FileConverter extends AbstractConverter
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext)
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
+        if (data.isNull())
+        {
+            return null;
+        }
+
         try
         {
             FormField formField = data.getFormField();
