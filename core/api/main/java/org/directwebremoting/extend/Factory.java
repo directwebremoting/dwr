@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 public class Factory<T>
 {
     /**
-     * Make it easy for XFactories to create a Factory instance.
+     * Make it easy for Factories to create a Factory instance.
      */
     public static <T> Factory<T> create()
     {
@@ -59,7 +59,7 @@ public class Factory<T>
      * code that someone else will configure, it is probably safe to use the
      * simpler {@link #get()} method.
      * @param ctx The servlet context to allow us to bootstrap
-     * @return The current JsonParser.
+     * @return The current object accessed by this Factory.
      */
     public T get(ServletContext ctx)
     {
@@ -73,9 +73,10 @@ public class Factory<T>
     }
 
     /**
-     * Internal method to allow us to get the Builder from which we
-     * will get JsonParser objects.
-     * Do not call this method from outside of DWR.
+     * Internal method to allow us to get the Builder from which we will get
+     * created objects. Do NOT call this method from outside of DWR.
+     * This function should <em>only</em> be called during startup, probably by
+     * {@link org.directwebremoting.impl.StartupUtil#initContainerBeans}.
      * @param builder The factory object (from DwrServlet)
      */
     public void setBuilder(Builder<T> builder)
@@ -84,7 +85,7 @@ public class Factory<T>
     }
 
     /**
-     * The Builder from which we will get JsonParser objects
+     * The Builder from which we will get created objects
      */
     private Builder<T> builder = null;
 
