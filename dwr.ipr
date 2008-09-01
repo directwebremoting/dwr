@@ -1025,7 +1025,7 @@
         <inspection_tool class="UpperCaseFieldNameNotConstant" level="WARNING" enabled="true" />
         <inspection_tool class="NonExceptionNameEndsWithException" level="WARNING" enabled="true" />
         <inspection_tool class="OverloadedVarargsMethod" level="WARNING" enabled="true" />
-        <inspection_tool class="ParameterNameDiffersFromOverriddenParameter" level="WARNING" enabled="true">
+        <inspection_tool class="ParameterNameDiffersFromOverriddenParameter" level="INFO" enabled="true">
           <option name="m_ignoreSingleCharacterNames" value="false" />
           <option name="m_ignoreOverridesOfLibraryMethods" value="false" />
         </inspection_tool>
@@ -1123,10 +1123,9 @@
         <inspection_tool class="ChannelResource" level="WARNING" enabled="true" />
         <inspection_tool class="HibernateResource" level="WARNING" enabled="true" />
         <inspection_tool class="IOResource" level="INFO" enabled="true" />
-        <inspection_tool class="JDBCResource" level="WARNING" enabled="true" />
         <inspection_tool class="JNDIResource" level="WARNING" enabled="true" />
         <inspection_tool class="SocketResource" level="WARNING" enabled="true" />
-        <inspection_tool class="JDBCPrepareStatementWithNonConstantString" level="WARNING" enabled="true" />
+        <inspection_tool class="JDBCPrepareStatementWithNonConstantString" level="INFO" enabled="true" />
         <inspection_tool class="RuntimeExecWithNonConstantString" level="WARNING" enabled="true" />
         <inspection_tool class="JDBCExecuteWithNonConstantString" level="WARNING" enabled="true" />
         <inspection_tool class="LoadLibraryWithNonConstantString" level="WARNING" enabled="true" />
@@ -1269,7 +1268,7 @@
         <inspection_tool class="TrivialIf" level="INFO" enabled="true" />
         <inspection_tool class="ThisExpressionReferencesGlobalObjectJS" level="WARNING" enabled="false" />
         <inspection_tool class="JSUnusedLocalSymbols" level="WARNING" enabled="false" />
-        <inspection_tool class="CheckTagEmptyBody" level="INFO" enabled="true" />
+        <inspection_tool class="CheckTagEmptyBody" level="INFO" enabled="false" />
         <inspection_tool class="HtmlUnknownAttribute" level="WARNING" enabled="false">
           <option name="myValues">
             <value>
@@ -1285,6 +1284,46 @@
           <option name="myCustomValuesEnabled" value="true" />
         </inspection_tool>
         <inspection_tool class="PointlessArithmeticExpressionJS" level="INFO" enabled="true" />
+        <inspection_tool class="MethodReturnAlwaysConstant" level="WARNING" enabled="true" />
+        <inspection_tool class="MissingDeprecatedAnnotation" level="WARNING" enabled="true" />
+        <inspection_tool class="MissingOverrideAnnotation" level="WARNING" enabled="true">
+          <option name="useJdk6Rules" value="false" />
+        </inspection_tool>
+        <inspection_tool class="ClassMayBeInterface" level="WARNING" enabled="true" />
+        <inspection_tool class="CallToStringConcatCanBeReplacedByOperator" level="WARNING" enabled="true" />
+        <inspection_tool class="UnnecessaryConstantArrayCreationExpression" level="WARNING" enabled="true" />
+        <inspection_tool class="FieldMayBeFinal" level="WARNING" enabled="true" />
+        <inspection_tool class="ListIndexOfReplaceableByContains" level="WARNING" enabled="true" />
+        <inspection_tool class="TooBroadScope" level="WARNING" enabled="true">
+          <option name="m_allowConstructorAsInitializer" value="false" />
+          <option name="m_onlyLookAtBlocks" value="false" />
+        </inspection_tool>
+        <inspection_tool class="ConstantValueVariableUse" level="WARNING" enabled="true" />
+        <inspection_tool class="NonJREEmulationClassesInClientCode" level="ERROR" enabled="false" />
+        <inspection_tool class="GwtDeprecatedPropertyKeyJavadocTag" level="WARNING" enabled="false" />
+        <inspection_tool class="GwtObsoleteTypeArgsJavadocTag" level="WARNING" enabled="false" />
+        <inspection_tool class="GwtServiceNotRegistered" level="ERROR" enabled="false" />
+        <inspection_tool class="GwtInconsistentI18nInterface" level="ERROR" enabled="false" />
+        <inspection_tool class="GWTRemoteServiceAsyncCheck" level="ERROR" enabled="false" />
+        <inspection_tool class="GwtInconsistentSerializableClass" level="ERROR" enabled="false" />
+        <inspection_tool class="GwtMethodWithParametersInConstantsInterface" level="ERROR" enabled="false" />
+        <inspection_tool class="NonSerializableServiceParameters" level="ERROR" enabled="false" />
+        <inspection_tool class="gwtRawAsyncCallback" level="WARNING" enabled="false" />
+        <inspection_tool class="GwtJavaScriptReferences" level="ERROR" enabled="false" />
+        <inspection_tool class="GWTStyleCheck" level="ERROR" enabled="false" />
+        <inspection_tool class="GwtToHtmlReferences" level="ERROR" enabled="false" />
+        <inspection_tool class="CollectionsFieldAccessReplaceableByMethodCall" level="WARNING" enabled="true" />
+        <inspection_tool class="AssertEqualsMayBeAssertSame" level="WARNING" enabled="true" />
+        <inspection_tool class="SystemGC" level="WARNING" enabled="true" />
+        <inspection_tool class="CharUsedInArithmeticContext" level="WARNING" enabled="true" />
+        <inspection_tool class="KeySetIterationMayUseEntrySet" level="WARNING" enabled="true" />
+        <inspection_tool class="TailRecursion" level="WARNING" enabled="true" />
+        <inspection_tool class="SuspiciousIndentAfterControlStatement" level="WARNING" enabled="true" />
+        <inspection_tool class="ObjectAllocationIgnoredJS" level="WARNING" enabled="true" />
+        <inspection_tool class="ThreadYield" level="WARNING" enabled="true" />
+        <inspection_tool class="ExtendsThread" level="WARNING" enabled="true" />
+        <inspection_tool class="AmbiguousMethodCall" level="WARNING" enabled="true" />
+        <inspection_tool class="ThrowableResultOfMethodCallIgnored" level="WARNING" enabled="false" />
       </profile>
     </profiles>
     <list size="4">

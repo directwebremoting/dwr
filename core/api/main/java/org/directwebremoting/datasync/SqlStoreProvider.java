@@ -41,7 +41,6 @@ import org.directwebremoting.io.StoreRegion;
  */
 class SqlStoreProvider<T> extends AbstractStoreProvider<T>
 {
-
     /**
      *
      */
@@ -165,7 +164,11 @@ class SqlStoreProvider<T> extends AbstractStoreProvider<T>
                 matchedValues.add(new Item(itemId, data));
             }
         }
-        catch (Exception ex)
+        catch (SQLException ex)
+        {
+            log.warn("SQL Failure", ex);
+        }
+        finally
         {
             if (con != null)
             {
@@ -204,7 +207,7 @@ class SqlStoreProvider<T> extends AbstractStoreProvider<T>
             }
         }
 
-        MatchedItems reply = new MatchedItems();
+        MatchedItems reply = new MatchedItems(matchedValues, -1);
         return reply;
     }
 

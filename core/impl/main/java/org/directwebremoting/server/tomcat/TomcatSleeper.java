@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
 
 /**
- * A Sleeper that works with Jetty Continuations
+ * A Sleeper that works with Tomcat {@link CometEvent}s
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class TomcatSleeper implements Sleeper
@@ -94,13 +94,13 @@ public class TomcatSleeper implements Sleeper
     /**
      * Tomcat's container for the request/response for this transaction
      */
-    private CometEvent event;
+    private final CometEvent event;
 
     /**
      * All operations that involve going to sleep of waking up must hold this
      * lock before they take action.
      */
-    private Object wakeUpCalledLock = new Object();
+    private final Object wakeUpCalledLock = new Object();
 
     /**
      * Has wakeUp been called?
