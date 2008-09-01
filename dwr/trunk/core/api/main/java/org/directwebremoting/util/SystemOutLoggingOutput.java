@@ -19,6 +19,7 @@ package org.directwebremoting.util;
  * An implementation of LoggingOutput that sends stuff to System.out
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
 public class SystemOutLoggingOutput implements LoggingOutput
 {
     /**

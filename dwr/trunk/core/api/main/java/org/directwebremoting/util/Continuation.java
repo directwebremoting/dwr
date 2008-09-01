@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A wrapper around Jetty Ajax Continuations
@@ -35,19 +35,23 @@ public class Continuation
      */
     public Continuation(HttpServletRequest request)
     {
-        proxy = request.getAttribute(ATTRIBUTE_JETTY_CONTINUATION);
-        if (proxy == null && isGrizzly())
+        // The attribute under which Jetty stores it's Continuations.
+        Object temp = request.getAttribute("org.mortbay.jetty.ajax.Continuation");
+        if (temp == null && isGrizzly())
         {
             try
             {
+                // The attribute under which Grizzly stores it's Continuations.
                 Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
                 Method gMethod = gContinuation.getMethod("getContinuation");
-                proxy = gMethod.invoke((Object[])null,(Object[])null);
+                temp = gMethod.invoke(null, (Object[]) null);
             }
-            catch (Throwable ex)
+            catch (Throwable ignored)
             {
             }
         }
+
+        proxy = temp;
     }
 
     /**
@@ -130,7 +134,7 @@ public class Continuation
     }
 
     /**
-     * We shouldn't be catching Jetty RetryRequests so we rethrow them.
+     * We shouldn't be catching Jetty RetryRequests so we re-throw them.
      * @param th The exception to test for continuation-ness
      */
     public static void rethrowIfContinuation(Throwable th)
@@ -142,7 +146,7 @@ public class Continuation
             ex = ((InvocationTargetException) ex).getTargetException();
         }
 
-        // Allow Jetty RequestRetry exception to propogate to container!
+        // Allow Jetty RequestRetry exception to propagate to container!
         if ("org.mortbay.jetty.RetryRequest".equals(ex.getClass().getName()))
         {
             throw (RuntimeException) ex;
@@ -174,7 +178,7 @@ public class Continuation
     /**
      * The real continuation object
      */
-    private Object proxy;
+    private final Object proxy;
 
     /**
      * The log stream
@@ -182,41 +186,35 @@ public class Continuation
     private static final Log log = LogFactory.getLog(Continuation.class);
 
     /**
-     * The attribute under which Jetty stores it's Contuniations.
-     * TODO: This feels like a mighty hack. I hope Greg doesn't change it without telling us!
-     */
-    private static final String ATTRIBUTE_JETTY_CONTINUATION = "org.mortbay.jetty.ajax.Continuation";
-
-    /**
      * Jetty code used by reflection to allow it to run outside of Jetty
      */
-    protected static Class<?> continuationClass = null;
+    protected static final Class<?> continuationClass;
 
     /**
      * How we suspend the continuation
      */
-    protected static Method suspendMethod = null;
+    protected static final Method suspendMethod;
 
     /**
      * How we resume the continuation
      */
-    protected static Method resumeMethod = null;
+    protected static final Method resumeMethod;
 
     /**
      * How we get the associated continuation object
      */
-    protected static Method getObject = null;
+    protected static final Method getObject;
 
     /**
      * How we set the associated continuation object
      */
-    protected static Method setObject = null;
+    protected static final Method setObject;
 
     /**
      * Are we using Jetty at all?
      */
     protected static boolean isJetty = false;
-    
+
     /**
      * Are we using Grizzly at all?
      */
@@ -227,30 +225,57 @@ public class Continuation
      */
     static
     {
+        Class<?> tempContinuationClass = null;
         try
         {
             try
             {
-                continuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
+                tempContinuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
                 isJetty = true;
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
                 Method gMethod = gContinuation.getMethod("getContinuation");
-                continuationClass = gMethod.invoke(gMethod).getClass();
+                tempContinuationClass = gMethod.invoke(gMethod).getClass();
                 isGrizzly = true;
             }
-
-            suspendMethod = continuationClass.getMethod("suspend", Long.TYPE);
-            resumeMethod = continuationClass.getMethod("resume");
-            getObject = continuationClass.getMethod("getObject");
-            setObject = continuationClass.getMethod("setObject", Object.class);
         }
         catch (Exception ex)
         {
             isJetty = false;
             log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
+        }
+
+        continuationClass = tempContinuationClass;
+
+        suspendMethod = getMethod("suspend", Long.TYPE);
+        resumeMethod = getMethod("resume");
+        getObject = getMethod("getObject");
+        setObject = getMethod("setObject", Object.class);
+    }
+
+    /**
+     *
+     */
+    private static Method getMethod(String name, Class<?>... args)
+    {
+        if (continuationClass == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return continuationClass.getMethod(name, args);
+        }
+        catch (SecurityException ex)
+        {
+            return null;
+        }
+        catch (NoSuchMethodException ex)
+        {
+            return null;
         }
     }
 
@@ -261,12 +286,12 @@ public class Continuation
     {
         return isJetty;
     }
-    
+
     /**
      * @return True if we have detected Grizzly classes
      */
     public static boolean isGrizzly()
     {
         return isGrizzly;
-    }    
+    }
 }

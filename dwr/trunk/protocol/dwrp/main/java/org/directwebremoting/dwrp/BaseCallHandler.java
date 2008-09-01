@@ -247,7 +247,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      */
     public void marshallOutbound(Replies replies, HttpServletResponse response) throws IOException
     {
-        RealScriptSession scriptSession = null;
+        RealScriptSession scriptSession;
         try
         {
             scriptSession = (RealScriptSession) WebContextFactory.get().getScriptSession();
