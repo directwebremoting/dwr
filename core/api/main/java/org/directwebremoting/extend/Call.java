@@ -145,9 +145,7 @@ public class Call
             throw new IllegalArgumentException("Missing method parameter");
         }
 
-        // Get a list of the available matching methods with the coerced
-        // parameters that we will use to call it if we choose to use
-        // that method.
+        // Get a mutable list of all methods on the type specified by the creator
         Creator creator = creatorManager.getCreator(scriptName, true);
         List<Method> allMethods = new ArrayList<Method>();
         allMethods.addAll(Arrays.asList(creator.getType().getMethods()));
@@ -165,7 +163,7 @@ public class Call
         {
             // Not even a name match
             log.warn("No method called '" + methodName + "' found in " + creator.getType());
-            throw new IllegalArgumentException("Method name not found. See logs for details");            
+            throw new IllegalArgumentException("Method name not found. See logs for details");
         }
 
         if (allMethods.size() == 1)
@@ -234,7 +232,7 @@ public class Call
                     log.warn("Warning multiple matching methods. Using first match.");
                 }
 
-                method = allMethods.get(0);                
+                method = allMethods.get(0);
             }
         }
     }

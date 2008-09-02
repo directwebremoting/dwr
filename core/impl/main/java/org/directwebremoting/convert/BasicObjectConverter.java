@@ -30,11 +30,8 @@ import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.JsonModeMarshallException;
-import org.directwebremoting.extend.MapOutboundVariable;
 import org.directwebremoting.extend.NamedConverter;
-import org.directwebremoting.extend.ObjectJsonOutboundVariable;
-import org.directwebremoting.extend.ObjectNonJsonOutboundVariable;
+import org.directwebremoting.extend.ObjectOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
@@ -166,20 +163,7 @@ public abstract class BasicObjectConverter implements NamedConverter
         Map<String, OutboundVariable> ovs = new TreeMap<String, OutboundVariable>();
 
         // We need to do this before collecting the children to save recursion
-        MapOutboundVariable ov;
-        if (outctx.isJsonMode())
-        {
-            if (javascript != null)
-            {
-                throw new JsonModeMarshallException(data.getClass(), "Can't used named Javascript objects in JSON mode");
-            }
-
-            ov = new ObjectJsonOutboundVariable();
-        }
-        else
-        {
-            ov = new ObjectNonJsonOutboundVariable(outctx, getJavascript());
-        }
+        ObjectOutboundVariable ov = new ObjectOutboundVariable(outctx, data.getClass(), getJavascript());
         outctx.put(data, ov);
 
         try

@@ -29,9 +29,7 @@ import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MapOutboundVariable;
-import org.directwebremoting.extend.ObjectJsonOutboundVariable;
-import org.directwebremoting.extend.ObjectNonJsonOutboundVariable;
+import org.directwebremoting.extend.ObjectOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.ProtocolConstants;
@@ -181,15 +179,7 @@ public class MapConverter implements Converter
             ovs = new HashMap<String, OutboundVariable>();
         }
 
-        MapOutboundVariable ov;
-        if (outctx.isJsonMode())
-        {
-            ov = new ObjectJsonOutboundVariable();
-        }
-        else
-        {
-            ov = new ObjectNonJsonOutboundVariable(outctx, null);
-        }
+        ObjectOutboundVariable ov = new ObjectOutboundVariable(outctx);
         outctx.put(data, ov);
 
         // Loop through the map outputting any init code and collecting

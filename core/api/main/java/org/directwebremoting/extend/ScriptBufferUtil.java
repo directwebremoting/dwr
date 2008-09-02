@@ -66,8 +66,7 @@ public class ScriptBufferUtil
             scriptParts.add(ov);
         }
 
-        StringBuffer buffer = new StringBuffer();
-        context.prepareForOutput();
+        StringBuilder buffer = new StringBuilder();
 
         // First we look for the declaration code
         for (OutboundVariable ov : scriptParts)
