@@ -67,25 +67,6 @@ public final class OutboundContext
     }
 
     /**
-     * Things work out if they are doubly referenced during the conversion
-     * process, and can't be sure how to create output until that phase is done.
-     * This method declares that we are done conversion, and now is a good time
-     * to calculate how to generate output
-     */
-    public void prepareForOutput()
-    {
-        for (OutboundVariable variable : map.values())
-        {
-            variable.prepareAssignCode();
-        }
-
-        for (OutboundVariable variable : map.values())
-        {
-            variable.prepareBuildDeclareCodes();
-        }
-    }
-
-    /**
      * @return Are we in JSON mode where everything is inline?
      */
     public boolean isJsonMode()
@@ -116,7 +97,7 @@ public final class OutboundContext
      * What index do we tack on the next variable name that we generate
      */
     private int nextVarIndex = 0;
-    
+
     /**
      * Are we in JSON mode where everything is inline?
      */

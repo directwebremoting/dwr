@@ -16,9 +16,20 @@
 package org.directwebremoting.extend;
 
 /**
- * A simple data container for 2 strings that comprise information about how a
+ * A simple data container for the strings that comprise information about how a
  * Java object has been converted into Javascript.
- * <p>There are potentially 3 parts to a variable in Javascript. If the variable
+ * <p>
+ * There are 3 steps to conversion:
+ * <ul>
+ * <li>First the {@link ConverterManager} creates a set of OutboundVariables
+ * from the raw data.
+ * <li>Second we reference count to see what needs to be outlined (i.e. not
+ * done inline). This typically means that something is declared before it is
+ * built.
+ * <li>Finally we create the full output script.
+ * </ul>
+ * <p>
+ * There are potentially 3 parts to a variable in Javascript. If the variable
  * is not something that can recurse then only the assignCode will contain data.
  * Otherwise all the parts will be filled out.
  * <ul>
@@ -33,6 +44,17 @@ package org.directwebremoting.extend;
  */
 public interface OutboundVariable
 {
+    /**
+     * Get a reference to this OutboundVariable.
+     * During step 1 of the conversion process where we turn the raw objects
+     * into OutboundVariables we may wish to refer to something that has already
+     * been converted.
+     * If <code>this</code> already is a reference then this method returns
+     * <code>this</code>, or if not it creates one that does.
+     * @return An OutboundVariable that refers to this one.
+     */
+    OutboundVariable getReferenceVariable();
+
     /**
      * A script to declare the variable so it can be referred to. This script
      * is guaranteed not to refer to anything that can recurse
@@ -52,26 +74,4 @@ public interface OutboundVariable
      * @return Returns the assignCode.
      */
     String getAssignCode();
-
-    /**
-     * Get a reference to this OutboundVariable.
-     * If <code>this</code> already is a reference then this method returns
-     * <code>this</code>, or if not it creates one that does.
-     * @return An OutboundVariable that refers to this one.
-     */
-    OutboundVariable getReferenceVariable();
-
-    /**
-     * Things work out if they are doubly referenced during the conversion
-     * process, and can't be sure how to create output until that phase is done.
-     * This method creates the assign code such that other variables can
-     * refer to us when creating build and declare codes
-     */
-    void prepareAssignCode();
-
-    /**
-     * Create build and declare codes.
-     * @see #prepareAssignCode()
-     */
-    void prepareBuildDeclareCodes();
 }

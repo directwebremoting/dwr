@@ -30,9 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.AbstractConverter;
-import org.directwebremoting.extend.ArrayJsonOutboundVariable;
-import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
-import org.directwebremoting.extend.CollectionOutboundVariable;
+import org.directwebremoting.extend.ArrayOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ErrorOutboundVariable;
@@ -196,15 +194,7 @@ public class CollectionConverter extends AbstractConverter
         }
 
         // Stash this bit of data to cope with recursion
-        CollectionOutboundVariable ov;
-        if (outctx.isJsonMode())
-        {
-            ov = new ArrayJsonOutboundVariable();
-        }
-        else
-        {
-            ov = new ArrayNonJsonOutboundVariable(outctx);
-        }
+        ArrayOutboundVariable ov = new ArrayOutboundVariable(outctx);
         outctx.put(data, ov);
 
         // Convert all the data members

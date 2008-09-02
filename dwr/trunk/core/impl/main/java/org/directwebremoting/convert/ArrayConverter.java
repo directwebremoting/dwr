@@ -23,9 +23,7 @@ import java.util.StringTokenizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.extend.ArrayJsonOutboundVariable;
-import org.directwebremoting.extend.ArrayNonJsonOutboundVariable;
-import org.directwebremoting.extend.CollectionOutboundVariable;
+import org.directwebremoting.extend.ArrayOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
@@ -114,17 +112,7 @@ public class ArrayConverter implements Converter
             throw new ConversionException(data.getClass());
         }
 
-        CollectionOutboundVariable ov;
-
-        // Stash this bit of data to cope with recursion
-        if (outctx.isJsonMode())
-        {
-            ov = new ArrayJsonOutboundVariable();
-        }
-        else
-        {
-            ov = new ArrayNonJsonOutboundVariable(outctx);
-        }
+        ArrayOutboundVariable ov = new ArrayOutboundVariable(outctx);
         outctx.put(data, ov);
 
         // Convert all the data members

@@ -15,6 +15,9 @@
  */
 package org.directwebremoting.extend;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * An {@link OutboundVariable} that we know to be unable to recurse
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -30,17 +33,16 @@ public class NonNestedOutboundVariable implements OutboundVariable
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.OutboundVariable#prepareAssignCode()
+     * @see org.directwebremoting.extend.OutboundVariable#incrementReferenceCount()
      */
-    public void prepareAssignCode()
+    public void incrementReferenceCount()
     {
-    }
+        referenceCount++;
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.OutboundVariable#prepareBuildDeclareCodes()
-     */
-    public void prepareBuildDeclareCodes()
-    {
+        if (referenceCount > 1)
+        {
+            log.warn("Creating JsonString from multiply referenced ArrayJsonOutboundVariable. Recurrsion expected.");
+        }
     }
 
     /* (non-Javadoc)
@@ -87,5 +89,15 @@ public class NonNestedOutboundVariable implements OutboundVariable
     /**
      * The variable that we refer to
      */
-    private String assignCode;
+    private final String assignCode;
+
+    /**
+     * By how many objects are we referred to?
+     */
+    private int referenceCount = 0;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(NonNestedOutboundVariable.class);
 }
