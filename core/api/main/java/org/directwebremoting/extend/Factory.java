@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Factory is not a user facing object, it is designed for system implementors.
- * Factory objects are generally use as helper classes by XFactory classes
+ * Factory objects are generally use as helper classes by Factory classes
  * whose methods reflect the methods of Factory, but which are static and
  * proxy the call to the contained Factory instance.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -87,7 +87,7 @@ public class Factory<T>
     /**
      * The Builder from which we will get created objects
      */
-    private Builder<T> builder = null;
+    private volatile Builder<T> builder = null;
 
     /**
      * The log stream
