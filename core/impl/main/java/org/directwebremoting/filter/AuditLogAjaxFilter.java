@@ -83,15 +83,7 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
     {
         if (reply instanceof String)
         {
-            String str = (String) reply;
-            if (str.length() > maxStringLength)
-            {
-                return '"' + str.substring(0, maxStringLength - 3) + "...\"";
-            }
-            else
-            {
-                return '"' + str + '"';
-            }
+            return shorten((String) reply, maxStringLength);
         }
 
         if (reply == null)
@@ -104,7 +96,24 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
             return reply.toString();
         }
 
-        return reply.getClass().getSimpleName() + "(...)";
+        return shorten(reply.toString(), maxStringLength);
+        //return reply.getClass().getSimpleName() + "(...)";
+    }
+
+    /**
+     * Shorten an input string if it is longer than <code>length</code>
+     * characters, by trimming it an adding an ellipsis (...).
+     */
+    private String shorten(String str, int length)
+    {
+        if (str.length() > length)
+        {
+            return '"' + str.substring(0, length - 3) + "...\"";
+        }
+        else
+        {
+            return '"' + str + '"';
+        }
     }
 
     /**
@@ -137,7 +146,7 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
     /**
      * What's the longest string that we output for a parameter
      */
-    private static int maxStringLength = 20;
+    private static int maxStringLength = 30;
 
     /**
      * The log stream
