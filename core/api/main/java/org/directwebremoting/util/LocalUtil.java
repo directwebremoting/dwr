@@ -933,37 +933,6 @@ public final class LocalUtil
     }
 
     /**
-     * Calling methods using reflection is useful for graceful fallback - this
-     * is a helper method to make this easy
-     * @param object The object to use as 'this'
-     * @param method The method to call, can be null in which case null is returned
-     * @param params The parameters to pass to the reflection call
-     * @return The results of calling method.invoke() or null
-     * @throws IllegalStateException If anything goes wrong
-     */
-    public static Object invoke(Object object, Method method, Object[] params) throws IllegalStateException
-    {
-        Object reply = null;
-        if (method != null)
-        {
-            try
-            {
-                reply = method.invoke(object, params);
-            }
-            catch (InvocationTargetException ex)
-            {
-                throw new IllegalStateException("InvocationTargetException calling " + method.getName() + ": " + ex.getTargetException().toString());
-            }
-            catch (Exception ex)
-            {
-                throw new IllegalStateException("Reflection error calling " + method.getName() + ": " + ex.toString());
-            }
-        }
-
-        return reply;
-    }
-
-    /**
      * Utility to essentially do Class forName with the assumption that the
      * environment expects failures for missing jar files and can carry on if
      * this process fails.
@@ -1126,6 +1095,37 @@ public final class LocalUtil
             log.error("Failed to load creator '" + name + "', classname=" + className + ": ", ex);
             return null;
         }
+    }
+
+    /**
+     * Calling methods using reflection is useful for graceful fallback - this
+     * is a helper method to make this easy
+     * @param object The object to use as 'this'
+     * @param method The method to call, can be null in which case null is returned
+     * @param params The parameters to pass to the reflection call
+     * @return The results of calling method.invoke() or null
+     * @throws IllegalStateException If anything goes wrong
+     */
+    public static Object invoke(Object object, Method method, Object[] params) throws IllegalStateException
+    {
+        Object reply = null;
+        if (method != null)
+        {
+            try
+            {
+                reply = method.invoke(object, params);
+            }
+            catch (InvocationTargetException ex)
+            {
+                throw new IllegalStateException("InvocationTargetException calling " + method.getName() + ": " + ex.getTargetException().toString());
+            }
+            catch (Exception ex)
+            {
+                throw new IllegalStateException("Reflection error calling " + method.getName() + ": " + ex.toString());
+            }
+        }
+
+        return reply;
     }
 
     /**
