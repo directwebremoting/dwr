@@ -17,7 +17,6 @@ package org.directwebremoting.extend;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
 
@@ -90,11 +89,11 @@ public class PropertyDescriptorProperty implements Property
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getSetter()
+     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
-    public Method getSetter()
+    public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
     {
-        return descriptor.getWriteMethod();
+        return new TypeHintContext(converterManager, descriptor.getWriteMethod(), 0);
     }
 
     /* (non-Javadoc)

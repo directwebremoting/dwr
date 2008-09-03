@@ -29,12 +29,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlObject;
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.extend.TypeHintContext;
 
 /**
  * A Converter for Apache XMLBeans.
@@ -147,16 +145,7 @@ public class XmlBeanConverter extends BeanConverter
 
                 Class<?> propType = property.getPropertyType();
 
-                String[] split = ConvertUtil.splitInbound(val);
-                String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
-                String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
-
-                InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
-                nested.dereference();
-
-                TypeHintContext incc = createTypeHintContext(data.getContext(), property);
-
-                Object output = converterManager.convertInbound(propType, nested, incc);
+                Object output = convert(val, propType, data.getContext(), property);
                 property.setValue(bean, output);
             }
 

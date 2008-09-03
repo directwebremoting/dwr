@@ -15,56 +15,25 @@
  */
 package org.directwebremoting.extend;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.lang.reflect.Constructor;
+
 import org.directwebremoting.ConversionException;
 
 /**
- * An implementation of {@link Property} that simply uses stored values.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PlainProperty implements Property
+public class ConstructorProperty implements Property
 {
     /**
-     * @param name The property name
-     * @param value The property value irrespective of the object that we read it on
+     * @param constructor
+     * @param parameterName
+     * @param parameterNum
      */
-    public PlainProperty(String name, Object value)
+    public ConstructorProperty(Constructor<?> constructor, String parameterName, int parameterNum)
     {
-        this.name = name;
-        this.value = value;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getName()
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getPropertyType()
-     */
-    public Class<?> getPropertyType()
-    {
-        return value.getClass();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
-     */
-    public Object getValue(Object bean) throws ConversionException
-    {
-        return value;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
-     */
-    public void setValue(Object bean, Object value) throws ConversionException
-    {
-        log.warn("Attempt to setValue() on plain property.");
+        this.constructor = constructor;
+        this.parameterName = parameterName;
+        this.parameterNum = parameterNum;
     }
 
     /* (non-Javadoc)
@@ -75,18 +44,41 @@ public class PlainProperty implements Property
         return new TypeHintContext(converterManager, this, 0);
     }
 
-    /**
-     * The name of this property
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#getName()
      */
-    private final String name;
+    public String getName()
+    {
+        return parameterName;
+    }
 
-    /**
-     * The property value irrespective of the object that we read it on
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    private final Object value;
+    public Class<?> getPropertyType()
+    {
+        return constructor.getParameterTypes()[parameterNum];
+    }
 
-    /**
-     * The log stream
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    private static final Log log = LogFactory.getLog(PlainProperty.class);
+    public Object getValue(Object bean) throws ConversionException
+    {
+        throw new UnsupportedOperationException("Can't get value from constructor parameter");
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
+     */
+    public void setValue(Object bean, Object value) throws ConversionException
+    {
+        throw new UnsupportedOperationException("Can't set value from constructor parameter");
+    }
+
+    private final Constructor<?> constructor;
+
+    private final String parameterName;
+
+    private final int parameterNum;
 }

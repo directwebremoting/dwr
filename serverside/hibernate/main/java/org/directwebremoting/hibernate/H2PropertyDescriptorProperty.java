@@ -24,7 +24,7 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 
 /**
- * A {@link Property} that catches hiberntate exceptions.
+ * A {@link Property} that catches Hibernate exceptions.
  * This is useful for Hibernate 2 where lazy loading results in an exception
  * and you are unable to detect and prevent this.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
