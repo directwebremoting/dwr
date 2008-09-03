@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.convert;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.extend.ConstructorProperty;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundContext;
@@ -38,6 +41,7 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Pair;
 
 /**
  * BasicObjectConverter is a parent to {@link BeanConverter} and
@@ -79,58 +83,21 @@ public abstract class BasicObjectConverter implements NamedConverter
 
         try
         {
-            Object bean;
-            if (instanceType != null)
-            {
-                bean = instanceType.newInstance();
-            }
-            else
-            {
-                bean = paramType.newInstance();
-            }
-
-            // We should put the new object into the working map in case it
-            // is referenced later nested down in the conversion process.
-            if (instanceType != null)
-            {
-                data.getContext().addConverted(data, instanceType, bean);
-            }
-            else
-            {
-                data.getContext().addConverted(data, paramType, bean);
-            }
-
-            Map<String, Property> properties = getPropertyMapFromObject(bean, false, true);
-
             // Loop through the properties passed in
             Map<String, String> tokens = extractInboundTokens(paramType, value);
-            for (Entry<String, String> entry : tokens.entrySet())
+
+            if (constructor == null)
             {
-                String key = entry.getKey();
-                String val = entry.getValue();
-
-                Property property = properties.get(key);
-                if (property == null)
-                {
-                    log.warn("Missing setter: " + paramType.getName() + ".set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "() to match javascript property: " + key + ". Check include/exclude rules and overloaded methods.");
-                    continue;
-                }
-
-                Class<?> propType = property.getPropertyType();
-
-                String[] split = ConvertUtil.splitInbound(val);
-                String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
-                String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
-
-                InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
-                nested.dereference();
-                TypeHintContext incc = createTypeHintContext(data.getContext(), property);
-
-                Object output = converterManager.convertInbound(propType, nested, incc);
-                property.setValue(bean, output);
+                return createUsingSetterInjection(paramType, data, tokens);
             }
-
-            return bean;
+            else
+            {
+                return createUsingConstructorInjection(data, tokens);
+            }
+        }
+        catch (InvocationTargetException ex)
+        {
+            throw new ConversionException(paramType, ex.getTargetException());
         }
         catch (ConversionException ex)
         {
@@ -140,6 +107,90 @@ public abstract class BasicObjectConverter implements NamedConverter
         {
             throw new ConversionException(paramType, ex);
         }
+    }
+
+    /**
+     * We're using constructor injection, create and populate a bean using
+     * a constructor
+     */
+    private Object createUsingConstructorInjection(InboundVariable data, Map<String, String> tokens) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
+    {
+        List<Object> arguments = new ArrayList<Object>();
+
+        int paramNum = 0;
+        for (Pair<Class<?>, String> parameter : parameters)
+        {
+            String argument = tokens.get(parameter.right);
+            ConstructorProperty property = new ConstructorProperty(constructor, parameter.right, paramNum);
+            Object output = convert(argument, parameter.left, data.getContext(), property);
+            arguments.add(output);
+            paramNum++;
+        }
+
+        Object[] argArray = arguments.toArray(new Object[arguments.size()]);
+        return constructor.newInstance(argArray);
+    }
+
+    /**
+     * We're using setter injection, create and populate a bean using property
+     * setters
+     */
+    private Object createUsingSetterInjection(Class<?> paramType, InboundVariable data, Map<String, String> tokens) throws InstantiationException, IllegalAccessException
+    {
+        Object bean;
+        if (instanceType != null)
+        {
+            bean = instanceType.newInstance();
+        }
+        else
+        {
+            bean = paramType.newInstance();
+        }
+
+        // We should put the new object into the working map in case it
+        // is referenced later nested down in the conversion process.
+        if (instanceType != null)
+        {
+            data.getContext().addConverted(data, instanceType, bean);
+        }
+        else
+        {
+            data.getContext().addConverted(data, paramType, bean);
+        }
+
+        Map<String, Property> properties = getPropertyMapFromObject(bean, false, true);
+
+        for (Entry<String, String> entry : tokens.entrySet())
+        {
+            String key = entry.getKey();
+            Property property = properties.get(key);
+            if (property == null)
+            {
+                log.warn("Missing setter: " + paramType.getName() + ".set" + Character.toTitleCase(key.charAt(0)) + key.substring(1) + "() to match javascript property: " + key + ". Check include/exclude rules and overloaded methods.");
+                continue;
+            }
+
+            Object output = convert(entry.getValue(), property.getPropertyType(), data.getContext(), property);
+            property.setValue(bean, output);
+        }
+        return bean;
+    }
+
+    /**
+     * We have inbound data and a type that we need to convert it into, this
+     * method performs the conversion.
+     */
+    protected Object convert(String val, Class<?> propType, InboundContext inboundContext, Property property)
+    {
+        String[] split = ConvertUtil.splitInbound(val);
+        String splitValue = split[ConvertUtil.INBOUND_INDEX_VALUE];
+        String splitType = split[ConvertUtil.INBOUND_INDEX_TYPE];
+
+        InboundVariable nested = new InboundVariable(inboundContext, null, splitType, splitValue);
+        nested.dereference();
+        TypeHintContext incc = createTypeHintContext(inboundContext, property);
+
+        return converterManager.convertInbound(propType, nested, incc);
     }
 
     /**
@@ -192,6 +243,20 @@ public abstract class BasicObjectConverter implements NamedConverter
         ov.setChildren(ovs);
 
         return ov;
+    }
+
+    /**
+     * Set the parameters to be used for constructor injection
+     * @param paramsString a comma separated list of type/name pairs.
+     */
+    public void setConstructor(String paramsString)
+    {
+        this.paramsString = paramsString;
+
+        if (instanceType != null)
+        {
+            checkConstructor();
+        }
     }
 
     /**
@@ -271,6 +336,11 @@ public abstract class BasicObjectConverter implements NamedConverter
     public void setInstanceType(Class<?> instanceType)
     {
         this.instanceType = instanceType;
+
+        if (paramsString != null)
+        {
+            checkConstructor();
+        }
     }
 
     /* (non-Javadoc)
@@ -384,6 +454,74 @@ public abstract class BasicObjectConverter implements NamedConverter
     {
         this.javascript = javascript;
     }
+
+    /**
+     * When both the {@link #instanceType} and the {@link #constructor} are set
+     * we need to check that it is all setup properly
+     */
+    private void checkConstructor()
+    {
+        parameters.clear();
+
+        // Convert a paramString into a list of parameters
+        StringTokenizer st = new StringTokenizer(paramsString, ",");
+        while (st.hasMoreTokens())
+        {
+            String paramString = st.nextToken().trim();
+            String[] paramParts = paramString.split(" ");
+
+            if (paramParts.length != 2)
+            {
+                log.error("Parameter list for " + instanceType.getName() + " includes parameter '" + paramString + "' that can't be parsed into a [type] and [name]");
+                throw new IllegalArgumentException("Badly formatted constructor parameter list. See log console for details.");
+            }
+
+            try
+            {
+                Class<?> type = LocalUtil.classForName(paramParts[0]);
+                Pair<Class<?>, String> parameter = new Pair<Class<?>, String>(type, paramParts[1]);
+                parameters.add(parameter);
+            }
+            catch (ClassNotFoundException ex)
+            {
+                log.error("Parameter list for " + instanceType.getName() + " includes unknown type '" + paramParts[0] + "'");
+                throw new IllegalArgumentException("Unknown type in constructor parameter list. See log console for details.");
+            }
+        }
+
+        // Find a constructor to match
+        List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+        for (Pair<java.lang.Class<?>,java.lang.String> parameter : parameters)
+        {
+            parameterTypes.add(parameter.left);
+        }
+        Class<?>[] paramTypeArray = parameterTypes.toArray(new Class<?>[parameterTypes.size()]);
+
+        try
+        {
+            constructor = instanceType.getConstructor(paramTypeArray);
+        }
+        catch (Exception ex)
+        {
+            log.error("Constructor not found for " + instanceType.getName() + " with types " + parameterTypes);
+            throw new IllegalArgumentException("Constructor not found. See log console for details.");
+        }
+    }
+
+    /**
+     * Stored temporarily until the {@link #instanceType} is known
+     */
+    private String paramsString;
+
+    /**
+     * The constructor to use if we are doing constructor injection
+     */
+    protected Constructor<?> constructor = null;
+
+    /**
+     * If we are doing constructor injection, this is the type list
+     */
+    protected final List<Pair<Class<?>, String>> parameters = new ArrayList<Pair<Class<?>,String>>();
 
     /**
      * The javascript class name for the converted objects

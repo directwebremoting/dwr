@@ -130,7 +130,9 @@
     <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
     <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
     <convert converter="bean" match="org.directwebremoting.io.Item"/>
-    <convert converter="bean" match="org.directwebremoting.io.ItemUpdate"/>
+    <convert converter="bean" match="org.directwebremoting.io.ItemUpdate">
+      <param name="constructor" value="String itemId, String attribute, RawData newValue"/>
+    </convert>
     <convert converter="bean" match="org.directwebremoting.io.MatchedItems"/>
     <convert converter="proxyFunction" match="org.directwebremoting.io.JavascriptFunction"/>
     <convert converter="proxyObject" match="org.directwebremoting.io.JavascriptObject"/>
@@ -141,7 +143,7 @@
 
     <!--
       TODO: enable constructor injection?
-      <param name="useConstructor" value="int start, int count, List sortCriteria, Map filter"/>
+      <param name="constructor" value="int start, int count, List sortCriteria, Map filter"/>
     -->
     <convert converter="bean" match="org.directwebremoting.io.SortCriterion"/>
     <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>

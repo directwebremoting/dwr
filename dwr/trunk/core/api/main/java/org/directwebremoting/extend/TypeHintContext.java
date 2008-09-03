@@ -40,6 +40,18 @@ public class TypeHintContext
     /**
      * External setup this object
      * @param converterManager For when we can't work out the parameterized type info
+     */
+    public TypeHintContext(ConverterManager converterManager)
+    {
+        this.converterManager = converterManager;
+        this.method = null;
+        this.parameterNumber = 0;
+        this.parameterType = null;
+    }
+
+    /**
+     * External setup this object
+     * @param converterManager For when we can't work out the parameterized type info
      * @param method The method to annotate
      * @param parameterNumber The number of the parameter to edit (counts from 0)
      */
@@ -70,9 +82,41 @@ public class TypeHintContext
         {
             this.parameterType = null;
         }
+    }
 
-        parameterNumberTree = new ArrayList<Integer>();
-        parameterTypeTree = new ArrayList<Type>();
+    /**
+     * External setup this object
+     * @param converterManager For when we can't work out the parameterized type info
+     * @param property The property to annotate
+     * @param parameterNumber The number of the parameter to edit (counts from 0)
+     */
+    public TypeHintContext(ConverterManager converterManager, Property property, int parameterNumber)
+    {
+        this.converterManager = converterManager;
+        this.method = null;
+        this.parameterNumber = parameterNumber;
+
+        if (method != null)
+        {
+            Type[] types = method.getGenericParameterTypes();
+            if (types != null && types.length > 0)
+            {
+                if (parameterNumber >= types.length)
+                {
+                    throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+                }
+
+                this.parameterType = types[parameterNumber];
+            }
+            else
+            {
+                this.parameterType = null;
+            }
+        }
+        else
+        {
+            this.parameterType = null;
+        }
     }
 
     /**
@@ -88,9 +132,6 @@ public class TypeHintContext
         this.method = method;
         this.parameterNumber = parameterNumber;
         this.parameterType = parameterType;
-
-        parameterNumberTree = new ArrayList<Integer>();
-        parameterTypeTree = new ArrayList<Type>();
     }
 
     /**
@@ -302,12 +343,12 @@ public class TypeHintContext
     /**
      * The list of generic parameters that we have dug into
      */
-    private final List<Integer> parameterNumberTree;
+    private final List<Integer> parameterNumberTree = new ArrayList<Integer>();
 
     /**
      * The list of generic parameters that we have dug into
      */
-    private final List<Type> parameterTypeTree;
+    private final List<Type> parameterTypeTree = new ArrayList<Type>();
 
     /**
      * The log stream

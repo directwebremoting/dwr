@@ -167,7 +167,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
 
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext(converterManager, null, 0);
+        TypeHintContext typeHintContext = new TypeHintContext(converterManager);
 
         T value = converterManager.convertInbound(type, inboundVariable, typeHintContext);
         return value;
@@ -193,7 +193,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
 
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext(converterManager, null, 0);
+        TypeHintContext typeHintContext = new TypeHintContext(converterManager);
 
         Object value = converterManager.convertInbound(toType, inboundVariable, typeHintContext);
         return value;

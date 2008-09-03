@@ -16,7 +16,6 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
 
@@ -81,15 +80,15 @@ public class FieldProperty implements Property
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#getSetter()
+     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
-    public Method getSetter()
+    public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
     {
-        return null;
+        return new TypeHintContext(converterManager, this, 0);
     }
 
     /**
      * The Field that we are proxying to
      */
-    private Field field;
+    private final Field field;
 }

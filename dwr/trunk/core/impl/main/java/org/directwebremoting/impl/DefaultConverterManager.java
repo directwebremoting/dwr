@@ -181,7 +181,7 @@ public class DefaultConverterManager implements ConverterManager
     {
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext(this, null, 0);
+        TypeHintContext typeHintContext = new TypeHintContext(this);
 
         return convertInbound(paramType, inboundVariable, typeHintContext);
     }

@@ -96,6 +96,6 @@ public class BeanConverter extends BasicObjectConverter
     @Override
     protected TypeHintContext createTypeHintContext(InboundContext inctx, Property property)
     {
-        return new TypeHintContext(converterManager, property.getSetter(), 0);
+        return property.createTypeHintContext(converterManager, inctx);
     }
 }

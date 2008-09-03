@@ -32,13 +32,13 @@ public interface Property
      * Gets the name of this property
      * @return The property name
      */
-    public String getName();
+    String getName();
 
     /**
      * What type does this property
      * @return The type of object that will be returned by {@link #getValue(Object)}
      */
-    public Class<?> getPropertyType();
+    Class<?> getPropertyType();
 
     /**
      * Get the value of this property of the passed in java bean
@@ -46,7 +46,7 @@ public interface Property
      * @return The value assigned to this property of the passed in bean
      * @throws ConversionException If the reflection access fails
      */
-    public Object getValue(Object bean) throws ConversionException;
+    Object getValue(Object bean) throws ConversionException;
 
     /**
      * Set the value of this property of the passed in java bean
@@ -54,14 +54,15 @@ public interface Property
      * @param value The value assigned to this property of the passed in bean
      * @throws ConversionException If the reflection access fails
      */
-    public void setValue(Object bean, Object value) throws ConversionException;
+    void setValue(Object bean, Object value) throws ConversionException;
 
     /**
+     * @param rewritethisjavadoc
      * This is a nasty hack - {@link TypeInfo} needs a {@link Method}.
      * If you are implementing this and not proxying to a {@link PropertyDescriptor}
      * then you can probably return <code>null</code>.
      * We should probably refactor {@link TypeInfo} to use {@link Property}
      * @return A setter method if one is available, or null otherwise
      */
-    public Method getSetter();
+    TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx);
 }
