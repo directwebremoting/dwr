@@ -35,9 +35,7 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.DebugPageGenerator;
 import org.directwebremoting.extend.DwrConstants;
-import org.directwebremoting.servlet.EngineHandler;
 import org.directwebremoting.servlet.PathConstants;
-import org.directwebremoting.servlet.UtilHandler;
 import org.directwebremoting.util.CopyUtils;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
@@ -435,17 +433,17 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     }
 
     /**
-     * The URL for the {@link EngineHandler}
+     * The URL for the {@link org.directwebremoting.servlet.EngineHandler}
      */
     protected String engineHandlerUrl;
 
     /**
-     * The URL for the {@link UtilHandler}
+     * The URL for the {@link org.directwebremoting.ui.servlet.UtilHandler}
      */
     protected String utilHandlerUrl;
 
     /**
-     * The URL for the {@link UtilHandler}
+     * The URL for the {@link org.directwebremoting.servlet.TestHandler}
      */
     protected String testHandlerUrl;
 
