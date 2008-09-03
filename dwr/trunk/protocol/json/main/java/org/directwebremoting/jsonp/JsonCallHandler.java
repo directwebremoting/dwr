@@ -36,6 +36,8 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
@@ -74,7 +76,7 @@ public class JsonCallHandler implements Handler
             for (int i = 0; i < replies.getReplyCount(); i++)
             {
                 Reply reply = replies.getReply(i);
-            
+
                 try
                 {
                     // The existence of a throwable indicates that something went wrong
@@ -82,7 +84,7 @@ public class JsonCallHandler implements Handler
                     {
                         Throwable ex = reply.getThrowable();
                         writeData(out, ex);
-            
+
                         log.warn("--Erroring: message[" + ex.toString() + ']');
                     }
                     else
@@ -192,7 +194,8 @@ public class JsonCallHandler implements Handler
         {
             Class<?> paramType = method.getParameterTypes()[j];
             InboundVariable param = inboundContext.getParameter(0, j);
-            TypeHintContext incc = new TypeHintContext(converterManager, method, j);
+            Property property = new ParameterProperty(method, j);
+            TypeHintContext incc = new TypeHintContext(converterManager, property, j);
 
             try
             {

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.util.CompareUtil;
 
 /**
  * {@link TypeHintContext} is a way to provide help to the converter in
@@ -45,43 +46,9 @@ public class TypeHintContext
     {
         this.converterManager = converterManager;
         this.method = null;
+        this.property = null;
         this.parameterNumber = 0;
         this.parameterType = null;
-    }
-
-    /**
-     * External setup this object
-     * @param converterManager For when we can't work out the parameterized type info
-     * @param method The method to annotate
-     * @param parameterNumber The number of the parameter to edit (counts from 0)
-     */
-    public TypeHintContext(ConverterManager converterManager, Method method, int parameterNumber)
-    {
-        this.converterManager = converterManager;
-        this.method = method;
-        this.parameterNumber = parameterNumber;
-
-        if (method != null)
-        {
-            Type[] types = method.getGenericParameterTypes();
-            if (types != null && types.length > 0)
-            {
-                if (parameterNumber >= types.length)
-                {
-                    throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
-                }
-
-                this.parameterType = types[parameterNumber];
-            }
-            else
-            {
-                this.parameterType = null;
-            }
-        }
-        else
-        {
-            this.parameterType = null;
-        }
     }
 
     /**
@@ -93,11 +60,12 @@ public class TypeHintContext
     public TypeHintContext(ConverterManager converterManager, Property property, int parameterNumber)
     {
         this.converterManager = converterManager;
-        this.method = null;
+        this.property = property;
         this.parameterNumber = parameterNumber;
 
-        if (method != null)
+        if (property instanceof SetterProperty)
         {
+            this.method = ((SetterProperty) property).getSetter();
             Type[] types = method.getGenericParameterTypes();
             if (types != null && types.length > 0)
             {
@@ -115,6 +83,7 @@ public class TypeHintContext
         }
         else
         {
+            this.method = null;
             this.parameterType = null;
         }
     }
@@ -130,6 +99,7 @@ public class TypeHintContext
     {
         this.converterManager = manager;
         this.method = method;
+        this.property = null;
         this.parameterNumber = parameterNumber;
         this.parameterType = parameterType;
     }
@@ -215,14 +185,12 @@ public class TypeHintContext
     @Override
     public int hashCode()
     {
-        if (method == null)
-        {
-            return parameterNumber + parameterNumberTree.hashCode();
-        }
-        else
-        {
-            return method.hashCode() + parameterNumber + parameterNumberTree.hashCode();
-        }
+        int hash = 1488;
+        hash += (method == null) ? 64 : method.hashCode();
+        //hash += (property == null) ? 64 : property.hashCode();
+        hash += parameterNumber;
+        hash += (parameterNumberTree == null) ? 4648 : parameterNumberTree.hashCode();
+        return hash;
     }
 
     /* (non-Javadoc)
@@ -248,20 +216,17 @@ public class TypeHintContext
 
         TypeHintContext that = (TypeHintContext) obj;
 
-        if (this.method == null)
+        if (!CompareUtil.equals(this.method, that.method))
         {
-            if (that.method != null)
-            {
-                return false;
-            }
+            return false;
         }
-        else
+
+        /*
+        if (!CompareUtil.equals(this.property, that.property))
         {
-            if (!this.method.equals(that.method))
-            {
-                return false;
-            }
+            return false;
         }
+        */
 
         if (this.parameterNumber != that.parameterNumber)
         {
@@ -274,7 +239,6 @@ public class TypeHintContext
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    // This really wants to go in the second loop but see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6297416
     @SuppressWarnings("unused")
     @Override
     public String toString()
@@ -329,6 +293,11 @@ public class TypeHintContext
      * The method that the conversion is happening for
      */
     private final Method method;
+
+    /**
+     * The property that the conversion is happening for
+     */
+    private final Property property;
 
     /**
      * The parameter of the method that the conversion is happening for

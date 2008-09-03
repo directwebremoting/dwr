@@ -38,6 +38,8 @@ import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.PageNormalizer;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
@@ -188,7 +190,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 {
                     Class<?> paramType = method.getParameterTypes()[j];
                     InboundVariable param = inctx.getParameter(callNum, j);
-                    TypeHintContext incc = new TypeHintContext(converterManager, method, j);
+                    Property property = new ParameterProperty(method, j);
+                    TypeHintContext incc = new TypeHintContext(converterManager, property, j);
                     params[j] = converterManager.convertInbound(paramType, param, incc);
                 }
                 catch (ConversionException ex)

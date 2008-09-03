@@ -17,6 +17,7 @@ package org.directwebremoting.extend;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
 
@@ -24,7 +25,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that proxies to a {@link PropertyDescriptor}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PropertyDescriptorProperty implements Property
+public class PropertyDescriptorProperty implements SetterProperty
 {
     /**
      * @param descriptor The PropertyDescriptor that we are proxying to
@@ -93,7 +94,15 @@ public class PropertyDescriptorProperty implements Property
      */
     public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
     {
-        return new TypeHintContext(converterManager, descriptor.getWriteMethod(), 0);
+        return new TypeHintContext(converterManager, this, 0);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.SetterProperty#getSetter()
+     */
+    public Method getSetter()
+    {
+        return descriptor.getReadMethod();
     }
 
     /* (non-Javadoc)

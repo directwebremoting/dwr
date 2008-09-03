@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 
@@ -184,7 +186,8 @@ public class SignatureParser
 
                 if (clazz != null)
                 {
-                    TypeHintContext thc = new TypeHintContext(converterManager, method, i).createChildContext(j);
+                    Property property = new ParameterProperty(method, i);
+                    TypeHintContext thc = new TypeHintContext(converterManager, property, i).createChildContext(j);
                     converterManager.setExtraTypeInfo(thc, clazz);
 
                     if (log.isDebugEnabled())
@@ -418,22 +421,22 @@ public class SignatureParser
     /**
      * The map of specific class imports that we have parsed.
      */
-    private Map<String, String> classImports = new HashMap<String, String>();
+    private final Map<String, String> classImports = new HashMap<String, String>();
 
     /**
      * The map of package imports that we have parsed.
      */
-    private List<String> packageImports = new ArrayList<String>();
+    private final List<String> packageImports = new ArrayList<String>();
 
     /**
      * Having understood the extra type info we add it in here.
      */
-    private ConverterManager converterManager;
+    private final ConverterManager converterManager;
 
     /**
      * If we can't find a class by Java name we can lookup by Javascript name
      */
-    private CreatorManager creatorManager;
+    private final CreatorManager creatorManager;
 
     /**
      * The log stream
