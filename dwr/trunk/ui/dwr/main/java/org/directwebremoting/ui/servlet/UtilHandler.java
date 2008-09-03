@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.servlet;
+package org.directwebremoting.ui.servlet;
 
 import org.directwebremoting.extend.DwrConstants;
+import org.directwebremoting.servlet.FileJavaScriptHandler;
 
 /**
  * A Handler that supports requests for util.js
@@ -28,6 +29,6 @@ public class UtilHandler extends FileJavaScriptHandler
      */
     public UtilHandler()
     {
-        super(DwrConstants.PACKAGE + "/util.js");
+        super(DwrConstants.PACKAGE + "/ui/servlet/util.js");
     }
 }
