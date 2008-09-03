@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <title>DWR + Dojo</title>
+  <title>DWR + Dojo Demo</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <style type="text/css">
     @import "dojo/dojo/resources/dojo.css";
@@ -10,6 +10,8 @@
     @import "dojo/dojox/grid/resources/tundraGrid.css";
     @import "dojo-demo.css";
   </style>
+  <link rel="stylesheet" type="text/css" href="../../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../../generic.css" />
   <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true"> </script>
   <script type="text/javascript" src="dojo/dijit/dijit.js"> </script>
   <script type="text/javascript" src="../dwr/DwrStore.js"> </script>
@@ -27,7 +29,11 @@
     dwrStore = new DwrStore("testServerData", { subscribe:true });
     grid = dijit.byId("grid");
     grid.setStore(dwrStore);
+
     dwr.engine.setActiveReverseAjax(true);
+
+    // Nothing to do with this demo - just to manage the documentation
+    Tabs.init('tabList', 'tabContents');
   });
 
   addRow = function(){
@@ -36,8 +42,12 @@
   </script>
 </head>
 <body class="tundra">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
 
-<h1>DWR + Dojo</h1>
+<h1>DWR + Dojo Demo</h1>
 
 <table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" defaultHeight="300px">
   <thead>
