@@ -40,6 +40,8 @@ import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.LogErrorHandler;
@@ -393,7 +395,7 @@ public class DwrXmlConfigurator implements Configurator
             Element include = (Element) incNodes.item(i);
             String method = include.getAttribute(ATTRIBUTE_METHOD);
             accessControl.addIncludeRule(javascript, method);
-            
+
             if (include.hasAttribute(ATTRIBUTE_ROLE))
             {
                 String role = include.getAttribute(ATTRIBUTE_ROLE);
@@ -533,7 +535,8 @@ public class DwrXmlConfigurator implements Configurator
             {
                 String type = st.nextToken();
                 Class<?> clazz = LocalUtil.classForName(type.trim());
-                TypeHintContext thc = new TypeHintContext(converterManager, method, paramNo).createChildContext(j);
+                Property property = new ParameterProperty(method, paramNo);
+                TypeHintContext thc = new TypeHintContext(converterManager, property, paramNo).createChildContext(j);
                 j++;
                 converterManager.setExtraTypeInfo(thc, clazz);
             }

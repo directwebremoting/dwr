@@ -75,6 +75,38 @@ public class PlainProperty implements Property
         return new TypeHintContext(converterManager, this, 0);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        int hash = 141;
+        hash += (name == null) ? 2886 : name.hashCode();
+        return hash;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+        {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass())
+        {
+            return false;
+        }
+
+        PlainProperty that = (PlainProperty) obj;
+
+        return this.name.equals(that.name);
+    }
+
     /**
      * The name of this property
      */

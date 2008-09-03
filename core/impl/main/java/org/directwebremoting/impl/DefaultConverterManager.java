@@ -35,6 +35,8 @@ import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.RawData;
@@ -237,7 +239,8 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setTypeInfo(Method method, int i, int j, Class<?> clazz)
     {
-        TypeHintContext thc = new TypeHintContext(this, method, i).createChildContext(j);
+        Property property = new ParameterProperty(method, i);
+        TypeHintContext thc = new TypeHintContext(this, property, i).createChildContext(j);
         this.setExtraTypeInfo(thc, clazz);
     }
 

@@ -18,6 +18,8 @@ package org.directwebremoting.impl;
 import java.lang.reflect.Method;
 
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.extend.TypeInfo;
 
@@ -44,7 +46,8 @@ public class TypeHintContextTypeInfo implements TypeInfo
     public TypeHintContextTypeInfo(Class<?> primaryType, ConverterManager converterManager, Method method, int i)
     {
         this.primaryType = primaryType;
-        icc = new TypeHintContext(converterManager, method, i);
+        Property property = new ParameterProperty(method, i);
+        icc = new TypeHintContext(converterManager, property, i);
     }
 
     /* (non-Javadoc)
@@ -66,10 +69,10 @@ public class TypeHintContextTypeInfo implements TypeInfo
         return primaryType;
     }
 
-    private TypeHintContext icc;
+    private final TypeHintContext icc;
 
     /**
      * The type about which we don't understand the any generic type info
      */
-    private Class<?> primaryType;
+    private final Class<?> primaryType;
 }

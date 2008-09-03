@@ -15,29 +15,27 @@
  */
 package org.directwebremoting.extend;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import org.directwebremoting.ConversionException;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ConstructorProperty implements Property
+public class ParameterProperty implements SetterProperty
 {
     /**
-     * @param constructor
-     * @param parameterName
-     * @param parameterNum
+     * @param method
+     * @param parameterNumber
      */
-    public ConstructorProperty(Constructor<?> constructor, String parameterName, int parameterNum)
+    public ParameterProperty(Method method, int parameterNumber)
     {
-        this.constructor = constructor;
-        this.parameterName = parameterName;
-        this.parameterNum = parameterNum;
+        this.method = method;
+        this.parameterNumber = parameterNumber;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
+     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.ConverterManager, org.directwebremoting.extend.InboundContext)
      */
     public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
     {
@@ -49,7 +47,7 @@ public class ConstructorProperty implements Property
      */
     public String getName()
     {
-        return parameterName;
+        return "parameter" + parameterNumber;
     }
 
     /* (non-Javadoc)
@@ -57,7 +55,7 @@ public class ConstructorProperty implements Property
      */
     public Class<?> getPropertyType()
     {
-        return constructor.getParameterTypes()[parameterNum];
+        return method.getParameterTypes()[parameterNumber];
     }
 
     /* (non-Javadoc)
@@ -65,7 +63,7 @@ public class ConstructorProperty implements Property
      */
     public Object getValue(Object bean) throws ConversionException
     {
-        throw new UnsupportedOperationException("Can't get value from constructor parameter");
+        throw new UnsupportedOperationException("Can't get value from method parameter");
     }
 
     /* (non-Javadoc)
@@ -73,7 +71,15 @@ public class ConstructorProperty implements Property
      */
     public void setValue(Object bean, Object value) throws ConversionException
     {
-        throw new UnsupportedOperationException("Can't set value to constructor parameter");
+        throw new UnsupportedOperationException("Can't set value to method parameter");
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.SetterProperty#getSetter()
+     */
+    public Method getSetter()
+    {
+        return method;
     }
 
     /* (non-Javadoc)
@@ -82,7 +88,7 @@ public class ConstructorProperty implements Property
     @Override
     public int hashCode()
     {
-        return constructor.hashCode() + parameterNum;
+        return method.hashCode() + parameterNumber;
     }
 
     /* (non-Javadoc)
@@ -101,19 +107,17 @@ public class ConstructorProperty implements Property
             return false;
         }
 
-        ConstructorProperty that = (ConstructorProperty) obj;
+        ParameterProperty that = (ParameterProperty) obj;
 
-        if (!this.constructor.equals(that.constructor))
+        if (!this.method.equals(that.method))
         {
             return false;
         }
 
-        return this.parameterNum == that.parameterNum;
+        return this.parameterNumber == that.parameterNumber;
     }
 
-    private final Constructor<?> constructor;
+    private final Method method;
 
-    private final String parameterName;
-
-    private final int parameterNum;
+    private final int parameterNumber;
 }

@@ -25,6 +25,8 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.ParameterProperty;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.ui.Callback;
@@ -80,7 +82,8 @@ public class DefaultCallbackHelper implements CallbackHelper
         {
             Method method = Callback.class.getMethod("dataReturned", type);
 
-            TypeHintContext incc = new TypeHintContext(converterManager, method, 0);
+            Property property = new ParameterProperty(method, 0);
+            TypeHintContext incc = new TypeHintContext(converterManager, property, 0);
             InboundVariable iv = data.getInboundVariable();
             Object callbackData  = converterManager.convertInbound(type, iv, incc);
 

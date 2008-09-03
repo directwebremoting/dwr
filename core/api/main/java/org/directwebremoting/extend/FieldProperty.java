@@ -87,6 +87,36 @@ public class FieldProperty implements Property
         return new TypeHintContext(converterManager, this, 0);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return field.hashCode();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+        {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass())
+        {
+            return false;
+        }
+
+        FieldProperty that = (FieldProperty) obj;
+
+        return this.field.equals(that.field);
+    }
+
     /**
      * The Field that we are proxying to
      */
