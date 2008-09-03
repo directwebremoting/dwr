@@ -127,7 +127,7 @@ public class H3BeanConverter extends BeanConverter
     }
 
     /**
-     * Hibernate makes {@link Class#getClass()} diffficult ...
+     * Hibernate makes {@link Class#getClass()} difficult ...
      * @param example The class that we want to call {@link Class#getClass()} on
      * @return The type of the given object
      */
