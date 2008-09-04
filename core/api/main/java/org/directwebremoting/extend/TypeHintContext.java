@@ -45,10 +45,8 @@ public class TypeHintContext
     public TypeHintContext(ConverterManager converterManager)
     {
         this.converterManager = converterManager;
-        this.method = null;
         this.property = null;
         this.parameterNumber = 0;
-        this.parameterType = null;
     }
 
     /**
@@ -62,46 +60,6 @@ public class TypeHintContext
         this.converterManager = converterManager;
         this.property = property;
         this.parameterNumber = parameterNumber;
-
-        if (property instanceof SetterProperty)
-        {
-            this.method = ((SetterProperty) property).getSetter();
-            Type[] types = method.getGenericParameterTypes();
-            if (types != null && types.length > 0)
-            {
-                if (parameterNumber >= types.length)
-                {
-                    throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
-                }
-
-                this.parameterType = types[parameterNumber];
-            }
-            else
-            {
-                this.parameterType = null;
-            }
-        }
-        else
-        {
-            this.method = null;
-            this.parameterType = null;
-        }
-    }
-
-    /**
-     * Internal setup for nested object
-     * @param manager For when we can't work out the parameterized type info
-     * @param method The method to annotate
-     * @param parameterNumber The number of the parameter to edit (counts from 0)
-     * @param parameterType The Type for this context
-     */
-    private TypeHintContext(ConverterManager manager, Method method, int parameterNumber, Type parameterType)
-    {
-        this.converterManager = manager;
-        this.method = method;
-        this.property = null;
-        this.parameterNumber = parameterNumber;
-        this.parameterType = parameterType;
     }
 
     /**
@@ -111,22 +69,33 @@ public class TypeHintContext
      */
     public TypeHintContext createChildContext(int newParameterNumber)
     {
-        Type childType = null;
-
-        if (parameterType instanceof ParameterizedType)
+        Method method = null;
+        Type parameterType = null;
+        if (property instanceof MethodProperty)
         {
-            ParameterizedType ptype = (ParameterizedType) parameterType;
-            Type[] actualTypeArguments = ptype.getActualTypeArguments();
+            method = ((MethodProperty) property).getMethod();
 
-            if (newParameterNumber >= actualTypeArguments.length)
+            if (property instanceof NestedProperty)
             {
-                throw new IllegalArgumentException("newParameterNumber=" + newParameterNumber + " is too big when parameterType=" + parameterType + " give actualTypeArguments.length=" + actualTypeArguments.length);
+                parameterType = ((NestedProperty) property).getParameterType();
             }
+            else
+            {
+                Type[] types = method.getGenericParameterTypes();
+                if (types != null && types.length > 0)
+                {
+                    if (parameterNumber >= types.length)
+                    {
+                        throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+                    }
 
-            childType = actualTypeArguments[newParameterNumber];
+                    parameterType = types[parameterNumber];
+                }
+            }
         }
 
-        TypeHintContext child = new TypeHintContext(converterManager, this.method, this.parameterNumber, childType);
+        Property childProperty = new NestedProperty(method, parameterType, parameterNumber, newParameterNumber);
+        TypeHintContext child = childProperty.createTypeHintContext(converterManager);
 
         child.parameterNumberTree.addAll(this.parameterNumberTree);
         child.parameterNumberTree.add(newParameterNumber);
@@ -153,6 +122,31 @@ public class TypeHintContext
             {
                 log.debug("Using type info from <signature> " + toString() + " of " + type);
                 return type;
+            }
+        }
+
+        Type parameterType = null;
+        if (property instanceof MethodProperty)
+        {
+            if (property instanceof NestedProperty)
+            {
+                parameterType = ((NestedProperty) property).getParameterType();
+            }
+            else
+            {
+                Method method = null;
+                method = ((MethodProperty) property).getMethod();
+
+                Type[] types = method.getGenericParameterTypes();
+                if (types != null && types.length > 0)
+                {
+                    if (parameterNumber >= types.length)
+                    {
+                        throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+                    }
+
+                    parameterType = types[parameterNumber];
+                }
             }
         }
 
@@ -186,11 +180,10 @@ public class TypeHintContext
     public int hashCode()
     {
         int hash = 1488;
-        hash += (method == null) ? 64 : method.hashCode();
-        //hash += (property == null) ? 64 : property.hashCode();
+        hash += (property == null) ? 64 : property.hashCode();
         hash += parameterNumber;
         hash += (parameterNumberTree == null) ? 4648 : parameterNumberTree.hashCode();
-        return hash;
+        return 1;
     }
 
     /* (non-Javadoc)
@@ -216,17 +209,10 @@ public class TypeHintContext
 
         TypeHintContext that = (TypeHintContext) obj;
 
-        if (!CompareUtil.equals(this.method, that.method))
-        {
-            return false;
-        }
-
-        /*
         if (!CompareUtil.equals(this.property, that.property))
         {
             return false;
         }
-        */
 
         if (this.parameterNumber != that.parameterNumber)
         {
@@ -243,56 +229,13 @@ public class TypeHintContext
     @Override
     public String toString()
     {
-        if (cachedToString == null)
-        {
-            StringBuffer buffer = new StringBuffer();
-
-            if (method == null)
-            {
-                buffer.append("UnknownMethod");
-            }
-            else
-            {
-                buffer.append(method.getDeclaringClass().getName());
-                buffer.append(".");
-                buffer.append(method.getName());
-            }
-            buffer.append("(param#=");
-            buffer.append(parameterNumber);
-
-            for (Integer i : parameterNumberTree)
-            {
-                buffer.append('<');
-                buffer.append(i);
-            }
-
-            for (Integer i : parameterNumberTree)
-            {
-                buffer.append('>');
-            }
-
-            buffer.append(')');
-
-            cachedToString = buffer.toString();
-        }
-
-        return cachedToString;
+        return property.toString();
     }
 
     /**
      * When we can't work out a parameterized type, then we can ask here
      */
     private final ConverterManager converterManager;
-
-    /**
-     * Calculating toString could be costly, so we cache it
-     */
-    private String cachedToString = null;
-
-    /**
-     * The method that the conversion is happening for
-     */
-    private final Method method;
 
     /**
      * The property that the conversion is happening for
@@ -303,11 +246,6 @@ public class TypeHintContext
      * The parameter of the method that the conversion is happening for
      */
     private final int parameterNumber;
-
-    /**
-     * The type parameter of the method that the conversion is happening for
-     */
-    private final Type parameterType;
 
     /**
      * The list of generic parameters that we have dug into

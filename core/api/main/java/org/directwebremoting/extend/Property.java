@@ -64,5 +64,5 @@ public interface Property
      * We should probably refactor {@link TypeInfo} to use {@link Property}
      * @return A setter method if one is available, or null otherwise
      */
-    TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx);
+    TypeHintContext createTypeHintContext(ConverterManager converterManager);
 }

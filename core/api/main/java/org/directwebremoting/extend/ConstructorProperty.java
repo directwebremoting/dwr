@@ -39,9 +39,9 @@ public class ConstructorProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
+    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, 0);
+        return new TypeHintContext(converterManager, this, parameterNum);
     }
 
     /* (non-Javadoc)

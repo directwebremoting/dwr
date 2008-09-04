@@ -25,7 +25,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that proxies to a {@link PropertyDescriptor}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PropertyDescriptorProperty implements SetterProperty
+public class PropertyDescriptorProperty implements MethodProperty
 {
     /**
      * @param descriptor The PropertyDescriptor that we are proxying to
@@ -92,15 +92,15 @@ public class PropertyDescriptorProperty implements SetterProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager, InboundContext inctx)
+    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
         return new TypeHintContext(converterManager, this, 0);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.SetterProperty#getSetter()
+     * @see org.directwebremoting.extend.MethodProperty#getSetter()
      */
-    public Method getSetter()
+    public Method getMethod()
     {
         return descriptor.getReadMethod();
     }
@@ -112,6 +112,41 @@ public class PropertyDescriptorProperty implements SetterProperty
     public String toString()
     {
         return "PropertyDescriptorProperty[" + descriptor.getName() + "=" + descriptor.getPropertyType() + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        return descriptor.getReadMethod().hashCode() /* + parameterNumber */;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this)
+        {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass())
+        {
+            return false;
+        }
+
+        PropertyDescriptorProperty that = (PropertyDescriptorProperty) obj;
+
+        if (!this.descriptor.getReadMethod().equals(that.descriptor.getReadMethod()))
+        {
+            return false;
+        }
+
+        return true /* this.parameterNumber == that.parameterNumber */;
     }
 
     /**

@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface SetterProperty extends Property
+public interface MethodProperty extends Property
 {
-    Method getSetter();
+    Method getMethod();
 }
