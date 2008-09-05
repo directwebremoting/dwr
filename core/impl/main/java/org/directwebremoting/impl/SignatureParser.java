@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -60,7 +59,7 @@ public class SignatureParser
     {
         try
         {
-            log.debug("Parsing extra type info: ");
+            slog.debug("Parsing extra type info: ");
 
             String reply = LegacyCompressor.stripMultiLineComments(sigtext);
             reply = LegacyCompressor.stripSingleLineComments(reply);
@@ -92,7 +91,7 @@ public class SignatureParser
         }
         catch (Exception ex)
         {
-            log.error("Unexpected Error", ex);
+            slog.error("Unexpected Error", ex);
         }
     }
 
@@ -115,7 +114,7 @@ public class SignatureParser
             int lastDot = line.lastIndexOf('.');
             if (lastDot == -1)
             {
-                log.error("Missing . from import statement: " + line);
+                slog.error("Missing . from import statement: " + line);
                 return;
             }
 
@@ -136,19 +135,19 @@ public class SignatureParser
 
         if (openBrace == -1)
         {
-            log.error("Missing ( in declaration: " + line);
+            slog.error("Missing ( in declaration: " + line);
             return;
         }
 
         if (closeBrace == -1)
         {
-            log.error("Missing ) in declaration: " + line);
+            slog.error("Missing ) in declaration: " + line);
             return;
         }
 
         if (openBrace > closeBrace)
         {
-            log.error("( Must come before ) in declaration: " + line);
+            slog.error("( Must come before ) in declaration: " + line);
             return;
         }
 
@@ -169,10 +168,10 @@ public class SignatureParser
         // Check that we have the right number
         if (method.getParameterTypes().length != paramNames.length)
         {
-            log.error("Parameter mismatch parsing signatures section in dwr.xml on line: " + line);
-            log.info("- Reflected method had: " + method.getParameterTypes().length + " parameters: " + method.toString());
-            log.info("- Signatures section had: " + paramNames.length + " parameters");
-            log.info("- This can be caused by method overloading which is not supported by Javascript or DWR");
+            slog.error("Parameter mismatch parsing signatures section in dwr.xml on line: " + line);
+            slog.info("- Reflected method had: " + method.getParameterTypes().length + " parameters: " + method.toString());
+            slog.info("- Signatures section had: " + paramNames.length + " parameters");
+            slog.info("- This can be caused by method overloading which is not supported by Javascript or DWR");
             return;
         }
 
@@ -187,17 +186,17 @@ public class SignatureParser
                 if (clazz != null)
                 {
                     Property property = new ParameterProperty(method, i);
-                    TypeHintContext thc = new TypeHintContext(converterManager, property, i).createChildContext(j);
+                    TypeHintContext thc = new TypeHintContext(property).createChildContext(converterManager, j);
                     converterManager.setExtraTypeInfo(thc, clazz);
 
-                    if (log.isDebugEnabled())
+                    if (slog.isDebugEnabled())
                     {
-                        log.debug("- " + thc + " = " + clazz.getName());
+                        slog.debug("- " + thc + " = " + clazz.getName());
                     }
                 }
                 else
                 {
-                    log.warn("Missing class (" + type + ") while parsing signature section on line: " + line);
+                    slog.warn("Missing class (" + type + ") while parsing signature section on line: " + line);
                 }
             }
         }
@@ -215,7 +214,7 @@ public class SignatureParser
         // Handle inner classes
         if (itype.indexOf('.') != -1)
         {
-            log.debug("Inner class detected: " + itype);
+            slog.debug("Inner class detected: " + itype);
             itype = itype.replace('.', '$');
         }
 
@@ -257,16 +256,16 @@ public class SignatureParser
             return creator.getType();
         }
 
-        log.error("Failed to find class: '" + itype + "' from <signature> block.");
-        log.info("- Looked in the following class imports:");
+        slog.error("Failed to find class: '" + itype + "' from <signature> block.");
+        slog.info("- Looked in the following class imports:");
         for (Entry<String, String> entry : classImports.entrySet())
         {
-            log.info("  - " + entry.getKey() + " -> " + entry.getValue());
+            slog.info("  - " + entry.getKey() + " -> " + entry.getValue());
         }
-        log.info("- Looked in the following package imports:");
+        slog.info("- Looked in the following package imports:");
         for (String pkg : packageImports)
         {
-            log.info("  - " + pkg);
+            slog.info("  - " + pkg);
         }
 
         return null;
@@ -283,14 +282,14 @@ public class SignatureParser
         int openGeneric = paramName.indexOf('<');
         if (openGeneric == -1)
         {
-            log.debug("No < in paramter declaration: " + paramName);
+            slog.debug("No < in paramter declaration: " + paramName);
             return new String[0];
         }
 
         int closeGeneric = paramName.lastIndexOf('>');
         if (closeGeneric == -1)
         {
-            log.error("Missing > in generic declaration: " + paramName);
+            slog.error("Missing > in generic declaration: " + paramName);
             return new String[0];
         }
 
@@ -327,7 +326,7 @@ public class SignatureParser
         int lastDot = classMethodChop.lastIndexOf('.');
         if (lastDot == -1)
         {
-            log.error("Missing . to separate class name and method: " + classMethodChop);
+            slog.error("Missing . to separate class name and method: " + classMethodChop);
             return null;
         }
 
@@ -353,14 +352,14 @@ public class SignatureParser
                 }
                 else
                 {
-                    log.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
+                    slog.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
                 }
             }
         }
 
         if (method == null)
         {
-            log.error("Unable to find method called: " + methodName + " on type: " + clazz.getName());
+            slog.error("Unable to find method called: " + methodName + " on type: " + clazz.getName());
         }
 
         return method;
@@ -384,7 +383,7 @@ public class SignatureParser
             {
                 if (inGeneric)
                 {
-                    log.error("Found < while parsing generic section: " + paramDecl);
+                    slog.error("Found < while parsing generic section: " + paramDecl);
                     break;
                 }
 
@@ -395,7 +394,7 @@ public class SignatureParser
             {
                 if (!inGeneric)
                 {
-                    log.error("Found > while not parsing generic section: " + paramDecl);
+                    slog.error("Found > while not parsing generic section: " + paramDecl);
                     break;
                 }
 
@@ -440,6 +439,8 @@ public class SignatureParser
 
     /**
      * The log stream
+     * WARNING: This intentionally uses a logger from a different class to
+     * make it easy to control startup messages.
      */
-    public static final Log log = LogFactory.getLog(SignatureParser.class);
+    private static final Log slog = StartupUtil.slog;
 }

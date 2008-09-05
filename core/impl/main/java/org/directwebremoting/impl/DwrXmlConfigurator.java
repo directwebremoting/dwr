@@ -30,7 +30,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory;
@@ -85,7 +84,7 @@ public class DwrXmlConfigurator implements Configurator
                 throw new IOException("Missing config file: '" + servletResourceName + "'");
             }
 
-            log.debug("Configuring from servlet resource: " + servletResourceName);
+            slog.debug("Configuring from servlet resource: " + servletResourceName);
             setInputStream(in);
         }
         finally
@@ -111,7 +110,7 @@ public class DwrXmlConfigurator implements Configurator
             throw new IOException("Missing config file: '" + classResourceName + "'");
         }
 
-        log.debug("Configuring from class resource: " + classResourceName);
+        slog.debug("Configuring from class resource: " + classResourceName);
         setInputStream(in);
     }
 
@@ -180,7 +179,7 @@ public class DwrXmlConfigurator implements Configurator
     }
 
     /**
-     * Internal method to load the inits element
+     * Internal method to load the init element
      * @param child The element to read
      */
     private void loadInits(Element child)
@@ -253,11 +252,11 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (NoClassDefFoundError ex)
         {
-            log.info("Convertor '" + type + "' not loaded due to NoClassDefFoundError. (match='" + match + "'). Cause: " + ex.getMessage());
+            slog.info("Convertor '" + type + "' not loaded due to NoClassDefFoundError. (match='" + match + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            log.error("Failed to add convertor: match=" + match + ", type=" + type, ex);
+            slog.error("Failed to add convertor: match=" + match + ", type=" + type, ex);
         }
     }
 
@@ -282,11 +281,11 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (NoClassDefFoundError ex)
         {
-            log.info("Creator '" + type + "' not loaded due to NoClassDefFoundError. (javascript='" + javascript + "'). Cause: " + ex.getMessage());
+            slog.info("Creator '" + type + "' not loaded due to NoClassDefFoundError. (javascript='" + javascript + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            log.error("Failed to add creator: type=" + type + ", javascript=" + javascript, ex);
+            slog.error("Failed to add creator: type=" + type + ", javascript=" + javascript, ex);
         }
     }
 
@@ -309,15 +308,15 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (ClassCastException ex)
         {
-            log.error(type + " does not implement " + AjaxFilter.class.getName(), ex);
+            slog.error(type + " does not implement " + AjaxFilter.class.getName(), ex);
         }
         catch (NoClassDefFoundError ex)
         {
-            log.info("Missing class for filter (class='" + type + "'). Cause: " + ex.getMessage());
+            slog.info("Missing class for filter (class='" + type + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            log.error("Failed to add filter: class=" + type, ex);
+            slog.error("Failed to add filter: class=" + type, ex);
         }
     }
 
@@ -471,7 +470,7 @@ public class DwrXmlConfigurator implements Configurator
             short type = node.getNodeType();
             if (type != Node.TEXT_NODE && type != Node.CDATA_SECTION_NODE)
             {
-                log.warn("Ignoring illegal node type: " + type);
+                slog.warn("Ignoring illegal node type: " + type);
                 continue;
             }
 
@@ -513,14 +512,14 @@ public class DwrXmlConfigurator implements Configurator
                     }
                     else
                     {
-                        log.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
+                        slog.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
                     }
                 }
             }
 
             if (method == null)
             {
-                log.error("Unable to find method called: " + methodName + " on type: " + dest.getName() + " from creator: " + javascript);
+                slog.error("Unable to find method called: " + methodName + " on type: " + dest.getName() + " from creator: " + javascript);
                 continue;
             }
 
@@ -536,7 +535,7 @@ public class DwrXmlConfigurator implements Configurator
                 String type = st.nextToken();
                 Class<?> clazz = LocalUtil.classForName(type.trim());
                 Property property = new ParameterProperty(method, paramNo);
-                TypeHintContext thc = new TypeHintContext(converterManager, property, paramNo).createChildContext(j);
+                TypeHintContext thc = new TypeHintContext(property).createChildContext(converterManager, j);
                 j++;
                 converterManager.setExtraTypeInfo(thc, clazz);
             }
@@ -570,11 +569,6 @@ public class DwrXmlConfigurator implements Configurator
     private static List<String> ignore = Arrays.asList("class");
 
     /**
-     * The log stream
-     */
-    public static final Log log = LogFactory.getLog(DwrXmlConfigurator.class);
-
-    /**
      * What AjaxFilters apply to which Ajax calls?
      */
     private AjaxFilterManager ajaxFilterManager = null;
@@ -605,6 +599,13 @@ public class DwrXmlConfigurator implements Configurator
      * Either this or {@link #classResourceName} will be null
      */
     private String servletResourceName;
+
+    /**
+     * The log stream
+     * WARNING: This intentionally uses a logger from a different class to
+     * make it easy to control startup messages.
+     */
+    public static final Log slog = StartupUtil.slog;
 
     /*
      * The element names
