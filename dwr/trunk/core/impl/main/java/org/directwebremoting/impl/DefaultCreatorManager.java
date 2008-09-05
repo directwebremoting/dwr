@@ -44,14 +44,14 @@ public class DefaultCreatorManager implements CreatorManager
     {
         if (!LocalUtil.isJavaIdentifier(typeName))
         {
-            log.error("Illegal identifier: '" + typeName + "'");
+            slog.error("Illegal identifier: '" + typeName + "'");
             return;
         }
 
         Class<? extends Creator> clazz = LocalUtil.classForName(typeName, className, Creator.class);
         if (clazz != null)
         {
-            log.debug("- adding creator type: " + typeName + " = " + clazz);
+            slog.debug("- adding creator type: " + typeName + " = " + clazz);
             creatorTypes.put(typeName, clazz);
         }
     }
@@ -64,7 +64,7 @@ public class DefaultCreatorManager implements CreatorManager
         Class<? extends Creator> clazz = creatorTypes.get(creatorName);
         if (clazz == null)
         {
-            log.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
+            slog.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
             return;
         }
 
@@ -86,7 +86,7 @@ public class DefaultCreatorManager implements CreatorManager
         Creator other = creators.get(scriptName);
         if (other != null)
         {
-            log.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
+            slog.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
             throw new IllegalArgumentException("Duplicate name found. See logs for details.");
         }
 
@@ -96,21 +96,21 @@ public class DefaultCreatorManager implements CreatorManager
             Class<?> test = creator.getType();
             if (test == null)
             {
-                log.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
+                slog.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
             }
             else
             {
-                log.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
+                slog.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
                 creators.put(scriptName, creator);
             }
         }
         catch (NoClassDefFoundError ex)
         {
-            log.error("Missing class for creator '" + creator + "'. Cause: " + ex.getMessage());
+            slog.error("Missing class for creator '" + creator + "'. Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            log.error("Error loading class for creator '" + creator + "'.", ex);
+            slog.error("Error loading class for creator '" + creator + "'.", ex);
         }
 
         // If this is application scope then it might make sense to create one
@@ -121,15 +121,15 @@ public class DefaultCreatorManager implements CreatorManager
             try
             {
                 WebContext webcx = WebContextFactory.get();
-                Object object = creator.getInstance();            
+                Object object = creator.getInstance();
                 webcx.getServletContext().setAttribute(creator.getJavascript(), object);
 
-                log.debug("Created new " + creator.getJavascript() + ", stored in application.");
+                slog.debug("Created new " + creator.getJavascript() + ", stored in application.");
             }
             catch (InstantiationException ex)
             {
-                log.warn("Failed to create " + creator.getJavascript(), ex);
-                log.debug("Maybe it will succeed when the application is in flight. If so you should probably set initApplicationScopeCreatorsAtStartup=false in web.xml");
+                slog.warn("Failed to create " + creator.getJavascript(), ex);
+                slog.debug("Maybe it will succeed when the application is in flight. If so you should probably set initApplicationScopeCreatorsAtStartup=false in web.xml");
             }
         }
     }
@@ -171,14 +171,6 @@ public class DefaultCreatorManager implements CreatorManager
             return noHidden;
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.CreatorManager#getCreator(java.lang.String)
-     */
-    //public Creator getCreator(String scriptName) throws SecurityException
-    //{
-    //    return getCreator(scriptName, false);
-    //}
 
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreator(java.lang.String, boolean)
@@ -278,6 +270,13 @@ public class DefaultCreatorManager implements CreatorManager
      * @see DefaultCreatorManager#addCreator(String, String, Map)
      */
     protected static List<String> ignore = Arrays.asList("creator", "class");
+
+    /**
+     * The startup log stream
+     * WARNING: This intentionally uses a logger from a different class to
+     * make it easy to control startup messages.
+     */
+    private static final Log slog = StartupUtil.slog;
 
     /**
      * The log stream

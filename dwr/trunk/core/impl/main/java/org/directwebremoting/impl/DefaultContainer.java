@@ -28,7 +28,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.util.FakeServletContext;
@@ -115,7 +114,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                 Class<?> iface = LocalUtil.classForName(askFor);
                 if (!iface.isAssignableFrom(value.getClass()))
                 {
-                    log.error("Can't cast: " + value + " to " + askFor);
+                    slog.error("Can't cast: " + value + " to " + askFor);
                 }
             }
             catch (ClassNotFoundException ex)
@@ -124,15 +123,15 @@ public class DefaultContainer extends AbstractContainer implements Container
             }
         }
 
-        if (log.isDebugEnabled())
+        if (slog.isDebugEnabled())
         {
             if (value instanceof String)
             {
-                log.debug("- value: " + askFor + " = " + value);
+                slog.debug("- value: " + askFor + " = " + value);
             }
             else
             {
-                log.debug("- impl:  " + askFor + " = " + value.getClass().getName());
+                slog.debug("- impl:  " + askFor + " = " + value.getClass().getName());
             }
         }
 
@@ -170,7 +169,7 @@ public class DefaultContainer extends AbstractContainer implements Container
 
             if (!(bean instanceof String))
             {
-                log.debug("- autowire: " + bean.getClass().getName());
+                slog.debug("- autowire: " + bean.getClass().getName());
 
                 Method[] methods = bean.getClass().getMethods();
                 methods:
@@ -189,7 +188,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                         {
                             if (propertyType.isAssignableFrom(setting.getClass()))
                             {
-                                log.debug("  - by name: " + name + " = " + setting);
+                                slog.debug("  - by name: " + name + " = " + setting);
                                 invoke(setter, bean, setting);
 
                                 continue methods;
@@ -200,7 +199,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                                 {
                                     Object value = LocalUtil.simpleConvert((String) setting, propertyType);
 
-                                    log.debug("  - by name: " + name + " = " + value);
+                                    slog.debug("  - by name: " + name + " = " + value);
                                     invoke(setter, bean, value);
                                 }
                                 catch (IllegalArgumentException ex)
@@ -216,13 +215,13 @@ public class DefaultContainer extends AbstractContainer implements Container
                         Object value = beans.get(propertyType.getName());
                         if (value != null)
                         {
-                            log.debug("  - by type: " + name + " = " + value.getClass().getName());
+                            slog.debug("  - by type: " + name + " = " + value.getClass().getName());
                             invoke(setter, bean, value);
 
                             continue methods;
                         }
 
-                        log.debug("  - no properties for: " + name);
+                        slog.debug("  - no properties for: " + name);
                     }
                 }
             }
@@ -246,11 +245,11 @@ public class DefaultContainer extends AbstractContainer implements Container
         }
         catch (InvocationTargetException ex)
         {
-            log.error("  - Exception during auto-wire: ", ex.getTargetException());
+            slog.error("  - Exception during auto-wire: ", ex.getTargetException());
         }
         catch (Exception ex)
         {
-            log.error("  - Error calling setter: " + setter, ex);
+            slog.error("  - Error calling setter: " + setter, ex);
         }
     }
 
@@ -275,7 +274,7 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public void destroy()
     {
-        log.debug("ServletContext destroying for container: " + getClass().getSimpleName());
+        slog.debug("ServletContext destroying for container: " + getClass().getSimpleName());
 
         Collection<String> beanNames = getBeanNames();
         for (String beanName : beanNames)
@@ -284,7 +283,7 @@ public class DefaultContainer extends AbstractContainer implements Container
             if (bean instanceof ServletContextListener)
             {
                 ServletContextListener scl = (ServletContextListener) bean;
-                log.debug("- For contained bean: " + beanName);
+                slog.debug("- For contained bean: " + beanName);
 
                 // TODO: we don't have access to the real ServletContext. Should we try to get it?
                 scl.contextDestroyed(new ServletContextEvent(new FakeServletContext()));
@@ -299,6 +298,8 @@ public class DefaultContainer extends AbstractContainer implements Container
 
     /**
      * The log stream
+     * WARNING: This intentionally uses a logger from a different class to
+     * make it easy to control startup messages.
      */
-    private static final Log log = LogFactory.getLog(DefaultContainer.class);
+    private static final Log slog = StartupUtil.slog;
 }

@@ -113,8 +113,10 @@ public class StartupUtil
 
     /**
      * The log stream
+     * Warning: This log stream is used by a number of other classes in this
+     * package to make it easier to switch the verbose startup logging off
      */
-    private static final Log log = LogFactory.getLog(StartupUtil.class);
+    public static final Log slog = LogFactory.getLog(StartupUtil.class);
 
     /**
      * To enable us to get at a ServerContext if one has been defined or at
@@ -193,7 +195,7 @@ public class StartupUtil
         String contextPath = LocalUtil.getProperty(servletContext, "ContextPath", String.class);
         contextPath = contextPath == null ? "" :  " at " + contextPath;
 
-        log.info("Starting: " + name + " v" + VersionUtil.getLabel() + " on " + servletContext.getServerInfo() + " / JDK " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor") + contextPath);
+        slog.info("Starting: " + name + " v" + VersionUtil.getLabel() + " on " + servletContext.getServerInfo() + " / JDK " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor") + contextPath);
     }
 
     /**
@@ -216,7 +218,7 @@ public class StartupUtil
             }
             else
             {
-                log.debug("Using alternate Container implementation: " + typeName);
+                slog.debug("Using alternate Container implementation: " + typeName);
                 Class<?> type = LocalUtil.classForName(typeName);
                 container = (DefaultContainer) type.newInstance();
             }
@@ -259,7 +261,7 @@ public class StartupUtil
                 return new DefaultContainer();
             }
 
-            log.debug("Using alternate Container implementation: " + typeName);
+            slog.debug("Using alternate Container implementation: " + typeName);
             Class<?> type = LocalUtil.classForName(typeName);
             return (DefaultContainer) type.newInstance();
         }
@@ -280,19 +282,19 @@ public class StartupUtil
      */
     public static void setupDefaultContainer(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
-        log.debug("Setup: Getting parameters from defaults.properties:");
+        slog.debug("Setup: Getting parameters from defaults.properties:");
         setupDefaults(container);
 
-        log.debug("Setup: Getting parameters from ServletConfig:");
+        slog.debug("Setup: Getting parameters from ServletConfig:");
         setupFromServletConfig(container, servletConfig);
 
-        log.debug("Setup: Resolving multiple implementations:");
+        slog.debug("Setup: Resolving multiple implementations:");
         resolveMultipleImplementations(container, servletConfig);
 
-        log.debug("Setup: Autowire beans");
+        slog.debug("Setup: Autowire beans");
         container.setupFinished();
 
-        log.debug("Setup: Resolving listener implementations:");
+        slog.debug("Setup: Resolving listener implementations:");
         resolveListenerImplementations(container, servletConfig);
     }
 
@@ -310,7 +312,7 @@ public class StartupUtil
         resolveMultipleImplementation(container, Compressor.class);
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
-        log.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
+        slog.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 
         abstractionImplNames = abstractionImplNames.replace(',', ' ');
         for (String abstractionImplName : abstractionImplNames.split(" "))
@@ -340,11 +342,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                slog.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                slog.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
 
@@ -361,7 +363,7 @@ public class StartupUtil
     protected static void resolveMultipleImplementation(DefaultContainer container, Class<?> toResolve)
     {
         String implNames = container.getParameter(toResolve.getName());
-        log.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
+        slog.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
         for (String implName : implNames.split(" "))
@@ -376,7 +378,7 @@ public class StartupUtil
                 Class<?> impl = Class.forName(implName);
                 if (!toResolve.isAssignableFrom(impl))
                 {
-                    log.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
+                    slog.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
                 }
 
                 impl.newInstance();
@@ -386,11 +388,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                slog.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                log.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                slog.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
     }
@@ -409,11 +411,11 @@ public class StartupUtil
         String implNames = container.getParameter(ScriptSessionListener.class.getName());
         if (implNames == null)
         {
-            log.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
+            slog.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
             return;
         }
 
-        log.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
+        slog.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
         for (String implName : implNames.split(" "))
@@ -428,7 +430,7 @@ public class StartupUtil
                 Class<?> impl = Class.forName(implName);
                 if (!ScriptSessionListener.class.isAssignableFrom(impl))
                 {
-                    log.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());
+                    slog.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());
                 }
                 else
                 {
@@ -441,11 +443,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                log.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
+                slog.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                log.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
+                slog.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
             }
         }
     }
@@ -617,11 +619,11 @@ public class StartupUtil
                 {
                     Configurator configurator = LocalUtil.classNewInstance(INIT_CUSTOM_CONFIGURATOR, value, Configurator.class);
                     configurator.configure(container);
-                    log.debug("Loaded config from: " + value);
+                    slog.debug("Loaded config from: " + value);
                 }
                 catch (Exception ex)
                 {
-                    log.warn("Failed to start custom configurator", ex);
+                    slog.warn("Failed to start custom configurator", ex);
                 }
             }
         }
@@ -642,7 +644,7 @@ public class StartupUtil
         Configurator configurator = new AnnotationsConfigurator();
         configurator.configure(container);
 
-        log.debug("Java5 AnnotationsConfigurator enabled");
+        slog.debug("Java5 AnnotationsConfigurator enabled");
         return true;
     }
 
@@ -656,7 +658,7 @@ public class StartupUtil
         // Allow all the configurators to have a go
         for (Configurator configurator : configurators)
         {
-            log.debug("Adding config from " + configurator);
+            slog.debug("Adding config from " + configurator);
             configurator.configure(container);
         }
     }
@@ -692,7 +694,7 @@ public class StartupUtil
 
         if (!configureFromAnnotations(container))
         {
-            log.debug("Java5 AnnotationsConfigurator disabled");
+            slog.debug("Java5 AnnotationsConfigurator disabled");
 
             if (delayedIOException != null)
             {
@@ -738,7 +740,7 @@ public class StartupUtil
             case 1:
                 // We're second - remove the previous guy from being default
                 contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
-                log.debug("Multiple instances of DWR detected.");
+                slog.debug("Multiple instances of DWR detected.");
                 break;
             default:
                 // We're third or more - leave it that there is no default
@@ -748,7 +750,7 @@ public class StartupUtil
             // Whatever, record the ServerContext against our servlet name
             String name = servletConfig.getServletName();
             contextMap.put(name, serverContext);
-            log.debug("Adding to contextMap, a serverContext called " + name);
+            slog.debug("Adding to contextMap, a serverContext called " + name);
 
             foundContexts++;
         }
@@ -814,48 +816,48 @@ public class StartupUtil
      */
     public static void debugConfig(Container container)
     {
-        if (log.isDebugEnabled())
+        if (slog.isDebugEnabled())
         {
             // Container level debug
-            log.debug("Container");
-            log.debug("  Type: " + container.getClass().getName());
+            slog.debug("Container");
+            slog.debug("  Type: " + container.getClass().getName());
             for (String name : container.getBeanNames())
             {
                 Object object = container.getBean(name);
 
                 if (object instanceof String)
                 {
-                    log.debug("  Param: " + name + " = " + object + " (" + object.getClass().getName() + ")");
+                    slog.debug("  Param: " + name + " = " + object + " (" + object.getClass().getName() + ")");
                 }
                 else
                 {
-                    log.debug("  Bean: " + name + " = " + object + " (" + object.getClass().getName() + ")");
+                    slog.debug("  Bean: " + name + " = " + object + " (" + object.getClass().getName() + ")");
                 }
             }
 
             // AccessControl debugging
             AccessControl accessControl = container.getBean(AccessControl.class);
-            log.debug("AccessControl");
-            log.debug("  Type: " + accessControl.getClass().getName());
+            slog.debug("AccessControl");
+            slog.debug("  Type: " + accessControl.getClass().getName());
 
             // AjaxFilterManager debugging
             AjaxFilterManager ajaxFilterManager = container.getBean(AjaxFilterManager.class);
-            log.debug("AjaxFilterManager");
-            log.debug("  Type: " + ajaxFilterManager.getClass().getName());
+            slog.debug("AjaxFilterManager");
+            slog.debug("  Type: " + ajaxFilterManager.getClass().getName());
 
             // ConverterManager debugging
             ConverterManager converterManager = container.getBean(ConverterManager.class);
-            log.debug("ConverterManager");
-            log.debug("  Type: " + converterManager.getClass().getName());
+            slog.debug("ConverterManager");
+            slog.debug("  Type: " + converterManager.getClass().getName());
 
             // CreatorManager debugging
             CreatorManager creatorManager = container.getBean(CreatorManager.class);
-            log.debug("CreatorManager");
-            log.debug("  Type: " + creatorManager.getClass().getName());
+            slog.debug("CreatorManager");
+            slog.debug("  Type: " + creatorManager.getClass().getName());
             for (String creatorName : creatorManager.getCreatorNames(false))
             {
                 Creator creator = creatorManager.getCreator(creatorName, false);
-                log.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
+                slog.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
             }
         }
     }
