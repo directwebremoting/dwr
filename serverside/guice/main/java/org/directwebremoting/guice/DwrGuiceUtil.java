@@ -22,6 +22,8 @@ import javax.servlet.ServletContext;
 
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.ServerContext;
+import org.directwebremoting.impl.StartupUtil;
 
 import com.google.inject.Injector;
 
@@ -50,6 +52,8 @@ public class DwrGuiceUtil
     /**
      * Gets the servlet context from the thread-local stash, if any,
      * otherwise from the current web context, if one exists,
+     * otherwise from the singleton server context, if it exists,
+     * otherwise from the first of all server contexts, if there are any,
      * otherwise null.
      */
     public static ServletContext getServletContext()
@@ -64,6 +68,18 @@ public class DwrGuiceUtil
         if (webcx != null)
         {
             return webcx.getServletContext();
+        }
+
+        ServerContext serverContext = StartupUtil.getSingletonServerContext();
+        if (serverContext != null)
+        {
+            return serverContext.getServletContext();
+        }
+
+        for (ServerContext sc : StartupUtil.getAllServerContexts())
+        {
+            // Use the ServletContext of the first ServerContext we see.
+            return sc.getServletContext();
         }
 
         return null;
