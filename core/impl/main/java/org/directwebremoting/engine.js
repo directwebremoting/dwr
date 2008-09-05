@@ -308,7 +308,7 @@ if (typeof this['dwr'] == 'undefined') {
   /** A function to be called after replies are received. Can be null. */
   dwr.engine._postHook = null;
 
-  /** An map of the batches that we have sent and are awaiting a reply on. */
+  /** A map of the batches that we have sent and are awaiting a reply on. */
   dwr.engine._batches = {};
 
   /** A count of the number of outstanding batches. Should be == to _batches.length unless prototype has messed things up */
@@ -365,6 +365,9 @@ if (typeof this['dwr'] == 'undefined') {
 
   /** Are we doing page unloading? */
   dwr.engine._isNotifyServerOnPageUnload = true;
+
+  /** A map of all mapped classes whose class declarations have been loaded (dwrClassName -> constructor function) */
+  dwr.engine._mappedClasses = {};
 
   /**
    * Find the HTTP session id sent by the web server
@@ -801,6 +804,23 @@ if (typeof this['dwr'] == 'undefined') {
         dwr.engine._receivedBatch = null;
         dwr.engine.batch.remove(dwr.engine._batches[batchId]);
       }
+    },
+
+    /**
+     * Called by the server: Create a new object of a mapped class
+     * @private
+     * @param {string} dwrClassName the name of the mapped class
+     * @param {Object} memberMap the object's data members
+     */
+    newObject:function(dwrClassName, memberMap){
+      var classfunc = dwr.engine._mappedClasses[dwrClassName]; 
+      if (classfunc && classfunc.createFromMap) {
+        return classfunc.createFromMap(memberMap);
+      }
+      else {
+        memberMap.$dwrClassName = dwrClassName;
+        return memberMap;
+      }
     }
   };
 
@@ -980,7 +1000,7 @@ if (typeof this['dwr'] == 'undefined') {
       // treat objects as an associative arrays
       var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data) + ":{";
       var elementset = (data.constructor && data.constructor.$dwrClassMembers ? data.constructor.$dwrClassMembers : data);
-	  var element;
+      var element;
       for (element in elementset) {
         if (typeof data[element] != "function") {
           batch.paramCount++;
@@ -1042,9 +1062,11 @@ if (typeof this['dwr'] == 'undefined') {
      * @return The name of the object
      */
     getObjectClassName:function(obj) {
-      // Mapped classes supply their classname as a property of the constructor function
-      if (obj.constructor && "$dwrClassName" in obj.constructor)
-        return obj.constructor.$dwrClassName;
+      // Different handling depending on if, and what type of, class-mapping is used
+      if (obj.$dwrClassName)
+        return obj.$dwrClassName; // Light class-mapping uses the classname from a property on the instance
+      else if (obj.constructor && obj.constructor.$dwrClassName)
+        return obj.constructor.$dwrClassName; // Full class-mapping uses the classname from a property on the constructor function
       else
         return "Object";
     }
