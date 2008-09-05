@@ -156,8 +156,9 @@ public class ObjectOutboundVariable extends NestedOutboundVariable
 
             if (isNamed)
             {
+                buffer.append("dwr.engine.remote.newObject(\"");
                 buffer.append(scriptClassName);
-                buffer.append(".createFromMap({");
+                buffer.append("\",{");
             }
             else
             {

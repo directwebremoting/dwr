@@ -336,7 +336,8 @@ public class DefaultRemoter implements Remoter
         // (8)      ...
         // (8)      return obj;
         // (8)    }
-        // (9)  }
+        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass; 
+        // (10)  }
         try
         {
             StringBuilder buf = new StringBuilder();
@@ -457,7 +458,14 @@ public class DefaultRemoter implements Remoter
             buf.append("    return obj;\n");
             buf.append("  }\n");
 
-            // Generate (9): end of definition
+            // Generate (9): dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
+            buf.append("  dwr.engine._mappedClasses['");
+            buf.append(jsClassName);
+            buf.append("'] = this.");
+            buf.append(jsClassName);
+            buf.append(";\n");
+
+            // Generate (10): end of definition
             buf.append("}\n");
             return buf.toString();
         }
