@@ -47,16 +47,16 @@ public class TypeHintContextTypeInfo implements TypeInfo
     {
         this.primaryType = primaryType;
         Property property = new ParameterProperty(method, i);
-        icc = new TypeHintContext(converterManager, property, i);
+        icc = new TypeHintContext(property);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.TypeInfo#getChildTypeInfo(int)
      */
-    public TypeInfo getChildTypeInfo(int i)
+    public TypeInfo getChildTypeInfo(ConverterManager converterManager, int i)
     {
-        TypeHintContext subthc = icc.createChildContext(i);
-        Class<?> subtype = subthc.getExtraTypeInfo();
+        TypeHintContext subthc = icc.createChildContext(converterManager, i);
+        Class<?> subtype = subthc.getExtraTypeInfo(converterManager);
 
         return new TypeHintContextTypeInfo(subtype, subthc);
     }

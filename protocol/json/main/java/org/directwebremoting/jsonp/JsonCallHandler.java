@@ -195,7 +195,7 @@ public class JsonCallHandler implements Handler
             Class<?> paramType = method.getParameterTypes()[j];
             InboundVariable param = inboundContext.getParameter(0, j);
             Property property = new ParameterProperty(method, j);
-            TypeHintContext incc = new TypeHintContext(converterManager, property, j);
+            TypeHintContext incc = new TypeHintContext(property);
 
             try
             {

@@ -33,7 +33,7 @@ public class ReflectionTypeInfo implements TypeInfo
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.TypeInfo#getChildTypeInfo(int)
      */
-    public TypeInfo getChildTypeInfo(int i)
+    public TypeInfo getChildTypeInfo(ConverterManager converterManager, int i)
     {
         if (primaryType.isArray())
         {
@@ -57,5 +57,5 @@ public class ReflectionTypeInfo implements TypeInfo
     /**
      * The type about which we don't understand the any generic type info
      */
-    private Class<?> primaryType;
+    private final Class<?> primaryType;
 }

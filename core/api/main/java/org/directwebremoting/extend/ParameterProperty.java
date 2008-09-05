@@ -16,13 +16,15 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ParameterProperty implements MethodProperty
+public class ParameterProperty extends Property
 {
     /**
      * @param method
@@ -37,14 +39,16 @@ public class ParameterProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.ConverterManager, org.directwebremoting.extend.InboundContext)
      */
+    @Override
     public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, parameterNumber);
+        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
+    @Override
     public String getName()
     {
         return "parameter" + parameterNumber;
@@ -53,14 +57,23 @@ public class ParameterProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
+    @Override
     public Class<?> getPropertyType()
     {
-        return method.getParameterTypes()[parameterNumber];
+        Type[] types = method.getGenericParameterTypes();
+        if (parameterNumber >= types.length)
+        {
+            throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+        }
+
+        Type parameterType = types[parameterNumber];
+        return LocalUtil.toClass(parameterType, toString());
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't get value from method parameter");
@@ -69,17 +82,25 @@ public class ParameterProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
+    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't set value to method parameter");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.MethodProperty#getSetter()
+     * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    public Method getMethod()
+    @Override
+    public Property createChild(int aNewParameterNumber)
     {
-        return method;
+        Type[] types = method.getGenericParameterTypes();
+        if (parameterNumber >= types.length)
+        {
+            throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
+        }
+        Type parameterType = types[parameterNumber];
+        return new NestedProperty(this, method, parameterType, parameterNumber, aNewParameterNumber);
     }
 
     /* (non-Javadoc)
@@ -115,6 +136,15 @@ public class ParameterProperty implements MethodProperty
         }
 
         return this.parameterNumber == that.parameterNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "ParameterProperty[method=" + method.getName() + ",p#=" + parameterNumber + "]";
     }
 
     private final Method method;

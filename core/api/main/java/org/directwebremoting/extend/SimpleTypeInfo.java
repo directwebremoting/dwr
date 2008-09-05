@@ -33,7 +33,7 @@ public class SimpleTypeInfo implements TypeInfo
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.TypeInfo#getChildTypeInfo(int)
      */
-    public TypeInfo getChildTypeInfo(int i)
+    public TypeInfo getChildTypeInfo(ConverterManager converterManager, int i)
     {
         return STRING_TYPE_INFO;
     }
@@ -49,7 +49,7 @@ public class SimpleTypeInfo implements TypeInfo
     /**
      * The type about which we don't understand the any generic type info
      */
-    private Class<?> primaryType;
+    private final Class<?> primaryType;
 
     /**
      * A static TypeInfo when we just need to make something up about strings

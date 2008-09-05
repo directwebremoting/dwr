@@ -127,6 +127,8 @@ public abstract class BasicObjectConverter implements NamedConverter
             paramNum++;
         }
 
+        log.debug("Using constructor injection for: " + constructor);
+
         Object[] argArray = arguments.toArray(new Object[arguments.size()]);
         return constructor.newInstance(argArray);
     }
@@ -499,6 +501,7 @@ public abstract class BasicObjectConverter implements NamedConverter
 
         try
         {
+            log.debug("Using constructor injection with " + constructor);
             constructor = instanceType.getConstructor(paramTypeArray);
         }
         catch (Exception ex)

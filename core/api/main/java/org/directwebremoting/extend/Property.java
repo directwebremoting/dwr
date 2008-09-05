@@ -26,19 +26,19 @@ import org.directwebremoting.ConversionException;
  * types like {@link Member} had a common supertype, but they don't. This is it.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface Property
+public abstract class Property
 {
     /**
      * Gets the name of this property
      * @return The property name
      */
-    String getName();
+    public abstract String getName();
 
     /**
      * What type does this property
      * @return The type of object that will be returned by {@link #getValue(Object)}
      */
-    Class<?> getPropertyType();
+    public abstract Class<?> getPropertyType();
 
     /**
      * Get the value of this property of the passed in java bean
@@ -46,7 +46,7 @@ public interface Property
      * @return The value assigned to this property of the passed in bean
      * @throws ConversionException If the reflection access fails
      */
-    Object getValue(Object bean) throws ConversionException;
+    public abstract Object getValue(Object bean) throws ConversionException;
 
     /**
      * Set the value of this property of the passed in java bean
@@ -54,7 +54,9 @@ public interface Property
      * @param value The value assigned to this property of the passed in bean
      * @throws ConversionException If the reflection access fails
      */
-    void setValue(Object bean, Object value) throws ConversionException;
+    public abstract void setValue(Object bean, Object value) throws ConversionException;
+
+    public abstract Property createChild(int newParameterNumber);
 
     /**
      * @param rewritethisjavadoc
@@ -64,5 +66,5 @@ public interface Property
      * We should probably refactor {@link TypeInfo} to use {@link Property}
      * @return A setter method if one is available, or null otherwise
      */
-    TypeHintContext createTypeHintContext(ConverterManager converterManager);
+    public abstract TypeHintContext createTypeHintContext(ConverterManager converterManager);
 }

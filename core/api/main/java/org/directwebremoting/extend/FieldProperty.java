@@ -23,7 +23,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that proxies to a {@link Field}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class FieldProperty implements Property
+public class FieldProperty extends Property
 {
     /**
      * @param field The Field that we are proxying to
@@ -36,6 +36,7 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
+    @Override
     public String getName()
     {
         return field.getName();
@@ -44,14 +45,25 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
+    @Override
     public Class<?> getPropertyType()
     {
         return field.getType();
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#createChild(int)
+     */
+    @Override
+    public Property createChild(int newParameterNumber)
+    {
+        return new NestedProperty(this, null, null, 0, newParameterNumber);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         try
@@ -67,6 +79,7 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
+    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         try
@@ -82,9 +95,10 @@ public class FieldProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
+    @Override
     public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, 0);
+        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)
@@ -115,6 +129,15 @@ public class FieldProperty implements Property
         FieldProperty that = (FieldProperty) obj;
 
         return this.field.equals(that.field);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "FieldProperty[field=" + field.getName() + "]";
     }
 
     /**

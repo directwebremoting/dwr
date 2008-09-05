@@ -83,7 +83,7 @@ public class DefaultCallbackHelper implements CallbackHelper
             Method method = Callback.class.getMethod("dataReturned", type);
 
             Property property = new ParameterProperty(method, 0);
-            TypeHintContext incc = new TypeHintContext(converterManager, property, 0);
+            TypeHintContext incc = new TypeHintContext(property);
             InboundVariable iv = data.getInboundVariable();
             Object callbackData  = converterManager.convertInbound(type, iv, incc);
 

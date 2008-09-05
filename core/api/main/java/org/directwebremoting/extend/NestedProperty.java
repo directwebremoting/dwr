@@ -20,19 +20,23 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class NestedProperty implements MethodProperty
+public class NestedProperty extends Property
 {
     /**
+     * @param parent
      * @param method
      * @param parameterNumber
      * @param parentParameterType
      */
-    public NestedProperty(Method method, Type parentParameterType, int parameterNumber, int newParameterNumber)
+    public NestedProperty(Property parent, Method method, Type parentParameterType, int parameterNumber, int newParameterNumber)
     {
+        this.parent = parent;
+
         if (parentParameterType instanceof ParameterizedType)
         {
             ParameterizedType ptype = (ParameterizedType) parentParameterType;
@@ -52,19 +56,22 @@ public class NestedProperty implements MethodProperty
 
         this.method = method;
         this.parameterNumber = parameterNumber;
+        this.newParameterNumber = newParameterNumber;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.ConverterManager, org.directwebremoting.extend.InboundContext)
      */
+    @Override
     public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, parameterNumber);
+        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
+    @Override
     public String getName()
     {
         return "NestedProperty";
@@ -73,14 +80,16 @@ public class NestedProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
+    @Override
     public Class<?> getPropertyType()
     {
-        return null;
+        return LocalUtil.toClass(parameterType, toString());
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't get value from nested property");
@@ -89,17 +98,19 @@ public class NestedProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
+    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't set value to nested property");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.MethodProperty#getMethod()
+     * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    public Method getMethod()
+    @Override
+    public Property createChild(int aNewParameterNumber)
     {
-        return method;
+        return new NestedProperty(this, method, parameterType, parameterNumber, aNewParameterNumber);
     }
 
     /**
@@ -142,12 +153,35 @@ public class NestedProperty implements MethodProperty
             return false;
         }
 
+        if (!this.parent.equals(that.parent))
+        {
+            return false;
+        }
+
+        if (this.newParameterNumber != that.newParameterNumber)
+        {
+            return false;
+        }
+
         return this.parameterNumber == that.parameterNumber;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "NestedProperty[method=" + method.getName() + ",p#=" + parameterNumber + ",parent=" + parent + "]";
+    }
+
+    private final Property parent;
 
     private final Method method;
 
     private final int parameterNumber;
 
     private final Type parameterType;
+
+    private final int newParameterNumber;
 }
