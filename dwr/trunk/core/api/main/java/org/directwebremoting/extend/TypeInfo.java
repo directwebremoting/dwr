@@ -38,5 +38,5 @@ public interface TypeInfo
      * @return A child TypeInfo object
      * @throws IllegalArgumentException if i<0 or i>=childCount
      */
-    public TypeInfo getChildTypeInfo(int i);
+    public TypeInfo getChildTypeInfo(ConverterManager converterManager, int i);
 }

@@ -24,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
  * Various utilities, stuff that we're still surprised isn't in the JDK, and
  * stuff that perhaps is borderline JDK material, but isn't really pure DWR
  * either.
+ * TODO: This probably needs cutting up into
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public final class LocalUtil
@@ -1203,30 +1206,6 @@ public final class LocalUtil
     }
 
     /**
-     * Get a timestamp for the earliest time that we know the JVM started
-     * @return a JVM start time
-     */
-    public static long getSystemClassloadTime()
-    {
-        return CLASSLOAD_TIME;
-    }
-
-    /**
-     * The time on the script files
-     */
-    private static final long CLASSLOAD_TIME;
-
-    /**
-     * Initialize the container start time
-     */
-    static
-    {
-        // Browsers are only accurate to the second
-        long now = System.currentTimeMillis();
-        CLASSLOAD_TIME = now - (now % 1000);
-    }
-
-    /**
      * Utility to find a getter and return it's value from an object.
      * If Java had the option to temporarily do dynamic typing there would be
      * no need for this.
@@ -1261,6 +1240,59 @@ public final class LocalUtil
             log.debug("Failed to get property called " + propertyName + " from a " + real.getName() + ": " + ex);
             return null;
         }
+    }
+
+    /**
+     * Utility to find a Class<?> from a Type if possible, assuming String.class
+     * if the conversion can't be made
+     */
+    public static Class<?> toClass(Type parameterType, String debugContext)
+    {
+        if (parameterType instanceof ParameterizedType)
+        {
+            ParameterizedType ptype = (ParameterizedType) parameterType;
+            Type rawType = ptype.getRawType();
+
+            if (rawType instanceof Class)
+            {
+                Class<?> type = (Class<?>) rawType;
+                log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + debugContext);
+                return type;
+            }
+        }
+        else if (parameterType instanceof Class)
+        {
+            Class<?> type = (Class<?>) parameterType;
+            log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + debugContext);
+            return type;
+        }
+
+        log.warn("Missing type info for " + debugContext + ". Assuming this is a map with String keys. Please add to <signatures> in dwr.xml");
+        return String.class;
+    }
+
+    /**
+     * Get a timestamp for the earliest time that we know the JVM started
+     * @return a JVM start time
+     */
+    public static long getSystemClassloadTime()
+    {
+        return CLASSLOAD_TIME;
+    }
+
+    /**
+     * The time on the script files
+     */
+    private static final long CLASSLOAD_TIME;
+
+    /**
+     * Initialize the container start time
+     */
+    static
+    {
+        // Browsers are only accurate to the second
+        long now = System.currentTimeMillis();
+        CLASSLOAD_TIME = now - (now % 1000);
     }
 
     /**

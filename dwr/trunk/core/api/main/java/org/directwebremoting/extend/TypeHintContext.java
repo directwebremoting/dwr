@@ -15,12 +15,6 @@
  */
 package org.directwebremoting.extend;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.util.CompareUtil;
@@ -40,13 +34,10 @@ public class TypeHintContext
 {
     /**
      * External setup this object
-     * @param converterManager For when we can't work out the parameterized type info
      */
-    public TypeHintContext(ConverterManager converterManager)
+    public TypeHintContext()
     {
-        this.converterManager = converterManager;
         this.property = null;
-        this.parameterNumber = 0;
     }
 
     /**
@@ -55,11 +46,9 @@ public class TypeHintContext
      * @param property The property to annotate
      * @param parameterNumber The number of the parameter to edit (counts from 0)
      */
-    public TypeHintContext(ConverterManager converterManager, Property property, int parameterNumber)
+    public TypeHintContext(Property property)
     {
-        this.converterManager = converterManager;
         this.property = property;
-        this.parameterNumber = parameterNumber;
     }
 
     /**
@@ -67,110 +56,28 @@ public class TypeHintContext
      * @param newParameterNumber The index of the item between &lt; and &gt;.
      * @return a new TypeHintContext
      */
-    public TypeHintContext createChildContext(int newParameterNumber)
+    public TypeHintContext createChildContext(ConverterManager converterManager, int newParameterNumber)
     {
-        Method method = null;
-        Type parameterType = null;
-        if (property instanceof MethodProperty)
-        {
-            method = ((MethodProperty) property).getMethod();
-
-            if (property instanceof NestedProperty)
-            {
-                parameterType = ((NestedProperty) property).getParameterType();
-            }
-            else
-            {
-                Type[] types = method.getGenericParameterTypes();
-                if (types != null && types.length > 0)
-                {
-                    if (parameterNumber >= types.length)
-                    {
-                        throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
-                    }
-
-                    parameterType = types[parameterNumber];
-                }
-            }
-        }
-
-        Property childProperty = new NestedProperty(method, parameterType, parameterNumber, newParameterNumber);
-        TypeHintContext child = childProperty.createTypeHintContext(converterManager);
-
-        child.parameterNumberTree.addAll(this.parameterNumberTree);
-        child.parameterNumberTree.add(newParameterNumber);
-
-        child.parameterTypeTree.addAll(parameterTypeTree);
-        child.parameterTypeTree.add(parameterType);
-
+        TypeHintContext child = property.createChild(newParameterNumber).createTypeHintContext(converterManager);
         return child;
     }
 
     /**
      * Find the parameterized type information for this parameter either using
-     * JDK5 introspection or
+     * JDK5 introspection, ConverterManager queries or defaults
+     * @param converterManager TODO
      * @return The extra type information for this context
      */
-    public Class<?> getExtraTypeInfo()
+    public Class<?> getExtraTypeInfo(ConverterManager converterManager)
     {
-        Class<?> type;
-
-        if (converterManager != null)
+        Class<?> type = converterManager.getExtraTypeInfo(this);
+        if (type != null)
         {
-            type = converterManager.getExtraTypeInfo(this);
-            if (type != null)
-            {
-                log.debug("Using type info from <signature> " + toString() + " of " + type);
-                return type;
-            }
-        }
-
-        Type parameterType = null;
-        if (property instanceof MethodProperty)
-        {
-            if (property instanceof NestedProperty)
-            {
-                parameterType = ((NestedProperty) property).getParameterType();
-            }
-            else
-            {
-                Method method = null;
-                method = ((MethodProperty) property).getMethod();
-
-                Type[] types = method.getGenericParameterTypes();
-                if (types != null && types.length > 0)
-                {
-                    if (parameterNumber >= types.length)
-                    {
-                        throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + method.getName() + " returns genericParameterTypes.length=" + types.length);
-                    }
-
-                    parameterType = types[parameterNumber];
-                }
-            }
-        }
-
-        if (parameterType instanceof ParameterizedType)
-        {
-            ParameterizedType ptype = (ParameterizedType) parameterType;
-            Type rawType = ptype.getRawType();
-
-            if (rawType instanceof Class)
-            {
-                type = (Class<?>) rawType;
-                log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + toString());
-                return type;
-            }
-        }
-        else if (parameterType instanceof Class)
-        {
-            type = (Class<?>) parameterType;
-            log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + toString());
+            log.debug("Using type info from <signature> " + toString() + " of " + type);
             return type;
         }
 
-        log.warn("Missing type info for " + toString() + ". Assuming this is a map with String keys. Please add to <signatures> in dwr.xml");
-        return String.class;
+        return property.getPropertyType();
     }
 
     /* (non-Javadoc)
@@ -181,8 +88,6 @@ public class TypeHintContext
     {
         int hash = 1488;
         hash += (property == null) ? 64 : property.hashCode();
-        hash += parameterNumber;
-        hash += (parameterNumberTree == null) ? 4648 : parameterNumberTree.hashCode();
         return 1;
     }
 
@@ -209,23 +114,12 @@ public class TypeHintContext
 
         TypeHintContext that = (TypeHintContext) obj;
 
-        if (!CompareUtil.equals(this.property, that.property))
-        {
-            return false;
-        }
-
-        if (this.parameterNumber != that.parameterNumber)
-        {
-            return false;
-        }
-
-        return this.parameterNumberTree.equals(that.parameterNumberTree);
+        return CompareUtil.equals(this.property, that.property);
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    @SuppressWarnings("unused")
     @Override
     public String toString()
     {
@@ -233,29 +127,9 @@ public class TypeHintContext
     }
 
     /**
-     * When we can't work out a parameterized type, then we can ask here
-     */
-    private final ConverterManager converterManager;
-
-    /**
      * The property that the conversion is happening for
      */
     private final Property property;
-
-    /**
-     * The parameter of the method that the conversion is happening for
-     */
-    private final int parameterNumber;
-
-    /**
-     * The list of generic parameters that we have dug into
-     */
-    private final List<Integer> parameterNumberTree = new ArrayList<Integer>();
-
-    /**
-     * The list of generic parameters that we have dug into
-     */
-    private final List<Type> parameterTypeTree = new ArrayList<Type>();
 
     /**
      * The log stream

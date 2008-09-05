@@ -101,11 +101,11 @@ public class MapConverter implements Converter
             // Get the extra type info
             TypeHintContext thc = data.getContext().getCurrentTypeHintContext();
 
-            TypeHintContext keyThc = thc.createChildContext(0);
-            Class<?> keyType = keyThc.getExtraTypeInfo();
+            TypeHintContext keyThc = thc.createChildContext(converterManager, 0);
+            Class<?> keyType = keyThc.getExtraTypeInfo(converterManager);
 
-            TypeHintContext valThc = thc.createChildContext(1);
-            Class<?> valType = valThc.getExtraTypeInfo();
+            TypeHintContext valThc = thc.createChildContext(converterManager, 1);
+            Class<?> valType = valThc.getExtraTypeInfo(converterManager);
 
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.

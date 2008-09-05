@@ -18,14 +18,16 @@ package org.directwebremoting.extend;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * An implementation of {@link Property} that proxies to a {@link PropertyDescriptor}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PropertyDescriptorProperty implements MethodProperty
+public class PropertyDescriptorProperty extends Property
 {
     /**
      * @param descriptor The PropertyDescriptor that we are proxying to
@@ -38,6 +40,7 @@ public class PropertyDescriptorProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
+    @Override
     public String getName()
     {
         return descriptor.getName();
@@ -46,14 +49,25 @@ public class PropertyDescriptorProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
+    @Override
     public Class<?> getPropertyType()
     {
-        return descriptor.getPropertyType();
+        Method method = descriptor.getReadMethod();
+
+        Type[] types = method.getGenericParameterTypes();
+        if (types.length == 0)
+        {
+            return descriptor.getPropertyType();
+        }
+
+        Type parameterType = types[0];
+        return LocalUtil.toClass(parameterType, toString());
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         try
@@ -73,6 +87,7 @@ public class PropertyDescriptorProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
+    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         try
@@ -92,26 +107,26 @@ public class PropertyDescriptorProperty implements MethodProperty
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
+    @Override
     public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, 0);
+        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.MethodProperty#getSetter()
-     */
-    public Method getMethod()
-    {
-        return descriptor.getReadMethod();
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
+     * @see org.directwebremoting.extend.Property#createChild(int)
      */
     @Override
-    public String toString()
+    public Property createChild(int newParameterNumber)
     {
-        return "PropertyDescriptorProperty[" + descriptor.getName() + "=" + descriptor.getPropertyType() + "]";
+        Method method = descriptor.getReadMethod();
+        Type[] types = method.getGenericParameterTypes();
+        if (types.length == 0)
+        {
+            return new NestedProperty(this, method, null, 0, newParameterNumber);
+        }
+
+        return new NestedProperty(this, method, types[0], 0, newParameterNumber);
     }
 
     /* (non-Javadoc)
@@ -120,7 +135,7 @@ public class PropertyDescriptorProperty implements MethodProperty
     @Override
     public int hashCode()
     {
-        return descriptor.getReadMethod().hashCode() /* + parameterNumber */;
+        return descriptor.getReadMethod().hashCode();
     }
 
     /* (non-Javadoc)
@@ -146,7 +161,16 @@ public class PropertyDescriptorProperty implements MethodProperty
             return false;
         }
 
-        return true /* this.parameterNumber == that.parameterNumber */;
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "PropertyDescriptorProperty[" + descriptor.getName() + "=" + descriptor.getPropertyType() + "]";
     }
 
     /**

@@ -191,7 +191,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     Class<?> paramType = method.getParameterTypes()[j];
                     InboundVariable param = inctx.getParameter(callNum, j);
                     Property property = new ParameterProperty(method, j);
-                    TypeHintContext incc = new TypeHintContext(converterManager, property, j);
+                    TypeHintContext incc = new TypeHintContext(property);
                     params[j] = converterManager.convertInbound(paramType, param, incc);
                 }
                 catch (ConversionException ex)

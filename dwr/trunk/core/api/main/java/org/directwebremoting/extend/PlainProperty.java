@@ -23,7 +23,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that simply uses stored values.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PlainProperty implements Property
+public class PlainProperty extends Property
 {
     /**
      * @param name The property name
@@ -38,6 +38,7 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
+    @Override
     public String getName()
     {
         return name;
@@ -46,14 +47,25 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
+    @Override
     public Class<?> getPropertyType()
     {
         return value.getClass();
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Property#createChild(int)
+     */
+    @Override
+    public Property createChild(int newParameterNumber)
+    {
+        return new NestedProperty(this, null, null, 0, newParameterNumber);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
+    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         return value;
@@ -62,6 +74,7 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
+    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         log.warn("Attempt to setValue() on plain property.");
@@ -70,9 +83,10 @@ public class PlainProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
      */
+    @Override
     public TypeHintContext createTypeHintContext(ConverterManager converterManager)
     {
-        return new TypeHintContext(converterManager, this, 0);
+        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)
@@ -105,6 +119,15 @@ public class PlainProperty implements Property
         PlainProperty that = (PlainProperty) obj;
 
         return this.name.equals(that.name);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "PlainProperty[name=" + name + "]";
     }
 
     /**

@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.impl;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,8 +34,6 @@ import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.extend.ParameterProperty;
-import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.RawData;
@@ -55,14 +52,14 @@ public class DefaultConverterManager implements ConverterManager
     {
         if (!LocalUtil.isJavaIdentifier(id))
         {
-            log.error("Illegal identifier: '" + id + "'");
+            slog.error("Illegal identifier: '" + id + "'");
             return;
         }
 
         Class<? extends Converter> clazz = LocalUtil.classForName(id, className, Converter.class);
         if (clazz != null)
         {
-            log.debug("- adding converter type: " + id + " = " + clazz.getName());
+            slog.debug("- adding converter type: " + id + " = " + clazz.getName());
             converterTypes.put(id, clazz);
         }
     }
@@ -75,7 +72,7 @@ public class DefaultConverterManager implements ConverterManager
         Class<?> clazz = converterTypes.get(type);
         if (clazz == null)
         {
-            log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
+            slog.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
             return;
         }
 
@@ -95,10 +92,10 @@ public class DefaultConverterManager implements ConverterManager
         Converter other = converters.get(match);
         if (other != null)
         {
-            log.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
+            slog.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
         }
 
-        log.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
+        slog.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
 
         converter.setConverterManager(this);
         converters.put(match, converter);
@@ -183,7 +180,7 @@ public class DefaultConverterManager implements ConverterManager
     {
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext(this);
+        TypeHintContext typeHintContext = new TypeHintContext();
 
         return convertInbound(paramType, inboundVariable, typeHintContext);
     }
@@ -236,13 +233,14 @@ public class DefaultConverterManager implements ConverterManager
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#setTypeInfo(java.lang.reflect.Method, int, int, java.lang.Class)
-     */
+     *
     public void setTypeInfo(Method method, int i, int j, Class<?> clazz)
     {
         Property property = new ParameterProperty(method, i);
         TypeHintContext thc = new TypeHintContext(this, property, i).createChildContext(j);
         this.setExtraTypeInfo(thc, clazz);
     }
+    */
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#setConverters(java.util.Map)
@@ -462,6 +460,13 @@ public class DefaultConverterManager implements ConverterManager
      * @see DefaultConverterManager#addConverter(String, String, Map)
      */
     private static List<String> ignore = Arrays.asList("converter", "match");
+
+    /**
+     * The startup log stream
+     * WARNING: This intentionally uses a logger from a different class to
+     * make it easy to control startup messages.
+     */
+    private static final Log slog = StartupUtil.slog;
 
     /**
      * The log stream

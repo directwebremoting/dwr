@@ -37,7 +37,7 @@ public class DefaultTypeInfo implements TypeInfo
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.TypeInfo#getChildTypeInfo(int)
      */
-    public TypeInfo getChildTypeInfo(int i)
+    public TypeInfo getChildTypeInfo(ConverterManager converterManager, int i)
     {
         return children.get(i);
     }
@@ -53,7 +53,7 @@ public class DefaultTypeInfo implements TypeInfo
     /**
      * The type about which we don't understand the any generic type info
      */
-    private Class<?> primaryType;
+    private final Class<?> primaryType;
 
     /**
      * If we've been given any specific

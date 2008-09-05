@@ -86,8 +86,8 @@ public class CollectionConverter extends AbstractConverter
         {
             TypeHintContext icc = data.getContext().getCurrentTypeHintContext();
 
-            TypeHintContext subthc = icc.createChildContext(0);
-            Class<?> subtype = subthc.getExtraTypeInfo();
+            TypeHintContext subthc = icc.createChildContext(converterManager, 0);
+            Class<?> subtype = subthc.getExtraTypeInfo(converterManager);
 
             // subtype.getMethod("h", null).getTypeParameters();
             Collection<Object> col;
