@@ -42,6 +42,7 @@ public class Factory<T>
      */
     public T get()
     {
+        Builder<T> builder = this.builder;
         if (builder == null)
         {
             log.warn("DWR has not been initialized properly");
@@ -63,6 +64,7 @@ public class Factory<T>
      */
     public T get(ServletContext ctx)
     {
+        Builder<T> builder = this.builder;
         if (builder == null)
         {
             log.warn("DWR has not been initialized properly");
