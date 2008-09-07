@@ -35,7 +35,7 @@ public class JettyContainerAbstraction implements ContainerAbstraction
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
         String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("jetty-"))
+        if (serverInfo.startsWith("jetty"))
         {
             try
             {
