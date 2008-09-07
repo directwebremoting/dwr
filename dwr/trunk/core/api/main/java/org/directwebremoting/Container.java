@@ -17,6 +17,9 @@ package org.directwebremoting;
 
 import java.util.Collection;
 
+import org.directwebremoting.servlet.DwrListener;
+import org.directwebremoting.servlet.DwrServlet;
+
 /**
  * A very basic IoC container.
  * See ContainerUtil for information on how to setup a {@link Container}
@@ -49,15 +52,23 @@ public interface Container
     Collection<String> getBeanNames();
 
     /**
-     * This should be called <em>only</em> by the controlling servlet (e.g.
-     * {@link org.directwebremoting.servlet.DwrServlet}) to request that the
-     * container wrap things up. It should be called when the context is being
-     * destroyed, however probably not on due to a call to
-     * {@link javax.servlet.http.HttpServlet#destroy()} because that is only
-     * called when all connections are closed. Instead it should be called from
-     * {@link javax.servlet.ServletContextListener#contextDestroyed}.
-     * In turn this should call contextDestroyed() on any contained objects that
-     * themselves implement {@link javax.servlet.ServletContextListener}
+     * This should be called <em>only</em> by {@link DwrListener}. It requests
+     * all reverse ajax threads to stop.
+     * <p>
+     * {@link javax.servlet.http.HttpServlet#destroy()} is called only when all
+     * connections are closed. If a {@link DwrListener} is configured then
+     * we can close down the connections in a timely way. All other tidy-up
+     * is done by {@link #servletDestroyed()} which will work even when a
+     * {@link DwrListener} has not been configured.
+     * @see #servletDestroyed()
      */
-    void destroy();
+    void contextDestroyed();
+
+    /**
+     * This should be called only by {@link DwrServlet} (or other servlet
+     * implementations). It requests all other threads to stop, and any tidy-up
+     * that can be done after the context has been fully destroyed.
+     * @see #contextDestroyed()
+     */
+    void servletDestroyed();
 }

@@ -147,6 +147,16 @@ public class DwrServlet extends HttpServlet
         }
     }
 
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#destroy()
+     */
+    @Override
+    public void destroy()
+    {
+        container.servletDestroyed();
+        super.destroy();
+    }
+
     /**
      * Accessor for the IoC container.
      */
