@@ -25,13 +25,10 @@ import org.directwebremoting.util.LocalUtil;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class NestedProperty extends Property
+public class NestedProperty implements Property
 {
     /**
-     * @param parent
-     * @param method
-     * @param parameterNumber
-     * @param parentParameterType
+     *
      */
     public NestedProperty(Property parent, Method method, Type parentParameterType, int parameterNumber, int newParameterNumber)
     {
@@ -60,18 +57,8 @@ public class NestedProperty extends Property
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.ConverterManager, org.directwebremoting.extend.InboundContext)
-     */
-    @Override
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
-    {
-        return new TypeHintContext(this);
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
-    @Override
     public String getName()
     {
         return "NestedProperty";
@@ -80,7 +67,6 @@ public class NestedProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    @Override
     public Class<?> getPropertyType()
     {
         return LocalUtil.toClass(parameterType, toString());
@@ -89,7 +75,6 @@ public class NestedProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't get value from nested property");
@@ -98,7 +83,6 @@ public class NestedProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't set value to nested property");
@@ -107,7 +91,6 @@ public class NestedProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    @Override
     public Property createChild(int aNewParameterNumber)
     {
         return new NestedProperty(this, method, parameterType, parameterNumber, aNewParameterNumber);
@@ -172,7 +155,7 @@ public class NestedProperty extends Property
     @Override
     public String toString()
     {
-        return "NestedProperty[method=" + method.getName() + ",p#=" + parameterNumber + ",parent=" + parent + "]";
+        return "(method=" + method.toGenericString() + ", parameter: " + parameterNumber + ")";
     }
 
     private final Property parent;

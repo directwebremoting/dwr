@@ -21,7 +21,7 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.extend.Property;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -93,7 +93,7 @@ public class BeanConverterTest
 
         EasyMock.expect(manager.convertInbound(EasyMock.eq(String.class),
                 EasyMock.isA(InboundVariable.class),
-                EasyMock.isA(TypeHintContext.class))).andReturn("bla");
+                EasyMock.isA(Property.class))).andReturn("bla");
         EasyMock.replay(manager);
 
         Object result = converter.convertInbound(Object.class, var);

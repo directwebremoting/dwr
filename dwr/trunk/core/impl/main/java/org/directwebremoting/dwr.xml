@@ -131,7 +131,7 @@
     <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
     <convert converter="bean" match="org.directwebremoting.io.Item"/>
     <convert converter="bean" match="org.directwebremoting.io.ItemUpdate">
-      <param name="constructor" value="String itemId, String attribute, RawData newValue"/>
+      <param name="constructor" value="String itemId, String attribute, org.directwebremoting.io.RawData newValue"/>
     </convert>
     <convert converter="bean" match="org.directwebremoting.io.MatchedItems"/>
     <convert converter="proxyFunction" match="org.directwebremoting.io.JavascriptFunction"/>

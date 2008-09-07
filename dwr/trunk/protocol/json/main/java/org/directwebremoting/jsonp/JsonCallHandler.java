@@ -43,7 +43,6 @@ import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -195,11 +194,10 @@ public class JsonCallHandler implements Handler
             Class<?> paramType = method.getParameterTypes()[j];
             InboundVariable param = inboundContext.getParameter(0, j);
             Property property = new ParameterProperty(method, j);
-            TypeHintContext incc = new TypeHintContext(property);
 
             try
             {
-                params[j] = converterManager.convertInbound(paramType, param, incc);
+                params[j] = converterManager.convertInbound(paramType, param, property);
             }
             catch (ConversionException ex)
             {

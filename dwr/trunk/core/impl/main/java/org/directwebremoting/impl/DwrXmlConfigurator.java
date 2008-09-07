@@ -41,7 +41,6 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.LogErrorHandler;
 import org.w3c.dom.Document;
@@ -534,10 +533,9 @@ public class DwrXmlConfigurator implements Configurator
             {
                 String type = st.nextToken();
                 Class<?> clazz = LocalUtil.classForName(type.trim());
-                Property property = new ParameterProperty(method, paramNo);
-                TypeHintContext thc = new TypeHintContext(property).createChildContext(converterManager, j);
+                Property property = new ParameterProperty(method, paramNo).createChild(j);
+                converterManager.setExtraTypeInfo(property, clazz);
                 j++;
-                converterManager.setExtraTypeInfo(thc, clazz);
             }
         }
     }

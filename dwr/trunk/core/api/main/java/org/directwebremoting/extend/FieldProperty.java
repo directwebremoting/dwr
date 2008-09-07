@@ -23,7 +23,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that proxies to a {@link Field}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class FieldProperty extends Property
+public class FieldProperty implements Property
 {
     /**
      * @param field The Field that we are proxying to
@@ -36,7 +36,6 @@ public class FieldProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
-    @Override
     public String getName()
     {
         return field.getName();
@@ -45,7 +44,6 @@ public class FieldProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    @Override
     public Class<?> getPropertyType()
     {
         return field.getType();
@@ -54,7 +52,6 @@ public class FieldProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    @Override
     public Property createChild(int newParameterNumber)
     {
         return new NestedProperty(this, null, null, 0, newParameterNumber);
@@ -63,7 +60,6 @@ public class FieldProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         try
@@ -79,7 +75,6 @@ public class FieldProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         try
@@ -90,15 +85,6 @@ public class FieldProperty extends Property
         {
             throw new ConversionException(bean.getClass(), ex);
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
-     */
-    @Override
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
-    {
-        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)

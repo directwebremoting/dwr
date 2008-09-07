@@ -48,7 +48,6 @@ import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
@@ -191,8 +190,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     Class<?> paramType = method.getParameterTypes()[j];
                     InboundVariable param = inctx.getParameter(callNum, j);
                     Property property = new ParameterProperty(method, j);
-                    TypeHintContext incc = new TypeHintContext(property);
-                    params[j] = converterManager.convertInbound(paramType, param, incc);
+                    params[j] = converterManager.convertInbound(paramType, param, property);
                 }
                 catch (ConversionException ex)
                 {

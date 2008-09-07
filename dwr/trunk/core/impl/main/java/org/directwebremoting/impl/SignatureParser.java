@@ -29,7 +29,6 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -185,13 +184,12 @@ public class SignatureParser
 
                 if (clazz != null)
                 {
-                    Property property = new ParameterProperty(method, i);
-                    TypeHintContext thc = new TypeHintContext(property).createChildContext(converterManager, j);
-                    converterManager.setExtraTypeInfo(thc, clazz);
+                    Property property = new ParameterProperty(method, i).createChild(j);
+                    converterManager.setExtraTypeInfo(property, clazz);
 
                     if (slog.isDebugEnabled())
                     {
-                        slog.debug("- " + thc + " = " + clazz.getName());
+                        slog.debug("- " + property + " = " + clazz.getName());
                     }
                 }
                 else

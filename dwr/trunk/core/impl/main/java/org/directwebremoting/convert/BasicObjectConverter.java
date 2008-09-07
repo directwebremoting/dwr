@@ -39,7 +39,6 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
@@ -86,13 +85,13 @@ public abstract class BasicObjectConverter implements NamedConverter
             // Loop through the properties passed in
             Map<String, String> tokens = extractInboundTokens(paramType, value);
 
-            if (constructor == null)
+            if (paramsString == null)
             {
                 return createUsingSetterInjection(paramType, data, tokens);
             }
             else
             {
-                return createUsingConstructorInjection(data, tokens);
+                return createUsingConstructorInjection(paramType, data, tokens);
             }
         }
         catch (InvocationTargetException ex)
@@ -113,8 +112,37 @@ public abstract class BasicObjectConverter implements NamedConverter
      * We're using constructor injection, create and populate a bean using
      * a constructor
      */
-    private Object createUsingConstructorInjection(InboundVariable data, Map<String, String> tokens) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException
+    private Object createUsingConstructorInjection(Class<?> paramType, InboundVariable data, Map<String, String> tokens) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
+        Class<?> type;
+        if (instanceType != null)
+        {
+            type = instanceType;
+        }
+        else
+        {
+            type = paramType;
+        }
+
+        // Find a constructor to match
+        List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
+        for (Pair<Class<?>, String> parameter : parameters)
+        {
+            parameterTypes.add(parameter.left);
+        }
+        Class<?>[] paramTypeArray = parameterTypes.toArray(new Class<?>[parameterTypes.size()]);
+
+        Constructor<?> constructor;
+        try
+        {
+            constructor = type.getConstructor(paramTypeArray);
+        }
+        catch (NoSuchMethodException ex)
+        {
+            log.error("Can't find a constructor for " + type.getName() + " with params " + parameterTypes);
+            throw ex;
+        }
+
         List<Object> arguments = new ArrayList<Object>();
 
         int paramNum = 0;
@@ -130,7 +158,26 @@ public abstract class BasicObjectConverter implements NamedConverter
         log.debug("Using constructor injection for: " + constructor);
 
         Object[] argArray = arguments.toArray(new Object[arguments.size()]);
-        return constructor.newInstance(argArray);
+
+        try
+        {
+            return constructor.newInstance(argArray);
+        }
+        catch (InstantiationException ex)
+        {
+            log.error("Error building using constructor " + constructor.getName() + " with arguments " + argArray);
+            throw ex;
+        }
+        catch (IllegalAccessException ex)
+        {
+            log.error("Error building using constructor " + constructor.getName() + " with arguments " + argArray);
+            throw ex;
+        }
+        catch (InvocationTargetException ex)
+        {
+            log.error("Error building using constructor " + constructor.getName() + " with arguments " + argArray);
+            throw ex;
+        }
     }
 
     /**
@@ -190,22 +237,22 @@ public abstract class BasicObjectConverter implements NamedConverter
 
         InboundVariable nested = new InboundVariable(inboundContext, null, splitType, splitValue);
         nested.dereference();
-        TypeHintContext incc = createTypeHintContext(inboundContext, property);
+        Property incc = createTypeHintContext(inboundContext, property);
 
         return converterManager.convertInbound(propType, nested, incc);
     }
 
     /**
-     * {@link #convertInbound} needs to create a {@link TypeHintContext} for the
+     * {@link #convertInbound} needs to create a {@link Property} for the
      * {@link Property} it is converting so that the type guessing system can do
      * its work.
-     * <p>The method of generating a {@link TypeHintContext} is different for
+     * <p>The method of generating a {@link Property} is different for
      * the {@link BeanConverter} and the {@link ObjectConverter}.
      * @param inctx The parent context
      * @param property The property being converted
      * @return The new TypeHintContext
      */
-    protected abstract TypeHintContext createTypeHintContext(InboundContext inctx, Property property);
+    protected abstract Property createTypeHintContext(InboundContext inctx, Property property);
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Converter#convertOutbound(java.lang.Object, org.directwebremoting.OutboundContext)
@@ -245,20 +292,6 @@ public abstract class BasicObjectConverter implements NamedConverter
         ov.setChildren(ovs);
 
         return ov;
-    }
-
-    /**
-     * Set the parameters to be used for constructor injection
-     * @param paramsString a comma separated list of type/name pairs.
-     */
-    public void setConstructor(String paramsString)
-    {
-        this.paramsString = paramsString;
-
-        if (instanceType != null)
-        {
-            checkConstructor();
-        }
     }
 
     /**
@@ -322,44 +355,6 @@ public abstract class BasicObjectConverter implements NamedConverter
     public void setImplementation(String name) throws ClassNotFoundException
     {
         setInstanceType(LocalUtil.classForName(name));
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.convert.NamedConverter#getInstanceType()
-     */
-    public Class<?> getInstanceType()
-    {
-        return instanceType;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.convert.NamedConverter#setInstanceType(java.lang.Class)
-     */
-    public void setInstanceType(Class<?> instanceType)
-    {
-        this.instanceType = instanceType;
-
-        if (paramsString != null)
-        {
-            checkConstructor();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Converter#setConverterManager(org.directwebremoting.extend.ConverterManager)
-     */
-    public void setConverterManager(ConverterManager converterManager)
-    {
-        this.converterManager = converterManager;
-    }
-
-    /**
-     * Accessor for the current ConverterManager
-     * @return the current ConverterManager
-     */
-    public ConverterManager getConverterManager()
-    {
-        return converterManager;
     }
 
     /**
@@ -442,6 +437,28 @@ public abstract class BasicObjectConverter implements NamedConverter
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.Converter#setConverterManager(org.directwebremoting.extend.ConverterManager)
+     */
+    public void setConverterManager(ConverterManager converterManager)
+    {
+        this.converterManager = converterManager;
+    }
+
+    /**
+     * Accessor for the current ConverterManager
+     * @return the current ConverterManager
+     */
+    public ConverterManager getConverterManager()
+    {
+        return converterManager;
+    }
+
+    /**
+     * To forward marshalling requests
+     */
+    protected ConverterManager converterManager = null;
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.convert.NamedConverter#getJavascript()
      */
     public String getJavascript()
@@ -458,12 +475,38 @@ public abstract class BasicObjectConverter implements NamedConverter
     }
 
     /**
-     * When both the {@link #instanceType} and the {@link #constructor} are set
-     * we need to check that it is all setup properly
+     * The javascript class name for the converted objects
      */
-    private void checkConstructor()
+    protected String javascript = null;
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.convert.NamedConverter#getInstanceType()
+     */
+    public Class<?> getInstanceType()
     {
-        parameters.clear();
+        return instanceType;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.convert.NamedConverter#setInstanceType(java.lang.Class)
+     */
+    public void setInstanceType(Class<?> instanceType)
+    {
+        this.instanceType = instanceType;
+    }
+
+    /**
+     * A type that allows us to fulfill an interface or subtype requirement
+     */
+    protected Class<?> instanceType = null;
+
+    /**
+     * Set the parameters to be used for constructor injection
+     * @param paramsString a comma separated list of type/name pairs.
+     */
+    public void setConstructor(String paramsString)
+    {
+        this.paramsString = paramsString;
 
         // Convert a paramString into a list of parameters
         StringTokenizer st = new StringTokenizer(paramsString, ",");
@@ -474,62 +517,58 @@ public abstract class BasicObjectConverter implements NamedConverter
 
             if (paramParts.length != 2)
             {
-                log.error("Parameter list for " + instanceType.getName() + " includes parameter '" + paramString + "' that can't be parsed into a [type] and [name]");
+                log.error("Parameter list includes parameter '" + paramString + "' that can't be parsed into a [type] and [name]");
                 throw new IllegalArgumentException("Badly formatted constructor parameter list. See log console for details.");
             }
 
+            String typeName = paramParts[0];
+
             try
             {
-                Class<?> type = LocalUtil.classForName(paramParts[0]);
+                Class<?> type = LocalUtil.classForName(typeName);
                 Pair<Class<?>, String> parameter = new Pair<Class<?>, String>(type, paramParts[1]);
                 parameters.add(parameter);
             }
             catch (ClassNotFoundException ex)
             {
-                log.error("Parameter list for " + instanceType.getName() + " includes unknown type '" + paramParts[0] + "'");
-                throw new IllegalArgumentException("Unknown type in constructor parameter list. See log console for details.");
+                if (typeName.contains("."))
+                {
+                    log.error("Parameter list includes unknown type '" + typeName + "'");
+                    throw new IllegalArgumentException("Unknown type in constructor parameter list. See log console for details.");
+                }
+                else
+                {
+                    try
+                    {
+                        Class<?> type = LocalUtil.classForName("java.lang." + typeName);
+                        Pair<Class<?>, String> parameter = new Pair<Class<?>, String>(type, paramParts[1]);
+                        parameters.add(parameter);
+                    }
+                    catch (ClassNotFoundException ex2)
+                    {
+                        log.error("Parameter list includes unknown type '" + typeName + "' (also tried java.lang." + typeName + ")");
+                        throw new IllegalArgumentException("Unknown type in constructor parameter list. See log console for details.");
+                    }
+                }
             }
-        }
-
-        // Find a constructor to match
-        List<Class<?>> parameterTypes = new ArrayList<Class<?>>();
-        for (Pair<java.lang.Class<?>,java.lang.String> parameter : parameters)
-        {
-            parameterTypes.add(parameter.left);
-        }
-        Class<?>[] paramTypeArray = parameterTypes.toArray(new Class<?>[parameterTypes.size()]);
-
-        try
-        {
-            log.debug("Using constructor injection with " + constructor);
-            constructor = instanceType.getConstructor(paramTypeArray);
-        }
-        catch (Exception ex)
-        {
-            log.error("Constructor not found for " + instanceType.getName() + " with types " + parameterTypes);
-            throw new IllegalArgumentException("Constructor not found. See log console for details.");
         }
     }
 
     /**
-     * Stored temporarily until the {@link #instanceType} is known
+     * Stored temporarily until the {@link #instanceType} is known so we can
+     * parse for constructor injection
      */
-    private String paramsString;
+    protected String paramsString;
 
     /**
      * The constructor to use if we are doing constructor injection
      */
-    protected Constructor<?> constructor = null;
+    protected Map<Class<?>, Constructor<?>> constructorCache = new HashMap<Class<?>, Constructor<?>>();
 
     /**
      * If we are doing constructor injection, this is the type list
      */
     protected final List<Pair<Class<?>, String>> parameters = new ArrayList<Pair<Class<?>,String>>();
-
-    /**
-     * The javascript class name for the converted objects
-     */
-    protected String javascript = null;
 
     /**
      * The list of excluded properties
@@ -540,16 +579,6 @@ public abstract class BasicObjectConverter implements NamedConverter
      * The list of included properties
      */
     protected List<String> inclusions = null;
-
-    /**
-     * A type that allows us to fulfill an interface or subtype requirement
-     */
-    protected Class<?> instanceType = null;
-
-    /**
-     * To forward marshalling requests
-     */
-    protected ConverterManager converterManager = null;
 
     /**
      * The log stream

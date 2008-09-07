@@ -342,39 +342,39 @@ public final class LocalUtil
         {
             return type;
         }
-        else if (type == Boolean.TYPE)
+        if (type == Boolean.TYPE)
         {
             return Boolean.class;
         }
-        else if (type == Byte.TYPE)
+        if (type == Byte.TYPE)
         {
             return Byte.class;
         }
-        else if (type == Character.TYPE)
+        if (type == Character.TYPE)
         {
             return Character.class;
         }
-        else if (type == Short.TYPE)
+        if (type == Short.TYPE)
         {
             return Short.class;
         }
-        else if (type == Integer.TYPE)
+        if (type == Integer.TYPE)
         {
             return Integer.class;
         }
-        else if (type == Long.TYPE)
+        if (type == Long.TYPE)
         {
             return Long.class;
         }
-        else if (type == Float.TYPE)
+        if (type == Float.TYPE)
         {
             return Float.class;
         }
-        else if (type == Double.TYPE)
+        if (type == Double.TYPE)
         {
             return Double.class;
         }
-        else if (type == Void.TYPE)
+        if (type == Void.TYPE)
         {
             return Void.class;
         }
@@ -931,6 +931,46 @@ public final class LocalUtil
      */
     public static Class<?> classForName(String className) throws ClassNotFoundException
     {
+        if (!className.contains("."))
+        {
+            if (className.equals(Boolean.TYPE.getName()))
+            {
+                return Boolean.TYPE;
+            }
+            if (className.equals(Byte.TYPE.getName()))
+            {
+                return Byte.TYPE;
+            }
+            if (className.equals(Character.TYPE.getName()))
+            {
+                return Character.TYPE;
+            }
+            if (className.equals(Short.TYPE.getName()))
+            {
+                return Short.TYPE;
+            }
+            if (className.equals(Integer.TYPE.getName()))
+            {
+                return Integer.TYPE;
+            }
+            if (className.equals(Long.TYPE.getName()))
+            {
+                return Long.TYPE;
+            }
+            if (className.equals(Float.TYPE.getName()))
+            {
+                return Float.TYPE;
+            }
+            if (className.equals(Double.TYPE.getName()))
+            {
+                return Double.TYPE;
+            }
+            if (className.equals(Void.TYPE.getName()))
+            {
+                return Void.TYPE;
+            }
+        }
+
         // Class.forName(className);
         return Thread.currentThread().getContextClassLoader().loadClass(className);
     }

@@ -24,7 +24,7 @@ import org.directwebremoting.util.LocalUtil;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ParameterProperty extends Property
+public class ParameterProperty implements Property
 {
     /**
      * @param method
@@ -37,18 +37,8 @@ public class ParameterProperty extends Property
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.ConverterManager, org.directwebremoting.extend.InboundContext)
-     */
-    @Override
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
-    {
-        return new TypeHintContext(this);
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
-    @Override
     public String getName()
     {
         return "parameter" + parameterNumber;
@@ -57,7 +47,6 @@ public class ParameterProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    @Override
     public Class<?> getPropertyType()
     {
         Type[] types = method.getGenericParameterTypes();
@@ -73,7 +62,6 @@ public class ParameterProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't get value from method parameter");
@@ -82,7 +70,6 @@ public class ParameterProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't set value to method parameter");
@@ -91,7 +78,6 @@ public class ParameterProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    @Override
     public Property createChild(int aNewParameterNumber)
     {
         Type[] types = method.getGenericParameterTypes();
