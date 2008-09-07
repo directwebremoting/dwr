@@ -1760,7 +1760,9 @@ if (typeof this['dwr'] == 'undefined') {
         callData = { callback:lastArg };
         stopAt = args.length - 1;
       }
-      else if (typeof lastArg == "object" && typeof lastArg.callback == "function") {
+      else if (typeof lastArg == "object" && (typeof lastArg.callback == "function"
+        || typeof lastArg.exceptionHandler == "function" || typeof lastArg.callbackHandler == "function"
+        || typeof lastArg.errorHandler == "function" || typeof lastArg.warningHandler == "function" )) {
         callData = lastArg;
         stopAt = args.length - 1;
       }
