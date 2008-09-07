@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.convert.BeanConverter;
@@ -37,6 +36,7 @@ import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -59,7 +59,7 @@ public class AnnotationsConfigurator implements Configurator
             }
             catch (Exception ex)
             {
-                log.error("Failed to process class: " + clazz.getName(), ex);
+                slog.error("Failed to process class: " + clazz.getName(), ex);
             }
         }
     }
@@ -95,7 +95,7 @@ public class AnnotationsConfigurator implements Configurator
                     }
                     catch (Exception ex)
                     {
-                        log.error("Failed to process class: " + element, ex);
+                        slog.error("Failed to process class: " + element, ex);
                     }
                 }
             }
@@ -107,7 +107,7 @@ public class AnnotationsConfigurator implements Configurator
                 }
                 catch (Exception ex)
                 {
-                    log.error("Failed to process class: " + data.getClass().getName(), ex);
+                    slog.error("Failed to process class: " + data.getClass().getName(), ex);
                 }
             }
         }
@@ -176,12 +176,12 @@ public class AnnotationsConfigurator implements Configurator
 
         try
         {
-            log.info("Adding class " + clazz.getName() + " as " + name);
+            slog.debug("Adding class " + clazz.getName() + " as " + name);
             creatorManager.addCreator(name, creatorName, params);
         }
         catch (Exception ex)
         {
-            log.error("Failed to add class as Creator: " + clazz.getName(), ex);
+            slog.error("Failed to add class as Creator: " + clazz.getName(), ex);
         }
 
         AccessControl accessControl = container.getBean(AccessControl.class);
@@ -225,7 +225,7 @@ public class AnnotationsConfigurator implements Configurator
     /**
      * Process the @Filter annotation
      * @param filterAnn The filter annotation
-     * @param name The Javascript name of the class to filter 
+     * @param name The Javascript name of the class to filter
      * @param container The IoC container to configure
      */
     protected void processFilter(Filter filterAnn, String name, Container container)
@@ -359,6 +359,8 @@ public class AnnotationsConfigurator implements Configurator
 
     /**
      * The log stream
+     * Warning: This log stream is used by a number of other classes in this
+     * package to make it easier to switch the verbose startup logging off
      */
-    private static final Log log = LogFactory.getLog(AnnotationsConfigurator.class);
+    private static final Log slog = StartupUtil.slog;
 }
