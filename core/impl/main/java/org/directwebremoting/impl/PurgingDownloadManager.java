@@ -40,7 +40,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
      */
     public PurgingDownloadManager()
     {
-        timer.scheduleWithFixedDelay(downloadPurge, queueSleepTime, queueSleepTime, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(downloadPurge, queueSleepTime, queueSleepTime, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
@@ -81,6 +81,14 @@ public abstract class PurgingDownloadManager implements DownloadManager
     }
 
     /**
+     * @param executor The DWR provided shutdown system
+     */
+    public void setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor executor)
+    {
+        this.executor = executor;
+    }
+
+    /**
      * Store a {@link FileGenerator} against a given id for
      * later retrieval.
      * @param id The id of the given FileGenerator
@@ -104,7 +112,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
      * Loop over the known downloads removing the ones that are out of date
      */
     public class DownloadPurge implements Runnable
-    {    
+    {
         /* (non-Javadoc)
          * @see java.lang.Runnable#run()
          */
@@ -117,7 +125,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
     /**
      * The cron system
      */
-    protected static ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(1);
+    protected ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 
     /**
      * Check that the cache of files does not contain out-of-date items

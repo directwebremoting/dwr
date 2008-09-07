@@ -26,8 +26,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.logging.Log;
@@ -40,6 +38,7 @@ import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.IdGenerator;
 
 /**
@@ -52,7 +51,7 @@ import org.directwebremoting.util.IdGenerator;
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean, ServletContextListener
+public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean, UninitializingBean
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
@@ -71,16 +70,16 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
      */
-    public void contextInitialized(ServletContextEvent sce)
+    public void contextDestroyed()
     {
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
      */
-    public void contextDestroyed(ServletContextEvent sce)
+    public void servletDestroyed()
     {
         future.cancel(true);
     }

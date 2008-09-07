@@ -59,7 +59,7 @@ public class DwrListener implements ServletContextListener
 
         for (Container container : containers)
         {
-            container.destroy();
+            container.contextDestroyed();
         }
     }
 

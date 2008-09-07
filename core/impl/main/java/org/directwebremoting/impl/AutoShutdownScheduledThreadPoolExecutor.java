@@ -17,8 +17,9 @@ package org.directwebremoting.impl;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import org.directwebremoting.extend.UninitializingBean;
 
 /**
  * Just a standard ScheduledThreadPoolExecutor with a single default thread in
@@ -27,25 +28,29 @@ import javax.servlet.ServletContextListener;
  * can shut us down.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class AutoShutdownScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor implements ServletContextListener
+public class AutoShutdownScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor implements UninitializingBean
 {
+    /**
+     * This is generally used as an event timer, so we don't need more than one
+     * thread running at a time.
+     */
     public AutoShutdownScheduledThreadPoolExecutor()
     {
         super(1);
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
      */
-    public void contextDestroyed(ServletContextEvent sce)
+    public void contextDestroyed()
     {
-        this.shutdownNow();
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
      */
-    public void contextInitialized(ServletContextEvent sce)
+    public void servletDestroyed()
     {
+        this.shutdownNow();
     }
 }

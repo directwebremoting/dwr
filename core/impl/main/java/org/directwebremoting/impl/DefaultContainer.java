@@ -24,13 +24,11 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
-import org.directwebremoting.util.FakeServletContext;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -272,23 +270,30 @@ public class DefaultContainer extends AbstractContainer implements Container
     /* (non-Javadoc)
      * @see org.directwebremoting.Container#destroy()
      */
-    public void destroy()
+    public void contextDestroyed()
     {
-        slog.debug("ServletContext destroying for container: " + getClass().getSimpleName());
+        slog.debug("ContextDestroyed for container: " + getClass().getSimpleName());
 
         Collection<String> beanNames = getBeanNames();
         for (String beanName : beanNames)
         {
             Object bean = getBean(beanName);
-            if (bean instanceof ServletContextListener)
+            if (bean instanceof UninitializingBean)
             {
-                ServletContextListener scl = (ServletContextListener) bean;
+                UninitializingBean scl = (UninitializingBean) bean;
                 slog.debug("- For contained bean: " + beanName);
 
-                // TODO: we don't have access to the real ServletContext. Should we try to get it?
-                scl.contextDestroyed(new ServletContextEvent(new FakeServletContext()));
+                scl.contextDestroyed();
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.Container#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
+        slog.debug("ServletDestroyed for container: " + getClass().getSimpleName());
     }
 
     /**

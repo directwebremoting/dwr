@@ -18,12 +18,12 @@ package org.directwebremoting.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ServerLoadMonitor;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.extend.WaitController;
 
 /**
@@ -31,19 +31,19 @@ import org.directwebremoting.extend.WaitController;
  * functionality, mostly to provide {@link ServletContextListener#contextDestroyed}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, ServletContextListener
+public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, UninitializingBean
 {
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
      */
-    public void contextInitialized(ServletContextEvent sce)
+    public void servletDestroyed()
     {
     }
 
     /* (non-Javadoc)
-     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
      */
-    public void contextDestroyed(ServletContextEvent sce)
+    public void contextDestroyed()
     {
         if (shutdownCalled)
         {
