@@ -25,8 +25,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Used by ExecutionContext to forward results back via javascript.
@@ -92,46 +92,6 @@ public final class SwallowingHttpServletResponse extends HttpServletResponseWrap
     public boolean containsHeader(String name)
     {
         return false;
-    }
-
-    /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#encodeRedirectUrl(java.lang.String)
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public String encodeRedirectUrl(String url)
-    {
-        return url;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.http.HttpServletResponseWrapper#encodeRedirectURL(java.lang.String)
-     */
-    @Override
-    public String encodeRedirectURL(String url)
-    {
-        return url;
-    }
-
-    /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#encodeUrl(java.lang.String)
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public String encodeUrl(String url)
-    {
-        return url;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.http.HttpServletResponseWrapper#encodeURL(java.lang.String)
-     */
-    @Override
-    public String encodeURL(String url)
-    {
-        return url;
     }
 
     /* (non-Javadoc)
@@ -408,7 +368,7 @@ public final class SwallowingHttpServletResponse extends HttpServletResponseWrap
     private String characterEncoding;
 
     /**
-     * Has the response been comitted
+     * Has the response been committed
      */
     private boolean committed = false;
 
