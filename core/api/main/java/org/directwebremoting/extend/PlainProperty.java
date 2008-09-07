@@ -23,7 +23,7 @@ import org.directwebremoting.ConversionException;
  * An implementation of {@link Property} that simply uses stored values.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class PlainProperty extends Property
+public class PlainProperty implements Property
 {
     /**
      * @param name The property name
@@ -38,7 +38,6 @@ public class PlainProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
-    @Override
     public String getName()
     {
         return name;
@@ -47,7 +46,6 @@ public class PlainProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    @Override
     public Class<?> getPropertyType()
     {
         return value.getClass();
@@ -56,7 +54,6 @@ public class PlainProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    @Override
     public Property createChild(int newParameterNumber)
     {
         return new NestedProperty(this, null, null, 0, newParameterNumber);
@@ -65,7 +62,6 @@ public class PlainProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         return value;
@@ -74,19 +70,9 @@ public class PlainProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         log.warn("Attempt to setValue() on plain property.");
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
-     */
-    @Override
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
-    {
-        return new TypeHintContext(this);
     }
 
     /* (non-Javadoc)

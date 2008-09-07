@@ -32,8 +32,8 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.ObjectOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
 
@@ -99,13 +99,13 @@ public class MapConverter implements Converter
             }
 
             // Get the extra type info
-            TypeHintContext thc = data.getContext().getCurrentTypeHintContext();
+            Property thc = data.getContext().getCurrentTypeHintContext();
 
-            TypeHintContext keyThc = thc.createChildContext(converterManager, 0);
-            Class<?> keyType = keyThc.getExtraTypeInfo(converterManager);
+            Property keyThc = thc.createChild(0);
+            Class<?> keyType = keyThc.getPropertyType();
 
-            TypeHintContext valThc = thc.createChildContext(converterManager, 1);
-            Class<?> valType = valThc.getExtraTypeInfo(converterManager);
+            Property valThc = thc.createChild(1);
+            Class<?> valType = valThc.getPropertyType();
 
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.

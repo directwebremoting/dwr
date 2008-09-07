@@ -37,8 +37,8 @@ import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.extend.TypeHintContext;
 
 /**
  * An implementation of Converter for Collections of Strings.
@@ -84,10 +84,9 @@ public class CollectionConverter extends AbstractConverter
 
         try
         {
-            TypeHintContext icc = data.getContext().getCurrentTypeHintContext();
-
-            TypeHintContext subthc = icc.createChildContext(converterManager, 0);
-            Class<?> subtype = subthc.getExtraTypeInfo(converterManager);
+            Property icc = data.getContext().getCurrentTypeHintContext();
+            Property subthc = icc.createChild(0);
+            Class<?> subtype = subthc.getPropertyType();
 
             // subtype.getMethod("h", null).getTypeParameters();
             Collection<Object> col;
@@ -164,6 +163,10 @@ public class CollectionConverter extends AbstractConverter
             {
                 return col;
             }
+        }
+        catch (ConversionException ex)
+        {
+            throw ex;
         }
         catch (Exception ex)
         {

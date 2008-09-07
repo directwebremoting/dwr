@@ -85,7 +85,7 @@ public interface ConverterManager
      * @return The convertible object
      * @throws ConversionException If the conversion failed for some reason
      */
-    <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext thc) throws ConversionException;
+    <T> T convertInbound(Class<T> paramType, InboundVariable data, Property thc) throws ConversionException;
 
     /**
      * RawData is something of a special case for conversion - it's designed to
@@ -117,7 +117,7 @@ public interface ConverterManager
      * @param thc The context to find any extra type information from
      * @param type The type of the specified parameter.
      */
-    void setExtraTypeInfo(TypeHintContext thc, Class<?> type);
+    void setExtraTypeInfo(Property thc, Class<?> type);
 
     /**
      * The extra type information that we have learnt about a method parameter.
@@ -125,7 +125,7 @@ public interface ConverterManager
      * @param thc The context to find any extra type information from
      * @return A type to use to fill out the generic type
      */
-    Class<?> getExtraTypeInfo(TypeHintContext thc);
+    Class<?> getExtraTypeInfo(Property thc);
 
     /**
      * Sets the converters for this converter manager.

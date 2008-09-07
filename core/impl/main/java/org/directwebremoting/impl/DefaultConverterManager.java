@@ -34,8 +34,8 @@ import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.RawData;
 import org.directwebremoting.util.LocalUtil;
 
@@ -129,7 +129,7 @@ public class DefaultConverterManager implements ConverterManager
      * @see org.directwebremoting.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.InboundVariable, org.directwebremoting.InboundContext, org.directwebremoting.TypeHintContext)
      */
     @SuppressWarnings("unchecked")
-    public <T> T convertInbound(Class<T> paramType, InboundVariable data, TypeHintContext thc) throws ConversionException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable data, Property thc) throws ConversionException
     {
         if (data == null)
         {
@@ -180,9 +180,7 @@ public class DefaultConverterManager implements ConverterManager
     {
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext();
-
-        return convertInbound(paramType, inboundVariable, typeHintContext);
+        return convertInbound(paramType, inboundVariable, null);
     }
 
     /* (non-Javadoc)
@@ -218,7 +216,7 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#setExtraTypeInfo(org.directwebremoting.TypeHintContext, java.lang.Class)
      */
-    public void setExtraTypeInfo(TypeHintContext thc, Class<?> type)
+    public void setExtraTypeInfo(Property thc, Class<?> type)
     {
         extraTypeInfoMap.put(thc, type);
     }
@@ -226,7 +224,7 @@ public class DefaultConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getExtraTypeInfo(org.directwebremoting.TypeHintContext)
      */
-    public Class<?> getExtraTypeInfo(TypeHintContext thc)
+    public Class<?> getExtraTypeInfo(Property thc)
     {
         return extraTypeInfoMap.get(thc);
     }
@@ -443,7 +441,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * Where we store real type information behind generic types
      */
-    protected Map<TypeHintContext, Class<?>> extraTypeInfoMap = new HashMap<TypeHintContext, Class<?>>();
+    protected Map<Property, Class<?>> extraTypeInfoMap = new HashMap<Property, Class<?>>();
 
     /**
      * The list of the available converters

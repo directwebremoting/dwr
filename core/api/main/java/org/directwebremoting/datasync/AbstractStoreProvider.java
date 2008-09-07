@@ -30,7 +30,6 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
-import org.directwebremoting.extend.TypeHintContext;
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.MatchedItems;
 import org.directwebremoting.io.RawData;
@@ -167,9 +166,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
 
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext();
-
-        T value = converterManager.convertInbound(type, inboundVariable, typeHintContext);
+        T value = converterManager.convertInbound(type, inboundVariable, null);
         return value;
     }
 
@@ -193,9 +190,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
 
         RealRawData realRawData = (RealRawData) rawData;
         InboundVariable inboundVariable = realRawData.getInboundVariable();
-        TypeHintContext typeHintContext = new TypeHintContext();
-
-        Object value = converterManager.convertInbound(toType, inboundVariable, typeHintContext);
+        Object value = converterManager.convertInbound(toType, inboundVariable, null);
         return value;
     }
 

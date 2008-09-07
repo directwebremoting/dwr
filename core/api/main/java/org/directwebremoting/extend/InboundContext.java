@@ -49,7 +49,7 @@ public final class InboundContext
      * Someone wants to tell us about a new conversion context.
      * @param context The current conversion context
      */
-    public void pushContext(TypeHintContext context)
+    public void pushContext(Property context)
     {
         typeHintStack.addFirst(context);
     }
@@ -65,7 +65,7 @@ public final class InboundContext
     /**
      * @return The method that we are currently converting data for
      */
-    public TypeHintContext getCurrentTypeHintContext()
+    public Property getCurrentTypeHintContext()
     {
         return typeHintStack.getFirst();
     }
@@ -332,7 +332,7 @@ public final class InboundContext
      * The stack of pushed conversion contexts.
      * i.e. What is the context of this type conversion.
      */
-    private final LinkedList<TypeHintContext> typeHintStack = new LinkedList<TypeHintContext>();
+    private final LinkedList<Property> typeHintStack = new LinkedList<Property>();
 
     /**
      * How many params are there?.

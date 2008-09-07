@@ -26,7 +26,7 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.extend.Property;
 import org.directwebremoting.impl.DefaultConverterManager;
 import org.directwebremoting.io.RawData;
 
@@ -105,7 +105,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.TypeHintContext)
      */
-    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, TypeHintContext incc) throws ConversionException
+    public <T> T convertInbound(Class<T> paramType, InboundVariable iv, Property incc) throws ConversionException
     {
         return converterManager.convertInbound(paramType, iv, incc);
     }
@@ -129,7 +129,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#setExtraTypeInfo(org.directwebremoting.extend.TypeHintContext, java.lang.Class)
      */
-    public void setExtraTypeInfo(TypeHintContext thc, Class<?> type)
+    public void setExtraTypeInfo(Property thc, Class<?> type)
     {
         converterManager.setExtraTypeInfo(thc, type);
     }
@@ -137,7 +137,7 @@ public class InternalConverterManager implements ConverterManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#getExtraTypeInfo(org.directwebremoting.extend.TypeHintContext)
      */
-    public Class<?> getExtraTypeInfo(TypeHintContext thc)
+    public Class<?> getExtraTypeInfo(Property thc)
     {
         return converterManager.getExtraTypeInfo(thc);
     }
@@ -151,7 +151,7 @@ public class InternalConverterManager implements ConverterManager
     }
 
     /**
-     * 
+     *
      */
     private final ConverterManager converterManager;
 

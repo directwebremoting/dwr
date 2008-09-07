@@ -24,7 +24,6 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.FieldProperty;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.Property;
-import org.directwebremoting.extend.TypeHintContext;
 
 /**
  * Convert a Javascript associative array into a JavaBean
@@ -51,7 +50,7 @@ public class ObjectConverter extends BasicObjectConverter
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.NamedConverter#getPropertyMap(java.lang.Class, boolean, boolean)
+     * @see org.directwebremoting.extend.NamedConverter#getPropertyMapFromClass(java.lang.Class, boolean, boolean)
      */
     public Map<String, Property> getPropertyMapFromClass(Class<?> type, boolean readRequired, boolean writeRequired)
     {
@@ -103,7 +102,7 @@ public class ObjectConverter extends BasicObjectConverter
      * @see org.directwebremoting.convert.BasicObjectConverter#createTypeHintContext(org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.Property)
      */
     @Override
-    protected TypeHintContext createTypeHintContext(InboundContext inctx, Property property)
+    protected Property createTypeHintContext(InboundContext inctx, Property property)
     {
         return inctx.getCurrentTypeHintContext();
     }

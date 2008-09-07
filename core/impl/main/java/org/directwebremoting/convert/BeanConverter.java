@@ -26,7 +26,6 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
-import org.directwebremoting.extend.TypeHintContext;
 
 /**
  * Convert a Javascript associative array into a JavaBean
@@ -94,8 +93,8 @@ public class BeanConverter extends BasicObjectConverter
      * @see org.directwebremoting.convert.BasicObjectConverter#createTypeHintContext(org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.Property)
      */
     @Override
-    protected TypeHintContext createTypeHintContext(InboundContext inctx, Property property)
+    protected Property createTypeHintContext(InboundContext inctx, Property property)
     {
-        return property.createTypeHintContext(converterManager);
+        return property;
     }
 }

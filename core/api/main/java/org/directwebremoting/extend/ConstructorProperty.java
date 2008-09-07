@@ -24,7 +24,7 @@ import org.directwebremoting.util.LocalUtil;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ConstructorProperty extends Property
+public class ConstructorProperty implements Property
 {
     /**
      * @param constructor
@@ -39,18 +39,8 @@ public class ConstructorProperty extends Property
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Property#createTypeHintContext(org.directwebremoting.extend.InboundContext)
-     */
-    @Override
-    public TypeHintContext createTypeHintContext(ConverterManager converterManager)
-    {
-        return new TypeHintContext(this);
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getName()
      */
-    @Override
     public String getName()
     {
         return parameterName;
@@ -59,7 +49,6 @@ public class ConstructorProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getPropertyType()
      */
-    @Override
     public Class<?> getPropertyType()
     {
         Type[] types = constructor.getGenericParameterTypes();
@@ -75,7 +64,6 @@ public class ConstructorProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    @Override
     public Property createChild(int aNewParameterNumber)
     {
         Type[] types = constructor.getGenericParameterTypes();
@@ -90,7 +78,6 @@ public class ConstructorProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#getValue(java.lang.Object)
      */
-    @Override
     public Object getValue(Object bean) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't get value from constructor parameter");
@@ -99,7 +86,6 @@ public class ConstructorProperty extends Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#setValue(java.lang.Object, java.lang.Object)
      */
-    @Override
     public void setValue(Object bean, Object value) throws ConversionException
     {
         throw new UnsupportedOperationException("Can't set value to constructor parameter");

@@ -17,7 +17,7 @@ package org.directwebremoting.impl;
 
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
-import org.directwebremoting.extend.TypeHintContext;
+import org.directwebremoting.extend.Property;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class SignatureParserTest
     public void testParse1()
     {
         //TypeHintContext thc = new TypeHintContext((Method) EasyMock.isA(Method.class), EasyMock.eq(0));
-        converterManager.setExtraTypeInfo(EasyMock.isA(TypeHintContext.class), EasyMock.eq(Integer.class));
+        converterManager.setExtraTypeInfo(EasyMock.isA(Property.class), EasyMock.eq(Integer.class));
 
         EasyMock.replay(converterManager);
         parser.parse("import java.util.*;\n" + "  import org.directwebremoting.impl.test.SignatureTestsObject;\n"
