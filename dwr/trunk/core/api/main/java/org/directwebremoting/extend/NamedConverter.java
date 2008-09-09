@@ -20,7 +20,8 @@ import java.util.Map;
 import org.directwebremoting.ConversionException;
 
 /**
- * Additions to Converter that allow objects to have names that
+ * Additions to Converter that allow objects to have names that are exposed to
+ * the browser
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface NamedConverter extends Converter
