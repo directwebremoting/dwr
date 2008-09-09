@@ -18,6 +18,8 @@ package org.directwebremoting.extend;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 
@@ -95,11 +97,15 @@ public class ScriptBufferUtil
         String output = buffer.toString();
         if (jsonOutput && !output.startsWith("{"))
         {
-            return "{ \"reply\":" + output + "}";
+            output = "{ \"reply\":" + output + "}";
         }
-        else
-        {
-            return output;
-        }
+
+        log.debug(output);
+        return output;
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(ScriptBufferUtil.class);
 }
