@@ -37,6 +37,7 @@ import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.io.RawData;
+import org.directwebremoting.util.ClasspathScanner;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -69,18 +70,33 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException
     {
-        Class<?> clazz = converterTypes.get(type);
-        if (clazz == null)
+        if (LocalUtil.hasText(match) && match.contains("*") && !match.startsWith("["))
         {
-            slog.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
-            return;
+            boolean recursive = match.endsWith("**");
+            String scan = recursive ? match.substring(0, match.length() - 1) : match;
+
+            ClasspathScanner scanner = new ClasspathScanner(scan, recursive);
+            for (String clazz : scanner.getClasses())
+            {
+                // Call ourselves without the wildcard, processed by the else below
+                addConverter(clazz, type, params);
+            }
         }
+        else
+        {
+            Class<?> clazz = converterTypes.get(type);
+            if (clazz == null)
+            {
+                log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
+                return;
+            }
 
-        Converter converter = (Converter) clazz.newInstance();
-        LocalUtil.setParams(converter, params, ignore);
+            Converter converter = (Converter) clazz.newInstance();
+            LocalUtil.setParams(converter, params, ignore);
 
-        // add the converter for the specified match
-        addConverter(match, converter);
+            // add the converter for the specified match
+            addConverter(match, converter);
+        }
     }
 
     /* (non-Javadoc)
@@ -98,7 +114,55 @@ public class DefaultConverterManager implements ConverterManager
         slog.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
 
         converter.setConverterManager(this);
+
+        if (converter instanceof NamedConverter)
+        {
+            try
+            {
+                NamedConverter namedConverter = (NamedConverter) converter;
+                namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
+                namedConverter.setInstanceType(Class.forName(match));
+            }
+            catch (Exception cne)
+            {
+                slog.warn("Could not load class [" + match + "]. Conversion will try to work upon other runtime information");
+            }
+        }
+
         converters.put(match, converter);
+    }
+
+    /**
+     * Expands the Javascript wildcard (if any).
+     * @param match the java class
+     * @param jsClassName the javascript attribute of a converter
+     * @return a string that does not contain * or null
+     */
+    protected String inferClassName(String match, String jsClassName)
+    {
+        String className = jsClassName;
+        if (jsClassName != null)
+        {
+            if ("*".equals(jsClassName))
+            {
+                className = match.substring(match.lastIndexOf('.') + 1);
+            }
+            else if ("**".equals(jsClassName))
+            {
+                className = match;
+            }
+            else if (jsClassName.indexOf("*") > 0)
+            {
+                className = jsClassName.replace("*", match.substring(match.lastIndexOf('.') + 1));
+            }
+
+            if (!className.equals(jsClassName) && log.isDebugEnabled())
+            {
+                slog.debug("- expanded javascript [" + jsClassName + "] to [" + className + "] for " + match);
+            }
+        }
+
+        return className;
     }
 
     /* (non-Javadoc)
@@ -123,6 +187,30 @@ public class DefaultConverterManager implements ConverterManager
     public boolean isConvertable(Class<?> paramType)
     {
         return getConverter(paramType) != null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#getClientDeclaredType(org.directwebremoting.extend.InboundVariable)
+     */
+    public Class<?> getClientDeclaredType(InboundVariable data)
+    {
+        String objectName = data.getNamedObjectType();
+        if (objectName != null)
+        {
+            NamedConverter converter = getNamedConverter(Object.class, objectName);
+            if (converter != null)
+            {
+                return converter.getInstanceType();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        // TODO: we do know the type that the client sent - we might be able
+        // to do something better here.
+        return null;
     }
 
     /* (non-Javadoc)
@@ -273,7 +361,7 @@ public class DefaultConverterManager implements ConverterManager
      * @return The Converter that matches this request (if any)
      * @throws ConversionException IF marshalling fails
      */
-    protected Converter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
+    protected NamedConverter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
     {
         // Locate a converter for this JavaScript classname
         for (Map.Entry<String, Converter> entry : converters.entrySet())

@@ -103,6 +103,14 @@ public class InternalConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#getClientDeclaredType(org.directwebremoting.extend.InboundVariable)
+     */
+    public Class<?> getClientDeclaredType(InboundVariable iv)
+    {
+        return converterManager.getClientDeclaredType(iv);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#convertInbound(java.lang.Class, org.directwebremoting.extend.InboundVariable, org.directwebremoting.extend.InboundContext, org.directwebremoting.extend.TypeHintContext)
      */
     public <T> T convertInbound(Class<T> paramType, InboundVariable iv, Property incc) throws ConversionException

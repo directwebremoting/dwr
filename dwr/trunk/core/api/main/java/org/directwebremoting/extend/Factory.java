@@ -42,14 +42,14 @@ public class Factory<T>
      */
     public T get()
     {
-        Builder<T> builder = this.builder;
-        if (builder == null)
+        Builder<T> b = this.builder;
+        if (b == null)
         {
             log.warn("DWR has not been initialized properly");
             return null;
         }
 
-        return builder.get();
+        return b.get();
     }
 
     /**
@@ -64,14 +64,14 @@ public class Factory<T>
      */
     public T get(ServletContext ctx)
     {
-        Builder<T> builder = this.builder;
-        if (builder == null)
+        Builder<T> b = this.builder;
+        if (b == null)
         {
             log.warn("DWR has not been initialized properly");
             return null;
         }
 
-        return builder.get(ctx);
+        return b.get(ctx);
     }
 
     /**

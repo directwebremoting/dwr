@@ -908,10 +908,10 @@ if (typeof this['dwr'] == 'undefined') {
         var objstr = Object.prototype.toString.call(data);
         if (data.$dwrByRef) batch.map[name] = dwr.engine.serialize.convertByReference(batch, referto, data, name, depth + 1);
         else if (ref != null) batch.map[name] = ref;
-        else if (objstr == "[object String]") batch.map[name] = "String:" + encodeURIComponent(data);
-        else if (objstr == "[object Boolean]") batch.map[name] = "Boolean:" + data;
-        else if (objstr == "[object Number]") batch.map[name] = "Number:" + data;
-        else if (objstr == "[object Date]") batch.map[name] = "Date:" + data.getTime();
+        else if (objstr == "[object String]") batch.map[name] = "string:" + encodeURIComponent(data);
+        else if (objstr == "[object Boolean]") batch.map[name] = "boolean:" + data;
+        else if (objstr == "[object Number]") batch.map[name] = "number:" + data;
+        else if (objstr == "[object Date]") batch.map[name] = "date:" + data.getTime();
         else if (objstr == "[object Array]") batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name, depth + 1);
         else if (data && data.tagName && data.tagName.toLowerCase() == "input" && data.type && data.type.toLowerCase() == "file") {
           batch.fileUpload = true;
@@ -962,7 +962,7 @@ if (typeof this['dwr'] == 'undefined') {
       var childName, i;
       if (dwr.engine.isIE <= 7) {
         // Use array joining on IE1-7 (fastest)
-        var buf = ["Array:["];
+        var buf = ["array:["];
         for (i = 0; i < data.length; i++) {
           if (i != 0) buf.push(",");
           batch.paramCount++;
@@ -976,7 +976,7 @@ if (typeof this['dwr'] == 'undefined') {
       }
       else {
         // Use string concat on other browsers (fastest)
-        var reply = "Array:[";
+        var reply = "array:[";
         for (i = 0; i < data.length; i++) {
           if (i != 0) reply += ",";
           batch.paramCount++;
@@ -1029,7 +1029,7 @@ if (typeof this['dwr'] == 'undefined') {
       else if (data.toXml) output = data.toXml;
       else output = data.innerHTML;
 
-      return "XML:" + encodeURIComponent(output);
+      return "xml:" + encodeURIComponent(output);
     },
 
     /**

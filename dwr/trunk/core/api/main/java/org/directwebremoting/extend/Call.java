@@ -131,9 +131,14 @@ public class Call
     }
 
     /**
-     * Find the method the best matches the method name and parameters
+     * Find the method the best matches the method name and parameters.
+     * <p>
+     * This method used to be significantly more detailed in its matching
+     * sequences, this simpler version is less defined in the order in which it
+     * matches methods, but able to find more matches. If we discover that this
+     * version creates problems, the old version was around up to revision 2317.
      */
-    public void findMethod(CreatorManager creatorManager, ConverterManager converterManager, InboundContext inctx)
+    public void findMethod(CreatorManager creatorManager, ConverterManager converterManager, InboundContext inctx, int callNum)
     {
         if (scriptName == null)
         {
@@ -144,6 +149,8 @@ public class Call
         {
             throw new IllegalArgumentException("Missing method parameter");
         }
+
+        int inputArgCount = inctx.getParameterCount(callNum);
 
         // Get a mutable list of all methods on the type specified by the creator
         Creator creator = creatorManager.getCreator(scriptName, true);
@@ -166,105 +173,114 @@ public class Call
             throw new IllegalArgumentException("Method name not found. See logs for details");
         }
 
-        if (allMethods.size() == 1)
+        // Remove all the methods where we can't convert the parameters
+        allMethodsLoop:
+        for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
         {
-            // Check the params of the single name match
-            Method methodOption = allMethods.get(0);
-            if (!parameterTypesCorrect(converterManager, inctx, methodOption))
+            Method m = it.next();
+            Class<?>[] methodParamTypes = m.getParameterTypes();
+
+            // Remove non-varargs methods which declare less params than were passed
+            if (!m.isVarArgs() && methodParamTypes.length < inputArgCount)
             {
-                throw new IllegalArgumentException("Parameter not convertible. See logs for details");
+                it.remove();
+                continue allMethodsLoop;
             }
-            method = methodOption;
+
+            // Remove methods where we can't convert the input
+            for (int i = 0; i < methodParamTypes.length; i++)
+            {
+                // If we can't convert this parameter type, ignore the method
+                Class<?> methodParamType = methodParamTypes[i];
+                if (!converterManager.isConvertable(methodParamType))
+                {
+                    it.remove();
+                    continue allMethodsLoop;
+                }
+
+                // Remove methods which declare more non-nullable parameters than were passed
+                if (inputArgCount <= i && methodParamType.isPrimitive())
+                {
+                    it.remove();
+                    continue allMethodsLoop;
+                }
+
+                // Remove methods where the client passed a type and we can't use it.
+                InboundVariable param = inctx.getParameter(callNum, i);
+                Class<?> inputType = converterManager.getClientDeclaredType(param);
+                if (inputType != null && !methodParamType.isAssignableFrom(inputType))
+                {
+                    it.remove();
+                    continue allMethodsLoop;
+                }
+            }
+        }
+
+        if (allMethods.isEmpty())
+        {
+            // Not even a name match
+            log.warn("No methods called " + creator.getType() + "." + methodName + "' are applicable for the passed parameters.");
+            throw new IllegalArgumentException("Method not found. See logs for details");
+        }
+        else if (allMethods.size() == 1)
+        {
+            setMethod(allMethods.get(0));
+            return;
+        }
+
+        // If we have methods that exactly match the param count we use a
+        // different matching algorithm, to when we don't
+        List<Method> exactParamCountMatches = new ArrayList<Method>();
+        for (Method m : allMethods)
+        {
+            if (!m.isVarArgs() && m.getParameterTypes().length == inputArgCount)
+            {
+                exactParamCountMatches.add(m);
+            }
+        }
+
+        if (exactParamCountMatches.size() == 1)
+        {
+            // One method with the right number of params - use that
+            setMethod(exactParamCountMatches.get(0));
         }
         else
         {
-            // First weed out the methods with the wrong number of parameters
-            for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
+            // Lots of methods with the right name, but none with the right
+            // parameter count. If we have exactly one varargs method, then we
+            // use that, otherwise we bail.
+            List<Method> varargsMathods = new ArrayList<Method>();
+            for (Method m : allMethods)
             {
-                // Check number of parameters
-                Method methodOption = it.next();
-                if (methodOption.getParameterTypes().length != inctx.getParameterCount())
+                if (m.isVarArgs())
                 {
-                    it.remove();
+                    varargsMathods.add(m);
                 }
             }
 
-            if (allMethods.isEmpty())
+            if (varargsMathods.size() == 1)
             {
-                // None have the right number of parameters
-                log.warn("Multiple methods called '" + methodName + "' found. But none had " + inctx.getParameterCount() + " parameters.");
-                throw new IllegalArgumentException("Method not found. See logs for details");
-            }
-
-            if (allMethods.size() == 1)
-            {
-                // Only one match, check and use if we can
-                Method methodOption = allMethods.get(0);
-                if (!parameterTypesCorrect(converterManager, inctx, methodOption))
-                {
-                    throw new IllegalArgumentException("Parameter not convertible. See logs for details");
-                }
-
-                method = methodOption;
+                setMethod(varargsMathods.get(0));
             }
             else
             {
-                // Many available weed out the ones with params that don't match
-                for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
-                {
-                    Method methodOption = it.next();
-                    if (!parameterTypesCorrect(converterManager, inctx, methodOption))
-                    {
-                        it.remove();
-                    }
-                }
-
-                if (allMethods.isEmpty())
-                {
-                    // None have the right parameters
-                    log.warn("Multiple methods called '" + methodName + "' found. But none had all parameters convertible.");
-                    throw new IllegalArgumentException("Method not found. See logs for details");
-                }
-
-                if (allMethods.size() > 1)
-                {
-                    // Randomly use the first, but warn
-                    log.warn("Warning multiple matching methods. Using first match.");
-                }
-
-                method = allMethods.get(0);
+                log.warn("Can't find method to match " + creator.getType() + "." + methodName);
+                log.warn("- DWR does not execute where there is ambiguity. Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMathods.size());
+                throw new IllegalArgumentException("Method not found. See logs for details");
             }
         }
-    }
 
-    /**
-     * @param converterManager
-     * @param inctx
-     * @param methodOption
-     */
-    private boolean parameterTypesCorrect(ConverterManager converterManager, InboundContext inctx, Method methodOption)
-    {
-        // Only one option - we're checking not selecting
-        // Check parameter types
-        for (int i = 0; i < methodOption.getParameterTypes().length; i++)
+
+        if (allMethods.size() > 1)
         {
-            Class<?> paramType = methodOption.getParameterTypes()[i];
-            if (!converterManager.isConvertable(paramType))
+            log.warn("Warning: Multiple potential method matches. The selection process is undefined. Future versions of DWR (or your class) may select a different method. Potential matches include:");
+            for (Method m : allMethods)
             {
-                log.warn(scriptName + '.' + methodName + "(), parameter #" + i + " is not convertable.");
-                log.warn("You might need to add a <convert converter='bean' match='" + paramType.getCanonicalName() + "'/> to dwr.xml");
-                log.warn("See: http://getahead.org/dwr/server/dwrxml/converters/bean for more info.");
-                return false;
-            }
-
-            if (i > inctx.getParameterCount() && paramType.isPrimitive())
-            {
-                log.warn(scriptName + '.' + methodName + "(), parameter #" + i + " is not primitive, and no data supplied.");
-                return false;
+                log.warn("- " + m.toGenericString());
             }
         }
 
-        return true;
+        setMethod(allMethods.get(0));
     }
 
     /* (non-Javadoc)
