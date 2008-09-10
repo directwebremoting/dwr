@@ -168,7 +168,7 @@ public class JsonCallHandler implements Handler
         }
 
         // Which method are we using?
-        call.findMethod(creatorManager, converterManager, inboundContext);
+        call.findMethod(creatorManager, converterManager, inboundContext, 0);
         Method method = call.getMethod();
 
         // Check this method is accessible

@@ -212,6 +212,14 @@ public abstract class BasicObjectConverter implements NamedConverter
         for (Entry<String, String> entry : tokens.entrySet())
         {
             String key = entry.getKey();
+
+            // TODO: We don't URL decode method names we probably should. This is $dwr
+            // TODO: We should probably have stripped these out already
+            if (key.startsWith("%24dwr"))
+            {
+                continue;
+            }
+
             Property property = properties.get(key);
             if (property == null)
             {

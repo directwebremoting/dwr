@@ -126,21 +126,6 @@ public final class InboundVariable
         }
     }
 
-    public enum OnJsonParseError
-    {
-        /**
-         * If there is anything about the {@link InboundVariable} that can not
-         * be represented in 100% pure JSON, then throw
-         */
-        Throw,
-
-        /**
-         * If there is anything about the {@link InboundVariable} that can not
-         * be represented in 100% pure JSON, then insert null and carry on
-         */
-        Skip,
-    }
-
     /**
      * Was this type null on the way in
      * @return true if the javascript variable was null or undefined.

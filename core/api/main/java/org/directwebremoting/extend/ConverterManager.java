@@ -78,6 +78,15 @@ public interface ConverterManager
     boolean isConvertable(Class<?> paramType);
 
     /**
+     * Sometimes data from clients contains type information which should take
+     * higher priority than the type guessing that we do as part of the method
+     * matching. This method extracts the client passed type information.
+     * @param data The string version of the object from the client
+     * @return Any type information specified by the client
+     */
+    Class<?> getClientDeclaredType(InboundVariable data);
+
+    /**
      * Convert an object from being a string into an object of some type.
      * Designed for use with converters that have a working map passed to them
      * @param paramType The type that you want the object to be

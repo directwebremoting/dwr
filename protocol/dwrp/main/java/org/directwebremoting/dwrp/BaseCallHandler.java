@@ -58,9 +58,6 @@ import org.directwebremoting.util.DebuggingPrintWriter;
  * considered closely related and it is important to understand what one does
  * while editing the other.
  * TODO: Double check that getting rid of the check with accessControl is right
- * TODO: This class used to not the importance of synchronizing on 'out' in
- * marshallOutbound, and then not do it. Should we being doing it or was the
- * note superseded?
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class BaseCallHandler extends BaseDwrpHandler
@@ -140,39 +137,45 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         for (int callNum = 0; callNum < calls.getCallCount(); callNum++)
         {
             Call call = calls.getCall(callNum);
-            InboundContext inctx = batch.getInboundContexts().get(callNum);
 
-            // Get a list of the available matching methods with the coerced
-            // parameters that we will use to call it if we choose to use
-            // that method.
-
-            // Which method are we using?
-            call.findMethod(creatorManager, converterManager, inctx);
-            Method method = call.getMethod();
-            if (method == null)
-            {
-                log.warn("No methods to match " + call.getScriptName() + '.' + call.getMethodName());
-
-                call.setMethod(null);
-                call.setParameters(null);
-                call.setException(new IllegalArgumentException("Missing method or missing parameter converters"));
-
-                continue callLoop;
-            }
-
-            // Check this method is accessible
-            //Creator creator = creatorManager.getCreator(call.getScriptName(), true);
-            //accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
-
-            // We are now sure we have the set of input lined up. They may
-            // cross-reference so we do the de-referencing all in one go.
             try
             {
+                InboundContext inctx = batch.getInboundContexts().get(callNum);
+
+                // Get a list of the available matching methods with the coerced
+                // parameters that we will use to call it if we choose to use
+                // that method.
+
+                // Which method are we using?
+                call.findMethod(creatorManager, converterManager, inctx, callNum);
+                Method method = call.getMethod();
+                if (method == null)
+                {
+                    log.warn("No methods to match " + call.getScriptName() + '.' + call.getMethodName());
+                    throw new IllegalArgumentException("Missing method or missing parameter converters");
+                }
+
+                // We are now sure we have the set of inputs lined up. They may
+                // cross-reference so we do the de-referencing all in one go.
+                // TODO: should we do this here? - why not earlier?
+                // do we need to know the method before we dereference?
                 inctx.dereference();
+
+                // Convert all the parameters to the correct types
+                Object[] arguments = new Object[method.getParameterTypes().length];
+                for (int j = 0; j < method.getParameterTypes().length; j++)
+                {
+                    Class<?> paramType = method.getParameterTypes()[j];
+                    InboundVariable param = inctx.getParameter(callNum, j);
+                    Property property = new ParameterProperty(method, j);
+                    arguments[j] = converterManager.convertInbound(paramType, param, property);
+                }
+
+                call.setParameters(arguments);
             }
-            catch (ConversionException ex)
+            catch (Exception ex)
             {
-                log.warn("Marshalling exception", ex);
+                log.debug("Marshalling exception", ex);
 
                 call.setMethod(null);
                 call.setParameters(null);
@@ -180,31 +183,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
                 continue callLoop;
             }
-
-            // Convert all the parameters to the correct types
-            Object[] params = new Object[method.getParameterTypes().length];
-            for (int j = 0; j < method.getParameterTypes().length; j++)
-            {
-                try
-                {
-                    Class<?> paramType = method.getParameterTypes()[j];
-                    InboundVariable param = inctx.getParameter(callNum, j);
-                    Property property = new ParameterProperty(method, j);
-                    params[j] = converterManager.convertInbound(paramType, param, property);
-                }
-                catch (ConversionException ex)
-                {
-                    log.warn("Marshalling exception", ex);
-
-                    call.setMethod(null);
-                    call.setParameters(null);
-                    call.setException(ex);
-
-                    continue callLoop;
-                }
-            }
-
-            call.setParameters(params);
         }
 
         return calls;
@@ -573,20 +551,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * How we create new beans
      */
     protected CreatorManager creatorManager = null;
-
-    /**
-     * Accessor for the security manager
-     * @param accessControl The accessControl to set.
-     */
-    //public void setAccessControl(AccessControl accessControl)
-    //{
-    //    this.accessControl = accessControl;
-    //}
-
-    /**
-     * The security manager
-     */
-    //protected AccessControl accessControl = null;
 
     /**
      * How we stash away the results of the request parse

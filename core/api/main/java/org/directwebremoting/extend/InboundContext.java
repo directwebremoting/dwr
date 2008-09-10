@@ -132,7 +132,7 @@ public final class InboundContext
     }
 
     /**
-     * Internal method to allow entries to resolve references
+     * Method to allow entries to resolve references
      * @param name The name of the variable to lookup
      * @return The found variable
      */
@@ -190,8 +190,8 @@ public final class InboundContext
     }
 
     /**
-     * This is a bit of a hack, needed for debug purposes - it counts the
-     * parameters (including method and script params) for a given call number
+     * Count the arguments (including method and script params) for a given call
+     * number.
      * @param callNum The Call number to count the parameters of
      * @return The parameter count for a given Call
      */
