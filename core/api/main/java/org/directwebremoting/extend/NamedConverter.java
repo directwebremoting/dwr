@@ -71,14 +71,28 @@ public interface NamedConverter extends Converter
     void setInstanceType(Class<?> instanceType);
 
     /**
-     * Accessor for the javascript class name for the converted objects.
-     * @return The Javascript name
+     * Accessor for the javascript class name for mapped converted objects.
+     * @return The Javascript classname
      */
     String getJavascript();
 
     /**
-     * Accessor for the javascript class name for the converted objects.
-     * @param javascript The Javascript name
+     * Accessor for the javascript class name for mapped converted objects.
+     * @param javascript The Javascript classname
      */
     void setJavascript(String javascript);
+
+    /**
+     * Accessor for the javascript class name that will appear as superclass
+     * for mapped converted objects.
+     * @return The Javascript classname
+     */
+    String getJavascriptSuperClass();
+
+    /**
+     * Setter for the javascript class name that will appear as superclass
+     * for mapped converted objects.
+     * @param javascriptSuperClass The Javascript classname
+     */
+    void setJavascriptSuperClass(String javascriptSuperClass);
 }

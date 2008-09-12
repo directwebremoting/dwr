@@ -83,7 +83,7 @@ public class DefaultRemoter implements Remoter
      */
     public String generateDtoScript(String jsClassName) throws SecurityException
     {
-        return createDtoClassDefinition(jsClassName);
+        return createDtoClassDefinition(jsClassName, true);
     }
 
     /* (non-Javadoc)
@@ -245,24 +245,38 @@ public class DefaultRemoter implements Remoter
     {
         StringBuilder buffer = new StringBuilder();
 
+        // First output class definitions
         for (String match : converterManager.getConverterMatchStrings())
         {
             Converter conv = converterManager.getConverterByMatchString(match);
             // We will only generate JavaScript classes for compound objects/beans
             if (conv instanceof NamedConverter)
             {
-                NamedConverter boConv = (NamedConverter) conv;
-                String jsClassName = boConv.getJavascript();
+                NamedConverter namedConv = (NamedConverter) conv;
+                String jsClassName = namedConv.getJavascript();
 
                 // We need a configured JavaScript class name
-                if (jsClassName != null && !"".equals(jsClassName))
+                if (LocalUtil.hasLength(jsClassName))
                 {
-                    // Wildcard match strings are currently not supported
-                    if (!match.contains("*"))
-                    {
-                        buffer.append(createDtoClassDefinition(match, jsClassName, boConv));
-                        buffer.append('\n');
-                    }
+                    buffer.append(createDtoClassDefinition(namedConv));
+                }
+            }
+        }
+
+        // Then output superclass definitions
+        for (String match : converterManager.getConverterMatchStrings())
+        {
+            Converter conv = converterManager.getConverterByMatchString(match);
+            // We will only generate JavaScript classes for compound objects/beans
+            if (conv instanceof NamedConverter)
+            {
+                NamedConverter namedConv = (NamedConverter) conv;
+                String jsClassName = namedConv.getJavascript();
+
+                // We need a configured JavaScript class name
+                if (LocalUtil.hasLength(jsClassName))
+                {
+                    buffer.append(createDtoSuperClassDefinition(namedConv));
                 }
             }
         }
@@ -273,8 +287,9 @@ public class DefaultRemoter implements Remoter
     /**
      * Create a JavaScript class definition for a mapped converted class.
      * @param jsClassName The mapped class's JavaScript class name
+     * @param setupSuperClass Control whether to generate code for superclass referral
      */
-    protected String createDtoClassDefinition(String jsClassName)
+    protected String createDtoClassDefinition(String jsClassName, boolean setupSuperClass)
     {
         StringBuilder buf = new StringBuilder();
         for (String match : converterManager.getConverterMatchStrings())
@@ -283,22 +298,13 @@ public class DefaultRemoter implements Remoter
             // We will only generate JavaScript classes for compound objects/beans
             if (conv instanceof NamedConverter)
             {
-                NamedConverter boConv = (NamedConverter) conv;
-                if (jsClassName.equals(boConv.getJavascript()))
+                NamedConverter namedConv = (NamedConverter) conv;
+                if (jsClassName.equals(namedConv.getJavascript()))
                 {
-                    // Wildcard match strings are currently not supported
-                    if (!match.contains("*"))
-                    {
-                        return createDtoClassDefinition(match, jsClassName, boConv);
-                    }
-                    else
-                    {
-                        log.warn("Failed to create class definition for JS class " + jsClassName + " due to wildcard match string.");
-                        buf.append("// Missing mapped class definition for ");
-                        buf.append(jsClassName);
-                        buf.append(". See the server logs for details.\n");
-                        return buf.toString();
-                    }
+                    buf.append(createDtoClassDefinition(namedConv));
+                    if (setupSuperClass)
+                        buf.append(createDtoSuperClassDefinition(namedConv));
+                    return buf.toString();
                 }
             }
         }
@@ -312,11 +318,9 @@ public class DefaultRemoter implements Remoter
 
     /**
      * Create a JavaScript class definition for a mapped converted class.
-     * @param className The converted class's Java class name
-     * @param jsClassName The mapped class's JavaScript class name
-     * @param boConv The class's converter
+     * @param namedConv The class's converter
      */
-    protected String createDtoClassDefinition(String className, String jsClassName, NamedConverter boConv)
+    protected String createDtoClassDefinition(NamedConverter namedConv)
     {
         // The desired output should follow this scheme:
         // (1)  if (!('pkg1' in this)) this.pkg1 = {};
@@ -338,6 +342,7 @@ public class DefaultRemoter implements Remoter
         // (8)    }
         // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
         // (10)  }
+        String jsClassName = namedConv.getJavascript();
         try
         {
             StringBuilder buf = new StringBuilder();
@@ -369,17 +374,7 @@ public class DefaultRemoter implements Remoter
             buf.append(" = function() {\n");
 
             // Generate (3): this.myProp = <initial value>;
-            Class<?> mappedType;
-            try
-            {
-                mappedType = LocalUtil.classForName(className);
-            }
-            catch (ClassNotFoundException ex)
-            {
-                throw new IllegalArgumentException(ex.getMessage());
-            }
-
-            Map<String, Property> properties = boConv.getPropertyMapFromClass(mappedType, true, true);
+            Map<String, Property> properties = namedConv.getPropertyMapFromClass(namedConv.getInstanceType(), true, true);
             for (Entry<String, Property> entry : properties.entrySet())
             {
                 String name = entry.getKey();
@@ -467,6 +462,7 @@ public class DefaultRemoter implements Remoter
 
             // Generate (10): end of definition
             buf.append("}\n");
+            buf.append("\n");
             return buf.toString();
         }
         catch (Exception ex)
@@ -481,6 +477,36 @@ public class DefaultRemoter implements Remoter
 
     }
 
+    /**
+     * Create the superclass definition for a mapped converted class.
+     * @param namedConv The class's converter
+     */
+    protected String createDtoSuperClassDefinition(NamedConverter namedConv)
+    {
+        // The desired output is something like this:
+        //   MySubClass.prototype = new MySuperClass();
+        //   MySubClass.prototype.constructor = MySubClass;
+        StringBuilder buf = new StringBuilder();
+        if (LocalUtil.hasLength(namedConv.getJavascriptSuperClass()))
+        {
+            String subclass = namedConv.getJavascript();
+            String superclass = namedConv.getJavascriptSuperClass();
+            
+            buf.append(subclass);
+            buf.append(".prototype = new ");
+            buf.append(superclass);
+            buf.append("();\n");
+            
+            buf.append(subclass);
+            buf.append(".prototype.constructor = ");
+            buf.append(subclass);
+            buf.append(";\n");
+
+            buf.append("\n");
+        }
+        return buf.toString();
+    }
+    
     /**
      * Generates Javascript for a given Java method
      * @param scriptName  Name of the Javascript file, without ".js" suffix
