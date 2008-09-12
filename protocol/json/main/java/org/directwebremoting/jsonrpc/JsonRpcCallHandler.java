@@ -32,6 +32,7 @@ import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
@@ -39,7 +40,6 @@ import org.directwebremoting.json.JsonUtil;
 import org.directwebremoting.json.parse.JsonParseException;
 import org.directwebremoting.jsonrpc.io.JsonRpcError;
 import org.directwebremoting.jsonrpc.io.JsonRpcRequest;
-import org.directwebremoting.servlet.RemotingHandler;
 import org.directwebremoting.util.MimeConstants;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -50,7 +50,7 @@ import static org.directwebremoting.jsonrpc.JsonRpcConstants.*;
  * A Handler for JSON-RPC calls.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JsonRpcCallHandler extends RemotingHandler
+public class JsonRpcCallHandler implements Handler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
