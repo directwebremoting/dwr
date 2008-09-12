@@ -56,10 +56,10 @@ public class JsonCallHandler implements Handler
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        if (!jsonEnabled)
+        if (!jsonpEnabled)
         {
-            log.warn("JSON request denied. To enable JSON mode add an init-param of jsonEnabled=true to web.xml");
-            throw new SecurityException("JSON interface disabled");
+            log.warn("JSONP request denied. To enable JSONP mode add an init-param of jsonpEnabled=true to web.xml");
+            throw new SecurityException("JSONP interface disabled");
         }
 
         // Get the output stream and setup the mime type
@@ -128,7 +128,7 @@ public class JsonCallHandler implements Handler
         if (pathParts.length < 4)
         {
             log.warn("pathInfo '" + pathInfo + "' contains " + pathParts.length + " parts. At least 4 are required.");
-            throw new JsonCallException("Bad JSON request. See logs for more details.");
+            throw new JsonpCallException("Bad JSON request. See logs for more details.");
         }
 
         InboundContext inboundContext = new InboundContext();
@@ -184,7 +184,7 @@ public class JsonCallHandler implements Handler
         catch (ConversionException ex)
         {
             log.warn("Dereferencing exception", ex);
-            throw new JsonCallException("Error dereferencing call. See logs for more details.");
+            throw new JsonpCallException("Error dereferencing call. See logs for more details.");
         }
 
         // Convert all the parameters to the correct types
@@ -202,7 +202,7 @@ public class JsonCallHandler implements Handler
             catch (ConversionException ex)
             {
                 log.warn("Marshalling exception. Param " + j + ", ", ex);
-                throw new JsonCallException("Error marshalling parameters. See logs for more details.");
+                throw new JsonpCallException("Error marshalling parameters. See logs for more details.");
             }
         }
 
@@ -261,6 +261,11 @@ public class JsonCallHandler implements Handler
     }
 
     /**
+     * How we convert parameters
+     */
+    protected ConverterManager converterManager = null;
+
+    /**
      * Accessor for the DefaultCreatorManager that we configure
      * @param creatorManager The new DefaultConverterManager
      */
@@ -268,6 +273,11 @@ public class JsonCallHandler implements Handler
     {
         this.creatorManager = creatorManager;
     }
+
+    /**
+     * How we create new beans
+     */
+    protected CreatorManager creatorManager = null;
 
     /**
      * Accessor for the security manager
@@ -279,12 +289,22 @@ public class JsonCallHandler implements Handler
     }
 
     /**
+     * The security manager
+     */
+    protected AccessControl accessControl = null;
+
+    /**
      * Are we allowing remote hosts to contact us using JSON?
      */
-    public void setJsonEnabled(boolean jsonEnabled)
+    public void setJsonpEnabled(boolean jsonpEnabled)
     {
-        this.jsonEnabled = jsonEnabled;
+        this.jsonpEnabled = jsonpEnabled;
     }
+
+    /**
+     * Are we allowing remote hosts to contact us using JSON?
+     */
+    protected boolean jsonpEnabled = false;
 
     /**
      * Setter for the remoter
@@ -296,29 +316,9 @@ public class JsonCallHandler implements Handler
     }
 
     /**
-     * Are we allowing remote hosts to contact us using JSON?
-     */
-    protected boolean jsonEnabled = false;
-
-    /**
      * The bean to execute remote requests and generate interfaces
      */
     protected Remoter remoter = null;
-
-    /**
-     * How we convert parameters
-     */
-    protected ConverterManager converterManager = null;
-
-    /**
-     * How we create new beans
-     */
-    protected CreatorManager creatorManager = null;
-
-    /**
-     * The security manager
-     */
-    protected AccessControl accessControl = null;
 
     /**
      * The log stream

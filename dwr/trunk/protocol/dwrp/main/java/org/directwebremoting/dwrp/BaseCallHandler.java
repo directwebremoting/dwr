@@ -266,13 +266,13 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
 
         // Send the script prefix (if any)
-        sendOutboundScriptPrefix(out, replies.getBatchId());
+        sendOutboundScriptPrefix(out, replies.getCalls().getBatchId());
 
         out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
         scriptSession.writeScripts(conduit);
         out.println(ProtocolConstants.SCRIPT_CALL_REPLY);
 
-        String batchId = replies.getBatchId();
+        String batchId = replies.getCalls().getBatchId();
         for (int i = 0; i < replies.getReplyCount(); i++)
         {
             Reply reply = replies.getReply(i);
@@ -321,7 +321,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             }
         }
 
-        sendOutboundScriptSuffix(out, replies.getBatchId());
+        sendOutboundScriptSuffix(out, replies.getCalls().getBatchId());
     }
 
     /* (non-Javadoc)

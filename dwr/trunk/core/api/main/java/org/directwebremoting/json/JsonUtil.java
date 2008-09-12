@@ -15,8 +15,11 @@
  */
 package org.directwebremoting.json;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ import org.directwebremoting.json.parse.impl.IgnoreJsonDecoder;
 import org.directwebremoting.json.parse.impl.ReflectionJsonDecoder;
 import org.directwebremoting.json.parse.impl.SimpleArrayJsonDecoder;
 import org.directwebremoting.json.parse.impl.SimpleObjectJsonDecoder;
+import org.directwebremoting.json.serialize.JsonSerializer;
+import org.directwebremoting.json.serialize.JsonSerializerFactory;
 
 /**
  * Various utilities to make parsing and reading JSON easier
@@ -108,6 +113,26 @@ public class JsonUtil
         {
             return ex.toString();
         }
+    }
+
+    /**
+     * Convert arbitrary convertible data into a JSON string and write it out
+     * to the given Writer
+     */
+    public static void toJson(Object data, Writer out) throws IOException
+    {
+        JsonSerializer serializer = JsonSerializerFactory.get();
+        serializer.toJson(data, out);
+    }
+
+    /**
+     * Convert arbitrary convertible data into a JSON string.
+     */
+    public static String toJson(Object data) throws IOException
+    {
+        StringWriter out = new StringWriter();
+        toJson(data, out);
+        return out.toString();
     }
 
     /*

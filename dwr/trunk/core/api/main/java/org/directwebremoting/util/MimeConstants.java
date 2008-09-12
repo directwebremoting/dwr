@@ -38,4 +38,9 @@ public interface MimeConstants
      * MIME constant for Javascript
      */
     public static final String MIME_JS = "text/javascript; charset=utf-8";
+
+    /**
+     * MIME constant for JSON
+     */
+    public static final String MIME_JSON = "application/json";
 }

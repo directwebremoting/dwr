@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.jsonp;
+package org.directwebremoting.json.serialize.local;
+
+import org.directwebremoting.impl.DefaultBuilder;
+import org.directwebremoting.json.serialize.JsonSerializer;
+import org.directwebremoting.json.serialize.JsonSerializerFactory.JsonSerializerBuilder;
 
 /**
- * Called when a JSON request is not formatted properly
+ * A Builder that creates {@link LocalJsonSerializer}s.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JsonCallException extends RuntimeException
+public class LocalJsonSerializerBuilder extends DefaultBuilder<JsonSerializer> implements JsonSerializerBuilder
 {
     /**
-     * All JsonCallExceptions must have a reason
+     * Initialize the DefaultBuilder with type of object to create
      */
-    public JsonCallException(String reason)
+    public LocalJsonSerializerBuilder()
     {
-        super(reason);
+        super(LocalJsonSerializer.class);
     }
 }
