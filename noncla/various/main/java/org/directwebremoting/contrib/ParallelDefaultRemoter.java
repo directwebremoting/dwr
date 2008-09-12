@@ -15,14 +15,6 @@
  */
 package org.directwebremoting.contrib;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-import org.directwebremoting.extend.Call;
-import org.directwebremoting.extend.Calls;
-import org.directwebremoting.extend.Replies;
-import org.directwebremoting.extend.Reply;
-import org.directwebremoting.impl.DefaultRemoter;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -30,6 +22,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.Call;
+import org.directwebremoting.extend.Calls;
+import org.directwebremoting.extend.Replies;
+import org.directwebremoting.extend.Reply;
+import org.directwebremoting.impl.DefaultRemoter;
 
 /**
  * This implementation is not officially supported, and may be removed
@@ -103,7 +103,7 @@ public class ParallelDefaultRemoter extends DefaultRemoter
     @Override
     public Replies execute(Calls calls)
     {
-        Replies replies = new Replies(calls.getBatchId());
+        Replies replies = new Replies(calls);
         Future<?>[] future = new Future<?>[calls.getCallCount()];
 
         if (calls.getCallCount() == 1)

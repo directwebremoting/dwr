@@ -28,11 +28,11 @@ import java.util.List;
 public class Replies implements Iterable<Reply>
 {
     /**
-     * @param batchId The batchId to set.
+     * @param calls The set of calls to that we are the reply to
      */
-    public Replies(String batchId)
+    public Replies(Calls calls)
     {
-        this.batchId = batchId;
+        this.calls = calls;
     }
 
     /**
@@ -63,19 +63,11 @@ public class Replies implements Iterable<Reply>
     }
 
     /**
-     * @param batchId The batchId to set.
-     */
-    public void setBatchId(String batchId)
-    {
-        this.batchId = batchId;
-    }
-
-    /**
      * @return Returns the batchId.
      */
-    public String getBatchId()
+    public Calls getCalls()
     {
-        return batchId;
+        return calls;
     }
 
     /* (non-Javadoc)
@@ -86,10 +78,13 @@ public class Replies implements Iterable<Reply>
         return replies.iterator();
     }
 
-    private String batchId = null;
+    /**
+     * The calls that we are the reply to
+     */
+    private final Calls calls;
 
     /**
      * The collection of Replies that we should execute
      */
-    private List<Reply> replies = new ArrayList<Reply>();
+    private final List<Reply> replies = new ArrayList<Reply>();
 }

@@ -336,7 +336,7 @@ public class DefaultRemoter implements Remoter
         // (8)      ...
         // (8)      return obj;
         // (8)    }
-        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass; 
+        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
         // (10)  }
         try
         {
@@ -546,7 +546,7 @@ public class DefaultRemoter implements Remoter
      */
     public Replies execute(Calls calls)
     {
-        Replies replies = new Replies(calls.getBatchId());
+        Replies replies = new Replies(calls);
 
         int callCount = calls.getCallCount();
         if (callCount > maxCallCount)
