@@ -120,8 +120,54 @@ public class DefaultConverterManager implements ConverterManager
             try
             {
                 NamedConverter namedConverter = (NamedConverter) converter;
-                namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
-                namedConverter.setInstanceType(Class.forName(match));
+                
+                // Set up stuff for mapped JavaScript class (if any)
+                if (LocalUtil.hasLength(namedConverter.getJavascript())) 
+                {
+                    Class javaClass = Class.forName(match);
+                    namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
+                    namedConverter.setInstanceType(javaClass);
+                    
+                    // Set up stuff for mapped JavaScript superclass (if not already assigned)
+                    if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+                    {
+                        // (Here we depend on that the match string is a non-wildcarded 
+                        // Java class name and the relevent match strings in the 
+                        // converters collection are also non-wildcarded Java 
+                        // class/interface names)
+                        
+                        // First check if any of our superclasses are mapped
+                        Class javaSuperClass = javaClass.getSuperclass();
+                        while(javaSuperClass != null)
+                        {
+                            String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
+                            if (jsSuperClassName != null)
+                            {
+                                namedConverter.setJavascriptSuperClass(jsSuperClassName);
+                                break;
+                            }
+
+                            // Continue with next class
+                            javaSuperClass = javaSuperClass.getSuperclass();
+                        }
+                        
+                        // If we still have no superclass then continue trying with interfaces
+                        if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass())) {
+                            Class checkInterfacesOnClass = javaClass;
+                            while(checkInterfacesOnClass != null)
+                            {
+                                String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
+                                if (jsSuperClassName != null)
+                                {
+                                    namedConverter.setJavascriptSuperClass(jsSuperClassName);
+                                    break;
+                                }
+                                // Continue with next class
+                                checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception cne)
             {
@@ -165,6 +211,59 @@ public class DefaultConverterManager implements ConverterManager
         return className;
     }
 
+    /**
+     * Convenience method to find a class's mapped JavaScript class name IF
+     * the Java class is being converted and IF there is a mapped class name.
+     * @param javaClass the java class
+     * @return a non-empty classname, or null if not found
+     */
+    protected String getMappedJavaScriptClassName(Class javaClass)
+    {
+        Converter conv = converters.get(javaClass.getName()); 
+        if (conv != null)
+        {
+            // Check if mapped
+            if (conv instanceof NamedConverter)
+            {
+                NamedConverter namedConv = (NamedConverter) conv;
+                if (LocalUtil.hasLength(namedConv.getJavascript()))
+                {
+                    return namedConv.getJavascript();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Recurse a class's interface graph and return the first found mapped
+     * JavaScript class name.
+     * @param checkInterfacesOnClass the java class
+     * @return a non-empty classname, or null if not found
+     */
+    protected String findMappedJavaScriptClassNameForAnyInterface(Class checkInterfacesOnClass)
+    {
+        Class[] interfaces = checkInterfacesOnClass.getInterfaces();
+        for (Class intfc : interfaces)
+        {
+            // Check if this interface is mapped
+            String jsClassName = getMappedJavaScriptClassName(intfc);
+            if (jsClassName != null)
+            {
+                return jsClassName;
+            }
+
+            // Otherwise recursively try with the interfaces we are extending
+            jsClassName = findMappedJavaScriptClassNameForAnyInterface(intfc);
+            if (jsClassName != null)
+            {
+                return jsClassName;
+            }
+        }
+        
+        return null;
+    }
+    
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getConverterMatchStrings()
      */

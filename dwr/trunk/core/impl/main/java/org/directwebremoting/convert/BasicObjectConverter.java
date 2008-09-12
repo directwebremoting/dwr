@@ -488,6 +488,28 @@ public abstract class BasicObjectConverter implements NamedConverter
     protected String javascript = null;
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.NamedConverter#getJavascriptSuperClass()
+     */
+    public String getJavascriptSuperClass()
+    {
+        return javascriptSuperClass;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.NamedConverter#setJavascriptSuperClass(java.lang.String)
+     */
+    public void setJavascriptSuperClass(String javascriptSuperClass)
+    {
+        this.javascriptSuperClass = javascriptSuperClass;
+    }
+    
+    /**
+     * The javascript class name that will appear as superclass
+     * for the converted objects
+     */
+    protected String javascriptSuperClass = null;
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.convert.NamedConverter#getInstanceType()
      */
     public Class<?> getInstanceType()
