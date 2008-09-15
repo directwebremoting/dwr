@@ -49,6 +49,7 @@ import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.io.FileTransfer;
+import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**
@@ -203,12 +204,17 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             for (Map.Entry<String, FormField> entry : paramMap.entrySet())
             {
                 String key = entry.getKey();
-                FormField formField = entry.getValue();
+                final FormField formField = entry.getValue();
                 Object value;
 
                 if (formField.isFile())
                 {
-                    value = new FileTransfer(formField.getName(), formField.getMimeType(), formField.getInputStream());
+                    value = new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(),
+                        new InputStreamFactory() {
+                            public java.io.InputStream getInputStream() throws IOException {
+                                return formField.getInputStream();
+                            }
+                    });
                 }
                 else
                 {
