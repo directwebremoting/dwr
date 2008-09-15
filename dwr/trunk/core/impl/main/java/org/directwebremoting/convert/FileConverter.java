@@ -41,6 +41,7 @@ import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.io.FileTransfer;
+import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.util.BrowserDetect;
 import org.directwebremoting.util.CopyUtils;
 import org.directwebremoting.util.UserAgent;
@@ -51,6 +52,7 @@ import org.directwebremoting.util.UserAgent;
  * Files come from an &lt;input type=&quot;file&quot;/&gt; on the client.
  * @author Lance Semmens [uklance at gmail dot com]
  * @author Joe Walker [joe at getahead dot org]
+ * @author Niklas Johansson [niklas dot json at gmail dot com]
  */
 public class FileConverter extends AbstractConverter
 {
@@ -66,10 +68,14 @@ public class FileConverter extends AbstractConverter
 
         try
         {
-            FormField formField = data.getFormField();
+            final FormField formField = data.getFormField();
             if (paramType == FileTransfer.class)
             {
-                return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getInputStream());
+                return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), new InputStreamFactory() {
+                    public InputStream getInputStream() throws IOException {
+                        return formField.getInputStream();
+                    }
+                });
             }
             else if (paramType == InputStream.class)
             {

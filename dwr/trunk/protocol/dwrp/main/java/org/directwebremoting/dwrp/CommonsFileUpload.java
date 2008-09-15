@@ -16,6 +16,7 @@
 package org.directwebremoting.dwrp;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.directwebremoting.event.SessionProgressListener;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ServerException;
+import org.directwebremoting.io.InputStreamFactory;
+
 
 /**
  * An implementation of {@link FileUpload} that uses Apache Commons FileUpload.
@@ -69,7 +72,7 @@ public class CommonsFileUpload implements FileUpload
         {
             Map<String, FormField> map = new HashMap<String, FormField>();
             List<FileItem> fileItems = fileUploader.parseRequest(req);
-            for (FileItem fileItem : fileItems)
+            for (final FileItem fileItem : fileItems)
             {
                 FormField formField;
                 if (fileItem.isFormField())
@@ -78,7 +81,12 @@ public class CommonsFileUpload implements FileUpload
                 }
                 else
                 {
-                    formField = new FormField(fileItem.getName(), fileItem.getContentType(), fileItem.get());
+                    formField = new FormField(fileItem.getName(), fileItem.getContentType(), fileItem.getSize(), 
+                            new InputStreamFactory() {
+                                public java.io.InputStream getInputStream() throws IOException {
+                                    return fileItem.getInputStream();
+                                }
+                    });
                 }
                 map.put(fileItem.getFieldName(), formField);
             }

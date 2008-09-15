@@ -26,6 +26,7 @@ import java.io.OutputStream;
  * The other is to expose a method with an {@link InputStream} parameter.
  * @author Lance Semmens [uklance at gmail dot com]
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Niklas Johansson [niklas dot json at gmail dot com]
  */
 public class FileTransfer
 {
@@ -39,35 +40,38 @@ public class FileTransfer
     {
         this.name = name;
         this.mimeType = mimeType;
-        this.inputStream = null;
         this.outputStreamLoader = outputStreamLoader;
+        this.size = -1;
     }
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
      * @param name The remote source filename
      * @param mimeType The mime type passed in by the browser
-     * @param inputStream A means by which the data can be read
+     * @param bytes the raw data
      */
-    public FileTransfer(String name, String mimeType, InputStream inputStream)
-    {
-        this.name = name;
-        this.mimeType = mimeType;
-        this.inputStream = inputStream;
-        this.outputStreamLoader = null;
+    public FileTransfer(String name, String mimeType, final byte[] bytes) {
+        this(name, mimeType, bytes.length, new InputStreamFactory() {
+            public InputStream getInputStream() throws IOException
+            {
+                return new ByteArrayInputStream(bytes);
+            }
+        });
     }
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
      * @param name The remote source filename
      * @param mimeType The mime type passed in by the browser
-     * @param data The data to be transfered
+     * @param size The size of the file
+     * @param inputStreamFactory A means by which the data can be read
      */
-    public FileTransfer(String name, String mimeType, byte[] data)
+    public FileTransfer(String name, String mimeType, long size, InputStreamFactory inputStreamFactory)
     {
         this.name = name;
         this.mimeType = mimeType;
-        this.inputStream = new ByteArrayInputStream(data);
+        this.size = size;
+        this.inputStreamFactory = inputStreamFactory;
         this.outputStreamLoader = null;
     }
 
@@ -80,12 +84,20 @@ public class FileTransfer
     }
 
     /**
+     * Returns the size of the file passed by the browser or -1 of this is a download transfer.
+     */
+    public long getSize()
+    {
+        return size;
+    }
+
+    /**
      * Returns an InputStream that can be used to retrieve the contents of the
      * file.
      */
-    public InputStream getInputStream()
+    public InputStream getInputStream() throws IOException
     {
-        return inputStream;
+        return inputStreamFactory.getInputStream();
     }
 
     /**
@@ -135,9 +147,14 @@ public class FileTransfer
     private final String mimeType;
 
     /**
+     * The size of the file
+     */
+    private final long size;
+
+    /**
      * A means by which the data can be read
      */
-    private final InputStream inputStream;
+    private InputStreamFactory inputStreamFactory;
 
     /**
      * A means by which the data can be written
