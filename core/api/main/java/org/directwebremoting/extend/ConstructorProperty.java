@@ -64,7 +64,7 @@ public class ConstructorProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    public Property createChild(int aNewParameterNumber)
+    public Property createChild(int nextNewParameterNumber)
     {
         Type[] types = constructor.getGenericParameterTypes();
         if (parameterNumber >= types.length)
@@ -72,7 +72,7 @@ public class ConstructorProperty implements Property
             throw new IllegalArgumentException("parameterNumber=" + parameterNumber + " is too big when method=" + constructor.getName() + " returns genericParameterTypes.length=" + types.length);
         }
         Type parameterType = types[parameterNumber];
-        return new NestedProperty(this, null/*constructor*/, parameterType, parameterNumber, aNewParameterNumber);
+        return new NestedProperty(this, constructor, parameterType, parameterNumber, nextNewParameterNumber);
     }
 
     /* (non-Javadoc)

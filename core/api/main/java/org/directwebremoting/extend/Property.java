@@ -67,6 +67,10 @@ public interface Property
      * Properties may have children where we have nested generic type info.
      * For example with {@code setFoo(List<Map<String, Class<?>> x)} we can
      * find type information about the nested bits of generic data.
+     * <p>
+     * If calling this method then you almost certainly want to check for an
+     * overridden property as defined by the {@link ConverterManager} by calling
+     * {@link ConverterManager#checkOverride(Property)}
      * @param index Generally the parameter offset.
      * @return A Property to describe the nested bit of data
      */

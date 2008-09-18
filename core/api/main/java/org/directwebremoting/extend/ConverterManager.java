@@ -123,18 +123,19 @@ public interface ConverterManager
      * We don't know enough from a method signature like setUsers(Set s) to be
      * able to cast the inbound data to a set of Users. This method enables us
      * to specify this extra information.
-     * @param thc The context to find any extra type information from
-     * @param type The type of the specified parameter.
+     * @param original The original property that might need replacing
+     * @param replacement A replacement property that returns the correct type
      */
-    void setExtraTypeInfo(Property thc, Class<?> type);
+    void setOverrideProperty(Property original, Property replacement);
 
     /**
-     * The extra type information that we have learnt about a method parameter.
-     * This method will return null if there is nothing extra to know
-     * @param thc The context to find any extra type information from
-     * @return A type to use to fill out the generic type
+     * All {@link Property}s can create children to represent sub-types, but the
+     * ConverterManager might want to override the options that they provide
+     * using types configured by a signatures element.
+     * @param property The property to check for overriding
+     * @return The original property unless an override was provided
      */
-    Class<?> getExtraTypeInfo(Property thc);
+    Property checkOverride(Property property);
 
     /**
      * Sets the converters for this converter manager.

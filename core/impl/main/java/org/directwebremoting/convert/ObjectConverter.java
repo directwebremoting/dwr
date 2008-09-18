@@ -104,7 +104,7 @@ public class ObjectConverter extends BasicObjectConverter
     @Override
     protected Property createTypeHintContext(InboundContext inctx, Property property)
     {
-        return inctx.getCurrentTypeHintContext();
+        return inctx.getCurrentProperty();
     }
 
     /**

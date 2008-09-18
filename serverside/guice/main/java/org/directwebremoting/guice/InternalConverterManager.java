@@ -135,19 +135,19 @@ public class InternalConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ConverterManager#setExtraTypeInfo(org.directwebremoting.extend.TypeHintContext, java.lang.Class)
+     * @see org.directwebremoting.extend.ConverterManager#checkOverride(org.directwebremoting.extend.Property)
      */
-    public void setExtraTypeInfo(Property thc, Class<?> type)
+    public Property checkOverride(Property property)
     {
-        converterManager.setExtraTypeInfo(thc, type);
+        return converterManager.checkOverride(property);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ConverterManager#getExtraTypeInfo(org.directwebremoting.extend.TypeHintContext)
+     * @see org.directwebremoting.extend.ConverterManager#setOverrideProperty(org.directwebremoting.extend.Property, org.directwebremoting.extend.Property)
      */
-    public Class<?> getExtraTypeInfo(Property thc)
+    public void setOverrideProperty(Property original, Property replacement)
     {
-        return converterManager.getExtraTypeInfo(thc);
+        converterManager.setOverrideProperty(original, replacement);
     }
 
     /* (non-Javadoc)

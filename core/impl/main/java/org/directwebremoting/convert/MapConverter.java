@@ -72,7 +72,7 @@ public class MapConverter implements Converter
 
         if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentProperty() + ". Passed: " + value);
             throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
@@ -99,13 +99,15 @@ public class MapConverter implements Converter
             }
 
             // Get the extra type info
-            Property thc = data.getContext().getCurrentTypeHintContext();
+            Property parent = data.getContext().getCurrentProperty();
 
-            Property keyThc = thc.createChild(0);
-            Class<?> keyType = keyThc.getPropertyType();
+            Property keyProp = parent.createChild(0);
+            keyProp = converterManager.checkOverride(keyProp);
+            Class<?> keyType = keyProp.getPropertyType();
 
-            Property valThc = thc.createChild(1);
-            Class<?> valType = valThc.getPropertyType();
+            Property valProp = parent.createChild(1);
+            valProp = converterManager.checkOverride(valProp);
+            Class<?> valType = valProp.getPropertyType();
 
             // We should put the new object into the working map in case it
             // is referenced later nested down in the conversion process.
@@ -137,7 +139,7 @@ public class MapConverter implements Converter
                 String splitIvType = splitIv[ConvertUtil.INBOUND_INDEX_TYPE];
                 InboundVariable valIv = new InboundVariable(incx, null, splitIvType, splitIvValue);
                 valIv.dereference();
-                Object val = converterManager.convertInbound(valType, valIv, valThc);
+                Object val = converterManager.convertInbound(valType, valIv, valProp);
 
                 // Keys (unlike values) do not have type info passed with them
                 // Could we have recursive key? - I don't think so because keys
@@ -148,7 +150,7 @@ public class MapConverter implements Converter
                 InboundVariable keyIv = new InboundVariable(incx, null, ProtocolConstants.TYPE_STRING, keyStr);
                 keyIv.dereference();
 
-                Object key = converterManager.convertInbound(keyType, keyIv, keyThc);
+                Object key = converterManager.convertInbound(keyType, keyIv, keyProp);
 
                 map.put(key, val);
             }
