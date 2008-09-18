@@ -64,7 +64,7 @@ public class XmlBeanConverter extends BeanConverter
 
         if (!value.startsWith(ProtocolConstants.INBOUND_MAP_START) || !value.endsWith(ProtocolConstants.INBOUND_MAP_END))
         {
-            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            log.warn("Expected object while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentProperty() + ". Passed: " + value);
             throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 

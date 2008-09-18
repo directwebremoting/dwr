@@ -39,6 +39,7 @@ import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.OverrideProperty;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.util.LocalUtil;
@@ -533,8 +534,11 @@ public class DwrXmlConfigurator implements Configurator
             {
                 String type = st.nextToken();
                 Class<?> clazz = LocalUtil.classForName(type.trim());
-                Property property = new ParameterProperty(method, paramNo).createChild(j);
-                converterManager.setExtraTypeInfo(property, clazz);
+                ParameterProperty parentProperty = new ParameterProperty(method, paramNo);
+                Property child = parentProperty.createChild(j);
+                child = converterManager.checkOverride(child);
+                Property replacement = new OverrideProperty(clazz);
+                converterManager.setOverrideProperty(child, replacement);
                 j++;
             }
         }

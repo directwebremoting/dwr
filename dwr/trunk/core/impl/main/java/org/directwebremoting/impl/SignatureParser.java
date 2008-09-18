@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.OverrideProperty;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.util.LocalUtil;
@@ -184,12 +185,15 @@ public class SignatureParser
 
                 if (clazz != null)
                 {
-                    Property property = new ParameterProperty(method, i).createChild(j);
-                    converterManager.setExtraTypeInfo(property, clazz);
+                    Property parent = new ParameterProperty(method, i);
+                    Property child = parent.createChild(i);
+                    child = converterManager.checkOverride(child);
+                    Property replacement = new OverrideProperty(clazz);
+                    converterManager.setOverrideProperty(child, replacement);
 
                     if (slog.isDebugEnabled())
                     {
-                        slog.debug("- " + property + " = " + clazz.getName());
+                        slog.debug("- " + child + " = " + clazz.getName());
                     }
                 }
                 else

@@ -65,7 +65,7 @@ public final class InboundContext
     /**
      * @return The method that we are currently converting data for
      */
-    public Property getCurrentTypeHintContext()
+    public Property getCurrentProperty()
     {
         return typeHintStack.getFirst();
     }

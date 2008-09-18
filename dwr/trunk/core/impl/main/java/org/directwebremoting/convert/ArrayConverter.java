@@ -95,7 +95,7 @@ public class ArrayConverter implements Converter
 
             InboundVariable nested = new InboundVariable(incx, null, splitType, splitValue);
             nested.dereference();
-            Object output = converterManager.convertInbound(componentType, nested, data.getContext().getCurrentTypeHintContext());
+            Object output = converterManager.convertInbound(componentType, nested, data.getContext().getCurrentProperty());
             Array.set(array, i, output);
         }
 

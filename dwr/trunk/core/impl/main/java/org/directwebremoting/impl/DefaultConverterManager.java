@@ -120,24 +120,24 @@ public class DefaultConverterManager implements ConverterManager
             try
             {
                 NamedConverter namedConverter = (NamedConverter) converter;
-                
+
                 // Set up stuff for mapped JavaScript class (if any)
-                if (LocalUtil.hasLength(namedConverter.getJavascript())) 
+                if (LocalUtil.hasLength(namedConverter.getJavascript()))
                 {
-                    Class javaClass = Class.forName(match);
+                    Class<?> javaClass = Class.forName(match);
                     namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
                     namedConverter.setInstanceType(javaClass);
-                    
+
                     // Set up stuff for mapped JavaScript superclass (if not already assigned)
                     if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
                     {
-                        // (Here we depend on that the match string is a non-wildcarded 
-                        // Java class name and the relevent match strings in the 
-                        // converters collection are also non-wildcarded Java 
+                        // (Here we depend on that the match string is a non-wildcarded
+                        // Java class name and the relevant match strings in the
+                        // converters collection are also non-wildcarded Java
                         // class/interface names)
-                        
-                        // First check if any of our superclasses are mapped
-                        Class javaSuperClass = javaClass.getSuperclass();
+
+                        // First check if any of our super-classes are mapped
+                        Class<?> javaSuperClass = javaClass.getSuperclass();
                         while(javaSuperClass != null)
                         {
                             String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
@@ -150,10 +150,11 @@ public class DefaultConverterManager implements ConverterManager
                             // Continue with next class
                             javaSuperClass = javaSuperClass.getSuperclass();
                         }
-                        
+
                         // If we still have no superclass then continue trying with interfaces
-                        if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass())) {
-                            Class checkInterfacesOnClass = javaClass;
+                        if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+                        {
+                            Class<?> checkInterfacesOnClass = javaClass;
                             while(checkInterfacesOnClass != null)
                             {
                                 String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
@@ -162,6 +163,7 @@ public class DefaultConverterManager implements ConverterManager
                                     namedConverter.setJavascriptSuperClass(jsSuperClassName);
                                     break;
                                 }
+
                                 // Continue with next class
                                 checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
                             }
@@ -217,9 +219,9 @@ public class DefaultConverterManager implements ConverterManager
      * @param javaClass the java class
      * @return a non-empty classname, or null if not found
      */
-    protected String getMappedJavaScriptClassName(Class javaClass)
+    protected String getMappedJavaScriptClassName(Class<?> javaClass)
     {
-        Converter conv = converters.get(javaClass.getName()); 
+        Converter conv = converters.get(javaClass.getName());
         if (conv != null)
         {
             // Check if mapped
@@ -234,17 +236,17 @@ public class DefaultConverterManager implements ConverterManager
         }
         return null;
     }
-    
+
     /**
      * Recurse a class's interface graph and return the first found mapped
      * JavaScript class name.
      * @param checkInterfacesOnClass the java class
      * @return a non-empty classname, or null if not found
      */
-    protected String findMappedJavaScriptClassNameForAnyInterface(Class checkInterfacesOnClass)
+    protected String findMappedJavaScriptClassNameForAnyInterface(Class<?> checkInterfacesOnClass)
     {
-        Class[] interfaces = checkInterfacesOnClass.getInterfaces();
-        for (Class intfc : interfaces)
+        Class<?>[] interfaces = checkInterfacesOnClass.getInterfaces();
+        for (Class<?> intfc : interfaces)
         {
             // Check if this interface is mapped
             String jsClassName = getMappedJavaScriptClassName(intfc);
@@ -260,10 +262,10 @@ public class DefaultConverterManager implements ConverterManager
                 return jsClassName;
             }
         }
-        
+
         return null;
     }
-    
+
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getConverterMatchStrings()
      */
@@ -401,31 +403,28 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ConverterManager#setExtraTypeInfo(org.directwebremoting.TypeHintContext, java.lang.Class)
+     * @see org.directwebremoting.extend.ConverterManager#setOverrideProperty(org.directwebremoting.extend.Property, org.directwebremoting.extend.Property)
      */
-    public void setExtraTypeInfo(Property thc, Class<?> type)
+    public void setOverrideProperty(Property original, Property replacement)
     {
-        extraTypeInfoMap.put(thc, type);
+        propertyOverrideMap.put(original, replacement);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ConverterManager#getExtraTypeInfo(org.directwebremoting.TypeHintContext)
+     * @see org.directwebremoting.extend.ConverterManager#checkOverride(org.directwebremoting.extend.Property)
      */
-    public Class<?> getExtraTypeInfo(Property thc)
+    public Property checkOverride(Property property)
     {
-        return extraTypeInfoMap.get(thc);
+        Property override = propertyOverrideMap.get(property);
+        if (override != null)
+        {
+            return override;
+        }
+        else
+        {
+            return property;
+        }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ConverterManager#setTypeInfo(java.lang.reflect.Method, int, int, java.lang.Class)
-     *
-    public void setTypeInfo(Method method, int i, int j, Class<?> clazz)
-    {
-        Property property = new ParameterProperty(method, i);
-        TypeHintContext thc = new TypeHintContext(this, property, i).createChildContext(j);
-        this.setExtraTypeInfo(thc, clazz);
-    }
-    */
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#setConverters(java.util.Map)
@@ -628,7 +627,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * Where we store real type information behind generic types
      */
-    protected Map<Property, Class<?>> extraTypeInfoMap = new HashMap<Property, Class<?>>();
+    protected Map<Property, Property> propertyOverrideMap = new HashMap<Property, Property>();
 
     /**
      * The list of the available converters

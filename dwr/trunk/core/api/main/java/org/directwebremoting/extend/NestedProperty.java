@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.extend;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,7 +31,7 @@ public class NestedProperty implements Property
     /**
      *
      */
-    public NestedProperty(Property parent, Method method, Type parentParameterType, int parameterNumber, int newParameterNumber)
+    public NestedProperty(Property parent, Object method, Type parentParameterType, int parameterNumber, int newParameterNumber)
     {
         this.parent = parent;
 
@@ -51,7 +52,7 @@ public class NestedProperty implements Property
             this.parameterType = null;
         }
 
-        this.method = method;
+        this.object = method;
         this.parameterNumber = parameterNumber;
         this.newParameterNumber = newParameterNumber;
     }
@@ -93,7 +94,7 @@ public class NestedProperty implements Property
      */
     public Property createChild(int aNewParameterNumber)
     {
-        return new NestedProperty(this, method, parameterType, parameterNumber, aNewParameterNumber);
+        return new NestedProperty(this, object, parameterType, parameterNumber, aNewParameterNumber);
     }
 
     /**
@@ -110,7 +111,7 @@ public class NestedProperty implements Property
     @Override
     public int hashCode()
     {
-        return method.hashCode() + parameterNumber;
+        return object.hashCode() + parameterNumber;
     }
 
     /* (non-Javadoc)
@@ -131,7 +132,7 @@ public class NestedProperty implements Property
 
         NestedProperty that = (NestedProperty) obj;
 
-        if (!this.method.equals(that.method))
+        if (!this.object.equals(that.object))
         {
             return false;
         }
@@ -155,12 +156,23 @@ public class NestedProperty implements Property
     @Override
     public String toString()
     {
-        return "(method=" + method.toGenericString() + ", parameter: " + parameterNumber + ")";
+        if (object instanceof Method)
+        {
+            Method method = (Method) object;
+            return "(method=" + method.toGenericString() + ", parameter: " + parameterNumber + ")";
+        }
+        else if (object instanceof Constructor)
+        {
+            Constructor<?> ctor = (Constructor<?>) object;
+            return "(method=" + ctor.toGenericString() + ", parameter: " + parameterNumber + ")";
+        }
+
+        return "(method=" + object.toString() + ", parameter: " + parameterNumber + ")";
     }
 
     private final Property parent;
 
-    private final Method method;
+    private final Object object;
 
     private final int parameterNumber;
 

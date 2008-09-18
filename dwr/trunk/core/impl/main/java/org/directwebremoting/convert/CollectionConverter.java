@@ -76,7 +76,7 @@ public class CollectionConverter extends AbstractConverter
 
         if (!value.startsWith(ProtocolConstants.INBOUND_ARRAY_START) || !value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
         {
-            log.warn("Expected collection while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentTypeHintContext() + ". Passed: " + value);
+            log.warn("Expected collection while converting data for " + paramType.getName() + " in " + data.getContext().getCurrentProperty() + ". Passed: " + value);
             throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
@@ -84,9 +84,10 @@ public class CollectionConverter extends AbstractConverter
 
         try
         {
-            Property icc = data.getContext().getCurrentTypeHintContext();
-            Property subthc = icc.createChild(0);
-            Class<?> subtype = subthc.getPropertyType();
+            Property parent = data.getContext().getCurrentProperty();
+            Property child = parent.createChild(0);
+            child = converterManager.checkOverride(child);
+            Class<?> subtype = child.getPropertyType();
 
             // subtype.getMethod("h", null).getTypeParameters();
             Collection<Object> col;
@@ -149,7 +150,7 @@ public class CollectionConverter extends AbstractConverter
                 InboundVariable nested = new InboundVariable(data.getContext(), null, splitType, splitValue);
                 nested.dereference();
 
-                Object output = converterManager.convertInbound(subtype, nested, subthc);
+                Object output = converterManager.convertInbound(subtype, nested, child);
                 col.add(output);
             }
 
