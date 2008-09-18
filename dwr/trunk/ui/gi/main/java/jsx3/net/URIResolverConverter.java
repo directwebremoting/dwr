@@ -37,7 +37,12 @@ public class URIResolverConverter extends AbstractConverter
             return null;
         }
 
-        URIResolver reply = URIResolver.toURIResolver(paramType.toString());
+        if (paramType != URIResolver.class)
+        {
+            throw new ConversionException(paramType);
+        }
+
+        URIResolver reply = URIResolver.toURIResolver(data.getValue());
         if (reply == null)
         {
             throw new ConversionException(paramType);
