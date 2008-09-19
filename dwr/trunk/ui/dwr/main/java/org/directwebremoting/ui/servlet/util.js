@@ -112,37 +112,36 @@ dwr.util.selectRange = function(ele, start, end) {
  * Find the element in the current HTML document with the given id or ids
  * @see http://getahead.org/dwr/browser/util/$
  */
-if (document.getElementById) {
-  dwr.util.byId = function() {
-    var elements = new Array();
-    for (var i = 0; i < arguments.length; i++) {
-      var element = arguments[i];
-      if (typeof element == 'string') {
-        element = document.getElementById(element);
+dwr.util.byId = function() {
+  var elems = [];
+  for (var i = 0; i < arguments.length; i++) {
+    var idOrElem = arguments[i];
+    var elem;
+    if (typeof idOrElem == 'string') {
+      var elem = document.getElementById(idOrElem);
+      // Workaround for IE and Opera that may return element based on name
+      // (note use of elem.attributes.id.value due to IE bug for elem.getAttribute) 
+      if (document.all && elem && elem.attributes.id.value != idOrElem) {
+        elem = null;
+        var maybeElems = document.all[idOrElem];
+        if (maybeElems.tagName) maybeElems = [maybeElems];
+        for (var j = 0; j < maybeElems.length; j++) {
+          if (maybeElems[j].attributes.id.value == idOrElem) {
+            elem = maybeElems[j];
+            break;
+          }
+        }
       }
-      if (arguments.length == 1) {
-        return element;
-      }
-      elements.push(element);
     }
-    return elements;
-  };
-}
-else if (document.all) {
-  dwr.util.byId = function() {
-    var elements = new Array();
-    for (var i = 0; i < arguments.length; i++) {
-      var element = arguments[i];
-      if (typeof element == 'string') {
-        element = document.all[element];
-      }
-      if (arguments.length == 1) {
-        return element;
-      }
-      elements.push(element);
+    else {
+      elem = idOrElem;
     }
-    return elements;
-  };
+    if (arguments.length == 1) {
+      return elem;
+    }
+    elems.push(elem);
+  }
+  return elems;
 }
 
 /**
