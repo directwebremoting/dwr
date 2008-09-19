@@ -97,7 +97,7 @@ public class FileTransfer
      */
     public InputStream getInputStream() throws IOException
     {
-        return inputStreamFactory.getInputStream();
+        return inputStreamFactory != null ? inputStreamFactory.getInputStream() : null;
     }
 
     /**
