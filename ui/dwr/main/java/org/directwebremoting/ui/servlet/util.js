@@ -44,7 +44,7 @@ dwr.util._shouldEscapeHtml = function(options) {
  * @see TODO
  */
 dwr.util.escapeHtml = function(original) {
-  return original.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return original.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 };
 
 /**
@@ -52,7 +52,7 @@ dwr.util.escapeHtml = function(original) {
  * @see TODO
  */
 dwr.util.unescapeHtml = function(original) {
-  return original.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  return original.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'");
 };
 
 /**
