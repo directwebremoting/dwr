@@ -93,7 +93,7 @@ public class IgnoreJsonDecoder implements JsonDecoder<Void>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
      */
-    public void beginMember()
+    public void beginMember(String name)
     {
     }
 
@@ -114,7 +114,7 @@ public class IgnoreJsonDecoder implements JsonDecoder<Void>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
      */
-    public void endMember()
+    public void endMember(String name)
     {
     }
 

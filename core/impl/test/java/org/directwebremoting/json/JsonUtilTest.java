@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +183,17 @@ public class JsonUtilTest
         child2.remove("d");
         reply = JsonUtil.toSimpleObject("{ \"c\":[{\"e\":[]}] }");
         assertEquals(expected, reply);
+    }
+
+    /**
+     * Test method for {@link org.directwebremoting.json.JsonUtil#toSimpleObject}.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testToReflectedTypes() throws JsonParseException
+    {
+        List list = JsonUtil.toReflectedTypes(ArrayList.class, "[ \"1\", \"2\", \"3\" ]");
+        assertEquals(Arrays.asList(new String[] { "1", "2", "3" }), list);
     }
 
     /**

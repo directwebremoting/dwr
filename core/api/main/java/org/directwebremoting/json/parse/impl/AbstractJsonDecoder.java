@@ -111,9 +111,6 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
         {
             switch (modes.getLast())
             {
-            case Object:
-                throw new RuntimeException("Not expecting an object nested directly in another object");
-
             case Member:
                 String propertyName = propertyNames.getLast();
                 obj = createObjectForAddingToObject(stack.getLast(), propertyName);
@@ -126,7 +123,6 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
         }
 
         stack.addLast(obj);
-        modes.addLast(Mode.Object);
     }
 
     /* (non-Javadoc)
@@ -135,7 +131,6 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
     public void endObject() throws JsonParseException
     {
         this.last = stack.removeLast();
-        modes.removeLast();
 
         // Don't try to add the top level object to its parent
         if (stack.size() > 0)
@@ -147,16 +142,18 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
      */
-    public void beginMember() throws JsonParseException
+    public void beginMember(String name) throws JsonParseException
     {
+        propertyNames.addLast(name);
         modes.addLast(Mode.Member);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
      */
-    public void endMember() throws JsonParseException
+    public void endMember(String name) throws JsonParseException
     {
+        propertyNames.removeLast();
         modes.removeLast();
     }
 
@@ -175,9 +172,6 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
         {
             switch (modes.getLast())
             {
-            case Object:
-                throw new RuntimeException("Not expecting an object nested directly in another object");
-
             case Member:
                 String propertyName = propertyNames.getLast();
                 obj = createArrayForAddingToObject(stack.getLast(), propertyName);
@@ -220,12 +214,8 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
         Mode mode = modes.getLast();
         switch (mode)
         {
-        case Object:
-            propertyNames.addLast((String) value);
-            break;
-
         case Member:
-            String propertyName = propertyNames.removeLast();
+            String propertyName = propertyNames.getLast();
             addMemberToObject(stack.getLast(), propertyName, value);
             break;
 
@@ -297,15 +287,7 @@ public abstract class AbstractJsonDecoder<T> implements JsonDecoder<T>
     protected enum Mode
     {
         /**
-         * We've just had a { so we're expecting a property name via
-         * {@link JsonDecoder#addString(String)}.
-         * Alternatively we might just have had a , inside a { }
-         */
-        Object,
-
-        /**
-         * We've just had a property name, so we're expecting a value for that
-         * property name. Only valid inside objects
+         * We're inside {} and inside a member, so values have names
          */
         Member,
 

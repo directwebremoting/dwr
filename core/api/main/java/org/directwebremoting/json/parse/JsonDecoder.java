@@ -51,14 +51,14 @@ public interface JsonDecoder<T>
      * We have encountered a :. This happens directly after an
      * {@link #addString(String)} and which happens after {@link #beginObject()}
      * Following this one of the add methods will be called for the data behind
-     * the property, followed by {@link #endMember()}
+     * the property, followed by {@link #endMember(String)}
      */
-    void beginMember() throws JsonParseException;
+    void beginMember(String name) throws JsonParseException;
 
     /**
-     * @see #beginMember()
+     * @see #beginMember(String)
      */
-    void endMember() throws JsonParseException;
+    void endMember(String name) throws JsonParseException;
 
     /**
      * We have encountered a [. What follows is a series of addX() calls and

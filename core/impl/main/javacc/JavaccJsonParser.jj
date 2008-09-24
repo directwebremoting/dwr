@@ -72,9 +72,7 @@ SKIP:
 
 TOKEN:
 {
-    <E:["e","E"](["+","-"])?> |
-    <DIGITS:["0"-"9"]|["1"-"9"](["0"-"9"])*> |
-    <QUOTE:"\"">:STRING_STATE
+    <E:["e","E"](["+","-"])?> | <DIGITS:["0"-"9"]|["1"-"9"](["0"-"9"])*> | <QUOTE:"\""> : STRING_STATE
 }
 
 <STRING_STATE> MORE:
@@ -84,8 +82,7 @@ TOKEN:
 
 <STRING_STATE> TOKEN:
 {
-    <ENDQUOTE:<QUOTE>> : DEFAULT |
-    <CHAR:~["\"","\\"]>
+    <ENDQUOTE:<QUOTE>> : DEFAULT | <CHAR:~["\"","\\"]>
 }
 
 <ESC_STATE> TOKEN:
@@ -95,13 +92,12 @@ TOKEN:
 
 <ESC_STATE> MORE:
 {
-    "u":HEX_STATE
+    "u" : HEX_STATE
 }
 
 <HEX_STATE> TOKEN:
 {
-    <#HEX:["a"-"f","A"-"F","0"-"9"]> |
-    <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
+    <#HEX:["a"-"f","A"-"F","0"-"9"]> | <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
 }
 
 void top(JsonDecoder<?> decoder) throws JsonParseException:
@@ -125,16 +121,17 @@ public void object(JsonDecoder<?> decoder) throws JsonParseException:
 
 void pair(JsonDecoder<?> decoder) throws JsonParseException:
 {
+    String name;
 }
 {
-    string(decoder)
+    name = member()
     {
-        decoder.beginMember();
+        decoder.beginMember(name);
     }
 
     ":" value(decoder)
     {
-        decoder.endMember();
+        decoder.endMember(name);
     }
 }
 
@@ -289,78 +286,71 @@ String getDigits() throws JsonParseException:
     }
 }
 
+String member() throws JsonParseException:
+{
+    StringBuilder builder = new StringBuilder();
+}
+{
+    <QUOTE> ( getChar(builder) )* <ENDQUOTE>
+
+    {
+        return builder.toString();
+    }
+}
+
 void string(JsonDecoder<?> decoder) throws JsonParseException:
 {
     StringBuilder builder = new StringBuilder();
 }
 {
-    <QUOTE>
-    [ getChars(builder) ]
-    <ENDQUOTE>
+    <QUOTE> ( getChar(builder) )* <ENDQUOTE>
 
     {
         decoder.addString(builder.toString());
     }
 }
 
-void getChars(StringBuilder builder):
-{
-    char c;
-}
-{
-    c = getChar()
-    [ getChars(builder) ]
-
-    {
-        builder.insert(0, c);
-    }
-}
-
-char getChar():
+void getChar(StringBuilder builder):
 {
     Token t;
 }
 {
-    (
-        t = <CHAR> |
-        t = <CNTRL_ESC> |
-        t = <HEX_ESC>
-    )
+    ( t = <CHAR> | t = <CNTRL_ESC> | t = <HEX_ESC> )
 
     {
         if (t.image.length() < 2)
         {
-            return t.image.charAt(0);
+            builder.append(t.image.charAt(0));
         }
-        if (t.image.length() < 6)
+        else if (t.image.length() < 6)
         {
             char c = t.image.charAt(1);
-            switch (t.image.charAt(1))
+            switch (c)
             {
             case 'b':
-                return (char) 8;
+                builder.append((char) 8);
                 break;
             case 'f':
-                return (char) 12;
+                builder.append((char) 12);
                 break;
             case 'n':
-                return (char) 10;
+                builder.append((char) 10);
                 break;
             case 'r':
-                return (char) 13;
+                builder.append((char) 13);
                 break;
             case 't':
-                return (char) 9;
+                builder.append((char) 9);
                 break;
             default:
-                return c;
+                builder.append(c);
             }
         }
         else
         {
             // hex escape code
-            int i = Integer.valueOf(t.image.substring(2,6), 16).intValue();
-            return (char) i;
+            int i = Integer.valueOf(t.image.substring(2, 6), 16).intValue();
+            builder.append((char) i);
         }
     }
 }
