@@ -99,18 +99,18 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
      */
-    public void beginMember() throws JsonParseException
+    public void beginMember(String name) throws JsonParseException
     {
         log.info(indent + ":");
-        proxy.beginMember();
+        proxy.beginMember(name);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
      */
-    public void endMember() throws JsonParseException
+    public void endMember(String name) throws JsonParseException
     {
-        proxy.endMember();
+        proxy.endMember(name);
     }
 
     /* (non-Javadoc)

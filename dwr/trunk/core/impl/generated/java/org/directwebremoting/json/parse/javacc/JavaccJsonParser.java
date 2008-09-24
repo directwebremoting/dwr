@@ -104,11 +104,12 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
 
     final public void pair(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
-        string(decoder);
-        decoder.beginMember();
+        String name;
+        name = member();
+        decoder.beginMember(name);
         jj_consume_token(15);
         value(decoder);
-        decoder.endMember();
+        decoder.endMember(name);
     }
 
     final public void array(JsonDecoder<?> decoder) throws ParseException, JsonParseException
@@ -328,42 +329,57 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         throw new Error("Missing return statement in function");
     }
 
+    final public String member() throws ParseException, JsonParseException
+    {
+        StringBuilder builder = new StringBuilder();
+        jj_consume_token(QUOTE);
+        label_3: while (true)
+        {
+            switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+            {
+            case CHAR:
+            case CNTRL_ESC:
+            case HEX_ESC:
+                break;
+            default:
+                jj_la1[10] = jj_gen;
+                break label_3;
+            }
+            getChar(builder);
+        }
+        jj_consume_token(ENDQUOTE);
+        {
+            if (true)
+            {
+                return builder.toString();
+            }
+        }
+        throw new Error("Missing return statement in function");
+    }
+
     final public void string(JsonDecoder<?> decoder) throws ParseException, JsonParseException
     {
         StringBuilder builder = new StringBuilder();
         jj_consume_token(QUOTE);
-        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+        label_4: while (true)
         {
-        case CHAR:
-        case CNTRL_ESC:
-        case HEX_ESC:
-            getChars(builder);
-            break;
-        default:
-            jj_la1[10] = jj_gen;
+            switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
+            {
+            case CHAR:
+            case CNTRL_ESC:
+            case HEX_ESC:
+                break;
+            default:
+                jj_la1[11] = jj_gen;
+                break label_4;
+            }
+            getChar(builder);
         }
         jj_consume_token(ENDQUOTE);
         decoder.addString(builder.toString());
     }
 
-    final public void getChars(StringBuilder builder) throws ParseException
-    {
-        char c;
-        c = getChar();
-        switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
-        {
-        case CHAR:
-        case CNTRL_ESC:
-        case HEX_ESC:
-            getChars(builder);
-            break;
-        default:
-            jj_la1[11] = jj_gen;
-        }
-        builder.insert(0, c);
-    }
-
-    final public char getChar() throws ParseException
+    final public void getChar(StringBuilder builder) throws ParseException
     {
         Token t;
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk)
@@ -384,79 +400,38 @@ public class JavaccJsonParser implements JsonParser, JavaccJsonParserConstants
         }
         if (t.image.length() < 2)
         {
-            {
-                if (true)
-                {
-                    return t.image.charAt(0);
-                }
-            }
+            builder.append(t.image.charAt(0));
         }
-        if (t.image.length() < 6)
+        else if (t.image.length() < 6)
         {
             char c = t.image.charAt(1);
-            switch (t.image.charAt(1))
+            switch (c)
             {
             case 'b':
-            {
-                if (true)
-                {
-                    return (char) 8;
-                }
-            }
+                builder.append((char) 8);
                 break;
             case 'f':
-            {
-                if (true)
-                {
-                    return (char) 12;
-                }
-            }
+                builder.append((char) 12);
                 break;
             case 'n':
-            {
-                if (true)
-                {
-                    return (char) 10;
-                }
-            }
+                builder.append((char) 10);
                 break;
             case 'r':
-            {
-                if (true)
-                {
-                    return (char) 13;
-                }
-            }
+                builder.append((char) 13);
                 break;
             case 't':
-            {
-                if (true)
-                {
-                    return (char) 9;
-                }
-            }
+                builder.append((char) 9);
                 break;
             default:
-            {
-                if (true)
-                {
-                    return c;
-                }
-            }
+                builder.append(c);
             }
         }
         else
         {
             // hex escape code
             int i = Integer.valueOf(t.image.substring(2, 6), 16).intValue();
-            {
-                if (true)
-                {
-                    return (char) i;
-                }
-            }
+            builder.append((char) i);
         }
-        throw new Error("Missing return statement in function");
     }
 
     public JavaccJsonParserTokenManager token_source;

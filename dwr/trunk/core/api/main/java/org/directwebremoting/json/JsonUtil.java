@@ -40,20 +40,28 @@ import org.directwebremoting.json.serialize.JsonSerializerFactory;
 public class JsonUtil
 {
     /**
-     * Convert the input string into a set of basic types
+     * Get a record of any errors in parsing the input string
      */
-    public static <T> T toReflectedTypes(Class<T> marshallInto, String input) throws JsonParseException
+    public static String getErrors(String input)
     {
-        return toReflectedTypes(marshallInto, new StringReader(input));
+        return getErrors(new StringReader(input));
     }
 
     /**
-     * Convert the input document into a set of basic types
+     * Get a record of any errors in parsing the input document
      */
-    public static <T> T toReflectedTypes(Class<T> marshallInto, Reader reader) throws JsonParseException
+    public static String getErrors(Reader reader)
     {
-        JsonParser parser = JsonParserFactory.get();
-        return parser.parse(reader, new ReflectionJsonDecoder<T>(marshallInto));
+        try
+        {
+            JsonParser parser = JsonParserFactory.get();
+            parser.parse(reader, new IgnoreJsonDecoder());
+            return null;
+        }
+        catch (JsonParseException ex)
+        {
+            return ex.toString();
+        }
     }
 
     /**
@@ -91,28 +99,20 @@ public class JsonUtil
     }
 
     /**
-     * Get a record of any errors in parsing the input string
+     * Convert the input string into a set of basic types
      */
-    public static String getErrors(String input)
+    public static <T> T toReflectedTypes(Class<T> marshallInto, String input) throws JsonParseException
     {
-        return getErrors(new StringReader(input));
+        return toReflectedTypes(marshallInto, new StringReader(input));
     }
 
     /**
-     * Get a record of any errors in parsing the input document
+     * Convert the input document into a set of basic types
      */
-    public static String getErrors(Reader reader)
+    public static <T> T toReflectedTypes(Class<T> marshallInto, Reader reader) throws JsonParseException
     {
-        try
-        {
-            JsonParser parser = JsonParserFactory.get();
-            parser.parse(reader, new IgnoreJsonDecoder());
-            return null;
-        }
-        catch (JsonParseException ex)
-        {
-            return ex.toString();
-        }
+        JsonParser parser = JsonParserFactory.get();
+        return parser.parse(reader, new ReflectionJsonDecoder<T>(marshallInto));
     }
 
     /**
