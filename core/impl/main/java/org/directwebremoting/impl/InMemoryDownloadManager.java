@@ -52,10 +52,15 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
     {
         synchronized (contentsLock)
         {
-            TimedFileGenerator generator = contents.remove(id);
+            TimedFileGenerator generator = contents.get(id);
             if (generator == null)
             {
                 return null;
+            }
+            generator.downloadRequests++;
+            if (generator.downloadRequests >= this.downloadRequestsBeforeRemove)
+            {
+                contents.remove(id);
             }
             return generator.fileGenerator;
         }
@@ -101,15 +106,30 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
             this.timeInserted = System.currentTimeMillis();
         }
 
-        FileGenerator fileGenerator;
-        long timeInserted;
+        protected final FileGenerator fileGenerator;
+        protected final long timeInserted;
+        protected int downloadRequests = 0;
     }
+
+    /**
+     * Some download managers cause multiple downloads, so we count the number
+     * of downloads before the delete is done.
+     */
+    public void setDownloadRequestsBeforeRemove(int downloadRequestsBeforeRemove)
+    {
+        this.downloadRequestsBeforeRemove = downloadRequestsBeforeRemove;
+    }
+
+    /**
+     * @see #setDownloadRequestsBeforeRemove(int)
+     */
+    protected int downloadRequestsBeforeRemove = 1;
 
     /**
      * The lock which you must hold to read or write from the list of
      * {@link FileGenerator}s.
      */
-    protected Object contentsLock = new Object();
+    protected final Object contentsLock = new Object();
 
     /**
      * The list of files in the system
