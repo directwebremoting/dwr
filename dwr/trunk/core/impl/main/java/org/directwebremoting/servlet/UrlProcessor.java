@@ -24,8 +24,8 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InitializingBean;
@@ -66,9 +66,13 @@ public class UrlProcessor implements Handler, InitializingBean
                     Handler handler = (Handler) bean;
                     urlMapping.put(name.substring(PathConstants.PATH_PREFIX.length()), handler);
                 }
+                else if (bean instanceof String)
+                {
+                    log.error("Discarding non Handler for " + name + " (" + bean + " can not be loaded)");
+                }
                 else
                 {
-                    log.error("Discarding non Handler for " + name);
+                    log.error("Discarding non Handler for " + name + " (" + bean.getClass().getName() + " is not an instance of " + Handler.class.getName() + ")");
                 }
             }
         }

@@ -49,7 +49,7 @@ import org.directwebremoting.util.MimeConstants;
  * A Handler JSON/REST DWR calls.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JsonCallHandler implements Handler
+public class JsonpCallHandler implements Handler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -323,5 +323,5 @@ public class JsonCallHandler implements Handler
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(JsonCallHandler.class);
+    private static final Log log = LogFactory.getLog(JsonpCallHandler.class);
 }
