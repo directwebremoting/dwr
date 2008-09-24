@@ -20,7 +20,8 @@ import java.io.InputStream;
 
 /**
  * This class wraps the getting of an input stream in a closure to avoid
- * issues with not closing the stream. An input stream will only be retrieved when it is needed
+ * issues with not closing the stream. An input stream will only be retrieved
+ * when it is needed
  * @author Lance Semmens [uklance at gmail dot com]
  */
 public interface InputStreamFactory
@@ -31,4 +32,3 @@ public interface InputStreamFactory
      */
     public InputStream getInputStream() throws IOException;
 }
-

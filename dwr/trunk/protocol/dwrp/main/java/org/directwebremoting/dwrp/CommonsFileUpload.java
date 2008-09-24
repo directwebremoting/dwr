@@ -56,10 +56,10 @@ public class CommonsFileUpload implements FileUpload
     @SuppressWarnings("unchecked")
     public Map<String, FormField> parseRequest(HttpServletRequest req) throws ServerException
     {
-        File location = new File(System.getProperty("java.io.tmpdir"));            
+        File location = new File(System.getProperty("java.io.tmpdir"));
         DiskFileItemFactory itemFactory = new DiskFileItemFactory(DEFAULT_SIZE_THRESHOLD, location);
         ServletFileUpload fileUploader = new ServletFileUpload(itemFactory);
-        
+
         HttpSession session = req.getSession(false);
         if (session != null)
         {
@@ -81,16 +81,18 @@ public class CommonsFileUpload implements FileUpload
                 }
                 else
                 {
-                    formField = new FormField(fileItem.getName(), fileItem.getContentType(), fileItem.getSize(), 
-                            new InputStreamFactory() {
-                                public java.io.InputStream getInputStream() throws IOException {
-                                    return fileItem.getInputStream();
-                                }
-                    });
+                    InputStreamFactory inFactory = new InputStreamFactory()
+                    {
+                        public java.io.InputStream getInputStream() throws IOException
+                        {
+                            return fileItem.getInputStream();
+                        }
+                    };
+                    formField = new FormField(fileItem.getName(), fileItem.getContentType(), fileItem.getSize(), inFactory);
                 }
                 map.put(fileItem.getFieldName(), formField);
             }
-            
+
             return map;
         }
         catch (FileUploadException ex)
@@ -102,7 +104,7 @@ public class CommonsFileUpload implements FileUpload
     /**
      * The name of the attribute that stores the progress of an upload in a session.
      */
-    public static final String PROGRESS_LISTENER = "PROGRESS_LISTENER"; 
+    public static final String PROGRESS_LISTENER = "PROGRESS_LISTENER";
 
     /**
      * The threshold, in bytes, below which items will be retained in memory and above which they will be stored as a file

@@ -18,7 +18,6 @@ package org.directwebremoting.io;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * One of the 2 ways you can receive uploaded files from a DWR enabled page is
@@ -50,8 +49,10 @@ public class FileTransfer
      * @param mimeType The mime type passed in by the browser
      * @param bytes the raw data
      */
-    public FileTransfer(String name, String mimeType, final byte[] bytes) {
-        this(name, mimeType, bytes.length, new InputStreamFactory() {
+    public FileTransfer(String name, String mimeType, final byte[] bytes)
+    {
+        this(name, mimeType, bytes.length, new InputStreamFactory()
+        {
             public InputStream getInputStream() throws IOException
             {
                 return new ByteArrayInputStream(bytes);
@@ -120,20 +121,6 @@ public class FileTransfer
     public String getName()
     {
         return name;
-    }
-
-    /**
-     * Sometimes you might have a way to write to an {@link OutputStream} and
-     * don't want to create a temporary in memory buffer to hold the data before
-     * it is squirted to the browser.
-     * @author Joe Walker [joe at getahead dot ltd dot uk]
-     */
-    public interface OutputStreamLoader
-    {
-        /**
-         * Write all the data to the given output stream.
-         */
-        public void load(OutputStream out) throws IOException;
     }
 
     /**

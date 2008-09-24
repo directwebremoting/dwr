@@ -209,12 +209,14 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
                 if (formField.isFile())
                 {
-                    value = new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(),
-                        new InputStreamFactory() {
-                            public java.io.InputStream getInputStream() throws IOException {
-                                return formField.getInputStream();
-                            }
-                    });
+                    InputStreamFactory inFactory = new InputStreamFactory()
+                    {
+                        public java.io.InputStream getInputStream() throws IOException
+                        {
+                            return formField.getInputStream();
+                        }
+                    };
+                    value = new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), inFactory);
                 }
                 else
                 {
