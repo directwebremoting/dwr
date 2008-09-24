@@ -136,7 +136,8 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
             log.warn("More than 1 match for prefix: " + prefix + ". Using first.");
         }
 
-        String[] parts = match[0].getName().split(PART_SEPARATOR, 4);
+        final File matched = match[0];
+        String[] parts = matched.getName().split(PART_SEPARATOR, 4);
 
         // Parts 0 and 1 are the prefix and id. We know they're right
         String mimeType = parts[2].replace(".", "/");
@@ -152,7 +153,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
                 InputStream in = null;
                 try
                 {
-                    in = new FileInputStream(match[0]);
+                    in = new FileInputStream(matched);
                     byte[] buffer = new byte[1024];
 
                     while (true)
@@ -168,7 +169,11 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
                 finally
                 {
                     LocalUtil.close(in);
-                    match[0].delete();
+
+                    // Some download managers cause multiple downloads. Since
+                    // space is less likely to be a problem on a disk, we wait
+                    // until the purge process to run rather than deleting now.
+                    //matched.delete();
                 }
             }
         };
