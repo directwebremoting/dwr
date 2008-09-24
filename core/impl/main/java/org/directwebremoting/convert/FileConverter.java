@@ -71,11 +71,14 @@ public class FileConverter extends AbstractConverter
             final FormField formField = data.getFormField();
             if (paramType == FileTransfer.class)
             {
-                return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), new InputStreamFactory() {
-                    public InputStream getInputStream() throws IOException {
+                InputStreamFactory inFactory = new InputStreamFactory()
+                {
+                    public InputStream getInputStream() throws IOException
+                    {
                         return formField.getInputStream();
                     }
-                });
+                };
+                return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), inFactory);
             }
             else if (paramType == InputStream.class)
             {

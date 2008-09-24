@@ -73,8 +73,10 @@ public class FormField
      * Returns the size of the file.
      * @return The size of the file.
      */
-    public long getFileSize() {
-        if (this.file) {
+    public long getFileSize()
+    {
+        if (this.file)
+        {
             return fileSize;
         }
         throw new UnsupportedOperationException();
@@ -84,8 +86,10 @@ public class FormField
      * Returns an InputStream that can be used to retrieve the contents of the file.
      * @return An InputStream that can be used to retrieve the contents of the file.
      */
-    public InputStream getInputStream() throws IOException {
-        if (inputStreamFactory != null) {
+    public InputStream getInputStream() throws IOException
+    {
+        if (inputStreamFactory != null)
+        {
             return inputStreamFactory.getInputStream();
         }
         throw new UnsupportedOperationException();
@@ -109,7 +113,8 @@ public class FormField
      */
     public String getString()
     {
-        if (file == true) {
+        if (file == true)
+        {
             throw new UnsupportedOperationException("Get string not available for files");
         }
         return string;

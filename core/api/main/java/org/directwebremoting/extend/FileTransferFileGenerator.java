@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.directwebremoting.io.FileTransfer;
-import org.directwebremoting.io.FileTransfer.OutputStreamLoader;
+import org.directwebremoting.io.OutputStreamLoader;
 
 /**
  * An implementation of {@link FileGenerator} that uses a {@link FileTransfer}.
