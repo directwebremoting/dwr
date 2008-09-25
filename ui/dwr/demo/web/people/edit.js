@@ -24,7 +24,7 @@ function fillTable() {
       dwr.util.setValue("tableName" + id, person.name);
       dwr.util.setValue("tableSalary" + id, person.salary);
       dwr.util.setValue("tableAddress" + id, person.address);
-      $("pattern" + id).style.display = ""; // officially we should use table-row, but IE prefers "" for some reason
+      dwr.util.byId("pattern" + id).style.display = ""; // officially we should use table-row, but IE prefers "" for some reason
       peopleCache[id] = person;
     }
   });
