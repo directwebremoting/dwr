@@ -47,6 +47,6 @@ public class Demo
     public String getInclude() throws ServletException, IOException
     {
         WebContext wctx = WebContextFactory.get();
-        return wctx.forwardToString("/simpletext/forward.html");
+        return wctx.forwardToString("/simple/forward.html");
     }
 }

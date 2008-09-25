@@ -18,11 +18,6 @@
       <param name="class" value="com.example.dwr.simple.Intro"/>
     </create>
 
-    <!-- address -->
-    <create creator="new">
-      <param name="class" value="com.example.dwr.address.AddressLookup"/>
-    </create>
-
     <!-- chat -->
     <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.reverseajax.JavascriptChat"/>
@@ -54,7 +49,7 @@
       <exclude method="getHours"/>
       <auth method="getMinutes" role="admin"/>
       <auth method="getMinutes" role="devel"/>
-      <filter class="com.example.dwr.filter.LoggingAjaxFilter"/>
+      <filter class="org.directwebremoting.filter.ExtraLatencyAjaxFilter"/>
     </create>
 
     <!-- an example of how to configure objects without a default constructors
