@@ -66,11 +66,13 @@ public class DefaultRemoter implements Remoter
     {
         StringBuilder buffer = new StringBuilder();
 
+        buffer.append(EnginePrivate.getEngineInitScript());
+
         if (includeDto)
         {
             buffer.append(createParameterDefinitions(scriptName));
         }
-        buffer.append(EnginePrivate.getEngineInitScript());
+
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));
         buffer.append(createMethodDefinitions(scriptName));
@@ -303,7 +305,9 @@ public class DefaultRemoter implements Remoter
                 {
                     buf.append(createDtoClassDefinition(namedConv));
                     if (setupSuperClass)
+                    {
                         buf.append(createDtoSuperClassDefinition(namedConv));
+                    }
                     return buf.toString();
                 }
             }
@@ -491,12 +495,12 @@ public class DefaultRemoter implements Remoter
         {
             String subclass = namedConv.getJavascript();
             String superclass = namedConv.getJavascriptSuperClass();
-            
+
             buf.append(subclass);
             buf.append(".prototype = new ");
             buf.append(superclass);
             buf.append("();\n");
-            
+
             buf.append(subclass);
             buf.append(".prototype.constructor = ");
             buf.append(subclass);
@@ -504,9 +508,10 @@ public class DefaultRemoter implements Remoter
 
             buf.append("\n");
         }
+
         return buf.toString();
     }
-    
+
     /**
      * Generates Javascript for a given Java method
      * @param scriptName  Name of the Javascript file, without ".js" suffix

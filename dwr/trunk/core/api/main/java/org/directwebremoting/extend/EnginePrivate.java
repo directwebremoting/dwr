@@ -195,6 +195,7 @@ public class EnginePrivate
         return "// Provide a default path to dwr.engine\n" +
                "if (typeof this['dwr'] == 'undefined') this.dwr = {};\n" +
                "if (typeof dwr['engine'] == 'undefined') dwr.engine = {};\n" +
+               "if (typeof dwr.engine['_mappedClasses'] == 'undefined') dwr.engine._mappedClasses = {};\n" +
                '\n';
     }
 
