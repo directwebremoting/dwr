@@ -15,7 +15,7 @@
  */
 
 /**
- * The DWR object is defined by dwr.util etc.
+ * The DWR object is also defined by dwr.util etc.
  */
 if (typeof this['dwr'] == 'undefined') {
   dwr = { };
@@ -366,8 +366,14 @@ if (typeof this['dwr'] == 'undefined') {
   /** Are we doing page unloading? */
   dwr.engine._isNotifyServerOnPageUnload = true;
 
-  /** A map of all mapped classes whose class declarations have been loaded (dwrClassName -> constructor function) */
-  dwr.engine._mappedClasses = {};
+  /**
+   * A map of all mapped classes whose class declarations have been loaded
+   * (dwrClassName -> constructor function)
+   * This could have been pre-created by interface scripts, so we need to check.
+   */
+  if (typeof dwr.engine['_mappedClasses'] == 'undefined') {
+    dwr.engine._mappedClasses = {};
+  }
 
   /**
    * Find the HTTP session id sent by the web server
