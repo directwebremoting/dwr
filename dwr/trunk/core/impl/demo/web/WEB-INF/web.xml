@@ -45,10 +45,10 @@
     </init-param>
 
     <!-- data: URLs are good for small images, but is slower, and could OOM for
-    larger images. Take this out for anything but small images -->
+    larger images. Leave this out for anything but small images -->
     <init-param>
       <param-name>preferDataUrlSchema</param-name>
-      <param-value>true</param-value>
+      <param-value>false</param-value>
     </init-param>
 
     <!-- This enables full streaming mode. It's probably better to leave this
