@@ -17,7 +17,8 @@
 /**
  * The DWR object is also defined by dwr.util etc.
  */
-if (typeof this['dwr'] == 'undefined') {
+if (window['dojo']) dojo.provide('dwr.engine');
+if (typeof window['dwr'] == 'undefined') {
   dwr = { };
 }
 
@@ -130,7 +131,9 @@ if (typeof this['dwr'] == 'undefined') {
     }
     else {
       // Can we cancel an existing request?
-      if (dwr.engine._activeReverseAjax && dwr.engine._pollReq) dwr.engine._pollReq.abort();
+      if (dwr.engine._activeReverseAjax && dwr.engine._pollReq) {
+        dwr.engine._pollReq.abort();
+      }
       dwr.engine._activeReverseAjax = false;
     }
     // TODO: in iframe mode, if we start, stop, start then the second start may
@@ -648,7 +651,7 @@ if (typeof this['dwr'] == 'undefined') {
         else {
           batch.handlers[callId] = null;
           if (typeof handlers.callback == "function") {
-            handlers.callback.call(handlers.callbackScope, reply, handlers.callbackArg);
+            handlers.callback.apply(handlers.callbackScope, [ reply, handlers.callbackArg ]);
           }
         }
       }
@@ -2178,7 +2181,7 @@ dwr.data = {
     if (!region.sort) region.sort = [];
     if (!region.query) region.query = {};
 
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewRegion', this.storeId, region, this.listener, callbackObj);
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewRegion', [ this.storeId, region, this.listener, callbackObj ]);
   };
 
   /**
@@ -2187,7 +2190,7 @@ dwr.data = {
    * @param {function|object} callbackObj A standard DWR callback object
    */
   dwr.data.Cache.prototype.viewItem = function(itemId, callbackObj) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewItem', this.storeId, itemId, this.listener, callbackObj);
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewItem', [ this.storeId, itemId, this.listener, callbackObj ]);
   };
 
   /**
@@ -2196,7 +2199,7 @@ dwr.data = {
    */
   dwr.data.Cache.prototype.unsubscribe = function(callbackObj) {
     if (this.listener) {
-      return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', this.storeId, this.listener, callbackObj);
+      return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', [ this.storeId, this.listener, callbackObj ]);
     }
   };
 
@@ -2206,7 +2209,7 @@ dwr.data = {
    * @param {function|object} callbackObj A standard DWR callback object
    */
   dwr.data.Cache.prototype.update = function(items, callbackObj) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', this.storeId, items, callbackObj);
+    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', [ this.storeId, items, callbackObj ]);
   };
 
 })();
