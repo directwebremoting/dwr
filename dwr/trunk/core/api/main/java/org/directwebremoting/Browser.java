@@ -52,20 +52,6 @@ public class Browser
     }
 
     /**
-     * As {@link #withAllSessions(Runnable)}, but for use when there is more
-     * than one copy of DWR in the ServletContext.
-     * <p>
-     * For 99% of cases the former method will be much simpler to use.
-     * @param serverContext The specific DWR context in which to execute
-     */
-    public static void withAllSessions(ServerContext serverContext, Runnable task)
-    {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getAllScriptSessions();
-        withSessions(sessions, task);
-    }
-
-    /**
      * Execute a task an send the output to a subset of the total list of users.
      * The {@link ScriptSessionFilter} defines which subset.
      * This method could be used to alert administrators wherever they are on a
@@ -78,20 +64,6 @@ public class Browser
     {
         ServerContext serverContext = ServerContextFactory.get();
         withAllSessionsFiltered(serverContext, filter, task);
-    }
-
-    /**
-     * As {@link #withAllSessionsFiltered(ScriptSessionFilter, Runnable)}, but
-     * for use when there is more than one copy of DWR in the ServletContext.
-     * <p>
-     * For 99% of cases the former method will be much simpler to use.
-     * @param serverContext The specific DWR context in which to execute
-     */
-    public static void withAllSessionsFiltered(ServerContext serverContext, ScriptSessionFilter filter, Runnable task)
-    {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> all = sessionManager.getAllScriptSessions();
-        withSessions(filter(all, filter), task);
     }
 
     /**
@@ -118,20 +90,6 @@ public class Browser
     }
 
     /**
-     * As {@link #withPage(String, Runnable)}, but for use when there is more
-     * than one copy of DWR in the ServletContext.
-     * <p>
-     * For 99% of cases the former method will be much simpler to use.
-     * @param serverContext The specific DWR context in which to execute
-     */
-    public static void withPage(ServerContext serverContext, String page, Runnable task)
-    {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
-        withSessions(sessions, task);
-    }
-
-    /**
      * Execute a task and aim the output at a subset of the users on a page.
      * This method is useful when you have a small number of pages that each
      * have a significant number of functions on them. The filter allows you to
@@ -145,20 +103,6 @@ public class Browser
     {
         ServerContext serverContext = ServerContextFactory.get();
         withPageFiltered(serverContext, page, filter, task);
-    }
-
-    /**
-     * As {@link #withPageFiltered}, but for use when there is more than one copy of DWR
-     * in a ServletContext.
-     * <p>
-     * For 99% of cases the former method will be much simpler to use.
-     * @param serverContext The specific DWR context in which to execute
-     */
-    public static void withPageFiltered(ServerContext serverContext, String page, ScriptSessionFilter filter, Runnable task)
-    {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
-        withSessions(filter(sessions, filter), task);
     }
 
     /**
@@ -217,23 +161,21 @@ public class Browser
     }
 
     /**
-     * As {@link #withSession(String, Runnable)}, but for use when there is more
-     * than one copy of DWR in a ServletContext.
-     * <p>
-     * For 99% of cases the former method will be much simpler to use.
-     * @param serverContext The specific DWR context in which to execute
+     * If a browser passes an object or function to DWR then DWR may need to
+     * release the reference that DWR keeps. If the server-side manifestation of
+     * this object is a proxy implemented interface, then there is no place for
+     * a close method, so this function allows you to close proxy implemented
+     * interfaces.
+     * @param proxy An proxy created interface implementation from a browser
+     * that we no longer need.
      */
-    public static void withSession(ServerContext serverContext, String sessionId, Runnable task)
+    public static void close(Object proxy)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        ScriptSession session = sessionManager.getScriptSession(sessionId, null, null);
-        Collection<ScriptSession> sessions = new ArrayList<ScriptSession>();
-        if (session != null)
+        if (proxy instanceof JavascriptObject)
         {
-            sessions.add(session);
+            JavascriptObject dproxy = (JavascriptObject) proxy;
+            dproxy.close();
         }
-
-        withSessions(sessions, task);
     }
 
     /**
@@ -244,7 +186,7 @@ public class Browser
      * APIs. Using it directly may cause scaling problems
      * @return The list of current browser windows.
      */
-    public static Collection<ScriptSession> getTargetSessions()
+    protected static Collection<ScriptSession> getTargetSessions()
     {
         Collection<ScriptSession> sessions = target.get();
         if (sessions != null)
@@ -303,21 +245,79 @@ public class Browser
     }
 
     /**
-     * If a browser passes an object or function to DWR then DWR may need to
-     * release the reference that DWR keeps. If the server-side manifestation of
-     * this object is a proxy implemented interface, then there is no place for
-     * a close method, so this function allows you to close proxy implemented
-     * interfaces.
-     * @param proxy An proxy created interface implementation from a browser
-     * that we no longer need.
+     * As {@link #withAllSessions(Runnable)}, but for use when there is more
+     * than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
      */
-    public static void close(Object proxy)
+    private static void withAllSessions(ServerContext serverContext, Runnable task)
     {
-        if (proxy instanceof JavascriptObject)
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getAllScriptSessions();
+        withSessions(sessions, task);
+    }
+
+    /**
+     * As {@link #withAllSessionsFiltered(ScriptSessionFilter, Runnable)}, but
+     * for use when there is more than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    private static void withAllSessionsFiltered(ServerContext serverContext, ScriptSessionFilter filter, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> all = sessionManager.getAllScriptSessions();
+        withSessions(filter(all, filter), task);
+    }
+
+    /**
+     * As {@link #withPage(String, Runnable)}, but for use when there is more
+     * than one copy of DWR in the ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    private static void withPage(ServerContext serverContext, String page, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
+        withSessions(sessions, task);
+    }
+
+    /**
+     * As {@link #withPageFiltered}, but for use when there is more than one copy of DWR
+     * in a ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    private static void withPageFiltered(ServerContext serverContext, String page, ScriptSessionFilter filter, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
+        withSessions(filter(sessions, filter), task);
+    }
+
+    /**
+     * As {@link #withSession(String, Runnable)}, but for use when there is more
+     * than one copy of DWR in a ServletContext.
+     * <p>
+     * For 99% of cases the former method will be much simpler to use.
+     * @param serverContext The specific DWR context in which to execute
+     */
+    private static void withSession(ServerContext serverContext, String sessionId, Runnable task)
+    {
+        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
+        ScriptSession session = sessionManager.getScriptSession(sessionId, null, null);
+        Collection<ScriptSession> sessions = new ArrayList<ScriptSession>();
+        if (session != null)
         {
-            JavascriptObject dproxy = (JavascriptObject) proxy;
-            dproxy.close();
+            sessions.add(session);
         }
+
+        withSessions(sessions, task);
     }
 
     /**
