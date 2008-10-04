@@ -29,6 +29,6 @@ public class DwrStoreHandler extends FileJavaScriptHandler
      */
     public DwrStoreHandler()
     {
-        super(DwrConstants.PACKAGE + "/dojo/DwrStore.js");
+        super(DwrConstants.PACKAGE + "/dojo/Store.js");
     }
 }

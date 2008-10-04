@@ -4,36 +4,28 @@
   <title>DWR + Dojo Demo</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <style type="text/css">
-    @import "dojo/dojo/resources/dojo.css";
     @import "dojo/dijit/themes/tundra/tundra.css";
     @import "dojo/dojox/grid/resources/Grid.css";
     @import "dojo/dojox/grid/resources/tundraGrid.css";
     @import "dojo-demo.css";
   </style>
-  <link rel="stylesheet" type="text/css" href="../../tabs/tabs.css" />
-  <link rel="stylesheet" type="text/css" href="../../generic.css" />
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
   <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true"> </script>
   <script type="text/javascript" src="dojo/dijit/dijit.js"> </script>
-  <script type="text/javascript" src="../dwr/DwrStore.js"> </script>
-  <script type='text/javascript' src='../dwr/engine.js'> </script>
-  <script type='text/javascript' src='../dwr/util.js'> </script>
-  <script type='text/javascript' src='../dwr/interface/People.js'> </script>
   <script type="text/javascript">
   dojo.require("dojox.grid.DataGrid");
   dojo.require("dojo.parser");
-  dojo.require("DwrStore");
-
-  var grid;
-  var dwrStore;
+  dojo.registerModulePath("dwr", "../../../dwr");
+  dojo.require("dwr.engine");
+  dojo.require("dwr.util");
+  dojo.require("dwr.data.Store");
+  </script>
+  <script type='text/javascript' src='../dwr/interface/People.js'> </script>
+  <script type="text/javascript">
   dojo.addOnLoad(function() {
-    dwrStore = new DwrStore("testServerData", { subscribe:true });
-    grid = dijit.byId("grid");
-    grid.setStore(dwrStore);
-
-    dwr.engine.setActiveReverseAjax(true);
-
     // Nothing to do with this demo - just to manage the documentation
-    Tabs.init('tabList', 'tabContents');
+    //Tabs.init('tabList', 'tabContents');
   });
 
   addRow = function(){
@@ -50,6 +42,10 @@
 <h1>DWR + Dojo Demo</h1>
 
 <table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" defaultHeight="300px">
+  <script type="dojo/method">
+    this.setStore(new dwr.data.Store("testServerData", { subscribe:true });
+    //dwr.engine.setActiveReverseAjax(true);
+  </script>  
   <thead>
     <tr>
       <th field="$id" width="50px" editable="false">ID</th>
