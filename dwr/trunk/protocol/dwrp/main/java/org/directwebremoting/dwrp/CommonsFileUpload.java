@@ -32,6 +32,7 @@ import org.directwebremoting.event.SessionProgressListener;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.io.InputStreamFactory;
+import org.directwebremoting.io.SimpleInputStreamFactory;
 
 
 /**
@@ -81,19 +82,17 @@ public class CommonsFileUpload implements FileUpload
                 }
                 else
                 {
-                    InputStreamFactory inFactory = new InputStreamFactory()
-                    {
-                        public java.io.InputStream getInputStream() throws IOException
-                        {
-                            return fileItem.getInputStream();
-                        }
-                    };
+                    InputStreamFactory inFactory = new SimpleInputStreamFactory(fileItem.getInputStream());
                     formField = new FormField(fileItem.getName(), fileItem.getContentType(), fileItem.getSize(), inFactory);
                 }
                 map.put(fileItem.getFieldName(), formField);
             }
 
             return map;
+        }
+        catch (IOException ex)
+        {
+            throw new ServerException("Input read failed", ex);
         }
         catch (FileUploadException ex)
         {

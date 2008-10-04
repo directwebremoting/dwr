@@ -17,8 +17,12 @@ package org.directwebremoting.extend;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.io.InputStreamFactory;
+import org.directwebremoting.util.CopyUtils;
 
 /**
  * The result of a DWR query is normally a set of name/value pairs unless we are
@@ -32,15 +36,16 @@ public class FormField
 {
     /**
      * Standard ctor for the normal non file-upload case
-     * @param value The string value
+     * @param string The string value
      */
-    public FormField(String value)
+    public FormField(String string)
     {
+        this.string = string;
+
         this.name = null;
         this.mimeType = null;
-        this.file = false;
-        this.string = value;
         this.inputStreamFactory = null;
+        this.fileSize = -1;
     }
 
     /**
@@ -52,11 +57,11 @@ public class FormField
      */
     public FormField(String name, String mimeType, long fileSize, InputStreamFactory inFactory)
     {
+        this.string = null;
+
         this.name = name;
         this.mimeType = mimeType;
         this.fileSize = fileSize;
-        this.file = true;
-        this.string = null;
         this.inputStreamFactory = inFactory;
     }
 
@@ -75,11 +80,12 @@ public class FormField
      */
     public long getFileSize()
     {
-        if (this.file)
+        if (string != null)
         {
-            return fileSize;
+            return string.length();
         }
-        throw new UnsupportedOperationException();
+
+        return fileSize;
     }
 
     /**
@@ -88,11 +94,12 @@ public class FormField
      */
     public InputStream getInputStream() throws IOException
     {
-        if (inputStreamFactory != null)
+        if (inputStreamFactory == null)
         {
-            return inputStreamFactory.getInputStream();
+            throw new UnsupportedOperationException("Can't getInputStream() from a string FormField");
         }
-        throw new UnsupportedOperationException();
+
+        return inputStreamFactory.getInputStream();
     }
 
     /**
@@ -105,6 +112,11 @@ public class FormField
      */
     public String getName()
     {
+        if (name == null)
+        {
+            throw new UnsupportedOperationException("Can't getName() from a string FormField");
+        }
+
         return name;
     }
 
@@ -113,10 +125,21 @@ public class FormField
      */
     public String getString()
     {
-        if (file == true)
+        if (string == null)
         {
-            throw new UnsupportedOperationException("Get string not available for files");
+            try
+            {
+                StringWriter buffer = new StringWriter();
+                CopyUtils.copy(inputStreamFactory.getInputStream(), buffer);
+                return buffer.toString();
+            }
+            catch (IOException ex)
+            {
+                log.error("Failed to read input", ex);
+                return null;
+            }
         }
+
         return string;
     }
 
@@ -127,7 +150,7 @@ public class FormField
      */
     public boolean isFile()
     {
-        return file;
+        return inputStreamFactory != null;
     }
 
     /* (non-Javadoc)
@@ -136,13 +159,13 @@ public class FormField
     @Override
     public String toString()
     {
-        if (file)
+        if (string == null)
         {
-            return super.toString();
+            return "FormField:File:" + name;
         }
         else
         {
-            return "FormField: " + getString();
+            return "FormField:String:" + string;
         }
     }
 
@@ -152,16 +175,14 @@ public class FormField
     @Override
     public int hashCode()
     {
-        int hash;
-        if (file)
+        if (string == null)
         {
-            hash = super.hashCode();
+            return super.hashCode();
         }
         else
         {
-            hash = string == null ? 0 : string.hashCode();
+            return string.hashCode();
         }
-        return hash;
     }
 
     /* (non-Javadoc)
@@ -170,43 +191,45 @@ public class FormField
     @Override
     public boolean equals(Object obj)
     {
-        if (this.file)
+        if (obj == this)
         {
-            return super.equals(obj);
+            return true;
         }
-        else if (obj instanceof FormField)
-        {
-            if (obj == this)
-            {
-                return true;
-            }
-            FormField that = (FormField) obj;
 
-            if (that.file)
+        if (obj == null || this.getClass() != obj.getClass())
+        {
+            return false;
+        }
+
+        FormField that = (FormField) obj;
+
+        if (string == null)
+        {
+            return super.equals(that);
+        }
+        else
+        {
+            if (!this.string.equals(that.string))
             {
                 return false;
             }
-
-            // both non-files (strings)
-            return equals(this.string, that.string);
         }
-        return false;
+
+        return true;
     }
 
-    private boolean equals(Object o1, Object o2)
-    {
-        if (o1 == null)
-        {
-            return o2 == null;
-        }
-        return o1.equals(o2);
-    }
-
-    private final boolean file;
-    private long fileSize;
-    private final String name;
-    private final String mimeType;
     private final String string;
-    private final InputStreamFactory inputStreamFactory;
-}
 
+    private final long fileSize;
+
+    private final String name;
+
+    private final String mimeType;
+
+    private final InputStreamFactory inputStreamFactory;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(FormField.class);
+}

@@ -50,6 +50,7 @@ import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
+import org.directwebremoting.io.SimpleInputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**
@@ -169,7 +170,16 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     Class<?> paramType = method.getParameterTypes()[j];
                     InboundVariable param = inctx.getParameter(callNum, j);
                     Property property = new ParameterProperty(method, j);
-                    arguments[j] = converterManager.convertInbound(paramType, param, property);
+
+                    try
+                    {
+                        arguments[j] = converterManager.convertInbound(paramType, param, property);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.debug("Problem converting param=" + param + ", property=" + property + ", into paramType=" + paramType.getName() + ": " + ex);
+                        throw ex;
+                    }
                 }
 
                 call.setParameters(arguments);
@@ -195,7 +205,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * @param webContext We need to notify others of some of the data we find
      * @param batch The parsed data to store
      */
-    private void storeParsedRequest(HttpServletRequest request, RealWebContext webContext, CallBatch batch)
+    private void storeParsedRequest(HttpServletRequest request, RealWebContext webContext, CallBatch batch) throws IOException
     {
         // Remaining parameters get put into the request for later consumption
         Map<String, FormField> paramMap = batch.getExtraParameters();
@@ -209,13 +219,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
                 if (formField.isFile())
                 {
-                    InputStreamFactory inFactory = new InputStreamFactory()
-                    {
-                        public java.io.InputStream getInputStream() throws IOException
-                        {
-                            return formField.getInputStream();
-                        }
-                    };
+                    InputStreamFactory inFactory = new SimpleInputStreamFactory(formField.getInputStream());
                     value = new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), inFactory);
                 }
                 else
@@ -223,8 +227,15 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     value = formField.getString();
                 }
 
-                request.setAttribute(key, value);
-                log.debug("Moved param to request: " + key + "=" + value);
+                if (key.startsWith(ProtocolConstants.INBOUND_KEY_METADATA))
+                {
+                    request.setAttribute(key.substring(ProtocolConstants.INBOUND_KEY_METADATA.length()), value);
+                    log.debug("Moved param to request: " + key + "=" + value);
+                }
+                else
+                {
+                    log.debug("Ignoring parameter: " + key + "=" + value);
+                }
             }
         }
     }

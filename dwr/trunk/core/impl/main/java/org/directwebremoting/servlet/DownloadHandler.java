@@ -16,14 +16,15 @@
 package org.directwebremoting.servlet;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.extend.DownloadManager;
-import org.directwebremoting.extend.FileGenerator;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.io.FileTransfer;
+import org.directwebremoting.io.OutputStreamLoader;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A DownloadHandler is basically a FileServingServlet that integrates with
@@ -45,18 +46,26 @@ public class DownloadHandler implements Handler
         }
         id = id.substring(downloadHandlerUrl.length());
 
-        FileGenerator generator = downloadManager.getFile(id);
-        if (generator == null)
+        FileTransfer transfer = downloadManager.getFileTransfer(id);
+        if (transfer == null)
         {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
         else
         {
-            response.setHeader("Content-disposition", "attachment; filename=" + generator.getFilename());
-            response.setContentType(generator.getMimeType());
+            response.setHeader("Content-disposition", "attachment; filename=" + transfer.getFilename());
+            response.setContentType(transfer.getMimeType());
 
-            OutputStream out = response.getOutputStream();
-            generator.generateFile(out);
+            OutputStreamLoader loader = null;
+            try
+            {
+                loader = transfer.getOutputStreamLoader();
+                loader.load(response.getOutputStream());
+            }
+            finally
+            {
+                LocalUtil.close(loader);
+            }
         }
     }
 

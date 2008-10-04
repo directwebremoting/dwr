@@ -47,6 +47,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.io.OutputStreamLoader;
 
 /**
  * Various utilities, stuff that we're still surprised isn't in the JDK, and
@@ -1186,6 +1187,28 @@ public final class LocalUtil
         try
         {
             in.close();
+        }
+        catch (IOException ex)
+        {
+            log.warn(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * OutputStreamLoader closer that can cope if the input is null.
+     * If anything goes wrong, the errors are logged and ignored.
+     * @param loader The resource to close
+     */
+    public static void close(OutputStreamLoader loader)
+    {
+        if (loader == null)
+        {
+            return;
+        }
+
+        try
+        {
+            loader.close();
         }
         catch (IOException ex)
         {

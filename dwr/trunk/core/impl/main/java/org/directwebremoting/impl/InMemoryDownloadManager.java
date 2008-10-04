@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.directwebremoting.extend.DownloadManager;
-import org.directwebremoting.extend.FileGenerator;
+import org.directwebremoting.io.FileTransfer;
 
 /**
  * A {@link DownloadManager} that simply stores the links in-memory.
@@ -33,36 +33,35 @@ import org.directwebremoting.extend.FileGenerator;
 public class InMemoryDownloadManager extends PurgingDownloadManager implements DownloadManager
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.impl.PurgingDownloadManager#putFileGenerator(java.lang.String, org.directwebremoting.extend.DownloadManager.FileGenerator)
+     * @see org.directwebremoting.impl.PurgingDownloadManager#putFileTransfer(java.lang.String, org.directwebremoting.extend.DownloadManager.FileTransfer)
      */
     @Override
-    protected void putFileGenerator(String id, FileGenerator generator)
+    protected void putFileTransfer(String id, FileTransfer transfer)
     {
         synchronized (contentsLock)
         {
-            contents.put(id, new TimedFileGenerator(generator));
+            contents.put(id, new TimedFileTransfer(transfer));
         }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.impl.PurgingDownloadManager#getFileGenerator(java.lang.String)
+     * @see org.directwebremoting.impl.PurgingDownloadManager#getFileTransfer(java.lang.String)
      */
-    @Override
-    protected FileGenerator getFileGenerator(String id)
+    public FileTransfer getFileTransfer(String id)
     {
         synchronized (contentsLock)
         {
-            TimedFileGenerator generator = contents.get(id);
-            if (generator == null)
+            TimedFileTransfer transfer = contents.get(id);
+            if (transfer == null)
             {
                 return null;
             }
-            generator.downloadRequests++;
-            if (generator.downloadRequests >= this.downloadRequestsBeforeRemove)
+            transfer.downloadRequests++;
+            if (transfer.downloadRequests >= this.downloadRequestsBeforeRemove)
             {
                 contents.remove(id);
             }
-            return generator.fileGenerator;
+            return transfer.fileTransfer;
         }
     }
 
@@ -76,9 +75,9 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
 
         synchronized (contentsLock)
         {
-            for (Iterator<Map.Entry<String, TimedFileGenerator>> it = contents.entrySet().iterator(); it.hasNext();)
+            for (Iterator<Map.Entry<String, TimedFileTransfer>> it = contents.entrySet().iterator(); it.hasNext();)
             {
-                Map.Entry<String, TimedFileGenerator> entry = it.next();
+                Map.Entry<String, TimedFileTransfer> entry = it.next();
 
                 try
                 {
@@ -96,17 +95,17 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
     }
 
     /**
-     * A union of a FileGenerator and the time it was inserted into this manager
+     * A union of a FileTransfer and the time it was inserted into this manager
      */
-    protected static class TimedFileGenerator
+    protected static class TimedFileTransfer
     {
-        protected TimedFileGenerator(FileGenerator fileGenerator)
+        protected TimedFileTransfer(FileTransfer fileTransfer)
         {
-            this.fileGenerator = fileGenerator;
+            this.fileTransfer = fileTransfer;
             this.timeInserted = System.currentTimeMillis();
         }
 
-        protected final FileGenerator fileGenerator;
+        protected final FileTransfer fileTransfer;
         protected final long timeInserted;
         protected int downloadRequests = 0;
     }
@@ -127,12 +126,12 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
 
     /**
      * The lock which you must hold to read or write from the list of
-     * {@link FileGenerator}s.
+     * {@link FileTransfer}s.
      */
     protected final Object contentsLock = new Object();
 
     /**
      * The list of files in the system
      */
-    protected final Map<String, TimedFileGenerator> contents = Collections.synchronizedMap(new HashMap<String, TimedFileGenerator>());
+    protected final Map<String, TimedFileTransfer> contents = Collections.synchronizedMap(new HashMap<String, TimedFileTransfer>());
 }

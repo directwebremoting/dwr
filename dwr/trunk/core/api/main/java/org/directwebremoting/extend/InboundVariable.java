@@ -162,7 +162,7 @@ public final class InboundVariable
             return type + ProtocolConstants.INBOUND_TYPE_SEPARATOR + "null";
         }
 
-        return type + ProtocolConstants.INBOUND_TYPE_SEPARATOR + formField.getString();
+        return type + ProtocolConstants.INBOUND_TYPE_SEPARATOR + formField.toString();
     }
 
     /* (non-Javadoc)

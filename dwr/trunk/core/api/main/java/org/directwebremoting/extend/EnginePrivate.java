@@ -19,7 +19,7 @@ import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.util.JavascriptUtil;
 
 /**
- * An abstraction of the DWREngine Javascript class.
+ * An abstraction of the dwr.engine Javascript class.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class EnginePrivate

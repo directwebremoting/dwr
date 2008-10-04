@@ -84,6 +84,14 @@ public class CallBatch extends Batch
             throw new SecurityException("Too many calls in a batch");
         }
 
+        // Extract the batch id
+        String batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID);
+        calls.setBatchId(batchId);
+        if (!LocalUtil.isLetterOrDigitOrUnderline(batchId))
+        {
+            throw new SecurityException("CallBatch IDs may only contain Java Identifiers");
+        }
+
         // Extract the ids, script names and method names
         for (int callNum = 0; callNum < callCount; callNum++)
         {
@@ -128,7 +136,7 @@ public class CallBatch extends Batch
                     FormField formField = entry.getValue();
                     if (formField.isFile())
                     {
-                        inctx.createInboundVariable(callNum, key, ProtocolConstants.TYPE_FILE, formField); 
+                        inctx.createInboundVariable(callNum, key, ProtocolConstants.TYPE_FILE, formField);
                     }
                     else
                     {
@@ -141,13 +149,6 @@ public class CallBatch extends Batch
                     it.remove();
                 }
             }
-        }
-
-        String batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID);
-        calls.setBatchId(batchId);
-        if (!LocalUtil.isLetterOrDigitOrUnderline(batchId))
-        {
-            throw new SecurityException("CallBatch IDs may only contain Java Identifiers");
         }
     }
 
@@ -190,7 +191,7 @@ public class CallBatch extends Batch
     /**
      * We don't want to allow too many calls in a batch
      */
-    private int maxCallsPerBatch = 1000;
+    private final int maxCallsPerBatch = 1000;
 
     /**
      * The log stream
