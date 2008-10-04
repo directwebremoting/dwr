@@ -67,4 +67,14 @@ JDK*:
 SERVLET*:
   When we move the default servlet spec level from one version to another, we
   will need to alter this code.
-  
+
+Refactoring Notes
+-----------------
+Refactorings that would be a good idea:
+- Currently convert is dependent on dwrp, but it should be the other way around
+  The Maps and List Converters are different to the others and should be part of
+  DWRP. The other converters should take different parameters:
+    Object convertInbound(Class<?> destinationType, JavaScriptTypeInformation sourceType, String data) throws ConversionException;  
+- ProtocolConstants is in the wrong place and would be a good place to start in
+  and refactoring because it is inherently part of DWRP
+
