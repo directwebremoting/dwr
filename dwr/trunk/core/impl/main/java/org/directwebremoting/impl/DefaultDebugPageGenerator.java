@@ -105,7 +105,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         String proxyEngineURL = PATH_UP + engineHandlerUrl;
         String proxyUtilURL = PATH_UP + utilHandlerUrl;
 
-        Creator creator = creatorManager.getCreator(scriptName, false);
+        Creator creator = creatorManager.getCreator(scriptName, true);
         Method[] methods = creator.getType().getMethods();
         StringBuffer buffer = new StringBuffer();
 
