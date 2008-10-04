@@ -91,7 +91,8 @@ public class JettyLauncherBase
         // causes file locking on windows). If we discover that it doesn't then
         // we need to investigate this more:
         // http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
-        context.getInitParams().put("useFileMappedBuffer", "false");
+        //context.getInitParams().put("useFileMappedBuffer", "false");
+        context.setCopyWebDir(true);
 
         scanner.addListener(new Scanner.BulkListener()
         {
