@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.DownloadManager;
-import org.directwebremoting.extend.FileGenerator;
+import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.util.IdGenerator;
 
 /**
@@ -46,21 +46,13 @@ public abstract class PurgingDownloadManager implements DownloadManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.DownloadManager#addFile(org.directwebremoting.extend.DownloadManager.FileGenerator)
      */
-    public String addFile(FileGenerator generator) throws IOException
+    public String addFileTransfer(FileTransfer generator) throws IOException
     {
         String id = idGenerator.generateId(16);
-        putFileGenerator(id, generator);
+        putFileTransfer(id, generator);
 
         HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
         return "'" + request.getContextPath() + request.getServletPath() + downloadHandlerUrl + id + "'";
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.DownloadManager#getFile(java.lang.String)
-     */
-    public FileGenerator getFile(String id)
-    {
-        return getFileGenerator(id);
     }
 
     /**
@@ -89,19 +81,11 @@ public abstract class PurgingDownloadManager implements DownloadManager
     }
 
     /**
-     * Store a {@link FileGenerator} against a given id for
-     * later retrieval.
+     * Store a {@link FileTransfer} against a given id for later retrieval.
      * @param id The id of the given FileGenerator
      * @param generator The FileGenerator to store against the id
      */
-    protected abstract void putFileGenerator(String id, FileGenerator generator);
-
-    /**
-     * Retrieve a FileGenerator given the id that it was stored under
-     * @param id The id to lookup
-     * @return The matching FileGenerator or null if no match was found
-     */
-    protected abstract FileGenerator getFileGenerator(String id);
+    protected abstract void putFileTransfer(String id, FileTransfer generator);
 
     /**
      * Remove all the stale entries from the cache

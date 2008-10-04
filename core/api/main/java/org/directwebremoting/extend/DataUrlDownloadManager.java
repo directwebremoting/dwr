@@ -18,7 +18,10 @@ package org.directwebremoting.extend;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.directwebremoting.io.FileTransfer;
+import org.directwebremoting.io.OutputStreamLoader;
 import org.directwebremoting.util.Base64;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A download manager that works my returning a data: URL so the data is
@@ -33,19 +36,30 @@ public class DataUrlDownloadManager implements DownloadManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.DownloadManager#addFile(org.directwebremoting.extend.DownloadManager.FileGenerator)
      */
-    public String addFile(FileGenerator generator) throws IOException
+    public String addFileTransfer(FileTransfer transfer) throws IOException
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        String mimeType = generator.getMimeType();
-        generator.generateFile(out);
-        String base64data = new String(Base64.encodeBase64(out.toByteArray()));
-        return "'data:" + mimeType + ";base64," + base64data + "'";
+        OutputStreamLoader loader = null;
+        ByteArrayOutputStream out = null;
+        try
+        {
+            out = new ByteArrayOutputStream();
+            String mimeType = transfer.getMimeType();
+            loader = transfer.getOutputStreamLoader();
+            loader.load(out);
+            String base64data = new String(Base64.encodeBase64(out.toByteArray()));
+            return "'data:" + mimeType + ";base64," + base64data + "'";
+        }
+        finally
+        {
+            LocalUtil.close(loader);
+            LocalUtil.close(out);
+        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.DownloadManager#getFile(java.lang.String)
      */
-    public FileGenerator getFile(String id)
+    public FileTransfer getFileTransfer(String id)
     {
         throw new UnsupportedOperationException("data: URLs should not be touched with http:");
     }

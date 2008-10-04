@@ -15,9 +15,14 @@
  */
 package org.directwebremoting.io;
 
-import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
+
+import org.directwebremoting.util.CopyUtils;
 
 /**
  * One of the 2 ways you can receive uploaded files from a DWR enabled page is
@@ -45,19 +50,55 @@ public class FileTransfer
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
+     */
+    public FileTransfer(final BufferedImage image, final String type)
+    {
+        this(image, "image", type);
+    }
+
+    /**
+     * A ctor for the 3 things browsers tell us about the uploaded file
+     */
+    public FileTransfer(final BufferedImage image, String filename, final String type)
+    {
+        this.name = filename;
+        this.mimeType = "image/" + type;
+        this.outputStreamLoader = new OutputStreamLoader()
+        {
+            public void load(OutputStream out) throws IOException
+            {
+                ImageIO.write(image, type, out);
+            }
+
+            public void close() throws IOException
+            {
+            }
+        };
+        this.size = -1;
+    }
+
+    /**
+     * A ctor for the 3 things browsers tell us about the uploaded file
      * @param name The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param bytes the raw data
      */
     public FileTransfer(String name, String mimeType, final byte[] bytes)
     {
-        this(name, mimeType, bytes.length, new InputStreamFactory()
+        this.name = name;
+        this.mimeType = mimeType;
+        this.size = bytes.length;
+        this.outputStreamLoader = new OutputStreamLoader()
         {
-            public InputStream getInputStream() throws IOException
+            public void load(OutputStream out) throws IOException
             {
-                return new ByteArrayInputStream(bytes);
+                CopyUtils.copy(bytes, out);
             }
-        });
+
+            public void close() throws IOException
+            {
+            }
+        };
     }
 
     /**
@@ -67,13 +108,50 @@ public class FileTransfer
      * @param size The size of the file
      * @param inputStreamFactory A means by which the data can be read
      */
-    public FileTransfer(String name, String mimeType, long size, InputStreamFactory inputStreamFactory)
+    public FileTransfer(String name, String mimeType, long size, final InputStreamFactory inputStreamFactory)
     {
         this.name = name;
         this.mimeType = mimeType;
         this.size = size;
-        this.inputStreamFactory = inputStreamFactory;
-        this.outputStreamLoader = null;
+        this.outputStreamLoader = new OutputStreamLoader()
+        {
+            public void load(OutputStream out) throws IOException
+            {
+                InputStream in = inputStreamFactory.getInputStream();
+                CopyUtils.copy(in, out);
+            }
+
+            public void close() throws IOException
+            {
+                inputStreamFactory.close();
+            }
+        };
+    }
+
+    /**
+     * A ctor for the 3 things browsers tell us about the uploaded file
+     * @param name The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param size The size of the file
+     * @param in A means by which the data can be read.
+     */
+    public FileTransfer(String name, String mimeType, long size, final InputStream in)
+    {
+        this.name = name;
+        this.mimeType = mimeType;
+        this.size = size;
+        this.outputStreamLoader = new OutputStreamLoader()
+        {
+            public void load(OutputStream out) throws IOException
+            {
+                CopyUtils.copy(in, out);
+            }
+
+            public void close() throws IOException
+            {
+                in.close();
+            }
+        };
     }
 
     /**
@@ -96,15 +174,6 @@ public class FileTransfer
      * Returns an InputStream that can be used to retrieve the contents of the
      * file.
      */
-    public InputStream getInputStream() throws IOException
-    {
-        return inputStreamFactory != null ? inputStreamFactory.getInputStream() : null;
-    }
-
-    /**
-     * Returns an InputStream that can be used to retrieve the contents of the
-     * file.
-     */
     public OutputStreamLoader getOutputStreamLoader()
     {
         return outputStreamLoader;
@@ -118,7 +187,7 @@ public class FileTransfer
      * information.
      * @return The original filename in the client's file-system.
      */
-    public String getName()
+    public String getFilename()
     {
         return name;
     }
@@ -137,11 +206,6 @@ public class FileTransfer
      * The size of the file
      */
     private final long size;
-
-    /**
-     * A means by which the data can be read
-     */
-    private InputStreamFactory inputStreamFactory;
 
     /**
      * A means by which the data can be written

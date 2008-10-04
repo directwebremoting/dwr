@@ -27,16 +27,11 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractConverter;
-import org.directwebremoting.extend.ByteArrayFileGenerator;
 import org.directwebremoting.extend.ContainerUtil;
 import org.directwebremoting.extend.DataUrlDownloadManager;
 import org.directwebremoting.extend.DownloadManager;
-import org.directwebremoting.extend.FileGenerator;
-import org.directwebremoting.extend.FileTransferFileGenerator;
 import org.directwebremoting.extend.FormField;
-import org.directwebremoting.extend.ImageIOFileGenerator;
 import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.InputStreamFileGenerator;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -77,6 +72,11 @@ public class FileConverter extends AbstractConverter
                     {
                         return formField.getInputStream();
                     }
+
+                    public void close() throws IOException
+                    {
+                        formField.getInputStream().close();
+                    }
                 };
                 return new FileTransfer(formField.getName(), formField.getMimeType(), formField.getFileSize(), inFactory);
             }
@@ -107,7 +107,7 @@ public class FileConverter extends AbstractConverter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Converter#convertOutbound(java.lang.Object, org.directwebremoting.extend.OutboundContext)
      */
-    public OutboundVariable convertOutbound(Object object, OutboundContext outboundContext) throws ConversionException
+    public OutboundVariable convertOutbound(final Object object, OutboundContext outboundContext) throws ConversionException
     {
         if (object == null)
         {
@@ -116,27 +116,35 @@ public class FileConverter extends AbstractConverter
 
         try
         {
-            FileGenerator generator;
+            FileTransfer transfer;
 
             if (object instanceof BufferedImage)
             {
-                BufferedImage image = (BufferedImage) object;
-                generator = new ImageIOFileGenerator(image, "image/png", "image", "png");
+                transfer = new FileTransfer((BufferedImage) object, "png");
             }
             else if (object instanceof InputStream)
             {
-                InputStream in = (InputStream) object;
-                generator = new InputStreamFileGenerator(in, "download.dat", "binary/octet-stream");
+                final InputStream in = (InputStream) object;
+                transfer = new FileTransfer("download.dat", "binary/octet-stream", -1, new InputStreamFactory()
+                {
+                    public InputStream getInputStream() throws IOException
+                    {
+                        return in;
+                    }
+
+                    public void close() throws IOException
+                    {
+                        in.close();
+                    }
+                });
             }
             else if (object instanceof FileTransfer)
             {
-                FileTransfer in = (FileTransfer) object;
-                generator = new FileTransferFileGenerator(in);
+                transfer = (FileTransfer) object;
             }
             else if (object.getClass().isArray() && object.getClass().getComponentType() == Byte.TYPE)
             {
-                byte[] buffer = (byte[]) object;
-                generator = new ByteArrayFileGenerator(buffer, "download.dat", "binary/octet-stream");
+                transfer = new FileTransfer("download.dat", "binary/octet-stream", (byte[]) object);
             }
             else
             {
@@ -156,7 +164,7 @@ public class FileConverter extends AbstractConverter
                 downloadManager = container.getBean(DownloadManager.class);
             }
 
-            String url = downloadManager.addFile(generator);
+            String url = downloadManager.addFileTransfer(transfer);
             return new NonNestedOutboundVariable(url);
         }
         catch (IOException ex)

@@ -30,4 +30,13 @@ public interface OutputStreamLoader
      * Write all the data to the given output stream.
      */
     public void load(OutputStream out) throws IOException;
+
+    /**
+     * This method indicates that whether or not this resource has been read,
+     * it is not longer required.
+     * Must be called by whatever calls {@link #load(OutputStream)} when it has
+     * finished reading from the stream, or when it has decided that it never
+     * will call {@link #load(OutputStream)}.
+     */
+    public void close() throws IOException;
 }
