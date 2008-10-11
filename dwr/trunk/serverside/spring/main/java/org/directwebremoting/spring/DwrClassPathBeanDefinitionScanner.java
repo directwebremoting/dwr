@@ -28,9 +28,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 /**
- * @author Jose Noheda [jose.noheda@gmail.com] 
+ * @author Jose Noheda [jose.noheda@gmail.com]
  */
 public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
 {
@@ -60,6 +61,10 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
             {
                 super.registerBeanDefinition(definitionHolder, registry);
                 String javascript = annotation.name();
+                if (!StringUtils.hasText(javascript))
+                {
+                    javascript = beanDefinitionClass.getSimpleName();
+                }
                 if (log.isInfoEnabled())
                 {
                     log.info("Dwr classpath scanning detected candidate bean [" + definitionHolder.getBeanName() + "]. Remoting using " + javascript);

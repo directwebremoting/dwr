@@ -33,6 +33,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Jose Noheda [jose.noheda@gmail.com]
@@ -53,6 +54,10 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
                 if (annotation != null)
                 {
                     String javascript = annotation.name();
+                    if (!StringUtils.hasText(javascript))
+                    {
+                        javascript = beanDefinitionClass.getSimpleName();
+                    } 
                     if (log.isInfoEnabled())
                     {
                         log.info("Detected candidate bean [" + beanName + "]. Remoting using " + javascript);
