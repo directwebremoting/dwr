@@ -57,7 +57,7 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
                     if (!StringUtils.hasText(javascript))
                     {
                         javascript = beanDefinitionClass.getSimpleName();
-                    } 
+                    }
                     if (log.isInfoEnabled())
                     {
                         log.info("Detected candidate bean [" + beanName + "]. Remoting using " + javascript);
