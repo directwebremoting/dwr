@@ -41,4 +41,17 @@ public @interface DataTransferObject
      * Parameters for the converter.
      */
     Param[] params() default {};
+
+    /**
+     * Converter type
+     * TODO: Just used by Spring configurator
+     */
+    String type() default "bean";
+
+    /**
+     * Javascript class mapping.
+     * TODO: Just used by Spring configurator
+     */
+    String javascript() default "";
+
 }

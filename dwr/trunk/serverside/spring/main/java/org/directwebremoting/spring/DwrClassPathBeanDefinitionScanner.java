@@ -15,9 +15,17 @@
  */
 package org.directwebremoting.spring;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
@@ -39,7 +47,6 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
     public DwrClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry)
     {
         super(registry, false);
-        addIncludeFilter(new AnnotationTypeFilter(RemoteProxy.class));
         addExcludeFilter(new AnnotationTypeFilter(Component.class));
         addExcludeFilter(new AnnotationTypeFilter(Service.class));
         addExcludeFilter(new AnnotationTypeFilter(Repository.class));
@@ -47,20 +54,18 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
         setScopedProxyMode(ScopedProxyMode.INTERFACES);
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.context.annotation.ClassPathBeanDefinitionScanner#registerBeanDefinition(org.springframework.beans.factory.config.BeanDefinitionHolder, org.springframework.beans.factory.support.BeanDefinitionRegistry)
-     */
     @Override
     protected void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
     {
         try
         {
             Class<?> beanDefinitionClass = ClassUtils.forName(definitionHolder.getBeanDefinition().getBeanClassName());
-            RemoteProxy annotation = beanDefinitionClass.getAnnotation(RemoteProxy.class);
-            if (annotation != null)
+            RemoteProxy proxy = beanDefinitionClass.getAnnotation(RemoteProxy.class);
+            DataTransferObject converter = beanDefinitionClass.getAnnotation(DataTransferObject.class);
+            if (proxy != null)
             {
                 super.registerBeanDefinition(definitionHolder, registry);
-                String javascript = annotation.name();
+                String javascript = proxy.name();
                 if (!StringUtils.hasText(javascript))
                 {
                     javascript = beanDefinitionClass.getSimpleName();
@@ -70,6 +75,46 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                     log.info("Dwr classpath scanning detected candidate bean [" + definitionHolder.getBeanName() + "]. Remoting using " + javascript);
                 }
                 DwrAnnotationPostProcessor.registerCreator(definitionHolder, registry, beanDefinitionClass, javascript);
+            }
+            else if (converter != null)
+            {
+                if (log.isInfoEnabled())
+                {
+                    log.info("Dwr classpath scanning detected candidate DTO [" + beanDefinitionClass.getName() + "] processed by converter type [" + converter.type() + "]");
+                }
+                ConverterConfig converterConfig = new ConverterConfig();
+                converterConfig.setType(converter.type());
+                PropertyDescriptor[] properties = BeanUtils.getPropertyDescriptors(beanDefinitionClass);
+                if ((properties != null) && (properties.length > 0))
+                {
+                    for (PropertyDescriptor p : properties)
+                    {
+                        Method getter = p.getReadMethod();
+                        if (getter != null)
+                        {
+                            if (getter.getAnnotation(RemoteProxy.class) != null)
+                            {
+                                converterConfig.addInclude(p.getName());
+                            }
+                        }
+                    }
+                }
+                String javascript = converter.javascript();
+                if (StringUtils.hasText(javascript))
+                {
+                    converterConfig.setJavascriptClassName(javascript);
+                }
+                Param[] params = converter.params();
+                if ((params != null) && (params.length > 0))
+                {
+                    Map<String, String> parameters = new HashMap<String, String>();
+                    for (Param param : params)
+                    {
+                        parameters.put(param.name(), param.value());
+                    }
+                    converterConfig.setParams(parameters);
+                }
+                DwrNamespaceHandler.lookupConverters(registry).put(beanDefinitionClass.getName(), converterConfig);
             }
         }
         catch (Exception ex)
