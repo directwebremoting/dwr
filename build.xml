@@ -149,16 +149,4 @@
     </delete>
   </target>
 
-  <!--=======================================================================-->
-  <target name="cvsup" description="cvs update">
-    <cvs dest=".">
-      <commandline>
-        <argument value="-q"/>
-        <argument value="update"/>
-        <argument value="-d"/>
-        <argument value="-P"/>
-      </commandline>
-    </cvs>
-  </target>
-
 </project>
