@@ -47,6 +47,8 @@ public class OutputAlarm extends BasicAlarm implements Alarm
      */
     public void setAlarmAction(Sleeper sleeper)
     {
+        super.setAlarmAction(sleeper);
+
         try
         {
             scriptSession.addScriptConduit(conduit);
@@ -55,8 +57,6 @@ public class OutputAlarm extends BasicAlarm implements Alarm
         {
             log.warn("Error adding monitor to script session", ex);
         }
-
-        super.setAlarmAction(sleeper);
     }
 
     /* (non-Javadoc)
