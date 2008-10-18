@@ -86,8 +86,18 @@
       </action>
     </if-not-uptodate>
     <!-- Copy over testdwr.war -->
-    <ant dir="${testdwr.home}" target="package" inheritall="false" inheritrefs="false"/>
-    <copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}"/>
+    <if>
+      <available file="${testdwr.home}/build.xml"/>
+      <then>
+        <ant dir="${testdwr.home}" target="package" inheritall="false" inheritrefs="false"/>
+      </then>      
+    </if>
+    <if>
+      <available file="${testdwr.home}/target/ant/testdwr.war"/>
+      <then>
+        <copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}"/>
+      </then>      
+    </if>
     <!-- Documentation: Javadoc and DTDDoc -->
     <mkdir dir="${target.root}/javadoc"/>
     <javadoc access="public"
