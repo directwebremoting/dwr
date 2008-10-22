@@ -114,11 +114,11 @@ public final class LocalUtil
      * More specifically, returns <code>true</code> if the string not <code>null</code>,
      * its length is greater than 0, and it contains at least one non-whitespace character.
      * <p><pre>
-     * StringUtils.hasText(null) = false
-     * StringUtils.hasText("") = false
-     * StringUtils.hasText(" ") = false
-     * StringUtils.hasText("12345") = true
-     * StringUtils.hasText(" 12345 ") = true
+     * LocalUtil.hasText(null) = false
+     * LocalUtil.hasText("") = false
+     * LocalUtil.hasText(" ") = false
+     * LocalUtil.hasText("12345") = true
+     * LocalUtil.hasText(" 12345 ") = true
      * </pre>
      * @param str the CharSequence to check (may be <code>null</code>)
      * @return <code>true</code> if the CharSequence is not <code>null</code>,
@@ -147,10 +147,10 @@ public final class LocalUtil
      * Check that the given CharSequence is neither <code>null</code> nor of length 0.
      * Note: Will return <code>true</code> for a CharSequence that purely consists of whitespace.
      * <p><pre>
-     * StringUtils.hasLength(null) = false
-     * StringUtils.hasLength("") = false
-     * StringUtils.hasLength(" ") = true
-     * StringUtils.hasLength("Hello") = true
+     * LocalUtil.hasLength(null) = false
+     * LocalUtil.hasLength("") = false
+     * LocalUtil.hasLength(" ") = true
+     * LocalUtil.hasLength("Hello") = true
      * </pre>
      * @param str the CharSequence to check (may be <code>null</code>)
      * @return <code>true</code> if the CharSequence is not null and has length
@@ -1334,6 +1334,27 @@ public final class LocalUtil
         return String.class;
     }
 
+    /**
+     * Parse the given <code>localeString</code> into a {@link Locale}.
+     * <p>This is the inverse operation of {@link Locale#toString Locale's toString}.
+     * @param localeString the locale string, following <code>Locale's</code>
+     * <code>toString()</code> format ("en", "en_UK", etc);
+     * also accepts spaces as separators, as an alternative to underscores
+     * @return a corresponding <code>Locale</code> instance
+     */
+    public static Locale parseLocaleString(String localeString) {
+        if (hasText(localeString))
+        {
+            String[] parts = localeString.trim().split("[_]+");
+            String language = parts[0];
+            String country = parts.length > 1 ? parts[1] : "";
+            String variant = parts.length > 2 ? parts[2] : "";
+            return new Locale(language, country, variant);
+        }
+        return null;
+    }
+
+    /**
     /**
      * Get a timestamp for the earliest time that we know the JVM started
      * @return a JVM start time
