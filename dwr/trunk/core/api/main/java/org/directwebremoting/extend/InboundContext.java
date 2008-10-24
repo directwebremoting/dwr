@@ -221,13 +221,31 @@ public final class InboundContext
                      ProtocolConstants.INBOUND_CALLNUM_SUFFIX +
                      ProtocolConstants.INBOUND_KEY_PARAM + index;
 
-        InboundVariable found = variables.get(key);
-        if (found != null)
+        return variables.get(key);
+    }
+
+    /**
+     * This is very nasty - we need to create an array for varargs. The correct
+     * solution is to have ArrayConverter (and MapConverter) part of dwrp and
+     * not implementations of Converter. This would resolve a number of problems
+     * however for now we will have to create a mock InboundVariable to make it
+     * look to our ArrayConverter that the client passed in an array all along
+     * @param callNum The call number to work on
+     * @param destParamCount The number of parameters to the method that we are
+     * calling, from which we can work out the size of the varargs array
+     */
+    public InboundVariable createArrayWrapper(int callNum, int destParamCount)
+    {
+        int inputParamCount = getParameterCount(callNum);
+        int memberCount = 1 + inputParamCount - destParamCount;
+
+        InboundVariable[] members = new InboundVariable[memberCount];
+        for (int i = 0; i < memberCount; i++)
         {
-            return found;
+            members[i] = getParameter(callNum, i);
         }
 
-        return nullInboundVariable;
+        return new InboundVariable(this, members);
     }
 
     /**
@@ -322,11 +340,6 @@ public final class InboundContext
         buffer.append("]");
         return buffer.toString();
     }
-
-    /**
-     * A variable to use if we need to tell someone that we got nothing.
-     */
-    private final InboundVariable nullInboundVariable = new InboundVariable(this);
 
     /**
      * The stack of pushed conversion contexts.

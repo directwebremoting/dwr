@@ -90,9 +90,17 @@ public class XOMConverter extends AbstractConverter
 
             Node node = (Node) data;
 
-            String script = EnginePrivate.xmlStringToJavascriptDom(node.toXML());
-            OutboundVariable ov = new NonNestedOutboundVariable(script);
+            String script;
+            if (data instanceof Element)
+            {
+                script = EnginePrivate.xmlStringToJavascriptDomElement(node.toXML());
+            }
+            else
+            {
+                script = EnginePrivate.xmlStringToJavascriptDomDocument(node.toXML());
+            }
 
+            OutboundVariable ov = new NonNestedOutboundVariable(script);
             outctx.put(data, ov);
 
             return ov;

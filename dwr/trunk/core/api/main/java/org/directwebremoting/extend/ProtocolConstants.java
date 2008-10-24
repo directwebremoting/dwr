@@ -36,7 +36,7 @@ public interface ProtocolConstants
      * The name for file types from javascript
      */
     public static final String TYPE_FILE = "file";
-    
+
     /**
      * How many calls are there in this request?
      */
@@ -164,6 +164,11 @@ public interface ProtocolConstants
      * null is sometimes needed in a javascript map
      */
     public static final String INBOUND_NULL = "null";
+
+    /**
+     * A special value for handling varargs
+     */
+    public static final String INBOUND_VARARGS = "varargs";
 
     /**
      * The marker to indicate that the output is from data inserted into the call

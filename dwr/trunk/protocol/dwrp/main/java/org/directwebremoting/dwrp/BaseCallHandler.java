@@ -164,13 +164,23 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 inctx.dereference();
 
                 // Convert all the parameters to the correct types
-                Object[] arguments = new Object[method.getParameterTypes().length];
-                for (int j = 0; j < method.getParameterTypes().length; j++)
+                int destParamCount = method.getParameterTypes().length;
+                Object[] arguments = new Object[destParamCount];
+                for (int j = 0; j < destParamCount; j++)
                 {
-                    Class<?> paramType = method.getParameterTypes()[j];
-                    InboundVariable param = inctx.getParameter(callNum, j);
+                    InboundVariable param;
+                    if (method.isVarArgs() && j + 1 == destParamCount)
+                    {
+                        param = inctx.createArrayWrapper(callNum, destParamCount);
+                    }
+                    else
+                    {
+                        param = inctx.getParameter(callNum, j);
+                    }
+
                     Property property = new ParameterProperty(method, j);
 
+                    Class<?> paramType = method.getParameterTypes()[j];
                     try
                     {
                         arguments[j] = converterManager.convertInbound(paramType, param, property);

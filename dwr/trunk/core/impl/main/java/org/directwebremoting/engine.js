@@ -649,7 +649,7 @@ if (typeof window['dwr'] == 'undefined') {
           dwr.engine._debug("Warning: Missing handlers. callId=" + callId, true);
         }
         else {
-          batch.handlers[callId] = null;
+          batch.handlers[callId].completed = true;
           if (typeof handlers.callback == "function") {
             handlers.callback.apply(handlers.callbackScope, [ reply, handlers.callbackArg ]);
           }
@@ -713,7 +713,7 @@ if (typeof window['dwr'] == 'undefined') {
       }
 
       var handlers = batch.handlers[callId];
-      batch.handlers[callId] = null;
+      batch.handlers[callId].completed = true;
       if (handlers == null) {
         dwr.engine._debug("Warning: null handlers in remoteHandleException", true);
         return;
@@ -861,10 +861,18 @@ if (typeof window['dwr'] == 'undefined') {
     funcId:0,
 
     /**
-     * Convert a text representation of XML into a DOM tree
+     * Convert a text representation of XML into a DOM element
      * @param {String} xml An xml string
      */
-    toDom:function(xml) {
+    toDomElement:function(xml) {
+      return dwr.engine.serialize.toDomDocument(xml).documentElement;
+    },
+
+    /**
+     * Convert a text representation of XML into a DOM document
+     * @param {String} xml An xml string
+     */
+    toDomDocument:function(xml) {
       var dom;
       if (window.DOMParser) {
         var parser = new DOMParser();
@@ -1186,7 +1194,7 @@ if (typeof window['dwr'] == 'undefined') {
         }
 
         // Proceed using XMLHttpRequest
-        if (batch.async) {
+        if (batch.async == true) {
           batch.req.onreadystatechange = function() {
             if (typeof dwr != 'undefined') {
               dwr.engine.transport.xhr.stateChange(batch);
@@ -1240,7 +1248,7 @@ if (typeof window['dwr'] == 'undefined') {
             dwr.engine._handleWarning(batch, ex);
           }
           batch.req.send(request.body);
-          if (!batch.async) {
+          if (batch.async == false) {
             dwr.engine.transport.xhr.stateChange(batch);
           }
         }
@@ -1678,7 +1686,7 @@ if (typeof window['dwr'] == 'undefined') {
       var batch = {
         async:dwr.engine._async,
         charsProcessed:0,
-        handlers:{},
+        handlers:[],
         isPoll:false,
         map:{ callCount:0, windowName:window.name },
         paramCount:0,
@@ -1953,7 +1961,7 @@ if (typeof window['dwr'] == 'undefined') {
       // If some call left unreplied, report an error.
       if (!batch.completed) {
         for (var i = 0; i < batch.map.callCount; i++) {
-          if (batch.handlers[i] != null) {
+          if (batch.handlers[i].completed !== true) {
             dwr.engine._handleWarning(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
             break;
           }
