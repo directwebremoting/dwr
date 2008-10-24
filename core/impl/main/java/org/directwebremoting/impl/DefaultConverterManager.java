@@ -295,6 +295,11 @@ public class DefaultConverterManager implements ConverterManager
      */
     public Class<?> getClientDeclaredType(InboundVariable data)
     {
+        if (data == null)
+        {
+            return null;
+        }
+
         String objectName = data.getNamedObjectType();
         if (objectName != null)
         {
@@ -322,7 +327,7 @@ public class DefaultConverterManager implements ConverterManager
     {
         if (data == null)
         {
-            throw new NullPointerException("data");
+            return null;
         }
 
         InboundContext context = data.getContext();

@@ -50,6 +50,7 @@ public final class InboundVariable
         this.context = context;
         this.key = key;
         this.type = type;
+        this.members = null;
         this.formField = fileField;
     }
 
@@ -63,6 +64,22 @@ public final class InboundVariable
         this.key = null;
         this.type = ProtocolConstants.INBOUND_NULL;
         this.formField = null;
+        this.members = null;
+        dereferenced = true;
+    }
+
+    /**
+     * Constructor for when we need to temporarily create an InboundVariable
+     * for sorting out varargs
+     * @param context How we lookup references
+     */
+    public InboundVariable(InboundContext context, InboundVariable[] members)
+    {
+        this.context = context;
+        this.key = null;
+        this.type = ProtocolConstants.INBOUND_VARARGS;
+        this.formField = null;
+        this.members = members;
         dereferenced = true;
     }
 
@@ -151,6 +168,14 @@ public final class InboundVariable
         return formField;
     }
 
+    /**
+     * Nasty hack to get around varargs
+     */
+    public InboundVariable[] getMembers()
+    {
+        return members;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -232,6 +257,11 @@ public final class InboundVariable
         hash += (key == null) ? 768 : key.hashCode();
         return hash;
     }
+
+    /**
+     * Nasty hack to get around varargs
+     */
+    private final InboundVariable[] members;
 
     /**
      * It's an error to store this in a Map unless we have already called

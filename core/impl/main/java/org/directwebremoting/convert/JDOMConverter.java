@@ -87,29 +87,30 @@ public class JDOMConverter extends AbstractConverter
             outformat.setEncoding("UTF-8");
 
             // Setup the destination
-            StringWriter xml = new StringWriter();
-
-            XMLOutputter writer = new XMLOutputter(outformat);
+            String script;
 
             // Using XSLT to convert to a stream. Setup the source
             if (data instanceof Document)
             {
-                Document doc = (Document) data;
-                writer.output(doc, xml);
+                StringWriter xml = new StringWriter();
+                XMLOutputter writer = new XMLOutputter(outformat);
+                writer.output((Document) data, xml);
+                xml.flush();
+                script = EnginePrivate.xmlStringToJavascriptDomDocument(xml.toString());
             }
             else if (data instanceof Element)
             {
-                Element ele = (Element) data;
-                writer.output(ele, xml);
+                StringWriter xml = new StringWriter();
+                XMLOutputter writer = new XMLOutputter(outformat);
+                writer.output((Element) data, xml);
+                xml.flush();
+                script = EnginePrivate.xmlStringToJavascriptDomElement(xml.toString());
             }
             else
             {
                 throw new ConversionException(data.getClass());
             }
 
-            xml.flush();
-
-            String script = EnginePrivate.xmlStringToJavascriptDom(xml.toString());
             OutboundVariable ov = new NonNestedOutboundVariable(script);
 
             outctx.put(data, ov);

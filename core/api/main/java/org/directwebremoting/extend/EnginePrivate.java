@@ -180,10 +180,22 @@ public class EnginePrivate
      * @param xml The XML string to convert
      * @return The Javascript
      */
-    public static String xmlStringToJavascriptDom(String xml)
+    public static String xmlStringToJavascriptDomElement(String xml)
     {
         String xmlout = JavascriptUtil.escapeJavaScript(xml);
-        return "dwr.engine.serialize.toDom(\"" + xmlout + "\")";
+        return "dwr.engine.serialize.toDomElement(\"" + xmlout + "\")";
+    }
+
+    /**
+     * Take an XML string, and convert it into some Javascript that when
+     * executed will return a DOM object that represents the same XML object
+     * @param xml The XML string to convert
+     * @return The Javascript
+     */
+    public static String xmlStringToJavascriptDomDocument(String xml)
+    {
+        String xmlout = JavascriptUtil.escapeJavaScript(xml);
+        return "dwr.engine.serialize.toDomDocument(\"" + xmlout + "\")";
     }
 
     /**

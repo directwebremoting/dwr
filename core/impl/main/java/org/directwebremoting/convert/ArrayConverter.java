@@ -64,27 +64,58 @@ public class ArrayConverter implements Converter
             throw new ConversionException(paramType);
         }
 
+        Class<?> componentType = paramType.getComponentType();
+        //componentType = LocalUtil.getNonPrimitiveType(componentType);
+        InboundContext incx = data.getContext();
+
+        // HACK: If ArrayConverter was part of DWRP we could avoid this
+        // getMembers() is there so BaseCallWrapper can support varargs by
+        // creating a temporary InboundVariable so it can pass the remaining
+        // parameters to be packaged into an array by the ArrayConverter
+        InboundVariable[] members = data.getMembers();
+        if (members != null)
+        {
+            Object array = Array.newInstance(componentType, members.length);
+            data.getContext().addConverted(data, paramType, array);
+
+            for (int i = 0; i < members.length; i++)
+            {
+                Object output = converterManager.convertInbound(componentType, members[i], data.getContext().getCurrentProperty());
+                Array.set(array, i, output);
+            }
+
+            return array;
+        }
+
         String value = data.getValue();
         if (value.startsWith(ProtocolConstants.INBOUND_ARRAY_START))
         {
             value = value.substring(1);
         }
+        else
+        {
+            log.error("Found array end without array start: " + data.getValue());
+            throw new IllegalArgumentException("Could not parse input. See logs for details.");
+        }
+
         if (value.endsWith(ProtocolConstants.INBOUND_ARRAY_END))
         {
             value = value.substring(0, value.length() - 1);
+        }
+        else
+        {
+            log.error("Found array end without array end: " + data.getValue());
+            throw new IllegalArgumentException("Could not parse input. See logs for details.");
         }
 
         StringTokenizer st = new StringTokenizer(value, ProtocolConstants.INBOUND_ARRAY_SEPARATOR);
         int size = st.countTokens();
 
-        Class<?> componentType = paramType.getComponentType();
-        //componentType = LocalUtil.getNonPrimitiveType(componentType);
         Object array = Array.newInstance(componentType, size);
 
         // We should put the new object into the working map in case it
         // is referenced later nested down in the conversion process.
         data.getContext().addConverted(data, paramType, array);
-        InboundContext incx = data.getContext();
 
         for (int i = 0; i < size; i++)
         {
@@ -98,7 +129,6 @@ public class ArrayConverter implements Converter
             Object output = converterManager.convertInbound(componentType, nested, data.getContext().getCurrentProperty());
             Array.set(array, i, output);
         }
-
         return array;
     }
 

@@ -103,9 +103,17 @@ public class DOM4JConverter extends AbstractConverter
             writer.flush();
             xml.flush();
 
-            String script = EnginePrivate.xmlStringToJavascriptDom(xml.toString());
-            OutboundVariable ov = new NonNestedOutboundVariable(script);
+            String script;
+            if (data instanceof Element)
+            {
+                script = EnginePrivate.xmlStringToJavascriptDomElement(xml.toString());
+            }
+            else
+            {
+                script = EnginePrivate.xmlStringToJavascriptDomDocument(xml.toString());
+            }
 
+            OutboundVariable ov = new NonNestedOutboundVariable(script);
             outctx.put(data, ov);
 
             return ov;
