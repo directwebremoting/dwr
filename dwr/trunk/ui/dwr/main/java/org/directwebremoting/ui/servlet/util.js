@@ -193,7 +193,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
     var reply = "";
     try {
       // string
-      if (typeof data == "string") {
+      if (dwr.util._isString(data)) {
         var str = data;
         if (showLevels == 0 && str.length > options.shortStringMaxLength)
           str = str.substring(0, options.shortStringMaxLength-3) + "...";
@@ -226,12 +226,12 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
       }
       
       // function
-      else if (typeof data == "function") {
+      else if (dwr.util._isFunction(data)) {
         reply = "function";
       }
     
       // Array
-      else if (dwr.util._isArray(data)) {
+      else if (dwr.util._isArrayLike(data)) {
         if (showLevels == 0) { // Short format (don't show items)
           if (data.length > 0)
             reply = "[...]";
@@ -243,7 +243,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
           strarr.push("[");
           var count = 0;
           for (var i = 0; i < data.length; i++) {
-            if (! (i in data)) continue;
+            if (!(i in data) && data != "[object NodeList]") continue;
             var itemvalue = data[i];
             if (count > 0) strarr.push(", ");
             if (showLevels == 1) { // One-line format
@@ -1424,14 +1424,41 @@ dwr.util._isObject = function(data) {
  * @private Array detector. Note: instanceof doesn't work with multiple frames.
  */
 dwr.util._isArray = function(data) {
-  return (data && data.join);
+  return (data && Object.prototype.toString.call(data)=="[object Array]");
+};
+
+/**
+ * @private Array like detector. Note: instanceof doesn't work with multiple frames.
+ */
+dwr.util._isArrayLike = function(data) {
+  return data 
+    && (typeof data.length == "number") // must have .length
+    && ((data.propertyIsEnumerable && data.propertyIsEnumerable("length")==false) || !data.constructor || data!="[object Object]") // .length must be native prop
+    && !dwr.util._isString(data) // don't be fooled by string
+    && !dwr.util._isFunction(data) // don't be fooled by function
+    && !data.tagName; // don't be fooled by elements
+};
+
+/**
+ * @private String detector.
+ */
+dwr.util._isString = function(data) {
+  return (data && (typeof data == "string" || Object.prototype.toString.call(data) == "[object String]"));
+};
+
+/**
+ * @private Function detector.
+ */
+dwr.util._isFunction = function(data) {
+  return (data && (typeof data == "function" || Object.prototype.toString.call(data) == "[object Function]") 
+    && data != "[object NodeList]"); // need to workaround NodeList on Safari
 };
 
 /**
  * @private Date detector. Note: instanceof doesn't work with multiple frames.
  */
 dwr.util._isDate = function(data) {
-  return (data && data.toUTCString) ? true : false;
+  return (data && Object.prototype.toString.call(data)=="[object Date]");
 };
 
 /**
