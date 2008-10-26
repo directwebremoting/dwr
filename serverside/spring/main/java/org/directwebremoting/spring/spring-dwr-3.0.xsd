@@ -41,17 +41,8 @@
             <xsd:complexType>
                 <xsd:attribute name="base-package" type="xsd:string" />
                 <xsd:attribute name="regex" type="xsd:string" />
-                <xsd:attribute name="scanConverters" type="xsd:boolean" default="true" />
-            </xsd:complexType>
-	</xsd:element>
-
-	<xsd:element name="converter-scan">
-            <xsd:annotation>
-                <xsd:documentation><![CDATA[Allow DWR to scan the classpath to detect classes annotated with @DataTransferObject registering the Converter proxies for them.]]></xsd:documentation>
-            </xsd:annotation>
-            <xsd:complexType>
-                <xsd:attribute name="base-package" type="xsd:string" />
-                <xsd:attribute name="regex" type="xsd:string" />
+                <xsd:attribute name="scanRemoteProxy" type="xsd:boolean" default="true" />
+                <xsd:attribute name="scanDataTransferObject" type="xsd:boolean" default="true" />
             </xsd:complexType>
 	</xsd:element>
 

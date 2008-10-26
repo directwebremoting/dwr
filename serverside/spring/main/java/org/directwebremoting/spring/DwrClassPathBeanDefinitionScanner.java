@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.Param;
+import org.directwebremoting.annotations.RemoteProperty;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -92,7 +93,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                         Method getter = p.getReadMethod();
                         if (getter != null)
                         {
-                            if (getter.getAnnotation(RemoteProxy.class) != null)
+                            if (getter.getAnnotation(RemoteProperty.class) != null)
                             {
                                 converterConfig.addInclude(p.getName());
                             }

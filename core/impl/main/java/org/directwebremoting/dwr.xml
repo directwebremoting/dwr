@@ -47,6 +47,7 @@
     <converter id="proxyObject" class="org.directwebremoting.convert.JavascriptObjectConverter"/>
     <converter id="proxyInterface" class="org.directwebremoting.convert.ProxyInterfaceConverter"/>
     <converter id="locale" class="org.directwebremoting.convert.LocaleConverter"/>
+    <converter id="currency" class="org.directwebremoting.convert.CurrencyConverter"/>
 
     <converter id="jsx3uri" class="jsx3.net.URIResolverConverter"/>
     <converter id="jsx3doc" class="jsx3.xml.CdfDocumentConverter"/>
@@ -86,6 +87,7 @@
     <convert converter="date" match="java.util.Calendar"/>
     <convert converter="url" match="java.net.URL"/>
     <convert converter="locale" match="java.util.Locale"/>
+    <convert converter="currency" match="java.util.Currency"/>
 
     <convert converter="array" match="[Z"/>
     <convert converter="file" match="[B"/>
