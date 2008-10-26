@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
-import org.springframework.util.StringUtils;
+import static org.springframework.util.StringUtils.hasText;
 import org.w3c.dom.Element;
 
 /**
@@ -47,8 +47,7 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
     {
         super.init();
         registerBeanDefinitionParser("annotation-config", new AnnotationConfigBeanDefinitionParser());
-        registerBeanDefinitionParser("annotation-scan", new AnnotationScannerDefinitionParser(true, true));
-        registerBeanDefinitionParser("converter-scan", new AnnotationScannerDefinitionParser(false, true));
+        registerBeanDefinitionParser("annotation-scan", new AnnotationScannerDefinitionParser());
     }
 
     /**
@@ -84,20 +83,14 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
     protected class AnnotationScannerDefinitionParser implements BeanDefinitionParser
     {
 
-        private boolean scanConverters;
-        private final boolean scanProxies;
-
-        protected AnnotationScannerDefinitionParser(boolean scanProxies, boolean scanConverters)
-        {
-            this.scanProxies = scanProxies;
-            this.scanConverters = scanConverters;
-        }
+        private boolean scanProxies = true;
+        private boolean scanConverters = true;
 
         public BeanDefinition parse(Element element, ParserContext parserContext)
         {
             ClassPathBeanDefinitionScanner scanner = new DwrClassPathBeanDefinitionScanner(parserContext.getRegistry());
             String basePackage = element.getAttribute("base-package");
-            if (!StringUtils.hasText(basePackage))
+            if (!hasText(basePackage))
             {
                 if (log.isInfoEnabled())
                 {
@@ -105,27 +98,36 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
                 }
             }
             String regex = element.getAttribute("regex");
-            if (StringUtils.hasText(regex))
+            if (hasText(regex))
             {
                 scanner.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(regex)));
+            }
+            String proxies = element.getAttribute("scanRemoteProxy");
+            if (hasText(proxies) && ("TRUE".equals(proxies.toUpperCase()) || "FALSE".equals(proxies.toUpperCase())))
+            {
+                scanProxies = Boolean.parseBoolean(proxies);
             }
             if (scanProxies)
             {
                 scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteProxy.class));
             }
-            try
+            String conv = element.getAttribute("scanDataTransferObject");
+            if (hasText(conv) && ("TRUE".equals(conv.toUpperCase()) || "FALSE".equals(conv.toUpperCase())))
             {
-                scanConverters = Boolean.parseBoolean(element.getAttribute("scanConverters"));
-            }
-            catch (Exception ex)
-            {
-                scanConverters = true;
+                scanConverters = Boolean.parseBoolean(conv);
             }
             if (scanConverters)
             {
                 scanner.addIncludeFilter(new AnnotationTypeFilter(DataTransferObject.class));
             }
-            scanner.scan(basePackage == null ? "" : basePackage);
+            if (scanProxies | scanConverters)
+            {
+                scanner.scan(basePackage == null ? "" : basePackage);
+            }
+            else
+            {
+                log.warn("Scan is not required if both @RemoteProxy and @DataTransferObject are disabled. Skipping detection");
+            }
             return null;
         }
 
