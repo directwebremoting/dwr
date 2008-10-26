@@ -221,7 +221,13 @@ public final class InboundContext
                      ProtocolConstants.INBOUND_CALLNUM_SUFFIX +
                      ProtocolConstants.INBOUND_KEY_PARAM + index;
 
-        return variables.get(key);
+        InboundVariable found = variables.get(key);
+        if (found != null)
+        {
+            return found;
+        }
+
+        return nullInboundVariable;
     }
 
     /**
@@ -340,6 +346,11 @@ public final class InboundContext
         buffer.append("]");
         return buffer.toString();
     }
+
+    /**
+     * A variable to use if we need to tell someone that we got nothing.
+     */
+    private final InboundVariable nullInboundVariable = new InboundVariable(this);
 
     /**
      * The stack of pushed conversion contexts.
