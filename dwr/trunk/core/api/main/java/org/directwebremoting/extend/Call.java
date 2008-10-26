@@ -190,9 +190,12 @@ public class Call
             // Remove methods where we can't convert the input
             for (int i = 0; i < methodParamTypes.length; i++)
             {
-                // If we can't convert this parameter type, ignore the method
                 Class<?> methodParamType = methodParamTypes[i];
-                if (!converterManager.isConvertable(methodParamType))
+                InboundVariable param = inctx.getParameter(callNum, i);
+                Class<?> inputType = converterManager.getClientDeclaredType(param);
+
+                // If we can't convert this parameter type, ignore the method
+                if (inputType == null && !converterManager.isConvertable(methodParamType))
                 {
                     it.remove();
                     continue allMethodsLoop;
@@ -206,8 +209,6 @@ public class Call
                 }
 
                 // Remove methods where the client passed a type and we can't use it.
-                InboundVariable param = inctx.getParameter(callNum, i);
-                Class<?> inputType = converterManager.getClientDeclaredType(param);
                 if (inputType != null && !methodParamType.isAssignableFrom(inputType))
                 {
                     it.remove();
