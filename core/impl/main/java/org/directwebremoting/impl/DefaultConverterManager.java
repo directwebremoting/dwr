@@ -325,11 +325,6 @@ public class DefaultConverterManager implements ConverterManager
     @SuppressWarnings("unchecked")
     public <T> T convertInbound(Class<T> paramType, InboundVariable data, Property thc) throws ConversionException
     {
-        if (data == null)
-        {
-            return null;
-        }
-
         InboundContext context = data.getContext();
 
         Object converted = context.getConverted(data, paramType);
