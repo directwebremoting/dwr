@@ -26,12 +26,13 @@ Building DWR
 ------------
 DWR is primarily built using ant. The important ant targets are:
 - clean: Removes target files and .DS_Store files left around by OSX
+- jar: Create a new dwr.jar file
+- war: Create a clean unpacked demo war file for tomcat/jetty/etc
 - package: Build a set of output .zip files for distribution
-- war: Create a clean unpacked war file for tomcat/jetty/etc
 
 The DWR build system can be adapted to create outputs containing different
 modules (see Terminology) so it is simple to create a dwr.jar file that
-contains exactly the modules that you need. See the 'war' target and the
+contains exactly the modules that you need. See the 'modules' property and the
 execution of the 'build' macrodef.
 
 The ant outputs are stored in dwr/target/ant.
@@ -77,4 +78,5 @@ Refactorings that would be a good idea:
     Object convertInbound(Class<?> destinationType, JavaScriptTypeInformation sourceType, String data) throws ConversionException;  
 - ProtocolConstants is in the wrong place and would be a good place to start in
   and refactoring because it is inherently part of DWRP
-
+- Extract an spi from the api and ensure that non-core modules depend on spi
+  and not impl
