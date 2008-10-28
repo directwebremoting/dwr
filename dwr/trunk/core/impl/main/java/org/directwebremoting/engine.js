@@ -1103,14 +1103,19 @@ if (typeof window['dwr'] == 'undefined') {
 
       // Work out if we are going cross domain
       var isCrossDomain = false;
-      var path = dwr.engine._pathToDwrServlet;
-      if (path.indexOf("http://") == 0 || path.indexOf("https://") == 0) {
+      if (batch.path == null) {
+        batch.path = dwr.engine._pathToDwrServlet;
+      }
+      if (batch.path.indexOf("http://") == 0 || batch.path.indexOf("https://") == 0) {
         var dwrShortPath = dwr.engine._pathToDwrServlet.split("/", 3).join("/");
         var hrefShortPath = window.location.href.split("/", 3).join("/");
         isCrossDomain = (dwrShortPath != hrefShortPath);
       }
 
       if (batch.fileUpload) {
+        if (isCrossDomain) {
+          throw new Error("Cross domain file uploads are not possible with this release of DWR");
+        }
         batch.transport = dwr.engine.transport.iframe;
       }
       else if (isCrossDomain && !dwr.engine.isJaxerServer) {
@@ -1638,12 +1643,13 @@ if (typeof window['dwr'] == 'undefined') {
         // has completed
         if (document.body) {
           batch.script = document.createElement("script");
-          batch.script.id = "dwr-st-" + batch.map["c0-id"];
+          batch.script.id = "dwr-st-" + batch.map.batchId;
           batch.script.src = request.url;
+          batch.script.type = "text/javascript";
           document.body.appendChild(batch.script);
         }
         else {
-          document.writeln("<scr" + "ipt id='dwr-st-" + batch.map["c0-id"] + "' src='" + request.url + "'> </scr" + "ipt>");
+          document.writeln("<scr" + "ipt type='text/javascript' id='dwr-st-" + batch.map["c0-id"] + "' src='" + request.url + "'> </scr" + "ipt>");
         }
       }
     },
@@ -1661,7 +1667,6 @@ if (typeof window['dwr'] == 'undefined') {
         batch.htmlfile = new window.ActiveXObject("htmlfile");
         batch.htmlfile.open();
         batch.htmlfile.write("<" + "html>");
-        //batch.htmlfile.write("<scr" + "ipt>document.domain='" + document.domain + "';</scr" + "ipt>");
         batch.htmlfile.write("<div><iframe className='wibble' src='javascript:void(0)' id='" + idname + "' name='" + idname + "' onload='dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");'></iframe></div>");
         batch.htmlfile.write("</" + "html>");
         batch.htmlfile.close();
@@ -2061,9 +2066,9 @@ if (typeof window['dwr'] == 'undefined') {
   catch(ex) { }
 
   // Fetch the scriptSessionId from the server
-  dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', function() {
+  dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', [ function() {
     dwr.engine._ordered = false;
-  });
+  }]);
 
   /**
    * Routines for the DWR pubsub hub
