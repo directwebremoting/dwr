@@ -25,10 +25,12 @@ public interface UninitializingBean
 {
     /**
      * Called when a {@link javax.servlet.ServletContext} is being destroyed.
+     * DWR finds out about this destruction if (and only if) in web.xml there
+     * is a {@link org.directwebremoting.servlet.DwrListener} registered.
      * This happens before the {@link javax.servlet.http.HttpServlet#destroy()}
      * is called.
      * <p>
-     * <strong>BUT IT MIGHT NOT HAPPEN AT ALL</strong>
+     * <strong>If DwrListener is not registered, this will not happen</strong>
      * <p>
      * This method should only be used when we need to take action to enable the
      * servlet to stop cleanly. Typically this will be restricted to stopping
@@ -38,7 +40,9 @@ public interface UninitializingBean
 
     /**
      * Called when {@link javax.servlet.http.HttpServlet#destroy()} is called.
-     * This event is the preferred time to close resources.
+     * This event is the preferred time to close resources that don't require
+     * all connections to be closed. The servletDestroy method is far more
+     * likely to be called.
      */
     void servletDestroyed();
 }
