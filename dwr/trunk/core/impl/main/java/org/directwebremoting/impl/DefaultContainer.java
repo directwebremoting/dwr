@@ -268,7 +268,7 @@ public class DefaultContainer extends AbstractContainer implements Container
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.Container#destroy()
+     * @see org.directwebremoting.Container#contextDestroyed()
      */
     public void contextDestroyed()
     {
@@ -294,6 +294,19 @@ public class DefaultContainer extends AbstractContainer implements Container
     public void servletDestroyed()
     {
         slog.debug("ServletDestroyed for container: " + getClass().getSimpleName());
+
+        Collection<String> beanNames = getBeanNames();
+        for (String beanName : beanNames)
+        {
+            Object bean = getBean(beanName);
+            if (bean instanceof UninitializingBean)
+            {
+                UninitializingBean scl = (UninitializingBean) bean;
+                slog.debug("- For contained bean: " + beanName);
+
+                scl.servletDestroyed();
+            }
+        }
     }
 
     /**
