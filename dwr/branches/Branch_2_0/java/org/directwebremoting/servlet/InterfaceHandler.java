@@ -52,7 +52,8 @@ public class InterfaceHandler implements Handler
         // Officially we should use MimeConstants.MIME_JS, but if we cheat and
         // use MimeConstants.MIME_PLAIN then it will be easier to read in a
         // browser window, and will still work just fine.
-        response.setContentType(MimeConstants.MIME_PLAIN);
+        // However: There have been a number of complaints about this so ...
+        response.setContentType(MimeConstants.MIME_JS);
         PrintWriter out = response.getWriter();
         out.print(script);
     }
