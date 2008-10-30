@@ -227,6 +227,12 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 final FormField formField = entry.getValue();
                 Object value;
 
+                if (formField == null)
+                {
+                    log.warn("Found a parameter with a null value. This is likely to be due to a URL with an & before the query parameters. Please URL encode such pages.");
+                    throw new IllegalArgumentException("Empty input parameter. See logs for suggestions");
+                }
+
                 if (formField.isFile())
                 {
                     InputStreamFactory inFactory = new SimpleInputStreamFactory(formField.getInputStream());

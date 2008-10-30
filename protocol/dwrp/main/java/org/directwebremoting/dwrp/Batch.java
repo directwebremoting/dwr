@@ -121,7 +121,7 @@ public class Batch
         {
             parseBrokenMacPost(paramMap);
         }
-        
+
         return paramMap;
     }
 
@@ -163,7 +163,7 @@ public class Batch
     {
         Map<String, FormField> paramMap;
         paramMap = new HashMap<String, FormField>();
-        
+
         BufferedReader in = null;
         try
         {
@@ -175,11 +175,11 @@ public class Batch
             // It would be more normal to do the following:
             // BufferedReader in = req.getReader();
             in = new BufferedReader(new InputStreamReader(req.getInputStream()));
-   
+
             while (true)
             {
                 String line = in.readLine();
-   
+
                 if (line == null)
                 {
                     if (paramMap.isEmpty())
@@ -197,7 +197,7 @@ public class Batch
 
                     break;
                 }
-   
+
                 if (line.indexOf('&') != -1)
                 {
                     // If there are any &'s then this must be iframe post and all the
@@ -208,7 +208,7 @@ public class Batch
                     {
                         String part = st.nextToken();
                         part = LocalUtil.decode(part);
-   
+
                         parsePostLine(part, paramMap);
                     }
                 }
