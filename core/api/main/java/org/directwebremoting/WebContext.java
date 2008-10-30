@@ -41,11 +41,20 @@ public interface WebContext extends ServerContext
     ScriptSession getScriptSession() throws UnsupportedOperationException;
 
     /**
-     * What is the URL of the current page.
-     * This includes 'http://', up to (but not including) '?' or '#'
-     * <p>If the DWR thread that gave rise to this {@link WebContext} is as a
-     * result of a JSON call, this method will throw an UnsupportedOperationException
-     * @return The URL of the current page
+     * Returns the partial-URL of the page from which the current thread
+     * originated.
+     * This string starts from (and includes) the application's context path,
+     * and therefore excludes the scheme, host, and port of the URL.
+     * If the URL has a query string (starting with and including a '?'
+     * character) and/or an in-page location (starting with and including a '#'
+     * character), these portions will be excluded. If the URL has a session
+     * identifier, i.e. via an application server's URL-rewriting behavior, this
+     * may not necessarily be excluded. e.g. Tomcat's default is to use
+     * ";jsessionid=123...".
+     * NOTE: this means that DWR will consider a session-appended URL to be
+     * distinct from a non-session-appended URL.
+     * @see org.directwebremoting.extend.PageNormalizer for details on how pages
+     * are converted from external form to this form.
      * @throws UnsupportedOperationException If this is part of a JSON call
      */
     String getCurrentPage() throws UnsupportedOperationException;
