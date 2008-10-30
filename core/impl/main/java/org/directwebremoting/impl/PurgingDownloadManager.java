@@ -35,14 +35,6 @@ import org.directwebremoting.util.IdGenerator;
  */
 public abstract class PurgingDownloadManager implements DownloadManager
 {
-    /**
-     * Schedule cache purges
-     */
-    public PurgingDownloadManager()
-    {
-        executor.scheduleWithFixedDelay(downloadPurge, queueSleepTime, queueSleepTime, TimeUnit.MILLISECONDS);
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.DownloadManager#addFile(org.directwebremoting.extend.DownloadManager.FileGenerator)
      */
@@ -78,6 +70,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
     public void setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor executor)
     {
         this.executor = executor;
+        this.executor.scheduleWithFixedDelay(downloadPurge, queueSleepTime, queueSleepTime, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -109,7 +102,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
     /**
      * The cron system
      */
-    protected ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+    protected ScheduledThreadPoolExecutor executor = null;
 
     /**
      * Check that the cache of files does not contain out-of-date items
