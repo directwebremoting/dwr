@@ -340,8 +340,7 @@ public class DefaultRemoter implements Remoter
         // (6)    ...
         // (7)    this.pkg1.pkg2.MyClass.createFromMap = function(map) {
         // (7)      var obj = new this(); // this = MyClass = constructor function
-        // (8)      if ('myProp' in map) obj.myProp = map.myProp;
-        // (8)      ...
+        // (8)      for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
         // (8)      return obj;
         // (8)    }
         // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
@@ -443,17 +442,7 @@ public class DefaultRemoter implements Remoter
             buf.append("    var obj = new this();\n");
 
             // Generate (8): if ('myProp' in map) obj.myProp = map.myProp;
-            for (Entry<String, Property> entry : properties.entrySet())
-            {
-                String name = entry.getKey();
-                buf.append("    if ('");
-                buf.append(name);
-                buf.append("' in map) obj.");
-                buf.append(name);
-                buf.append(" = map.");
-                buf.append(name);
-                buf.append(";\n");
-            }
+            buf.append("    for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];\n");
             buf.append("    return obj;\n");
             buf.append("  }\n");
 
