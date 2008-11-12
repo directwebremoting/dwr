@@ -1856,7 +1856,7 @@ if (typeof window['dwr'] == 'undefined') {
       batch.completed = false;
 
       // security details are filled in late so previous batches have completed
-      batch.map.page = window.location.pathname + window.location.search;
+      batch.map.page = encodeURIComponent(window.location.pathname + window.location.search);
       batch.map.httpSessionId = dwr.engine._getHttpSessionId();
       batch.map.scriptSessionId = dwr.engine._scriptSessionId;
       batch.map.windowName = window.name;
