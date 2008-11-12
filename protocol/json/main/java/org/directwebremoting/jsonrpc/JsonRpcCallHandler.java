@@ -17,9 +17,6 @@ package org.directwebremoting.jsonrpc;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
-import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -38,8 +34,12 @@ import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.json.JsonUtil;
 import org.directwebremoting.json.parse.JsonParseException;
+import org.directwebremoting.json.parse.JsonParser;
+import org.directwebremoting.json.parse.JsonParserFactory;
+import org.directwebremoting.jsonrpc.io.JsonRpcCallException;
+import org.directwebremoting.jsonrpc.io.JsonRpcCalls;
+import org.directwebremoting.jsonrpc.io.JsonRpcCallsJsonDecoder;
 import org.directwebremoting.jsonrpc.io.JsonRpcError;
-import org.directwebremoting.jsonrpc.io.JsonRpcRequest;
 import org.directwebremoting.util.MimeConstants;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -63,106 +63,30 @@ public class JsonRpcCallHandler implements Handler
             throw new SecurityException("JSON interface disabled");
         }
 
-        Calls calls = new Calls();
-        JsonRpcRequest jsonRpc;
+        JsonRpcCalls calls = null;
 
         try
         {
             // TODO: We do not support JSON-RPC-GET. Is this legal?
-            // I'm of the opinion that allow any kind of RPC over GET is against the
-            // HTTP spec so I'm not rushing to fix this error
+            // I'm of the opinion that allow any kind of RPC over GET without an
+            // explicit @idempotent marker is probably against the HTTP spec
+            // Plus there are additional security issues with GET requests
+            // So I'm not rushing to fix this error
             Reader in = request.getReader();
-            jsonRpc = JsonUtil.toReflectedTypes(JsonRpcRequest.class, in);
-        }
-        catch (JsonParseException ex)
-        {
-            JsonRpcError error = new JsonRpcError("2.0", null, ex.getMessage(), ERROR_CODE_PARSE, null);
-            writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
+            JsonParser parser = JsonParserFactory.get();
+            calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder());
 
-        // Fill out the Calls structure
-        Call call = new Call();
-        try
-        {
-            // JSON-RPC does not support batching
-            calls.addCall(call);
-            call.setCallId(jsonRpc.getId());
-
-            String exec = jsonRpc.getMethod();
-            String[] parts = exec.split(".");
-            if (parts.length != 2)
-            {
-                log.warn("Got method='" + exec + "', but this does not split into 2 parts (parts=" + parts + ").");
-                JsonRpcError error = new JsonRpcError(jsonRpc, "Method parameter not valid", ERROR_CODE_INVALID, null);
-                writeResponse(error, response, SC_BAD_REQUEST);
-                return;
-            }
-
-            call.setScriptName(parts[0]);
-            call.setMethodName(parts[1]);
-
-            Creator creator = creatorManager.getCreator(parts[0], false);
-            if (creator == null)
-            {
-                log.warn("No creator found: " + parts[0]);
-                JsonRpcError error = new JsonRpcError(jsonRpc, "Object not valid", ERROR_CODE_INVALID, null);
-                writeResponse(error, response, SC_BAD_REQUEST);
-                return;
-            }
-
-            Class<?> type = creator.getType();
-
-            // Get the types of the parameters
-            List<Object> params = jsonRpc.getParams();
-            List<Class<?>> paramTypes = new ArrayList<Class<?>>();
-            for (Object param : params)
-            {
-                paramTypes.add(param.getClass());
-            }
-            Class<?>[] typeArray = paramTypes.toArray(new Class[paramTypes.size()]);
-
-            Method method = type.getMethod(call.getMethodName(), typeArray);
-            call.setMethod(method);
-
-            call.setParameters(params.toArray());
-        }
-        catch (SecurityException ex)
-        {
-            log.warn("Method not allowed: " + jsonRpc.getMethod() + ".", ex);
-            JsonRpcError error = new JsonRpcError(jsonRpc, "Method not allowed", ERROR_CODE_INVALID, null);
-            writeResponse(error, response, SC_BAD_REQUEST);
-            return;
-        }
-        catch (NoSuchMethodException ex)
-        {
-            log.warn("Method not found: " + jsonRpc.getMethod() + ".", ex);
-            JsonRpcError error = new JsonRpcError(jsonRpc, "Method not found", ERROR_CODE_INVALID, null);
-            writeResponse(error, response, SC_BAD_REQUEST);
-            return;
-        }
-
-        // Check the methods are accessible
-        try
-        {
+            // Check the methods are accessible
             for (Call c : calls)
             {
                 Creator creator = creatorManager.getCreator(c.getScriptName(), true);
                 accessControl.assertExecutionIsPossible(creator, c.getScriptName(), c.getMethod());
             }
-        }
-        catch (SecurityException ex)
-        {
-            JsonRpcError error = new JsonRpcError(jsonRpc, ex.getMessage(), ERROR_CODE_NO_METHOD, null);
-            writeResponse(error, response, SC_NOT_FOUND);
-        }
 
-        try
-        {
             Replies replies = remoter.execute(calls);
             if (replies.getReplyCount() != 1)
             {
-                JsonRpcError error = new JsonRpcError(jsonRpc, "Multiple replies", ERROR_CODE_INTERNAL, null);
+                JsonRpcError error = new JsonRpcError(calls, "Multiple replies", ERROR_CODE_INTERNAL, null);
                 writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
             }
 
@@ -172,12 +96,28 @@ public class JsonRpcCallHandler implements Handler
             if (reply.getThrowable() != null)
             {
                 Throwable ex = reply.getThrowable();
-                JsonRpcError error = new JsonRpcError(jsonRpc, ex.getMessage(), ERROR_CODE_SERVER, null);
+                JsonRpcError error = new JsonRpcError(calls, ex.getMessage(), ERROR_CODE_SERVER, null);
                 writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
                 return;
             }
 
             writeResponse(reply.getReply(), response, HttpServletResponse.SC_OK);
+        }
+        catch (JsonRpcCallException ex)
+        {
+            writeResponse(new JsonRpcError(ex), response, ex.getHttpStatusCode());
+            return;
+        }
+        catch (JsonParseException ex)
+        {
+            JsonRpcError error = new JsonRpcError("2.0", null, ex.getMessage(), ERROR_CODE_PARSE, null);
+            writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        catch (SecurityException ex)
+        {
+            JsonRpcError error = new JsonRpcError(calls, ex.getMessage(), ERROR_CODE_NO_METHOD, null);
+            writeResponse(error, response, SC_NOT_FOUND);
         }
         catch (IOException ex)
         {
@@ -185,16 +125,13 @@ public class JsonRpcCallHandler implements Handler
         }
         catch (Exception ex)
         {
-            JsonRpcError error = new JsonRpcError(jsonRpc, ex.getMessage(), ERROR_CODE_SERVER, null);
+            JsonRpcError error = new JsonRpcError(calls, ex.getMessage(), ERROR_CODE_SERVER, null);
             writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     *
-     * @param data
-     * @param response
-     * @throws IOException
+     * Create an output data packet that a JSON-RPC client can understand
      */
     protected void writeResponse(Object data, HttpServletResponse response, int httpStatus) throws IOException
     {

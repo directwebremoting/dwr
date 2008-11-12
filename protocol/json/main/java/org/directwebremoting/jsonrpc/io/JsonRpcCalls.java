@@ -13,23 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.json.parse;
+package org.directwebremoting.jsonrpc.io;
 
-import java.io.Reader;
+import org.directwebremoting.extend.Calls;
 
 /**
- * Parse some JSON input and produce some objects that represent the input.
+ * An extension to the {@link Calls} object to hold JsonRpc version information.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface JsonParser
+public class JsonRpcCalls extends Calls
 {
     /**
-     * Walk along the json <code>input</code> calling methods on
-     * <code>decoder</code> as we discover new tokens in the input.
-     * @param input The json data source
-     * @param decoder The decoder to turn parse events into a data tree.
-     * @return The object constructed by the {@link JsonDecoder}.
-     * @throws JsonParseException If the input is not valid.
+     * @return The JsonRpc version string as defined in the jsonrpc attribute
      */
-    Object parse(Reader input, JsonDecoder decoder) throws JsonParseException;
+    public String getVersion()
+    {
+        return version;
+    }
+
+    /**
+     * @see #getVersion()
+     */
+    public void setVersion(String version)
+    {
+        this.version = version;
+    }
+
+    /**
+     * @see #getVersion()
+     */
+    private String version;
 }

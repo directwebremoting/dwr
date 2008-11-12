@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.jsonrpc.io;
 
-
 /**
  * A Container for a JSON-RPC response
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -25,10 +24,10 @@ public class JsonRpcResponse
     /**
      * Create an Error from a request and the data to fulfill the request
      */
-    public JsonRpcResponse(JsonRpcRequest request, Object result)
+    public JsonRpcResponse(String jsonrpc, String id, Object result)
     {
-        this.jsonrpc = request.getJsonrpc();
-        this.id = request.getId();
+        this.jsonrpc = jsonrpc;
+        this.id = id;
         this.result = result;
     }
 

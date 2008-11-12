@@ -15,102 +15,93 @@
  */
 package org.directwebremoting.json.parse;
 
-import java.math.BigDecimal;
-
 /**
  * Used by {@link JsonParser} to allow the parse process to be mostly stateless,
  * and to abstract the process of creating objects. It is very likely that
- * {@link org.directwebremoting.json.parse.impl.AbstractJsonDecoder} will be
+ * {@link org.directwebremoting.json.parse.impl.StatefulJsonDecoder} will be
  * an easier start point than this.
- * TODO: Some naming tidy-up and thought around when the various addNumber methods are used
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public interface JsonDecoder<T>
+public interface JsonDecoder
 {
     /**
      * When the parse is finished, this gives access to the result
      */
-    T getRoot() throws JsonParseException;
+    Object getRoot() throws JsonParseException;
 
     /**
-     * We have encountered a {. The first thing to happen inside an object will
-     * be an {@link #addString(String)} so we do need to remember that we are
-     * inside an object.
-     * <p>
-     * In the future we might change the {@link #addString(String)} call to be
-     * addPropertyName() or similar.
+     * We have encountered a {.
+     * If this object is a top level object, or the object is being added to an
+     * array, then the <code>propertyName</code> argument will be null,
+     * otherwise it will contain the name that this object will be assigned to
+     * in the parent object.
+     * What follows is a series of addXxxx() calls, possibly nested
+     * arrays and objects, followed by a call to {@link #endObject(String)}
      */
-    void beginObject() throws JsonParseException;
+    void beginObject(String propertyName) throws JsonParseException;
 
     /**
-     * We have encountered a }
+     * We have encountered a }.
+     * This is called in a matching pair to {@link #beginObject(String)}
+     * The <code>propertyName</code> argument will match the value given in the
+     * corresponding {@link #beginObject(String)} call.
      */
-    void endObject() throws JsonParseException;
+    void endObject(String propertyName) throws JsonParseException;
 
     /**
-     * We have encountered a :. This happens directly after an
-     * {@link #addString(String)} and which happens after {@link #beginObject()}
-     * Following this one of the add methods will be called for the data behind
-     * the property, followed by {@link #endMember(String)}
+     * We have encountered a [.
+     * If this object is a top level object, or the object is being added to an
+     * array, then the <code>propertyName</code> argument will be null,
+     * otherwise it will contain the name that this object will be assigned to
+     * in the parent object.
+     * What follows is a series of addXxxxx() calls, possibly including nested
+     * arrays and objects, followed by a call to {@link #endArray(String)}.
      */
-    void beginMember(String name) throws JsonParseException;
-
-    /**
-     * @see #beginMember(String)
-     */
-    void endMember(String name) throws JsonParseException;
-
-    /**
-     * We have encountered a [. What follows is a series of addX() calls and
-     * then an {@link #endArray()}.
-     */
-    void beginArray() throws JsonParseException;
+    void beginArray(String propertyName) throws JsonParseException;
 
     /**
      * We have encountered a ].
-     * @see #beginArray()
+     * This is called in a matching pair to {@link #beginArray(String)}
+     * The <code>propertyName</code> argument will match the value given in the
+     * corresponding {@link #beginArray(String)} call.
+     * @see #beginArray(String)
      */
-    void endArray() throws JsonParseException;
+    void endArray(String propertyName) throws JsonParseException;
 
     /**
-     * Add a string member. See the note on {@link #beginObject()}
+     * Add a string member.
+     * If the member is added to an object then the <code>propertyName</code>
+     * argument will be the part of the JSON string before the ':'. If the
+     * member is added to an array, then <code>propertyName</code> will be null.
+     * See the note on {@link #beginObject(String)}
      */
-    void addString(String value) throws JsonParseException;
+    void addString(String propertyName, String value) throws JsonParseException;
 
     /**
-     * Add an integer member. This method will always be used for numbers unless
-     * the number will not fit into an integer.
-     * @see #addLong(long)
+     * Add a numeric member.
+     * See the note on {@link #addString(String, String)} for the meaning of the
+     * <code>propertyName</code> argument.
+     * The 3 parts are put together like this:
+     * <code>{intPart}[.{floatPart}][E{expPart}]</code>. For example:
+     * <ul>
+     * <li>JSON=3 results in addNumber("3", null, null);
+     * <li>JSON=3.14 results in addNumber("3", "14", null);
+     * <li>JSON=2.9E8 results in addNumber("2", "9", "8");
+     * </ul>
      */
-    void addInt(int value) throws JsonParseException;
+    void addNumber(String propertyName, String intPart, String floatPart, String expPart)throws JsonParseException;
 
     /**
-     * Add an long member. After {@link #addInt(int)} this method will be used
-     * for numbers unless the number will not fit into an integer.
-     * @see #addDouble(double)
+     * Add a boolean member.
+     * See the note on {@link #addString(String, String)} for the meaning of the
+     * <code>propertyName</code> argument.
      */
-    void addLong(long value) throws JsonParseException;
+    void addBoolean(String propertyName, boolean value) throws JsonParseException;
 
     /**
-     * Add a double member. After {@link #addLong(long)} this method will be
-     * used for numbers unless the number will not fit into a double.
-     * @see #addNumber(BigDecimal)
+     * Add a null member.
+     * See the note on {@link #addString(String, String)} for the meaning of the
+     * <code>propertyName</code> argument.
      */
-    void addDouble(double value) throws JsonParseException;
-
-    /**
-     * Add a BigDecimal member. After {@link #addDouble(double)} this method
-     * will be used for numbers.
-     */
-    void addNumber(BigDecimal value) throws JsonParseException;
-
-    /**
-     * Add a boolean member
-     */
-    void addBoolean(boolean value) throws JsonParseException;
-
-    /**
-     * Add a null member
-     */
-    void addNull() throws JsonParseException;
+    void addNull(String propertyName) throws JsonParseException;
 }

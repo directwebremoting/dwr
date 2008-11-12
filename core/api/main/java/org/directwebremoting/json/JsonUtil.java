@@ -28,8 +28,7 @@ import org.directwebremoting.json.parse.JsonParser;
 import org.directwebremoting.json.parse.JsonParserFactory;
 import org.directwebremoting.json.parse.impl.IgnoreJsonDecoder;
 import org.directwebremoting.json.parse.impl.ReflectionJsonDecoder;
-import org.directwebremoting.json.parse.impl.SimpleArrayJsonDecoder;
-import org.directwebremoting.json.parse.impl.SimpleObjectJsonDecoder;
+import org.directwebremoting.json.parse.impl.SimpleJsonDecoder;
 import org.directwebremoting.json.serialize.JsonSerializer;
 import org.directwebremoting.json.serialize.JsonSerializerFactory;
 
@@ -75,10 +74,11 @@ public class JsonUtil
     /**
      * Convert the input document into a set of basic types
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> toSimpleObject(Reader reader) throws JsonParseException
     {
         JsonParser parser = JsonParserFactory.get();
-        return parser.parse(reader, new SimpleObjectJsonDecoder());
+        return (Map<String, Object>) parser.parse(reader, new SimpleJsonDecoder());
     }
 
     /**
@@ -92,10 +92,11 @@ public class JsonUtil
     /**
      * Convert the input document into a set of basic types
      */
+    @SuppressWarnings("unchecked")
     public static List<Object> toSimpleArray(Reader reader) throws JsonParseException
     {
         JsonParser parser = JsonParserFactory.get();
-        return parser.parse(reader, new SimpleArrayJsonDecoder());
+        return (List<Object>) parser.parse(reader, new SimpleJsonDecoder());
     }
 
     /**
@@ -109,10 +110,11 @@ public class JsonUtil
     /**
      * Convert the input document into a set of basic types
      */
+    @SuppressWarnings("unchecked")
     public static <T> T toReflectedTypes(Class<T> marshallInto, Reader reader) throws JsonParseException
     {
         JsonParser parser = JsonParserFactory.get();
-        return parser.parse(reader, new ReflectionJsonDecoder<T>(marshallInto));
+        return (T) parser.parse(reader, new ReflectionJsonDecoder(marshallInto));
     }
 
     /**
