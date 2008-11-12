@@ -76,6 +76,16 @@ Refactorings that would be a good idea:
   The Maps and List Converters are different to the others and should be part of
   DWRP. The other converters should take different parameters:
     Object convertInbound(Class<?> destinationType, JavaScriptTypeInformation sourceType, String data) throws ConversionException;  
+- Converters create an entire duplicate outbound tree which wastes a lot of
+  memory. We should be able to pre-parse the tree and allow the converters to
+  write out directly.
+    void convertOutbound(Object value, StringBuilder assignCodes, StringBuilder buildCodes, StringBuilder declareCodes, OutboundOptions opts)
+    class OutboundOptions {
+        isStrictJson;
+        isMultiplyReferenced;
+        getAssignCodeForChild(Object child);
+        getAssignCode;
+    }
 - ProtocolConstants is in the wrong place and would be a good place to start in
   and refactoring because it is inherently part of DWRP
 - Extract an spi from the api and ensure that non-core modules depend on spi
