@@ -25,7 +25,6 @@ package org.directwebremoting.json.parse.javacc;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.math.BigDecimal;
 
 import org.directwebremoting.json.parse.JsonDecoder;
 import org.directwebremoting.json.parse.JsonParseException;
@@ -35,6 +34,7 @@ import org.directwebremoting.json.parse.JsonParser;
  * Produced by JavaCC from JavaccJsonParser.jj
  * @author Joe Walker [joe at getahead dot org]
  */
+@SuppressWarnings("all")
 public class JavaccJsonParser implements JsonParser
 {
     /**
@@ -47,9 +47,9 @@ public class JavaccJsonParser implements JsonParser
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonParser#parse(java.lang.String, org.directwebremoting.json.parse.JsonDecoder)
+     * @see org.directwebremoting.json.parse.JsonParser#parse(java.io.Reader, org.directwebremoting.json.parse.JsonDecoder)
      */
-    public <T> T parse(Reader reader, JsonDecoder<T> decoder) throws JsonParseException
+    public Object parse(Reader reader, JsonDecoder decoder) throws JsonParseException
     {
         ReInit(reader);
         try
@@ -100,87 +100,80 @@ TOKEN:
     <#HEX:["a"-"f","A"-"F","0"-"9"]> | <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
 }
 
-void top(JsonDecoder<?> decoder) throws JsonParseException:
+void top(JsonDecoder decoder) throws JsonParseException:
 {
 }
 {
-    ( object(decoder) | array(decoder) )
+    ( object(decoder, null) | array(decoder, null) )
 }
 
-public void object(JsonDecoder<?> decoder) throws JsonParseException:
+public void object(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
-    decoder.beginObject();
+    decoder.beginObject(propertyName);
 }
 {
     "{" [ pair(decoder) ( "," pair(decoder) )* ] "}"
 
     {
-        decoder.endObject();
+        decoder.endObject(propertyName);
     }
 }
 
-void pair(JsonDecoder<?> decoder) throws JsonParseException:
+void pair(JsonDecoder decoder) throws JsonParseException:
 {
-    String name;
+    String propertyName;
 }
 {
-    name = member()
-    {
-        decoder.beginMember(name);
-    }
-
-    ":" value(decoder)
-    {
-        decoder.endMember(name);
-    }
+    propertyName = propertyName()
+    ":" value(decoder, propertyName)
 }
 
-void array(JsonDecoder<?> decoder) throws JsonParseException:
+void array(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
-    decoder.beginArray();
+    decoder.beginArray(propertyName);
 }
 {
-    "[" [ value(decoder) ( "," value(decoder) )* ] "]"
+    "[" [ value(decoder, null) ( "," value(decoder, null) )* ] "]"
 
     {
-        decoder.endArray();
+        decoder.endArray(propertyName);
     }
 }
 
-void value(JsonDecoder<?> decoder) throws JsonParseException:
+void value(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
 }
 {
-    ( string(decoder) | number(decoder) | object(decoder) | array(decoder) | literal(decoder) )
+    ( string(decoder, propertyName) | number(decoder, propertyName) | object(decoder, propertyName) | array(decoder, propertyName) | literal(decoder, propertyName) )
 }
 
-void literal(JsonDecoder<?> decoder) throws JsonParseException:
+void literal(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
 }
 {
     (
         "true"
         {
-            decoder.addBoolean(true);
+            decoder.addBoolean(propertyName, true);
         }
     )
     |
     (
         "false"
         {
-            decoder.addBoolean(false);
+            decoder.addBoolean(propertyName, false);
         }
     )
     |
     (
         "null"
         {
-            decoder.addNull();
+            decoder.addNull(propertyName);
         }
     )
 }
 
-void number(JsonDecoder<?> decoder) throws JsonParseException:
+void number(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
     String intPart = null;
     String floatPart = null;
@@ -192,32 +185,7 @@ void number(JsonDecoder<?> decoder) throws JsonParseException:
     [ expPart = getExpPart() ]
 
     {
-        if (expPart != null)
-        {
-            decoder.addNumber(new BigDecimal(intPart + floatPart + expPart));
-        }
-        else if (floatPart != null)
-        {
-            decoder.addDouble(Double.parseDouble(intPart + floatPart));
-        }
-        else
-        {
-            try
-            {
-                decoder.addInt(Integer.parseInt(intPart));
-            }
-            catch (NumberFormatException ex)
-            {
-                try
-                {
-                    decoder.addLong(Long.parseLong(intPart));
-                }
-                catch (NumberFormatException ex2)
-                {
-                    decoder.addNumber(new BigDecimal(intPart));
-                }
-            }
-        }
+        decoder.addNumber(propertyName, intPart, floatPart, expPart);
 
         // This is can help to reduce memory consumption
         intPart = null;
@@ -286,7 +254,7 @@ String getDigits() throws JsonParseException:
     }
 }
 
-String member() throws JsonParseException:
+String propertyName() throws JsonParseException:
 {
     StringBuilder builder = new StringBuilder();
 }
@@ -298,7 +266,7 @@ String member() throws JsonParseException:
     }
 }
 
-void string(JsonDecoder<?> decoder) throws JsonParseException:
+void string(JsonDecoder decoder, String propertyName) throws JsonParseException:
 {
     StringBuilder builder = new StringBuilder();
 }
@@ -306,7 +274,7 @@ void string(JsonDecoder<?> decoder) throws JsonParseException:
     <QUOTE> ( getChar(builder) )* <ENDQUOTE>
 
     {
-        decoder.addString(builder.toString());
+        decoder.addString(propertyName, builder.toString());
     }
 }
 

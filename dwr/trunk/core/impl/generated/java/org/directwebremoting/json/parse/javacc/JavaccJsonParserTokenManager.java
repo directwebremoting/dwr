@@ -16,7 +16,7 @@
  */
 package org.directwebremoting.json.parse.javacc;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
 public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
 {
     public java.io.PrintStream debugStream = System.out;
@@ -160,7 +160,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
             }
             else
             {
-                int hiByte = (curChar >> 8);
+                int hiByte = (int) (curChar >> 8);
                 int i1 = hiByte >> 6;
                 long l1 = 1L << (hiByte & 077);
                 int i2 = (curChar & 0xff) >> 6;
@@ -492,7 +492,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
             }
             else
             {
-                int hiByte = (curChar >> 8);
+                int hiByte = (int) (curChar >> 8);
                 int i1 = hiByte >> 6;
                 long l1 = 1L << (hiByte & 077);
                 int i2 = (curChar & 0xff) >> 6;
@@ -623,7 +623,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
             }
             else
             {
-                int hiByte = (curChar >> 8);
+                int hiByte = (int) (curChar >> 8);
                 int i1 = hiByte >> 6;
                 long l1 = 1L << (hiByte & 077);
                 int i2 = (curChar & 0xff) >> 6;
@@ -774,7 +774,7 @@ public class JavaccJsonParserTokenManager implements JavaccJsonParserConstants
             }
             else
             {
-                int hiByte = (curChar >> 8);
+                int hiByte = (int) (curChar >> 8);
                 int i1 = hiByte >> 6;
                 long l1 = 1L << (hiByte & 077);
                 int i2 = (curChar & 0xff) >> 6;

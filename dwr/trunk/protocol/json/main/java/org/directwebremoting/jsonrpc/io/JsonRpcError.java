@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.jsonrpc.io;
 
-
 /**
  * A Container for a JSON-RPC request
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -25,37 +24,41 @@ public class JsonRpcError
     /**
      * Create an Error from a request and an exception/error code
      */
-    public JsonRpcError(JsonRpcRequest request, Throwable ex, int code, Object data)
+    public JsonRpcError(JsonRpcCalls calls, String message, int code, Object data)
     {
-        this.jsonrpc = request.getJsonrpc();
-        this.id = request.getId();
-        this.data = data;
-        this.message = ex.getMessage();
-        this.code = code;
-    }
-
-    /**
-     * Create an Error from a request and an exception/error code
-     */
-    public JsonRpcError(JsonRpcRequest request, String message, int code, Object data)
-    {
-        this.jsonrpc = request.getJsonrpc();
-        this.id = request.getId();
+        this.jsonrpc = calls.getVersion();
+        this.id = calls.getBatchId();
         this.data = data;
         this.message = message;
         this.code = code;
     }
 
     /**
-     * Create an Error from a request and an exception/error code
+     * @param version
+     * @param id
+     * @param message
+     * @param code
+     * @param data
      */
-    public JsonRpcError(String jsonrpc, String id, String message, int code, Object data)
+    public JsonRpcError(String version, String id, String message, int code, Object data)
     {
-        this.jsonrpc = jsonrpc;
+        this.jsonrpc = version;
         this.id = id;
         this.data = data;
         this.message = message;
         this.code = code;
+    }
+
+    /**
+     * @param ex
+     */
+    public JsonRpcError(JsonRpcCallException ex)
+    {
+        this.jsonrpc = ex.getVersion();
+        this.id = ex.getId();
+        this.code = ex.getJsonRpcErrorCode();
+        this.message = ex.getMessage();
+        this.data = ex.getData();
     }
 
     /**

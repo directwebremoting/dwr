@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.json.parse.impl;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.json.parse.JsonDecoder;
@@ -28,9 +26,9 @@ import org.directwebremoting.json.parse.JsonParseException;
  * parse was happening.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
+public class DebuggingJsonDecoder<T> implements JsonDecoder
 {
-    public DebuggingJsonDecoder(JsonDecoder<T> proxy)
+    public DebuggingJsonDecoder(JsonDecoder proxy)
     {
         this.proxy = proxy;
     }
@@ -38,15 +36,15 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#getRoot()
      */
-    public T getRoot() throws JsonParseException
+    public Object getRoot() throws JsonParseException
     {
         return proxy.getRoot();
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginObject()
+     * @see org.directwebremoting.json.parse.JsonDecoder#beginObject(java.lang.String)
      */
-    public void beginObject() throws JsonParseException
+    public void beginObject(String propertyName) throws JsonParseException
     {
         if (indent.length() == 0)
         {
@@ -55,15 +53,15 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
         log.info(indent + "{");
         increaseIndent();
 
-        proxy.beginObject();
+        proxy.beginObject(propertyName);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endObject()
+     * @see org.directwebremoting.json.parse.JsonDecoder#endObject(java.lang.String)
      */
-    public void endObject() throws JsonParseException
+    public void endObject(String propertyName) throws JsonParseException
     {
-        proxy.endObject();
+        proxy.endObject(propertyName);
 
         decreaseIndent();
         log.info(indent + "}");
@@ -75,105 +73,70 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginArray()
+     * @see org.directwebremoting.json.parse.JsonDecoder#beginArray(java.lang.String)
      */
-    public void beginArray() throws JsonParseException
+    public void beginArray(String propertyName) throws JsonParseException
     {
         log.info(indent + "[");
         increaseIndent();
 
-        proxy.beginArray();
+        proxy.beginArray(propertyName);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endArray()
+     * @see org.directwebremoting.json.parse.JsonDecoder#endArray(java.lang.String)
      */
-    public void endArray() throws JsonParseException
+    public void endArray(String propertyName) throws JsonParseException
     {
-        proxy.endArray();
+        proxy.endArray(propertyName);
 
         decreaseIndent();
         log.info(indent + "]");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
+     * @see org.directwebremoting.json.parse.JsonDecoder#addString(java.lang.String, java.lang.String)
      */
-    public void beginMember(String name) throws JsonParseException
-    {
-        log.info(indent + ":");
-        proxy.beginMember(name);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
-     */
-    public void endMember(String name) throws JsonParseException
-    {
-        proxy.endMember(name);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addString(java.lang.String)
-     */
-    public void addString(String value) throws JsonParseException
+    public void addString(String propertyName, String value) throws JsonParseException
     {
         log.info(indent + value);
-        proxy.addString(value);
+        proxy.addString(propertyName, value);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addNumber(java.math.BigDecimal)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addNumber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void addNumber(BigDecimal value) throws JsonParseException
+    public void addNumber(String propertyName, String intPart, String floatPart, String expPart) throws JsonParseException
+    {
+        String value = intPart;
+        if (floatPart != null)
+        {
+            value += "." + floatPart;
+        }
+        if (expPart != null)
+        {
+            value += "." + expPart;
+        }
+        log.info(indent + value);
+        proxy.addNumber(propertyName, intPart, floatPart, expPart);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addBoolean(java.lang.String, boolean)
+     */
+    public void addBoolean(String propertyName, boolean value) throws JsonParseException
     {
         log.info(indent + value);
-        proxy.addNumber(value);
+        proxy.addBoolean(propertyName, value);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addDouble(double)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addNull(java.lang.String)
      */
-    public void addDouble(double value) throws JsonParseException
-    {
-        log.info(indent + value);
-        proxy.addDouble(value);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addLong(long)
-     */
-    public void addLong(long value) throws JsonParseException
-    {
-        log.info(indent + value);
-        proxy.addLong(value);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addInt(int)
-     */
-    public void addInt(int value) throws JsonParseException
-    {
-        log.info(indent + value);
-        proxy.addInt(value);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addBoolean(boolean)
-     */
-    public void addBoolean(boolean value) throws JsonParseException
-    {
-        log.info(indent + value);
-        proxy.addBoolean(value);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addNull()
-     */
-    public void addNull() throws JsonParseException
+    public void addNull(String propertyName) throws JsonParseException
     {
         log.info(indent + "null");
-        proxy.addNull();
+        proxy.addNull(propertyName);
     }
 
     /**
@@ -195,7 +158,7 @@ public class DebuggingJsonDecoder<T> implements JsonDecoder<T>
     /**
      * The real {@link JsonDecoder} to which we proxy
      */
-    private final JsonDecoder<T> proxy;
+    private final JsonDecoder proxy;
 
     /**
      * How many levels deep are we?

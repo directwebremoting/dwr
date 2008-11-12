@@ -23,46 +23,28 @@ import java.util.Map;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class SimpleJsonDecoder<T> extends AbstractJsonDecoder<T>
+public class SimpleJsonDecoder extends StatefulJsonDecoder
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createObject()
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#createObject(Object, String)
      */
     @Override
-    protected Map<String, Object> createObjectForAddingToArray(Object parent)
+    protected Map<String, Object> createObject(Object parent, String propertyName)
     {
         return new HashMap<String, Object>();
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createObject()
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#createArray(Object, String)
      */
     @Override
-    protected Map<String, Object> createObjectForAddingToObject(Object parent, String propertyName)
-    {
-        return new HashMap<String, Object>();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createArray()
-     */
-    @Override
-    protected ArrayList<Object> createArrayForAddingToArray(Object parent)
+    protected ArrayList<Object> createArray(Object parent, String propertyName)
     {
         return new ArrayList<Object>();
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createArray()
-     */
-    @Override
-    protected ArrayList<Object> createArrayForAddingToObject(Object parent, String propertyName)
-    {
-        return new ArrayList<Object>();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#addMember(java.lang.Object, java.lang.String, java.lang.Object)
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#addMember(java.lang.Object, java.lang.String, java.lang.Object)
      */
     @Override
     protected void addMemberToObject(Object parent, String propertyName, Object member)
@@ -73,7 +55,7 @@ public abstract class SimpleJsonDecoder<T> extends AbstractJsonDecoder<T>
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#addMember(java.lang.Object)
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#addMember(java.lang.Object)
      */
     @Override
     protected void addMemberToArray(Object parent, Object member)

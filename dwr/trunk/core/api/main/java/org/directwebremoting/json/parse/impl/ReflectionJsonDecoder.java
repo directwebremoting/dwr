@@ -16,7 +16,6 @@
 package org.directwebremoting.json.parse.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.directwebremoting.json.parse.JsonDecoder;
@@ -28,81 +27,46 @@ import org.directwebremoting.util.LocalUtil;
  * objects.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ReflectionJsonDecoder<T> extends AbstractJsonDecoder<T>
+public class ReflectionJsonDecoder extends StatefulJsonDecoder
 {
-    private final Class<T> marshallInto;
+    private final Class<?> marshallInto;
 
     /**
      * @param marshallInto
      */
-    public ReflectionJsonDecoder(Class<T> marshallInto)
+    public ReflectionJsonDecoder(Class<?> marshallInto)
     {
         this.marshallInto = marshallInto;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createObjectForRoot()
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#createObject(Object, String)
      */
-    @SuppressWarnings("unchecked")
     @Override
-    protected T createObjectForRoot() throws JsonParseException
+    protected Object createObject(Object parent, String propertyName) throws JsonParseException
     {
-        return (T) createType(marshallInto);
+        return createArray(parent, propertyName);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createObject(java.lang.Object)
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#createArray(java.lang.Object, java.lang.String)
      */
     @Override
-    protected Object createObjectForAddingToArray(Object parent)
+    protected Object createArray(Object parent, String propertyName) throws JsonParseException
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (parent == null)
+        {
+            return createType(marshallInto);
+        }
+        else
+        {
+            Class<?> type = LocalUtil.getPropertyType(parent.getClass(), propertyName);
+            return createType(type);
+        }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createObject(java.lang.Object, java.lang.String)
-     */
-    @Override
-    protected Object createObjectForAddingToObject(Object parent, String propertyName) throws JsonParseException
-    {
-        Class<?> type = LocalUtil.getPropertyType(parent.getClass(), propertyName);
-        return createType(type);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createArrayForRoot(java.lang.Object)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected T createArrayForRoot(Object parent) throws JsonParseException
-    {
-        return (T) createType(marshallInto);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createArray(java.lang.Object)
-     */
-    @Override
-    protected Object createArrayForAddingToArray(Object parent)
-    {
-        // This is probably broken, but I'm not sure that there is anything else
-        // we can do simply right now
-        return new ArrayList<Object>();
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#createArray(java.lang.Object, java.lang.String)
-     */
-    @Override
-    protected Object createArrayForAddingToObject(Object parent, String propertyName) throws JsonParseException
-    {
-        Class<?> type = LocalUtil.getPropertyType(parent.getClass(), propertyName);
-        return createType(type);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#addMember(java.lang.Object, java.lang.String, java.lang.Object)
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#addMember(java.lang.Object, java.lang.String, java.lang.Object)
      */
     @Override
     protected void addMemberToObject(Object parent, String propertyName, Object member) throws JsonParseException
@@ -134,7 +98,7 @@ public class ReflectionJsonDecoder<T> extends AbstractJsonDecoder<T>
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.impl.AbstractJsonDecoder#addMember(java.lang.Object, java.lang.Object)
+     * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#addMember(java.lang.Object, java.lang.Object)
      */
     @Override
     protected void addMemberToArray(Object parent, Object member)

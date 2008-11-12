@@ -15,29 +15,53 @@
  */
 package org.directwebremoting.json.parse.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.math.BigDecimal;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
-import org.directwebremoting.extend.Property;
 import org.directwebremoting.json.parse.JsonDecoder;
 import org.directwebremoting.json.parse.JsonParseException;
 
 /**
- * This class is incomplete
+ * A stateful implementation of {@link JsonDecoder} where we track the stack
+ * of objects and allow a subclass to have a simpler set of things to do
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-class ConverterJsonDecoder implements JsonDecoder
+public abstract class StatefulJsonDecoder implements JsonDecoder
 {
     /**
-     * We need to know what we are decoding into
+     * Create a new object.
+     * This method should not actually add the object to the <code>parent</code>.
+     * That will be done by {@link #addMemberToArray(Object, Object)}
+     * @param parent The parent object that this will be added to. This will be
+     * null if we are creating the root object
+     * @param propertyName The member name if we are adding a property to an
+     * object or null if we are adding to an array
      */
-    public ConverterJsonDecoder(Property property)
-    {
-        destinations.addLast(property);
-    }
+    protected abstract Object createObject(Object parent, String propertyName) throws JsonParseException;
+
+    /**
+     * Create a new array.
+     * This method should not actually add the object to the <code>parent</code>.
+     * That will be done by {@link #addMemberToArray(Object, Object)}
+     * @param parent The parent object that this will be added to. This will be
+     * null if we are creating the root object
+     * @param propertyName The member name if we are adding a property to an
+     * object or null if we are adding to an array
+     */
+    protected abstract Object createArray(Object parent, String propertyName) throws JsonParseException;
+
+    /**
+     * Add the given <code>value</code> to the <code>propertyName</code> property
+     * of the <code>parent</code> object.
+     * @throws JsonParseException If there are any errors in adding the value
+     */
+    protected abstract void addMemberToObject(Object parent, String propertyName, Object member) throws JsonParseException;
+
+    /**
+     * Add the given <code>value</code> to the <code>parent</code> array.
+     * @throws JsonParseException If there are any errors in adding the value
+     */
+    protected abstract void addMemberToArray(Object parent, Object member) throws JsonParseException;
 
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#getRoot()
@@ -52,10 +76,8 @@ class ConverterJsonDecoder implements JsonDecoder
      */
     public void beginObject(String propertyName) throws JsonParseException
     {
-        //Property property = destinations.getLast();
-        //Class<?> type = property.getPropertyType();
-
-        stack.addLast(new HashMap<String, Object>());
+        Object obj = createObject(stackPeek(), propertyName);
+        stack.addLast(obj);
     }
 
     /* (non-Javadoc)
@@ -77,7 +99,8 @@ class ConverterJsonDecoder implements JsonDecoder
      */
     public void beginArray(String propertyName) throws JsonParseException
     {
-        stack.addLast(new ArrayList<Object>());
+        Object obj = createArray(stackPeek(), propertyName);
+        stack.addLast(obj);
     }
 
     /* (non-Javadoc)
@@ -85,10 +108,10 @@ class ConverterJsonDecoder implements JsonDecoder
      */
     public void endArray(String propertyName) throws JsonParseException
     {
-        last = stack.removeLast();
+        this.last = stack.removeLast();
 
         // Don't add the top level object to its parent
-        if (stack.size() > 0)
+        if (!stack.isEmpty())
         {
             add(propertyName, last);
         }
@@ -101,19 +124,15 @@ class ConverterJsonDecoder implements JsonDecoder
      * Strings are slightly different because they are valid as object properly
      * names too.
      */
-    public void add(String propertyName, Object value)
+    public void add(String propertyName, Object value) throws JsonParseException
     {
         if (propertyName == null)
         {
-            @SuppressWarnings("unchecked")
-            List<Object> array = (List<Object>) stack.getLast();
-            array.add(value);
+            addMemberToArray(stackPeek(), value);
         }
         else
         {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) stack.getLast();
-            map.put(propertyName, value);
+            addMemberToObject(stackPeek(), propertyName, value);
         }
     }
 
@@ -130,7 +149,7 @@ class ConverterJsonDecoder implements JsonDecoder
      */
     public void addNumber(String propertyName, String intPart, String floatPart, String expPart) throws JsonParseException
     {
-        Object value = StatefulJsonDecoder.realizeNumber(intPart, floatPart, expPart);
+        Object value = realizeNumber(intPart, floatPart, expPart);
         add(propertyName, value);
     }
 
@@ -151,6 +170,22 @@ class ConverterJsonDecoder implements JsonDecoder
     }
 
     /**
+     * Peek at the top of the stack without changing it, or return null if there
+     * is nothing on the stack.
+     */
+    protected Object stackPeek()
+    {
+        if (stack.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            return stack.getLast();
+        }
+    }
+
+    /**
      * The stack of objects that we have created. Sometimes (particularly with
      * objects there are a number of states within an object, so we need to
      * maintain a separate mode stack.
@@ -158,13 +193,48 @@ class ConverterJsonDecoder implements JsonDecoder
     protected final LinkedList<Object> stack = new LinkedList<Object>();
 
     /**
-     * The stack of types that we are in the process of creating
-     */
-    protected final LinkedList<Property> destinations = new LinkedList<Property>();
-
-    /**
      * {@link #getRoot()} is called after we have removed the last object on the
      * stack, so we need to remember what it was.
      */
     protected Object last = null;
+
+    /**
+     * Create a {@link BigDecimal}, double, int, or long depending on the input
+     * strings.
+     * @param intPart A string of [0-9]* representing the integer part of the
+     * number.
+     * @param floatPart A string of \.[0-9]* representing the floating point part
+     * of the number. This INCLUDES the period
+     * @param expPart A string of [eE][+-]?[0-9]* representing the integer part
+     * of the number. This includes the 'e' or 'E'.
+     */
+    public static Object realizeNumber(String intPart, String floatPart, String expPart)
+    {
+        if (expPart != null)
+        {
+            return new BigDecimal(intPart + floatPart + expPart);
+        }
+        else if (floatPart != null)
+        {
+            return Double.parseDouble(intPart + floatPart);
+        }
+        else
+        {
+            try
+            {
+                return Integer.parseInt(intPart);
+            }
+            catch (NumberFormatException ex)
+            {
+                try
+                {
+                    return Long.parseLong(intPart);
+                }
+                catch (NumberFormatException ex2)
+                {
+                    return new BigDecimal(intPart);
+                }
+            }
+        }
+    }
 }

@@ -15,10 +15,7 @@
  */
 package org.directwebremoting.json;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +24,7 @@ import java.util.Map;
 
 import org.directwebremoting.impl.TestEnvironment;
 import org.directwebremoting.json.parse.JsonParseException;
+import org.directwebremoting.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,14 +47,14 @@ public class JsonUtilTest
     @Test
     public void testGetErrors() throws IOException
     {
-        List<String> validTests = parseTestInput("validJson.txt");
+        List<String> validTests = TestUtil.parseTestInput(getClass(), "validJson.txt");
         for (String test : validTests)
         {
             String errors = JsonUtil.getErrors(test);
             assertNull("Expecting no error for: " + test + " got " + errors, errors);
         }
 
-        List<String> invalidTests = parseTestInput("invalidJson.txt");
+        List<String> invalidTests = TestUtil.parseTestInput(getClass(), "invalidJson.txt");
         for (String test : invalidTests)
         {
             String errors = JsonUtil.getErrors(test);
@@ -194,51 +192,5 @@ public class JsonUtilTest
     {
         List list = JsonUtil.toReflectedTypes(ArrayList.class, "[ \"1\", \"2\", \"3\" ]");
         assertEquals(Arrays.asList(new String[] { "1", "2", "3" }), list);
-    }
-
-    /**
-     * Parse the list of tests to detect json test that we need to run
-     * @param filename The name of a file in the same package
-     * @return A list of json test, read from the file
-     * @throws IOException
-     */
-    private List<String> parseTestInput(String filename) throws IOException
-    {
-        InputStream raw = getClass().getResourceAsStream(filename);
-        BufferedReader in = new BufferedReader(new InputStreamReader(raw));
-        List<String> tests = new ArrayList<String>();
-        StringBuilder test = new StringBuilder();
-
-        while (true)
-        {
-            String line = in.readLine();
-
-            if (line == null)
-            {
-                break;
-            }
-
-            String trim = line.trim();
-
-            if (trim.startsWith("#"))
-            {
-                continue;
-            }
-
-            if (trim.length() != 0)
-            {
-                test.append(line);
-            }
-            else
-            {
-                if (test.toString().trim().length() != 0)
-                {
-                    tests.add(test.toString());
-                    test = new StringBuilder();
-                }
-            }
-        }
-
-        return tests;
     }
 }

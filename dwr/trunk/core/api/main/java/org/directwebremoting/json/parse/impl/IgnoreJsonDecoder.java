@@ -15,113 +15,77 @@
  */
 package org.directwebremoting.json.parse.impl;
 
-import java.math.BigDecimal;
-
 import org.directwebremoting.json.parse.JsonDecoder;
+import org.directwebremoting.json.parse.JsonParseException;
 
 /**
  * A {@link JsonDecoder} that doesn't do anything, which is useful for
  * validations that don't need to get any data, just check it's validity.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class IgnoreJsonDecoder implements JsonDecoder<Void>
+public class IgnoreJsonDecoder implements JsonDecoder
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.JsonDecoder#getRoot()
      */
-    public Void getRoot()
+    public Object getRoot()
     {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addBoolean(boolean)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addBoolean(java.lang.String, boolean)
      */
-    public void addBoolean(boolean b)
+    public void addBoolean(String propertyName, boolean value) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addDouble(double)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addNull(java.lang.String)
      */
-    public void addDouble(double parseDouble)
+    public void addNull(String propertyName) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addLong(long)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addNumber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public void addLong(long parseLong)
+    public void addNumber(String propertyName, String intPart, String floatPart, String expPart) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addInt(int)
+     * @see org.directwebremoting.json.parse.JsonDecoder#addString(java.lang.String, java.lang.String)
      */
-    public void addInt(int parseInt)
+    public void addString(String propertyName, String value) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addNull()
+     * @see org.directwebremoting.json.parse.JsonDecoder#beginArray(java.lang.String)
      */
-    public void addNull()
+    public void beginArray(String propertyName) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addNumber(java.math.BigDecimal)
+     * @see org.directwebremoting.json.parse.JsonDecoder#beginObject(java.lang.String)
      */
-    public void addNumber(BigDecimal bigDecimal)
+    public void beginObject(String propertyName) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#addString(java.lang.String)
+     * @see org.directwebremoting.json.parse.JsonDecoder#endArray(java.lang.String)
      */
-    public void addString(String string)
+    public void endArray(String propertyName) throws JsonParseException
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginArray()
+     * @see org.directwebremoting.json.parse.JsonDecoder#endObject(java.lang.String)
      */
-    public void beginArray()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginMember()
-     */
-    public void beginMember(String name)
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#beginObject()
-     */
-    public void beginObject()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endArray()
-     */
-    public void endArray()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endMember()
-     */
-    public void endMember(String name)
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.json.parse.JsonDecoder#endObject()
-     */
-    public void endObject()
+    public void endObject(String propertyName) throws JsonParseException
     {
     }
 }
