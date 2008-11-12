@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -532,11 +533,32 @@ public final class LocalUtil
      * @param value The string to decode
      * @return The decoded string
      */
-    public static String decode(String value)
+    public static String urlDecode(String value)
     {
         try
         {
             return URLDecoder.decode(value, "UTF-8");
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            log.error("UTF-8 is not a valid char sequence?", ex);
+            return value;
+        }
+    }
+
+    /**
+     * URL encode a value.
+     * {@link URLEncoder#encode(String, String)} throws an
+     * {@link UnsupportedEncodingException}, which is silly given that the most
+     * common use case will be to pass in "UTF-8"
+     * @param value The string to decode
+     * @return The decoded string
+     */
+    public static String urlEncode(String value)
+    {
+        try
+        {
+            return URLEncoder.encode(value, "UTF-8");
         }
         catch (UnsupportedEncodingException ex)
         {
@@ -739,7 +761,7 @@ public final class LocalUtil
 
         if (paramType == Character.class || paramType == Character.TYPE)
         {
-            value = decode(value);
+            value = urlDecode(value);
             if (value.length() == 1)
             {
                 return (T) Character.valueOf(value.charAt(0));

@@ -58,7 +58,7 @@ public class Batch
 
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
         httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID);
-        page = extractParameter(ProtocolConstants.INBOUND_KEY_PAGE);
+        page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE));
         windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME);
     }
 
@@ -207,7 +207,7 @@ public class Batch
                     while (st.hasMoreTokens())
                     {
                         String part = st.nextToken();
-                        part = LocalUtil.decode(part);
+                        part = LocalUtil.urlDecode(part);
 
                         parsePostLine(part, paramMap);
                     }
@@ -269,7 +269,7 @@ public class Batch
         while (st.hasMoreTokens())
         {
             String part = st.nextToken();
-            part = LocalUtil.decode(part);
+            part = LocalUtil.urlDecode(part);
 
             parsePostLine(part, paramMap);
         }

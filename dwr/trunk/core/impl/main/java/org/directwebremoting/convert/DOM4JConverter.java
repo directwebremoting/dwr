@@ -49,7 +49,7 @@ public class DOM4JConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.decode(data.getValue());
+        String value = LocalUtil.urlDecode(data.getValue());
 
         try
         {

@@ -47,7 +47,7 @@ public class StringConverter extends AbstractConverter
         }
         else
         {
-            return LocalUtil.decode(data.getValue());
+            return LocalUtil.urlDecode(data.getValue());
         }
     }
 

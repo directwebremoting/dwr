@@ -45,7 +45,7 @@ public class URLConverter extends AbstractConverter
             return null;
         }
 
-        String urlString = LocalUtil.decode(data.getValue());
+        String urlString = LocalUtil.urlDecode(data.getValue());
         try
         {
             return new URL(urlString);

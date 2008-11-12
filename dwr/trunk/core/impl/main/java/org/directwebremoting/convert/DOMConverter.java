@@ -55,7 +55,7 @@ public class DOMConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.decode(data.getValue());
+        String value = LocalUtil.urlDecode(data.getValue());
 
         try
         {
