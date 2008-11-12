@@ -40,7 +40,7 @@ public class CharArrayConverter extends AbstractConverter
             return null;
         }
 
-        return LocalUtil.decode(data.getValue()).toCharArray();
+        return LocalUtil.urlDecode(data.getValue()).toCharArray();
     }
 
     /* (non-Javadoc)

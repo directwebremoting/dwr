@@ -34,7 +34,7 @@ public class LocaleConverter extends AbstractConverter
      */
     public Object convertInbound(Class<?> paramType, InboundVariable data) throws ConversionException
     {
-        return data.isNull() ? null : LocalUtil.parseLocaleString(LocalUtil.decode(data.getValue()));
+        return data.isNull() ? null : LocalUtil.parseLocaleString(LocalUtil.urlDecode(data.getValue()));
     }
 
     /* (non-Javadoc)
