@@ -70,4 +70,13 @@ public interface Container
      * @see #contextDestroyed()
      */
     void servletDestroyed();
+
+    /**
+     * Sometimes we need to take a bean not created by the container, and inject
+     * it with the data that it would contain if it was created by the
+     * container.
+     * This does not make the object part of the container.
+     * @param object The object to inject.
+     */
+    void initializeBean(Object object);
 }
