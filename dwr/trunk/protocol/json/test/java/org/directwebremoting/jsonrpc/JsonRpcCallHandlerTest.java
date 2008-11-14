@@ -15,14 +15,16 @@
  */
 package org.directwebremoting.jsonrpc;
 
-import java.io.StringReader;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
+import org.directwebremoting.create.NewCreator;
+import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.TestEnvironment;
-import org.directwebremoting.json.parse.JsonParser;
-import org.directwebremoting.json.parse.JsonParserFactory;
-import org.directwebremoting.jsonrpc.io.JsonRpcCalls;
-import org.directwebremoting.jsonrpc.io.JsonRpcCallsJsonDecoder;
+import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletResponse;
 import org.directwebremoting.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,14 +46,31 @@ public class JsonRpcCallHandlerTest
     @Test
     public void testHandle() throws Exception
     {
-        // JsonRpcCallHandler handler = TestEnvironment.getContainer().getBean(JsonRpcCallHandler.class);
+        Container container = TestEnvironment.getContainer();
+        JsonRpcCallHandler handler = (JsonRpcCallHandler) container.getBean("url:/jsonrpc");
+        handler.setJsonRpcEnabled(true);
+        CreatorManager creatorManager = container.getBean(CreatorManager.class);
+
+        NewCreator creator = new NewCreator();
+        creator.setClassName("com.example.dwr.simple.Demo");
+        creator.setJavascript("Demo");
+        creatorManager.addCreator(creator.getJavascript(), creator);
 
         List<String> validTests = TestUtil.parseTestInput(getClass(), "validJsonRpc.txt");
         for (String test : validTests)
         {
-            StringReader in = new StringReader(test);
-            JsonParser parser = JsonParserFactory.get();
-            JsonRpcCalls calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder());
+            FakeHttpServletRequest request = new FakeHttpServletRequest();
+            request.setContent(test);
+            FakeHttpServletResponse response = new FakeHttpServletResponse();
+
+            handler.handle(request, response);
+            String output = new String(response.getContentAsByteArray());
+            log.info(output);
         }
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(JsonRpcCallHandlerTest.class);
 }

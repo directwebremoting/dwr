@@ -17,6 +17,7 @@ package org.directwebremoting.jsonrpc.io;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,16 +30,29 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.json.parse.JsonParseException;
 import org.directwebremoting.json.parse.impl.StatefulJsonDecoder;
+import org.directwebremoting.util.JavascriptUtil;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import static org.directwebremoting.jsonrpc.JsonRpcConstants.*;
 
 /**
+ * A JsonDecoder that creates a JsonRpcCalls structure.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
 {
+    /**
+     * Force creators to give us the beans we need
+     */
+    public JsonRpcCallsJsonDecoder(ConverterManager converterManager, CreatorManager creatorManager)
+    {
+        this.converterManager = converterManager;
+        this.creatorManager = creatorManager;
+
+        calls.addCall(call);
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.json.parse.impl.StatefulJsonDecoder#addMemberToArray(java.lang.Object, java.lang.Object)
      */
@@ -48,7 +62,8 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
         if (!inParams)
         {
             log.error("JSON parse has addMemberToArray where inParms=false");
-            throw new IllegalStateException("Error parsing request");
+            calls.addParseError("Array not expected");
+            return;
         }
 
         @SuppressWarnings("unchecked")
@@ -70,13 +85,15 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
                 if (!"params".equals(propertyName))
                 {
                     log.error("JSON parse has addMemberToObject where parent=request and inParms=true for propertyName=" + propertyName);
-                    throw new IllegalStateException("Error parsing request");
+                    calls.addParseError("Expected property 'params' to be only object child");
+                    return;
                 }
 
                 if (!(member instanceof List))
                 {
                     log.error("JSON parse has addMemberToObject where member.class == " + member.getClass().getName() + " (expecting List) and propertyName=" + propertyName);
-                    throw new IllegalStateException("Error parsing request");
+                    calls.addParseError("Expected property 'params' to be a list");
+                    return;
                 }
 
                 params = (List<Object>) member;
@@ -94,42 +111,58 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
             if (parent != calls)
             {
                 log.error("JSON parse has addMemberToObject where parent != request and !inParms for propertyName=" + propertyName);
-                throw new IllegalStateException("Error parsing request");
+                calls.addParseError("Only params (and their children) can have children");
+                return;
             }
 
             if ("params".equals(propertyName))
             {
                 log.error("JSON parse has addMemberToObject where !inParams and propertyName=" + propertyName);
-                throw new IllegalStateException("Error parsing request");
+                calls.addParseError("Adding params property when not in params mode");
+                return;
             }
 
-            if (!(member instanceof String))
+            if ("id".equals(propertyName))
             {
-                log.error("JSON parse has addMemberToObject where member.class == " + member.getClass().getName() + " (expecting String) and propertyName=" + propertyName);
-                throw new IllegalStateException("Error parsing request");
-            }
-
-            String data = (String) member;
-            if ("jsonrpc".equals(propertyName))
-            {
-                calls.setVersion(data);
-            }
-            else if ("method".equals(propertyName))
-            {
-                String[] parts = data.split(".");
-                if (parts.length != 2)
+                // id is allowed to be a string|number|boolean and we need to
+                // recreate it exactly ...
+                if (member instanceof String)
                 {
-                    log.warn("Got method='" + data + "', but this does not split into 2 parts (parts=" + parts + ").");
-                    throw new IllegalStateException("Error parsing request");
+                    calls.setBatchId(JavascriptUtil.escapeJavaScript((String) member));
+                }
+                else
+                {
+                    calls.setBatchId(member.toString());
+                }
+            }
+            else
+            {
+                if (!(member instanceof String))
+                {
+                    log.error("JSON parse has addMemberToObject where member.class == " + member.getClass().getName() + " (expecting String) and propertyName=" + propertyName);
+                    calls.addParseError("Expected string type");
+                    return;
                 }
 
-                call.setScriptName(parts[0]);
-                call.setMethodName(parts[1]);
-                convertParamsIfPossible();
-            }
-            else if ("id".equals(propertyName))
-            {
-                calls.setBatchId(data);
+                String data = (String) member;
+                if ("jsonrpc".equals(propertyName))
+                {
+                    calls.setVersion(data);
+                }
+                else if ("method".equals(propertyName))
+                {
+                    String[] parts = data.split("\\.");
+                    if (parts.length != 2)
+                    {
+                        log.warn("Got method='" + data + "', but this does not split into 2 parts (parts=" + Arrays.asList(parts) + ").");
+                        calls.addParseError("method parameter did not split into 2 parts");
+                        return;
+                    }
+
+                    call.setScriptName(parts[0]);
+                    call.setMethodName(parts[1]);
+                    convertParamsIfPossible();
+                }
             }
         }
     }
@@ -194,7 +227,7 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
         if (parent == null)
         {
             log.error("JSON parse has createArray where parent=null");
-            throw new IllegalStateException("Error parsing request");
+            calls.addParseError("json-rpc request must have a root object");
         }
 
         if (parent == calls)
@@ -202,7 +235,7 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
             if (!"params".equals(propertyName))
             {
                 log.error("JSON parse has createArray where parent=request but propertyName=" + propertyName + " (expecting 'params')");
-                throw new IllegalStateException("Error parsing request");
+                calls.addParseError("Only params object in a request can be an array");
             }
 
             inParams = true;
@@ -225,39 +258,21 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
         if (parent == calls)
         {
             log.error("JSON parse has createObject where parent=request and propertyName=" + propertyName);
-            throw new IllegalStateException("Error parsing request");
+            calls.addParseError("There should be no child objects in a request object");
         }
 
         return new HashMap<String, Object>();
     }
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param converterManager The new DefaultConverterManager
-     */
-    public void setConverterManager(ConverterManager converterManager)
-    {
-        this.converterManager = converterManager;
-    }
-
-    /**
      * How we convert parameters
      */
-    protected ConverterManager converterManager = null;
-
-    /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param creatorManager The new DefaultConverterManager
-     */
-    public void setCreatorManager(CreatorManager creatorManager)
-    {
-        this.creatorManager = creatorManager;
-    }
+    protected final ConverterManager converterManager;
 
     /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected final CreatorManager creatorManager;
 
     /**
      *

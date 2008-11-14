@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.jsonrpc.io;
 
+import org.directwebremoting.io.StringWrapper;
+
 /**
  * A Container for a JSON-RPC response
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -24,9 +26,9 @@ public class JsonRpcResponse
     /**
      * Create an Error from a request and the data to fulfill the request
      */
-    public JsonRpcResponse(String jsonrpc, String id, Object result)
+    public JsonRpcResponse(String version, StringWrapper id, Object result)
     {
-        this.jsonrpc = jsonrpc;
+        this.version = version;
         this.id = id;
         this.result = result;
     }
@@ -34,15 +36,15 @@ public class JsonRpcResponse
     /**
      * @return A String specifying the version of the JSON-RPC protocol.
      */
-    public String getJsonrpc()
+    public String getJsonRpc()
     {
-        return jsonrpc;
+        return version;
     }
 
     /**
-     * @see #getJsonrpc()
+     * @see #getJsonRpc()
      */
-    private final String jsonrpc;
+    private final String version;
 
     /**
      * @return The data that results from running a JSON-RPC request
@@ -62,7 +64,7 @@ public class JsonRpcResponse
      * False), but SHOULD normally not be Null [1].
      * If omitted, the Request is a Notification.
      */
-    public String getId()
+    public StringWrapper getId()
     {
         return id;
     }
@@ -70,5 +72,5 @@ public class JsonRpcResponse
     /**
      * @see #getId()
      */
-    private final String id;
+    private final StringWrapper id;
 }
