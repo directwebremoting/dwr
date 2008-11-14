@@ -6,10 +6,9 @@
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
   <script type="text/javascript" src="../widgets/dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true"> </script>
-  <script type="text/javascript" src="../widgets/dojo/demo/layer.js"> </script>
+  <script type="text/javascript" src="../widgets/dojo/custom/jsonrpcDemo.js"> </script>
   <script type='text/javascript' src='../tabs/tabs.js'> </script>
   <script type='text/javascript'>
-    // Register the sayHello() service
     var services = new dojox.rpc.Service({
         target:"../dwr/jsonrpc",
         transport:"POST",
@@ -25,18 +24,10 @@
 
     function update() {
         var name = dojo.byId("demoName").value;
-
-        var deferred = services.Demo.sayHello("Fred");
+        var deferred = services.Demo.sayHello(name);
         deferred.addCallback(function(result) {
-            dojo.byId("demoReply").innerHtml = data;
+            dojo.byId("demoReply").innerHTML = result;
         });
-
-        /*
-        // With the plain DWR version we just did this:
-        Demo.sayHello(name, function(data) {
-            dwr.util.setValue("demoReply", data);
-        });
-        */
     }
   </script>
 </head>
@@ -48,10 +39,12 @@
 
 <h1>Dynamically Updating Text</h1>
 
-<p>This is a simple demonstration of how to dynamically update a web-page with
-text fetched from a web server using DWR to serve a JSON service.</p>
+<p>This is a simple demonstration of updating a web-page with text fetched from
+JSON-RPC service provided by DWR.</p>
+
 <p>It is similar to the <a href="../simple/text.html">plain DWR version</a> of
-this demo.</p>
+this demo. Using vanilla DWR is simpler and more powerful than using JSON-RPC,
+however JSON-RPC is useful when you need to use a different client.</p>
 
 <ul id="tabList">
   <li><a href="#" tabId="demoDiv">Demo</a></li>
@@ -97,8 +90,8 @@ var services = new dojox.rpc.Service({
     
 <pre>
 function update() {
-    var name = dwr.util.getValue("demoName");
-    var deferred = services.Demo.sayHello("Fred");
+    var name = dojo.byId("demoName").value;
+    var deferred = services.Demo.sayHello(name);
     // ...
 }
 </pre>
@@ -107,11 +100,11 @@ function update() {
     future. We need to add a callback to the deferred object:</p>    
 <pre>
 deferred.addCallback(function(result) {
-    dwr.util.setValue("demoReply", data);
+    dojo.byId("demoReply").innerHTML = result;
 });
 </pre>
     
-    <p>There's a good deal more to this than the
+    <p>This is a good deal more complex than the
     <a href="../simple/text.html">plain DWR version</a>, however using JSON-RPC
     allows interaction with systems that are not using a DWR client.</p>
     
@@ -132,7 +125,6 @@ deferred.addCallback(function(result) {
 
 <h2>Javascript source:</h2>
 <pre>
-// Register the sayHello() service
 var services = new dojox.rpc.Service({
     target:"../dwr/jsonrpc",
     transport:"POST",
@@ -147,19 +139,11 @@ var services = new dojox.rpc.Service({
 });
 
 function update() {
-    var name = dwr.util.getValue("demoName");
-
-    var deferred = services.Demo.sayHello("Fred");
+    var name = dojo.byId("demoName").value;
+    var deferred = services.Demo.sayHello(name);
     deferred.addCallback(function(result) {
-        dwr.util.setValue("demoReply", data);
+        dojo.byId("demoReply").innerHTML = result;
     });
-
-    /*
-    // With the plain DWR version we just did this:
-    Demo.sayHello(name, function(data) {
-        dwr.util.setValue("demoReply", data);
-    });
-    */
 }
 </pre>
 

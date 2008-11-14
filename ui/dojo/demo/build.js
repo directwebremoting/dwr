@@ -1,15 +1,19 @@
 
 dependencies = {
     layers:[ {
-            name:"../demo/layer.js",
-            resourceName:"demo.layer",
-            dependencies: [ "demo.layer" ]
+            name:"../custom/storeDemo.js",
+            resourceName:"custom.storeDemo",
+            dependencies: [ "custom.storeDemo" ]
+        }, {
+            name:"../custom/jsonRpcDemo.js",
+            resourceName:"custom.jsonRpcDemo",
+            dependencies: [ "custom.jsonRpcDemo" ]
         }
     ],
 
     prefixes:[
         [ "dijit", "../dijit" ],
         [ "dojox", "../dojox" ],
-        [ "demo", "../demo" ]
+        [ "custom", "../custom" ]
     ]
 };
