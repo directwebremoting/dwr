@@ -118,11 +118,8 @@ public abstract class StatefulJsonDecoder implements JsonDecoder
     }
 
     /**
-     * Add the add methods (with the slight exception of {@link #addString}) do
-     * basically the same thing - add themselves to the current object or
-     * array.
-     * Strings are slightly different because they are valid as object properly
-     * names too.
+     * Add the add methods do basically the same thing - add themselves to the
+     * current object or array.
      */
     public void add(String propertyName, Object value) throws JsonParseException
     {
