@@ -31,10 +31,10 @@ import org.directwebremoting.impl.test.TestCreatedObject;
 import org.directwebremoting.impl.test.TestWebContextFactory;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.FakeHttpServletResponse;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.Assert;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  */
 public class DefaultRemoterTest
 {
-    private DefaultRemoter defaultRemoter = new DefaultRemoter();
+    private final DefaultRemoter defaultRemoter = new DefaultRemoter();
 
     private CreatorManager creatorManager;
 
@@ -116,7 +116,7 @@ public class DefaultRemoterTest
         replay(ajaxFilterManager);
 
         DefaultWebContextBuilder builder = new DefaultWebContextBuilder();
-        builder.set(request, null, null, null, null);
+        builder.set(null, request, null, null, null);
         TestWebContextFactory.setWebContextBuilder(builder);
 
         FakeHttpServletResponse response = new FakeHttpServletResponse();
@@ -198,7 +198,7 @@ public class DefaultRemoterTest
     public void handleWithReasonsNotToDisplay() throws Exception
     {
         request.setMethod("GET");
-        
+
         // make sure not to allow an impossible test
         defaultRemoter.setAllowImpossibleTests(false);
 

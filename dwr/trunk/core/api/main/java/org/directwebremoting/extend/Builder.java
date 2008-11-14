@@ -17,6 +17,8 @@ package org.directwebremoting.extend;
 
 import javax.servlet.ServletContext;
 
+import org.directwebremoting.Container;
+
 /**
  * Class to enable us to build 'singleton' interface implementations.
  * It is assumed that there is one 'singleton' per {@link ServletContext}.
@@ -47,12 +49,12 @@ public interface Builder<T>
     T get(ServletContext context);
 
     /**
-     * Associate this thread with a Builder.
+     * Associate this ServletContext with a Builder.
      * Make the current webapp know what the current config/context is.
      * This method is only for use internally to DWR.
      * @param context The {@link ServletContext} to associate the builder with
      * @param constructorParameters The parameters to pass to the implementation
      * of T created by this Builder
      */
-    void set(ServletContext context, Object... constructorParameters);
+    void set(Container container, ServletContext context, Object... constructorParameters);
 }

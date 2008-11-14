@@ -45,14 +45,14 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
 {
     /**
      * Create a new DefaultWebContext
+     * @param container The IoC container
      * @param request The incoming http request
      * @param response The outgoing http reply
      * @param config The servlet configuration
      * @param context The servlet context
-     * @param container The IoC container
-     * @see org.directwebremoting.WebContextFactory.WebContextBuilder#set(HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext, Container)
+     * @see org.directwebremoting.WebContextFactory.WebContextBuilder#set(Container, HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext)
      */
-    public DefaultWebContext(HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context, Container container)
+    public DefaultWebContext(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context)
     {
         super(config, context, container);
 

@@ -36,10 +36,7 @@ import org.xml.sax.SAXException;
 public class TestEnvironment
 {
     /**
-     * @param classResourceName
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     * Configure from a dwr.xml file given as a class resource name
      */
     public static void configureFromClassResource(String classResourceName) throws IOException, ParserConfigurationException, SAXException
     {
@@ -53,7 +50,7 @@ public class TestEnvironment
      */
     public static void engageThread()
     {
-        webContextBuilder.set(null, null, servletConfig, servletContext, container);
+        webContextBuilder.set(container, null, null, servletConfig, servletContext);
     }
 
     /**

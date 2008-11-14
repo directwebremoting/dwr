@@ -64,6 +64,9 @@ import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
 import org.directwebremoting.json.parse.JsonParser;
 import org.directwebremoting.json.parse.JsonParserFactory;
 import org.directwebremoting.json.parse.JsonParserFactory.JsonParserBuilder;
+import org.directwebremoting.json.serialize.JsonSerializer;
+import org.directwebremoting.json.serialize.JsonSerializerFactory;
+import org.directwebremoting.json.serialize.JsonSerializerFactory.JsonSerializerBuilder;
 import org.directwebremoting.servlet.DwrWebContextFilter;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UrlProcessor;
@@ -872,22 +875,26 @@ public class StartupUtil
     {
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
         WebContextFactory.setBuilder(webContextBuilder);
-        webContextBuilder.set(null, null, servletConfig, servletContext, container);
+        webContextBuilder.set(container, null, null, servletConfig, servletContext);
 
         ServerContextBuilder serverContextBuilder = container.getBean(ServerContextBuilder.class);
         ServerContextFactory.setBuilder(serverContextBuilder);
-        serverContextBuilder.set(servletContext, servletConfig, container);
+        serverContextBuilder.set(container, servletContext, servletConfig);
 
         Builder<Hub> hubBuilder = container.getBean(HubBuilder.class);
         HubFactory.setBuilder(hubBuilder);
-        hubBuilder.set(servletContext);
+        hubBuilder.set(container, servletContext);
 
         Builder<JsonParser> jsonParserBuilder = container.getBean(JsonParserBuilder.class);
         JsonParserFactory.setBuilder(jsonParserBuilder);
-        jsonParserBuilder.set(servletContext);
+        jsonParserBuilder.set(container, servletContext);
+
+        Builder<JsonSerializer> jsonSerializerBuilder = container.getBean(JsonSerializerBuilder.class);
+        JsonSerializerFactory.setBuilder(jsonSerializerBuilder);
+        jsonSerializerBuilder.set(container, servletContext);
 
         Builder<CallbackHelper> callbackHelperBuilder = container.getBean(CallbackHelperBuilder.class);
         CallbackHelperFactory.setBuilder(callbackHelperBuilder);
-        callbackHelperBuilder.set(servletContext);
+        callbackHelperBuilder.set(container, servletContext);
     }
 }

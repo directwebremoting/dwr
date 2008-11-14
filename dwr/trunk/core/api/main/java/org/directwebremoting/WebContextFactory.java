@@ -69,14 +69,14 @@ public class WebContextFactory
         /**
          * Make the current thread know what the current request is.
          * This method is only for use internally to DWR.
+         * @param container The IoC container
          * @param request The incoming http request
          * @param response The outgoing http reply
          * @param config The servlet configuration
          * @param context The servlet context
-         * @param container The IoC container
          * @see #unset()
          */
-        void set(HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context, Container container);
+        void set(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context);
 
         /**
          * @return The WebContext that is associated with this thread
@@ -86,7 +86,7 @@ public class WebContextFactory
         /**
          * Unset the current ExecutionContext
          * This method is only for use internally to DWR.
-         * @see #set(HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext, Container)
+         * @see #set(Container, HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext)
          */
         void unset();
     }

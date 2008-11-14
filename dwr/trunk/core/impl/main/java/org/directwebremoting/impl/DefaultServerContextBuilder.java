@@ -79,7 +79,7 @@ public class DefaultServerContextBuilder implements ServerContextBuilder
     /* (non-Javadoc)
      * @see org.directwebremoting.ServerContextFactory.ServerContextBuilder#set(javax.servlet.ServletContext, javax.servlet.ServletConfig, org.directwebremoting.Container)
      */
-    public void set(ServletContext context, ServletConfig config, Container container)
+    public void set(Container container, ServletContext context, ServletConfig config)
     {
         try
         {
@@ -95,9 +95,9 @@ public class DefaultServerContextBuilder implements ServerContextBuilder
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Builder#set(javax.servlet.ServletContext, java.lang.Object[])
      */
-    public void set(ServletContext context, Object... constructorParameters)
+    public void set(Container container, ServletContext context, Object... constructorParameters)
     {
-        set(context, (ServletConfig) constructorParameters[0], (Container) constructorParameters[1]);
+        set(container, context, constructorParameters[0], constructorParameters[1]);
     }
 
     /**

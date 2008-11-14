@@ -73,9 +73,9 @@ public class ServerContextFactory
     public interface ServerContextBuilder extends Builder<ServerContext>
     {
         /**
-         * Version of {@link Builder#set(ServletContext, Object...)} with the
-         * correct parameters
+         * Version of {@link Builder#set(Container, ServletContext, Object...)}
+         * with the correct parameters
          */
-        void set(ServletContext context, ServletConfig config, Container container);
+        void set(Container container, ServletContext context, ServletConfig config);
     }
 }
