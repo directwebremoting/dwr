@@ -186,7 +186,7 @@
         <fileset dir="${dojo.home}" includes="**"/>
         <pathelement path="${source.root}/ui/dojo/demo/build.js"/>
       </sourcefiles>
-      <targetfiles path="${target.root}/web/demo/widgets"/>
+      <targetfiles path="${dojo.temp}"/>
       <sequential>
         <mkdir dir="${dojo.temp}"/>
         <java classname="org.mozilla.javascript.tools.shell.Main" dir="${dojo.home}/util/buildscripts/" fork="true">
@@ -201,9 +201,9 @@
           <arg line="optimize=shrinksafe"/>
           <arg line="cssOptimize=comments.keepLines"/>
           <arg line="version=${label}"/>
-          <arg line="log=1"/>
+          <arg line="log=2"/>
         </java>
-        <copy todir="${target.root}/web/demo/widgets" verbose="on">
+        <copy todir="${target.root}/web/demo/widgets">
           <fileset dir="${dojo.temp}">
             <include name="dojo/demo/**"/>
             <include name="dojo/dojo/dojo.js"/>
