@@ -70,6 +70,12 @@ public class TestUtil
             }
         }
 
+        if (test.toString().trim().length() != 0)
+        {
+            tests.add(test.toString());
+            test = new StringBuilder();
+        }
+
         return tests;
     }
 }

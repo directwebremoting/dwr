@@ -144,6 +144,8 @@
     <convert converter="bean" match="org.directwebremoting.io.StoreRegion"/>
     <convert converter="proxyInterface" match="org.directwebremoting.io.StoreChangeListener"/>
     <convert converter="null" match="org.directwebremoting.datasync.StoreProvider"/>
+    <convert converter="bean" match="org.directwebremoting.jsonrpc.io.JsonRpcError"/>
+    <convert converter="bean" match="org.directwebremoting.jsonrpc.io.JsonRpcResponse"/>
 
     <!--
       TODO: enable constructor injection?

@@ -26,8 +26,17 @@ public class JsonRpcError
      */
     public JsonRpcError(JsonRpcCalls calls, String message, int code, Object data)
     {
-        this.jsonrpc = calls.getVersion();
-        this.id = calls.getBatchId();
+        if (calls != null)
+        {
+            this.jsonrpc = calls.getVersion();
+            this.id = calls.getBatchId();
+        }
+        else
+        {
+            this.jsonrpc = "2.0";
+            this.id = "";
+        }
+
         this.data = data;
         this.message = message;
         this.code = code;

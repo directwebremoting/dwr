@@ -40,6 +40,7 @@ import org.directwebremoting.jsonrpc.io.JsonRpcCallException;
 import org.directwebremoting.jsonrpc.io.JsonRpcCalls;
 import org.directwebremoting.jsonrpc.io.JsonRpcCallsJsonDecoder;
 import org.directwebremoting.jsonrpc.io.JsonRpcError;
+import org.directwebremoting.jsonrpc.io.JsonRpcResponse;
 import org.directwebremoting.util.MimeConstants;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -74,7 +75,21 @@ public class JsonRpcCallHandler implements Handler
             // So I'm not rushing to fix this error
             Reader in = request.getReader();
             JsonParser parser = JsonParserFactory.get();
-            calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder());
+            calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder(converterManager, creatorManager));
+
+            if (calls.getCallCount() != 1)
+            {
+                JsonRpcError error = new JsonRpcError(calls, "Non unique call", ERROR_CODE_INTERNAL, null);
+                writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+
+            if (!calls.isParseErrorClean())
+            {
+                JsonRpcError error = new JsonRpcError(calls, calls.getParseErrors(), ERROR_CODE_PARSE, null);
+                writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
 
             // Check the methods are accessible
             for (Call c : calls)
@@ -84,11 +99,6 @@ public class JsonRpcCallHandler implements Handler
             }
 
             Replies replies = remoter.execute(calls);
-            if (replies.getReplyCount() != 1)
-            {
-                JsonRpcError error = new JsonRpcError(calls, "Multiple replies", ERROR_CODE_INTERNAL, null);
-                writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
-            }
 
             Reply reply = replies.getReply(0);
 
@@ -101,7 +111,8 @@ public class JsonRpcCallHandler implements Handler
                 return;
             }
 
-            writeResponse(reply.getReply(), response, HttpServletResponse.SC_OK);
+            JsonRpcResponse answer = new JsonRpcResponse(calls.getVersion(), calls.getId(), reply.getReply());
+            writeResponse(answer, response, HttpServletResponse.SC_OK);
         }
         catch (JsonRpcCallException ex)
         {
@@ -125,6 +136,7 @@ public class JsonRpcCallHandler implements Handler
         }
         catch (Exception ex)
         {
+            log.warn("Unexpected error:", ex);
             JsonRpcError error = new JsonRpcError(calls, ex.getMessage(), ERROR_CODE_SERVER, null);
             writeResponse(error, response, SC_INTERNAL_SERVER_ERROR);
         }
@@ -214,5 +226,4 @@ public class JsonRpcCallHandler implements Handler
      * The log stream
      */
     private static final Log log = LogFactory.getLog(JsonRpcCallHandler.class);
-
 }
