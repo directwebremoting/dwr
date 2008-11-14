@@ -178,9 +178,9 @@ public class ObjectOutboundVariable extends NestedOutboundVariable
                     buffer.append(',');
                 }
 
-                // The compact JSON style syntax is only any good for simple names
-                // and when we are not recursive
-                if (LocalUtil.isSimpleName(name))
+                // The compact syntax is only any good for simple names, when
+                // we are not recursive, and when we're not doing JSON
+                if (LocalUtil.isSimpleName(name) && !isJsonMode())
                 {
                     buffer.append(name);
                     buffer.append(':');
@@ -188,9 +188,9 @@ public class ObjectOutboundVariable extends NestedOutboundVariable
                 }
                 else
                 {
-                    buffer.append('\'');
+                    buffer.append('\"');
                     buffer.append(name);
-                    buffer.append("\':");
+                    buffer.append("\":");
                     buffer.append(innerAssignCode);
                 }
 

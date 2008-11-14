@@ -115,6 +115,14 @@ public abstract class NestedOutboundVariable implements OutboundVariable
     }
 
     /**
+     * Are we in JSON mode, and therefore must quote property names?
+     */
+    public boolean isJsonMode()
+    {
+        return context.isJsonMode();
+    }
+
+    /**
      * Are there references to us (forcing outline)?
      */
     private boolean referenced = false;
