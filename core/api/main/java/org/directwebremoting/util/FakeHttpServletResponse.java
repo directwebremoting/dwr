@@ -276,7 +276,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
     }
 
     /**
-     * @param committed Set the comitted flag
+     * @param committed Set the committed flag
      */
     public void setCommitted(boolean committed)
     {

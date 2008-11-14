@@ -18,7 +18,7 @@ package org.directwebremoting.util;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Arrays;
@@ -200,7 +200,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /**
      * @see #isUserInRole(String)
      */
-    private Set<String> roles = new HashSet<String>();
+    private final Set<String> roles = new HashSet<String>();
 
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getUserPrincipal()
@@ -368,7 +368,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
     {
         return new ServletInputStream()
         {
-            private ByteArrayInputStream proxy = new ByteArrayInputStream(content);
+            private final ByteArrayInputStream proxy = new ByteArrayInputStream(content);
 
             /* (non-Javadoc)
              * @see java.io.InputStream#read()
@@ -459,6 +459,14 @@ public class FakeHttpServletRequest implements HttpServletRequest
     public void setContent(byte[] content)
     {
         this.content = content;
+    }
+
+    /**
+     * @see #getInputStream()
+     */
+    public void setContent(String content)
+    {
+        this.content = content.getBytes();
     }
 
     /**
@@ -566,7 +574,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
      */
     public BufferedReader getReader() throws IOException
     {
-        return new BufferedReader(new StringReader(""));
+        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
     /* (non-Javadoc)
@@ -677,7 +685,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /**
      * The list of attributes
      */
-    private Map<String, Object> attributes = new HashMap<String, Object>();
+    private final Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
      * The log stream
