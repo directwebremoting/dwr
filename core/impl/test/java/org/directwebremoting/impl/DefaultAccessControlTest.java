@@ -98,7 +98,7 @@ public class DefaultAccessControlTest
     public void testReasonToNotExecute() throws Exception
     {
         WebContextBuilder builder = new DefaultWebContextBuilder();
-        builder.set(new FakeHttpServletRequest(), new FakeHttpServletResponse(), null, null, null);
+        builder.set(null, new FakeHttpServletRequest(), new FakeHttpServletResponse(), null, null);
         WebContextFactory.setBuilder(builder);
 
         NewCreator creator = new NewCreator();

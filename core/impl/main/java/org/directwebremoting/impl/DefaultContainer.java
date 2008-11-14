@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 
@@ -160,72 +159,77 @@ public class DefaultContainer extends AbstractContainer implements Container
     public void setupFinished()
     {
         // We try to autowire each bean in turn
-        for (Entry<String, Object> entry : beans.entrySet())
+        for (Object bean : beans.values())
         {
-            // Class type = (Class) entry.getKey();
-            Object bean = entry.getValue();
-
-            if (!(bean instanceof String))
-            {
-                slog.debug("- autowire: " + bean.getClass().getName());
-
-                Method[] methods = bean.getClass().getMethods();
-                methods:
-                for (Method setter : methods)
-                {
-                    if (setter.getName().startsWith("set") &&
-                            setter.getName().length() > 3 &&
-                            setter.getParameterTypes().length == 1)
-                    {
-                        String name = Character.toLowerCase(setter.getName().charAt(3)) + setter.getName().substring(4);
-                        Class<?> propertyType = setter.getParameterTypes()[0];
-
-                        // First we try auto-wire by name
-                        Object setting = beans.get(name);
-                        if (setting != null)
-                        {
-                            if (propertyType.isAssignableFrom(setting.getClass()))
-                            {
-                                slog.debug("  - by name: " + name + " = " + setting);
-                                invoke(setter, bean, setting);
-
-                                continue methods;
-                            }
-                            else if (setting.getClass() == String.class)
-                            {
-                                try
-                                {
-                                    Object value = LocalUtil.simpleConvert((String) setting, propertyType);
-
-                                    slog.debug("  - by name: " + name + " = " + value);
-                                    invoke(setter, bean, value);
-                                }
-                                catch (IllegalArgumentException ex)
-                                {
-                                    // Ignore - this was a speculative convert anyway
-                                }
-
-                                continue methods;
-                            }
-                        }
-
-                        // Next we try autowire-by-type
-                        Object value = beans.get(propertyType.getName());
-                        if (value != null)
-                        {
-                            slog.debug("  - by type: " + name + " = " + value.getClass().getName());
-                            invoke(setter, bean, value);
-
-                            continue methods;
-                        }
-
-                        slog.debug("  - no properties for: " + name);
-                    }
-                }
-            }
+            initializeBean(bean);
         }
 
         callInitializingBeans();
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.Container#initializeBean(java.lang.Object)
+     */
+    public void initializeBean(Object bean)
+    {
+        if (!(bean instanceof String))
+        {
+            slog.debug("- autowire: " + bean.getClass().getName());
+
+            Method[] methods = bean.getClass().getMethods();
+            methods:
+            for (Method setter : methods)
+            {
+                if (setter.getName().startsWith("set") &&
+                        setter.getName().length() > 3 &&
+                        setter.getParameterTypes().length == 1)
+                {
+                    String name = Character.toLowerCase(setter.getName().charAt(3)) + setter.getName().substring(4);
+                    Class<?> propertyType = setter.getParameterTypes()[0];
+
+                    // First we try auto-wire by name
+                    Object setting = beans.get(name);
+                    if (setting != null)
+                    {
+                        if (propertyType.isAssignableFrom(setting.getClass()))
+                        {
+                            slog.debug("  - by name: " + name + " = " + setting);
+                            invoke(setter, bean, setting);
+
+                            continue methods;
+                        }
+                        else if (setting.getClass() == String.class)
+                        {
+                            try
+                            {
+                                Object value = LocalUtil.simpleConvert((String) setting, propertyType);
+
+                                slog.debug("  - by name: " + name + " = " + value);
+                                invoke(setter, bean, value);
+                            }
+                            catch (IllegalArgumentException ex)
+                            {
+                                // Ignore - this was a speculative convert anyway
+                            }
+
+                            continue methods;
+                        }
+                    }
+
+                    // Next we try autowire-by-type
+                    Object value = beans.get(propertyType.getName());
+                    if (value != null)
+                    {
+                        slog.debug("  - by type: " + name + " = " + value.getClass().getName());
+                        invoke(setter, bean, value);
+
+                        continue methods;
+                    }
+
+                    slog.debug("  - no properties for: " + name);
+                }
+            }
+        }
     }
 
     /**

@@ -21,6 +21,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Builder;
@@ -105,11 +106,12 @@ public class DefaultBuilder<T> implements Builder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Builder#set(javax.servlet.ServletContext, java.lang.Object[])
      */
-    public void set(ServletContext context, Object... constructorParameters)
+    public void set(Container container, ServletContext context, Object... constructorParameters)
     {
         try
         {
             T t = constructor.newInstance(constructorParameters);
+            container.initializeBean(t);
             context.setAttribute(attributeName, t);
         }
         catch (Exception ex)
@@ -126,7 +128,7 @@ public class DefaultBuilder<T> implements Builder<T>
     /**
      * The attribute under which we publish the T
      */
-    private final String attributeName;
+    protected final String attributeName;
 
     /**
      * The log stream

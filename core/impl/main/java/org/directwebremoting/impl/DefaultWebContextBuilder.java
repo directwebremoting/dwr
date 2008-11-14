@@ -20,8 +20,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
@@ -35,11 +35,11 @@ public class DefaultWebContextBuilder implements WebContextBuilder
     /* (non-Javadoc)
      * @see org.directwebremoting.WebContextBuilder#set(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.ServletConfig, javax.servlet.ServletContext, org.directwebremoting.Container)
      */
-    public void set(HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context, Container container)
+    public void set(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context)
     {
         try
         {
-            WebContext ec = new DefaultWebContext(request, response, config, context, container);
+            WebContext ec = new DefaultWebContext(container, request, response, config, context);
             user.set(ec);
         }
         catch (Exception ex)

@@ -136,7 +136,7 @@ public class DwrServlet extends HttpServlet
     {
         try
         {
-            webContextBuilder.set(request, response, getServletConfig(), getServletContext(), container);
+            webContextBuilder.set(container, request, response, getServletConfig(), getServletContext());
 
             UrlProcessor processor = container.getBean(UrlProcessor.class);
             processor.handle(request, response);
