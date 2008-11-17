@@ -39,13 +39,13 @@ public class FileTransfer
 {
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param name The remote source filename
+     * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param outputStreamLoader A means by which the data can be read
      */
-    public FileTransfer(String name, String mimeType, OutputStreamLoader outputStreamLoader)
+    public FileTransfer(String filename, String mimeType, OutputStreamLoader outputStreamLoader)
     {
-        this.name = name;
+        this.filename = filename;
         this.mimeType = mimeType;
         this.outputStreamLoader = outputStreamLoader;
         this.size = -1;
@@ -65,7 +65,7 @@ public class FileTransfer
      */
     public FileTransfer(final BufferedImage image, String filename, final String type)
     {
-        this.name = filename;
+        this.filename = filename;
         this.mimeType = "image/" + type;
         this.outputStreamLoader = new OutputStreamLoader()
         {
@@ -84,13 +84,13 @@ public class FileTransfer
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param name The remote source filename
+     * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param bytes the raw data
      */
-    public FileTransfer(String name, String mimeType, final byte[] bytes)
+    public FileTransfer(String filename, String mimeType, final byte[] bytes)
     {
-        this.name = name;
+        this.filename = filename;
         this.mimeType = mimeType;
         this.size = bytes.length;
         this.outputStreamLoader = new OutputStreamLoader()
@@ -109,14 +109,14 @@ public class FileTransfer
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param name The remote source filename
+     * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param size The size of the file
      * @param inputStreamFactory A means by which the data can be read
      */
-    public FileTransfer(String name, String mimeType, long size, final InputStreamFactory inputStreamFactory)
+    public FileTransfer(String filename, String mimeType, long size, final InputStreamFactory inputStreamFactory)
     {
-        this.name = name;
+        this.filename = filename;
         this.mimeType = mimeType;
         this.size = size;
         this.outputStreamLoader = null;
@@ -125,14 +125,14 @@ public class FileTransfer
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param name The remote source filename
+     * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param size The size of the file
      * @param in A means by which the data can be read.
      */
-    public FileTransfer(String name, String mimeType, long size, final InputStream in)
+    public FileTransfer(String filename, String mimeType, long size, final InputStream in)
     {
-        this.name = name;
+        this.filename = filename;
         this.mimeType = mimeType;
         this.size = size;
         this.outputStreamLoader = null;
@@ -149,7 +149,7 @@ public class FileTransfer
      */
     public String getFilename()
     {
-        return name;
+        return filename;
     }
 
     /**
@@ -206,7 +206,7 @@ public class FileTransfer
     /**
      * The remote source filename
      */
-    private final String name;
+    private final String filename;
 
     /**
      * The mime type passed in by the browser
