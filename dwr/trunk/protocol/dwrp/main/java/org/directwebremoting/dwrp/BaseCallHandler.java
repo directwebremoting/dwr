@@ -48,9 +48,9 @@ import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
+import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
-import org.directwebremoting.io.SimpleInputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**

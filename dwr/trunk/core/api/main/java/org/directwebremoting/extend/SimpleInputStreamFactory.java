@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.io;
+package org.directwebremoting.extend;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.directwebremoting.io.InputStreamFactory;
 
 /**
  * SimpleInputStreamFactory is just an InputStreamFactory that holds an
