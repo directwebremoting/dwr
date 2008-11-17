@@ -174,11 +174,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         }
         ServletContext servletContext = getServletContext();
 
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("afterPropertiesSet() called with servletContext '" + servletContext + "'");
-        }
-
         Assert.notNull(servletContext, "The servlet context has not been set on the controller");
         Assert.notNull(configurators, "The required 'configurators' property should be set");
 
@@ -235,7 +230,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         try
         {
             // set up the web context and delegate to the processor
-            webContextBuilder.set(request, response, servletConfig, getServletContext(), container);
+            webContextBuilder.set(container, request, response, servletConfig, getServletContext());
 
             UrlProcessor processor = container.getBean(UrlProcessor.class);
             processor.handle(request, response);
@@ -269,7 +264,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         Assert.notNull(configParams, "configParams cannot be null");
         this.configParams = configParams;
     }
-
 
     /**
      * How is this deployed in Spring
