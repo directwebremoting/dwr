@@ -318,7 +318,9 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         }
     }
 
-    @Inject private void injectRegisteredObjects(Injector injector)
+    @SuppressWarnings("unused") /* called by reflection */
+    @Inject
+    private void injectRegisteredObjects(Injector injector)
     {
         for (Object injectee : registeredForInjection.keySet())
         {
