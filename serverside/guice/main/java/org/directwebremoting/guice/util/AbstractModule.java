@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.aopalliance.intercept.MethodInterceptor;
 
 import com.google.inject.Binder;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.matcher.Matcher;
@@ -316,7 +318,6 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
         }
     }
 
-    /* TODO: Not used, should we get rid of this?
     @Inject private void injectRegisteredObjects(Injector injector)
     {
         for (Object injectee : registeredForInjection.keySet())
@@ -324,7 +325,6 @@ public abstract class AbstractModule extends com.google.inject.AbstractModule
             injector.injectMembers(injectee);
         }
     }
-    */
 
     private void ensureSelfInjection(Binder binder)
     {
