@@ -22,6 +22,9 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import org.directwebremoting.extend.InputStreamFactoryOutputStreamLoader;
+import org.directwebremoting.extend.OutputStreamLoaderInputStreamFactory;
+import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.util.CopyUtils;
 
 /**
@@ -46,12 +49,13 @@ public class FileTransfer
         this.mimeType = mimeType;
         this.outputStreamLoader = outputStreamLoader;
         this.size = -1;
+        this.inputStreamFactory = null;
     }
 
     /**
      * A ctor for the 3 things browsers tell us about the uploaded file
      */
-    public FileTransfer(final BufferedImage image, final String type)
+    public FileTransfer(BufferedImage image, String type)
     {
         this(image, "image", type);
     }
@@ -75,6 +79,7 @@ public class FileTransfer
             }
         };
         this.size = -1;
+        this.inputStreamFactory = null;
     }
 
     /**
@@ -99,6 +104,7 @@ public class FileTransfer
             {
             }
         };
+        this.inputStreamFactory = null;
     }
 
     /**
@@ -113,19 +119,8 @@ public class FileTransfer
         this.name = name;
         this.mimeType = mimeType;
         this.size = size;
-        this.outputStreamLoader = new OutputStreamLoader()
-        {
-            public void load(OutputStream out) throws IOException
-            {
-                InputStream in = inputStreamFactory.getInputStream();
-                CopyUtils.copy(in, out);
-            }
-
-            public void close() throws IOException
-            {
-                inputStreamFactory.close();
-            }
-        };
+        this.outputStreamLoader = null;
+        this.inputStreamFactory = inputStreamFactory;
     }
 
     /**
@@ -140,43 +135,8 @@ public class FileTransfer
         this.name = name;
         this.mimeType = mimeType;
         this.size = size;
-        this.outputStreamLoader = new OutputStreamLoader()
-        {
-            public void load(OutputStream out) throws IOException
-            {
-                CopyUtils.copy(in, out);
-            }
-
-            public void close() throws IOException
-            {
-                in.close();
-            }
-        };
-    }
-
-    /**
-     * Returns the content type passed by the browser or null if not defined.
-     */
-    public String getMimeType()
-    {
-        return mimeType;
-    }
-
-    /**
-     * Returns the size of the file passed by the browser or -1 of this is a download transfer.
-     */
-    public long getSize()
-    {
-        return size;
-    }
-
-    /**
-     * Returns an InputStream that can be used to retrieve the contents of the
-     * file.
-     */
-    public OutputStreamLoader getOutputStreamLoader()
-    {
-        return outputStreamLoader;
+        this.outputStreamLoader = null;
+        this.inputStreamFactory = new SimpleInputStreamFactory(in, true);
     }
 
     /**
@@ -190,6 +150,57 @@ public class FileTransfer
     public String getFilename()
     {
         return name;
+    }
+
+    /**
+     * Returns the content type passed by the browser or null if not defined.
+     */
+    public String getMimeType()
+    {
+        return mimeType;
+    }
+
+    /**
+     * Returns the size of the file passed by the browser or -1 if this is not
+     * known.
+     */
+    public long getSize()
+    {
+        return size;
+    }
+
+    /**
+     * Returns an OutputStreamLoader that can be used to retrieve the contents
+     * of the file.
+     */
+    public OutputStreamLoader getOutputStreamLoader()
+    {
+        if (outputStreamLoader != null)
+        {
+            return outputStreamLoader;
+        }
+        else
+        {
+            return new InputStreamFactoryOutputStreamLoader(inputStreamFactory);
+        }
+    }
+
+    /**
+     * Returns an {@link InputStream} that can be used to retrieve the contents
+     * of the file.
+     * {@link InputStreamFactory} is used place of direct access to an
+     * {@link InputStream} to ensure that resources are properly closed.
+     */
+    public InputStream getInputStream() throws IOException
+    {
+        if (inputStreamFactory != null)
+        {
+            return inputStreamFactory.getInputStream();
+        }
+        else
+        {
+            return new OutputStreamLoaderInputStreamFactory(outputStreamLoader).getInputStream();
+        }
     }
 
     /**
@@ -208,7 +219,14 @@ public class FileTransfer
     private final long size;
 
     /**
-     * A means by which the data can be written
+     * One of 2 means by which the data can be obtained
+     * @see #inputStreamFactory
      */
     private final OutputStreamLoader outputStreamLoader;
+
+    /**
+     * One of 2 means by which the data can be obtained
+     * @see #outputStreamLoader
+     */
+    private final InputStreamFactory inputStreamFactory;
 }

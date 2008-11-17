@@ -31,8 +31,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.directwebremoting.event.SessionProgressListener;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ServerException;
+import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.io.InputStreamFactory;
-import org.directwebremoting.io.SimpleInputStreamFactory;
 
 
 /**

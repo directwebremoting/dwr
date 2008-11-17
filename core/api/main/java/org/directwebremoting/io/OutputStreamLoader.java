@@ -19,9 +19,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Sometimes you might have a way to write to an {@link OutputStream} and
- * don't want to create a temporary in memory buffer to hold the data before
- * it is squirted to the browser.
+ * This class gives some lifecycle to an OutputStream.
+ * There may be times (particularly with downloading files to browsers) when it
+ * is not clear if the data will ever be read.
+ * A call to {@link #load(OutputStream)} is a signal that we really to want data
+ * <strong>now</strong> and that if any processing is needed, if should be done.
+ * A call to {@link #close()} is a signal that whether or not getInputStream was
+ * called, the data is no longer required.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public interface OutputStreamLoader
