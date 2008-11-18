@@ -181,7 +181,7 @@
   <target name="dojo" depends="prepare" description="Create Dojo custom build">
     <property name="dojo.home" value="${source.root}/ui/dojo/build"/>
     <property name="dojo.temp" value="${target.root}/dojoBuild"/>
-    <outofdate verbose="true">
+    <outofdate verbose="false">
       <sourcefiles>
         <fileset dir="${dojo.home}" includes="**"/>
         <pathelement path="${source.root}/ui/dojo/demo/build.js"/>
