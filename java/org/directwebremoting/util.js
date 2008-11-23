@@ -897,6 +897,7 @@ dwr.util.addOptions = function(ele, data/*, options*/) {
   var arg4 = null; if (argcount >= 4) arg4 = arguments[3];
   if (!options.optionCreator && useOptions) options.optionCreator = dwr.util._defaultOptionCreator;
   if (!options.optionCreator && useLi) options.optionCreator = dwr.util._defaultListItemCreator;
+  options.document = ele.ownerDocument;
 
   var text, value, li;
   if (dwr.util._isArray(data)) {
@@ -995,14 +996,14 @@ dwr.util._getValueFrom = function(data, method) {
  * @private Default option creation function
  */
 dwr.util._defaultOptionCreator = function(options) {
-  return new Option();
+  return options.document.createElement("option");
 };
 
 /**
  * @private Default list item creation function
  */
 dwr.util._defaultListItemCreator = function(options) {
-  return document.createElement("li");
+  return options.document.createElement("li");
 };
 
 /**
@@ -1042,6 +1043,7 @@ dwr.util.addRows = function(ele, data, cellFuncs, options) {
   if (!options) options = {};
   if (!options.rowCreator) options.rowCreator = dwr.util._defaultRowCreator;
   if (!options.cellCreator) options.cellCreator = dwr.util._defaultCellCreator;
+  options.document = ele.ownerDocument;
   var tr, rowNum;
   if (dwr.util._isArray(data)) {
     for (rowNum = 0; rowNum < data.length; rowNum++) {
@@ -1105,14 +1107,14 @@ dwr.util._addRowInner = function(cellFuncs, options) {
  * @private Default row creation function
  */
 dwr.util._defaultRowCreator = function(options) {
-  return document.createElement("tr");
+  return options.document.createElement("tr");
 };
 
 /**
  * @private Default cell creation function
  */
 dwr.util._defaultCellCreator = function(options) {
-  return document.createElement("td");
+  return options.document.createElement("td");
 };
 
 /**
