@@ -39,6 +39,7 @@ import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.io.RawData;
 import org.directwebremoting.util.ClasspathScanner;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A class to manage the converter types and the instantiated class name matches.
@@ -53,14 +54,14 @@ public class DefaultConverterManager implements ConverterManager
     {
         if (!LocalUtil.isJavaIdentifier(id))
         {
-            slog.error("Illegal identifier: '" + id + "'");
+            Loggers.STARTUP.error("Illegal identifier: '" + id + "'");
             return;
         }
 
         Class<? extends Converter> clazz = LocalUtil.classForName(id, className, Converter.class);
         if (clazz != null)
         {
-            slog.debug("- adding converter type: " + id + " = " + clazz.getName());
+            Loggers.STARTUP.debug("- adding converter type: " + id + " = " + clazz.getName());
             converterTypes.put(id, clazz);
         }
     }
@@ -84,14 +85,14 @@ public class DefaultConverterManager implements ConverterManager
         }
         else
         {
-            Class<?> clazz = converterTypes.get(type);
+            Class<? extends Converter> clazz = converterTypes.get(type);
             if (clazz == null)
             {
                 log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
                 return;
             }
 
-            Converter converter = (Converter) clazz.newInstance();
+            Converter converter = clazz.newInstance();
             LocalUtil.setParams(converter, params, ignore);
 
             // add the converter for the specified match
@@ -108,10 +109,10 @@ public class DefaultConverterManager implements ConverterManager
         Converter other = converters.get(match);
         if (other != null)
         {
-            slog.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
+            Loggers.STARTUP.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
         }
 
-        slog.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
+        Loggers.STARTUP.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
 
         converter.setConverterManager(this);
 
@@ -173,7 +174,7 @@ public class DefaultConverterManager implements ConverterManager
             }
             catch (Exception cne)
             {
-                slog.warn("Could not load class [" + match + "]. Conversion will try to work upon other runtime information");
+                Loggers.STARTUP.warn("Could not load class [" + match + "]. Conversion will try to work upon other runtime information");
             }
         }
 
@@ -206,7 +207,7 @@ public class DefaultConverterManager implements ConverterManager
 
             if (!className.equals(jsClassName) && log.isDebugEnabled())
             {
-                slog.debug("- expanded javascript [" + jsClassName + "] to [" + className + "] for " + match);
+                Loggers.STARTUP.debug("- expanded javascript [" + jsClassName + "] to [" + className + "] for " + match);
             }
         }
 
@@ -632,7 +633,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * The list of the available converters
      */
-    protected Map<String, Class<?>> converterTypes = new HashMap<String, Class<?>>();
+    protected Map<String, Class<? extends Converter>> converterTypes = new HashMap<String, Class<? extends Converter>>();
 
     /**
      * The list of the configured converters
@@ -644,13 +645,6 @@ public class DefaultConverterManager implements ConverterManager
      * @see DefaultConverterManager#addConverter(String, String, Map)
      */
     private static List<String> ignore = Arrays.asList("converter", "match");
-
-    /**
-     * The startup log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    private static final Log slog = StartupUtil.slog;
 
     /**
      * The log stream

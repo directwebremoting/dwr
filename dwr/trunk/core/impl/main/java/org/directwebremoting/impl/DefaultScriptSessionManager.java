@@ -28,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.event.EventListenerList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionEvent;
@@ -40,6 +38,7 @@ import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.IdGenerator;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A default implementation of ScriptSessionManager.
@@ -122,6 +121,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         String id = generator.generateId(16);
 
         DefaultScriptSession scriptSession = new DefaultScriptSession(id, this, page);
+        Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
 
         synchronized (sessionLock)
         {
@@ -147,7 +147,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * @param scriptSession The script session to be linked to an http session
      * @param httpSessionId The http session from the browser with the given scriptSession
      */
-    protected void associateScriptSessionAndHttpSession(RealScriptSession scriptSession, String httpSessionId)
+    protected void associateScriptSessionAndHttpSession(DefaultScriptSession scriptSession, String httpSessionId)
     {
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, httpSessionId);
 
@@ -162,10 +162,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
     /**
      * Unlink any http sessions from this script session
-     * @see #associateScriptSessionAndHttpSession(RealScriptSession, String)
+     * @see #associateScriptSessionAndHttpSession(DefaultScriptSession, String)
      * @param scriptSession The script session to be unlinked
      */
-    protected void disassociateScriptSessionAndHttpSession(RealScriptSession scriptSession)
+    protected void disassociateScriptSessionAndHttpSession(DefaultScriptSession scriptSession)
     {
         Object httpSessionId = scriptSession.getAttribute(ATTRIBUTE_HTTPSESSIONID);
         if (httpSessionId == null)
@@ -176,7 +176,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
         if (scriptSessionIds == null)
         {
-            log.debug("Warning: No script session ids for http session");
+            Loggers.SESSION.debug("Warning: No script session ids for http session");
             return;
         }
         scriptSessionIds.remove(scriptSession.getId());
@@ -195,7 +195,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * @param scriptSession The script session to be linked to a page
      * @param page The page (un-normalized) to be linked to
      */
-    protected void associateScriptSessionAndPage(RealScriptSession scriptSession, String page)
+    protected void associateScriptSessionAndPage(DefaultScriptSession scriptSession, String page)
     {
         if (page == null)
         {
@@ -212,16 +212,15 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         }
 
         pageSessions.add(scriptSession);
-
         scriptSession.setAttribute(ATTRIBUTE_PAGE, normalizedPage);
     }
 
     /**
      * Unlink any pages from this script session
-     * @see #associateScriptSessionAndPage(RealScriptSession, String)
+     * @see #associateScriptSessionAndPage(DefaultScriptSession, String)
      * @param scriptSession The script session to be unlinked
      */
-    protected void disassociateScriptSessionAndPage(RealScriptSession scriptSession)
+    protected void disassociateScriptSessionAndPage(DefaultScriptSession scriptSession)
     {
         for (Set<RealScriptSession> pageSessions : pageSessionMap.values())
         {
@@ -293,10 +292,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * leave it for the GC vultures to pluck.
      * @param scriptSession The session to get rid of
      */
-    protected void invalidate(RealScriptSession scriptSession)
+    protected void invalidate(DefaultScriptSession scriptSession)
     {
-        // Can we think of a reason why we need to sync both together?
-        // It feels like a deadlock risk to do so
+        Loggers.SESSION.debug("Invalidating " + scriptSession + " from " + scriptSession.getPage());
+
         synchronized (sessionLock)
         {
             // Due to the way systems get a number of script sessions for a page
@@ -553,9 +552,4 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * <p>GuardedBy("sessionLock")
      */
     private final Map<String, Set<RealScriptSession>> pageSessionMap = new HashMap<String, Set<RealScriptSession>>();
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DefaultScriptSessionManager.class);
 }

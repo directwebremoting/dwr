@@ -21,13 +21,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
-
 import org.directwebremoting.guice.util.AbstractSimpleContextScope;
 import org.directwebremoting.guice.util.ContextScope;
-import static org.directwebremoting.guice.DwrGuiceUtil.getServletContext;
+
+import static org.directwebremoting.guice.DwrGuiceUtil.*;
 
 /**
  * Scopes available to DWR applications.
@@ -149,20 +148,24 @@ public class DwrScopes
         @Override
         public Object get(ServletContext servletContext, String name)
         {
+            /*
             if (log.isDebugEnabled())
             {
                 log.debug(String.format("servletContext.getAttribute(%s)", name));
             }
+            //*/
             return servletContext.getAttribute(name);
         }
 
         @Override
         public void put(ServletContext servletContext, String name, Object value)
         {
+            /*
             if (log.isDebugEnabled())
             {
                 log.debug(String.format("servletContext.setAttribute(%s, %s)", name, value));
             }
+            //*/
             servletContext.setAttribute(name, value);
         }
     }

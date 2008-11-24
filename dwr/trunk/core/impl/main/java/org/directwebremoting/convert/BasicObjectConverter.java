@@ -155,7 +155,7 @@ public abstract class BasicObjectConverter implements NamedConverter
             paramNum++;
         }
 
-        log.debug("Using constructor injection for: " + constructor);
+        // log.debug("Using constructor injection for: " + constructor);
 
         Object[] argArray = arguments.toArray(new Object[arguments.size()]);
 
@@ -494,7 +494,7 @@ public abstract class BasicObjectConverter implements NamedConverter
     {
         return javascriptSuperClass;
     }
-    
+
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.NamedConverter#setJavascriptSuperClass(java.lang.String)
      */
@@ -502,7 +502,7 @@ public abstract class BasicObjectConverter implements NamedConverter
     {
         this.javascriptSuperClass = javascriptSuperClass;
     }
-    
+
     /**
      * The javascript class name that will appear as superclass
      * for the converted objects

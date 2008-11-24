@@ -244,44 +244,37 @@ public class Call
         {
             // One method with the right number of params - use that
             setMethod(exactParamCountMatches.get(0));
+            return;
         }
-        else
+
+        // Lots of methods with the right name, but none with the right
+        // parameter count. If we have exactly one varargs method, then we
+        // try that, otherwise we bail.
+        List<Method> varargsMathods = new ArrayList<Method>();
+        for (Method m : allMethods)
         {
-            // Lots of methods with the right name, but none with the right
-            // parameter count. If we have exactly one varargs method, then we
-            // use that, otherwise we bail.
-            List<Method> varargsMathods = new ArrayList<Method>();
-            for (Method m : allMethods)
+            if (m.isVarArgs())
             {
-                if (m.isVarArgs())
-                {
-                    varargsMathods.add(m);
-                }
-            }
-
-            if (varargsMathods.size() == 1)
-            {
-                setMethod(varargsMathods.get(0));
-            }
-            else
-            {
-                log.warn("Can't find method to match " + creator.getType() + "." + methodName);
-                log.warn("- DWR does not execute where there is ambiguity. Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMathods.size());
-                throw new IllegalArgumentException("Method not found. See logs for details");
+                varargsMathods.add(m);
             }
         }
 
-
-        if (allMethods.size() > 1)
+        if (varargsMathods.size() == 1)
         {
-            log.warn("Warning: Multiple potential method matches. The selection process is undefined. Future versions of DWR (or your class) may select a different method. Potential matches include:");
-            for (Method m : allMethods)
-            {
-                log.warn("- " + m.toGenericString());
-            }
+            setMethod(varargsMathods.get(0));
+            return;
         }
 
-        setMethod(allMethods.get(0));
+        log.warn("Can't find single method to match " + creator.getType() + "." + methodName);
+        log.warn("- DWR does not continue where there is ambiguity about which method to execute.");
+        log.warn("- Input parameters: " + inputArgCount + ".Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMathods.size());
+        log.warn("- Potential matches include:");
+        for (Method m : allMethods)
+        {
+            log.warn("  - " + m.toGenericString());
+        }
+
+        throw new IllegalArgumentException("Method not found. See logs for details");
     }
 
     /* (non-Javadoc)

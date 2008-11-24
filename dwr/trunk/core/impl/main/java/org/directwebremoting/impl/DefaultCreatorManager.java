@@ -30,6 +30,7 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A class to manage the types of creators and the instantiated creators.
@@ -44,14 +45,14 @@ public class DefaultCreatorManager implements CreatorManager
     {
         if (!LocalUtil.isJavaIdentifier(typeName))
         {
-            slog.error("Illegal identifier: '" + typeName + "'");
+            Loggers.STARTUP.error("Illegal identifier: '" + typeName + "'");
             return;
         }
 
         Class<? extends Creator> clazz = LocalUtil.classForName(typeName, className, Creator.class);
         if (clazz != null)
         {
-            slog.debug("- adding creator type: " + typeName + " = " + clazz);
+            Loggers.STARTUP.debug("- adding creator type: " + typeName + " = " + clazz);
             creatorTypes.put(typeName, clazz);
         }
     }
@@ -64,7 +65,7 @@ public class DefaultCreatorManager implements CreatorManager
         Class<? extends Creator> clazz = creatorTypes.get(creatorName);
         if (clazz == null)
         {
-            slog.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
+            Loggers.STARTUP.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
             return;
         }
 
@@ -86,7 +87,7 @@ public class DefaultCreatorManager implements CreatorManager
         Creator other = creators.get(scriptName);
         if (other != null)
         {
-            slog.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
+            Loggers.STARTUP.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
             throw new IllegalArgumentException("Duplicate name found. See logs for details.");
         }
 
@@ -96,21 +97,21 @@ public class DefaultCreatorManager implements CreatorManager
             Class<?> test = creator.getType();
             if (test == null)
             {
-                slog.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
+                Loggers.STARTUP.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
             }
             else
             {
-                slog.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
+                Loggers.STARTUP.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
                 creators.put(scriptName, creator);
             }
         }
         catch (NoClassDefFoundError ex)
         {
-            slog.error("Missing class for creator '" + creator + "'. Cause: " + ex.getMessage());
+            Loggers.STARTUP.error("Missing class for creator '" + creator + "'. Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            slog.error("Error loading class for creator '" + creator + "'.", ex);
+            Loggers.STARTUP.error("Error loading class for creator '" + creator + "'.", ex);
         }
 
         // If this is application scope then it might make sense to create one
@@ -124,23 +125,15 @@ public class DefaultCreatorManager implements CreatorManager
                 Object object = creator.getInstance();
                 webcx.getServletContext().setAttribute(creator.getJavascript(), object);
 
-                slog.debug("Created new " + creator.getJavascript() + ", stored in application.");
+                Loggers.STARTUP.debug("Created new " + creator.getJavascript() + ", stored in application.");
             }
             catch (InstantiationException ex)
             {
-                slog.warn("Failed to create " + creator.getJavascript(), ex);
-                slog.debug("Maybe it will succeed when the application is in flight. If so you should probably set initApplicationScopeCreatorsAtStartup=false in web.xml");
+                Loggers.STARTUP.warn("Failed to create " + creator.getJavascript(), ex);
+                Loggers.STARTUP.debug("Maybe it will succeed when the application is in flight. If so you should probably set initApplicationScopeCreatorsAtStartup=false in web.xml");
             }
         }
     }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.CreatorManager#getCreatorNames()
-     */
-    //public Collection<String> getCreatorNames() throws SecurityException
-    //{
-    //    return getCreatorNames(false);
-    //}
 
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#getCreatorNames(boolean)
@@ -270,13 +263,6 @@ public class DefaultCreatorManager implements CreatorManager
      * @see DefaultCreatorManager#addCreator(String, String, Map)
      */
     protected static List<String> ignore = Arrays.asList("creator", "class");
-
-    /**
-     * The startup log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    private static final Log slog = StartupUtil.slog;
 
     /**
      * The log stream

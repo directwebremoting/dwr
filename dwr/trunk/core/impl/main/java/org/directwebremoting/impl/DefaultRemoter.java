@@ -675,6 +675,7 @@ public class DefaultRemoter implements Remoter
             }
 
             // Some debug
+            /*
             if (log.isDebugEnabled())
             {
                 StringBuffer buffer = new StringBuffer();
@@ -708,6 +709,7 @@ public class DefaultRemoter implements Remoter
 
                 log.debug(buffer.toString());
             }
+            //*/
 
             // Execute the filter chain method.toString()
             final Iterator<AjaxFilter> it = filters.iterator();
