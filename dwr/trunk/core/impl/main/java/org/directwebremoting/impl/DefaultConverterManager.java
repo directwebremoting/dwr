@@ -71,6 +71,25 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException
     {
+        Class<?> clazz = converterTypes.get(type);
+        if (clazz == null)
+        {
+            log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
+            return;
+        }
+
+        Converter converter = (Converter) clazz.newInstance();
+        LocalUtil.setParams(converter, params, ignore);
+
+        // add the converter for the specified match
+        addConverter(match, converter);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ConverterManager#addConverter(java.lang.String, org.directwebremoting.Converter)
+     */
+    public void addConverter(String match, Converter converter) throws IllegalArgumentException
+    {
         if (LocalUtil.hasText(match) && match.contains("*") && !match.startsWith("["))
         {
             boolean recursive = match.endsWith("**");
@@ -80,85 +99,48 @@ public class DefaultConverterManager implements ConverterManager
             for (String clazz : scanner.getClasses())
             {
                 // Call ourselves without the wildcard, processed by the else below
-                addConverter(clazz, type, params);
+                addConverter(clazz, converter);
             }
         }
         else
         {
-            Class<? extends Converter> clazz = converterTypes.get(type);
-            if (clazz == null)
+            // Check that we don't have this one already
+            Converter other = converters.get(match);
+            if (other != null)
             {
-                log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
-                return;
+                Loggers.STARTUP.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
             }
 
-            Converter converter = clazz.newInstance();
-            LocalUtil.setParams(converter, params, ignore);
+            Loggers.STARTUP.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
 
-            // add the converter for the specified match
-            addConverter(match, converter);
-        }
-    }
+            converter.setConverterManager(this);
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ConverterManager#addConverter(java.lang.String, org.directwebremoting.Converter)
-     */
-    public void addConverter(String match, Converter converter) throws IllegalArgumentException
-    {
-        // Check that we don't have this one already
-        Converter other = converters.get(match);
-        if (other != null)
-        {
-            Loggers.STARTUP.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
-        }
-
-        Loggers.STARTUP.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + match);
-
-        converter.setConverterManager(this);
-
-        if (converter instanceof NamedConverter)
-        {
-            try
+            if (converter instanceof NamedConverter)
             {
-                NamedConverter namedConverter = (NamedConverter) converter;
-
-                // Set up stuff for mapped JavaScript class (if any)
-                if (LocalUtil.hasLength(namedConverter.getJavascript()))
+                try
                 {
-                    Class<?> javaClass = Class.forName(match);
-                    namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
-                    namedConverter.setInstanceType(javaClass);
+                    NamedConverter namedConverter = (NamedConverter) converter;
 
-                    // Set up stuff for mapped JavaScript superclass (if not already assigned)
-                    if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+                    // Set up stuff for mapped JavaScript class (if any)
+                    if (LocalUtil.hasLength(namedConverter.getJavascript()))
                     {
-                        // (Here we depend on that the match string is a non-wildcarded
-                        // Java class name and the relevant match strings in the
-                        // converters collection are also non-wildcarded Java
-                        // class/interface names)
+                        Class<?> javaClass = Class.forName(match);
+                        namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
+                        namedConverter.setInstanceType(javaClass);
 
-                        // First check if any of our super-classes are mapped
-                        Class<?> javaSuperClass = javaClass.getSuperclass();
-                        while(javaSuperClass != null)
-                        {
-                            String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
-                            if (jsSuperClassName != null)
-                            {
-                                namedConverter.setJavascriptSuperClass(jsSuperClassName);
-                                break;
-                            }
-
-                            // Continue with next class
-                            javaSuperClass = javaSuperClass.getSuperclass();
-                        }
-
-                        // If we still have no superclass then continue trying with interfaces
+                        // Set up stuff for mapped JavaScript superclass (if not already assigned)
                         if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
                         {
-                            Class<?> checkInterfacesOnClass = javaClass;
-                            while(checkInterfacesOnClass != null)
+                            // (Here we depend on that the match string is a non-wildcarded
+                            // Java class name and the relevant match strings in the
+                            // converters collection are also non-wildcarded Java
+                            // class/interface names)
+
+                            // First check if any of our super-classes are mapped
+                            Class<?> javaSuperClass = javaClass.getSuperclass();
+                            while(javaSuperClass != null)
                             {
-                                String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
+                                String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
                                 if (jsSuperClassName != null)
                                 {
                                     namedConverter.setJavascriptSuperClass(jsSuperClassName);
@@ -166,19 +148,37 @@ public class DefaultConverterManager implements ConverterManager
                                 }
 
                                 // Continue with next class
-                                checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
+                                javaSuperClass = javaSuperClass.getSuperclass();
+                            }
+
+                            // If we still have no superclass then continue trying with interfaces
+                            if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+                            {
+                                Class<?> checkInterfacesOnClass = javaClass;
+                                while(checkInterfacesOnClass != null)
+                                {
+                                    String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
+                                    if (jsSuperClassName != null)
+                                    {
+                                        namedConverter.setJavascriptSuperClass(jsSuperClassName);
+                                        break;
+                                    }
+
+                                    // Continue with next class
+                                    checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
+                                }
                             }
                         }
                     }
                 }
+                catch (Exception cne)
+                {
+                    Loggers.STARTUP.warn("Could not load class [" + match + "]. Conversion will try to work upon other runtime information");
+                }
             }
-            catch (Exception cne)
-            {
-                Loggers.STARTUP.warn("Could not load class [" + match + "]. Conversion will try to work upon other runtime information");
-            }
-        }
 
-        converters.put(match, converter);
+            converters.put(match, converter);
+        }
     }
 
     /**

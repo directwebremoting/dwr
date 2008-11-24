@@ -138,20 +138,22 @@
       <xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:attribute name="class" type="xsd:string" use="required"/>
-    <xsd:attribute name="type" use="required"  >
+    <xsd:attribute name="ref" type="xsd:string" use="optional" />
+    <xsd:attribute name="type" default="preconfigured" use="optional">
       <xsd:simpleType>
         <xsd:union >
           <xsd:simpleType>
             <xsd:restriction  base="xsd:string">
-              <xsd:enumeration value="array"/>
-              <xsd:enumeration value="bean"/>
-              <xsd:enumeration value="collection"/>
-              <xsd:enumeration value="map"/>
-              <xsd:enumeration value="enum"/>
-              <xsd:enumeration value="hibernate2"/>
-              <xsd:enumeration value="hibernate3"/>
-              <xsd:enumeration value="exception"/>
-              <xsd:enumeration value="object"/>
+              <xsd:enumeration value="array" />
+              <xsd:enumeration value="bean" />
+              <xsd:enumeration value="collection" />
+              <xsd:enumeration value="map" />
+              <xsd:enumeration value="enum" />
+              <xsd:enumeration value="hibernate2" />
+              <xsd:enumeration value="hibernate3" />
+              <xsd:enumeration value="exception" />
+              <xsd:enumeration value="object" />
+              <xsd:enumeration value="preconfigured" />
             </xsd:restriction>  
           </xsd:simpleType>
           <xsd:simpleType>
