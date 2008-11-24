@@ -32,6 +32,7 @@ public class Reply
     {
         this.callId = callId;
         this.reply = reply;
+        this.th = null;
     }
 
     /**
@@ -51,6 +52,7 @@ public class Reply
         }
 
         this.callId = callId;
+        this.reply = null;
         this.th = th;
     }
 
@@ -78,9 +80,9 @@ public class Reply
         return th;
     }
 
-    private String callId = null;
+    private final String callId;
 
-    private Object reply = null;
+    private final Object reply;
 
-    private Throwable th = null;
+    private final Throwable th;
 }
