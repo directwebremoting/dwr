@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
@@ -35,6 +33,7 @@ import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.util.IdGenerator;
+import org.directwebremoting.util.Loggers;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 /**
@@ -48,13 +47,15 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      * @param container The IoC container
      * @param request The incoming http request
      * @param response The outgoing http reply
-     * @param config The servlet configuration
-     * @param context The servlet context
-     * @see org.directwebremoting.WebContextFactory.WebContextBuilder#set(Container, HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext)
+     * @param servletConfig The servlet configuration
+     * @param servletContext The servlet context
+     * @see org.directwebremoting.WebContextFactory.WebContextBuilder#engageThread(Container, HttpServletRequest, HttpServletResponse)
      */
-    public DefaultWebContext(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context)
+    public DefaultWebContext(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig servletConfig, ServletContext servletContext)
     {
-        super(config, context, container);
+        setServletConfig(servletConfig);
+        setServletContext(servletContext);
+        setContainer(container);
 
         this.request = request;
         this.response = response;
@@ -96,7 +97,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
             scriptSession.addScript(script);
 
             // Use the new script session id not the one passed in
-            log.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + sentPage);
+            Loggers.SESSION.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + sentPage);
             this.scriptSessionId = newSessionId;
             this.page = sentPage;
         }
@@ -109,7 +110,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
             String storedPage = scriptSession.getPage();
             if (!storedPage.equals(sentPage))
             {
-                log.error("Invalid Page: Passed page=" + sentPage + ", but page in script session=" + storedPage);
+                Loggers.SESSION.error("Invalid Page: Passed page=" + sentPage + ", but page in script session=" + storedPage);
                 throw new SecurityException("Invalid Page");
             }
 
@@ -159,7 +160,6 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         if (scriptSession == null)
         {
             // TODO: We ought to have some detection mechanism rather than throwing
-            log.debug("Script session invalid (probably timed out): " + simplifyId(scriptSessionId));
             throw new SecurityException("Expected script session to exist");
         }
 
@@ -280,9 +280,4 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      * The HttpServletResponse associated with the current request
      */
     private HttpServletResponse response = null;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DefaultWebContext.class);
 }

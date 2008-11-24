@@ -31,10 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
-import org.directwebremoting.Hub;
 import org.directwebremoting.HubFactory;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
@@ -46,8 +43,6 @@ import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
-import org.directwebremoting.extend.Builder;
-import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.CallbackHelperFactory;
 import org.directwebremoting.extend.Compressor;
 import org.directwebremoting.extend.Configurator;
@@ -61,10 +56,8 @@ import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
-import org.directwebremoting.json.parse.JsonParser;
 import org.directwebremoting.json.parse.JsonParserFactory;
 import org.directwebremoting.json.parse.JsonParserFactory.JsonParserBuilder;
-import org.directwebremoting.json.serialize.JsonSerializer;
 import org.directwebremoting.json.serialize.JsonSerializerFactory;
 import org.directwebremoting.json.serialize.JsonSerializerFactory.JsonSerializerBuilder;
 import org.directwebremoting.servlet.DwrWebContextFilter;
@@ -73,6 +66,7 @@ import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
 import org.directwebremoting.util.FakeServletContext;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 import org.directwebremoting.util.VersionUtil;
 import org.xml.sax.SAXException;
 
@@ -115,13 +109,6 @@ public class StartupUtil
     public static final String DEFAULT_SERVERCONTEXT_NAME = "__default";
 
     /**
-     * The log stream
-     * Warning: This log stream is used by a number of other classes in this
-     * package to make it easier to switch the verbose startup logging off
-     */
-    public static final Log slog = LogFactory.getLog(StartupUtil.class);
-
-    /**
      * To enable us to get at a ServerContext if one has been defined or at
      * all of them if several have been defined
      */
@@ -152,7 +139,7 @@ public class StartupUtil
 
             Container container = createAndSetupDefaultContainer(servletConfig);
 
-            initContainerBeans(servletConfig, servletContext, container);
+            initContainerBeans(container);
             WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
 
             prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
@@ -181,7 +168,7 @@ public class StartupUtil
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
         if (webContextBuilder != null)
         {
-            webContextBuilder.unset();
+            webContextBuilder.disengageThread();
         }
     }
 
@@ -198,7 +185,7 @@ public class StartupUtil
         String contextPath = LocalUtil.getProperty(servletContext, "ContextPath", String.class);
         contextPath = contextPath == null ? "" :  " at " + contextPath;
 
-        slog.info("Starting: " + name + " v" + VersionUtil.getLabel() + " on " + servletContext.getServerInfo() + " / JDK " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor") + contextPath);
+        Loggers.STARTUP.info("Starting: " + name + " v" + VersionUtil.getLabel() + " on " + servletContext.getServerInfo() + " / JDK " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor") + contextPath);
     }
 
     /**
@@ -221,9 +208,9 @@ public class StartupUtil
             }
             else
             {
-                slog.debug("Using alternate Container implementation: " + typeName);
+                Loggers.STARTUP.debug("Using alternate Container implementation: " + typeName);
                 Class<?> type = LocalUtil.classForName(typeName);
-                container = (DefaultContainer) type.newInstance();
+                container = (Container) type.newInstance();
             }
 
             if (container instanceof DefaultContainer)
@@ -264,7 +251,7 @@ public class StartupUtil
                 return new DefaultContainer();
             }
 
-            slog.debug("Using alternate Container implementation: " + typeName);
+            Loggers.STARTUP.debug("Using alternate Container implementation: " + typeName);
             Class<?> type = LocalUtil.classForName(typeName);
             return (DefaultContainer) type.newInstance();
         }
@@ -285,20 +272,34 @@ public class StartupUtil
      */
     public static void setupDefaultContainer(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
-        slog.debug("Setup: Getting parameters from defaults.properties:");
+        Loggers.STARTUP.debug("Setup: Getting parameters from defaults.properties:");
         setupDefaults(container);
 
-        slog.debug("Setup: Getting parameters from ServletConfig:");
+        Loggers.STARTUP.debug("Setup: Getting parameters from environment:");
+        setupFromEnvironment(container, servletConfig);
+
+        Loggers.STARTUP.debug("Setup: Getting parameters from ServletConfig:");
         setupFromServletConfig(container, servletConfig);
 
-        slog.debug("Setup: Resolving multiple implementations:");
+        Loggers.STARTUP.debug("Setup: Resolving multiple implementations:");
         resolveMultipleImplementations(container, servletConfig);
 
-        slog.debug("Setup: Autowire beans");
+        Loggers.STARTUP.debug("Setup: Autowire beans");
         container.setupFinished();
 
-        slog.debug("Setup: Resolving listener implementations:");
+        Loggers.STARTUP.debug("Setup: Resolving listener implementations:");
         resolveListenerImplementations(container, servletConfig);
+    }
+
+    /**
+     * Add the ServletConfig and ServletContext to the container so they can
+     * be injected into contained beans
+     */
+    public static void setupFromEnvironment(DefaultContainer container, ServletConfig servletConfig)
+    {
+        container.addBean(Container.class, container);
+        container.addBean(ServletConfig.class, servletConfig);
+        container.addBean(ServletContext.class, servletConfig.getServletContext());
     }
 
     /**
@@ -315,7 +316,7 @@ public class StartupUtil
         resolveMultipleImplementation(container, Compressor.class);
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
-        slog.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
+        Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 
         abstractionImplNames = abstractionImplNames.replace(',', ' ');
         for (String abstractionImplName : abstractionImplNames.split(" "))
@@ -345,11 +346,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                slog.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                slog.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
 
@@ -366,7 +367,7 @@ public class StartupUtil
     protected static void resolveMultipleImplementation(DefaultContainer container, Class<?> toResolve)
     {
         String implNames = container.getParameter(toResolve.getName());
-        slog.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
+        Loggers.STARTUP.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
         for (String implName : implNames.split(" "))
@@ -381,7 +382,7 @@ public class StartupUtil
                 Class<?> impl = Class.forName(implName);
                 if (!toResolve.isAssignableFrom(impl))
                 {
-                    slog.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
+                    Loggers.STARTUP.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
                 }
 
                 impl.newInstance();
@@ -391,11 +392,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                slog.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                slog.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
     }
@@ -414,11 +415,11 @@ public class StartupUtil
         String implNames = container.getParameter(ScriptSessionListener.class.getName());
         if (implNames == null)
         {
-            slog.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
+            Loggers.STARTUP.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
             return;
         }
 
-        slog.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
+        Loggers.STARTUP.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
         for (String implName : implNames.split(" "))
@@ -433,7 +434,7 @@ public class StartupUtil
                 Class<?> impl = Class.forName(implName);
                 if (!ScriptSessionListener.class.isAssignableFrom(impl))
                 {
-                    slog.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());
+                    Loggers.STARTUP.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());
                 }
                 else
                 {
@@ -446,11 +447,11 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                slog.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
+                Loggers.STARTUP.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                slog.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
+                Loggers.STARTUP.error("  - Can't use : " + implName + " to implement " + ScriptSessionListener.class.getName() + ". Reason: " + ex);
             }
         }
     }
@@ -622,11 +623,11 @@ public class StartupUtil
                 {
                     Configurator configurator = LocalUtil.classNewInstance(INIT_CUSTOM_CONFIGURATOR, value, Configurator.class);
                     configurator.configure(container);
-                    slog.debug("Loaded config from: " + value);
+                    Loggers.STARTUP.debug("Loaded config from: " + value);
                 }
                 catch (Exception ex)
                 {
-                    slog.warn("Failed to start custom configurator", ex);
+                    Loggers.STARTUP.warn("Failed to start custom configurator", ex);
                 }
             }
         }
@@ -647,7 +648,7 @@ public class StartupUtil
         Configurator configurator = new AnnotationsConfigurator();
         configurator.configure(container);
 
-        slog.debug("Java5 AnnotationsConfigurator enabled");
+        Loggers.STARTUP.debug("Java5 AnnotationsConfigurator enabled");
         return true;
     }
 
@@ -661,7 +662,7 @@ public class StartupUtil
         // Allow all the configurators to have a go
         for (Configurator configurator : configurators)
         {
-            slog.debug("Adding config from " + configurator);
+            Loggers.STARTUP.debug("Adding config from " + configurator);
             configurator.configure(container);
         }
     }
@@ -697,7 +698,7 @@ public class StartupUtil
 
         if (!configureFromAnnotations(container))
         {
-            slog.debug("Java5 AnnotationsConfigurator disabled");
+            Loggers.STARTUP.debug("Java5 AnnotationsConfigurator disabled");
 
             if (delayedIOException != null)
             {
@@ -728,7 +729,7 @@ public class StartupUtil
         servletContext.setAttribute(ATTRIBUTE_CONTAINER_LIST, containers);
 
         // Update the list of ServerContexts
-        ServerContext serverContext = ServerContextFactory.get(servletContext);
+        ServerContext serverContext = ServerContextFactory.get();
 
         // Attempt to set the singleton ServerContext, unsetting for all if
         // there is already one
@@ -743,7 +744,7 @@ public class StartupUtil
             case 1:
                 // We're second - remove the previous guy from being default
                 contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
-                slog.debug("Multiple instances of DWR detected.");
+                Loggers.STARTUP.debug("Multiple instances of DWR detected.");
                 break;
             default:
                 // We're third or more - leave it that there is no default
@@ -753,7 +754,7 @@ public class StartupUtil
             // Whatever, record the ServerContext against our servlet name
             String name = servletConfig.getServletName();
             contextMap.put(name, serverContext);
-            slog.debug("Adding to contextMap, a serverContext called " + name);
+            Loggers.STARTUP.debug("Adding to contextMap, a serverContext called " + name);
 
             foundContexts++;
         }
@@ -819,82 +820,66 @@ public class StartupUtil
      */
     public static void debugConfig(Container container)
     {
-        if (slog.isDebugEnabled())
+        if (Loggers.STARTUP.isDebugEnabled())
         {
             // Container level debug
-            slog.debug("Container");
-            slog.debug("  Type: " + container.getClass().getName());
+            Loggers.STARTUP.debug("Container");
+            Loggers.STARTUP.debug("  Type: " + container.getClass().getName());
             for (String name : container.getBeanNames())
             {
                 Object object = container.getBean(name);
 
                 if (object instanceof String)
                 {
-                    slog.debug("  Param: " + name + " = " + object + " (" + object.getClass().getName() + ")");
+                    Loggers.STARTUP.debug("  Param: " + name + " = " + object + " (" + object.getClass().getName() + ")");
                 }
                 else
                 {
-                    slog.debug("  Bean: " + name + " = " + object + " (" + object.getClass().getName() + ")");
+                    Loggers.STARTUP.debug("  Bean: " + name + " = " + object + " (" + object.getClass().getName() + ")");
                 }
             }
 
             // AccessControl debugging
             AccessControl accessControl = container.getBean(AccessControl.class);
-            slog.debug("AccessControl");
-            slog.debug("  Type: " + accessControl.getClass().getName());
+            Loggers.STARTUP.debug("AccessControl");
+            Loggers.STARTUP.debug("  Type: " + accessControl.getClass().getName());
 
             // AjaxFilterManager debugging
             AjaxFilterManager ajaxFilterManager = container.getBean(AjaxFilterManager.class);
-            slog.debug("AjaxFilterManager");
-            slog.debug("  Type: " + ajaxFilterManager.getClass().getName());
+            Loggers.STARTUP.debug("AjaxFilterManager");
+            Loggers.STARTUP.debug("  Type: " + ajaxFilterManager.getClass().getName());
 
             // ConverterManager debugging
             ConverterManager converterManager = container.getBean(ConverterManager.class);
-            slog.debug("ConverterManager");
-            slog.debug("  Type: " + converterManager.getClass().getName());
+            Loggers.STARTUP.debug("ConverterManager");
+            Loggers.STARTUP.debug("  Type: " + converterManager.getClass().getName());
 
             // CreatorManager debugging
             CreatorManager creatorManager = container.getBean(CreatorManager.class);
-            slog.debug("CreatorManager");
-            slog.debug("  Type: " + creatorManager.getClass().getName());
+            Loggers.STARTUP.debug("CreatorManager");
+            Loggers.STARTUP.debug("  Type: " + creatorManager.getClass().getName());
             for (String creatorName : creatorManager.getCreatorNames(false))
             {
                 Creator creator = creatorManager.getCreator(creatorName, false);
-                slog.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
+                Loggers.STARTUP.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
             }
         }
     }
 
     /**
      * Get the various objects out of the {@link Container}, and configure them.
-     * @param servletConfig The servlet configuration
-     * @param servletContext The servlet context
      * @param container The container to save in the ServletContext
      */
-    public static void initContainerBeans(ServletConfig servletConfig, ServletContext servletContext, Container container)
+    public static void initContainerBeans(Container container)
     {
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
         WebContextFactory.setBuilder(webContextBuilder);
-        webContextBuilder.set(container, null, null, servletConfig, servletContext);
+        webContextBuilder.engageThread(container, null, null);
 
-        ServerContextBuilder serverContextBuilder = container.getBean(ServerContextBuilder.class);
-        ServerContextFactory.setBuilder(serverContextBuilder);
-        serverContextBuilder.set(container, servletContext, servletConfig);
-
-        Builder<Hub> hubBuilder = container.getBean(HubBuilder.class);
-        HubFactory.setBuilder(hubBuilder);
-        hubBuilder.set(container, servletContext);
-
-        Builder<JsonParser> jsonParserBuilder = container.getBean(JsonParserBuilder.class);
-        JsonParserFactory.setBuilder(jsonParserBuilder);
-        jsonParserBuilder.set(container, servletContext);
-
-        Builder<JsonSerializer> jsonSerializerBuilder = container.getBean(JsonSerializerBuilder.class);
-        JsonSerializerFactory.setBuilder(jsonSerializerBuilder);
-        jsonSerializerBuilder.set(container, servletContext);
-
-        Builder<CallbackHelper> callbackHelperBuilder = container.getBean(CallbackHelperBuilder.class);
-        CallbackHelperFactory.setBuilder(callbackHelperBuilder);
-        callbackHelperBuilder.set(container, servletContext);
+        ServerContextFactory.setBuilder(container.getBean(ServerContextBuilder.class));
+        HubFactory.setBuilder(container.getBean(HubBuilder.class));
+        JsonParserFactory.setBuilder(container.getBean(JsonParserBuilder.class));
+        JsonSerializerFactory.setBuilder(container.getBean(JsonSerializerBuilder.class));
+        CallbackHelperFactory.setBuilder(container.getBean(CallbackHelperBuilder.class));
     }
 }

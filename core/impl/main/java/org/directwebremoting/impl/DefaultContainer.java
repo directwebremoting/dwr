@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
 import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * DefaultContainer is like a mini-IoC container for DWR.
@@ -40,6 +42,17 @@ import org.directwebremoting.util.LocalUtil;
  */
 public class DefaultContainer extends AbstractContainer implements Container
 {
+    /**
+     * Set the class that should be used to implement the given interface
+     * @param base The interface to implement
+     * @param bean The new implementation
+     * @throws ContainerConfigurationException If the specified beans could not be used
+     */
+    public <T> void addBean(Class<T> base, T bean)
+    {
+        addParameter(base.getName(), bean);
+    }
+
     /**
      * Set the class that should be used to implement the given interface
      * @param base The interface to implement
@@ -111,7 +124,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                 Class<?> iface = LocalUtil.classForName(askFor);
                 if (!iface.isAssignableFrom(value.getClass()))
                 {
-                    slog.error("Can't cast: " + value + " to " + askFor);
+                    Loggers.STARTUP.error("Can't cast: " + value + " to " + askFor);
                 }
             }
             catch (ClassNotFoundException ex)
@@ -120,15 +133,15 @@ public class DefaultContainer extends AbstractContainer implements Container
             }
         }
 
-        if (slog.isDebugEnabled())
+        if (Loggers.STARTUP.isDebugEnabled())
         {
             if (value instanceof String)
             {
-                slog.debug("- value: " + askFor + " = " + value);
+                Loggers.STARTUP.debug("- value: " + askFor + " = " + value);
             }
             else
             {
-                slog.debug("- impl:  " + askFor + " = " + value.getClass().getName());
+                Loggers.STARTUP.debug("- impl:  " + askFor + " = " + value.getClass().getName());
             }
         }
 
@@ -168,13 +181,36 @@ public class DefaultContainer extends AbstractContainer implements Container
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.Container#newInstance(java.lang.Class)
+     */
+    public <T> T newInstance(Class<T> type) throws InstantiationException, IllegalAccessException
+    {
+        T t = type.newInstance();
+        initializeBean(t);
+        return t;
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.Container#initializeBean(java.lang.Object)
      */
     public void initializeBean(Object bean)
     {
+        // HACK: It wouldn't be a good idea to start injecting into objects
+        // created by the app-server. Currently this is just ServletContext
+        // and ServletConfig. If it is others in the future then we'll need a
+        // better way of marking objects that should not be injected into.
+        // It's worth remembering that the Container is itself in the container
+        // so there is a vague risk of recursion here if we're not careful
+
+        if (bean instanceof ServletContext || bean instanceof ServletConfig)
+        {
+            Loggers.STARTUP.debug("- skipping injecting into: " + bean.getClass().getName());
+            return;
+        }
+
         if (!(bean instanceof String))
         {
-            slog.debug("- autowire: " + bean.getClass().getName());
+            Loggers.STARTUP.debug("- autowire: " + bean.getClass().getName());
 
             Method[] methods = bean.getClass().getMethods();
             methods:
@@ -193,7 +229,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                     {
                         if (propertyType.isAssignableFrom(setting.getClass()))
                         {
-                            slog.debug("  - by name: " + name + " = " + setting);
+                            Loggers.STARTUP.debug("  - by name: " + name + " = " + setting);
                             invoke(setter, bean, setting);
 
                             continue methods;
@@ -204,7 +240,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                             {
                                 Object value = LocalUtil.simpleConvert((String) setting, propertyType);
 
-                                slog.debug("  - by name: " + name + " = " + value);
+                                Loggers.STARTUP.debug("  - by name: " + name + " = " + value);
                                 invoke(setter, bean, value);
                             }
                             catch (IllegalArgumentException ex)
@@ -220,13 +256,13 @@ public class DefaultContainer extends AbstractContainer implements Container
                     Object value = beans.get(propertyType.getName());
                     if (value != null)
                     {
-                        slog.debug("  - by type: " + name + " = " + value.getClass().getName());
+                        Loggers.STARTUP.debug("  - by type: " + name + " = " + value.getClass().getName());
                         invoke(setter, bean, value);
 
                         continue methods;
                     }
 
-                    slog.debug("  - no properties for: " + name);
+                    Loggers.STARTUP.debug("  - no properties for: " + name);
                 }
             }
         }
@@ -247,11 +283,11 @@ public class DefaultContainer extends AbstractContainer implements Container
         }
         catch (InvocationTargetException ex)
         {
-            slog.error("  - Exception during auto-wire: ", ex.getTargetException());
+            Loggers.STARTUP.error("  - Exception during auto-wire: ", ex.getTargetException());
         }
         catch (Exception ex)
         {
-            slog.error("  - Error calling setter: " + setter, ex);
+            Loggers.STARTUP.error("  - Error calling setter: " + setter, ex);
         }
     }
 
@@ -276,7 +312,7 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public void contextDestroyed()
     {
-        slog.debug("ContextDestroyed for container: " + getClass().getSimpleName());
+        Loggers.STARTUP.debug("ContextDestroyed for container: " + getClass().getSimpleName());
 
         Collection<String> beanNames = getBeanNames();
         for (String beanName : beanNames)
@@ -285,7 +321,7 @@ public class DefaultContainer extends AbstractContainer implements Container
             if (bean instanceof UninitializingBean)
             {
                 UninitializingBean scl = (UninitializingBean) bean;
-                slog.debug("- For contained bean: " + beanName);
+                Loggers.STARTUP.debug("- For contained bean: " + beanName);
 
                 scl.contextDestroyed();
             }
@@ -297,7 +333,7 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public void servletDestroyed()
     {
-        slog.debug("ServletDestroyed for container: " + getClass().getSimpleName());
+        Loggers.STARTUP.debug("ServletDestroyed for container: " + getClass().getSimpleName());
 
         Collection<String> beanNames = getBeanNames();
         for (String beanName : beanNames)
@@ -306,7 +342,7 @@ public class DefaultContainer extends AbstractContainer implements Container
             if (bean instanceof UninitializingBean)
             {
                 UninitializingBean scl = (UninitializingBean) bean;
-                slog.debug("- For contained bean: " + beanName);
+                Loggers.STARTUP.debug("- For contained bean: " + beanName);
 
                 scl.servletDestroyed();
             }
@@ -317,11 +353,4 @@ public class DefaultContainer extends AbstractContainer implements Container
      * The beans that we know of indexed by type
      */
     protected Map<String, Object> beans = new TreeMap<String, Object>();
-
-    /**
-     * The log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    private static final Log slog = StartupUtil.slog;
 }
