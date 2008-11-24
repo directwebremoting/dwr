@@ -187,7 +187,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         {
             StartupUtil.logStartup(getClass().getSimpleName(), servletConfig);
             StartupUtil.setupDefaultContainer(container, servletConfig);
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
+            StartupUtil.initContainerBeans(container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
             StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
@@ -210,7 +210,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         {
             if (webContextBuilder != null)
             {
-                webContextBuilder.unset();
+                webContextBuilder.disengageThread();
             }
         }
     }
@@ -230,14 +230,14 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         try
         {
             // set up the web context and delegate to the processor
-            webContextBuilder.set(container, request, response, servletConfig, getServletContext());
+            webContextBuilder.engageThread(container, request, response);
 
             UrlProcessor processor = container.getBean(UrlProcessor.class);
             processor.handle(request, response);
         }
         finally
         {
-            webContextBuilder.unset();
+            webContextBuilder.disengageThread();
         }
 
         // return null to inform the dispatcher servlet the request has already been handled

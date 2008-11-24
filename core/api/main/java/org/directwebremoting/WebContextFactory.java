@@ -15,8 +15,6 @@
  */
 package org.directwebremoting;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -63,32 +61,33 @@ public class WebContextFactory
 
     /**
      * Class to enable us to access servlet parameters.
+     * This class is for internal use only.
      */
     public interface WebContextBuilder
     {
+        /**
+         * Accessor for the WebContext that is associated with this thread.
+         * This method is only for use internally to DWR.
+         * @see WebContextFactory#get()
+         */
+        WebContext get();
+
         /**
          * Make the current thread know what the current request is.
          * This method is only for use internally to DWR.
          * @param container The IoC container
          * @param request The incoming http request
          * @param response The outgoing http reply
-         * @param config The servlet configuration
-         * @param context The servlet context
-         * @see #unset()
+         * @see #disengageThread()
          */
-        void set(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context);
-
-        /**
-         * @return The WebContext that is associated with this thread
-         */
-        WebContext get();
+        void engageThread(Container container, HttpServletRequest request, HttpServletResponse response);
 
         /**
          * Unset the current ExecutionContext
          * This method is only for use internally to DWR.
-         * @see #set(Container, HttpServletRequest, HttpServletResponse, ServletConfig, ServletContext)
+         * @see #engageThread(Container, HttpServletRequest, HttpServletResponse)
          */
-        void unset();
+        void disengageThread();
     }
 
     /**

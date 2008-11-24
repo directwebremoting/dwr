@@ -33,13 +33,24 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 public class DefaultWebContextBuilder implements WebContextBuilder
 {
     /* (non-Javadoc)
+     * @see org.directwebremoting.WebContextBuilder#get()
+     */
+    public WebContext get()
+    {
+        return user.get();
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.WebContextBuilder#set(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.ServletConfig, javax.servlet.ServletContext, org.directwebremoting.Container)
      */
-    public void set(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig config, ServletContext context)
+    public void engageThread(Container container, HttpServletRequest request, HttpServletResponse response)
     {
         try
         {
-            WebContext ec = new DefaultWebContext(container, request, response, config, context);
+            ServletConfig servletConfig = container.getBean(ServletConfig.class);
+            ServletContext servletContext = container.getBean(ServletContext.class);
+
+            WebContext ec = new DefaultWebContext(container, request, response, servletConfig, servletContext);
             user.set(ec);
         }
         catch (Exception ex)
@@ -49,17 +60,9 @@ public class DefaultWebContextBuilder implements WebContextBuilder
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.WebContextBuilder#get()
-     */
-    public WebContext get()
-    {
-        return user.get();
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.WebContextBuilder#unset()
      */
-    public void unset()
+    public void disengageThread()
     {
         user.set(null);
     }
