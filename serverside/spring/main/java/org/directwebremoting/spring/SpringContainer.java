@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.impl.DefaultContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -60,20 +61,11 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         try
         {
             Class<?> clz = ClassUtils.forName(askFor);
-            if (log.isDebugEnabled())
-            {
-                log.debug("trying to resolve the following class from the Spring bean container: " + clz.getName());
-            }
 
             Map<String, Object> beansOfType = ((ListableBeanFactory) beanFactory).getBeansOfType(clz);
-            if (log.isDebugEnabled())
-            {
-                log.debug("beans: " + beansOfType + " - " + beansOfType.size());
-            }
 
             if (beansOfType.isEmpty())
             {
-                log.debug("adding parameter the normal way");
                 super.addParameter(askFor, valueParam);
             }
             else if (beansOfType.size() > 1)
@@ -129,8 +121,15 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         // Snarf the beans from Spring
         if (beanFactory instanceof ListableBeanFactory)
         {
-            ListableBeanFactory listable = (ListableBeanFactory) beanFactory;
-            names.addAll(Arrays.asList(listable.getBeanDefinitionNames()));
+            try
+            {
+                ListableBeanFactory listable = (ListableBeanFactory) beanFactory;
+                names.addAll(Arrays.asList(listable.getBeanDefinitionNames()));
+            }
+            catch (IllegalStateException ex)
+            {
+                log.warn("List of beanNames does not include Spring beans since the BeanFactory was closed when we tried to read it.");
+            }
         }
         else
         {
@@ -144,12 +143,28 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.impl.AbstractContainer#callInitializingBeans()
+     * @see org.directwebremoting.impl.DefaultContainer#destroy()
      */
     @Override
-    protected void callInitializingBeans()
+    public void contextDestroyed()
     {
-        callInitializingBeans(super.getBeanNames());
+        // This override prevents us from trying to poke around in the Spring
+        // BeanFactory which gets Spring all confused
+        log.debug("ServletContext destroying for container: " + getClass().getSimpleName());
+
+        // We're being destroyed, we shouldn't be touching Spring beans
+        Collection<String> names = super.getBeanNames();
+        for (String beanName : names)
+        {
+            Object bean = getBean(beanName);
+            if (bean instanceof UninitializingBean)
+            {
+                UninitializingBean scl = (UninitializingBean) bean;
+                log.debug("- For contained bean: " + beanName);
+
+                scl.contextDestroyed();
+            }
+        }
     }
 
     /**
