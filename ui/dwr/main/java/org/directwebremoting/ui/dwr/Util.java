@@ -128,18 +128,19 @@ public class Util
      * @param data The cells to add to the table
      * @param options See link above for documentation on the options
      */
+    @SuppressWarnings("unused")
     public static void addRows(String elementId, String[][] data, String options)
     {
-        if (data.length > 0)
-        {
-            StringBuffer functions = new StringBuffer();
-            for (int i = 0; i < data[0].length; i++)
-            {
-                functions.append("function(data) { return data[")
-                         .append(i)
-                         .append("]},");
-            }
+        StringBuffer functions = new StringBuffer();
 
+        int rowCount = 0;
+        for (Object ignore : data)
+        {
+            functions.append("function(data) { return data[").append(rowCount++).append("]},");
+        }
+
+        if (rowCount > 0)
+        {
             functions.deleteCharAt(functions.length() - 1);
 
             ScriptBuffer script = new ScriptBuffer();
@@ -163,6 +164,53 @@ public class Util
      * @param data The cells to add to the table
      */
     public static void addRows(String elementId, String[][] data)
+    {
+        addRows(elementId, data, null);
+    }
+
+    /**
+     * Create rows inside a the table, tbody, thead or tfoot element (given by id).
+     * <p><a href="http://getahead.org/dwr/browser/tables">More</a>.
+     * @param elementId The HTML element to update (by id)
+     * @param data The cells to add to the table
+     * @param options See link above for documentation on the options
+     */
+    @SuppressWarnings("unused")
+    public static void addRows(String elementId, Collection<Collection<String>> data, String options)
+    {
+        StringBuffer functions = new StringBuffer();
+
+        int rowCount = 0;
+        for (Object ignore : data)
+        {
+            functions.append("function(data) { return data[").append(rowCount++).append("]},");
+        }
+
+        if (rowCount > 0)
+        {
+            functions.deleteCharAt(functions.length() - 1);
+
+            ScriptBuffer script = new ScriptBuffer();
+            script.appendScript("dwr.util.addRows(")
+                  .appendData(elementId)
+                  .appendScript(",")
+                  .appendData(data)
+                  .appendScript(",")
+                  .appendScript("[" + functions.toString() + "]")
+                  .appendScript(options == null ? "" : ", " + options)
+                  .appendScript(");");
+
+            ScriptSessions.addScript(script);
+        }
+    }
+
+    /**
+     * Create rows inside a the table, tbody, thead or tfoot element (given by id).
+     * <p><a href="http://getahead.org/dwr/browser/tables">More</a>.
+     * @param elementId The HTML element to update (by id)
+     * @param data The cells to add to the table
+     */
+    public static void addRows(String elementId, Collection<Collection<String>> data)
     {
         addRows(elementId, data, null);
     }
