@@ -26,6 +26,7 @@ import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Configurator;
+import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -169,7 +170,16 @@ public class SpringConfigurator implements Configurator
                     {
                         params.put("javascript", converterConfig.getJavascriptClassName());
                     }
-                    converterManager.addConverter(match, converterConfig.getType(), params);
+
+                    String type = converterConfig.getType();
+                    if(type.startsWith("preconfigured"))
+                    {
+                        converterManager.addConverter(match, (Converter) container.getBean(type.substring(14)));
+                    }
+                    else
+                    {
+                        converterManager.addConverter(match, type, params);
+                    }
                 }
             }
             catch (Exception ex)

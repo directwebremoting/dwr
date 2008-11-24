@@ -492,6 +492,10 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
         {
             Element element = (Element) node;
             String type = element.getAttribute("type");
+            if ("preconfigured".equals(type))
+            {
+                type += ":" + element.getAttribute("ref");
+            }
             String className = element.getAttribute("class");
             String javascriptClassName = element.getAttribute("javascript");
 
