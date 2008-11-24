@@ -65,7 +65,7 @@ public class DwrServlet extends HttpServlet
 
             container = createContainer(servletConfig);
 
-            StartupUtil.initContainerBeans(servletConfig, servletContext, container);
+            StartupUtil.initContainerBeans(container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
             StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
@@ -81,7 +81,7 @@ public class DwrServlet extends HttpServlet
         {
             if (webContextBuilder != null)
             {
-                webContextBuilder.unset();
+                webContextBuilder.disengageThread();
             }
         }
     }
@@ -136,14 +136,14 @@ public class DwrServlet extends HttpServlet
     {
         try
         {
-            webContextBuilder.set(container, request, response, getServletConfig(), getServletContext());
+            webContextBuilder.engageThread(container, request, response);
 
             UrlProcessor processor = container.getBean(UrlProcessor.class);
             processor.handle(request, response);
         }
         finally
         {
-            webContextBuilder.unset();
+            webContextBuilder.disengageThread();
         }
     }
 

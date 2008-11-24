@@ -227,7 +227,7 @@ class DwrGuiceServletModule extends AbstractDwrModule
     {
         public ServerContext get()
         {
-            return ServerContextFactory.get(getServletContext());
+            return ServerContextFactory.get();
         }
 
         @Override

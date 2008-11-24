@@ -50,7 +50,7 @@ public class TestEnvironment
      */
     public static void engageThread()
     {
-        webContextBuilder.set(container, null, null, servletConfig, servletContext);
+        webContextBuilder.engageThread(container, null, null);
     }
 
     /**
@@ -58,7 +58,7 @@ public class TestEnvironment
      */
     public static void disengageThread()
     {
-        webContextBuilder.unset();
+        webContextBuilder.disengageThread();
     }
 
     /**
@@ -118,7 +118,7 @@ public class TestEnvironment
        {
            container = StartupUtil.createAndSetupDefaultContainer(servletConfig);
 
-           StartupUtil.initContainerBeans(servletConfig, servletContext, container);
+           StartupUtil.initContainerBeans(container);
            webContextBuilder = container.getBean(WebContextBuilder.class);
            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
            StartupUtil.publishContainer(container, servletConfig);
@@ -136,7 +136,7 @@ public class TestEnvironment
        {
            if (webContextBuilder != null)
            {
-               webContextBuilder.unset();
+               webContextBuilder.disengageThread();
            }
        }
    }

@@ -116,7 +116,7 @@ public class DefaultRemoterTest
         replay(ajaxFilterManager);
 
         DefaultWebContextBuilder builder = new DefaultWebContextBuilder();
-        builder.set(null, request, null, null, null);
+        builder.engageThread(null, request, null);
         TestWebContextFactory.setWebContextBuilder(builder);
 
         FakeHttpServletResponse response = new FakeHttpServletResponse();

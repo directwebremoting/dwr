@@ -77,12 +77,12 @@ public class DwrWebContextFilter implements Filter
         {
             try
             {
-                webContextBuilder.set(container, (HttpServletRequest) request, (HttpServletResponse) response, servletConfig, servletContext);
+                webContextBuilder.engageThread(container, (HttpServletRequest) request, (HttpServletResponse) response);
                 chain.doFilter(request, response);
             }
             finally
             {
-                webContextBuilder.unset();
+                webContextBuilder.disengageThread();
             }
         }
     }

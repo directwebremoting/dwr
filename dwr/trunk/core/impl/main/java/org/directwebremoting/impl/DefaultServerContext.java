@@ -36,19 +36,6 @@ import org.directwebremoting.util.VersionUtil;
  */
 public class DefaultServerContext implements ServerContext
 {
-    /**
-     * Build a new DefaultServerContext
-     * @param config The servlet configuration
-     * @param context The servlet context
-     * @param container The IoC container
-     */
-    public DefaultServerContext(ServletConfig config, ServletContext context, Container container)
-    {
-        this.config = config;
-        this.context = context;
-        this.container = container;
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.ServerContext#getAllScriptSessions()
      */
@@ -77,6 +64,14 @@ public class DefaultServerContext implements ServerContext
         return getScriptSessionManager().getScriptSession(sessionId, null, null);
     }
 
+    /**
+     * Injection point for Container
+     */
+    public void setContainer(Container container)
+    {
+        this.container = container;
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.ServerContext#getContainer()
      */
@@ -85,12 +80,28 @@ public class DefaultServerContext implements ServerContext
         return container;
     }
 
+    /**
+     * Injection point for ServletConfig
+     */
+    public void setServletConfig(ServletConfig servletConfig)
+    {
+        this.servletConfig = servletConfig;
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.ServerContext#getServletConfig()
      */
     public ServletConfig getServletConfig()
     {
-        return config;
+        return servletConfig;
+    }
+
+    /**
+     * Injection point for ServletContext
+     */
+    public void setServletContext(ServletContext servletContext)
+    {
+        this.servletContext = servletContext;
     }
 
     /* (non-Javadoc)
@@ -98,7 +109,7 @@ public class DefaultServerContext implements ServerContext
      */
     public ServletContext getServletContext()
     {
-        return context;
+        return servletContext;
     }
 
     /* (non-Javadoc)
@@ -152,7 +163,7 @@ public class DefaultServerContext implements ServerContext
     @Override
     public String toString()
     {
-        return "DefaultServerContext[path=" + config.getServletName() + ", container=" + container.getClass().getSimpleName() + "]";
+        return "DefaultServerContext[path=" + servletConfig.getServletName() + ", container=" + container.getClass().getSimpleName() + "]";
     }
 
     /* (non-Javadoc)
@@ -168,12 +179,12 @@ public class DefaultServerContext implements ServerContext
     /**
      * The ServletConfig associated with the current request
      */
-    private ServletConfig config = null;
+    private ServletConfig servletConfig = null;
 
     /**
      * The ServletContext associated with the current request
      */
-    private ServletContext context = null;
+    private ServletContext servletContext = null;
 
     /**
      * The IOC container implementation

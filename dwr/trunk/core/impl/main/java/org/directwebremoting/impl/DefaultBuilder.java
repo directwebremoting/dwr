@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.impl;
 
-import java.lang.reflect.Constructor;
-
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
@@ -25,36 +23,29 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Builder;
+import org.directwebremoting.extend.InitializingBean;
 
 /**
  * A Builder that creates DefaultHubs.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultBuilder<T> implements Builder<T>
+public class DefaultBuilder<T> implements Builder<T>, InitializingBean
 {
     /**
      * This method calls created.getConstructor(constructorParameters) in order
      * to find a constructor which the Builder can use
      * @param created The type we wish to create
-     * @param constructorParameters The parameter types needed by the chosen constructor
      */
-    public DefaultBuilder(Class<? extends T> created, Class<?>...constructorParameters)
+    public DefaultBuilder(Class<? extends T> created)
     {
-        try
-        {
-            this.constructor = created.getConstructor(constructorParameters);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
+        this.created = created;
         this.attributeName = created.getName();
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Builder#get()
      */
+    @SuppressWarnings("unchecked")
     public T get()
     {
         // Try to get the context from the thread
@@ -65,15 +56,20 @@ public class DefaultBuilder<T> implements Builder<T>
             serverContext = StartupUtil.getSingletonServerContext();
             if (serverContext == null)
             {
-                log.fatal("Error initializing " + constructor.getDeclaringClass().getName() + " because singleton ServerContext == null.");
+                log.fatal("Error initializing " + created.getName() + " because this is not a DWR thread and there is more than one DWR servlet in the current classloader.");
                 log.fatal("This probably means that either DWR has not been properly initialized (in which case you should delay the current action until it has)");
                 log.fatal("or that there is more than 1 DWR servlet is configured in this classloader, in which case you should provide a ServletContext to the get() yourself.");
                 throw new IllegalStateException("No singleton ServerContext see logs for possible causes and solutions.");
             }
         }
 
+        // This might be a builder for ServletContexts in which case we're done
+        if (ServletContext.class.isAssignableFrom(created))
+        {
+            return (T) created;
+        }
+
         ServletContext servletContext = serverContext.getServletContext();
-        @SuppressWarnings("unchecked")
         T reply = (T) servletContext.getAttribute(attributeName);
         if (reply == null)
         {
@@ -104,15 +100,16 @@ public class DefaultBuilder<T> implements Builder<T>
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Builder#set(javax.servlet.ServletContext, java.lang.Object[])
+     * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
      */
-    public void set(Container container, ServletContext context, Object... constructorParameters)
+    public void afterContainerSetup(Container container)
     {
         try
         {
-            T t = constructor.newInstance(constructorParameters);
-            container.initializeBean(t);
-            context.setAttribute(attributeName, t);
+            T t = container.newInstance(created);
+
+            ServletContext servletContext = container.getBean(ServletContext.class);
+            servletContext.setAttribute(attributeName, t);
         }
         catch (Exception ex)
         {
@@ -123,7 +120,7 @@ public class DefaultBuilder<T> implements Builder<T>
     /**
      * How we create objects of the given type
      */
-    private final Constructor<? extends T> constructor;
+    private final Class<? extends T> created;
 
     /**
      * The attribute under which we publish the T
