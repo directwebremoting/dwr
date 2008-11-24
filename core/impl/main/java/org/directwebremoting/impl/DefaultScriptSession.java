@@ -64,8 +64,6 @@ public class DefaultScriptSession implements RealScriptSession
         this.manager = manager;
         this.creationTime = System.currentTimeMillis();
         this.lastAccessedTime = creationTime;
-
-        log.debug("Created DefaultScriptSession: " + getDebugName() + " on " + page);
     }
 
     /* (non-Javadoc)
@@ -263,7 +261,7 @@ public class DefaultScriptSession implements RealScriptSession
                     catch (Exception ex)
                     {
                         it.remove();
-                        log.debug("Failed to write to ScriptConduit, removing from list: " + conduit);
+                        log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
                     }
                 }
 
@@ -340,7 +338,7 @@ public class DefaultScriptSession implements RealScriptSession
                 }
                 catch (ConversionException ex)
                 {
-                    log.warn("Failed to convert data. Dropping Javascript: " + script, ex);
+                    log.error("Failed to convert data. Dropping Javascript: " + script, ex);
                     it.remove();
                 }
             }
@@ -359,7 +357,7 @@ public class DefaultScriptSession implements RealScriptSession
             boolean removed = conduits.remove(conduit);
             if (!removed)
             {
-                log.debug("Removing unattached ScriptConduit: " + conduit);
+                log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
                 debug();
             }
         }
@@ -434,7 +432,6 @@ public class DefaultScriptSession implements RealScriptSession
             long age = now - lastAccessedTime;
             if (age > manager.getScriptSessionTimeout())
             {
-                log.debug("Timeout: lastAccessedTime=" + lastAccessedTime + " for " + this);
                 invalidate();
             }
         }
@@ -447,7 +444,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         if (log.isDebugEnabled())
         {
-            log.debug("Known ScriptConduits:");
+            log.debug("Found " + conduits.size() + " ScriptConduits attached to " + this);
             for (ScriptConduit scriptConduit : conduits)
             {
                 log.debug("- " + scriptConduit);
@@ -504,7 +501,7 @@ public class DefaultScriptSession implements RealScriptSession
     /**
      * A very short name for debugging purposes
      */
-    private String getDebugName()
+    protected String getDebugName()
     {
         return id.substring(0, 4);
     }

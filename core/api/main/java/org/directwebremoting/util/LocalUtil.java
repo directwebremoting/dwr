@@ -1341,14 +1341,14 @@ public final class LocalUtil
             if (rawType instanceof Class)
             {
                 Class<?> type = (Class<?>) rawType;
-                log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + debugContext);
+                // log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + debugContext);
                 return type;
             }
         }
         else if (parameterType instanceof Class)
         {
             Class<?> type = (Class<?>) parameterType;
-            log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + debugContext);
+            // log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + debugContext);
             return type;
         }
 

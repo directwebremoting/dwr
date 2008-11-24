@@ -29,7 +29,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory;
@@ -44,6 +43,7 @@ import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.LogErrorHandler;
+import org.directwebremoting.util.Loggers;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -84,7 +84,7 @@ public class DwrXmlConfigurator implements Configurator
                 throw new IOException("Missing config file: '" + servletResourceName + "'");
             }
 
-            slog.debug("Configuring from servlet resource: " + servletResourceName);
+            Loggers.STARTUP.debug("Configuring from servlet resource: " + servletResourceName);
             setInputStream(in);
         }
         finally
@@ -110,7 +110,7 @@ public class DwrXmlConfigurator implements Configurator
             throw new IOException("Missing config file: '" + classResourceName + "'");
         }
 
-        slog.debug("Configuring from class resource: " + classResourceName);
+        Loggers.STARTUP.debug("Configuring from class resource: " + classResourceName);
         setInputStream(in);
     }
 
@@ -252,11 +252,11 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (NoClassDefFoundError ex)
         {
-            slog.info("Convertor '" + type + "' not loaded due to NoClassDefFoundError. (match='" + match + "'). Cause: " + ex.getMessage());
+            Loggers.STARTUP.info("Convertor '" + type + "' not loaded due to NoClassDefFoundError. (match='" + match + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            slog.error("Failed to add convertor: match=" + match + ", type=" + type, ex);
+            Loggers.STARTUP.error("Failed to add convertor: match=" + match + ", type=" + type, ex);
         }
     }
 
@@ -281,11 +281,11 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (NoClassDefFoundError ex)
         {
-            slog.info("Creator '" + type + "' not loaded due to NoClassDefFoundError. (javascript='" + javascript + "'). Cause: " + ex.getMessage());
+            Loggers.STARTUP.info("Creator '" + type + "' not loaded due to NoClassDefFoundError. (javascript='" + javascript + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            slog.error("Failed to add creator: type=" + type + ", javascript=" + javascript, ex);
+            Loggers.STARTUP.error("Failed to add creator: type=" + type + ", javascript=" + javascript, ex);
         }
     }
 
@@ -308,15 +308,15 @@ public class DwrXmlConfigurator implements Configurator
         }
         catch (ClassCastException ex)
         {
-            slog.error(type + " does not implement " + AjaxFilter.class.getName(), ex);
+            Loggers.STARTUP.error(type + " does not implement " + AjaxFilter.class.getName(), ex);
         }
         catch (NoClassDefFoundError ex)
         {
-            slog.info("Missing class for filter (class='" + type + "'). Cause: " + ex.getMessage());
+            Loggers.STARTUP.info("Missing class for filter (class='" + type + "'). Cause: " + ex.getMessage());
         }
         catch (Exception ex)
         {
-            slog.error("Failed to add filter: class=" + type, ex);
+            Loggers.STARTUP.error("Failed to add filter: class=" + type, ex);
         }
     }
 
@@ -470,7 +470,7 @@ public class DwrXmlConfigurator implements Configurator
             short type = node.getNodeType();
             if (type != Node.TEXT_NODE && type != Node.CDATA_SECTION_NODE)
             {
-                slog.warn("Ignoring illegal node type: " + type);
+                Loggers.STARTUP.warn("Ignoring illegal node type: " + type);
                 continue;
             }
 
@@ -512,14 +512,14 @@ public class DwrXmlConfigurator implements Configurator
                     }
                     else
                     {
-                        slog.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
+                        Loggers.STARTUP.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
                     }
                 }
             }
 
             if (method == null)
             {
-                slog.error("Unable to find method called: " + methodName + " on type: " + dest.getName() + " from creator: " + javascript);
+                Loggers.STARTUP.error("Unable to find method called: " + methodName + " on type: " + dest.getName() + " from creator: " + javascript);
                 continue;
             }
 
@@ -601,13 +601,6 @@ public class DwrXmlConfigurator implements Configurator
      * Either this or {@link #classResourceName} will be null
      */
     private String servletResourceName;
-
-    /**
-     * The log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    public static final Log slog = StartupUtil.slog;
 
     /*
      * The element names

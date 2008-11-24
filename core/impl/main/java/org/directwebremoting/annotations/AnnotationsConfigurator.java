@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.convert.BeanConverter;
@@ -36,8 +35,8 @@ import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
-import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A Configurator that works off Annotations.
@@ -59,7 +58,7 @@ public class AnnotationsConfigurator implements Configurator
             }
             catch (Exception ex)
             {
-                slog.error("Failed to process class: " + clazz.getName(), ex);
+                Loggers.STARTUP.error("Failed to process class: " + clazz.getName(), ex);
             }
         }
     }
@@ -95,7 +94,7 @@ public class AnnotationsConfigurator implements Configurator
                     }
                     catch (Exception ex)
                     {
-                        slog.error("Failed to process class: " + element, ex);
+                        Loggers.STARTUP.error("Failed to process class: " + element, ex);
                     }
                 }
             }
@@ -107,7 +106,7 @@ public class AnnotationsConfigurator implements Configurator
                 }
                 catch (Exception ex)
                 {
-                    slog.error("Failed to process class: " + data.getClass().getName(), ex);
+                    Loggers.STARTUP.error("Failed to process class: " + data.getClass().getName(), ex);
                 }
             }
         }
@@ -176,12 +175,12 @@ public class AnnotationsConfigurator implements Configurator
 
         try
         {
-            slog.debug("Adding class " + clazz.getName() + " as " + name);
+            Loggers.STARTUP.debug("Adding class " + clazz.getName() + " as " + name);
             creatorManager.addCreator(name, creatorName, params);
         }
         catch (Exception ex)
         {
-            slog.error("Failed to add class as Creator: " + clazz.getName(), ex);
+            Loggers.STARTUP.error("Failed to add class as Creator: " + clazz.getName(), ex);
         }
 
         AccessControl accessControl = container.getBean(AccessControl.class);
@@ -356,11 +355,4 @@ public class AnnotationsConfigurator implements Configurator
      * The getter prefix for non-boolean variables
      */
     private static final String METHOD_PREFIX_GET = "get";
-
-    /**
-     * The log stream
-     * Warning: This log stream is used by a number of other classes in this
-     * package to make it easier to switch the verbose startup logging off
-     */
-    private static final Log slog = StartupUtil.slog;
 }

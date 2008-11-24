@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import org.apache.commons.logging.Log;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -31,6 +30,7 @@ import org.directwebremoting.extend.OverrideProperty;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A parser for type info in a dwr.xml signature.
@@ -59,7 +59,7 @@ public class SignatureParser
     {
         try
         {
-            slog.debug("Parsing extra type info: ");
+            Loggers.STARTUP.debug("Parsing extra type info: ");
 
             String reply = LegacyCompressor.stripMultiLineComments(sigtext);
             reply = LegacyCompressor.stripSingleLineComments(reply);
@@ -91,7 +91,7 @@ public class SignatureParser
         }
         catch (Exception ex)
         {
-            slog.error("Unexpected Error", ex);
+            Loggers.STARTUP.error("Unexpected Error", ex);
         }
     }
 
@@ -114,7 +114,7 @@ public class SignatureParser
             int lastDot = line.lastIndexOf('.');
             if (lastDot == -1)
             {
-                slog.error("Missing . from import statement: " + line);
+                Loggers.STARTUP.error("Missing . from import statement: " + line);
                 return;
             }
 
@@ -135,19 +135,19 @@ public class SignatureParser
 
         if (openBrace == -1)
         {
-            slog.error("Missing ( in declaration: " + line);
+            Loggers.STARTUP.error("Missing ( in declaration: " + line);
             return;
         }
 
         if (closeBrace == -1)
         {
-            slog.error("Missing ) in declaration: " + line);
+            Loggers.STARTUP.error("Missing ) in declaration: " + line);
             return;
         }
 
         if (openBrace > closeBrace)
         {
-            slog.error("( Must come before ) in declaration: " + line);
+            Loggers.STARTUP.error("( Must come before ) in declaration: " + line);
             return;
         }
 
@@ -168,10 +168,10 @@ public class SignatureParser
         // Check that we have the right number
         if (method.getParameterTypes().length != paramNames.length)
         {
-            slog.error("Parameter mismatch parsing signatures section in dwr.xml on line: " + line);
-            slog.info("- Reflected method had: " + method.getParameterTypes().length + " parameters: " + method.toString());
-            slog.info("- Signatures section had: " + paramNames.length + " parameters");
-            slog.info("- This can be caused by method overloading which is not supported by Javascript or DWR");
+            Loggers.STARTUP.error("Parameter mismatch parsing signatures section in dwr.xml on line: " + line);
+            Loggers.STARTUP.info("- Reflected method had: " + method.getParameterTypes().length + " parameters: " + method.toString());
+            Loggers.STARTUP.info("- Signatures section had: " + paramNames.length + " parameters");
+            Loggers.STARTUP.info("- This can be caused by method overloading which is not supported by Javascript or DWR");
             return;
         }
 
@@ -191,14 +191,14 @@ public class SignatureParser
                     Property replacement = new OverrideProperty(clazz);
                     converterManager.setOverrideProperty(child, replacement);
 
-                    if (slog.isDebugEnabled())
+                    if (Loggers.STARTUP.isDebugEnabled())
                     {
-                        slog.debug("- " + child + " = " + clazz.getName());
+                        Loggers.STARTUP.debug("- " + child + " = " + clazz.getName());
                     }
                 }
                 else
                 {
-                    slog.warn("Missing class (" + type + ") while parsing signature section on line: " + line);
+                    Loggers.STARTUP.warn("Missing class (" + type + ") while parsing signature section on line: " + line);
                 }
             }
         }
@@ -216,7 +216,7 @@ public class SignatureParser
         // Handle inner classes
         if (itype.indexOf('.') != -1)
         {
-            slog.debug("Inner class detected: " + itype);
+            Loggers.STARTUP.debug("Inner class detected: " + itype);
             itype = itype.replace('.', '$');
         }
 
@@ -258,16 +258,16 @@ public class SignatureParser
             return creator.getType();
         }
 
-        slog.error("Failed to find class: '" + itype + "' from <signature> block.");
-        slog.info("- Looked in the following class imports:");
+        Loggers.STARTUP.error("Failed to find class: '" + itype + "' from <signature> block.");
+        Loggers.STARTUP.info("- Looked in the following class imports:");
         for (Entry<String, String> entry : classImports.entrySet())
         {
-            slog.info("  - " + entry.getKey() + " -> " + entry.getValue());
+            Loggers.STARTUP.info("  - " + entry.getKey() + " -> " + entry.getValue());
         }
-        slog.info("- Looked in the following package imports:");
+        Loggers.STARTUP.info("- Looked in the following package imports:");
         for (String pkg : packageImports)
         {
-            slog.info("  - " + pkg);
+            Loggers.STARTUP.info("  - " + pkg);
         }
 
         return null;
@@ -284,14 +284,14 @@ public class SignatureParser
         int openGeneric = paramName.indexOf('<');
         if (openGeneric == -1)
         {
-            slog.debug("No < in paramter declaration: " + paramName);
+            Loggers.STARTUP.debug("No < in paramter declaration: " + paramName);
             return new String[0];
         }
 
         int closeGeneric = paramName.lastIndexOf('>');
         if (closeGeneric == -1)
         {
-            slog.error("Missing > in generic declaration: " + paramName);
+            Loggers.STARTUP.error("Missing > in generic declaration: " + paramName);
             return new String[0];
         }
 
@@ -328,7 +328,7 @@ public class SignatureParser
         int lastDot = classMethodChop.lastIndexOf('.');
         if (lastDot == -1)
         {
-            slog.error("Missing . to separate class name and method: " + classMethodChop);
+            Loggers.STARTUP.error("Missing . to separate class name and method: " + classMethodChop);
             return null;
         }
 
@@ -354,14 +354,14 @@ public class SignatureParser
                 }
                 else
                 {
-                    slog.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
+                    Loggers.STARTUP.warn("Setting extra type info to overloaded methods may fail with <parameter .../>");
                 }
             }
         }
 
         if (method == null)
         {
-            slog.error("Unable to find method called: " + methodName + " on type: " + clazz.getName());
+            Loggers.STARTUP.error("Unable to find method called: " + methodName + " on type: " + clazz.getName());
         }
 
         return method;
@@ -385,7 +385,7 @@ public class SignatureParser
             {
                 if (inGeneric)
                 {
-                    slog.error("Found < while parsing generic section: " + paramDecl);
+                    Loggers.STARTUP.error("Found < while parsing generic section: " + paramDecl);
                     break;
                 }
 
@@ -396,7 +396,7 @@ public class SignatureParser
             {
                 if (!inGeneric)
                 {
-                    slog.error("Found > while not parsing generic section: " + paramDecl);
+                    Loggers.STARTUP.error("Found > while not parsing generic section: " + paramDecl);
                     break;
                 }
 
@@ -438,11 +438,4 @@ public class SignatureParser
      * If we can't find a class by Java name we can lookup by Javascript name
      */
     private final CreatorManager creatorManager;
-
-    /**
-     * The log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    private static final Log slog = StartupUtil.slog;
 }

@@ -18,10 +18,9 @@ package org.directwebremoting.extend;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.util.Loggers;
 
 /**
  * A simple utility class to extract a {@link String} from a {@link ScriptBuffer}.
@@ -100,12 +99,7 @@ public class ScriptBufferUtil
             output = "{ \"reply\":" + output + "}";
         }
 
-        log.debug(output);
+        Loggers.SCRIPTS.debug(output);
         return output;
     }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(ScriptBufferUtil.class);
 }

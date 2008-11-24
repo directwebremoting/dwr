@@ -18,7 +18,6 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,6 +108,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         Calls calls = batch.getCalls();
 
         // Debug the environment
+        /*
         if (log.isDebugEnabled() && calls.getCallCount() > 0)
         {
             // We can just use 0 because they are all shared
@@ -131,9 +131,10 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
             if (buffer.length() > 0)
             {
-                log.debug("Environment:  " + buffer.toString());
+                log.debug("Environment: " + buffer.toString());
             }
         }
+        //*/
 
         callLoop:
         for (int callNum = 0; callNum < calls.getCallCount(); callNum++)
@@ -595,5 +596,5 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(BaseCallHandler.class);
+    private static final Log log = LogFactory.getLog(BaseCallHandler.class);
 }

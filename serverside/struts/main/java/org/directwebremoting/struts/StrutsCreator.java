@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
@@ -28,9 +27,9 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
-import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * StrutsCreator
@@ -51,7 +50,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
             getModuleNameMethod = moduleUtilsClass.getMethod("getModuleName", String.class, ServletContext.class);
             getModuleConfigMethod = moduleUtilsClass.getMethod("getModuleConfig", String.class, ServletContext.class);
 
-            slog.debug("Using Struts 1.2 based ModuleUtils code");
+            Loggers.STARTUP.debug("Using Struts 1.2 based ModuleUtils code");
         }
         catch (Exception ex)
         {
@@ -59,7 +58,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
             getModuleNameMethod = null;
             getModuleConfigMethod = null;
 
-            slog.debug("Failed to find Struts 1.2 ModuleUtils code. Falling back to 1.1 based code");
+            Loggers.STARTUP.debug("Failed to find Struts 1.2 ModuleUtils code. Falling back to 1.1 based code");
         }
     }
 
@@ -106,7 +105,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
                     HttpServletRequest request = wc.getHttpServletRequest();
                     if (request == null)
                     {
-                        slog.warn("Using a FakeHttpServletRequest as part of setup");
+                        Loggers.STARTUP.warn("Using a FakeHttpServletRequest as part of setup");
                         request = new FakeHttpServletRequest();
                     }
 
@@ -164,11 +163,4 @@ public class StrutsCreator extends AbstractCreator implements Creator
      * Reflection access to 1.2 code for compatibility with 1.1
      */
     private Method getModuleConfigMethod;
-
-    /**
-     * The startup log stream
-     * WARNING: This intentionally uses a logger from a different class to
-     * make it easy to control startup messages.
-     */
-    private static final Log slog = StartupUtil.slog;
 }
