@@ -1,16 +1,17 @@
 @CHARSET "ISO-8859-1";
 
-body { margin:60px 40px 0px 40px; color:#666; line-height:1.3em;
-  font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
+body { margin:60px 40px 0px 40px; color:#444; line-height:1.75em;
+  font:normal medium 'Calibri','Helvetica Neue','Arial',clean,sans-serif;
+  word-spacing:0.1em;
 }
 
 select, textarea, input[type='text'], input[type='password'], input[type='file'] {
-  font-family:'Century Gothic', Helvetica, Arial, clean, sans-serif;
+  font-family:'Calibri','Helvetica Neue','Arial',clean,sans-serif;
   font-size:1em; padding:3px 3px; margin:2px;
 }
 
 button, input[type='button'], input[type='submit'], input[type='cancel'] {
-  font-family:'Century Gothic', 'GillSans', Helvetica, Arial, clean, sans-serif;
+  font-family:'Calibri','Helvetica Neue','Arial',clean,sans-serif;
   font-size:1em;
 }
 

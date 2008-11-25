@@ -105,7 +105,10 @@ public class RandomData
         "Luke", "Matt", "Gemma", "Joe", "Ben", "Jessie", "Leanne", "Becky",
         "William", "Jo", "Jane", "Joan", "Jerry", "Jason", "Martin", "Mark",
         "Max", "Mike", "Molly", "Sam", "Shane", "Dwane", "Diane", "Anne", "Anna",
-        "Bill",
+        "Bill", "Jack", "Thomas", "Oliver", "Joshua", "Harry", "Charlie", "Dan",
+        "Will", "James", "Alfie", "Grace", "Ruby", "Olivia", "Emily", "Jessica",
+        "Sophie", "Chloe", "Lily", "Ella", "Amelia", "Kimberly", "Owen", "Rhys",
+        "Layla", "Jonny", "Darren", "Laura", "Bridget", "Carl", "Josie",
     };
 
     private static final String[] SURNAMES =
@@ -136,7 +139,7 @@ public class RandomData
     private static final String[] TOWNS =
     {
         "San Mateo", "San Francisco", "San Diego", "New York", "Atlanta",
-        "Sandford", "York", "London", "Coventry", "Exeter", "Knowle",
+        "Sandford", "York", "London", "Coventry", "Exeter", "Knowle", "Rhyl",
+        "Stamford",
     };
 }
-

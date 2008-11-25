@@ -36,7 +36,8 @@
       <thead>
         <tr>
           <th>Person</th>
-          <th>Salary</th>
+          <th>Age</th>
+          <th>Superhero?</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -46,7 +47,8 @@
             <span id="tableName">Name</span><br/>
             <small>&nbsp;&nbsp;<span id="tableAddress">Address</span></small>
           </td>
-          <td>$<span id="tableSalary">Salary</span></td>
+          <td><span id="tableAge">Age</span></td>
+          <td><span id="tableSuperhero">Superhero</span></td>
           <td>
             <input id="edit" type="button" value="Edit" onclick="editClicked(this.id)"/>
             <input id="delete" type="button" value="Delete" onclick="deleteClicked(this.id)"/>
@@ -61,12 +63,16 @@
         <td><input id="name" type="text" size="30"/></td>
       </tr>
       <tr>
-        <td>Salary:</td>
-        <td>$<input id="salary" type="text" size="20"/></td>
+        <td>Address:</td>
+        <td><input id="address" type="text" size="40"/></td>
       </tr>
       <tr>
-        <td>Address:</td>
-        <td><input type="text" id="address" size="40"/></td>
+        <td>Age:</td>
+        <td><input id="age" type="text" size="20"/></td>
+      </tr>
+      <tr>
+        <td>Superhero?:</td>
+        <td><input id="superhero" type="checkbox" size="20"/></td>
       </tr>
       <tr>
         <td colspan="2" align="right">
@@ -81,14 +87,12 @@
 
   <div id="explainDiv">
     <h2>Creating the table</h2>
-    <p>This demo introduces a number of features, some of which are new to
-    DWR 2.0.</p>
     <p>When the page first loads, the onload event calls the server-side
-    <code>People.getAllPeople()</code> function to return an array of people
+    <code>People.getSmallCrowd()</code> function to return an array of people
     objects.</p>
-    <p>A Person is just a POJO containing an name and address fields along with
-    a salary as a float and an id as an int. Full details of the Java source
-    are shown on the "Source" tab.</p>
+    <p>A Person is just a POJO containing an id, name and address fields along
+    an age as an integer an boolean superhero status. Full details of the Java
+    source are shown on the "Source" tab.</p>
     <p>The Javascript uses the <code>cloneNode()</code> feature to create a row
     in a table for each returned person. So for each person we do this:</p>
 
@@ -125,11 +129,11 @@ dwr.util.setValue("tableAddress" + id, person.address);
 $("pattern" + id).style.display = "table-row";
 </pre>
 
-    <p>Finally thing we need to account for the fact that this could be a
-    re-draw rather than a draw on page-load, so we might need to remove old
-    rows. <code>dwr.util.removeAllRows()</code> as been around since 1.0, but
-    new in 2.0 is the options object which can contain a filter to be selective
-    about the rows we remove. In this case we want to remove everything but the
+    <p>We need to account for the fact that this could be a re-draw rather than
+    a draw on page-load, so we might need to remove old rows.
+    <code>dwr.util.removeAllRows()</code> as been around since 1.0, but new in
+    2.0 is the options object which can contain a filter to be selective about
+    the rows we remove. In this case we want to remove everything but the
     "pattern" row.</p>
 
 <pre>
@@ -166,7 +170,7 @@ function editClicked(eleid) {
 
 <pre>
 function writePerson() {
-  var person = { id:viewed, name:null, address:null, salary:null };
+  var person = { id:viewed, name:null, address:null, age:null, superhero:null };
   dwr.util.getValues(person);
 
   dwr.engine.beginBatch();
@@ -193,7 +197,8 @@ function writePerson() {
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th&gt;Person&lt;/th&gt;
-      &lt;th&gt;Salary&lt;/th&gt;
+      &lt;th&gt;Age&lt;/th&gt;
+      &lt;th&gt;Superhero?&lt;/th&gt;
       &lt;th&gt;Actions&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
@@ -203,7 +208,8 @@ function writePerson() {
         &lt;span id="tableName"&gt;Name&lt;/span&gt;&lt;br/&gt;
         &lt;small&gt;&nbsp;&nbsp;&lt;span id="tableAddress"&gt;Address&lt;/span&gt;&lt;/small&gt;
       &lt;/td&gt;
-      &lt;td&gt;$&lt;span id="tableSalary"&gt;Salary&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;span id="tableAge"&gt;Age&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;span id="tableSuperhero"&gt;Superhero&lt;/span&gt;&lt;/td&gt;
       &lt;td&gt;
         &lt;input id="edit" type="button" value="Edit" onclick="editClicked(this.id)"/&gt;
         &lt;input id="delete" type="button" value="Delete" onclick="deleteClicked(this.id)"/&gt;
@@ -211,7 +217,6 @@ function writePerson() {
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-
 &lt;h3&gt;Edit Person&lt;/h3&gt;
 &lt;table class="plain"&gt;
   &lt;tr&gt;
@@ -219,12 +224,16 @@ function writePerson() {
     &lt;td&gt;&lt;input id="name" type="text" size="30"/&gt;&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-    &lt;td&gt;Salary:&lt;/td&gt;
-    &lt;td&gt;$&lt;input id="salary" type="text" size="20"/&gt;&lt;/td&gt;
+    &lt;td&gt;Address:&lt;/td&gt;
+    &lt;td&gt;&lt;input id="address" type="text" size="40"/&gt;&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-    &lt;td&gt;Address:&lt;/td&gt;
-    &lt;td&gt;&lt;input type="text" id="address" size="40"/&gt;&lt;/td&gt;
+    &lt;td&gt;Age:&lt;/td&gt;
+    &lt;td&gt;&lt;input id="age" type="text" size="20"/&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Superhero?:&lt;/td&gt;
+    &lt;td&gt;&lt;input id="superhero" type="checkbox" size="20"/&gt;&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
     &lt;td colspan="2" align="right"&gt;
@@ -238,8 +247,8 @@ function writePerson() {
 
 <h2>Javascript source:</h2>
 <pre>
-
 function init() {
+  dwr.util.useLoadingMessage();
   fillTable();
 }
 
@@ -247,7 +256,7 @@ var peopleCache = { };
 var viewed = -1;
 
 function fillTable() {
-  People.getAllPeople(function(people) {
+  People.getSmallCrowd(function(people) {
     // Delete all the rows except for the "pattern" row
     dwr.util.removeAllRows("peoplebody", { filter:function(tr) {
       return (tr.id != "pattern");
@@ -260,9 +269,10 @@ function fillTable() {
       id = person.id;
       dwr.util.cloneNode("pattern", { idSuffix:id });
       dwr.util.setValue("tableName" + id, person.name);
-      dwr.util.setValue("tableSalary" + id, person.salary);
+      dwr.util.setValue("tableAge" + id, person.age);
       dwr.util.setValue("tableAddress" + id, person.address);
-      $("pattern" + id).style.display = "table-row";
+      dwr.util.setValue("tableSuperhero" + id, person.superhero ? "Yes" : "No");
+      dwr.util.byId("pattern" + id).style.display = ""; // officially we should use table-row, but IE prefers "" for some reason
       peopleCache[id] = person;
     }
   });
@@ -279,14 +289,14 @@ function deleteClicked(eleid) {
   var person = peopleCache[eleid.substring(6)];
   if (confirm("Are you sure you want to delete " + person.name + "?")) {
     dwr.engine.beginBatch();
-    People.deletePerson({ id:id });
+    People.deletePerson(person.id);
     fillTable();
     dwr.engine.endBatch();
   }
 }
 
 function writePerson() {
-  var person = { id:viewed, name:null, address:null, salary:null };
+  var person = { id:viewed, name:null, address:null, age:null, superhero:null };
   dwr.util.getValues(person);
 
   dwr.engine.beginBatch();
@@ -304,36 +314,32 @@ function clearPerson() {
 <h2>Java source:</h2>
 <pre>
 public class People {
-    // Code to create a random set of people omitted
-
-    public Set getAllPeople() {
-        return people;
+    public People() {
+        smallCrowd = createCrowd(10);
     }
 
-    public void setPerson(Person person) {
-        if (person.getId() == -1) {
-            person.setId(getNextId());
+    public Collection&lt;Person&gt; getSmallCrowd() {
+        return smallCrowd.values();
+    }
+
+    public String setPerson(Person person) {
+        smallCrowd.put(person.getId(), person);
+        return "Updated values for " + person.getName();
+    }
+
+    public String deletePerson(String id) {
+        Person person = smallCrowd.remove(id);
+        if (person == null) {
+            return "Person does not exist";
         }
-
-        people.remove(person);
-        people.add(person);
+        else {
+            return "Deleted " + person.getName();
+        }
     }
 
-    public void deletePerson(Person person) {
-        people.remove(person);
-    }
+    private final Map&lt;String, Person&gt; smallCrowd;
 
-    private Set people = new HashSet();
-}
-
-public class Person
-{
-    private int id;
-    private String name;
-    private String address;
-    private float salary;
-
-    // Getters, setters, equals and toString omitted
+    // ...
 }
 </pre>
 

@@ -1,4 +1,3 @@
-
 function init() {
   dwr.util.useLoadingMessage();
   Tabs.init('tabList', 'tabContents');
@@ -9,7 +8,7 @@ var peopleCache = { };
 var viewed = -1;
 
 function fillTable() {
-  People.getAllPeople(function(people) {
+  People.getSmallCrowd(function(people) {
     // Delete all the rows except for the "pattern" row
     dwr.util.removeAllRows("peoplebody", { filter:function(tr) {
       return (tr.id != "pattern");
@@ -22,8 +21,9 @@ function fillTable() {
       id = person.id;
       dwr.util.cloneNode("pattern", { idSuffix:id });
       dwr.util.setValue("tableName" + id, person.name);
-      dwr.util.setValue("tableSalary" + id, person.salary);
+      dwr.util.setValue("tableAge" + id, person.age);
       dwr.util.setValue("tableAddress" + id, person.address);
+      dwr.util.setValue("tableSuperhero" + id, person.superhero ? "Yes" : "No");
       dwr.util.byId("pattern" + id).style.display = ""; // officially we should use table-row, but IE prefers "" for some reason
       peopleCache[id] = person;
     }
@@ -41,14 +41,14 @@ function deleteClicked(eleid) {
   var person = peopleCache[eleid.substring(6)];
   if (confirm("Are you sure you want to delete " + person.name + "?")) {
     dwr.engine.beginBatch();
-    People.deletePerson({ id:person.id });
+    People.deletePerson(person.id);
     fillTable();
     dwr.engine.endBatch();
   }
 }
 
 function writePerson() {
-  var person = { id:viewed, name:null, address:null, salary:null };
+  var person = { id:viewed, name:null, address:null, age:null, superhero:null };
   dwr.util.getValues(person);
 
   dwr.engine.beginBatch();

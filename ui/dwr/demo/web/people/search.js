@@ -4,7 +4,6 @@ function init() {
   Tabs.init('tabList', 'tabContents');
   dwr.util.setValue("filter", "");
   addSingleRow("peoplebody", "Please enter a search filter");
-  People.init(20);
 }
 
 var peopleCache = [ ];
@@ -26,8 +25,8 @@ function fillTable(people) {
   else {
     dwr.util.addRows("peoplebody", filtered, [
       function(person) { return person.name.replace(pattern, "<span class='highlight'>$1</span>"); },
-      function(person) { return "$" + person.salary; },
-      function(person) { return person.address; },
+      function(person) { return person.age; },
+      function(person) { return person.address; }
     ], { escapeHtml:false });
   }
   peopleCache = people;
@@ -44,7 +43,7 @@ function filterChanged() {
       fillTable(peopleCache);
     }
     else {
-      People.getMatchingPeople(filter.charAt(0), fillTable);
+      People.getMatchingFromLargeCrowd(filter.charAt(0), fillTable);
     }
   }
   lastFilter = filter;
