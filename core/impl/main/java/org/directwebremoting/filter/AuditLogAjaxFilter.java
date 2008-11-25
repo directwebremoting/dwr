@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.filter;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -89,7 +90,25 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
 
         if (reply.getClass().isArray())
         {
-            reply = Arrays.deepToString((Object[]) reply);
+            if (reply.getClass().getComponentType().isPrimitive())
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.append("[");
+                for (int i = 0; i < Array.getLength(reply); i++)
+                {
+                    if (i != 0)
+                    {
+                        builder.append(",");
+                    }
+                    builder.append(Array.get(reply, i));
+                }
+                builder.append("]");
+                reply = builder.toString();
+            }
+            else
+            {
+                reply = Arrays.deepToString((Object[]) reply);
+            }
         }
 
         if (reply instanceof String)
