@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.ui.dwr.Util;
@@ -84,9 +86,15 @@ public class Clock implements Runnable
             public void run()
             {
                 Util.setValue("clockDisplay", output);
+                log.info("setting display to " + output);
             }
         });
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(Clock.class);
 
     /**
      * Are we updating the clocks on all the pages?

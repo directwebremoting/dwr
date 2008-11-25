@@ -15,10 +15,10 @@
   <script type="text/javascript">
   var dwrStore, grid;
   dojo.addOnLoad(function() {
-    dwrStore = new dwr.data.Store("testServerData", { subscribe:true });
+    dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
     grid = dijit.byId("grid");
     grid.setStore(dwrStore);
-    //dwr.engine.setActiveReverseAjax(true);
+    dwr.engine.setActiveReverseAjax(true);
   });
 
   addRow = function(){

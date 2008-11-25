@@ -17,6 +17,8 @@ package org.directwebremoting.io;
 
 import java.util.Map;
 
+import org.directwebremoting.datasync.ExposeToString;
+
 /**
  * Analogous to a {@link java.util.Map.Entry} that we use to pass objects that
  * have been stored in a {@link org.directwebremoting.datasync.StoreProvider} to
@@ -77,7 +79,7 @@ public class Item
      */
     public String getLabel()
     {
-        if (data instanceof ExposeToString)
+        if (data.getClass().isAnnotationPresent(ExposeToString.class))
         {
             return data.toString();
         }
@@ -85,19 +87,6 @@ public class Item
         {
             return itemId;
         }
-    }
-
-    /**
-     * A marker interface to indicate that {@link Object#toString()} does not
-     * have any information in it that you don't want to be exposed to the
-     * Internet.
-     */
-    public static interface ExposeToString
-    {
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        String toString();
     }
 
     /* (non-Javadoc)

@@ -22,152 +22,110 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.datasync.Directory;
 import org.directwebremoting.datasync.MapStoreProvider;
-
+import org.directwebremoting.datasync.StoreProvider;
 
 /**
- * A container for a set of people
+ * A container for 2 sets of people.
+ * The smaller is designed for viewing all at the same time, and is viewable
+ * and editable via {@link #getSmallCrowd()}, {@link #setPerson(Person)} and
+ * {@link #deletePerson(String)}. The larger is accessible using the
+ * {@link StoreProvider} registered under 'largeCrowd', and searchable using
+ * {@link #getMatchingFromLargeCrowd(String)}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class People
 {
     /**
-     * Pre-populate with 50 random people
+     * Pre-populate the small and large crowds
      */
     public People()
     {
-        this(1000);
+        smallCrowd = createCrowd(10);
+
+        MapStoreProvider<Person> provider = new MapStoreProvider<Person>(createCrowd(1000), Person.class);
+        Directory.register("largeCrowd", provider);
+
+        largeCrowd = provider.asMap();
     }
 
     /**
-     * Pre-populate with <code>count</code> random people
+     * We maintain 2 lists of people, small (~10 people) and large (~1000).
+     * The smaller is for when we want to show them all on the screen at the
+     * same time, the larger for when we don'e.
      */
-    public People(int count)
+    public Collection<Person> getSmallCrowd()
     {
-        people = createCrowd(count);
-        MapStoreProvider<Person> provider = new MapStoreProvider<Person>(people, Person.class);
-
-        log.debug("Registering StoreProvider 'testServerData'");
-        Directory.register("testServerData", provider);
-    }
-
-    /**
-     * 
-     */
-    public Map<String, Person> createCrowd(int count)
-    {
-        Map<String, Person> reply = new HashMap<String, Person>();
-        for (int i = 0; i < count; i++)
-        {
-            reply.put(getNextId(), getRandomPerson());
-        }
-        return reply;
-    }
-
-    /**
-     * Accessor for the current list of people
-     * @return the current list of people
-     */
-    public Collection<Person> getAllPeople()
-    {
-        return people.values();
-    }
-
-    /**
-     * Accessor for a subset of the current list of people
-     * @return the current list of people
-     */
-    public List<Person> getMatchingPeople(String filter)
-    {
-        List<Person> reply = new ArrayList<Person>();
-        Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
-        for (Person person : people.values())
-        {
-            if (regex.matcher(person.getName()).find())
-            {
-                reply.add(person);
-                log.debug("Adding " + person + " to reply");
-            }
-        }
-        return reply;
+        return smallCrowd.values();
     }
 
     /**
      * Insert a person into the set of people
      * @param person The person to add or update
      */
-    public void setPerson(String id, Person person)
+    public String setPerson(Person person)
     {
-        log.debug("Adding person: " + person);
-        if (id == null)
-        {
-            id = getNextId();
-        }
-
-        people.put(id, person);
+        smallCrowd.put(person.getId(), person);
+        return "Updated values for " + person.getName();
     }
 
     /**
      * Delete a person from the set of people
      * @param id The id of the person to delete
      */
-    public void deletePerson(String id)
+    public String deletePerson(String id)
     {
-        log.debug("Removing person with id: " + id);
-        people.remove(id);
-        debug();
-    }
-
-    /**
-     * Create a random person
-     * @return a random person
-     */
-    public static Person getRandomPerson()
-    {
-        Person person = new Person();
-        person.setName(RandomData.getFullName());
-        String[] addressAndNumber = RandomData.getAddressAndNumber();
-        person.setAddress(addressAndNumber[0]);
-        person.setPhoneNumber(addressAndNumber[1]);
-        person.setAge(RandomData.getAge());
-        return person;
-    }
-
-    /**
-     * List the current people so we know what is going on
-     */
-    protected void debug()
-    {
-        for (Person person : people.values())
+        Person person = smallCrowd.remove(id);
+        if (person == null)
         {
-            log.debug(person.toString());
+            return "Person does not exist";
+        }
+        else
+        {
+            return "Deleted " + person.getName();
         }
     }
 
     /**
-     * Get the next unique ID in a thread safe way
-     * @return a unique id
+     * Accessor for a subset of the current list of people
+     * @return the current list of people
      */
-    public static synchronized String getNextId()
+    public List<Person> getMatchingFromLargeCrowd(String filter)
     {
-        return "P" + (nextId++);
+        List<Person> reply = new ArrayList<Person>();
+        Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
+        for (Person person : largeCrowd.values())
+        {
+            if (regex.matcher(person.getName()).find())
+            {
+                reply.add(person);
+            }
+        }
+        return reply;
     }
 
     /**
-     * The next ID, to get around serialization issues
+     * @see #getSmallCrowd()
      */
-    private static int nextId = 1;
+    private final Map<String, Person> smallCrowd;
 
     /**
-     * the current list of people
+     * @see #getMatchingFromLargeCrowd(String)
      */
-    private final Map<String, Person> people;
+    private final Map<String, Person> largeCrowd;
 
     /**
-     * The log stream
+     * Both crowds are created in the same way.
      */
-    private static final Log log = LogFactory.getLog(People.class);
+    private static Map<String, Person> createCrowd(int count)
+    {
+        Map<String, Person> reply = new HashMap<String, Person>();
+        for (int i = 0; i < count; i++)
+        {
+            Person person = new Person(true);
+            reply.put(person.getId(), person);
+        }
+        return reply;
+    }
 }
