@@ -18,6 +18,7 @@ package org.directwebremoting.filter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -81,14 +82,19 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
      */
     private String toString(Object reply)
     {
-        if (reply instanceof String)
-        {
-            return shorten((String) reply, maxStringLength);
-        }
-
         if (reply == null)
         {
             return "null";
+        }
+
+        if (reply.getClass().isArray())
+        {
+            reply = Arrays.deepToString((Object[]) reply);
+        }
+
+        if (reply instanceof String)
+        {
+            return shorten((String) reply, maxStringLength);
         }
 
         if (toStringClasses.contains(reply.getClass()))
@@ -146,7 +152,7 @@ public class AuditLogAjaxFilter implements AjaxFilter, LogAjaxFilter
     /**
      * What's the longest string that we output for a parameter
      */
-    private static int maxStringLength = 30;
+    private static int maxStringLength = 40;
 
     /**
      * The log stream
