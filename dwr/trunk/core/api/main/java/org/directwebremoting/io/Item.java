@@ -71,13 +71,13 @@ public class Item
     /**
      * Items need labels to support dojo.data.api.Read.getLabel()
      * By default we just use the itemId, however if the data implements
-     * {@link ExposeToStringToTheOutside} then consider {@link Object#toString()}
+     * {@link ExposeToString} then consider {@link Object#toString()}
      * to be safe for Internet use.
      * @return A label for this object
      */
     public String getLabel()
     {
-        if (data instanceof ExposeToStringToTheOutside)
+        if (data instanceof ExposeToString)
         {
             return data.toString();
         }
@@ -92,7 +92,7 @@ public class Item
      * have any information in it that you don't want to be exposed to the
      * Internet.
      */
-    public static interface ExposeToStringToTheOutside
+    public static interface ExposeToString
     {
         /* (non-Javadoc)
          * @see java.lang.Object#toString()

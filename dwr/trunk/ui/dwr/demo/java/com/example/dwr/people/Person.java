@@ -20,7 +20,7 @@ import org.directwebremoting.io.Item;
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Person implements Item.ExposeToStringToTheOutside
+public class Person implements Item.ExposeToString
 {
     public Person()
     {
