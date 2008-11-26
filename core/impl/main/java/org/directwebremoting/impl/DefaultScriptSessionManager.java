@@ -149,6 +149,11 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected void associateScriptSessionAndHttpSession(DefaultScriptSession scriptSession, String httpSessionId)
     {
+        if (httpSessionId == null)
+        {
+            return;
+        }
+
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, httpSessionId);
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
@@ -204,10 +209,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
         String normalizedPage = pageNormalizer.normalizePage(page);
 
-        Set<RealScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
+        Set<DefaultScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
         if (pageSessions == null)
         {
-            pageSessions = new HashSet<RealScriptSession>();
+            pageSessions = new HashSet<DefaultScriptSession>();
             pageSessionMap.put(normalizedPage, pageSessions);
         }
 
@@ -222,7 +227,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected void disassociateScriptSessionAndPage(DefaultScriptSession scriptSession)
     {
-        for (Set<RealScriptSession> pageSessions : pageSessionMap.values())
+        for (Set<DefaultScriptSession> pageSessions : pageSessionMap.values())
         {
             pageSessions.remove(scriptSession);
         }
@@ -236,10 +241,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         String normalizedPage = pageNormalizer.normalizePage(url);
         synchronized (sessionLock)
         {
-            Set<RealScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
+            Set<DefaultScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
             if (pageSessions == null)
             {
-                pageSessions = new HashSet<RealScriptSession>();
+                pageSessions = new HashSet<DefaultScriptSession>();
             }
 
             Set<ScriptSession> reply = new HashSet<ScriptSession>();
@@ -536,14 +541,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The key is an http session id, the
      * <p>GuardedBy("sessionLock")
      */
-    private final Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
+    protected final Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
 
     /**
      * The map of all the known sessions.
      * The key is the script session id, the value is the session data
      * <p>GuardedBy("sessionLock")
      */
-    private final Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
+    protected final Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
 
     /**
      * The map of pages that have sessions.
@@ -551,5 +556,5 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * known to be currently visiting the page
      * <p>GuardedBy("sessionLock")
      */
-    private final Map<String, Set<RealScriptSession>> pageSessionMap = new HashMap<String, Set<RealScriptSession>>();
+    protected final Map<String, Set<DefaultScriptSession>> pageSessionMap = new HashMap<String, Set<DefaultScriptSession>>();
 }
