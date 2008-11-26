@@ -17,8 +17,6 @@ package com.example.dwr.reverseajax;
 
 import java.util.LinkedList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSessions;
 
@@ -54,9 +52,4 @@ public class JavascriptChat
      * The current set of messages
      */
     private final LinkedList<Message> messages = new LinkedList<Message>();
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(JavascriptChat.class);
 }
