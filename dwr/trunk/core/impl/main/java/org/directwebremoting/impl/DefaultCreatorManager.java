@@ -262,7 +262,7 @@ public class DefaultCreatorManager implements CreatorManager
      * The properties that we don't warn about if they don't exist.
      * @see DefaultCreatorManager#addCreator(String, String, Map)
      */
-    protected static List<String> ignore = Arrays.asList("creator", "class");
+    protected static final List<String> ignore = Arrays.asList("creator", "class");
 
     /**
      * The log stream
