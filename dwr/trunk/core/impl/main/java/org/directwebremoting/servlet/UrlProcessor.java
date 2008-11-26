@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InitializingBean;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * This is the main servlet that handles all the requests to DWR.
@@ -76,6 +78,12 @@ public class UrlProcessor implements Handler, InitializingBean
                 }
             }
         }
+
+        ServletContext servletContext = container.getBean(ServletContext.class);
+
+        // This will fail (i.e. return null with servlet 2.4, but we patch up
+        // in the handle method.
+        contextPath = LocalUtil.getProperty(servletContext, "contextPath", String.class);
     }
 
     /* (non-Javadoc)
@@ -86,11 +94,17 @@ public class UrlProcessor implements Handler, InitializingBean
         try
         {
             String pathInfo = request.getPathInfo();
-            contextPath = request.getContextPath();
+            String requestContextPath = request.getContextPath();
+
+            // Patching up for missing servlet 2.5 servletContext.getContextPath
+            if (contextPath == null)
+            {
+                contextPath = requestContextPath;
+            }
 
             if (pathInfo == null || pathInfo.length() == 0 || "/".equals(pathInfo))
             {
-                response.sendRedirect(contextPath + request.getServletPath() + indexHandlerUrl);
+                response.sendRedirect(requestContextPath + request.getServletPath() + indexHandlerUrl);
             }
             else
             {
