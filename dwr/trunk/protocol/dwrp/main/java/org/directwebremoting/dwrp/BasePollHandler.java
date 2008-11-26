@@ -447,5 +447,5 @@ public class BasePollHandler extends BaseDwrpHandler
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(BasePollHandler.class);
+    private static final Log log = LogFactory.getLog(BasePollHandler.class);
 }

@@ -87,5 +87,5 @@ public class BigNumberConverter extends AbstractConverter
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(BigNumberConverter.class);
+    private static final Log log = LogFactory.getLog(BigNumberConverter.class);
 }

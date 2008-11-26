@@ -362,5 +362,5 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(AbstractStoreProvider.class);
+    private static final Log log = LogFactory.getLog(AbstractStoreProvider.class);
 }

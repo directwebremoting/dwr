@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.io.FileTransfer;
@@ -130,9 +128,4 @@ public abstract class PurgingDownloadManager implements DownloadManager
      * Unique id so we can retrieve downloads when asked
      */
     protected IdGenerator idGenerator = new IdGenerator();
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(PurgingDownloadManager.class);
 }

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConvertUtil;
@@ -192,9 +190,4 @@ public class CallBatch extends Batch
      * We don't want to allow too many calls in a batch
      */
     private final int maxCallsPerBatch = 1000;
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(CallBatch.class);
 }

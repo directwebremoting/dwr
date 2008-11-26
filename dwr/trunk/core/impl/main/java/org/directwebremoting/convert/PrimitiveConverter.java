@@ -89,5 +89,5 @@ public class PrimitiveConverter extends AbstractConverter
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(PrimitiveConverter.class);
+    private static final Log log = LogFactory.getLog(PrimitiveConverter.class);
 }

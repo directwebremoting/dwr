@@ -153,7 +153,7 @@ public class DefaultServerLoadMonitorHarness
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(DefaultServerLoadMonitorHarness.class);
+    private static final Log log = LogFactory.getLog(DefaultServerLoadMonitorHarness.class);
 
     protected DefaultServerLoadMonitor dslm = new DefaultServerLoadMonitor();
 }

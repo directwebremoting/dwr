@@ -19,8 +19,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.guice.util.AbstractSimpleContextScope;
@@ -171,9 +169,4 @@ public class DwrScopes
     }
 
     private DwrScopes() { /* uninstantiable */ }
-
-    /**
-     * The log stream
-     */
-    protected static final Log log = LogFactory.getLog(DwrScopes.class);
 }

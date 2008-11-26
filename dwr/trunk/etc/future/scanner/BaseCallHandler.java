@@ -612,5 +612,5 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(BaseCallHandler.class);
+    private static final Log log = LogFactory.getLog(BaseCallHandler.class);
 }
