@@ -1291,14 +1291,14 @@ public final class LocalUtil
     }
 
     /**
-     * Utility to find a getter and return it's value from an object.
+     * Utility to find a getter and return it's value from an object
      * If Java had the option to temporarily do dynamic typing there would be
      * no need for this.
      * @param pojo The POJO to extract some data from.
      * @param propertyName The name of the property form which we form a getter
      * name by upper-casing the first letter (in the EN locale) and prefixing
      * with 'get'
-     * @return The value of property
+     * @return The value of property, or null if it does not exist
      */
     @SuppressWarnings("unchecked")
     public static <T> T getProperty(Object pojo, String propertyName, Class<T> type)
