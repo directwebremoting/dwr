@@ -243,7 +243,11 @@ public class XmlBeanConverter extends BeanConverter
 
     }
 
-    private static StringEnumAbstractBaseConverter enumConverter = new StringEnumAbstractBaseConverter();
+    /**
+     * This used to be static, but there's a chance that could fail when there
+     * is more than 1 DWR servlet in a given context.
+     */
+    private final StringEnumAbstractBaseConverter enumConverter = new StringEnumAbstractBaseConverter();
 
     /**
      * The log stream

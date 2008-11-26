@@ -568,7 +568,7 @@ public class DwrXmlConfigurator implements Configurator
     /**
      * The properties that we don't warn about if they don't exist.
      */
-    private static List<String> ignore = Arrays.asList("class");
+    private static final List<String> ignore = Arrays.asList("class");
 
     /**
      * What AjaxFilters apply to which Ajax calls?

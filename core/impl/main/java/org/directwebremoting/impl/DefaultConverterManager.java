@@ -644,7 +644,7 @@ public class DefaultConverterManager implements ConverterManager
      * The properties that we don't warn about if they don't exist.
      * @see DefaultConverterManager#addConverter(String, String, Map)
      */
-    private static List<String> ignore = Arrays.asList("converter", "match");
+    private static final List<String> ignore = Arrays.asList("converter", "match");
 
     /**
      * The log stream
