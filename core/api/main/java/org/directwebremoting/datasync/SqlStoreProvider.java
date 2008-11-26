@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.ItemUpdate;
 import org.directwebremoting.io.MatchedItems;
@@ -281,4 +283,9 @@ class SqlStoreProvider<T> extends AbstractStoreProvider<T>
         // TODO Auto-generated method stub
         return null;
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(SqlStoreProvider.class);
 }

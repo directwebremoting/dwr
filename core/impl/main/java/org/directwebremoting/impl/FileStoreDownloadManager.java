@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.extend.InitializingBean;
@@ -233,4 +235,9 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
      * The directory in which we store temp files.
      */
     protected File downloadFileCache = null;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(FileStoreDownloadManager.class);
 }

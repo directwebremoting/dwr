@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.DownloadManager;
 import org.directwebremoting.io.FileTransfer;
 
@@ -134,4 +136,9 @@ public class InMemoryDownloadManager extends PurgingDownloadManager implements D
      * The list of files in the system
      */
     protected final Map<String, TimedFileTransfer> contents = Collections.synchronizedMap(new HashMap<String, TimedFileTransfer>());
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(InMemoryDownloadManager.class);
 }

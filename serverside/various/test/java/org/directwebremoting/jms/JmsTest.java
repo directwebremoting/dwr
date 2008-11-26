@@ -212,7 +212,7 @@ public class JmsTest
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(JmsTest.class);
+    private static final Log log = LogFactory.getLog(JmsTest.class);
 
     /**
      *

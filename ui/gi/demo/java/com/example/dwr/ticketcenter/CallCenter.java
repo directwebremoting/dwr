@@ -479,5 +479,5 @@ public class CallCenter implements Runnable
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(CallCenter.class);
+    private static final Log log = LogFactory.getLog(CallCenter.class);
 }
