@@ -130,5 +130,5 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(DwrClassPathBeanDefinitionScanner.class);
+    private static final Log log = LogFactory.getLog(DwrClassPathBeanDefinitionScanner.class);
 }

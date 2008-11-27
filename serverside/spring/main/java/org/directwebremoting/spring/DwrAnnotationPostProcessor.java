@@ -127,6 +127,6 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(DwrAnnotationPostProcessor.class);
+    private static final Log log = LogFactory.getLog(DwrAnnotationPostProcessor.class);
 
 }

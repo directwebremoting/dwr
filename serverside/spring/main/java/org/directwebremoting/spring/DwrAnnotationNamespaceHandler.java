@@ -17,6 +17,8 @@ package org.directwebremoting.spring;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,8 +28,9 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
-import static org.springframework.util.StringUtils.hasText;
 import org.w3c.dom.Element;
+
+import static org.springframework.util.StringUtils.*;
 
 /**
  * Adds the missing elements to the DWR namespace handling. Namely <dwr:annotation-config />
@@ -130,7 +133,10 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
             }
             return null;
         }
-
     }
 
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(DwrAnnotationNamespaceHandler.class);
 }

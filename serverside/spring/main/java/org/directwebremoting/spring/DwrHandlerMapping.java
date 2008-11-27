@@ -31,7 +31,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
  */
 public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
 
-	protected static final Log log = LogFactory.getLog(DwrHandlerMapping.class);
+	private static final Log log = LogFactory.getLog(DwrHandlerMapping.class);
 
 	/**
 	 * Maps the URLs (/engine.js, /util.js, /interface/**, /call/**) and continues.
