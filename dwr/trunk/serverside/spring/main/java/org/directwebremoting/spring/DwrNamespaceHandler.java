@@ -774,7 +774,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
     /**
      * The log stream
      */
-    protected static final Log log = LogFactory.getLog(DwrNamespaceHandler.class);
+    private static final Log log = LogFactory.getLog(DwrNamespaceHandler.class);
 
     /*
      * The element names
