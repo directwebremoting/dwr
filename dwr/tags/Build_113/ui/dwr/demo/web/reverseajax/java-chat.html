@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>DWR Thin Chat Version 2.0</title>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/JavaChat.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type="text/javascript">
+    function sendMessage() {
+      JavaChat.addMessage(dwr.util.getValue("text"));
+    }
+  </script>
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+
+<body onload="dwr.engine.setActiveReverseAjax(true); Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Java Chat</h1>
+
+<p>This is a very simple chat demo that uses reverse ajax to collect messages
+and server-side browser manipulation to update the pages with the results.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+    <p>
+      Your Message:
+      <input id="text" onkeypress="dwr.util.onReturn(event, sendMessage)"/>
+      <input type="button" value="Send" onclick="sendMessage()"/>
+    </p>
+    <hr/>
+    
+    <ul id="chatlog" style="list-style-type:none;">
+    </ul>
+  </div>
+
+  <div id="explainDiv">
+    <h2>Sending a Message</h2>
+    <p>This code is similar to the <a href="javascript-chat.html">JavaScript
+    Chat</a> demo except that we've moved more processing to the server in this
+    case. With this version we simply send whatever is typed to the server on
+    a keypress.</p>
+<pre>
+function sendMessage() {
+  JavaChat.addMessage(dwr.util.getValue("text"));
+}
+</pre>
+    <p>And the server processes the input as it did in the JavaScript Chat
+    example, except that rather than call a JavaScript function to update the UI
+    it does it itself:</p>
+    <p>First it clears the message input field. Since the default target browser
+    is the browser that caused the event to happen, we can just call setValue as
+    follows:</p>
+<pre>
+Util.setValue("text", "");
+</pre>
+    <p>We then need to change the target browsers to include everyone on the
+    same page before we alter the list of current messages:</p>
+<pre>
+// For all the browsers on the current page:
+Browser.withCurrentPage(new Runnable() {
+    public void run() {
+        // Clear the list and add in the new set of messages
+        Util.removeAllOptions("chatlog");
+        Util.addOptions("chatlog", messages, "text");
+    }
+});
+</pre>
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;p&gt;
+  Your Message:
+  &lt;input id="text" onkeypress="dwr.util.onReturn(event, sendMessage)"/&gt;
+  &lt;input type="button" value="Send" onclick="sendMessage()"/&gt;
+&lt;/p&gt;
+&lt;hr/&gt;
+&lt;div id="chatlog"&gt;&lt;/div&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+dwr.engine.setActiveReverseAjax(true);
+
+function sendMessage() {
+  JavaChat.addMessage(dwr.util.getValue("text"));
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+public class JavaChat {
+    /**
+     * @param text The new message text to add
+     */
+    public void addMessage(String text) {
+        // Make sure we have a list of the list 10 messages
+        if (text != null && text.trim().length() > 0) {
+            messages.addFirst(new Message(text));
+            while (messages.size() > 10) {
+                messages.removeLast();
+            }
+        }
+
+        // Clear the input box in the browser that kicked off this page only
+        Util.setValue("text", "");
+
+        // For all the browsers on the current page:
+        Browser.withCurrentPage(new Runnable() {
+            public void run() {
+                // Clear the list and add in the new set of messages
+                Util.removeAllOptions("chatlog");
+                Util.addOptions("chatlog", messages, "text");
+            }
+        });
+    }
+
+    /**
+     * The current set of messages
+     */
+    private final LinkedList&lt;Message&gt; messages = new LinkedList&lt;Message&gt;();
+}
+</pre>
+
+  </div>
+
+</div>
+
+</body>
+</html>

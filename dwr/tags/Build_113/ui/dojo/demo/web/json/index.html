@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Simple Text Generation Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <script type="text/javascript" src="../widgets/dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true"> </script>
+  <script type="text/javascript" src="../widgets/dojo/custom/jsonrpcDemo.js"> </script>
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript'>
+    var services = new dojox.rpc.Service({
+        target:"../dwr/jsonrpc",
+        transport:"POST",
+        envelope:"JSON-RPC-1.0",
+        contentType:"application/json",
+        services:{
+            "Demo.sayHello":{
+                returns:{"type":"string"},
+                parameters:[{"type":"string"}]
+            }
+        }
+    });
+
+    function update() {
+        var name = dojo.byId("demoName").value;
+        var deferred = services.Demo.sayHello(name);
+        deferred.addCallback(function(result) {
+            dojo.byId("demoReply").innerHTML = result;
+        });
+    }
+  </script>
+</head>
+<body onload="Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Dynamically Updating Text</h1>
+
+<p>This is a simple demonstration of updating a web-page with text fetched from
+JSON-RPC service provided by DWR.</p>
+
+<p>It is similar to the <a href="../simple/text.html">plain DWR version</a> of
+this demo. Using vanilla DWR is simpler and more powerful than using JSON-RPC,
+however JSON-RPC is useful when you need to use a different client.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+
+    <p>
+      Name:
+      <input type="text" id="demoName" value="Joe"/>
+      <input type="button" id="demoSend" value="Send" onclick="update()"/>
+      <br/>
+      Reply: <span id="demoReply" style="background:#eeffdd; padding-left:4px; padding-right:4px;">&nbsp;</span>
+    </p>
+
+  </div>
+
+  <div id="explainDiv">
+    <p>In this example we're using Dojo's JSON-RPC handler to call into DWR's
+    JSON-RPC service, however we could use any JSON-RPC client. Dojo's API
+    requires that we first register the call:</p>
+<pre>
+var services = new dojox.rpc.Service({
+    target:"../dwr/jsonrpc",
+    transport:"POST",
+    envelope:"JSON-RPC-1.0",
+    contentType:"application/json",
+    services:{
+        "Demo.sayHello":{
+            returns:{"type":"string"},
+            parameters:[{"type":"string"}]
+        }
+    }
+});
+</pre>
+
+    <p>When you click on the "Send" button the browser calls the onclick event,
+    which calls the <code>update()</code> function:</p>
+    
+<pre>
+function update() {
+    var name = dojo.byId("demoName").value;
+    var deferred = services.Demo.sayHello(name);
+    // ...
+}
+</pre>
+
+    <p><em>deferred</em> is a Dojo concept for something that will happen in the
+    future. We need to add a callback to the deferred object:</p>    
+<pre>
+deferred.addCallback(function(result) {
+    dojo.byId("demoReply").innerHTML = result;
+});
+</pre>
+    
+    <p>This is a good deal more complex than the
+    <a href="../simple/text.html">plain DWR version</a>, however using JSON-RPC
+    allows interaction with systems that are not using a DWR client.</p>
+    
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;p&gt;
+  Name:
+  &lt;input type="text" id="demoName"/&gt;
+  &lt;input value="Send" type="button" onclick="update()"/&gt;
+  &lt;br/&gt;
+  Reply: &lt;span id="demoReply"&gt;&lt;/span&gt;
+&lt;/p&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+var services = new dojox.rpc.Service({
+    target:"../dwr/jsonrpc",
+    transport:"POST",
+    envelope:"JSON-RPC-1.0",
+    contentType:"application/json",
+    services:{
+        "Demo.sayHello":{
+            returns:{"type":"string"},
+            parameters:[{"type":"string"}]
+        }
+    }
+});
+
+function update() {
+    var name = dojo.byId("demoName").value;
+    var deferred = services.Demo.sayHello(name);
+    deferred.addCallback(function(result) {
+        dojo.byId("demoReply").innerHTML = result;
+    });
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+package org.getahead.dwrdemo.simpletext;
+
+public class Demo {
+    public String sayHello(String name) {
+        return "Hello, " + name;
+    }
+}
+</pre>
+
+<h2>dwr.xml</h2>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.org/dwr/dwr20.dtd"&gt;
+
+&lt;dwr&gt;
+  &lt;allow&gt;
+    &lt;create creator="new" javascript="Demo"&gt;
+      &lt;param name="class" value="org.getahead.dwrdemo.simpletext.Demo"/&gt;
+    &lt;/create&gt;
+  &lt;/allow&gt;
+&lt;/dwr&gt;
+</pre>
+
+  </div>
+
+</div>
+
+</body>
+</html>

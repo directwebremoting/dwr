@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Server Side Reverse Ajax Clock</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/interface/Clock.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+
+<body onload="dwr.engine.setActiveReverseAjax(true); Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Server Side Reverse Ajax Clock</h1>
+
+<p>Creating a clock in a web page is easy, but what about a clock controlled by
+the server? This demo shows how use use a separate server side thread to control
+a number of browsers.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+    <input type="button" value="Start / Stop" onclick="Clock.toggle();"/>
+    <p></p>
+    <h2 id="clockDisplay"></h2>
+  </div>
+
+  <div id="explainDiv">
+    <h2>Client side script</h2>
+    <p>Virtually none. Other than setting up the tabs, all we do is to turn
+    active Reverse Ajax on: <code>dwr.engine.setActiveReverseAjax(true);</code>.
+    Reverse Ajax will work without comet, by using piggyback, however this gives
+    you very long latency, not what we need for a clock, so we turn on comet or
+    polling (whatever the server is configured to prefer).</p>
+
+    <p>The server code uses a ScheduledThreadPoolExecutor to call update the
+    screen once a second. The setClockDisplay looks like this:</p>
+
+<pre>
+String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
+Browser.withPage(page, new Runnable()
+{
+    public void run()
+    {
+        Util.setValue("clockDisplay", output);
+    }
+});
+</pre>
+
+    <p>ServerContextFactory is a lot like WebContextFactory, however it will
+    work outside a DWR thread. Since we're using the ScheduledThreadPoolExecutor
+    thread here, we need to use ServerContext and not WebContext.</p>
+    
+    <p>We need to work out the page to update. You may know the contextPath
+    without needing to ask, but in this case we're making the web-app
+    relocatable by asking for the contextPath.</p>
+
+    <p>We then create a scope where the target browsers includes everyone
+    looking at the given page, and we use the <code>Util.setValue()</code>
+    method to alter the target browsers.</p>
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;input type="button" value="Start / Stop" onclick="Clock.toggle();"/&gt;
+&lt;h2 id="clockDisplay"&gt;&lt;/h2&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+dwr.engine.setActiveReverseAjax(true);
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+public class Clock implements Runnable {
+    public Clock() {
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+    }
+
+    public void run() {
+        if (active) {
+            setClockDisplay(new Date().toString());
+        }
+    }
+
+    /**
+     * Called from the client to turn the clock on/off
+     */
+    public synchronized void toggle() {
+        active = !active;
+
+        if (active) {
+            setClockDisplay("Started");
+        }
+        else {
+            setClockDisplay("Stopped");
+        }
+    }
+
+    /**
+     * Actually alter the clients.
+     * @param output The string to display.
+     */
+    public void setClockDisplay(final String output) {
+        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
+        Browser.withPage(page, new Runnable() {
+            public void run() {
+                Util.setValue("clockDisplay", output);
+            }
+        });
+    }
+
+    protected transient boolean active = false;
+}
+</pre>
+
+  </div>
+
+</div>
+
+</body>
+</html>
