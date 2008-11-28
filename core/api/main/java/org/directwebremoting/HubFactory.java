@@ -15,8 +15,6 @@
  */
 package org.directwebremoting;
 
-import javax.servlet.ServletContext;
-
 import org.directwebremoting.extend.Builder;
 import org.directwebremoting.extend.Factory;
 
@@ -46,7 +44,7 @@ public class HubFactory
      * @param ctx The servlet context to allow us to bootstrap
      * @return The current Hub.
      */
-    public static Hub get(ServletContext ctx)
+    public static Hub get(ServerContext ctx)
     {
         return factory.get(ctx);
     }

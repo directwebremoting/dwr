@@ -23,10 +23,10 @@ import javax.jms.IllegalStateException;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
-import javax.servlet.ServletContext;
 
 import org.directwebremoting.Hub;
 import org.directwebremoting.HubFactory;
+import org.directwebremoting.ServerContext;
 
 /**
  * An implementation of {@link MessageProducer} that sends messages out over
@@ -41,11 +41,11 @@ public class DwrMessageProducer implements MessageProducer
     public DwrMessageProducer(Destination destination, DwrConnection connection)
     {
         this.destination = destination;
-        ServletContext servletContext = connection.getServletContext();
+        ServerContext serverContext = connection.getServerContext();
 
-        if (servletContext != null)
+        if (serverContext != null)
         {
-            hub = HubFactory.get(servletContext);
+            hub = HubFactory.get(serverContext);
         }
         else
         {
@@ -217,7 +217,7 @@ public class DwrMessageProducer implements MessageProducer
     /**
      * The default queue or topic
      */
-    private Destination destination;
+    private final Destination destination;
 
     /**
      * For queues: are messages persistent

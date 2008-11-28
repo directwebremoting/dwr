@@ -18,8 +18,6 @@ package org.directwebremoting.export;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Hub;
@@ -92,8 +90,7 @@ public class System
     {
         WebContext webContext = WebContextFactory.get();
         ConverterManager converterManager = webContext.getContainer().getBean(ConverterManager.class);
-        ServletContext servletContext = webContext.getServletContext();
-        Hub hub = HubFactory.get(servletContext);
+        Hub hub = HubFactory.get();
 
         MessageEvent event = new DefaultMessageEvent(hub, converterManager, data);
         hub.publish(topic, event);
@@ -108,8 +105,7 @@ public class System
     public void subscribe(String topic, String subscriptionId)
     {
         WebContext webContext = WebContextFactory.get();
-        ServletContext servletContext = webContext.getServletContext();
-        Hub hub = HubFactory.get(servletContext);
+        Hub hub = HubFactory.get();
         final ScriptSession session = webContext.getScriptSession();
 
         // Create a subscription block
@@ -135,8 +131,7 @@ public class System
     public boolean unsubscribe(String subscriptionId)
     {
         WebContext webContext = WebContextFactory.get();
-        ServletContext servletContext = webContext.getServletContext();
-        Hub hub = HubFactory.get(servletContext);
+        Hub hub = HubFactory.get();
         ScriptSession session = webContext.getScriptSession();
 
         Map<String, BrowserMessageListener> subscriptions = (Map<String, BrowserMessageListener>) session.getAttribute(ATTRIBUTE_SUBSCRIPTIONS);

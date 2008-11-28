@@ -23,10 +23,10 @@ import javax.jms.JMSException;
 import javax.jms.ServerSessionPool;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ServerContext;
 
 /**
  * An implementation of {@link Connection} for DWR
@@ -154,23 +154,23 @@ public class DwrConnection implements Connection
     /**
      * @return the servletContext
      */
-    public ServletContext getServletContext()
+    public ServerContext getServerContext()
     {
-        return servletContext;
+        return serverContext;
     }
 
     /**
-     * @param servletContext the servletContext to set
+     * @param serverContext the servletContext to set
      */
-    public void setServletContext(ServletContext servletContext)
+    public void setServerContext(ServerContext serverContext)
     {
-        this.servletContext = servletContext;
+        this.serverContext = serverContext;
     }
 
     /**
      * Our connection to the DWR infrastructure
      */
-    private ServletContext servletContext;
+    private ServerContext serverContext;
 
     /**
      * What's the current state of the current connection?

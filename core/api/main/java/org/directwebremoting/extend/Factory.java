@@ -15,10 +15,9 @@
  */
 package org.directwebremoting.extend;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ServerContext;
 
 /**
  * Factory is not a user facing object, it is designed for system implementors.
@@ -62,7 +61,7 @@ public class Factory<T>
      * @param ctx The servlet context to allow us to bootstrap
      * @return The current object accessed by this Factory.
      */
-    public T get(ServletContext ctx)
+    public T get(ServerContext ctx)
     {
         Builder<T> b = this.builder;
         if (b == null)

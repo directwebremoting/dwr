@@ -15,8 +15,7 @@
  */
 package org.directwebremoting.json.parse;
 
-import javax.servlet.ServletContext;
-
+import org.directwebremoting.ServerContext;
 import org.directwebremoting.extend.Builder;
 import org.directwebremoting.extend.Factory;
 
@@ -39,14 +38,14 @@ public class JsonParserFactory
     /**
      * Accessor for the current JsonParser in more complex setups.
      * For some setups DWR may not be able to discover the correct environment
-     * (i.e. ServletContext), so we need to tell it. This generally happens if
+     * (i.e. ServerContext), so we need to tell it. This generally happens if
      * you have DWR configured twice in a single context. Unless you are writing
      * code that someone else will configure, it is probably safe to use the
      * simpler {@link #get()} method.
      * @param ctx The servlet context to allow us to bootstrap
      * @return The current JsonParser.
      */
-    public static JsonParser get(ServletContext ctx)
+    public static JsonParser get(ServerContext ctx)
     {
         return factory.get(ctx);
     }
