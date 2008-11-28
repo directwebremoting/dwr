@@ -15,7 +15,8 @@
  */
 package org.directwebremoting.impl;
 
-import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,10 +46,69 @@ public class DefaultBuilder<T> implements Builder<T>, InitializingBean
     /* (non-Javadoc)
      * @see org.directwebremoting.Builder#get()
      */
-    @SuppressWarnings("unchecked")
     public T get()
     {
-        // Try to get the context from the thread
+        return get(getServerContext());
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.Builder#get()
+     */
+    @SuppressWarnings("unchecked")
+    public T get(ServerContext serverContext)
+    {
+        // This might be a builder for ServletContexts in which case we're done
+        if (ServerContext.class.isAssignableFrom(created))
+        {
+            return (T) serverContext;
+        }
+
+        Map<Class<?>, Object> contextObjects = lookup.get(serverContext);
+        if (contextObjects == null)
+        {
+            throw new IllegalStateException("The passed ServerContext in unknown to the DefaultBuilder");
+        }
+
+        T t = (T) contextObjects.get(created);
+        if (t == null)
+        {
+            throw new IllegalStateException("The DefaultBuilder knows nothing about objects of type " + created.getName());
+        }
+
+        return t;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
+     */
+    public void afterContainerSetup(Container container)
+    {
+        try
+        {
+            T t = container.newInstance(created);
+            // It might seem better to do getServerContext() at this point, but
+            // since this is called during setup, that does not work, so we ask
+            // the container for it instead.
+            ServerContext serverContext = container.getBean(ServerContext.class);
+            Map<Class<?>, Object> contextObjects = lookup.get(serverContext);
+            if (contextObjects == null)
+            {
+                contextObjects = new HashMap<Class<?>, Object>();
+                lookup.put(serverContext, contextObjects);
+            }
+            contextObjects.put(created, t);
+        }
+        catch (Exception ex)
+        {
+            log.fatal("Failed to create an ExecutionContext", ex);
+        }
+    }
+
+    /**
+     * Try to get the context from the thread, or from the singleton
+     */
+    private ServerContext getServerContext()
+    {
         ServerContext serverContext = WebContextFactory.get();
         if (serverContext == null)
         {
@@ -63,59 +123,13 @@ public class DefaultBuilder<T> implements Builder<T>, InitializingBean
             }
         }
 
-        // This might be a builder for ServletContexts in which case we're done
-        if (ServletContext.class.isAssignableFrom(created))
-        {
-            return (T) created;
-        }
-
-        ServletContext servletContext = serverContext.getServletContext();
-        T reply = (T) servletContext.getAttribute(attributeName);
-        if (reply == null)
-        {
-            log.warn("get() returns null when DWR has not been initialized in the given ServletContext");
-        }
-
-        return reply;
+        return serverContext;
     }
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.Builder#get()
+    /**
+     * Our cache of created objects.
      */
-    public T get(ServletContext servletContext)
-    {
-        if (servletContext == null)
-        {
-            throw new NullPointerException("servletContext");
-        }
-
-        @SuppressWarnings("unchecked")
-        T reply = (T) servletContext.getAttribute(attributeName);
-        if (reply == null)
-        {
-            log.warn("get(ServletContext) returns null when DWR has not been initialized in the given ServletContext");
-        }
-
-        return reply;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)
-     */
-    public void afterContainerSetup(Container container)
-    {
-        try
-        {
-            T t = container.newInstance(created);
-
-            ServletContext servletContext = container.getBean(ServletContext.class);
-            servletContext.setAttribute(attributeName, t);
-        }
-        catch (Exception ex)
-        {
-            log.fatal("Failed to create an ExecutionContext", ex);
-        }
-    }
+    private static final Map<ServerContext, Map<Class<?>, Object>> lookup = new HashMap<ServerContext, Map<Class<?>, Object>>();
 
     /**
      * How we create objects of the given type

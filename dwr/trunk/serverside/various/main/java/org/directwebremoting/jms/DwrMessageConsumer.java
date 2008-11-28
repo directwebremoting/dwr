@@ -21,12 +21,12 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Hub;
 import org.directwebremoting.HubFactory;
+import org.directwebremoting.ServerContext;
 import org.directwebremoting.event.MessageEvent;
 
 /**
@@ -44,7 +44,7 @@ public class DwrMessageConsumer implements MessageConsumer
     }
 
     /**
-     * @throws JMSException 
+     * @throws JMSException
      * @see javax.jms.Session#createConsumer(Destination, String)
      */
     public DwrMessageConsumer(DwrConnection connection, Destination destination, String messageSelector) throws JMSException
@@ -61,17 +61,17 @@ public class DwrMessageConsumer implements MessageConsumer
         setMessageSelector(messageSelector);
         this.noLocal = noLocal;
 
-        ServletContext servletContext = connection.getServletContext();
+        ServerContext serverContext = connection.getServerContext();
 
-        if (servletContext != null)
+        if (serverContext != null)
         {
-            hub = HubFactory.get(servletContext);
+            hub = HubFactory.get(serverContext);
         }
         else
         {
             hub = HubFactory.get();
         }
-        
+
         if (destination instanceof DwrTopic)
         {
             DwrTopic topic = (DwrTopic) destination;

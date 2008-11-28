@@ -15,8 +15,7 @@
  */
 package org.directwebremoting.extend;
 
-import javax.servlet.ServletContext;
-
+import org.directwebremoting.ServerContext;
 import org.directwebremoting.ui.Callback;
 
 /**
@@ -44,7 +43,7 @@ public class CallbackHelperFactory
      * @param ctx The servlet context to allow us to bootstrap
      * @return The current CallbackHelper.
      */
-    public static CallbackHelper get(ServletContext ctx)
+    public static CallbackHelper get(ServerContext ctx)
     {
         return factory.get(ctx);
     }

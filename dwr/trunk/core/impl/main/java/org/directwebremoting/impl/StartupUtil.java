@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -102,23 +103,6 @@ public class StartupUtil
      * The name under which we publish all {@link Container}s.
      */
     public static final String ATTRIBUTE_CONTAINER_LIST = "org.directwebremoting.ContainerList";
-
-    /**
-     * We store a single ServerContext in the contextMap under this name.
-     */
-    public static final String DEFAULT_SERVERCONTEXT_NAME = "__default";
-
-    /**
-     * To enable us to get at a ServerContext if one has been defined or at
-     * all of them if several have been defined
-     */
-    private static final Map<String, ServerContext> contextMap = new HashMap<String, ServerContext>();
-
-    /**
-     * How many Contexts are there in this classloader that we need to
-     * distinguish? Things will be a lot harder if there is more than 1.
-     */
-    private static int foundContexts = 0;
 
     /**
      * A way to setup DWR outside of any Containers.
@@ -739,11 +723,11 @@ public class StartupUtil
             {
             case 0:
                 // No-one has been here before - set us as the default
-                contextMap.put(DEFAULT_SERVERCONTEXT_NAME, serverContext);
+                singletonServerContext = serverContext;
                 break;
             case 1:
                 // We're second - remove the previous guy from being default
-                contextMap.remove(DEFAULT_SERVERCONTEXT_NAME);
+                singletonServerContext = null;
                 Loggers.STARTUP.debug("Multiple instances of DWR detected.");
                 break;
             default:
@@ -769,7 +753,7 @@ public class StartupUtil
     {
         synchronized (contextMap)
         {
-            return contextMap.get(DEFAULT_SERVERCONTEXT_NAME);
+            return singletonServerContext;
         }
     }
 
@@ -781,18 +765,8 @@ public class StartupUtil
     public static Collection<ServerContext> getAllServerContexts()
     {
         Collection<ServerContext> reply = new ArrayList<ServerContext>();
-        synchronized (contextMap)
-        {
-            for (Map.Entry<String, ServerContext> entry : contextMap.entrySet())
-            {
-                String key = entry.getKey();
-                if (!key.equals(DEFAULT_SERVERCONTEXT_NAME))
-                {
-                    reply.add(entry.getValue());
-                }
-            }
-        }
-        return reply;
+        reply.addAll(contextMap.values());
+        return Collections.unmodifiableCollection(reply);
     }
 
     /**
@@ -882,4 +856,20 @@ public class StartupUtil
         JsonSerializerFactory.setBuilder(container.getBean(JsonSerializerBuilder.class));
         CallbackHelperFactory.setBuilder(container.getBean(CallbackHelperBuilder.class));
     }
+
+    /**
+     * We store a single ServerContext in the contextMap under this name.
+     */
+    private static ServerContext singletonServerContext;
+
+    /**
+     * To enable us to get at a complete list of all {@link ServerContext}s
+     */
+    private static final Map<String, ServerContext> contextMap = new HashMap<String, ServerContext>();
+
+    /**
+     * How many Contexts are there in this classloader that we need to
+     * distinguish? Things will be a lot harder if there is more than 1.
+     */
+    private static int foundContexts = 0;
 }

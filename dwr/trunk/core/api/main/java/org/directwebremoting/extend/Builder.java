@@ -15,11 +15,11 @@
  */
 package org.directwebremoting.extend;
 
-import javax.servlet.ServletContext;
+import org.directwebremoting.ServerContext;
 
 /**
  * Class to enable us to build 'singleton' interface implementations.
- * It is assumed that there is one 'singleton' per {@link ServletContext}.
+ * It is assumed that there is one 'singleton' per {@link ServerContext}.
  * Both this class and implementations of it are generally for use by DWR
  * developers. If you are a DWR user then unless you're doing something very
  * deep, you're probably digging too far.
@@ -29,20 +29,18 @@ public interface Builder<T>
 {
     /**
      * Get the object that is associated with this thread, assuming that there
-     * is no confusion over the current {@link ServletContext}.
-     * If DWR is configured more than once in this {@link ServletContext} then
-     * it is probably best to use {@link #get(ServletContext)} to ensure that
-     * the correct object is found.
-     * @return The object associated with this thread, or null if there is
-     * confusion over which {@link ServletContext} to access.
+     * is no confusion over the current {@link ServerContext}.
+     * There is more than one {@link ServerContext} then you need to use
+     * {@link #get(ServerContext)} to ensure that the correct one is used.
+     * @return The object associated with this DWR instance
      */
     T get();
 
     /**
      * Get the object that is associated with this thread, whilst specifying
-     * the current {@link ServletContext}.
+     * the correct {@link ServerContext}.
      * @param context The web application environment
      * @return The object that is associated with this web application
      */
-    T get(ServletContext context);
+    T get(ServerContext context);
 }

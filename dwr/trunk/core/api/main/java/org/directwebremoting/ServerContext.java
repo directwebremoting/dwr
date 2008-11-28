@@ -21,10 +21,15 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
- * Basic information about the environment that DWR is running in. Since there
- * is no way to work on what {@link ServletContext}s are open in the current
- * classloader, this class provides access to information associated with a
- * single context in which DWR is running.
+ * ServerContext is something of a misnomer - it refers to a running DwrServlet
+ * (or a similar concept when DWR is run inside Guice/Spring/etc).
+ * ServerContext is useful for threads that are NOT created by DWR to allow
+ * them to interact with the environment that the DWR instance knows about.
+ * <p>If you are running in a DWR thread then you are probably better off using
+ * {@link WebContext} in place of {@link ServerContext}.
+ * <p>From DWR 3, you are probably better off looking towards {@link Browser},
+ * {@link ScriptSessions} or the various reverse ajax proxy APIs in order to
+ * interact with web-clients.
  * <p>
  * {@link ServerContext} is accessible from {@link ServerContextFactory#get()}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
