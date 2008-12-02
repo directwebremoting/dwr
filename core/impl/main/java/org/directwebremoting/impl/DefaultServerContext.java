@@ -15,7 +15,9 @@
  */
 package org.directwebremoting.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -24,8 +26,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ScriptSessionFilter;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.PageScriptSessionFilter;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.VersionUtil;
@@ -49,7 +53,19 @@ public class DefaultServerContext implements ServerContext
      */
     public Collection<ScriptSession> getScriptSessionsByPage(String url)
     {
-        return getScriptSessionManager().getScriptSessionsByPage(url);
+        List<ScriptSession> matching = new ArrayList<ScriptSession>();
+        Collection<ScriptSession> allScriptSessions = getScriptSessionManager().getAllScriptSessions();
+        ScriptSessionFilter filter = new PageScriptSessionFilter(this, url);
+
+        for (ScriptSession session : allScriptSessions)
+        {
+            if (filter.match(session))
+            {
+                matching.add(session);
+            }
+        }
+
+        return matching;
     }
 
     /* (non-Javadoc)

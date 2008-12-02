@@ -18,7 +18,10 @@ package org.directwebremoting;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.directwebremoting.extend.PageNormalizer;
+import org.directwebremoting.extend.AllScriptSessionFilter;
+import org.directwebremoting.extend.AndScriptSessionFilter;
+import org.directwebremoting.extend.IdScriptSessionFilter;
+import org.directwebremoting.extend.PageScriptSessionFilter;
 import org.directwebremoting.extend.TaskDispatcher;
 import org.directwebremoting.extend.TaskDispatcherFactory;
 import org.directwebremoting.io.JavascriptObject;
@@ -277,89 +280,5 @@ public class Browser
         }
 
         throw new IllegalStateException("No current UI to manipulate. See org.directwebremoting.Browser to set one.");
-    }
-
-    /**
-     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
-     * that match the given page
-     */
-    private static class PageScriptSessionFilter implements ScriptSessionFilter
-    {
-        private PageScriptSessionFilter(ServerContext serverContext, String page)
-        {
-            PageNormalizer pageNormalizer = serverContext.getContainer().getBean(PageNormalizer.class);
-            this.page = pageNormalizer.normalizePage(page);
-        }
-
-        /* (non-Javadoc)
-         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
-         */
-        public boolean match(ScriptSession session)
-        {
-            return session.getPage().equals(page);
-        }
-
-        private final String page;
-    }
-
-    /**
-     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
-     * that match the given session id
-     */
-    private static class IdScriptSessionFilter implements ScriptSessionFilter
-    {
-        private IdScriptSessionFilter(String id)
-        {
-            this.id = id;
-        }
-
-        /* (non-Javadoc)
-         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
-         */
-        public boolean match(ScriptSession session)
-        {
-            return session.getId().equals(id);
-        }
-
-        private final String id;
-    }
-
-    /**
-     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
-     * that match pass both the given {@link ScriptSessionFilter}s
-     */
-    private static class AndScriptSessionFilter implements ScriptSessionFilter
-    {
-        private AndScriptSessionFilter(ScriptSessionFilter left, ScriptSessionFilter right)
-        {
-            this.left = left;
-            this.right = right;
-        }
-
-        /* (non-Javadoc)
-         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
-         */
-        public boolean match(ScriptSession session)
-        {
-            return left.match(session) && right.match(session);
-        }
-
-        private final ScriptSessionFilter left;
-
-        private final ScriptSessionFilter right;
-    }
-
-    /**
-     * A {@link ScriptSessionFilter} that passes everything
-     */
-    private static class AllScriptSessionFilter implements ScriptSessionFilter
-    {
-        /* (non-Javadoc)
-         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
-         */
-        public boolean match(ScriptSession session)
-        {
-            return true;
-        }
     }
 }
