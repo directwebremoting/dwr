@@ -546,10 +546,10 @@ dwr.util.setValue = function(ele, val, options) {
   }
 
   // Fall back to innerHTML and friends
-  if (dwr.util._shouldEscapeHtml(options) && typeof(val) == "string") {
-    if ("textContent" in ele) ele.textContent = val;
-    else if ("innerText" in ele) ele.innerText = val;
-    else ele.innerHTML = dwr.util.escapeHtml(val);
+  if (dwr.util._shouldEscapeHtml(options)) {
+    if ("textContent" in ele) ele.textContent = val.toString();
+    else if ("innerText" in ele) ele.innerText = val.toString();
+    else ele.innerHTML = dwr.util.escapeHtml(val.toString());
   }
   else {
     ele.innerHTML = val;
@@ -749,20 +749,23 @@ dwr.util.getText = function(ele) {
  */
 dwr.util.setValues = function(data, options) {
   var prefix = "";
+  var depth = 100;
   if (options && options.prefix) prefix = options.prefix;
   if (options && options.idPrefix) prefix = options.idPrefix;
-  dwr.util._setValuesRecursive(data, prefix, options);
+  if (options && "depth" in options) depth = options.depth;
+  dwr.util._setValuesRecursive(data, prefix, depth, options);
 };
 
 /**
  * @private Recursive helper for setValues()
  */
-dwr.util._setValuesRecursive = function(data, idpath, options) {
+dwr.util._setValuesRecursive = function(data, idpath, depth, options) {
+  if (depth == 0) return;
   // Array containing objects -> add "[n]" to prefix and make recursive call
   // for each item object
   if (dwr.util._isArray(data) && data.length > 0 && dwr.util._isObject(data[0])) {
     for (var i = 0; i < data.length; i++) {
-      dwr.util._setValuesRecursive(data[i], idpath+"["+i+"]", options);
+      dwr.util._setValuesRecursive(data[i], idpath+"["+i+"]", depth-1, options);
     }
   }
   // Object (not array) -> handle nested object properties
@@ -770,9 +773,9 @@ dwr.util._setValuesRecursive = function(data, idpath, options) {
     for (var prop in data) {
       var subidpath = idpath ? idpath+"."+prop : prop;
       // Object (not array), or array containing objects -> call ourselves recursively
-      if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop]) 
+      if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop]) && !dwr.util._isDate(data[prop]) 
           || dwr.util._isArray(data[prop]) && data[prop].length > 0 && dwr.util._isObject(data[prop][0])) {
-        dwr.util._setValuesRecursive(data[prop], subidpath, options);
+        dwr.util._setValuesRecursive(data[prop], subidpath, depth-1, options);
       }
       // Functions -> skip
       else if (typeof data[prop] == "function") {
@@ -804,9 +807,11 @@ dwr.util.getValues = function(data, options) {
   }
   else {
     var prefix = "";
+    var depth = 100;
     if (options != null && options.prefix) prefix = options.prefix;
     if (options != null && options.idPrefix) prefix = options.idPrefix;
-    dwr.util._getValuesRecursive(data, prefix);
+    if (options != null && "depth" in options) depth = options.depth;
+    dwr.util._getValuesRecursive(data, prefix, depth, options);
     return data;
   }
 };
@@ -853,12 +858,13 @@ dwr.util.getFormValues = function(eleOrNameOrId) {
 /**
  * @private Recursive helper for getValues().
  */
-dwr.util._getValuesRecursive = function(data, idpath) {
+dwr.util._getValuesRecursive = function(data, idpath, depth, options) {
+  if (depth == 0) return;
   // Array containing objects -> add "[n]" to idpath and make recursive call
   // for each item object
   if (dwr.util._isArray(data) && data.length > 0 && dwr.util._isObject(data[0])) {
     for (var i = 0; i < data.length; i++) {
-      dwr.util._getValuesRecursive(data[i], idpath+"["+i+"]");
+      dwr.util._getValuesRecursive(data[i], idpath+"["+i+"]", depth-1, options);
     }
   }
   // Object (not array) -> handle nested object properties
@@ -868,7 +874,7 @@ dwr.util._getValuesRecursive = function(data, idpath) {
       // Object, or array containing objects -> call ourselves recursively
       if (dwr.util._isObject(data[prop]) && !dwr.util._isArray(data[prop])
           || dwr.util._isArray(data[prop]) && data[prop].length > 0 && dwr.util._isObject(data[prop][0])) {
-        dwr.util._getValuesRecursive(data[prop], subidpath);
+        dwr.util._getValuesRecursive(data[prop], subidpath, depth-1, options);
       }
       // Functions -> skip
       else if (typeof data[prop] == "function") {
