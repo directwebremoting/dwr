@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.json.serialize;
 
+import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.extend.Builder;
 import org.directwebremoting.extend.Factory;
@@ -53,15 +54,14 @@ public class JsonSerializerFactory
     /**
      * Internal method to allow us to get the Builder from which we
      * will get JsonSerializer objects.
-     * Do not call this method from outside of DWR.
-     * @param builder The factory object (from DwrServlet)
+     * Do NOT call this method from outside of DWR.
      */
-    public static void setBuilder(Builder<JsonSerializer> builder)
+    public static void attach(Container container)
     {
-        factory.setBuilder(builder);
+        factory.attach(container);
     }
 
-    private static Factory<JsonSerializer> factory = Factory.create();
+    private static Factory<JsonSerializer> factory = Factory.create(JsonSerializerBuilder.class);
 
     /**
      * Hack to get around Generics not being implemented by erasure
