@@ -22,7 +22,7 @@
   });
 
   addRow = function(){
-    grid.addRow({ name:"Noname", address:"No Address", age:21, male:false });
+    grid.addRow({ name:"Noname", address:"No Address", age:21, superhero:false });
   };
   </script>
 </head>
@@ -34,16 +34,15 @@
 
 <h1>DWR + Dojo Demo</h1>
 
-<div id="mainTabContainer" dojoType="dijit.layout.TabContainer" style="width:600px;height:500px">
+<div id="mainTabContainer" dojoType="dijit.layout.TabContainer" style="width:90%;height:500px">
   <div id="demoDiv" dojoType="dijit.layout.ContentPane" title="Demo">
-    <table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" style="width:550px;height:380px">
+    <table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" style="width:650px;height:380px">
       <thead>
         <tr>
-          <th field="$id" width="50px" editable="false">ID</th>
           <th field="name" width="120px" editable="true">Name</th>
           <th field="address" width="200px" editable="true">Address</th>
           <th field="age" width="30px" editable="true">Age</th>
-          <th field="male" width="30px" editable="true">Male</th>
+          <th field="superhero" width="40px" editable="true">Superhero?</th>
         </tr>
       </thead>
     </table>
@@ -61,14 +60,23 @@
 &lt;table id="grid" dojoType="dojox.grid.DataGrid"&gt;
   &lt;thead&gt;
     &lt;tr&gt;
-      &lt;th field="$id" width="50px" editable="false"&gt;ID&lt;/th&gt;
       &lt;th field="name" width="120px" editable="true"&gt;Name&lt;/th&gt;
       &lt;th field="address" width="200px" editable="true"&gt;Address&lt;/th&gt;
       &lt;th field="age" width="30px" editable="true"&gt;Age&lt;/th&gt;
-      &lt;th field="male" width="30px" editable="true"&gt;Male&lt;/th&gt;
+      &lt;th field="superhero" width="30px" editable="true"&gt;Superhero?&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
 &lt;/table&gt;
+</pre>
+    <p>All that's needed to initialize this is the following:</p>
+<pre>
+var dwrStore, grid;
+dojo.addOnLoad(function() {
+  dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
+  grid = dijit.byId("grid");
+  grid.setStore(dwrStore);
+  dwr.engine.setActiveReverseAjax(true);
+});
 </pre>
 
   </div>
