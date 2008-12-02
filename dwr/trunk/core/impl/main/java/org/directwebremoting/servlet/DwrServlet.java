@@ -65,7 +65,6 @@ public class DwrServlet extends HttpServlet
 
             container = createContainer(servletConfig);
 
-            StartupUtil.initContainerBeans(container);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
             StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
