@@ -56,9 +56,9 @@ public class JsonSerializerFactory
      * will get JsonSerializer objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static JsonSerializer attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     private static Factory<JsonSerializer> factory = Factory.create(JsonSerializerBuilder.class);

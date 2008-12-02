@@ -47,11 +47,11 @@ public interface Builder<T>
     T get(ServerContext context);
 
     /**
+     * This method should be called during setup only.
      * This is a bit like {@link InitializingBean#afterContainerSetup}
      * except that it is called by {@link Factory#attach} which is
      * called after the container has finished setting itself up so we can
      * rely on {@link ServerContextFactory#get()} working.
-     * This method should be called during setup only.
      */
-    void attach(Container container);
+    T attach(Container container);
 }

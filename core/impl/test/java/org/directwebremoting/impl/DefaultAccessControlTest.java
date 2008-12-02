@@ -17,12 +17,9 @@ package org.directwebremoting.impl;
 
 import java.lang.reflect.Method;
 
-import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.FakeHttpServletRequest;
-import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -97,9 +94,9 @@ public class DefaultAccessControlTest
     @Test
     public void testReasonToNotExecute() throws Exception
     {
-        WebContextBuilder builder = new DefaultWebContextBuilder();
-        builder.engageThread(null, new FakeHttpServletRequest(), new FakeHttpServletResponse());
-        WebContextFactory.setBuilder(builder);
+        //WebContextBuilder builder = new DefaultWebContextBuilder();
+        //builder.engageThread(null, new FakeHttpServletRequest(), new FakeHttpServletResponse());
+        //WebContextFactory.setBuilder(builder);
 
         NewCreator creator = new NewCreator();
         creator.setClass(DefaultAccessControl.class.getName());

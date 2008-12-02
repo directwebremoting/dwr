@@ -119,8 +119,6 @@ public class TestEnvironment
            container = StartupUtil.createAndSetupDefaultContainer(servletConfig);
 
            webContextBuilder = container.getBean(WebContextBuilder.class);
-           StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-           StartupUtil.publishContainer(container, servletConfig);
 
            StartupUtil.configureFromSystemDwrXml(container);
 

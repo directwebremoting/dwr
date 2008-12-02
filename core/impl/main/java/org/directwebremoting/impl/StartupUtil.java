@@ -29,7 +29,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.directwebremoting.Container;
@@ -57,7 +56,6 @@ import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.TaskDispatcherFactory;
 import org.directwebremoting.json.parse.JsonParserFactory;
 import org.directwebremoting.json.serialize.JsonSerializerFactory;
-import org.directwebremoting.servlet.DwrWebContextFilter;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
@@ -113,16 +111,8 @@ public class StartupUtil
         try
         {
             ServletConfig servletConfig = new FakeServletConfig("test", new FakeServletContext());
-            ServletContext servletContext = servletConfig.getServletContext();
-
             logStartup("DWR:OutOfContainer", servletConfig);
-
             Container container = createAndSetupDefaultContainer(servletConfig);
-
-            WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
-
-            prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-            publishContainer(container, servletConfig);
             configureContainerFully(container, servletConfig);
 
             return container;
@@ -254,8 +244,12 @@ public class StartupUtil
         Loggers.STARTUP.debug("Setup: Getting parameters from defaults.properties:");
         setupDefaults(container);
 
+        // Add the ServletConfig and ServletContext to the container so they can
+        // be injected into contained beans
         Loggers.STARTUP.debug("Setup: Getting parameters from environment:");
-        setupFromEnvironment(container, servletConfig);
+        container.addBean(Container.class, container);
+        container.addBean(ServletConfig.class, servletConfig);
+        container.addBean(ServletContext.class, servletConfig.getServletContext());
 
         Loggers.STARTUP.debug("Setup: Getting parameters from ServletConfig:");
         setupFromServletConfig(container, servletConfig);
@@ -270,18 +264,26 @@ public class StartupUtil
         resolveListenerImplementations(container, servletConfig);
 
         Loggers.STARTUP.debug("Setup: Initializing Factories:");
-        initContainerBeans(container);
-    }
 
-    /**
-     * Add the ServletConfig and ServletContext to the container so they can
-     * be injected into contained beans
-     */
-    public static void setupFromEnvironment(DefaultContainer container, ServletConfig servletConfig)
-    {
-        container.addBean(Container.class, container);
-        container.addBean(ServletConfig.class, servletConfig);
-        container.addBean(ServletContext.class, servletConfig.getServletContext());
+        ServerContext serverContext = ServerContextFactory.attach(container);
+
+        WebContextFactory.attach(container);
+        HubFactory.attach(container);
+        JsonParserFactory.attach(container);
+        JsonSerializerFactory.attach(container);
+        CallbackHelperFactory.attach(container);
+        TaskDispatcherFactory.attach(container);
+
+        ServletContext servletContext = servletConfig.getServletContext();
+
+        // Make some changes to the ServletContext so {@link DwrWebContextFilter}
+        // can find the Container etc.
+        WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
+        servletContext.setAttribute(Container.class.getName(), container);
+        servletContext.setAttribute(WebContextBuilder.class.getName(), webContextBuilder);
+        servletContext.setAttribute(ServletConfig.class.getName(), servletConfig);
+
+        publishContainer(container, serverContext, servletConfig);
     }
 
     /**
@@ -519,23 +521,6 @@ public class StartupUtil
     }
 
     /**
-     * Make some changes to the ServletContext so {@link DwrWebContextFilter}
-     * can find the Container etc.
-     * @param context The servlet context
-     * @param config The servlet configuration
-     * @param container The container to save in the ServletContext
-     * @param webContextBuilder The WebContextBuilder to save
-     * @param servlet The Servlet to save
-     */
-    public static void prepareForWebContextFilter(ServletContext context, ServletConfig config, Container container, WebContextBuilder webContextBuilder, HttpServlet servlet)
-    {
-        context.setAttribute(Container.class.getName(), container);
-        context.setAttribute(WebContextBuilder.class.getName(), webContextBuilder);
-        context.setAttribute(ServletConfig.class.getName(), config);
-        context.setAttribute(HttpServlet.class.getName(), servlet);
-    }
-
-    /**
      * Configure using the system dwr.xml from within the JAR file.
      * @param container The container to configure
      * @throws ParserConfigurationException If the config file parse fails
@@ -556,10 +541,10 @@ public class StartupUtil
      * @throws IOException If the config file read fails
      * @throws SAXException If the config file parse fails
      */
-    public static void configureFromDefaultDwrXml(Container container) throws IOException, ParserConfigurationException, SAXException
+    public static void configureFromDefaultDwrXml(Container container, ServletConfig servletConfig) throws IOException, ParserConfigurationException, SAXException
     {
         DwrXmlConfigurator local = new DwrXmlConfigurator();
-        local.setServletResourceName(DwrConstants.DEFAULT_DWR_XML);
+        local.setServletResourceName(servletConfig.getServletContext(), DwrConstants.DEFAULT_DWR_XML);
         local.configure(container);
     }
 
@@ -593,7 +578,7 @@ public class StartupUtil
                 {
                     String fileName = st.nextToken().trim();
                     DwrXmlConfigurator local = new DwrXmlConfigurator();
-                    local.setServletResourceName(fileName);
+                    local.setServletResourceName(servletConfig.getServletContext(), fileName);
                     local.configure(container);
                 }
             }
@@ -669,7 +654,7 @@ public class StartupUtil
         {
             try
             {
-                configureFromDefaultDwrXml(container);
+                configureFromDefaultDwrXml(container, servletConfig);
             }
             catch (IOException ex)
             {
@@ -697,7 +682,7 @@ public class StartupUtil
      * @param servletConfig Source of initParams to dictate publishing and contexts to publish to
      */
     @SuppressWarnings("unchecked")
-    public static void publishContainer(Container container, ServletConfig servletConfig)
+    private static void publishContainer(Container container, ServerContext serverContext, ServletConfig servletConfig)
     {
         ServletContext servletContext = servletConfig.getServletContext();
 
@@ -709,9 +694,6 @@ public class StartupUtil
         }
         containers.add(container);
         servletContext.setAttribute(ATTRIBUTE_CONTAINER_LIST, containers);
-
-        // Update the list of ServerContexts
-        ServerContext serverContext = ServerContextFactory.get();
 
         // Attempt to set the singleton ServerContext, unsetting for all if
         // there is already one
@@ -836,25 +818,6 @@ public class StartupUtil
                 Loggers.STARTUP.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
             }
         }
-    }
-
-    /**
-     * Get the various objects out of the {@link Container}, and configure them.
-     * @param container The container to save in the ServletContext
-     */
-    private static void initContainerBeans(Container container)
-    {
-        WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
-        WebContextFactory.setBuilder(webContextBuilder);
-        webContextBuilder.engageThread(container, null, null);
-
-        ServerContextFactory.attach(container);
-
-        HubFactory.attach(container);
-        JsonParserFactory.attach(container);
-        JsonSerializerFactory.attach(container);
-        CallbackHelperFactory.attach(container);
-        TaskDispatcherFactory.attach(container);
     }
 
     /**

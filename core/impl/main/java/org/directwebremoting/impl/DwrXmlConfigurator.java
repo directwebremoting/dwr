@@ -31,7 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
-import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Configurator;
@@ -65,15 +64,9 @@ public class DwrXmlConfigurator implements Configurator
      * @throws ParserConfigurationException On XML setup failure
      * @throws SAXException On XML parse failure
      */
-    public void setServletResourceName(String servletResourceName) throws IOException, ParserConfigurationException, SAXException
+    public void setServletResourceName(ServletContext servletContext, String servletResourceName) throws IOException, ParserConfigurationException, SAXException
     {
         this.servletResourceName = servletResourceName;
-
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        if (servletContext == null)
-        {
-            throw new IOException("Missing ServletContext");
-        }
 
         InputStream in = null;
         try
