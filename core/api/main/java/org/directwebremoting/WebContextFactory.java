@@ -22,13 +22,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Accessor for the current WebContext.
+ * Accessor for the current {@link WebContext}.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class WebContextFactory
 {
     /**
-     * Accessor for the current WebContext.
+     * Accessor for the current {@link WebContext}.
      * @return The current WebContext or null if the current thread was not
      * started by DWR.
      */

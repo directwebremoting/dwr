@@ -54,18 +54,17 @@ public class ServerContextFactory
     /**
      * Internal method to allow us to get the Builder from which we
      * will get ServerContext objects.
-     * Do not call this method from outside of DWR.
-     * @param builder The factory object (from DwrServlet)
+     * Do NOT call this method from outside of DWR.
      */
-    public static void setBuilder(ServerContextBuilder builder)
+    public static void attach(Container container)
     {
-        factory.setBuilder(builder);
+        factory.attach(container);
     }
 
     /**
      * The factory helper class
      */
-    private static Factory<ServerContext> factory = Factory.create();
+    private static Factory<ServerContext> factory = Factory.create(ServerContextBuilder.class);
 
     /**
      * Hack to get around Generics not being implemented by erasure

@@ -18,15 +18,21 @@ package org.directwebremoting;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.extend.ScriptSessionManager;
+import org.directwebremoting.extend.PageNormalizer;
+import org.directwebremoting.extend.TaskDispatcher;
+import org.directwebremoting.extend.TaskDispatcherFactory;
 import org.directwebremoting.io.JavascriptObject;
 
 /**
  * A collection of APIs that manage reverse ajax APIs.
  * <p>See {@link #withAllSessions} for a menu of the various different with*
  * methods.
+ * <p>The {@link Runnable}s that are passed to the with* methods may be executed
+ * any number of times between 0 (nothing passes the filter) 1 (where
+ * {@link Browser#getTargetSessions()} returns all the matching ScriptSessions)
+ * and X (where X is the number of matching ScriptSessions, with
+ * {@link Browser#getTargetSessions()} returning one of the ScriptSessions on
+ * each invocation).
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Browser
@@ -47,8 +53,8 @@ public class Browser
      */
     public static void withAllSessions(Runnable task)
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        withAllSessions(serverContext, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
+        taskDispatcher.dispatchTask(new AllScriptSessionFilter(), task);
     }
 
     /**
@@ -60,9 +66,8 @@ public class Browser
      */
     public static void withAllSessions(ServerContext serverContext, Runnable task)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getAllScriptSessions();
-        withSessions(sessions, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(new AllScriptSessionFilter(), task);
     }
 
     /**
@@ -76,8 +81,8 @@ public class Browser
      */
     public static void withAllSessionsFiltered(ScriptSessionFilter filter, Runnable task)
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        withAllSessionsFiltered(serverContext, filter, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
+        taskDispatcher.dispatchTask(filter, task);
     }
 
     /**
@@ -89,9 +94,8 @@ public class Browser
      */
     public static void withAllSessionsFiltered(ServerContext serverContext, ScriptSessionFilter filter, Runnable task)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> all = sessionManager.getAllScriptSessions();
-        withSessions(filter(all, filter), task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(filter, task);
     }
 
     /**
@@ -106,7 +110,8 @@ public class Browser
     {
         WebContext webContext = WebContextFactory.get();
         String page = webContext.getCurrentPage();
-        withPage(page, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(webContext);
+        taskDispatcher.dispatchTask(new PageScriptSessionFilter(webContext, page), task);
     }
 
     /**
@@ -129,7 +134,8 @@ public class Browser
     public static void withPage(String page, Runnable task)
     {
         ServerContext serverContext = ServerContextFactory.get();
-        withPage(serverContext, page, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(new PageScriptSessionFilter(serverContext, page), task);
     }
 
     /**
@@ -141,9 +147,8 @@ public class Browser
      */
     public static void withPage(ServerContext serverContext, String page, Runnable task)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
-        withSessions(sessions, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(new PageScriptSessionFilter(serverContext, page), task);
     }
 
     /**
@@ -159,7 +164,10 @@ public class Browser
     {
         WebContext webContext = WebContextFactory.get();
         String page = webContext.getCurrentPage();
-        withPageFiltered(page, filter, task);
+        ScriptSessionFilter pageFilter = new PageScriptSessionFilter(webContext, page);
+        ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(webContext);
+        taskDispatcher.dispatchTask(realFilter, task);
     }
 
     /**
@@ -175,7 +183,10 @@ public class Browser
     public static void withPageFiltered(String page, ScriptSessionFilter filter, Runnable task)
     {
         ServerContext serverContext = ServerContextFactory.get();
-        withPageFiltered(serverContext, page, filter, task);
+        ScriptSessionFilter pageFilter = new PageScriptSessionFilter(serverContext, page);
+        ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(realFilter, task);
     }
 
     /**
@@ -187,9 +198,10 @@ public class Browser
      */
     public static void withPageFiltered(ServerContext serverContext, String page, ScriptSessionFilter filter, Runnable task)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        Collection<ScriptSession> sessions = sessionManager.getScriptSessionsByPage(page);
-        withSessions(filter(sessions, filter), task);
+        ScriptSessionFilter pageFilter = new PageScriptSessionFilter(serverContext, page);
+        ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(realFilter, task);
     }
 
     /**
@@ -204,8 +216,8 @@ public class Browser
      */
     public static void withSession(String sessionId, Runnable task)
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        withSession(serverContext, sessionId, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
+        taskDispatcher.dispatchTask(new IdScriptSessionFilter(sessionId), task);
     }
 
     /**
@@ -217,15 +229,8 @@ public class Browser
      */
     public static void withSession(ServerContext serverContext, String sessionId, Runnable task)
     {
-        ScriptSessionManager sessionManager = serverContext.getContainer().getBean(ScriptSessionManager.class);
-        ScriptSession session = sessionManager.getScriptSession(sessionId, null, null);
-        Collection<ScriptSession> sessions = new ArrayList<ScriptSession>();
-        if (session != null)
-        {
-            sessions.add(session);
-        }
-
-        withSessions(sessions, task);
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+        taskDispatcher.dispatchTask(new IdScriptSessionFilter(sessionId), task);
     }
 
     /**
@@ -254,9 +259,10 @@ public class Browser
      * APIs. Using it directly may cause scaling problems
      * @return The list of current browser windows.
      */
-    protected static Collection<ScriptSession> getTargetSessions()
+    public static Collection<ScriptSession> getTargetSessions()
     {
-        Collection<ScriptSession> sessions = target.get();
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get();
+        Collection<ScriptSession> sessions = taskDispatcher.getTargetSessions();
         if (sessions != null)
         {
             return sessions;
@@ -274,51 +280,86 @@ public class Browser
     }
 
     /**
-     * Execute a task and aim the output at a specific set of users. This method
-     * is private because the filter version is likely to be just as easy to use
-     * and potentially better suited to a clustered environment.
-     * @param sessions The browser window to send the generated scripts to
-     * @param task A code block to execute
+     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
+     * that match the given page
      */
-    private static void withSessions(Collection<ScriptSession> sessions, Runnable task)
+    private static class PageScriptSessionFilter implements ScriptSessionFilter
     {
-        if (sessions.size() > 0)
+        private PageScriptSessionFilter(ServerContext serverContext, String page)
         {
-            log.debug("Executing task (" + task.getClass().getSimpleName() + ") against " + sessions.size() + " sessions.");
-
-            target.set(sessions);
-            task.run();
-            target.remove();
+            PageNormalizer pageNormalizer = serverContext.getContainer().getBean(PageNormalizer.class);
+            this.page = pageNormalizer.normalizePage(page);
         }
+
+        /* (non-Javadoc)
+         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
+         */
+        public boolean match(ScriptSession session)
+        {
+            return session.getPage().equals(page);
+        }
+
+        private final String page;
     }
 
     /**
-     * Utility method to run a filter over a set of script sessions.
-     * @param start The un-filtered set of script sessions
-     * @param filter The filter to use to trim this list down
-     * @return The subset of script sessions left by the filter
+     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
+     * that match the given session id
      */
-    private static Collection<ScriptSession> filter(Collection<ScriptSession> start, ScriptSessionFilter filter)
+    private static class IdScriptSessionFilter implements ScriptSessionFilter
     {
-        Collection<ScriptSession> use = new ArrayList<ScriptSession>();
-        for (ScriptSession session : start)
+        private IdScriptSessionFilter(String id)
         {
-            if (filter.match(session))
-            {
-                use.add(session);
-            }
+            this.id = id;
         }
 
-        return use;
+        /* (non-Javadoc)
+         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
+         */
+        public boolean match(ScriptSession session)
+        {
+            return session.getId().equals(id);
+        }
+
+        private final String id;
     }
 
     /**
-     * ThreadLocal in which the list of sessions are stored.
+     * A {@link ScriptSessionFilter} that only allows {@link ScriptSession}s
+     * that match pass both the given {@link ScriptSessionFilter}s
      */
-    private static final ThreadLocal<Collection<ScriptSession>> target = new ThreadLocal<Collection<ScriptSession>>();
+    private static class AndScriptSessionFilter implements ScriptSessionFilter
+    {
+        private AndScriptSessionFilter(ScriptSessionFilter left, ScriptSessionFilter right)
+        {
+            this.left = left;
+            this.right = right;
+        }
+
+        /* (non-Javadoc)
+         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
+         */
+        public boolean match(ScriptSession session)
+        {
+            return left.match(session) && right.match(session);
+        }
+
+        private final ScriptSessionFilter left;
+
+        private final ScriptSessionFilter right;
+    }
 
     /**
-     * The log stream
+     * A {@link ScriptSessionFilter} that passes everything
      */
-    private static final Log log = LogFactory.getLog(Browser.class);
+    private static class AllScriptSessionFilter implements ScriptSessionFilter
+    {
+        /* (non-Javadoc)
+         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
+         */
+        public boolean match(ScriptSession session)
+        {
+            return true;
+        }
+    }
 }

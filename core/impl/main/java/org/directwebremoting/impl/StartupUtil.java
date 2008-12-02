@@ -37,8 +37,6 @@ import org.directwebremoting.HubFactory;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.HubFactory.HubBuilder;
-import org.directwebremoting.ServerContextFactory.ServerContextBuilder;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.event.ScriptSessionListener;
@@ -56,11 +54,9 @@ import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.extend.CallbackHelperFactory.CallbackHelperBuilder;
+import org.directwebremoting.extend.TaskDispatcherFactory;
 import org.directwebremoting.json.parse.JsonParserFactory;
-import org.directwebremoting.json.parse.JsonParserFactory.JsonParserBuilder;
 import org.directwebremoting.json.serialize.JsonSerializerFactory;
-import org.directwebremoting.json.serialize.JsonSerializerFactory.JsonSerializerBuilder;
 import org.directwebremoting.servlet.DwrWebContextFilter;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UrlProcessor;
@@ -123,7 +119,6 @@ public class StartupUtil
 
             Container container = createAndSetupDefaultContainer(servletConfig);
 
-            initContainerBeans(container);
             WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
 
             prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
@@ -273,6 +268,9 @@ public class StartupUtil
 
         Loggers.STARTUP.debug("Setup: Resolving listener implementations:");
         resolveListenerImplementations(container, servletConfig);
+
+        Loggers.STARTUP.debug("Setup: Initializing Factories:");
+        initContainerBeans(container);
     }
 
     /**
@@ -844,17 +842,19 @@ public class StartupUtil
      * Get the various objects out of the {@link Container}, and configure them.
      * @param container The container to save in the ServletContext
      */
-    public static void initContainerBeans(Container container)
+    private static void initContainerBeans(Container container)
     {
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
         WebContextFactory.setBuilder(webContextBuilder);
         webContextBuilder.engageThread(container, null, null);
 
-        ServerContextFactory.setBuilder(container.getBean(ServerContextBuilder.class));
-        HubFactory.setBuilder(container.getBean(HubBuilder.class));
-        JsonParserFactory.setBuilder(container.getBean(JsonParserBuilder.class));
-        JsonSerializerFactory.setBuilder(container.getBean(JsonSerializerBuilder.class));
-        CallbackHelperFactory.setBuilder(container.getBean(CallbackHelperBuilder.class));
+        ServerContextFactory.attach(container);
+
+        HubFactory.attach(container);
+        JsonParserFactory.attach(container);
+        JsonSerializerFactory.attach(container);
+        CallbackHelperFactory.attach(container);
+        TaskDispatcherFactory.attach(container);
     }
 
     /**

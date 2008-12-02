@@ -17,6 +17,7 @@ package org.directwebremoting.extend;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 
 /**
@@ -31,9 +32,17 @@ public class Factory<T>
     /**
      * Make it easy for Factories to create a Factory instance.
      */
-    public static <T> Factory<T> create()
+    public static <T> Factory<T> create(Class<? extends Builder<T>> created)
     {
-        return new Factory<T>();
+        return new Factory<T>(created);
+    }
+
+    /**
+     * We need to know what type of builder to extract from the Container
+     */
+    public Factory(Class<? extends Builder<T>> created)
+    {
+        this.created = created;
     }
 
     /**
@@ -78,12 +87,18 @@ public class Factory<T>
      * created objects. Do NOT call this method from outside of DWR.
      * This function should <em>only</em> be called during startup, probably by
      * {@link org.directwebremoting.impl.StartupUtil#initContainerBeans}.
-     * @param builder The factory object (from DwrServlet)
+     * our Container Builder from.
      */
-    public void setBuilder(Builder<T> builder)
+    public void attach(Container container)
     {
-        this.builder = builder;
+        this.builder = container.getBean(created);
+        builder.attach(container);
     }
+
+    /**
+     * The type of builder that we get out of the container
+     */
+    private final Class<? extends Builder<T>> created;
 
     /**
      * The Builder from which we will get created objects

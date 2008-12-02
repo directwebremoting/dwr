@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.json.parse;
 
+import org.directwebremoting.Container;
 import org.directwebremoting.ServerContext;
 import org.directwebremoting.extend.Builder;
 import org.directwebremoting.extend.Factory;
@@ -53,15 +54,14 @@ public class JsonParserFactory
     /**
      * Internal method to allow us to get the Builder from which we
      * will get JsonParser objects.
-     * Do not call this method from outside of DWR.
-     * @param builder The factory object (from DwrServlet)
+     * Do NOT call this method from outside of DWR.
      */
-    public static void setBuilder(Builder<JsonParser> builder)
+    public static void attach(Container container)
     {
-        factory.setBuilder(builder);
+        factory.attach(container);
     }
 
-    private static Factory<JsonParser> factory = Factory.create();
+    private static Factory<JsonParser> factory = Factory.create(JsonParserBuilder.class);
 
     /**
      * Hack to get around Generics not being implemented by erasure

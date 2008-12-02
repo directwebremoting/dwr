@@ -37,7 +37,7 @@ public class HubFactory
     /**
      * Accessor for the current Hub in more complex setups.
      * For some setups DWR may not be able to discover the correct environment
-     * (i.e. ServletContext), so we need to tell it. This generally happens if
+     * (i.e. ServerContext), so we need to tell it. This generally happens if
      * you have DWR configured twice in a single context. Unless you are writing
      * code that someone else will configure, it is probably safe to use the
      * simpler {@link #get()} method.
@@ -52,18 +52,17 @@ public class HubFactory
     /**
      * Internal method to allow us to get the Builder from which we
      * will get Hub objects.
-     * Do not call this method from outside of DWR.
-     * @param builder The factory object (from DwrServlet)
+     * Do NOT call this method from outside of DWR.
      */
-    public static void setBuilder(Builder<Hub> builder)
+    public static void attach(Container container)
     {
-        factory.setBuilder(builder);
+        factory.attach(container);
     }
 
     /**
      * The factory helper class
      */
-    private static Factory<Hub> factory = Factory.create();
+    private static Factory<Hub> factory = Factory.create(HubBuilder.class);
 
     /**
      * Hack to get around Generics not being implemented by erasure
