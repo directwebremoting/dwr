@@ -234,26 +234,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptSessionManager#getScriptSessionsByPage(java.lang.String)
-     */
-    public Collection<ScriptSession> getScriptSessionsByPage(String url)
-    {
-        String normalizedPage = pageNormalizer.normalizePage(url);
-        synchronized (sessionLock)
-        {
-            Set<DefaultScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
-            if (pageSessions == null)
-            {
-                pageSessions = new HashSet<DefaultScriptSession>();
-            }
-
-            Set<ScriptSession> reply = new HashSet<ScriptSession>();
-            reply.addAll(pageSessions);
-            return reply;
-        }
-    }
-
-    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionsByHttpSessionId(java.lang.String)
      */
     public Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
@@ -429,6 +409,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                 ((ScriptSessionListener) listeners[i + 1]).sessionDestroyed(ev);
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptSessionManager#getInitCode()
+     */
+    public String getInitCode()
+    {
+        return "dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', [ function() { dwr.engine._ordered = false; }]);";
     }
 
     /* (non-Javadoc)

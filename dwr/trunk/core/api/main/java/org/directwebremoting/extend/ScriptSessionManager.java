@@ -38,14 +38,6 @@ public interface ScriptSessionManager
     Collection<ScriptSession> getAllScriptSessions();
 
     /**
-     * For a given script session id, either create a new ScriptSession object
-     * or retrieve an existing one if one exists.
-     * @param url The URL including 'http://', up to (but not including) '?' or '#'
-     * @return A ScriptSession.
-     */
-    Collection<ScriptSession> getScriptSessionsByPage(String url);
-
-    /**
      * Lookup all the windows associated with a given browser
      * @param httpSessionId The browser id to lookup
      * @return A list of script sessions for each open window
@@ -87,6 +79,12 @@ public interface ScriptSessionManager
      * @param li the ScriptSessionListener to remove
      */
     public void removeScriptSessionListener(ScriptSessionListener li);
+
+    /**
+     * Some implementations of ScriptSessionManager need to add custom code into
+     * engine.js to register ScriptSessions with the server.
+     */
+    String getInitCode();
 
     /**
      * The default length of time a session can go unused before it

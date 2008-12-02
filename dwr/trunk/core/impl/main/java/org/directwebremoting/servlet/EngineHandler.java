@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Remoter;
+import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.util.VersionUtil;
 
@@ -103,6 +104,8 @@ public class EngineHandler extends FileJavaScriptHandler
         replace.put("${versionBuild}", String.valueOf(VersionUtil.getBuild()));
         replace.put("${versionTitle}", String.valueOf(VersionUtil.getTitle()));
         replace.put("${versionLabel}", String.valueOf(VersionUtil.getLabel()));
+
+        replace.put("${initCode}", scriptSessionManager.getInitCode());
 
         return replace;
     }
@@ -194,6 +197,14 @@ public class EngineHandler extends FileJavaScriptHandler
     }
 
     /**
+     * @param scriptSessionManager the scriptSessionManager to set
+     */
+    public void setScriptSessionManager(ScriptSessionManager scriptSessionManager)
+    {
+        this.scriptSessionManager = scriptSessionManager;
+    }
+
+    /**
      * URL that engine.js makes calls into
      */
     private String plainCallHandlerUrl;
@@ -212,6 +223,11 @@ public class EngineHandler extends FileJavaScriptHandler
      * URL that engine.js makes calls into
      */
     private String htmlPollHandlerUrl;
+
+    /**
+     * The source of the commands to we give to the client on startup?
+     */
+    private ScriptSessionManager scriptSessionManager;
 
     /**
      * The session cookie name
@@ -239,7 +255,7 @@ public class EngineHandler extends FileJavaScriptHandler
     /**
      * Does DWR by default use synchronous XHR - i.e. Sjax
      */
-    private boolean defaultToAsync = true;
+    private final boolean defaultToAsync = true;
 
     /**
      * So we can correctly calculate the path to the DWR servlet

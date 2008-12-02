@@ -2066,9 +2066,7 @@ if (typeof window['dwr'] == 'undefined') {
   catch(ex) { }
 
   // Fetch the scriptSessionId from the server
-  dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', [ function() {
-    dwr.engine._ordered = false;
-  }]);
+  eval("${initCode}");
 
   /**
    * Routines for the DWR pubsub hub
