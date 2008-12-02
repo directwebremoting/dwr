@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.util.LocalUtil;
@@ -121,9 +121,8 @@ public class DefaultCreatorManager implements CreatorManager
         {
             try
             {
-                WebContext webcx = WebContextFactory.get();
                 Object object = creator.getInstance();
-                webcx.getServletContext().setAttribute(creator.getJavascript(), object);
+                servletContext.setAttribute(creator.getJavascript(), object);
 
                 Loggers.STARTUP.debug("Created new " + creator.getJavascript() + ", stored in application.");
             }
@@ -254,9 +253,23 @@ public class DefaultCreatorManager implements CreatorManager
     }
 
     /**
+     * When initApplicationScopeCreatorsAtStartup = true we need somewhere to
+     * store the objects
+     */
+    public void setServletContext(ServletContext servletContext)
+    {
+        this.servletContext = servletContext;
+    }
+
+    /**
      * Do we do full-create on startup?
      */
     protected boolean initApplicationScopeCreatorsAtStartup = false;
+
+    /**
+     * @see #setServletContext(ServletContext)
+     */
+    protected ServletContext servletContext;
 
     /**
      * The properties that we don't warn about if they don't exist.
