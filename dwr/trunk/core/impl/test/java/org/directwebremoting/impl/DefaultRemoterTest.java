@@ -28,7 +28,6 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.impl.test.TestCreatedObject;
-import org.directwebremoting.impl.test.TestWebContextFactory;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.Assert;
@@ -117,7 +116,7 @@ public class DefaultRemoterTest
 
         DefaultWebContextBuilder builder = new DefaultWebContextBuilder();
         builder.engageThread(null, request, null);
-        TestWebContextFactory.setWebContextBuilder(builder);
+        //TestWebContextFactory.setWebContextBuilder(builder);
 
         FakeHttpServletResponse response = new FakeHttpServletResponse();
         //Calls calls = marshaller.marshallInbound(request, response);

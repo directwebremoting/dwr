@@ -85,14 +85,13 @@ public class Factory<T>
     /**
      * Internal method to allow us to get the Builder from which we will get
      * created objects. Do NOT call this method from outside of DWR.
-     * This function should <em>only</em> be called during startup, probably by
-     * {@link org.directwebremoting.impl.StartupUtil#initContainerBeans}.
+     * This function should <em>only</em> be called during startup.
      * our Container Builder from.
      */
-    public void attach(Container container)
+    public T attach(Container container)
     {
         this.builder = container.getBean(created);
-        builder.attach(container);
+        return builder.attach(container);
     }
 
     /**

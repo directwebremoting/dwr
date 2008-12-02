@@ -56,9 +56,9 @@ public class ServerContextFactory
      * will get ServerContext objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static ServerContext attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     /**

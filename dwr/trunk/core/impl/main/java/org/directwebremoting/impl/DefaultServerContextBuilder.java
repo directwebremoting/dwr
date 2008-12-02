@@ -61,8 +61,9 @@ public class DefaultServerContextBuilder implements ServerContextBuilder
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Builder#attach(org.directwebremoting.ServerContext)
      */
-    public void attach(Container container)
+    public ServerContext attach(Container container)
     {
+        return new DefaultServerContext();
     }
 
     /**

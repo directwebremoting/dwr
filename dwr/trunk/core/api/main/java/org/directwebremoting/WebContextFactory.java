@@ -51,12 +51,11 @@ public class WebContextFactory
     /**
      * Internal method to allow us to get the WebContextBuilder from which we
      * will get WebContext objects.
-     * Do not call this method from outside of DWR.
-     * @param builder The factory object (from DwrServlet)
+     * Do NOT call this method from outside of DWR.
      */
-    public static void setBuilder(WebContextBuilder builder)
+    public static void attach(Container container)
     {
-        WebContextFactory.builder = builder;
+        WebContextFactory.builder = container.getBean(WebContextBuilder.class);
     }
 
     /**

@@ -54,9 +54,9 @@ public class HubFactory
      * will get Hub objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static Hub attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     /**

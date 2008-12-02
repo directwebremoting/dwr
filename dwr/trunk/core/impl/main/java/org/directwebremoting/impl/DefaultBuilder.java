@@ -75,7 +75,7 @@ public class DefaultBuilder<T> implements Builder<T>
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Builder#attach(org.directwebremoting.Container)
      */
-    public void attach(Container container)
+    public T attach(Container container)
     {
         try
         {
@@ -87,10 +87,12 @@ public class DefaultBuilder<T> implements Builder<T>
                 lookup.put(container, contextObjects);
             }
             contextObjects.put(created, t);
+            return t;
         }
         catch (Exception ex)
         {
-            log.fatal("Failed to create an ExecutionContext", ex);
+            log.warn("Failed to create an instance of " + created.getName());
+            throw new RuntimeException(ex);
         }
     }
 

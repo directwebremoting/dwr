@@ -56,9 +56,9 @@ public class JsonParserFactory
      * will get JsonParser objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static JsonParser attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     private static Factory<JsonParser> factory = Factory.create(JsonParserBuilder.class);

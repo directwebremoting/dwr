@@ -189,9 +189,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
             StartupUtil.setupDefaultContainer(container, servletConfig);
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, null);
-            StartupUtil.publishContainer(container, servletConfig);
-
             // The dwr.xml from within the JAR file.
             if (includeDefaultConfig)
             {

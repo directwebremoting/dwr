@@ -54,9 +54,9 @@ public class CallbackHelperFactory
      * will get CallbackHelper objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static CallbackHelper attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     private static Factory<CallbackHelper> factory = Factory.create(CallbackHelperBuilder.class);

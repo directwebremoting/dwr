@@ -30,7 +30,7 @@ import jsx3.gui.Slider;
 import jsx3.gui.TextBox;
 
 import org.directwebremoting.Browser;
-import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.ServerContextFactory;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -94,12 +94,12 @@ public class Reverse
     }
 
     /**
-     * 
+     *
      */
     private Server getServer()
     {
         final Server[] reply = new Server[1];
-        String page = WebContextFactory.get().getContextPath() + "/gi/reverse.html";
+        String page = ServerContextFactory.get().getContextPath() + "/gi/reverse.html";
         Browser.withPage(page, new Runnable()
         {
             public void run()

@@ -18,7 +18,6 @@ package org.directwebremoting.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +56,6 @@ public class DwrServlet extends HttpServlet
     public void init(ServletConfig servletConfig) throws ServletException
     {
         super.init(servletConfig);
-        ServletContext servletContext = servletConfig.getServletContext();
 
         try
         {
@@ -67,9 +65,11 @@ public class DwrServlet extends HttpServlet
 
             webContextBuilder = container.getBean(WebContextBuilder.class);
 
-            StartupUtil.prepareForWebContextFilter(servletContext, servletConfig, container, webContextBuilder, this);
-            StartupUtil.publishContainer(container, servletConfig);
             configureContainer(container, servletConfig);
+        }
+        catch (ServletException ex)
+        {
+            throw ex;
         }
         catch (Exception ex)
         {

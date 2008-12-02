@@ -54,9 +54,9 @@ public class TaskDispatcherFactory
      * will get TaskDispatcher objects.
      * Do NOT call this method from outside of DWR.
      */
-    public static void attach(Container container)
+    public static TaskDispatcher attach(Container container)
     {
-        factory.attach(container);
+        return factory.attach(container);
     }
 
     private static Factory<TaskDispatcher> factory = Factory.create(TaskDispatcherBuilder.class);
