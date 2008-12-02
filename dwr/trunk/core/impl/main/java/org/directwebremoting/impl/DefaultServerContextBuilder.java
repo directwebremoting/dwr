@@ -63,7 +63,18 @@ public class DefaultServerContextBuilder implements ServerContextBuilder
      */
     public ServerContext attach(Container container)
     {
-        return new DefaultServerContext();
+        try
+        {
+            return container.newInstance(DefaultServerContext.class);
+        }
+        catch (RuntimeException ex)
+        {
+            throw ex;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
