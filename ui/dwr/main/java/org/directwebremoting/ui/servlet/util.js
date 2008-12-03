@@ -1485,7 +1485,7 @@ dwr.util._importNode = function(doc, importedNode, deep) {
       }
     }
 
-    if (typeof importedNode.style != "undefined") {
+    if (importedNode.style != null) {
       newNode.style.cssText = importedNode.style.cssText;
     }
   }
