@@ -1095,6 +1095,11 @@ dwr.util.addRows = function(ele, data, cellFuncs, options) {
 };
 
 /**
+ * @private The contents we put in empty table cells to workaround IE's border bug.
+ */
+dwr.util._emptyTableCellReplacement = "<div style='width:0;height:0;overflow:hidden;'></div>";
+
+/**
  * @private Internal function to draw a single row of a table.
  */
 dwr.util._addRowInner = function(cellFuncs, options) {
@@ -1107,7 +1112,7 @@ dwr.util._addRowInner = function(cellFuncs, options) {
     options.cellNum = cellNum;
     var td = options.cellCreator(options);
     if (td != null) {
-      if (options.data != null) {
+      if (options.data) {
         if (dwr.util._isHTMLElement(options.data)) td.appendChild(options.data);
         else {
           if (dwr.util._shouldEscapeHtml(options) && typeof(options.data) == "string") {
@@ -1117,6 +1122,9 @@ dwr.util._addRowInner = function(cellFuncs, options) {
             td.innerHTML = options.data;
           }
         }
+      }
+      else {
+        td.innerHTML = dwr.util._emptyTableCellReplacement;
       }
       tr.appendChild(td);
     }
