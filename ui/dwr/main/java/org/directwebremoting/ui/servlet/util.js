@@ -149,8 +149,8 @@ dwr.util.byId = function() {
  * Alias $ to dwr.util.byId
  * @see http://getahead.org/dwr/browser/util/$
  */
-if (this['$'] == null) {
-  this['$'] = dwr.util.byId;
+if (window['$'] == null) {
+  window['$'] = dwr.util.byId;
 }
 
 /**
@@ -473,13 +473,7 @@ dwr.util.setValue = function(ele, val, options) {
   if (options == null) options = {};
 
   var orig = ele;
-  if (typeof ele == "string") {
-    ele = dwr.util.byId(ele);
-    // We can work with names and need to sometimes for radio buttons, and IE has
-    // an annoying bug where getElementById() returns an element based on name if
-    // it doesn't find it by id. Here we don't want to do that, so:
-    if (ele && ele.id != orig) ele = null;
-  }
+  ele = dwr.util.byId(ele); // Returns null if argument is a name, even on IE
   var nodes = null;
   if (ele == null) {
     // Now it is time to look by name
@@ -623,13 +617,7 @@ dwr.util._selectListItem = function(ele, val) {
 dwr.util.getValue = function(ele, options) {
   if (options == null) options = {};
   var orig = ele;
-  if (typeof ele == "string") {
-    ele = dwr.util.byId(ele);
-    // We can work with names and need to sometimes for radio buttons, and IE has
-    // an annoying bug where getElementById() returns an element based on name if
-    // it doesn't find it by id. Here we don't want to do that, so:
-    if (ele && ele.id != orig) ele = null;
-  }
+  ele = dwr.util.byId(ele); // Returns null if argument is a name, even on IE
   var nodes = null;
   if (ele == null) {
     // Now it is time to look by name
@@ -824,11 +812,11 @@ dwr.util.getValues = function(data, options) {
 dwr.util.getFormValues = function(eleOrNameOrId) {
   var ele = null;
   if (typeof eleOrNameOrId == "string") {
-    ele = document.forms[eleOrNameOrId];
-    if (ele == null) ele = dwr.util.byId(eleOrNameOrId);
+    ele = document.forms[eleOrNameOrId]; // arg is name
+    if (ele == null) ele = dwr.util.byId(eleOrNameOrId); // arg is id
   }
   else if (dwr.util._isHTMLElement(eleOrNameOrId)) {
-    ele = eleOrNameOrId;
+    ele = eleOrNameOrId; // arg is element
   }
   if (ele != null) {
     if (ele.elements == null) {
