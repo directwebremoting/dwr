@@ -97,15 +97,6 @@ public final class StoreRegion
     }
 
     /**
-     * @deprecated Don't use this it's for DWR until we sort constructor injection
-     */
-    @Deprecated
-    public void setStart(int start)
-    {
-        this.start = start;
-    }
-
-    /**
      * Accessor for the length of the region of interest to the viewer. If the
      * subscriber wishes to subscribe to 'the rest of the data', they should
      * use count = -1. Thus using start = 0, count = -1 is the entire data set.
@@ -117,15 +108,6 @@ public final class StoreRegion
     public int getCount()
     {
         return count;
-    }
-
-    /**
-     * @deprecated Don't use this it's for DWR until we sort constructor injection
-     */
-    @Deprecated
-    public void setCount(int count)
-    {
-        this.count = count;
     }
 
     /**
@@ -141,19 +123,6 @@ public final class StoreRegion
     }
 
     /**
-     * @deprecated Don't use this it's for DWR until we sort constructor injection
-     */
-    @Deprecated
-    public void setSort(List<SortCriterion> sort)
-    {
-        this.sort.clear();
-        if (sort != null)
-        {
-            this.sort.addAll(sort);
-        }
-    }
-
-    /**
      * Accessor for the filter criteria to be used before the range is extracted.
      * This functions much like the sort criteria, except, clearly this is
      * filtering and not sorting.
@@ -165,7 +134,7 @@ public final class StoreRegion
     }
 
     /**
-     * @deprecated Don't use this it's for DWR until we sort constructor injection
+     * @deprecated For DWR internal use only. Use constructor injection
      */
     @Deprecated
     public void setQuery(Map<String, String> query)
@@ -198,7 +167,7 @@ public final class StoreRegion
     }
 
     /**
-     * @deprecated Don't use this it's for DWR until we sort constructor injection
+     * @deprecated For DWR internal use only. Use constructor injection
      */
     @Deprecated
     public void setQueryOptions(Map<String, String> queryOptions)
@@ -310,12 +279,12 @@ public final class StoreRegion
     /**
      * @see #getStart
      */
-    private int start;
+    private final int start;
 
     /**
      * @see #getCount
      */
-    private int count;
+    private final int count;
 
     /**
      * @see #getSort
