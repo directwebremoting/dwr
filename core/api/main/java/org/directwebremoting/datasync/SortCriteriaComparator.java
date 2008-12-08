@@ -35,16 +35,15 @@ public class SortCriteriaComparator<T> implements Comparator<T>
      * All SortCriteriaComparators need a set of things to sort on and a way to
      * get the values to sort
      */
-    public SortCriteriaComparator(List<SortCriterion> sort, AttributeValueExtractor extractor)
+    public SortCriteriaComparator(List<SortCriterion> sort, ComparatorFactory<T> comparatorFactory)
     {
         this.sort = sort;
-        this.extractor = extractor;
+        this.comparatorFactory = comparatorFactory;
     }
 
     /* (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
     public int compare(T object1, T object2)
     {
         if (object1 == null)
@@ -75,28 +74,11 @@ public class SortCriteriaComparator<T> implements Comparator<T>
         {
             for (SortCriterion criterion : sort)
             {
-                Object value1 = extractor.getValue(object1, criterion.getAttribute());
-                Object value2 = extractor.getValue(object2, criterion.getAttribute());
-
-                if (value1 instanceof Comparable)
+                Comparator<? super T> comparator = comparatorFactory.getComparator(criterion.getAttribute(), criterion.isAscending());
+                int comparison = comparator.compare(object1, object2);
+                if (comparison != 0)
                 {
-                    Comparable comp1 = (Comparable) value1;
-                    Comparable comp2 = (Comparable) value2;
-
-                    int comparison;
-                    if (criterion.isDescending())
-                    {
-                        comparison = comp2.compareTo(comp1);
-                    }
-                    else
-                    {
-                        comparison = comp1.compareTo(comp2);
-                    }
-
-                    if (comparison != 0)
-                    {
-                        return comparison;
-                    }
+                    return comparison;
                 }
             }
         }
@@ -120,7 +102,7 @@ public class SortCriteriaComparator<T> implements Comparator<T>
     /**
      * The way to extract values to sort on
      */
-    private final AttributeValueExtractor extractor;
+    private final ComparatorFactory<T> comparatorFactory;
 
     /**
      * The sort criteria
