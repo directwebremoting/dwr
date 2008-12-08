@@ -165,6 +165,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 inctx.dereference();
 
                 // Convert all the parameters to the correct types
+                Object target = creatorManager.getCreator(call.getScriptName(), true).getInstance();
                 int destParamCount = method.getParameterTypes().length;
                 Object[] arguments = new Object[destParamCount];
                 for (int j = 0; j < destParamCount; j++)
@@ -179,7 +180,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                         param = inctx.getParameter(callNum, j);
                     }
 
-                    Property property = new ParameterProperty(method, j);
+                    Property property = new ParameterProperty(method, j, target);
 
                     Class<?> paramType = method.getParameterTypes()[j];
                     try

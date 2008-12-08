@@ -26,13 +26,30 @@ import org.directwebremoting.util.LocalUtil;
  */
 public class ParameterProperty implements Property
 {
-    /**
-     * @param method
-     * @param parameterNumber
-     */
+
     public ParameterProperty(Method method, int parameterNumber)
     {
         this.method = method;
+        this.parameterNumber = parameterNumber;
+    }
+
+    public ParameterProperty(Method method, int parameterNumber, Object target)
+    {
+        Method m = method;
+        try {
+            Class<?> advisedClass = Class.forName("org.springframework.aop.framework.Advised");
+            if (advisedClass.isAssignableFrom(method.getDeclaringClass()))
+            {
+                Method targetClassMethod = target.getClass().getMethod("getTargetClass");
+                Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
+                m = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+            }
+        }
+        catch (Exception ex)
+        {
+            // Probably not in Spring context so no Advised proxies at all
+        }
+        this.method = m;
         this.parameterNumber = parameterNumber;
     }
 
