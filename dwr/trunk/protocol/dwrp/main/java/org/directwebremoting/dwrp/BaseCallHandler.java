@@ -58,7 +58,6 @@ import org.directwebremoting.util.DebuggingPrintWriter;
  * This class works in concert with CallScriptConduit, they should be
  * considered closely related and it is important to understand what one does
  * while editing the other.
- * TODO: Double check that getting rid of the check with accessControl is right
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class BaseCallHandler extends BaseDwrpHandler
@@ -164,8 +163,9 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // do we need to know the method before we dereference?
                 inctx.dereference();
 
+                // Object target = creatorManager.getCreator(call.getScriptName(), true).getInstance();
+
                 // Convert all the parameters to the correct types
-                Object target = creatorManager.getCreator(call.getScriptName(), true).getInstance();
                 int destParamCount = method.getParameterTypes().length;
                 Object[] arguments = new Object[destParamCount];
                 for (int j = 0; j < destParamCount; j++)
@@ -180,8 +180,11 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                         param = inctx.getParameter(callNum, j);
                     }
 
-                    Property property = new ParameterProperty(method, j, target);
+                    // method = applySpringHack(method, target);
 
+                    Property property = new ParameterProperty(method, j);
+
+                    // TODO: Having just got a property, shouldn't we call property.getPropertyType() in place of this?
                     Class<?> paramType = method.getParameterTypes()[j];
                     try
                     {
@@ -209,6 +212,29 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
 
         return calls;
+    }
+
+    /**
+     * TODO: Find a better way
+     */
+    private static Method applySpringHack(Method method, Object target)
+    {
+        try
+        {
+            Class<?> advisedClass = Class.forName("org.springframework.aop.framework.Advised");
+            if (advisedClass.isAssignableFrom(method.getDeclaringClass()))
+            {
+                Method targetClassMethod = target.getClass().getMethod("getTargetClass");
+                Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
+                return targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+            }
+        }
+        catch (Exception ex)
+        {
+            // Probably not in Spring context so no Advised proxies at all
+        }
+
+        return method;
     }
 
     /**
