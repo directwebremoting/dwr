@@ -45,14 +45,6 @@ public class SortCriterion
     }
 
     /**
-     * @deprecated We will make this class immutable soon. Use the full constructor
-     */
-    @Deprecated
-    public SortCriterion()
-    {
-    }
-
-    /**
      * The attribute points to a data member within the data to be sorted.
      * If the data is a {@link java.util.Map} this will be a key. If the data
      * is a Pojo, it will be a property.
@@ -61,15 +53,6 @@ public class SortCriterion
     public String getAttribute()
     {
         return attribute;
-    }
-
-    /**
-     * @deprecated This class will become immutable soon
-     */
-    @Deprecated
-    public void setAttribute(String attribute)
-    {
-        this.attribute = attribute;
     }
 
     /**
@@ -87,15 +70,6 @@ public class SortCriterion
     public boolean isAscending()
     {
         return !descending;
-    }
-
-    /**
-     * @deprecated This class will become immutable soon
-     */
-    @Deprecated
-    public void setDescending(boolean descending)
-    {
-        this.descending = descending;
     }
 
     /* (non-Javadoc)
@@ -143,15 +117,22 @@ public class SortCriterion
         return true;
     }
 
-    /**
-     * TODO: Make this field final when we have constructor injection
-     * @see #getAttribute
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
      */
-    private String attribute;
+    @Override
+    public String toString()
+    {
+        return "Sorting[" + attribute + (descending ? "|desc" : "|asc") + "]";
+    }
 
     /**
-     * TODO: Make this field final when we have constructor injection
+     * @see #getAttribute
+     */
+    private final String attribute;
+
+    /**
      * @see #isDescending
      */
-    private boolean descending;
+    private final boolean descending;
 }

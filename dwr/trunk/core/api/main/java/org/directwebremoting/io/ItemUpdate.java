@@ -36,15 +36,6 @@ public class ItemUpdate
     }
 
     /**
-     * For use with setter-injection
-     * @deprecated
-     */
-    @Deprecated
-    public ItemUpdate()
-    {
-    }
-
-    /**
      * Accessor for the primary key for this Object.
      * Clearly not all database primary keys are Strings, my current feeling is
      * that the majority of database primary keys can either be simply mapped to
@@ -59,15 +50,6 @@ public class ItemUpdate
     }
 
     /**
-     * Accessor for the primary key for this Object.
-     * @param itemId the new ID for this Item
-     */
-    public void setItemId(String itemId)
-    {
-        this.itemId = itemId;
-    }
-
-    /**
      * Accessor for the property that we want to change on the Object with the
      * ID given in <code>itemId</code>.
      */
@@ -77,29 +59,12 @@ public class ItemUpdate
     }
 
     /**
-     * Accessor for the property that we want to change.
-     */
-    public void setAttribute(String attribute)
-    {
-        this.attribute = attribute;
-    }
-
-    /**
      * Accessor for the value for the <code>attribute</code> that we want to
      * change on the Object with the ID given in <code>itemId</code>.
      */
     public RawData getNewValue()
     {
         return newValue;
-    }
-
-    /**
-     * Accessor for the value for the <code>attribute</code> that we want to
-     * change.
-     */
-    public void setNewValue(RawData newValue)
-    {
-        this.newValue = newValue;
     }
 
     /* (non-Javadoc)
@@ -145,15 +110,15 @@ public class ItemUpdate
     /**
      * @see #getItemId
      */
-    private String itemId;
+    private final String itemId;
 
     /**
      * @see #getAttribute
      */
-    private String attribute;
+    private final String attribute;
 
     /**
      * @see #getNewValue
      */
-    private RawData newValue;
+    private final RawData newValue;
 }
