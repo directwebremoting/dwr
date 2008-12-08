@@ -1310,9 +1310,9 @@ public final class LocalUtil
         try
         {
             Method method = real.getMethod(getterName);
-            if (method.getReturnType() != type)
+            if (!type.isAssignableFrom(method.getReturnType()))
             {
-                log.debug("Expected type of " + real.getName() + "." + propertyName + " was " + type.getName() + " but found " + method.getReturnType().getName() + ".");
+                log.debug("Expected that the type of " + real.getName() + "." + propertyName + " was " + type.getName() + " but found " + method.getReturnType().getName() + ".");
                 return null;
             }
             else
