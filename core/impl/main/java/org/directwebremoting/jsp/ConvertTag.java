@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.tag;
+package org.directwebremoting.jsp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +29,6 @@ import org.directwebremoting.extend.ScriptBufferUtil;
 
 /**
  * JSP tag to convert an object into javascript using the dwr converter manager
- *
  * Example usage:
  * &lt;%@ taglib uri="http://directwebremoting.org/dwr" prefix="dwr" %&gt;
  * &lt;script%&gt;
@@ -40,14 +39,15 @@ import org.directwebremoting.extend.ScriptBufferUtil;
  */
 public class ConvertTag extends TagSupport
 {
-
+    /* (non-Javadoc)
+     * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
+     */
     @Override
     public int doEndTag() throws JspException
     {
         try
         {
             Container container = ServerContextFactory.get().getContainer();
-
             ConverterManager converterManager = container.getBean(ConverterManager.class);
 
             HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -72,7 +72,7 @@ public class ConvertTag extends TagSupport
                     pageContext.getOut().write(
                         "(function() { " +
                             ScriptBufferUtil.createOutput(buffy, converterManager, false) +
-                        " })()"
+                        " })();"
                     );
                 }
             }
@@ -83,9 +83,9 @@ public class ConvertTag extends TagSupport
             }
             return super.doEndTag();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            throw new JspException(e);
+            throw new JspException(ex);
         }
     }
 
@@ -116,5 +116,4 @@ public class ConvertTag extends TagSupport
      * Should the output be proper json?
      */
     private boolean json;
-
 }

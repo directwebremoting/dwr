@@ -5,16 +5,17 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
     version="2.1">
 
+  <description>Direct Web Remoting TagLib</description>
+  <display-name>DWR TagLib</display-name>
   <tlib-version>1.0</tlib-version>
-  <description>Direct Web Remoting taglib</description>
-  <display-name>DWR taglib</display-name>
-  <short-name>dwr</short-name>
-  <uri>http://directwebremoting.org/dwr</uri>
+  <short-name>DwrTagLib</short-name>
+  <uri>http://www.directwebremoting.org/dwr/</uri>
 
   <tag>
-    <description>Converts serverside objects into clientside javascript</description>
+    <description>Converts server-side objects into client-side javascript</description>
     <name>convert</name>
-    <tag-class>org.directwebremoting.tag.ConvertTag</tag-class>
+    <tag-class>org.directwebremoting.jsp.ConvertTag</tag-class>
+    <body-content>empty</body-content>
     <attribute>
       <description>The serverside value to convert</description>
       <name>value</name>
