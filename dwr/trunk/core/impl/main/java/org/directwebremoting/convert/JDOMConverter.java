@@ -83,7 +83,7 @@ public class JDOMConverter extends AbstractConverter
     {
         try
         {
-            Format outformat = Format.getCompactFormat();
+            Format outformat = Format.getRawFormat();
             outformat.setEncoding("UTF-8");
 
             // Setup the destination
