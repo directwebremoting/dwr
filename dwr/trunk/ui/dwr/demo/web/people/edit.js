@@ -4,11 +4,21 @@ function init() {
   fillTable();
 }
 
+function initJsp(people) {
+  dwr.util.useLoadingMessage();
+  Tabs.init('tabList', 'tabContents');
+  peopleCallback(people);
+}
+
+
 var peopleCache = { };
 var viewed = -1;
 
 function fillTable() {
-  People.getSmallCrowd(function(people) {
+  People.getSmallCrowd(peopleCallback);
+}
+
+function peopleCallback(people) {
     // Delete all the rows except for the "pattern" row
     dwr.util.removeAllRows("peoplebody", { filter:function(tr) {
       return (tr.id != "pattern");
@@ -27,7 +37,6 @@ function fillTable() {
       dwr.util.byId("pattern" + id).style.display = ""; // officially we should use table-row, but IE prefers "" for some reason
       peopleCache[id] = person;
     }
-  });
 }
 
 function editClicked(eleid) {

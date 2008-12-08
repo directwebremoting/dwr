@@ -44,6 +44,9 @@
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
     </jar>
+  	<zip destfile="${target.root}/dwr.jar" compress="true" update="true">
+  		<zipfileset dir="./core/api/main/java/META-INF" prefix="META-INF"/>
+  	</zip>
   </target>
 
   <!--=======================================================================-->
