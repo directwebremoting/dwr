@@ -127,5 +127,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
+	<classpathentry kind="lib" path="core/api/lib/jsp-api-2.0.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
