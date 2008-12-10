@@ -29,9 +29,11 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.event.EventListenerList;
 
 import org.directwebremoting.Container;
+import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
@@ -86,7 +88,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSession(java.lang.String)
      */
-    public RealScriptSession getScriptSession(String id, String page, String httpSessionId)
+    public RealScriptSession getScriptSession(String sentScriptId, String page, String httpSessionId)
     {
         maybeCheckTimeouts();
 
@@ -94,10 +96,39 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
         synchronized (sessionLock)
         {
-            scriptSession = sessionMap.get(id);
+            scriptSession = sessionMap.get(sentScriptId);
             if (scriptSession == null)
             {
-                return null;
+                // Force creation of a new script session
+                String newSessionId = generator.generateId(16);
+
+                scriptSession = new DefaultScriptSession(newSessionId, this, page);
+                Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
+
+                sessionMap.put(newSessionId, scriptSession);
+
+                // See notes on synchronization in invalidate()
+                fireScriptSessionCreatedEvent(scriptSession);
+
+                // Inject a (new) script session id into the page
+                ScriptBuffer script = EnginePrivate.getRemoteHandleNewScriptSessionScript(newSessionId);
+                scriptSession.addScript(script);
+
+                // Use the new script session id not the one passed in
+                Loggers.SESSION.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + page);
+            }
+            else
+            {
+                // This could be called from a poll or an rpc call, so this is a
+                // good place to update the session access time
+                scriptSession.updateLastAccessedTime();
+
+                String storedPage = scriptSession.getPage();
+                if (!storedPage.equals(page))
+                {
+                    Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
+                    throw new SecurityException("Invalid Page");
+                }
             }
 
             associateScriptSessionAndPage(scriptSession, page);
@@ -109,30 +140,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
             // browser, it's not really an indication that this session is still
             // alive, so we don't.
         }
-
-        return scriptSession;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#createScriptSession(org.directwebremoting.extend.RealWebContext)
-     */
-    public RealScriptSession createScriptSession(String page, String httpSessionId)
-    {
-        String id = generator.generateId(16);
-
-        DefaultScriptSession scriptSession = new DefaultScriptSession(id, this, page);
-        Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
-
-        synchronized (sessionLock)
-        {
-            sessionMap.put(id, scriptSession);
-
-            associateScriptSessionAndPage(scriptSession, page);
-            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
-        }
-
-        // See notes on synchronization in invalidate()
-        fireScriptSessionCreatedEvent(scriptSession);
 
         return scriptSession;
     }
@@ -417,6 +424,30 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     public String getInitCode()
     {
         return "dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', [ function() { dwr.engine._ordered = false; }]);";
+    }
+
+    /**
+     * ScriptSession IDs are too long to be useful to humans. We shorten them
+     * to the first 4 characters.
+     */
+    private String simplifyId(String id)
+    {
+        if (id == null)
+        {
+            return "[null]";
+        }
+
+        if (id.length() == 0)
+        {
+            return "[blank]";
+        }
+
+        if (id.length() < 4)
+        {
+            return id;
+        }
+
+        return id.substring(0, 4);
     }
 
     /* (non-Javadoc)

@@ -45,7 +45,7 @@ public interface ScriptSessionManager
     Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId);
 
     /**
-      * For a given script session id, return the related ScriptSession object
+     * For a given script session id, return the related ScriptSession object
      * or null if the id is not known.
      * @param id The id to get a ScriptSession object for
      * @param url The URL including 'http://', up to (but not including) '?' or '#' (or null if not known)
@@ -53,14 +53,6 @@ public interface ScriptSessionManager
      * @return A ScriptSession to match the ID, or null if a match is not found.
      */
     RealScriptSession getScriptSession(String id, String url, String httpSessionId);
-
-    /**
-     * When a new client page-loads, we create a script session.
-     * @param url The URL including 'http://', up to (but not including) '?' or '#'
-     * @param httpSessionId The session ID (or null if not known)
-     * @return The new script session id
-     */
-    RealScriptSession createScriptSession(String url, String httpSessionId);
 
     /**
      * Accessor for the time (in milliseconds) when unused ScriptSessions will expire
@@ -72,13 +64,13 @@ public interface ScriptSessionManager
      * Maintain the list of {@link ScriptSessionListener}s
      * @param li the ScriptSessionListener to add
      */
-    public void addScriptSessionListener(ScriptSessionListener li);
+    void addScriptSessionListener(ScriptSessionListener li);
 
     /**
      * Maintain the list of {@link ScriptSessionListener}s
      * @param li the ScriptSessionListener to remove
      */
-    public void removeScriptSessionListener(ScriptSessionListener li);
+    void removeScriptSessionListener(ScriptSessionListener li);
 
     /**
      * Some implementations of ScriptSessionManager need to add custom code into

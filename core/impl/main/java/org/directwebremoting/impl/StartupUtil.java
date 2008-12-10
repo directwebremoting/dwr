@@ -254,6 +254,9 @@ public class StartupUtil
         Loggers.STARTUP.debug("Setup: Getting parameters from ServletConfig:");
         setupFromServletConfig(container, servletConfig);
 
+        Loggers.STARTUP.debug("Setup: Applying long versions of shortcut parameters:");
+        applyParameterShortcuts(container);
+
         Loggers.STARTUP.debug("Setup: Resolving multiple implementations:");
         resolveMultipleImplementations(container, servletConfig);
 
@@ -264,9 +267,7 @@ public class StartupUtil
         resolveListenerImplementations(container, servletConfig);
 
         Loggers.STARTUP.debug("Setup: Initializing Factories:");
-
         ServerContext serverContext = ServerContextFactory.attach(container);
-
         WebContextFactory.attach(container);
         HubFactory.attach(container);
         JsonParserFactory.attach(container);
@@ -274,16 +275,54 @@ public class StartupUtil
         CallbackHelperFactory.attach(container);
         TaskDispatcherFactory.attach(container);
 
-        ServletContext servletContext = servletConfig.getServletContext();
-
         // Make some changes to the ServletContext so {@link DwrWebContextFilter}
         // can find the Container etc.
         WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
+        ServletContext servletContext = servletConfig.getServletContext();
         servletContext.setAttribute(Container.class.getName(), container);
         servletContext.setAttribute(WebContextBuilder.class.getName(), webContextBuilder);
         servletContext.setAttribute(ServletConfig.class.getName(), servletConfig);
 
         publishContainer(container, serverContext, servletConfig);
+    }
+
+    /**
+     * Some parameters might be shortcuts for one or more other parameters.
+     * For example 'interactivity. This method resolves those shortcuts by
+     * adding new values into the container.
+     */
+    private static void applyParameterShortcuts(DefaultContainer container)
+    {
+        Object bean = container.getBean("interactivity");
+        if (bean == null)
+        {
+            return;
+        }
+
+        if (bean instanceof String)
+        {
+            String level = (String) bean;
+            if ("stateless".equals(level))
+            {
+                container.addImplementation(ScriptSessionManager.class, TransientScriptSessionManager.class);
+            }
+            else if ("passiveReverseAjax".equals(level))
+            {
+                // The default - do nothing
+            }
+            else if ("activeReverseAjax".equals(level))
+            {
+                container.addParameter("activeReverseAjax", "true");
+            }
+            else
+            {
+                Loggers.STARTUP.error("Illegal value for 'interactivity' parameter of '" + level + "'. Valid values are [stateless|passiveReverseAjax|activeReverseAjax]. Ignoring.");
+            }
+        }
+        else
+        {
+            Loggers.STARTUP.error("Found non-string value for 'interactivity' parameter. Ignoring.");
+        }
     }
 
     /**
@@ -594,7 +633,7 @@ public class StartupUtil
                 }
                 catch (Exception ex)
                 {
-                    Loggers.STARTUP.warn("Failed to start custom configurator", ex);
+                    Loggers.STARTUP.error("Failed to start custom configurator", ex);
                 }
             }
         }
