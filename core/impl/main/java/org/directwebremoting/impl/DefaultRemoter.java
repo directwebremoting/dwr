@@ -73,6 +73,7 @@ public class DefaultRemoter implements Remoter
             buffer.append(createParameterDefinitions(scriptName));
         }
 
+        buffer.append(createDojoProvides(scriptName));
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));
         buffer.append(createMethodDefinitions(scriptName));
@@ -103,9 +104,21 @@ public class DefaultRemoter implements Remoter
      * @see EnginePrivate#getEngineInitScript()
      * @param scriptName
      */
+    protected String createDojoProvides(String scriptName)
+    {
+        return "if (window['dojo']) dojo.provide('dwr.interface." + scriptName + "');\n\n";
+    }
+
+    /**
+     * Create a class definition string.
+     * This is similar to {@link EnginePrivate#getEngineInitScript()} except
+     * that it creates scripts for a specific class not for dwr.engine
+     * @see EnginePrivate#getEngineInitScript()
+     * @param scriptName
+     */
     protected String createClassDefinition(String scriptName)
     {
-        return "if (typeof this['" + scriptName + "'] == 'undefined') this." + scriptName + " = {};\n\n";
+        return "if (typeof this['" + scriptName + "'] == 'undefined') " + scriptName + " = {};\n\n";
     }
 
     /**
