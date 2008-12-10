@@ -95,6 +95,17 @@ dwr.gi._convertObject = function(data, name, depth) {
   return reply;
 };
 
+/** @private The characters that we need to escape from an JS perspective */
+dwr.gi._specials = [ '\\', '\'', '"' ];
+
+/** @private The Regex that works on the characters needing escaping */
+dwr.gi._escapeRegexp = new RegExp('(\\' + dwr.gi._specials.join('|\\') + ')', 'g');
+
+/** @private Escape a string so it is valid */
+dwr.gi._escape = function(text) {
+  return text.replace(dwr.gi._escapeRegexp, '\\$1');
+};
+
 /** @private Convert an object of unknown type to a JSX string */
 dwr.gi._convertAttributes = function(data, name, depth) {
   if (typeof data == "function") {
@@ -110,7 +121,7 @@ dwr.gi._convertAttributes = function(data, name, depth) {
     }
     return "";
   }
-  return " " + name + "='" + data + "'";
+  return " " + name + "='" + dwr.gi._escape(data) + "'";
 };
 
 /** @private Convert an object of unknown type to a JSX string */
