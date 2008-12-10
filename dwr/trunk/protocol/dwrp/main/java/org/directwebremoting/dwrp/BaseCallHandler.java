@@ -69,7 +69,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     {
         try
         {
-            RealWebContext webContext = (RealWebContext) WebContextFactory.get();
             CallBatch batch = new CallBatch(request);
 
             // Security checks first, once we've parsed the input
@@ -80,6 +79,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             request.setAttribute(ATTRIBUTE_BATCH, batch);
 
             String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
+            RealWebContext webContext = (RealWebContext) WebContextFactory.get();
             webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
 
             // Various bits of the CallBatch need to be stashed away places

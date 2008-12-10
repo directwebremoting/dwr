@@ -34,6 +34,7 @@ import org.directwebremoting.event.ScriptSessionBindingEvent;
 import org.directwebremoting.event.ScriptSessionBindingListener;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
+import org.directwebremoting.util.IdGenerator;
 
 /**
  * An implementation of ScriptSession and RealScriptSession.
@@ -142,7 +143,7 @@ public class TransientScriptSession implements RealScriptSession
      */
     public String getId()
     {
-        return null;
+        return scriptSessionId;
     }
 
     /* (non-Javadoc)
@@ -371,6 +372,11 @@ public class TransientScriptSession implements RealScriptSession
     }
 
     /**
+     * How we create script session ids.
+     */
+    private static IdGenerator generator = new IdGenerator();
+
+    /**
      * The server side attributes for this page.
      * <p>GuardedBy("attributes")
      */
@@ -398,6 +404,11 @@ public class TransientScriptSession implements RealScriptSession
      * The page being viewed.
      */
     protected final String page;
+
+    /**
+     * ScriptSessionIds for {@link TransientScriptSession}s are very temporary
+     */
+    protected final String scriptSessionId = generator.generateId(16);
 
     /**
      * We track window names to link script sessions together and to help

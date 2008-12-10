@@ -41,15 +41,6 @@ public class TransientScriptSessionManager implements ScriptSessionManager
      */
     public RealScriptSession getScriptSession(String id, String page, String httpSessionId)
     {
-        // There is nothing to retrieve because we don't store data
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptSessionManager#createScriptSession(org.directwebremoting.extend.RealWebContext)
-     */
-    public RealScriptSession createScriptSession(String page, String httpSessionId)
-    {
         return new TransientScriptSession(this, page);
     }
 

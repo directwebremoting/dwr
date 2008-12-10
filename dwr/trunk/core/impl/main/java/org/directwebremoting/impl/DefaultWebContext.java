@@ -33,7 +33,6 @@ import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.util.IdGenerator;
-import org.directwebremoting.util.Loggers;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 /**
@@ -51,7 +50,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      * @param servletContext The servlet context
      * @see org.directwebremoting.WebContextFactory.WebContextBuilder#engageThread(Container, HttpServletRequest, HttpServletResponse)
      */
-    public DefaultWebContext(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig servletConfig, ServletContext servletContext)
+    protected DefaultWebContext(Container container, HttpServletRequest request, HttpServletResponse response, ServletConfig servletConfig, ServletContext servletContext)
     {
         setServletConfig(servletConfig);
         setServletContext(servletContext);
@@ -70,7 +69,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.RealWebContext#checkPageInformation(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void checkPageInformation(String sentPage, String sentScriptId, String windowName)
+    public void checkPageInformation(final String sentPage, String sentScriptId, String windowName)
     {
         ScriptSessionManager scriptSessionManager = getScriptSessionManager();
 
@@ -85,39 +84,10 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         // Check validity to the script session id. It could be invalid due to
         // to a server re-start, a timeout, a back-button, just because the user
         // is new to this page, or because someone is hacking
-        RealScriptSession scriptSession = scriptSessionManager.getScriptSession(sentScriptId, sentPage, httpSessionId);
-        if (scriptSession == null)
-        {
-            // Force creation of a new script session
-            scriptSession = scriptSessionManager.createScriptSession(sentPage, httpSessionId);
-            String newSessionId = scriptSession.getId();
+        this.scriptSession = scriptSessionManager.getScriptSession(sentScriptId, sentPage, httpSessionId);
 
-            // Inject a (new) script session id into the page
-            ScriptBuffer script = EnginePrivate.getRemoteHandleNewScriptSessionScript(newSessionId);
-            scriptSession.addScript(script);
-
-            // Use the new script session id not the one passed in
-            Loggers.SESSION.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + sentPage);
-            this.scriptSessionId = newSessionId;
-            this.page = sentPage;
-        }
-        else
-        {
-            // This could be called from a poll or an rpc call, so this is a
-            // good place to update the session access time
-            scriptSession.updateLastAccessedTime();
-
-            String storedPage = scriptSession.getPage();
-            if (!storedPage.equals(sentPage))
-            {
-                Loggers.SESSION.error("Invalid Page: Passed page=" + sentPage + ", but page in script session=" + storedPage);
-                throw new SecurityException("Invalid Page");
-            }
-
-            // The passed script session id passed the test, use it
-            this.scriptSessionId = sentScriptId;
-            this.page = sentPage;
-        }
+        // The passed script session id passed the test, use it
+        this.page = sentPage;
 
         if (avoidConnectionLimitWithWindowName)
         {
@@ -149,20 +119,6 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      */
     public ScriptSession getScriptSession()
     {
-        if (scriptSessionId == null)
-        {
-            throw new UnsupportedOperationException("ScriptSession is not supported from a JSON call.");
-        }
-
-        ScriptSessionManager manager = getScriptSessionManager();
-
-        RealScriptSession scriptSession = manager.getScriptSession(scriptSessionId, null, null);
-        if (scriptSession == null)
-        {
-            // TODO: We ought to have some detection mechanism rather than throwing
-            throw new SecurityException("Expected script session to exist");
-        }
-
         return scriptSession;
     }
 
@@ -247,7 +203,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
     @Override
     public String toString()
     {
-        return "DefaultWebContext[id=" + simplifyId(scriptSessionId) + ", page=" + page + "]";
+        return "DefaultWebContext[id=" + simplifyId(scriptSession.getId()) + ", page=" + page + "]";
     }
 
     /**
@@ -259,25 +215,25 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      * If a window does not have a name, we give it one so we can avoid the
      * 2 connection limit
      */
-    private static IdGenerator generator = new IdGenerator();
+    private static final IdGenerator generator = new IdGenerator();
 
     /**
      * The unique ID (like a session ID) assigned to the current page
      */
-    private String scriptSessionId = null;
+    private RealScriptSession scriptSession;
 
     /**
      * The URL of the current page
      */
-    private String page = null;
+    private String page;
 
     /**
      * The HttpServletRequest associated with the current request
      */
-    private HttpServletRequest request = null;
+    private final HttpServletRequest request;
 
     /**
      * The HttpServletResponse associated with the current request
      */
-    private HttpServletResponse response = null;
+    private final HttpServletResponse response;
 }
