@@ -202,6 +202,7 @@
           <arg line="cssOptimize=comments.keepLines"/>
           <arg line="version=${label}"/>
           <arg line="log=2"/>
+          <!--arg line="scopeDjConfig=modulePaths:{dwr:\\'http://localhost:8080/dwr/dwr\\'}"/-->
         </java>
         <copy todir="${target.root}/web/demo/widgets">
           <fileset dir="${dojo.temp}">
