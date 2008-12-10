@@ -15,7 +15,9 @@
  */
 package org.directwebremoting.servlet;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,6 +110,33 @@ public class EngineHandler extends FileJavaScriptHandler
         replace.put("${initCode}", scriptSessionManager.getInitCode());
 
         return replace;
+    }
+
+    /**
+     * This API is primarily for JAWR to discover the tags that we are using
+     * to customize our output.
+     */
+    public static List<String> getKeywords()
+    {
+        return Arrays.asList(new String[] {
+            "pollWithXhr",
+            "pathToDwrServlet",
+            "sessionCookieName",
+            "allowGetForSafariButMakeForgeryEasier",
+            "scriptTagProtection",
+            "plainCallHandlerUrl",
+            "plainPollHandlerUrl",
+            "htmlCallHandlerUrl",
+            "htmlPollHandlerUrl",
+            "defaultToAsync",
+            "versionMajor",
+            "versionMinor",
+            "versionRevision",
+            "versionBuild",
+            "versionTitle",
+            "versionLabel",
+            "initCode",
+        });
     }
 
     /**
