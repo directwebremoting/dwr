@@ -53,7 +53,7 @@ dwr.util.escapeHtml = function(original) {
  * @see TODO
  */
 dwr.util.unescapeHtml = function(original) {
-  return original.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'");
+  return original.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#039;/g,"'").replace(/&amp;/g,'&');
 };
 
 /**
