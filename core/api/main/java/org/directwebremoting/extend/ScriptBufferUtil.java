@@ -59,11 +59,15 @@ public class ScriptBufferUtil
     {
         OutboundContext context = new OutboundContext(jsonOutput);
         List<OutboundVariable> scriptParts = new ArrayList<OutboundVariable>();
+        boolean outboundError = false;
 
         // First convert everything into OutboundVariables
         for (Object part : script.getParts())
         {
             OutboundVariable ov = converterManager.convertOutbound(part, context);
+            if( ov instanceof ErrorOutboundVariable ) {
+                outboundError = true;
+            }
             scriptParts.add(ov);
         }
 
@@ -96,7 +100,15 @@ public class ScriptBufferUtil
         String output = buffer.toString();
         if (jsonOutput && !output.startsWith("{"))
         {
-            output = "{ \"reply\":" + output + "}";
+            if( outboundError )
+            {
+                output = output.replaceFirst("null", "{}");
+                output = "{\"error\":" + output + "}";
+            }
+            else
+            {
+                output = "{ \"reply\":" + output + "}";
+            }
         }
 
         Loggers.SCRIPTS.debug(output);

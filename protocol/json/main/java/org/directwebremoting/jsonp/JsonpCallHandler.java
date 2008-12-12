@@ -64,6 +64,7 @@ public class JsonpCallHandler implements Handler
 
         // Get the output stream and setup the mime type
         response.setContentType(MimeConstants.MIME_JS);
+        String callback = getCallback(request);
         PrintWriter out = response.getWriter();
 
         try
@@ -82,14 +83,14 @@ public class JsonpCallHandler implements Handler
                     if (reply.getThrowable() != null)
                     {
                         Throwable ex = reply.getThrowable();
-                        writeData(out, ex);
+                        writeData(out, ex, callback);
 
                         log.warn("--Erroring: message[" + ex.toString() + ']');
                     }
                     else
                     {
                         Object data = reply.getReply();
-                        writeData(out, data);
+                        writeData(out, data, callback);
                     }
                 }
                 catch (Exception ex)
@@ -97,15 +98,19 @@ public class JsonpCallHandler implements Handler
                     // This is a bit of a "this can't happen" case so I am a bit
                     // nervous about sending the exception to the client, but we
                     // want to avoid silently dying so we need to do something.
-                    writeData(out, ex);
+                    writeData(out, ex, callback);
                     log.error("--ConversionException: message=" + ex.toString());
                 }
             }
         }
         catch (Exception ex)
         {
-            writeData(out, ex);
+            writeData(out, ex, callback);
         }
+    }
+
+    public String getCallback(HttpServletRequest request) {
+        return request.getParameter("callback");
     }
 
     /**
@@ -214,7 +219,7 @@ public class JsonpCallHandler implements Handler
     /**
      * Create output for some data and write it to the given stream.
      */
-    public void writeData(PrintWriter out, Object data)
+    public void writeData(PrintWriter out, Object data, String callback)
     {
         try
         {
@@ -222,6 +227,13 @@ public class JsonpCallHandler implements Handler
             buffer.appendData(data);
 
             String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
+            if( data instanceof Exception ) {
+                output = "{\"error\":" + output + "}";
+            }
+            if( callback != null && !"".equals(callback.trim()) )
+            {
+                output = callback + "(" + output + ")";
+            }
             out.println(output);
         }
         catch (ConversionException ex)
@@ -234,6 +246,11 @@ public class JsonpCallHandler implements Handler
             try
             {
                 String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
+                output = "{\"error\":" + output + "}";
+                if( callback != null && !"".equals(callback.trim()) )
+                {
+                    output = callback + "(" + output + ")";
+                }
                 out.println(output);
             }
             catch (ConversionException ex1)
