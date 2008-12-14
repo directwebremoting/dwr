@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
@@ -165,17 +166,28 @@ public class SpringCreator extends AbstractCreator implements Creator
             return new ClassPathXmlApplicationContext(configLocation);
         }
 
-        ServletContext srvCtx = WebContextFactory.get().getServletContext();
-        HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
+        ServletContext srvCtx = null;
+        try
+        {
+            srvCtx = WebContextFactory.get().getServletContext();
+        }
+        catch (Exception ex)
+        {
+            srvCtx = ServerContextFactory.get().getServletContext();
+        }
 
-        if (request != null)
+        HttpServletRequest request = null;
+        try
         {
-            return RequestContextUtils.getWebApplicationContext(request, srvCtx);
+            request = WebContextFactory.get().getHttpServletRequest();
         }
-        else
+        catch (Exception ex)
         {
-            return WebApplicationContextUtils.getWebApplicationContext(srvCtx);
+            // Probably on boot time
         }
+
+        return request != null ? RequestContextUtils.getWebApplicationContext(request, srvCtx) : WebApplicationContextUtils.getWebApplicationContext(srvCtx);
+
     }
 
     /**
