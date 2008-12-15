@@ -31,7 +31,6 @@
     serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
     ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
     "/>
-  <!-- Skipped until we can get a CLA: noncla/various -->
 
   <!--=======================================================================-->
   <target name="prepare" description="Various bits of setup">
@@ -40,9 +39,13 @@
 
   <!--=======================================================================-->
   <target name="jar" depends="prepare" description="Create dwr.jar">
-    <build target="${target.root}" modules="${modules}"/>
+    <build target="${target.root}" include="" modules="${modules}"/>
     <jar destfile="${target.root}/dwr.jar" compress="true">
       <fileset dir="${target.root}/classes/main"/>
+    </jar>
+    <build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various"/>
+    <jar destfile="${target.root}/dwr-noncla.jar" compress="true">
+      <fileset dir="${target.root}/classes/noncla/classes/main"/>
     </jar>
   </target>
 
@@ -152,7 +155,7 @@
       core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
       protocol/dwrp, protocol/json, ui/jaxer
       "/>
-    <build target="${target.root}/jaxer" modules="${modules}"/>
+    <build target="${target.root}/jaxer" include="" modules="${modules}"/>
     <!-- The 3 core outputs are a readme, jaxer-dwr.jar and a template web.xml -->
     <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
     <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
@@ -243,6 +246,7 @@
   <macrodef name="build" description="Create some distribution files from a set of modules">
     <attribute name="modules" description="The set module to compile"/>
     <attribute name="target" description="The directory into which to build"/>
+    <attribute name="include" description="The results of another build that we can depend on"/>
     <sequential>
       <mkdir dir="@{target}/lib"/>
       <mkdir dir="@{target}/classes/main"/>
@@ -252,6 +256,7 @@
       <mkdir dir="@{target}/web/demo/WEB-INF/lib"/>
       <foreach list="@{modules}" param="module" trim="true" target="process-module">
         <param name="target" value="@{target}"/>
+        <param name="include" value="@{include}"/>
       </foreach>
     </sequential>
   </macrodef>
@@ -338,15 +343,33 @@
     <element name="sources"/>
     <sequential>
       <!-- compile the sources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
-      <javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}">
-        <exclude name="**/package.html"/>
-        <exclude name="**/package-info.java"/>
-        <sources/>
-        <classpath>
-          <fileset dir="${target}/lib" includes="**/*.jar"/>
-          <pathelement location="${target}/classes/main"/>
-        </classpath>
-      </javac>
+      <if>
+        <equals arg1="${include}" arg2=""/>
+        <then>
+          <javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}">
+            <exclude name="**/package.html"/>
+            <exclude name="**/package-info.java"/>
+            <sources/>
+            <classpath>
+              <fileset dir="${target}/lib" includes="**/*.jar"/>
+              <pathelement location="${target}/classes/main"/>
+            </classpath>
+          </javac>
+        </then>
+        <else>
+          <javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}">
+            <exclude name="**/package.html"/>
+            <exclude name="**/package-info.java"/>
+            <sources/>
+            <classpath>
+              <fileset dir="${target}/lib" includes="**/*.jar"/>
+              <fileset dir="${include}/lib" includes="**/*.jar"/>
+              <pathelement location="${target}/classes/main"/>
+              <pathelement location="${include}/classes/main"/>
+            </classpath>
+          </javac>
+        </else>
+      </if>
     </sequential>
   </macrodef>
 
