@@ -49,8 +49,6 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
     {
         this.converterManager = converterManager;
         this.creatorManager = creatorManager;
-
-        calls.addCall(call);
     }
 
     /* (non-Javadoc)
@@ -98,7 +96,6 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
 
                 params = (List<Object>) member;
                 inParams = false;
-                convertParamsIfPossible();
             }
             else
             {
@@ -159,62 +156,10 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
                         return;
                     }
 
-                    call.setScriptName(parts[0]);
-                    call.setMethodName(parts[1]);
-                    convertParamsIfPossible();
+                    scriptName = parts[0];
+                    methodName = parts[1];
                 }
             }
-        }
-    }
-
-    /**
-     * We might not have enough information to convert the parameters because
-     * the method parameter might not have been transfered, before the params
-     * so we need to check for both
-     */
-    protected void convertParamsIfPossible()
-    {
-        String methodName = call.getMethodName();
-        String scriptName = call.getScriptName();
-        if (scriptName == null || params == null)
-        {
-            return;
-        }
-
-        Creator creator = creatorManager.getCreator(scriptName, false);
-        if (creator == null)
-        {
-            log.warn("No creator found: " + scriptName);
-            throw new JsonRpcCallException(calls, "Object not valid", ERROR_CODE_INVALID, SC_BAD_REQUEST);
-        }
-
-        // Fill out the Calls structure
-        try
-        {
-            Class<?> type = creator.getType();
-
-            // Get the types of the parameters
-            List<Class<?>> paramTypes = new ArrayList<Class<?>>();
-            for (Object param : params)
-            {
-                paramTypes.add(param.getClass());
-            }
-            Class<?>[] typeArray = paramTypes.toArray(new Class[paramTypes.size()]);
-
-            Method method = type.getMethod(call.getMethodName(), typeArray);
-            call.setMethod(method);
-
-            call.setParameters(params.toArray());
-        }
-        catch (SecurityException ex)
-        {
-            log.warn("Method not allowed: " + scriptName + "." + methodName, ex);
-            throw new JsonRpcCallException(calls, "Method not allowed", ERROR_CODE_INVALID, SC_BAD_REQUEST);
-        }
-        catch (NoSuchMethodException ex)
-        {
-            log.warn("Method not allowed: " + scriptName + "." + methodName, ex);
-            throw new JsonRpcCallException(calls, "Method not found", ERROR_CODE_INVALID, SC_BAD_REQUEST);
         }
     }
 
@@ -252,6 +197,9 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
     {
         if (parent == null)
         {
+            // This must be done at the end of the parse, if we don't have
+            // everything now, we never will
+            convertParams();
             return calls;
         }
 
@@ -262,6 +210,52 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
         }
 
         return new HashMap<String, Object>();
+    }
+
+    /**
+     * We might not have enough information to convert the parameters because
+     * the method parameter might not have been transfered, before the params
+     * so we need to check for both
+     */
+    protected void convertParams()
+    {
+        Creator creator = creatorManager.getCreator(scriptName, false);
+        if (creator == null)
+        {
+            log.warn("No creator found: " + scriptName);
+            throw new JsonRpcCallException(calls, "Object not valid", ERROR_CODE_INVALID, SC_BAD_REQUEST);
+        }
+
+        // Fill out the Calls structure
+        try
+        {
+            Class<?> type = creator.getType();
+
+            // Get the types of the parameters
+            List<Class<?>> paramTypes = new ArrayList<Class<?>>();
+            for (Object param : params)
+            {
+                paramTypes.add(param.getClass());
+            }
+            Class<?>[] typeArray = paramTypes.toArray(new Class[paramTypes.size()]);
+
+            Method method = type.getMethod(methodName, typeArray);
+
+            Call call = new Call(null, scriptName, methodName);
+            calls.addCall(call);
+            call.setMethod(method);
+            call.setParameters(params.toArray());
+        }
+        catch (SecurityException ex)
+        {
+            log.warn("Method not allowed: " + scriptName + "." + methodName, ex);
+            throw new JsonRpcCallException(calls, "Method not allowed", ERROR_CODE_INVALID, SC_BAD_REQUEST);
+        }
+        catch (NoSuchMethodException ex)
+        {
+            log.warn("Method not allowed: " + scriptName + "." + methodName, ex);
+            throw new JsonRpcCallException(calls, "Method not found", ERROR_CODE_INVALID, SC_BAD_REQUEST);
+        }
     }
 
     /**
@@ -284,10 +278,9 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
      */
     private final JsonRpcCalls calls = new JsonRpcCalls();
 
-    /**
-     *
-     */
-    private final Call call = new Call();
+    private String methodName;
+
+    private String scriptName;
 
     /**
      *

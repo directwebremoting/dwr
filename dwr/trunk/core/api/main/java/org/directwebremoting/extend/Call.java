@@ -16,6 +16,7 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -34,20 +35,26 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Call
 {
+    public Call(String callId, String scriptName, String methodName)
+    {
+        this.callId = callId;
+        this.scriptName = scriptName;
+        this.methodName = methodName;
+    }
+
+    public void setMarshallFailure(Throwable exception)
+    {
+        this.exception = exception;
+        this.method = null;
+        this.parameters = null;
+    }
+
     /**
      * @return the exception
      */
     public Throwable getException()
     {
         return exception;
-    }
-
-    /**
-     * @param exception the exception to set
-     */
-    public void setException(Throwable exception)
-    {
-        this.exception = exception;
     }
 
     /**
@@ -83,14 +90,6 @@ public class Call
     }
 
     /**
-     * @param callId The callId to set.
-     */
-    public void setCallId(String callId)
-    {
-        this.callId = callId;
-    }
-
-    /**
      * @return Returns the callId.
      */
     public String getCallId()
@@ -99,27 +98,11 @@ public class Call
     }
 
     /**
-     * @param scriptName The scriptName to set.
-     */
-    public void setScriptName(String scriptName)
-    {
-        this.scriptName = scriptName;
-    }
-
-    /**
      * @return Returns the scriptName.
      */
     public String getScriptName()
     {
         return scriptName;
-    }
-
-    /**
-     * @param methodName The methodName to set.
-     */
-    public void setMethodName(String methodName)
-    {
-        this.methodName = methodName;
     }
 
     /**
@@ -225,7 +208,8 @@ public class Call
         }
         else if (allMethods.size() == 1)
         {
-            setMethod(allMethods.get(0));
+            method = allMethods.get(0);
+            checkProxiedMethod(creatorManager);
             return;
         }
 
@@ -243,7 +227,8 @@ public class Call
         if (exactParamCountMatches.size() == 1)
         {
             // One method with the right number of params - use that
-            setMethod(exactParamCountMatches.get(0));
+            method = exactParamCountMatches.get(0);
+            checkProxiedMethod(creatorManager);
             return;
         }
 
@@ -261,7 +246,8 @@ public class Call
 
         if (varargsMathods.size() == 1)
         {
-            setMethod(varargsMathods.get(0));
+            method = varargsMathods.get(0);
+            checkProxiedMethod(creatorManager);
             return;
         }
 
@@ -276,6 +262,69 @@ public class Call
 
         throw new IllegalArgumentException("Method not found. See logs for details");
     }
+
+    /**
+     * The main issue here happens with JDK proxies, that is, those based on
+     * interfaces and is easily noticeable with Spring because it's designed to
+     * generate proxies on the fly for many different purposes (security, tx,..)
+     * For some unknown reasons but probably related to erasure, when a proxy is
+     * created and it contains a method with at least one generic parameter,
+     * that generic type information is lost. Those that rely on reflection to
+     * detect that info at runtime (our case when detecting the matching method
+     * for an incoming call) face a dead end. The solution involves detecting
+     * the proxy interface and obtain the original class (which holds the
+     * required information).
+     * <p>Here comes the problematic area. In the case of Spring all proxies
+     * implement the Advised interface which includes a method that returns the
+     * target class (and so fulfills our need). Of course, this means that:
+     * a) A Spring dependency appears and
+     * b) The solution only applies to Spring contexts.
+     * The first concern is solvable using Class.forName. The current fix does
+     * not solve the second. Probably a better solution should be implemented
+     * (for example, something that works under the AOP alliance umbrella).
+     */
+    private void checkProxiedMethod(CreatorManager creatorManager)
+    {
+        try
+        {
+            if (method != null && advisedClass != null && advisedClass.isAssignableFrom(method.getDeclaringClass()))
+            {
+                Creator creator = creatorManager.getCreator(scriptName, true);
+                if (Proxy.isProxyClass(creator.getType()))
+                {
+                    Object target = creator.getInstance(); // Should be a singleton
+                    Method targetClassMethod = target.getClass().getMethod("getTargetClass");
+                    Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
+                    method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Probably not in Spring context so no Advised proxies at all
+        }
+    }
+
+    /**
+     * Spring/AOP hack
+     * @see #checkProxiedMethod(CreatorManager)
+     */
+    static
+    {
+        try
+        {
+            advisedClass = Class.forName("org.springframework.aop.framework.Advised");
+        }
+        catch (ClassNotFoundException ex)
+        {
+        }
+    }
+
+    /**
+     * Spring/AOP hack
+     * @see #checkProxiedMethod(CreatorManager)
+     */
+    private static Class<?> advisedClass;
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -293,11 +342,11 @@ public class Call
         }
     }
 
-    private String callId = null;
+    private final String callId;
 
-    private String scriptName = null;
+    private final String scriptName;
 
-    private String methodName = null;
+    private final String methodName;
 
     private Method method = null;
 

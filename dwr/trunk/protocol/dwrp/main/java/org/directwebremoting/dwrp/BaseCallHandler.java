@@ -163,8 +163,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // do we need to know the method before we dereference?
                 inctx.dereference();
 
-                // Object target = creatorManager.getCreator(call.getScriptName(), true).getInstance();
-
                 // Convert all the parameters to the correct types
                 int destParamCount = method.getParameterTypes().length;
                 Object[] arguments = new Object[destParamCount];
@@ -179,8 +177,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     {
                         param = inctx.getParameter(callNum, j);
                     }
-
-                    // method = applySpringHack(method, target);
 
                     Property property = new ParameterProperty(method, j);
 
@@ -202,39 +198,12 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             catch (Exception ex)
             {
                 log.debug("Marshalling exception", ex);
-
-                call.setMethod(null);
-                call.setParameters(null);
-                call.setException(ex);
-
+                call.setMarshallFailure(ex);
                 continue callLoop;
             }
         }
 
         return calls;
-    }
-
-    /**
-     * TODO: Find a better way
-     */
-    private static Method applySpringHack(Method method, Object target)
-    {
-        try
-        {
-            Class<?> advisedClass = Class.forName("org.springframework.aop.framework.Advised");
-            if (advisedClass.isAssignableFrom(method.getDeclaringClass()))
-            {
-                Method targetClassMethod = target.getClass().getMethod("getTargetClass");
-                Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                return targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-            }
-        }
-        catch (Exception ex)
-        {
-            // Probably not in Spring context so no Advised proxies at all
-        }
-
-        return method;
     }
 
     /**

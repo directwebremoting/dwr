@@ -127,12 +127,23 @@ public class BayeuxClient implements Listener
     }
 
     /**
+     * We're note constraining our output to JSON at the moment
+     */
+    private static final boolean JSON_OUTPUT = false;
+
+    private final Bayeux bayeux;
+
+    private Client client;
+
+    /**
      * @param remoter
      */
     public void setRemoter(Remoter remoter)
     {
         this.remoter = remoter;
     }
+
+    private Remoter remoter;
 
     /**
      * @param converterManager
@@ -142,6 +153,8 @@ public class BayeuxClient implements Listener
         this.converterManager = converterManager;
     }
 
+    private ConverterManager converterManager;
+
     /**
      * @param plainCallHandler
      */
@@ -150,19 +163,6 @@ public class BayeuxClient implements Listener
         this.plainCallHandler = plainCallHandler;
     }
 
-    /**
-     * We're note constraining our output to JSON at the moment
-     */
-    private static final boolean JSON_OUTPUT = false;
-
-    private Bayeux bayeux;
-
-    private Client client;
-
-    private Remoter remoter;
-
-    private ConverterManager converterManager;
-    
     private PlainCallHandler plainCallHandler;
 
     /**
