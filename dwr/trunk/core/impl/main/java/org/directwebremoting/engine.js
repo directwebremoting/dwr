@@ -367,7 +367,7 @@ if (typeof window['dwr'] == 'undefined') {
   dwr.engine._partialResponseFlush = 2;
 
   /** Are we doing page unloading? */
-  dwr.engine._isNotifyServerOnPageUnload = true;
+  dwr.engine._isNotifyServerOnPageUnload = false;
 
   /**
    * A map of all mapped classes whose class declarations have been loaded
