@@ -16,7 +16,6 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -285,6 +284,32 @@ public class Call
      */
     private void checkProxiedMethod(CreatorManager creatorManager)
     {
+        /*
+        if (method != null)
+        {
+            Creator c = creatorManager.getCreator(scriptName, true);
+            if (Proxy.isProxyClass(c.getType()))
+            {
+                try
+                {
+                    advisedClass = Class.forName("org.springframework.aop.framework.Advised");
+                    if (advisedClass.isAssignableFrom(method.getDeclaringClass()))
+                    {
+                        Object target = c.getInstance(); // Should be a singleton
+                        Method targetClassMethod = target.getClass().getMethod("getTargetClass");
+                        Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
+                        method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Probably not in Spring context so no Advised proxies at all
+                }
+            }
+        }
+        */
+
+        /*
         try
         {
             if (method != null && advisedClass != null && advisedClass.isAssignableFrom(method.getDeclaringClass()))
@@ -303,28 +328,8 @@ public class Call
         {
             // Probably not in Spring context so no Advised proxies at all
         }
+        */
     }
-
-    /**
-     * Spring/AOP hack
-     * @see #checkProxiedMethod(CreatorManager)
-     */
-    static
-    {
-        try
-        {
-            advisedClass = Class.forName("org.springframework.aop.framework.Advised");
-        }
-        catch (ClassNotFoundException ex)
-        {
-        }
-    }
-
-    /**
-     * Spring/AOP hack
-     * @see #checkProxiedMethod(CreatorManager)
-     */
-    private static Class<?> advisedClass;
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -358,4 +363,28 @@ public class Call
      * The log stream
      */
     private static final Log log = LogFactory.getLog(Call.class);
+
+    /**
+     * Spring/AOP hack
+     * @see #checkProxiedMethod(CreatorManager)
+     */
+    private static Class<?> advisedClass;
+
+    /**
+     * Spring/AOP hack
+     * @see #checkProxiedMethod(CreatorManager)
+     */
+    static
+    {
+        try
+        {
+            advisedClass = Class.forName("org.springframework.aop.framework.Advised");
+            log.debug("Found org.springframework.aop.framework.Advised enabling AOP checks");
+        }
+        catch (ClassNotFoundException ex)
+        {
+            log.debug("ClassNotFoundException on org.springframework.aop.framework.Advised skipping AOP checks");
+        }
+    }
+
 }
