@@ -90,3 +90,22 @@ Refactorings that would be a good idea:
   and refactoring because it is inherently part of DWRP
 - Extract an spi from the api and ensure that non-core modules depend on spi
   and not impl
+- Call/Calls do 2 jobs, they store the raw data about the requested method call
+  and the results of deciding what actual java.lang.Method should be called.
+  This results in bizarreness like the need to store exceptions if the parse
+  failed, which in turn causes difficulty in exception handling, and the
+  possibility that the wrong sequence of actions will be taken in handling the
+  call (as was the case with JSON-RPC).
+  Phases of a call (this documentation should be copied somewhere):
+  Decode the request: Create a batch that describes what the user was asking
+    for. This ensures that the request is well formed. Errors decoding the
+    request will result in 'go away' error messages. i.e. "I can't understand
+    anything that you say" as opposed to "I can't do X".
+  Validate the batch: This checks to see that the request is allowed, that the
+    resource has been exported, that the parameters make sense for the method in
+    question, the the reply can be exported to the user, etc. Errors from this
+    phase can be more helpful, however they may be security sensitive, so care
+    should be taken.
+  Execute: Make the call. Errors at this stage are created by the called
+    application.
+ 
