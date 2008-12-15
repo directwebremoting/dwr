@@ -166,15 +166,7 @@ public class SpringCreator extends AbstractCreator implements Creator
             return new ClassPathXmlApplicationContext(configLocation);
         }
 
-        ServletContext srvCtx = null;
-        try
-        {
-            srvCtx = WebContextFactory.get().getServletContext();
-        }
-        catch (Exception ex)
-        {
-            srvCtx = ServerContextFactory.get().getServletContext();
-        }
+        ServletContext srvCtx = ServerContextFactory.get().getServletContext();
 
         HttpServletRequest request = null;
         try
@@ -187,7 +179,6 @@ public class SpringCreator extends AbstractCreator implements Creator
         }
 
         return request != null ? RequestContextUtils.getWebApplicationContext(request, srvCtx) : WebApplicationContextUtils.getWebApplicationContext(srvCtx);
-
     }
 
     /**
