@@ -93,31 +93,25 @@ public class CallBatch extends Batch
         // Extract the ids, script names and method names
         for (int callNum = 0; callNum < callCount; callNum++)
         {
-            Call call = new Call();
-            calls.addCall(call);
-
-            InboundContext inctx = new InboundContext();
-            inboundContexts.add(inctx);
+            InboundContext inboundContext = new InboundContext();
+            inboundContexts.add(inboundContext);
 
             String prefix = ProtocolConstants.INBOUND_CALLNUM_PREFIX + callNum + ProtocolConstants.INBOUND_CALLNUM_SUFFIX;
 
             // The special values
             String callId = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_ID);
-            call.setCallId(callId);
             if (!LocalUtil.isLetterOrDigitOrUnderline(callId))
             {
                 throw new SecurityException("Call IDs may only contain Java Identifiers");
             }
 
             String scriptName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_SCRIPTNAME);
-            call.setScriptName(scriptName);
             if (!LocalUtil.isLetterOrDigitOrUnderline(scriptName))
             {
                 throw new SecurityException("Script names may only contain Java Identifiers");
             }
 
             String methodName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_METHODNAME);
-            call.setMethodName(methodName);
             if (!LocalUtil.isLetterOrDigitOrUnderline(methodName))
             {
                 throw new SecurityException("Method names may only contain Java Identifiers");
@@ -134,7 +128,7 @@ public class CallBatch extends Batch
                     FormField formField = entry.getValue();
                     if (formField.isFile())
                     {
-                        inctx.createInboundVariable(callNum, key, ProtocolConstants.TYPE_FILE, formField);
+                        inboundContext.createInboundVariable(callNum, key, ProtocolConstants.TYPE_FILE, formField);
                     }
                     else
                     {
@@ -142,11 +136,14 @@ public class CallBatch extends Batch
 
                         String value = split[ConvertUtil.INBOUND_INDEX_VALUE];
                         String type = split[ConvertUtil.INBOUND_INDEX_TYPE];
-                        inctx.createInboundVariable(callNum, key, type, value);
+                        inboundContext.createInboundVariable(callNum, key, type, value);
                     }
                     it.remove();
                 }
             }
+
+            Call call = new Call(callId, scriptName, methodName);
+            calls.addCall(call);
         }
     }
 

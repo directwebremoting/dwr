@@ -109,7 +109,8 @@ public class JsonpCallHandler implements Handler
         }
     }
 
-    public String getCallback(HttpServletRequest request) {
+    public String getCallback(HttpServletRequest request)
+    {
         return request.getParameter("callback");
     }
 
@@ -121,11 +122,7 @@ public class JsonpCallHandler implements Handler
     @SuppressWarnings("unchecked")
     public Calls convertToCalls(HttpServletRequest request)
     {
-        // JSON does not support batching
-        Calls calls = new Calls();
-
-        Call call = new Call();
-        calls.addCall(call);
+        InboundContext inboundContext = new InboundContext();
 
         String pathInfo = request.getPathInfo();
         String[] pathParts = pathInfo.split("/");
@@ -135,10 +132,6 @@ public class JsonpCallHandler implements Handler
             log.warn("pathInfo '" + pathInfo + "' contains " + pathParts.length + " parts. At least 4 are required.");
             throw new JsonpCallException("Bad JSON request. See logs for more details.");
         }
-
-        InboundContext inboundContext = new InboundContext();
-        call.setScriptName(pathParts[2]);
-        call.setMethodName(pathParts[3]);
 
         if (pathParts.length > 4)
         {
@@ -171,6 +164,12 @@ public class JsonpCallHandler implements Handler
                 }
             }
         }
+
+        Call call = new Call(null, pathParts[2], pathParts[3]);
+
+        // JSON does not support batching
+        Calls calls = new Calls();
+        calls.addCall(call);
 
         // Which method are we using?
         call.findMethod(creatorManager, converterManager, inboundContext, 0);
@@ -227,10 +226,11 @@ public class JsonpCallHandler implements Handler
             buffer.appendData(data);
 
             String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
-            if( data instanceof Exception ) {
+            if (data instanceof Exception)
+            {
                 output = "{\"error\":" + output + "}";
             }
-            if( callback != null && !"".equals(callback.trim()) )
+            if (callback != null && !"".equals(callback.trim()))
             {
                 output = callback + "(" + output + ")";
             }
@@ -247,7 +247,7 @@ public class JsonpCallHandler implements Handler
             {
                 String output = ScriptBufferUtil.createOutput(buffer, converterManager, true);
                 output = "{\"error\":" + output + "}";
-                if( callback != null && !"".equals(callback.trim()) )
+                if (callback != null && !"".equals(callback.trim()))
                 {
                     output = callback + "(" + output + ")";
                 }

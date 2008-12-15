@@ -65,7 +65,8 @@ public class ScriptBufferUtil
         for (Object part : script.getParts())
         {
             OutboundVariable ov = converterManager.convertOutbound(part, context);
-            if( ov instanceof ErrorOutboundVariable ) {
+            if (ov instanceof ErrorOutboundVariable)
+            {
                 outboundError = true;
             }
             scriptParts.add(ov);
@@ -100,7 +101,7 @@ public class ScriptBufferUtil
         String output = buffer.toString();
         if (jsonOutput && !output.startsWith("{"))
         {
-            if( outboundError )
+            if (outboundError)
             {
                 output = output.replaceFirst("null", "{}");
                 output = "{\"error\":" + output + "}";
