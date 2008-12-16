@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>Simple DWR Chat Version 2.0</title>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/JavascriptChat.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type="text/javascript" src='javascript-chat.js'> </script>
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+
+<body onload="init();Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Javascript Chat</h1>
+
+<p>This is a very simple chat demo that uses reverse ajax to collect messages
+and Javascript to manipulate the pages with the results.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+    <p>
+      Your Message:
+      <input id="text" onkeypress="dwr.util.onReturn(event, sendMessage)"/>
+      <input type="button" value="Send" onclick="sendMessage()"/>
+    </p>
+    <hr/>
+
+    <div id="chatlog"></div>
+  </div>
+
+  <div id="explainDiv">
+    <h2>Sending a Message</h2>
+    <p>The code begins by turning active reverse ajax on (see the clock demo for
+    more details). We then wait for the user to press the 'Send' button, when
+    they do, the following happens:</p>
+<pre>
+var text = dwr.util.getValue("text");
+dwr.util.setValue("text", "");
+JavascriptChat.addMessage(text);
+</pre>
+    <p>We get the value out of the message field, clear it, and send the
+    message to the server. The addMessage method on the server looks like
+    this:</p>
+<pre>
+if (text != null && text.trim().length() > 0) {
+    messages.addFirst(new Message(text));
+    while (messages.size() > 10) {
+        messages.removeLast();
+    }
+}
+
+Browser.withCurrentPage(new Runnable() {
+    public void run() {
+        ScriptSessions.addFunctionCall("receiveMessages", messages);
+    }
+});
+</pre>
+    <p>We check that the message isn't too long, and then add it to our list
+    of messages, which we push to all browsers on the same page as us by
+    calling the <code>receiveMessages()</code> function in the browser, which
+    looks like this:</p>
+<pre>
+var chatlog = "";
+for (var data in messages) {
+  chatlog = "<div>" + dwr.util.escapeHtml(messages[data].text) + "</div>" + chatlog;
+}
+dwr.util.setValue("chatlog", chatlog, { escapeHtml:false });
+</pre>
+    <p>We simply create a set of divs that contain the chat messages, and add
+    them to the chatlog element.</p>
+
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;p&gt;
+  Your Message:
+  &lt;input id="text" onkeypress="dwr.util.onReturn(event, sendMessage)"/&gt;
+  &lt;input type="button" value="Send" onclick="sendMessage()"/&gt;
+&lt;/p&gt;
+&lt;hr/&gt;
+&lt;div id="chatlog"&gt;&lt;/div&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+function init() {
+  dwr.engine.setActiveReverseAjax(true);
+}
+
+function sendMessage() {
+  var text = dwr.util.getValue("text");
+  dwr.util.setValue("text", "");
+  JavascriptChat.addMessage(text);
+}
+
+function receiveMessages(messages) {
+  var chatlog = "";
+  for (var data in messages) {
+    chatlog = "<div>" + dwr.util.escapeHtml(messages[data].text) + "</div>" + chatlog;
+  }
+  dwr.util.setValue("chatlog", chatlog, { escapeHtml:false });
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+public class JavascriptChat {
+    /**
+     * @param text The new message text to add
+     */
+    public void addMessage(String text) {
+        if (text != null && text.trim().length() > 0) {
+            messages.addFirst(new Message(text));
+            while (messages.size() > 10) {
+                messages.removeLast();
+            }
+        }
+
+        Browser.withCurrentPage(new Runnable() {
+            public void run() {
+                ScriptSessions.addFunctionCall("receiveMessages", messages);
+            }
+        });
+    }
+
+    /**
+     * The current set of messages
+     */
+    private final LinkedList&lt;Message&gt; messages = new LinkedList&lt;Message&gt;();
+}
+</pre>
+
+  </div>
+
+</div>
+
+
+</body>
+</html>

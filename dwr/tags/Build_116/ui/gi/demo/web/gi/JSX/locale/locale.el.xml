@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data jsxnamespace="propsbundle">
+  <locale key="el">
+    <record jsxid="format.date.long" jsxtext="dd MMMM yyyy"/>
+    <record jsxid="format.time.medium" jsxtext="h:mm:ss a"/>
+    <record jsxid="format.date.full" jsxtext="EEEE, dd MMMM yyyy"/>
+    <record jsxid="format.time.short" jsxtext="h:mm a"/>
+    <record jsxid="format.date.short" jsxtext="dd/MM/yyyy"/>
+    <record jsxid="number.grouping" jsxtext="."/>
+    <record jsxid="format.date.medium" jsxtext="dd MMM yyyy"/>
+    <record jsxid="format.time.long" jsxtext="h:mm:ss a z"/>
+    <record jsxid="number.decimal" jsxtext=","/>
+    <record jsxid="format.time.full" jsxtext="h:mm:ss a z"/>
+    <record eval="1" jsxid="date.month.abbrev" jsxtext="['Ιαν','Φεβ','Μαρ','Απρ','Μαϊ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ']"/>
+    <record eval="1" jsxid="date.month" jsxtext="['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου']"/>
+    <record eval="1" jsxid="date.month.narrow" jsxtext="['Ι','Φ','Μ','Α','Μ','Ι','Ι','Α','Σ','Ο','Ν','Δ']"/>
+    <record eval="1" jsxid="date.day.abbrev" jsxtext="['Κυρ','Δευ','Τρι','Τετ','Πεμ','Παρ','Σαβ']"/>
+    <record eval="1" jsxid="date.day" jsxtext="['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο']"/>
+    <record eval="1" jsxid="date.day.narrow" jsxtext="['Κ','Δ','Τ','Τ','Π','Π','Σ']"/>
+    <record eval="1" jsxid="date.era" jsxtext="['π.Χ.','μ.Χ.']"/>
+    <record eval="1" jsxid="time.ampm" jsxtext="['ΠΜ','ΜΜ']"/>
+    <record jsxid="string.lang.ar" jsxtext="Αραβικά"/>
+    <record jsxid="string.lang.da" jsxtext="Δανικά"/>
+    <record jsxid="string.lang.de" jsxtext="Γερμανικά"/>
+    <record jsxid="string.lang.el" jsxtext="Ελληνικά"/>
+    <record jsxid="string.lang.en" jsxtext="Αγγλικά"/>
+    <record jsxid="string.lang.es" jsxtext="Ισπανικά"/>
+    <record jsxid="string.lang.fr" jsxtext="Γαλλικά"/>
+    <record jsxid="string.lang.it" jsxtext="Ιταλικά"/>
+    <record jsxid="string.lang.ja" jsxtext="Ιαπωνικά"/>
+    <record jsxid="string.lang.ko" jsxtext="Κορεατικά"/>
+    <record jsxid="string.lang.pt" jsxtext="Πορτογαλικά"/>
+    <record jsxid="string.lang.ru" jsxtext="Ρωσικά"/>
+    <record jsxid="string.lang.sv" jsxtext="Σουηδικά"/>
+    <record jsxid="string.lang.zh" jsxtext="Κινεζικά"/>
+    <record jsxid="string.terr.AU" jsxtext="Αυστραλία"/>
+    <record jsxid="string.terr.BR" jsxtext="Βραζιλία"/>
+    <record jsxid="string.terr.CA" jsxtext="Καναδάς"/>
+    <record jsxid="string.terr.CN" jsxtext="Κίνα"/>
+    <record jsxid="string.terr.DE" jsxtext="Γερμανία"/>
+    <record jsxid="string.terr.DK" jsxtext="Δανία"/>
+    <record jsxid="string.terr.ES" jsxtext="Ισπανία"/>
+    <record jsxid="string.terr.FR" jsxtext="Γαλλία"/>
+    <record jsxid="string.terr.GB" jsxtext="Ηνωμένο Βασίλειο"/>
+    <record jsxid="string.terr.GR" jsxtext="Ελλάδα"/>
+    <record jsxid="string.terr.HK" jsxtext="Χονγκ Κονγκ, Ειδική Διοικητική Περιφέρεια της Κίνας"/>
+    <record jsxid="string.terr.IT" jsxtext="Ιταλία"/>
+    <record jsxid="string.terr.JP" jsxtext="Ιαπωνία"/>
+    <record jsxid="string.terr.KR" jsxtext="Κορέα, Νότια"/>
+    <record jsxid="string.terr.MX" jsxtext="Μεξικό"/>
+    <record jsxid="string.terr.NZ" jsxtext="Νέα Ζηλανδία"/>
+    <record jsxid="string.terr.PT" jsxtext="Πορτογαλία"/>
+    <record jsxid="string.terr.RU" jsxtext="Ρωσία"/>
+    <record jsxid="string.terr.SE" jsxtext="Σουηδία"/>
+    <record jsxid="string.terr.TW" jsxtext="Ταϊβάν"/>
+    <record jsxid="string.terr.US" jsxtext="Ηνωμένες Πολιτείες"/>
+    <record eval="1" jsxid="time.24hour" jsxtext="false"/>
+    <record jsxid="time.sep.hour-min" jsxtext=":"/>
+    <record jsxid="time.sep.min-sec" jsxtext=":"/>
+  </locale>
+<locale key="el_GR">
+    <record jsxid="currency.code" jsxtext="EUR"/>
+    <record jsxid="format.number.currency" jsxtext="#,##0.00¤;-¤#,##0.00"/>
+    <record jsxid="number.currency.decimal" jsxtext=","/>
+    <record jsxid="number.currency.grouping" jsxtext="."/>
+  </locale>
+</data>

@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>File Upload Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/UploadDownload.js'> </script>
+  <script type="text/javascript" src='upload.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+<body onload="dwr.util.useLoadingMessage();Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Asynchronous FileUpload</h1>
+
+<p>This is an example of uploading files via DWR</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+  <div id="demoDiv">
+
+    <p>Please select an image and a text file for uploading. A simple transform
+    will take the image a scale it to 200 pixels square, and emboss on it the
+    text from the uploaded file.</p>
+
+  	<table class="plain grey form">
+      <tr>
+        <th>Image:</th>
+        <td><input type="file" id="uploadImage" size="30"/></td>
+      </tr>
+      <tr>
+        <th>File:</th>
+        <td><input type="file" id="uploadFile" size="30"/></td>
+      </tr>
+      <tr>
+        <th>Color:</th>
+        <td>#<input type="text" id="color" value="FFFFFF" size="7"/></td>
+      </tr>
+      <tr>
+        <th></th>
+      	<td>
+          <button onclick="uploadFiles()">Upload</button>
+      	</td>
+      </tr>
+  	</table>
+
+    <br/>    
+    <img id="image" src="javascript:void(0);"/>
+
+  </div>
+
+  <div id="explainDiv">
+<p>DWR automatically converts files from the browser to instances of
+<code>org.directwebremoting.export.FileUpload</code> using the &quot;file&quot;
+converter. When you click on the Upload button the browser calls the
+<code>uploadFiles()</code> function, which simply gets the values from the
+3 input elements and passes them up to DWR:</p>
+
+<pre>
+function uploadFiles() {
+  var image = dwr.util.getValue('uploadImage');
+  var file = dwr.util.getValue('uploadFile');
+  var color = dwr.util.getValue('color');
+
+  FileUploader.uploadFiles(image, file, color, function(data) {
+    dwr.util.setValue('image', data);
+  });
+}
+</pre>
+
+<p><code>dwr.util.getValue()</code> is a utility to get the value of any
+element, in this case a file object.</p>
+
+<p>On the server, DWR calls the <code>FileUploader.uploadFiles()</code> Java
+method, which has the following signature:</p>
+
+<pre>
+BufferedImage uploadFiles(BufferedImage uploadImage, String uploadFile, String color)
+</pre>
+
+<p>Transform the image by scaling it and writing the text onto the image</p>
+
+<pre>
+uploadImage = scaleToSize(uploadImage);
+uploadImage = grafitiTextOnImage(uploadImage, uploadFile, color);
+return uploadImage;
+</pre>
+
+<p>And that's basically it. See the full source for how to resize using an
+AffineTransform and write text onto an image, it's got nothing to do with DWR,
+so we can skip it for now. The Java code returns the image which DWR converts
+and passes it to the callback in the JavaScript which simply updates the image
+in the web page:</p>
+
+<pre>
+dwr.util.setValue('image', data);
+</pre>
+
+<p>The <b>really</b> good news is that 99% of this code is about image
+manipulation. The DWR part is trivially easy.</p>
+
+  </div>
+
+  <div id="sourceDiv">
+<h2>HTML source:</h2>
+<pre>
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Image&lt;/td&gt;
+        &lt;td&gt;&lt;input type="file" id="image" /&gt;&lt;/td&gt;
+        &lt;td id="image.container"&gt;&amp;nbsp;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;File&lt;/td&gt;
+        &lt;td&gt;&lt;input type="file" id="file" /&gt;&lt;/td&gt;
+        &lt;td id="file.container"&gt;&amp;nbsp;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td colspan="3"&gt;
+          &lt;button onclick="uploadFilesFlat()"&gt;Save Flat&lt;/button&gt;
+          &lt;button onclick="uploadFilesNested()"&gt;Save Nested&lt;/button&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+</pre>  
+
+<h2>Javascript source:</h2>
+<pre>
+function uploadFiles() {
+  var image = dwr.util.getValue('uploadImage');
+  var file = dwr.util.getValue('uploadFile');
+  var color = dwr.util.getValue('color');
+
+  FileUploader.uploadFiles(image, file, color, function(data) {
+    dwr.util.setValue('image', data);
+  });
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+/**
+ * A demonstration of uploading files and images
+ * @author Joe Walker [joe at getahead dot ltd dot uk]
+ */
+public class FileUploader
+{
+    /**
+     * Take 2 uploaded files and return an image based on them
+     * @param uploadImage The uploaded image
+     * @param uploadFile The uploaded file
+     * @param color The selected color
+     * @return A mangled image based on the 2 uploaded files
+     */
+    public BufferedImage uploadFiles(BufferedImage uploadImage, String uploadFile, String color)
+    {
+        uploadImage = scaleToSize(uploadImage);
+        uploadImage = grafitiTextOnImage(uploadImage, uploadFile, color);
+
+        return uploadImage;
+    }
+
+    /**
+     * Voodoo to scale the image to 200x200
+     * @param uploadImage The image to work on
+     * @return The altered image
+     */
+    private BufferedImage scaleToSize(BufferedImage uploadImage)
+    {
+        AffineTransform atx = new AffineTransform();
+        atx.scale(200d / uploadImage.getWidth(), 200d / uploadImage.getHeight());
+        AffineTransformOp afop = new AffineTransformOp(atx, AffineTransformOp.TYPE_BILINEAR);
+        uploadImage = afop.filter(uploadImage, null);
+        return uploadImage;
+    }
+
+    /**
+     * And scrawl the text on the image in 10 rows of 20 chars
+     * @param uploadImage The image to work on
+     * @param uploadFile The text to write on the image
+     * @param color The selected color
+     * @return The altered image
+     */
+    private BufferedImage grafitiTextOnImage(BufferedImage uploadImage, String uploadFile, String color)
+    {
+        while (uploadFile.length() &lt; 200)
+        {
+            uploadFile += uploadFile + " ";
+        }
+
+        Graphics2D g2d = uploadImage.createGraphics();
+        for (int row = 0; row &lt; 10; row++)
+        {
+            String output = null;
+            if (uploadFile.length() &gt; (row + 1) * 20)
+            {
+                output = uploadFile.substring(row * 20, (row + 1) * 20);
+            }
+            else
+            {
+                output = uploadFile.substring(row * 20);
+            }
+
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 16));
+            g2d.setColor(ColorUtil.decodeHtmlColorString(color));
+            g2d.drawString(output, 5, (row + 1) * 20);
+        }
+
+        return uploadImage;
+    }
+}
+</pre>
+  </div>
+</div>
+
+</body>
+</html>
+  

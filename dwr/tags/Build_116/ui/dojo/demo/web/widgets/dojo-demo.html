@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>DWR + Dojo Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link rel="stylesheet" type="text/css" href="dojo/custom/storeDemo.css" />
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': 'http://localhost:8080/dwr/dwr'}"> </script>
+  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script>
+  <script type="text/javascript">
+  dojo.require("dwr.engine");
+  dojo.require("dwr.util");
+  dojo.require("dwr.data.Store");
+  dojo.require("dwr.interface.People");
+
+  var dwrStore, grid;
+  dojo.addOnLoad(function() {
+    dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
+    grid = dijit.byId("grid");
+    grid.setStore(dwrStore);
+    dwr.engine.setActiveReverseAjax(true);
+  });
+
+  addRow = function(){
+    grid.addRow({ name:"Noname", address:"No Address", age:21, superhero:false });
+  };
+  </script>
+</head>
+<body class="tundra">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>DWR + Dojo Demo</h1>
+
+<div id="mainTabContainer" dojoType="dijit.layout.TabContainer" style="width:90%;height:500px">
+  <div id="demoDiv" dojoType="dijit.layout.ContentPane" title="Demo">
+    <table id="grid" dojoType="dojox.grid.DataGrid" autoWidth="true" style="width:650px;height:380px">
+      <thead>
+        <tr>
+          <th field="name" width="120px" editable="true">Name</th>
+          <th field="address" width="200px" editable="true">Address</th>
+          <th field="age" width="30px" editable="true">Age</th>
+          <th field="superhero" width="40px" editable="true">Superhero?</th>
+        </tr>
+      </thead>
+    </table>
+    <br/>
+    <div id="controls">
+      <button onclick="addRow();">Add Row</button>
+      <button onclick="grid.removeSelectedRows();">Remove</button>&nbsp;&nbsp;&nbsp;
+      <button onclick="dwrStore.save({});">Save</button>
+      <button onclick="grid.edit.cancel();">Cancel</button>
+    </div>
+  </div>
+  <div id="explainDiv" dojoType="dijit.layout.ContentPane" title="How it works">
+    <p>Out Dojo Grid is declared using the following markup:</p>
+<pre>
+&lt;table id="grid" dojoType="dojox.grid.DataGrid"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th field="name" width="120px" editable="true"&gt;Name&lt;/th&gt;
+      &lt;th field="address" width="200px" editable="true"&gt;Address&lt;/th&gt;
+      &lt;th field="age" width="30px" editable="true"&gt;Age&lt;/th&gt;
+      &lt;th field="superhero" width="30px" editable="true"&gt;Superhero?&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+&lt;/table&gt;
+</pre>
+    <p>All that's needed to initialize this is the following:</p>
+<pre>
+var dwrStore, grid;
+dojo.addOnLoad(function() {
+  dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
+  grid = dijit.byId("grid");
+  grid.setStore(dwrStore);
+  dwr.engine.setActiveReverseAjax(true);
+});
+</pre>
+
+  </div>
+  <div id="sourceDiv" dojoType="dijit.layout.ContentPane" title="Source">
+      There was once upon a time a hermit who lived in a forest at the foot
+      of a mountain, and passed his time in prayer and good works,
+      and every evening he carried, to the glory of God, two pails of water
+      up the mountain.
+  </div>
+</div>
+
+
+
+</body>
+</html>

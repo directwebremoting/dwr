@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Ajax Search Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/People.js'> </script>
+  <script type="text/javascript" src='search.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <style type="text/css">
+  .highlight { color:#F33; }
+  </style>
+</head>
+<body onload="init();">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Ajax Search Demo</h1>
+
+<p>This demo allows you to filter the data in a table.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+
+    <p>Search: <input id="filter" onkeyup="filterChanged();"/></p>
+    <table border="1" class="rowed grey">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody id="peoplebody">
+      </tbody>
+    </table>
+
+  </div>
+
+  <div id="explainDiv">
+    <h2>Search Demo</h2>
+    <p>On each change to the filter field we either call the server function
+    <code>People.getMatchingFromLargeCrowd()</code> to find matches, or, if
+    we have already found a set of matches, we filter that set if this makes
+    sense.</p>
+
+    <p>The server code simply searches the data using a RegEx.</p>
+
+<pre>
+public List&lt;Person&gt; getMatchingFromLargeCrowd(String filter)
+{
+    List&lt;Person&gt; reply = new ArrayList&lt;Person&gt;();
+    Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
+    for (Person person : largeCrowd.values())
+    {
+        if (regex.matcher(person.getName()).find())
+        {
+            reply.add(person);
+        }
+    }
+    return reply;
+}
+</pre>
+
+    <p>Found rows are added to the page using <code>dwr.util.addRows</code>:</p>
+
+<pre>
+dwr.util.addRows("peoplebody", filtered, [
+  function(person) { return person.name.replace(pattern, "<span class='highlight'>$1</span>"); },
+  function(person) { return "$" + person.age; },
+  function(person) { return person.address; }
+], { escapeHtml:false });
+</pre>
+
+    <p>We use <code>person.name.replace</code> to highlight the matches.</p>
+
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;p&gt;Search: &lt;input id="filter" onkeyup="filterChanged();"/&gt;&lt;/p&gt;
+&lt;table border="1" class="rowed grey"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Name&lt;/th&gt;
+      &lt;th&gt;Age&lt;/th&gt;
+      &lt;th&gt;Address&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody id="peoplebody"&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+function init() {
+  dwr.util.useLoadingMessage();
+  Tabs.init('tabList', 'tabContents');
+  dwr.util.setValue("filter", "");
+  addSingleRow("peoplebody", "Please enter a search filter");
+}
+
+var peopleCache = [ ];
+var lastFilter = "";
+
+function fillTable(people) {
+  var filter = dwr.util.getValue("filter");
+  var pattern = new RegExp("(" + filter + ")", "i");
+  var filtered = [];
+  for (i = 0; i &lt; people.length; i++) {
+    if (pattern.test(people[i].name)) {
+      filtered.push(people[i]);
+    }
+  }
+  dwr.util.removeAllRows("peoplebody");
+  if (filtered.length == 0) {
+    addSingleRow("peoplebody", "No matches");
+  }
+  else {
+    dwr.util.addRows("peoplebody", filtered, [
+      function(person) { return person.name.replace(pattern, "&lt;span class='highlight'&gt;$1&lt;/span&gt;"); },
+      function(person) { return "$" + person.age; },
+      function(person) { return person.address; }
+    ], { escapeHtml:false });
+  }
+  peopleCache = people;
+}
+
+function filterChanged() {
+  var filter = dwr.util.getValue("filter");
+  if (filter.length == 0) {
+    dwr.util.removeAllRows("peoplebody");
+    addSingleRow("peoplebody", "Please enter a search filter");
+  }
+  else {
+    if (filter.charAt(0) == lastFilter.charAt(0)) {
+      fillTable(peopleCache);
+    }
+    else {
+      People.getMatchingFromLargeCrowd(filter.charAt(0), fillTable);
+    }
+  }
+  lastFilter = filter;
+}
+
+function addSingleRow(id, message) {
+  dwr.util.addRows(id, [1], [
+    function(data) { return message; }
+  ], {
+    cellCreator:function() {
+      var td = document.createElement("td");
+      td.setAttribute("colspan", 3);
+      return td;
+    }
+  });
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+public class People {
+    public People() {
+        largeCrowd = createCrowd(1000);
+    }
+
+    public List&lt;Person&gt; getMatchingFromLargeCrowd(String filter) {
+        List&lt;Person&gt; reply = new ArrayList&lt;Person&gt;();
+        Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);
+        for (Person person : largeCrowd.values()) {
+            if (regex.matcher(person.getName()).find()) {
+                reply.add(person);
+            }
+        }
+        return reply;
+    }
+
+    private final Map&lt;String, Person&gt; largeCrowd;
+
+    // ...
+}
+</pre>
+
+<h2>dwr.xml</h2>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.org/dwr/dwr20.dtd"&gt;
+
+&lt;dwr&gt;
+  &lt;allow&gt;
+    &lt;create creator="new" javascript="People" scope="script"&gt;
+      &lt;param name="class" value="org.getahead.dwrdemo.people.People"/&gt;
+    &lt;/create&gt;
+    &lt;convert match="org.getahead.dwrdemo.people.Person" converter="bean"/&gt;
+  &lt;/allow&gt;
+&lt;/dwr&gt;
+</pre>
+
+  </div>
+
+</div>
+
+</body>
+</html>

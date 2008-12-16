@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>File Upload Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/UploadDownload.js'> </script>
+  <script type="text/javascript" src='download.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+</head>
+<body onload="dwr.util.useLoadingMessage();Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>File Download</h1>
+
+<p>This is an example of downloading files via DWR</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+  <div id="demoDiv">
+
+    <p>Please enter some text to make part of a PDF download.</p>
+
+  	<table class="plain grey form">
+      <tr>
+        <th>Text for PDF file:</th>
+        <td><input type="text" id="pdftext" value="Hello, World" size="20"/></td>
+      </tr>
+      <tr>
+        <th></th>
+      	<td>
+          <button onclick="downloadPdfFile()">Download</button>
+      	</td>
+      </tr>
+  	</table>
+
+  </div>
+
+  <div id="explainDiv">
+<p>The client code simply gets the value of the input text field and sends it
+to the <code>UploadDownload.downloadPdfFile()</code> server function, and when
+the server replies with a PDF file, we open it for download.</p>
+<pre>
+function downloadPdfFile() {
+  var pdftext = dwr.util.getValue('pdftext');
+
+  UploadDownload.downloadPdfFile(pdftext, function(data) {
+    dwr.engine.openInDownload(data);
+  });
+}
+</pre>
+
+<p>The server function uses iText to create a PDF file, and returns it in a
+FileTransfer object:</p>
+<pre>
+ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+Document document = new Document();
+PdfWriter.getInstance(document, buffer);
+
+document.addCreator("DWR.war using iText");
+document.open();
+document.add(new Paragraph(contents));
+document.close();
+
+return new FileTransfer("example.pdf", "application/pdf", buffer.toByteArray());
+</pre>
+  </div>
+
+  <div id="sourceDiv">
+<h2>HTML source:</h2>
+<pre>
+&lt;input type="text" id="pdftext" value="Hello, World" size="20"/&gt;
+&lt;button onclick="downloadPdfFile()"&gt;Download&lt;/button&gt;
+</pre>  
+
+<h2>Javascript source:</h2>
+<pre>
+function downloadPdfFile() {
+  var pdftext = dwr.util.getValue('pdftext');
+
+  UploadDownload.downloadPdfFile(pdftext, function(data) {
+    dwr.engine.openInDownload(data);
+  });
+}
+</pre>
+
+<h2>Java source:</h2>
+<pre>
+public FileTransfer downloadPdfFile(String contents) throws Exception {
+    if (contents == null || contents.length() == 0) {
+        contents = "[BLANK]";
+    }
+
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+    Document document = new Document();
+    PdfWriter.getInstance(document, buffer);
+
+    document.addCreator("DWR.war using iText");
+    document.open();
+    document.add(new Paragraph(contents));
+    document.close();
+
+    return new FileTransfer("example.pdf", "application/pdf", buffer.toByteArray());
+}
+</pre>
+  </div>
+</div>
+
+</body>
+</html>
+  

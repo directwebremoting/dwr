@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.directwebremoting</groupId>
+    <artifactId>dwr</artifactId>
+    <version>3.0.0.109.dev</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>dwr-struts</artifactId>
+  <name>DWR Struts Integration</name>
+  <packaging>jar</packaging>
+  <description>DWR Struts Integration</description>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-core</artifactId>
+      <version>3.0.0.109.dev</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>struts</groupId>
+      <artifactId>struts</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <directory>${project.basedir}/target</directory>
+    <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
+  </build>
+  
+</project>

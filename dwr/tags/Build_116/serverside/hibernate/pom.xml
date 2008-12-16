@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.directwebremoting</groupId>
+    <artifactId>dwr</artifactId>
+    <version>3.0.0.109.dev</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <artifactId>dwr-hibernate</artifactId>
+  <name>DWR Hibernate Integration</name>
+  <packaging>jar</packaging>
+  <description>DWR Hibernate Integration</description>
+  
+  <dependencies>
+    
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-core</artifactId>
+      <version>3.0.0.109.dev</version>
+    </dependency>
+    
+    <!-- TODO Do we really support both Hibernate 2 and 3 in the same jar? -->
+    <!-- Hibernate 2  -->
+    <dependency>
+      <groupId>hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+    </dependency>
+    
+    <!-- Hibernate 3 -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+    </dependency>
+          
+  </dependencies>
+  
+  <build>
+    <directory>${project.basedir}/target</directory>
+    <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
+  </build>
+</project>

@@ -1,0 +1,361 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.directwebremoting</groupId>
+  <artifactId>dwr</artifactId>
+  <packaging>pom</packaging>
+  <version>3.0.0.116.rc1</version>
+  <name>Direct Web Remoting</name>
+  <url>http://getahead.org/dwr</url>
+
+  <developers>
+    <developer>
+      <name>Joe Walker</name>
+      <id>joe_walker</id>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dwr</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@cvs.dev.java.net:/cvs:dwr</developerConnection>
+    <url>https://dwr.dev.java.net/source/browse/dwr/</url>
+  </scm>
+  
+  <description>
+    DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript. 
+    It gets rid of almost all the boiler plate code between the web browser and your Java code.
+  </description>
+  
+  <modules>
+    <module>core</module>
+    <module>protocol/dwrp</module>
+    <module>protocol/bayeux</module>
+    <module>serverside/hibernate</module>
+    <module>serverside/spring</module>
+    <module>serverside/struts</module>
+  </modules>
+  
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus</name>
+      <layout>default</layout>
+      <url>http://repository.codehaus.org</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
+  <!-- This section 'declares' all the libraries we're using in the project with
+       the corresponding version numbers. 'sub-projects' should not ever need to 
+       specify a version only declare the dependency. -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>backport-util-concurrent</groupId>
+        <artifactId>backport-util-concurrent</artifactId>
+        <version>1.1_01</version>
+      </dependency>
+      <dependency>
+        <groupId>bsf</groupId>
+        <artifactId>bsf</artifactId>
+        <version>2.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>1.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jdom</groupId>
+        <artifactId>jdom</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>2.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>oro</groupId>
+        <artifactId>oro</artifactId>
+        <version>2.0.8</version>
+      </dependency>
+      <dependency>
+        <groupId>opensymphony</groupId>
+        <artifactId>webwork</artifactId>
+        <version>2.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>xom</groupId>
+        <artifactId>xom</artifactId>
+        <version>1.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.xml</groupId>
+            <artifactId>jsr173</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>msv</groupId>
+            <artifactId>xsdlib</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>msv</groupId>
+            <artifactId>relaxngDatatype</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>pull-parser</groupId>
+            <artifactId>pull-parser</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junitperf</groupId>
+            <artifactId>junitperf</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>stax</groupId>
+            <artifactId>stax-ri</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>catalina</artifactId>
+        <version>6.0.16</version>
+      </dependency>       
+
+      <!--  Libraries we integrate with -->
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>3.2.0.ga</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>hibernate</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>2.1.7c</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.myfaces.core</groupId>
+        <artifactId>myfaces-api</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+      
+      <!-- Spring -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring</artifactId>
+        <version>2.5.5</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>2.5.5</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>struts</groupId>
+        <artifactId>struts</artifactId>
+        <version>1.2.9</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.guice</groupId>
+        <artifactId>guice</artifactId>
+        <version>1.0</version>
+      </dependency>
+      
+      <!-- Jetty -->
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>cometd-api</artifactId>
+        <version>0.9.20080221</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>cometd-bayeux</artifactId>
+        <version>6.1.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+        <version>6.1.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-util</artifactId>
+        <version>6.1.10</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      
+      <!-- Testing dependencies -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.4</version>
+        <scope>test</scope>
+      </dependency>
+     
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-idea-plugin</artifactId>
+          <configuration>
+            <jdkName>1.5</jdkName>
+            <exclude>target,test-output,.clover</exclude>
+            <useShortDependencyNames>true</useShortDependencyNames>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+              <exclude>**/TestBean.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <defaultGoal>install</defaultGoal>
+  </build>
+  
+  <!-- 
+  <reporting>
+
+    <outputDirectory>target/maven2/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+          <showSuccess>false</showSuccess>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <rulesets>
+            <ruleset>etc/pmd/custom.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>etc/checkstyle/custom.xml</configLocation>
+        </configuration>
+      </plugin>
+      
+    </plugins>
+
+  </reporting>
+   -->
+   
+  <!--
+  <distributionManagement>
+    <snapshotRepository>
+      <id>dwr-snapshots</id>
+      <url>${snapshot.repo.url}</url>
+    </snapshotRepository>
+    <repository>
+      <id>local-repository</id>
+      <url>${m2-repo.java.net.url}</url>
+    </repository>
+  </distributionManagement>
+  -->
+</project>

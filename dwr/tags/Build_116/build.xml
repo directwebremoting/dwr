@@ -1,0 +1,414 @@
+<?xml version="1.0"?>
+<project name="dwr" default="package">
+
+  <!-- For terminology, see the readme.txt file alongside this build file -->
+
+  <!--=======================================================================-->
+  <!-- File that contains local settings, you may need to edit this -->
+  <property file="build.properties"/>
+
+  <!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
+  <property file="${source.root}/core/impl/main/java/dwr-version.properties"/>
+  <condition property="label" value="${major}.${minor}.${revision}">
+    <equals arg1="${title}" arg2=""/>
+  </condition>
+  <condition property="label" value="${major}.${minor}.${revision}.${build}.${title}">
+    <not>
+      <equals arg1="${title}" arg2=""/>
+    </not>
+  </condition>
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <fileset dir="${source.root}/etc/ant" includes="**/*"/>
+    </classpath>
+  </taskdef>
+
+  <!-- The modules that we are working with -->
+  <property name="modules" value="
+    core/api, core/impl, core/legacy,
+    protocol/dwrp, protocol/json, protocol/bayeux,
+    serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
+    ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
+    "/>
+
+  <!--=======================================================================-->
+  <target name="prepare" description="Various bits of setup">
+    <tstamp/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jar" depends="prepare" description="Create dwr.jar">
+    <build target="${target.root}" include="" modules="${modules}"/>
+    <jar destfile="${target.root}/dwr.jar" compress="true">
+      <fileset dir="${target.root}/classes/main"/>
+    </jar>
+    <build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various"/>
+    <jar destfile="${target.root}/dwr-noncla.jar" compress="true">
+      <fileset dir="${target.root}/classes/noncla/classes/main"/>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="test" depends="jar" description="Create output for import into the testing project">
+    <jar destfile="${target.root}/junitdwr.jar" compress="true">
+      <fileset dir="${target.root}/classes/test"/>
+    </jar>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="war" depends="jar, dojo" description="Create an exploded dwr.war">
+    <copy todir="${target.root}/web/demo/WEB-INF/classes">
+      <fileset dir="${target.root}/classes/demo"/>
+    </copy>
+    <copy todir="${target.root}/web/demo/WEB-INF/lib">
+      <fileset file="${target.root}/dwr.jar"/>
+    </copy>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="package" depends="war" description="Create packaged outputs: dwr.war, dwr-jdk14.jar, and the source .zip">
+    <!-- Run retroweaver if dwr.jar has changed since we last ran it -->
+    <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
+      <classpath>
+        <fileset dir="${source.root}/etc/retroweaver" includes="**/*"/>
+      </classpath>
+    </taskdef>
+    <if-not-uptodate destfile="${basedir}/${target.root}/dwr-jdk14.jar" sourcedir="${target.root}/classes/main">
+      <action>
+        <!-- retroweaver is borked because it doesn't inherit directories properly
+        so if you call this ant build from another it gets the basedir wrong. so
+        we need to prefix the paths with ${basedir} -->
+        <retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4"/>
+      </action>
+    </if-not-uptodate>
+    <!-- Rezip the demo war file if it's contents have changed -->
+    <if-not-uptodate destfile="${target.root}/dwr.war" sourcedir="${target.root}/web/demo">
+      <action>
+        <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
+      </action>
+    </if-not-uptodate>
+    <!-- Copy over testdwr.war -->
+    <if>
+      <available file="${testdwr.home}/build.xml"/>
+      <then>
+        <ant dir="${testdwr.home}" target="package" inheritall="false" inheritrefs="false"/>
+      </then>      
+    </if>
+    <if>
+      <available file="${testdwr.home}/target/ant/testdwr.war"/>
+      <then>
+        <copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}"/>
+      </then>      
+    </if>
+    <!-- Documentation: Javadoc and DTDDoc -->
+    <mkdir dir="${target.root}/javadoc"/>
+    <javadoc access="public"
+        author="true"
+        destdir="${target.root}/javadoc"
+        doctitle="DWR Version ${label}"
+        use="true"
+        splitindex="true"
+        version="true">
+      <sourcepath path="${source.root}/core/api/main/java"/>
+      <classpath>
+        <pathelement location="${target.root}/classes/main"/>
+        <fileset dir="${target.root}/lib" includes="**/*.jar"/>
+      </classpath>
+      <package name="org.directwebremoting.*"/>
+      <footer>Copyright &#168; 2008</footer>
+    </javadoc>
+    <path id="dtddocpath">
+      <fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar"/>
+    </path>
+    <taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath"/>
+    <mkdir dir="${target.root}/dtddoc"/>
+    <DTDDoc showHiddenTags="false"
+        showFixmeTags="false"
+        sourceDir="${source.root}/core/impl/main/java"
+        destDir="${target.root}/dtddoc"
+        docTitle = "DTDDoc's example">
+      <include name="**/*.dtd"/>
+      <exclude name="common/*.dtd"/>
+    </DTDDoc>
+    <!-- Source package -->
+    <zip destfile="${target.root}/dwr-${label}-src.zip">
+      <fileset dir="${source.root}">
+        <exclude name="target/**"/>
+        <exclude name="**/*.iml"/>
+        <exclude name="**/*.ipr"/>
+        <exclude name="**/*.iws"/>
+      </fileset>
+      <fileset dir="${target.root}">
+        <include name="dwr.jar"/>
+        <include name="dwr.war"/>
+      </fileset>
+      <!-- The DWR website extracts javadoc from here -->
+      <zipfileset dir="${target.root}/javadoc" prefix="javadoc"/>
+    </zip>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="jaxer" depends="prepare" description="Create Jaxer output files">
+    <!-- Build the core jaxer modules -->
+    <property name="modules" value="
+      core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
+      protocol/dwrp, protocol/json, ui/jaxer
+      "/>
+    <build target="${target.root}/jaxer" include="" modules="${modules}"/>
+    <!-- The 3 core outputs are a readme, jaxer-dwr.jar and a template web.xml -->
+    <copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/"/>
+    <jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
+      <fileset dir="${target.root}/jaxer/classes/main"/>
+    </jar>
+    <copy file="${source.root}/ui/jaxer/customDemo/web/WEB-INF/web.xml" todir="${target.root}/jaxer/"/>
+    <!-- Demo: Build an exploded jaxer demo war file, and zip it up -->
+    <property name="jaxer.demo.war" value="${target.root}/jaxer/web/ui/jaxer"/>
+    <copy todir="${jaxer.demo.war}">
+      <fileset dir="${source.root}/ui/jaxer/customDemo/web"/>
+    </copy>
+    <copy todir="${jaxer.demo.war}/WEB-INF/classes">
+      <fileset dir="${target.root}/jaxer/classes/demo"/>
+    </copy>
+    <copy todir="${jaxer.demo.war}/WEB-INF/lib">
+      <fileset file="${target.root}/jaxer/jaxer-dwr.jar"/>
+    </copy>
+    <zip destfile="${target.root}/jaxer/demoServer.war">
+      <fileset dir="${jaxer.demo.war}"/>
+    </zip>
+    <!-- Demo: Build a zip of a file to stick into jaxer/public -->
+    <zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/customDemo/demoRemoting"/>
+  </target>
+
+  <!--=======================================================================-->
+  <target name="dojo" depends="prepare" description="Create Dojo custom build">
+    <property name="dojo.home" value="${source.root}/ui/dojo/build"/>
+    <property name="dojo.temp" value="${target.root}/dojoBuild"/>
+    <outofdate verbose="false">
+      <sourcefiles>
+        <fileset dir="${dojo.home}" includes="**"/>
+        <pathelement path="${source.root}/ui/dojo/demo/build.js"/>
+      </sourcefiles>
+      <targetfiles path="${dojo.temp}"/>
+      <sequential>
+        <mkdir dir="${dojo.temp}"/>
+        <java classname="org.mozilla.javascript.tools.shell.Main" dir="${dojo.home}/util/buildscripts/" fork="true">
+          <classpath>
+            <fileset file="${dojo.home}/util/shrinksafe/custom_rhino.jar"/>
+          </classpath>
+          <arg line="build.js"/>
+          <arg line="profileFile=${basedir}/${source.root}/ui/dojo/demo/build.js"/>
+          <arg line="releaseDir=${basedir}/${dojo.temp}/"/>
+          <arg line="copyTests=false"/>
+          <arg line="action=release"/>
+          <arg line="optimize=shrinksafe"/>
+          <arg line="cssOptimize=comments.keepLines"/>
+          <arg line="version=${label}"/>
+          <arg line="log=2"/>
+          <!--arg line="scopeDjConfig=modulePaths:{dwr:\\'http://localhost:8080/dwr/dwr\\'}"/-->
+        </java>
+        <copy todir="${target.root}/web/demo/widgets">
+          <fileset dir="${dojo.temp}">
+            <include name="dojo/custom/**"/>
+            <include name="dojo/dojo/dojo.js"/>
+            <include name="dojo/dojo/resources/**"/>
+            <include name="dojo/dijit/themes/tundra/**"/>
+          </fileset>
+        </copy>
+      </sequential>
+    </outofdate>
+  </target>
+
+  <!--=======================================================================-->
+  <macrodef name="if-not-uptodate">
+    <!-- If you change this, remember the copy in testdwr/build.xml -->
+    <attribute name="destfile"/>
+    <attribute name="sourcedir"/>
+    <element name="action"/>
+    <sequential>
+      <if>
+        <or>
+          <not><available file="@{destfile}"/></not>
+          <not>
+            <uptodate targetfile="@{destfile}">
+              <srcfiles dir="@{sourcedir}" includes="**/*"/>
+            </uptodate>
+          </not>
+        </or>
+        <then>
+          <action/>
+        </then>      
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--=======================================================================-->
+  <macrodef name="build" description="Create some distribution files from a set of modules">
+    <attribute name="modules" description="The set module to compile"/>
+    <attribute name="target" description="The directory into which to build"/>
+    <attribute name="include" description="The results of another build that we can depend on"/>
+    <sequential>
+      <mkdir dir="@{target}/lib"/>
+      <mkdir dir="@{target}/classes/main"/>
+      <mkdir dir="@{target}/classes/test"/>
+      <mkdir dir="@{target}/classes/demo"/>
+      <mkdir dir="@{target}/web/demo/WEB-INF/classes"/>
+      <mkdir dir="@{target}/web/demo/WEB-INF/lib"/>
+      <foreach list="@{modules}" param="module" trim="true" target="process-module">
+        <param name="target" value="@{target}"/>
+        <param name="include" value="@{include}"/>
+      </foreach>
+    </sequential>
+  </macrodef>
+
+  <!--=======================================================================-->
+  <target name="process-module">
+    <echo message="Processing module: ${module}"/>
+    <!-- copy jar files to the jar pool, to help suss the classpath -->
+    <if>
+      <available file="${source.root}/${module}/lib"/>
+      <then>
+        <copy todir="${target}/lib" verbose="true">
+          <fileset dir="${module}/lib">
+            <include name="**/*.jar"/>
+          </fileset>
+        </copy>
+      </then>
+    </if>
+    <!-- The main tree -->
+    <if>
+      <available file="${source.root}/${module}/main/java"/>
+      <then>
+        <if>
+          <available file="${source.root}/${module}/generated/java"/>
+          <then>
+            <compile-tree module="${module}" tree="main">
+              <sources>
+                <src path="${source.root}/${module}/main/java"/>
+                <src path="${source.root}/${module}/generated/java"/>
+              </sources>
+            </compile-tree>
+            <compile-copy module="${module}" tree="main"/>
+          </then>
+          <else>
+            <compile-tree module="${module}" tree="main">
+              <sources>
+                <src path="${source.root}/${module}/main/java"/>
+              </sources>
+            </compile-tree>
+            <compile-copy module="${module}" tree="main"/>
+          </else>
+        </if>
+      </then>
+    </if>
+    <!-- The test tree -->
+    <if>
+      <available file="${source.root}/${module}/test/java"/>
+      <then>
+        <compile-tree module="${module}" tree="test">
+          <sources>
+            <src path="${source.root}/${module}/test/java"/>
+          </sources>
+        </compile-tree>
+        <compile-copy module="${module}" tree="test"/>
+      </then>
+    </if>
+    <!-- The demo tree -->
+    <if>
+      <available file="${source.root}/${module}/demo/java"/>
+      <then>
+        <compile-tree module="${module}" tree="demo">
+          <sources>
+            <src path="${source.root}/${module}/demo/java"/>
+          </sources>
+        </compile-tree>
+        <compile-copy module="${module}" tree="demo"/>
+      </then>
+    </if>
+    <!-- The demo web tree -->
+    <if>
+      <available file="${source.root}/${module}/demo/web"/>
+      <then>
+        <copy todir="${target}/web/demo">
+          <fileset dir="${source.root}/${module}/demo/web"/>
+        </copy>
+      </then>
+    </if>
+  </target>
+
+  <!--=======================================================================-->
+  <macrodef name="compile-tree" description="Compile the sources from a set of trees">
+    <attribute name="module" description="The module to compile"/>
+    <attribute name="tree" description="Must be one of [main|test|demo]"/>
+    <element name="sources"/>
+    <sequential>
+      <!-- compile the sources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
+      <if>
+        <equals arg1="${include}" arg2=""/>
+        <then>
+          <javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}">
+            <exclude name="**/package.html"/>
+            <exclude name="**/package-info.java"/>
+            <sources/>
+            <classpath>
+              <fileset dir="${target}/lib" includes="**/*.jar"/>
+              <pathelement location="${target}/classes/main"/>
+            </classpath>
+          </javac>
+        </then>
+        <else>
+          <javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}">
+            <exclude name="**/package.html"/>
+            <exclude name="**/package-info.java"/>
+            <sources/>
+            <classpath>
+              <fileset dir="${target}/lib" includes="**/*.jar"/>
+              <fileset dir="${include}/lib" includes="**/*.jar"/>
+              <pathelement location="${target}/classes/main"/>
+              <pathelement location="${include}/classes/main"/>
+            </classpath>
+          </javac>
+        </else>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--=======================================================================-->
+  <macrodef name="compile-copy" description="Compile the sources from a set of trees">
+    <attribute name="module" description="The module to compile"/>
+    <attribute name="tree" description="Must be one of [main|test|demo]"/>
+    <sequential>
+      <!-- copy the resources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
+      <copy todir="${target}/classes/@{tree}">
+        <fileset dir="${source.root}/@{module}/@{tree}/java">
+          <exclude name="**/*.java"/>
+          <exclude name="**/package.html"/>
+          <exclude name="**/package-info.java"/>
+        </fileset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <!--=======================================================================-->
+  <target name="generate-json-parser" description="Re-runs javacc on the JsonParser">
+    <mkdir dir="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc"/>
+    <javacc
+        target="${source.root}/core/impl/main/javacc/JavaccJsonParser.jj"
+        javacchome="${source.root}/core/impl/main/javacc"
+        outputdirectory="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc"
+        />
+  </target>
+
+  <!--=======================================================================-->
+  <target name="clean" description="Remove all build targets and .DS_Store files left around by the Mac finder">
+    <echo message="Deleting everything from: ${target.root}"/>
+    <delete verbose="true" dir="${target.root}"/>
+    <echo message="Deleting **/*.DS_Store from: ${source.root}"/>
+    <delete verbose="true">
+      <fileset defaultexcludes="false" dir="${source.root}">
+        <include name="**/*.DS_Store"/>
+      </fileset>
+    </delete>
+  </target>
+
+</project>

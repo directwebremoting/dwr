@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry exported="true" kind="lib" path="core/api/lib/commons-logging-1.1.1.jar" sourcepath="/librarydwr/source/commons-logging-1.1.1-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-logging-1.1.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="core/api/lib/servlet-api-2.4.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/products/servlet/2.5/docs/servlet-2_5-mr2/"/>
+		</attributes>
+	</classpathentry>
+    <classpathentry exported="true" kind="lib" path="core/api/lib/jsp-api-2.0.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/commons-fileupload-1.2.1.jar" sourcepath="/librarydwr/source/commons-fileupload-1.2.1-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-fileupload-1.2.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/api/lib/commons-io-1.4.jar" sourcepath="/librarydwr/source/commons-io-1.4-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-io-1.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/api/lib/junit-4.4.jar" sourcepath="/librarydwr/source/junit-4.4-src.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/easymock-2.3.jar" sourcepath="/librarydwr/source/easymock-2.3-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/easymock2.3.zip!/easymock2.3/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/api/lib/jetty-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.mortbay.org/jetty-6/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/api/lib/jetty-util-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.mortbay.org/jetty-6/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/api/lib/catalina.jar" sourcepath="/librarydwr/source/apache-tomcat-6.0.16-src.zip"/>
+	<classpathentry kind="lib" path="core/api/lib/tomcat-coyote.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/tomcat-juli.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/annotations-api.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/api/main/java"/>
+	<classpathentry kind="lib" path="core/impl/lib/bsf-2.4.0.jar" sourcepath="/librarydwr/source/bsf-src-2.4.0.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/source/bsf-src-2.4.0.zip!/bsf-2.4.0/docs/api"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/impl/lib/yuicompressor-2.3.5.jar"/>
+	<classpathentry kind="lib" path="core/impl/lib/iText-2.1.2u.jar" sourcepath="/librarydwr/source/iText-src-2.1.2u.zip"/>
+	<classpathentry kind="lib" path="core/impl/lib/jdom-1.1.jar" sourcepath="/librarydwr/source/jdom-1.1.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/impl/lib/dom4j-1.6.1.jar" sourcepath="/librarydwr/source/dom4j-1.6.1.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/source/dom4j-1.6.1.zip!/dom4j-1.6.1/docs/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/impl/lib/xom-1.1.jar" sourcepath="/librarydwr/source/xom-1.1.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/source/xom-1.1.zip!/XOM/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="core/impl/lib/xbean-2.2.0.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/generated/java"/>
+	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/legacy/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/dwrp/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/json/main/java"/>
+    <classpathentry kind="src" output="target/eclipse/test/classes" path="protocol/json/test/java"/>
+	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-api-0.9.20080221.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
+	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-bayeux-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/bayeux/main/java"/>
+	<classpathentry kind="lib" path="serverside/guice/lib/guice-1.0.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/guice/main/java"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/hibernate-2.1.7c.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/hibernate-3.2.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/hibernate-entitymanager-3.2.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/asm.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/cglib-2.1.3.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/commons-collections-2.1.1.jar" sourcepath="/librarydwr/source/commons-collections-2.1.1-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/collections/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/hsqldb-1.8.7.jar"/>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/jta.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/hibernate/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/hibernate/test/java"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.5.jar" sourcepath="/librarydwr/source/spring-sources-2.5.5.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-2.5.2.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/spring/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/spring/test/java"/>
+	<classpathentry kind="lib" path="serverside/struts/lib/struts-1.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://struts.apache.org/struts-doc-1.1/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/struts/main/java"/>
+	<classpathentry kind="lib" path="serverside/webwork/lib/webwork-2.2.2.jar"/>
+	<classpathentry kind="lib" path="serverside/webwork/lib/xwork-1.1.1.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/webwork/main/java"/>
+	<classpathentry kind="lib" path="serverside/various/lib/javax.jms-1.1.jar"/>
+	<classpathentry kind="lib" path="serverside/various/lib/jms-1.1.jar"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/various/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/various/test/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/dwr/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/demo/classes" path="ui/dwr/demo/java"/>
+	<classpathentry kind="src" path="ui/dojo/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/scriptaculous/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="ui/gi/test/java"/>
+	<classpathentry kind="src" output="target/eclipse/demo/classes" path="ui/gi/demo/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/generated/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
+	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
+	<classpathentry kind="output" path="target/eclipse/classes"/>
+</classpath>

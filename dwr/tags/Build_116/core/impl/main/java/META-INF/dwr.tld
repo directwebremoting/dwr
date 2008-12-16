@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+    version="2.1">
+
+  <description>Direct Web Remoting TagLib</description>
+  <display-name>DWR TagLib</display-name>
+  <tlib-version>1.0</tlib-version>
+  <short-name>DwrTagLib</short-name>
+  <uri>http://www.directwebremoting.org/dwr/</uri>
+
+  <tag>
+    <description>Converts server-side objects into client-side javascript</description>
+    <name>convert</name>
+    <tag-class>org.directwebremoting.jsp.ConvertTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>The serverside value to convert</description>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>Should the serverside javascript be JSON?</description>
+      <name>json</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+</taglib>

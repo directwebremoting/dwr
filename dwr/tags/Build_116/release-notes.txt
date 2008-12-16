@@ -1,0 +1,50 @@
+
+RELEASE NOTES
+=============
+
+This file contains partially formed release notes for the next full release.
+Many changes will have been properly recorded in the bug tracking system,
+however we don't insist on a issue number for all changes. So this file mops
+up the remaining changes.
+
+Potentially Breaking Changes
+----------------------------
+
+[Web|Server]Context.getScriptSessionById
+[Web|Server]Context.getAllScriptSessions
+[Web|Server]Context.getScriptSessionsByPage
+
+
+Var-args support and function overloading changes some things.
+
+Auto-fill Servlet Parameters
+
+Suppose you have:
+  public class Remote {
+    public void method(HttpServletResponse r, int i) { ...}
+  }
+You used to be able to call it with:
+  Remote.method(42);
+And DWR would magically fill in the HttpServletResponse from the XHR request.
+Working out where to put parameters in the presence of varargs and overloading
+could be too complex so now you need to call:
+  Remote.method(null, 42);
+
+Tighter definitions of final arguments
+
+The rules for what would be considered a callback function or callback options
+object used to take into account the number of parameters to the called function.
+With the addition of varargs/overloading support, the rules become simpler:
+If the last argument is a function, then is is considered to be the callback
+function and the remaining arguments are the real arguments.
+If the last argument is an object with a member called callback which is of type
+function, then the last argument is a callback options object and the rest are
+real arguments.
+Otherwise there is no callback function and all arguments are real arguments.
+
+What does this break?
+This used to be a call to Remote.method(42);
+  Remote.method(42, { exceptionHandler:function() { ... } });
+However after this change it is a call to a method with 2 parameters.
+The fix is to call:
+  Remote.method(42, { exceptionHandler:function() { ... }, callback:function() {} };
