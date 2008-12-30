@@ -16,6 +16,7 @@
 package org.directwebremoting.spring;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProperty;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.util.LocalUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -85,21 +87,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                 }
                 ConverterConfig converterConfig = new ConverterConfig();
                 converterConfig.setType(converter.type());
-                PropertyDescriptor[] properties = BeanUtils.getPropertyDescriptors(beanDefinitionClass);
-                if ((properties != null) && (properties.length > 0))
-                {
-                    for (PropertyDescriptor p : properties)
-                    {
-                        Method getter = p.getReadMethod();
-                        if (getter != null)
-                        {
-                            if (getter.getAnnotation(RemoteProperty.class) != null)
-                            {
-                                converterConfig.addInclude(p.getName());
-                            }
-                        }
-                    }
-                }
+                setIncludes(beanDefinitionClass, converterConfig);
                 String javascript = converter.javascript();
                 if (StringUtils.hasText(javascript))
                 {
@@ -123,6 +111,36 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
             if (log.isWarnEnabled())
             {
                 log.warn("Dwr classpath scanning detected candidate bean [" + definitionHolder.getBeanName() + "] but could not create needed proxies", ex);
+            }
+        }
+    }
+
+    protected void setIncludes(Class<?> beanDefinitionClass, ConverterConfig converterConfig)
+    {
+        PropertyDescriptor[] properties = BeanUtils.getPropertyDescriptors(beanDefinitionClass);
+        if (properties != null)
+        {
+            for (PropertyDescriptor p : properties)
+            {
+                Method getter = p.getReadMethod();
+                if (getter != null)
+                {
+                    if (getter.getAnnotation(RemoteProperty.class) != null)
+                    {
+                        converterConfig.addInclude(p.getName());
+                    }
+                }
+            }
+        }
+        Field[] fields = LocalUtil.getAllFields(beanDefinitionClass);
+        if (fields != null)
+        {
+            for (Field field : fields)
+            {
+                if (field.getAnnotation(RemoteProperty.class) != null)
+                {
+                    converterConfig.addInclude(field.getName());
+                }
             }
         }
     }
