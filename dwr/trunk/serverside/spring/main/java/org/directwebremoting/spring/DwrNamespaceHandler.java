@@ -344,6 +344,11 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
          */
         public BeanDefinition parse(Element element, ParserContext parserContext) {
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(DwrHandlerMapping.class);
+            String interceptors = element.getAttribute("interceptors");
+            if (StringUtils.hasText(interceptors))
+            {
+                builder.addPropertyReference("interceptors", interceptors);
+            }
             parserContext.getRegistry().registerBeanDefinition("DwrAnnotationURLMapper", builder.getBeanDefinition());
             return parserContext.getRegistry().getBeanDefinition("DwrAnnotationURLMapper");
         }
