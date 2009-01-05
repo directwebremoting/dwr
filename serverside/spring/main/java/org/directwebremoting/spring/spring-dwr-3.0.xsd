@@ -18,9 +18,12 @@
 
 <xsd:schema xmlns="http://www.directwebremoting.org/schema/spring-dwr"
       xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:beans="http://www.springframework.org/schema/beans"
       targetNamespace="http://www.directwebremoting.org/schema/spring-dwr"
       elementFormDefault="qualified"
-      attributeFormDefault="unqualified">
+      attributeFormDefault="unqualified"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<xsd:element name="proxy-ref" type="proxy">
             <xsd:annotation>
@@ -28,10 +31,10 @@
             </xsd:annotation>
 	</xsd:element>
 
-	<xsd:element name="url-mapping">
-            <xsd:annotation>
-                <xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
-            </xsd:annotation>
+	<xsd:element name="url-mapping" type="mapping">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
+		</xsd:annotation>
 	</xsd:element>
 
 	<xsd:element name="annotation-scan">
@@ -69,6 +72,10 @@
       <xsd:documentation source="org.directwebremoting.spring.DwrController">The element which creates a DWR specific controller. You can use the id/name attribute to identify the controller in order to map it to a certain path. You can also use the optional debug attribute to allow access to the generated debug pages.</xsd:documentation>
     </xsd:annotation>
   </xsd:element>
+
+	<xsd:complexType name="mapping">
+		<xsd:attribute name="interceptors" type="xsd:string" />
+	</xsd:complexType>
 
   <xsd:complexType name="proxy">
     <xsd:sequence>
