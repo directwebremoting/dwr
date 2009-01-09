@@ -15,9 +15,10 @@
  */
 package org.directwebremoting.spring;
 
-import java.util.List;
-import java.util.Properties;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.extend.Creator;
@@ -88,7 +89,7 @@ public class CreatorConfig extends AbstractConfig
      * @return the map containing the method name and the corrosponding required role
      * @see org.directwebremoting.extend.AccessControl#addRoleRestriction(String, String, String)
      */
-    public Properties getAuth()
+    public Map<String, List<String>> getAuth()
     {
         return auth;
     }
@@ -98,7 +99,7 @@ public class CreatorConfig extends AbstractConfig
      * @param auth the map containing the method name and the corresponding required role
      * @see org.directwebremoting.extend.AccessControl#addRoleRestriction(String, String, String)
      */
-    public void setAuth(Properties auth)
+    public void setAuth(Map<String, List<String>> auth)
     {
         this.auth = auth;
     }
@@ -133,7 +134,11 @@ public class CreatorConfig extends AbstractConfig
      */
     public void addAuth(String method, String role)
     {
-        auth.setProperty(method, role);
+        if (auth.get(method) == null)
+        {
+            auth.put(method, new ArrayList<String>());
+        }
+        auth.get(method).add(role);
     }
 
     /**
@@ -159,10 +164,11 @@ public class CreatorConfig extends AbstractConfig
     /**
      * The properties containing the method name and the corresponding required role.
      */
-    private Properties auth = new Properties();
+    private Map<String, List<String>> auth = new HashMap<String, List<String>>();
 
     /**
      * The list of filter objects for this creator.
      */
     private List<Object> filters = new ArrayList<Object>();
+
 }

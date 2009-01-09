@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,7 +113,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
         List<String> excludes = new ArrayList<String>();
         creatorConfig.addPropertyValue("excludes", excludes);
 
-        Properties auth = new Properties();
+        Map<String, List<String>> auth = new HashMap<String, List<String>>();
         creatorConfig.addPropertyValue("auth", auth);
 
         // check to see if there are any nested elements here
@@ -150,7 +149,12 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
             }
             else if ("dwr:auth".equals(node.getNodeName()))
             {
-                auth.setProperty(child.getAttribute("method"), child.getAttribute("role"));
+                String method = child.getAttribute("method");
+                if (auth.get(method) == null)
+                {
+                    auth.put(method, new ArrayList<String>());
+                }
+                auth.get(method).add(child.getAttribute("role"));
             }
             else if ("dwr:convert".equals(node.getNodeName()))
             {

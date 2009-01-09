@@ -18,7 +18,6 @@ package org.directwebremoting.spring;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.directwebremoting.AjaxFilter;
@@ -105,12 +104,13 @@ public class SpringConfigurator implements Configurator
                         accessControl.addIncludeRule(scriptName, include);
                     }
 
-                    Properties auth = creatorConfig.getAuth();
-                    for (Entry<Object, Object> aentry : auth.entrySet())
+                    Map<String, List<String>> auth = creatorConfig.getAuth();
+                    for (Entry<String, List<String>> constraint : auth.entrySet())
                     {
-                        String methodName = (String) aentry.getKey();
-                        String role = (String) aentry.getValue();
-                        accessControl.addRoleRestriction(scriptName, methodName, role);
+                        for (String role : constraint.getValue())
+                        {
+                            accessControl.addRoleRestriction(scriptName, constraint.getKey(), role);
+                        }
                     }
 
                     List<?> filters = creatorConfig.getFilters();

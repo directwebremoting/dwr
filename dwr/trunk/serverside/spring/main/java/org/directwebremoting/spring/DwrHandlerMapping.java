@@ -25,8 +25,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 /**
- * Automatically maps (at context startup) the URLs needed by DWR to a DWRController. 
- * 
+ * Automatically maps (at context startup) the URLs needed by DWR to a DWRController.
+ *
  * @author Jose Noheda [jose.noheda@gmail.com]
  */
 public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
@@ -34,7 +34,13 @@ public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
 	private static final Log log = LogFactory.getLog(DwrHandlerMapping.class);
 
 	/**
-	 * Maps the URLs (/engine.js, /util.js, /interface/**, /call/**) and continues.
+	 * Maps the following URLs to dwr controller
+	 * /engine.js
+	 * /util.js
+	 * /interface/**
+	 * /call/**
+	 * /test/**
+	 * /download/**
 	 */
 	@Override
     public void initApplicationContext() throws BeansException {
@@ -47,7 +53,7 @@ public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
 		mappings.put("/interface/**", handler);
 		mappings.put("/call/**", handler);
 		mappings.put("/test/**", handler);
-                mappings.put("/download/**", handler);
+		mappings.put("/download/**", handler);
 		if (log.isDebugEnabled())
 		{
 			log.info("[engine.js] mapped to dwrController");
