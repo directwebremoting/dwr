@@ -142,6 +142,15 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         return Collections.unmodifiableCollection(names);
     }
 
+    /**
+     * Avoids initialization of lazy-init beans in Spring context.
+     */
+    @Override
+    protected void callInitializingBeans()
+    {
+        callInitializingBeans(super.getBeanNames());
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.impl.DefaultContainer#destroy()
      */
