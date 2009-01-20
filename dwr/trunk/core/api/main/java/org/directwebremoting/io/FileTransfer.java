@@ -108,7 +108,7 @@ public class FileTransfer
     }
 
     /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
+     * A ctor for InputStreamFactory + all other details
      * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param size The size of the file
@@ -124,7 +124,7 @@ public class FileTransfer
     }
 
     /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
+     * A ctor for InputStream + all other details
      * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param size The size of the file
@@ -135,6 +135,36 @@ public class FileTransfer
         this.filename = filename;
         this.mimeType = mimeType;
         this.size = size;
+        this.outputStreamLoader = null;
+        this.inputStreamFactory = new SimpleInputStreamFactory(in, true);
+    }
+
+    /**
+     * A ctor for the 3 things browsers tell us about the uploaded file
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param inputStreamFactory A means by which the data can be read
+     */
+    public FileTransfer(String filename, String mimeType, final InputStreamFactory inputStreamFactory)
+    {
+        this.filename = filename;
+        this.mimeType = mimeType;
+        this.size = -1;
+        this.outputStreamLoader = null;
+        this.inputStreamFactory = inputStreamFactory;
+    }
+
+    /**
+     * A ctor for the 3 things browsers tell us about the uploaded file
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param in A means by which the data can be read.
+     */
+    public FileTransfer(String filename, String mimeType, final InputStream in)
+    {
+        this.filename = filename;
+        this.mimeType = mimeType;
+        this.size = -1;
         this.outputStreamLoader = null;
         this.inputStreamFactory = new SimpleInputStreamFactory(in, true);
     }
