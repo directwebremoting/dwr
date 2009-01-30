@@ -21,10 +21,13 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.annotations.GlobalFilter;
+import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
@@ -41,19 +45,21 @@ import org.springframework.util.StringUtils;
 public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
 {
 
+    @SuppressWarnings("unchecked")
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
     {
         BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
         for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames())
         {
+            BeanDefinition springConfigurator = DwrNamespaceHandler.registerSpringConfiguratorIfNecessary(beanDefinitionRegistry);
             BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinitionRegistry.getBeanDefinition(beanName), beanName);
             Class<?> beanDefinitionClass = getBeanDefinitionClass(beanDefinitionHolder, beanDefinitionRegistry);
             if (beanDefinitionClass != null)
             {
-                RemoteProxy annotation = beanDefinitionClass.getAnnotation(RemoteProxy.class);
-                if (annotation != null)
+                RemoteProxy remoteProxy = beanDefinitionClass.getAnnotation(RemoteProxy.class);
+                if (remoteProxy != null)
                 {
-                    String javascript = annotation.name();
+                    String javascript = remoteProxy.name();
                     if (!StringUtils.hasText(javascript))
                     {
                         javascript = beanDefinitionClass.getSimpleName();
@@ -63,6 +69,24 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
                         log.info("Detected candidate bean [" + beanName + "]. Remoting using " + javascript);
                     }
                     registerCreator(beanDefinitionHolder, beanDefinitionRegistry, beanDefinitionClass, javascript);
+                }
+                GlobalFilter globalFilter = beanDefinitionClass.getAnnotation(GlobalFilter.class);
+                if (globalFilter != null)
+                {
+                    if (log.isInfoEnabled())
+                    {
+                        log.info("Detected global filter [" + beanDefinitionClass + "].");
+                    }
+                    ManagedList filters = (ManagedList) springConfigurator.getPropertyValues().getPropertyValue("filters").getValue();
+                    Param[] params = globalFilter.params();
+                    if (params != null)
+                    {
+                        for (Param param : params)
+                        {
+                            beanDefinitionHolder.getBeanDefinition().getPropertyValues().addPropertyValue(param.name(), param.value());
+                        }
+                    }
+                    filters.add(new RuntimeBeanReference(beanName));
                 }
             }
         }
