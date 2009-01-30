@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.annotations.GlobalFilter;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -86,6 +87,7 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
     protected class AnnotationScannerDefinitionParser implements BeanDefinitionParser
     {
 
+        private boolean scanFilters = true;
         private boolean scanProxies = true;
         private boolean scanConverters = true;
 
@@ -123,13 +125,22 @@ public class DwrAnnotationNamespaceHandler extends DwrNamespaceHandler
             {
                 scanner.addIncludeFilter(new AnnotationTypeFilter(DataTransferObject.class));
             }
-            if (scanProxies | scanConverters)
+            String filters = element.getAttribute("scanGlobalFilter");
+            if (hasText(filters) && ("TRUE".equals(filters.toUpperCase()) || "FALSE".equals(filters.toUpperCase())))
+            {
+                scanFilters = Boolean.parseBoolean(filters);
+            }
+            if (scanFilters)
+            {
+                scanner.addIncludeFilter(new AnnotationTypeFilter(GlobalFilter.class));
+            }
+            if (scanProxies | scanConverters | scanFilters)
             {
                 scanner.scan(basePackage == null ? "" : basePackage);
             }
             else
             {
-                log.warn("Scan is not required if both @RemoteProxy and @DataTransferObject are disabled. Skipping detection");
+                log.warn("Scan is not required if all @RemoteProxy, @DataTransferObject and @GlobalFilter are disabled. Skipping detection");
             }
             return null;
         }

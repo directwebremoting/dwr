@@ -48,6 +48,12 @@ public class SpringConfigurator implements Configurator
         ConverterManager converterManager = container.getBean(ConverterManager.class);
         CreatorManager creatorManager = container.getBean(CreatorManager.class);
 
+        // Configure the global filters
+        for (AjaxFilter filter : filters)
+        {
+            ajaxFilterManager.addAjaxFilter(filter);
+        }
+
         // Configure the creator types
         if (creatorTypes != null)
         {
@@ -113,8 +119,7 @@ public class SpringConfigurator implements Configurator
                         }
                     }
 
-                    List<?> filters = creatorConfig.getFilters();
-                    for (Object obj : filters)
+                    for (Object obj : creatorConfig.getFilters())
                     {
                         if (obj instanceof String)
                         {
@@ -248,6 +253,16 @@ public class SpringConfigurator implements Configurator
     }
 
     /**
+     * Sets the global AJAX filters.
+     * @param filters the filters to set
+     */
+    public void setFilters(List<AjaxFilter> filters)
+    {
+        this.filters = filters;
+    }
+
+
+    /**
      * The map of Converter types
      */
     private Map<String, String> creatorTypes;
@@ -271,4 +286,10 @@ public class SpringConfigurator implements Configurator
      * The string of Signatures
      */
     private String signatures;
+
+    /**
+     * The global filters
+     */
+    private List<AjaxFilter> filters;
+
 }

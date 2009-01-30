@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.filter.ExtraLatencyAjaxFilter;
+import org.directwebremoting.util.LocalUtil;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
@@ -74,6 +75,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
         registerBeanDefinitionParser("controller", new ControllerBeanDefinitionParser());
         registerBeanDefinitionParser("url-mapping", new UrlMappingBeanDefinitionParser());
         registerBeanDefinitionParser("proxy-ref", new ProxyBeanDefinitionParser());
+        registerBeanDefinitionParser("global-filter", new GlobalFilterBeanDefinitionParser());
 
         registerBeanDefinitionDecorator("init", new InitDefinitionDecorator());
         registerBeanDefinitionDecorator("create", new CreatorBeanDefinitionDecorator());
@@ -89,6 +91,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(SpringConfigurator.class);
             builder.addPropertyValue("creators", new ManagedMap());
             builder.addPropertyValue("converters", new ManagedMap());
+            builder.addPropertyValue("filters", new ManagedList());
             registry.registerBeanDefinition(DEFAULT_SPRING_CONFIGURATOR_ID, builder.getBeanDefinition());
         }
         return registry.getBeanDefinition(DEFAULT_SPRING_CONFIGURATOR_ID);
@@ -335,7 +338,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
     /**
      * Registers a new bean definition based on <dwr:url-mapping /> schema.
      *
-     * @author Jose Noheda [jose.noheda@gmail.com]
+     * @author Jose Noheda [jose.noheda at gmail]
      */
     protected class UrlMappingBeanDefinitionParser implements BeanDefinitionParser
     {
@@ -360,9 +363,45 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
     }
 
     /**
+     * Registers global filters declared using <dwr:global-filter />
+     *
+     * @author Jose Noheda [jose.noheda at gmail]
+     */
+    protected class GlobalFilterBeanDefinitionParser implements BeanDefinitionParser
+    {
+
+        @SuppressWarnings("unchecked")
+        public BeanDefinition parse(Element element, ParserContext parserContext)
+        {
+            String clazz = element.getAttribute("class");
+            try
+            {
+                BeanDefinitionRegistry registry = parserContext.getRegistry();
+                BeanDefinitionBuilder beanFilter = BeanDefinitionBuilder.rootBeanDefinition(LocalUtil.classForName(clazz));
+                BeanDefinition filterDefinition = beanFilter.getBeanDefinition();
+                List<Element> filterParamElements = DomUtils.getChildElementsByTagName(element, "param");
+                for (Element filterParamElement : filterParamElements)
+                {
+                    beanFilter.addPropertyValue(filterParamElement.getAttribute("name"), filterParamElement.getAttribute("value"));
+                }
+                BeanDefinitionHolder holder = new BeanDefinitionHolder(filterDefinition, clazz);
+                BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
+                BeanDefinition springConfigurator = registerSpringConfiguratorIfNecessary(registry);
+                ManagedList filters = (ManagedList) springConfigurator.getPropertyValues().getPropertyValue("filters").getValue();
+                filters.add(new RuntimeBeanReference(clazz));
+                return filterDefinition;
+            }
+            catch (ClassNotFoundException cne) {
+                throw new RuntimeException(cne);
+            }
+
+        }
+    }
+
+    /**
      * Registers a bean proxy based in <dwr:proxy-ref />
      *
-     * @author Jose Noheda [jose.noheda@gmail.com]
+     * @author Jose Noheda [jose.noheda at gmail]
      */
     protected class ProxyBeanDefinitionParser implements BeanDefinitionParser
     {
@@ -372,7 +411,6 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
             String beanRef = element.getAttribute("bean");
             BeanDefinitionRegistry registry = parserContext.getRegistry();
             BeanDefinition beanRefDefinition = findParentDefinition(beanRef, registry);
-            //BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanRefDefinition, beanRef);
             String javascript = element.getAttribute("javascript");
             if (!StringUtils.hasText(javascript))
             {

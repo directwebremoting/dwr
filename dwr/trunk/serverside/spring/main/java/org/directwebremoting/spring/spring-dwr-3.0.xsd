@@ -26,9 +26,15 @@
       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<xsd:element name="proxy-ref" type="proxy">
-            <xsd:annotation>
-                <xsd:documentation><![CDATA[Remote a bean already defined in a reachable application context indicating the reference to it]]></xsd:documentation>
-            </xsd:annotation>
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[Remote a bean already defined in a reachable application context indicating the reference to it]]></xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element name="global-filter" type="filter">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[Global AJAX filter that intercepts all requests]]></xsd:documentation>
+		</xsd:annotation>
 	</xsd:element>
 
 	<xsd:element name="url-mapping" type="mapping">
@@ -45,6 +51,7 @@
                 <xsd:attribute name="base-package" type="xsd:string" />
                 <xsd:attribute name="regex" type="xsd:string" />
                 <xsd:attribute name="scanRemoteProxy" type="xsd:boolean" default="true" />
+                <xsd:attribute name="scanGlobalFilter" type="xsd:boolean" default="true" />
                 <xsd:attribute name="scanDataTransferObject" type="xsd:boolean" default="true" />
             </xsd:complexType>
 	</xsd:element>
