@@ -31,12 +31,6 @@
 		</xsd:annotation>
 	</xsd:element>
 
-	<xsd:element name="global-filter" type="filter">
-		<xsd:annotation>
-			<xsd:documentation><![CDATA[Global AJAX filter that intercepts all requests]]></xsd:documentation>
-		</xsd:annotation>
-	</xsd:element>
-
 	<xsd:element name="url-mapping" type="mapping">
 		<xsd:annotation>
 			<xsd:documentation><![CDATA[Automatically map engine.js, util.js and all the remoted interface files to the DWR specific controller]]></xsd:documentation>
@@ -96,6 +90,7 @@
   <xsd:complexType name="configuration">
     <xsd:sequence>
       <xsd:element name="init" type="init" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="filter" type="filter" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="create" type="create" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="convert" type="convert" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="signatures" type="xsd:string" minOccurs="0" maxOccurs="1"/>
