@@ -186,7 +186,7 @@ public class SignatureParser
                 if (clazz != null)
                 {
                     Property parent = new ParameterProperty(method, i);
-                    Property child = parent.createChild(i);
+                    Property child = parent.createChild(j);
                     child = converterManager.checkOverride(child);
                     Property replacement = new OverrideProperty(clazz);
                     converterManager.setOverrideProperty(child, replacement);
