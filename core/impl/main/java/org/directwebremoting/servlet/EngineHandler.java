@@ -15,13 +15,14 @@
  */
 package org.directwebremoting.servlet;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Remoter;
@@ -49,7 +50,6 @@ public class EngineHandler extends FileJavaScriptHandler
     @Override
     public Map<String, String> getSearchReplacePairs()
     {
-        HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
         Map<String, String> replace = new HashMap<String, String>();
 
         // If we are dynamic then we might need to pre-configure some variables.
@@ -74,11 +74,24 @@ public class EngineHandler extends FileJavaScriptHandler
         String pollWithXhr = streaming ? "false" : "true";
         replace.put("${pollWithXhr}", pollWithXhr);
 
-        // What is the replacement field we use to tell engine.js what we are using
-        // for script tag hack protection
-        String contextServletPath = request.getContextPath() + request.getServletPath();
-        String pathToDwrServlet = remoter.getPathToDwrServlet(contextServletPath);
-        replace.put("${pathToDwrServlet}", pathToDwrServlet);
+        // Checks for usage outside a DWR thread, for example,
+        // during JAWR initialization.
+
+        WebContext context = WebContextFactory.get();
+        if (context != null)
+        {
+            HttpServletRequest request = context.getHttpServletRequest();
+            if (request != null)
+            {
+                String contextServletPath = request.getContextPath() + request.getServletPath();
+                String pathToDwrServlet = remoter.getPathToDwrServlet(contextServletPath);
+                replace.put("${pathToDwrServlet}", pathToDwrServlet);
+            }
+        }
+        else
+        {
+            log.warn("Unable to detect DWR servlet path (no web context found). Is this a DWR thread?");
+        }
 
         // Under what cookie name is the session id stored?
         replace.put("${sessionCookieName}", sessionCookieName);
@@ -110,33 +123,6 @@ public class EngineHandler extends FileJavaScriptHandler
         replace.put("${initCode}", scriptSessionManager.getInitCode());
 
         return replace;
-    }
-
-    /**
-     * This API is primarily for JAWR to discover the tags that we are using
-     * to customize our output.
-     */
-    public static List<String> getKeywords()
-    {
-        return Arrays.asList(new String[] {
-            "pollWithXhr",
-            "pathToDwrServlet",
-            "sessionCookieName",
-            "allowGetForSafariButMakeForgeryEasier",
-            "scriptTagProtection",
-            "plainCallHandlerUrl",
-            "plainPollHandlerUrl",
-            "htmlCallHandlerUrl",
-            "htmlPollHandlerUrl",
-            "defaultToAsync",
-            "versionMajor",
-            "versionMinor",
-            "versionRevision",
-            "versionBuild",
-            "versionTitle",
-            "versionLabel",
-            "initCode",
-        });
     }
 
     /**
@@ -295,4 +281,10 @@ public class EngineHandler extends FileJavaScriptHandler
      * Are we supporting streaming?
      */
     private ServerLoadMonitor serverLoadMonitor;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(EngineHandler.class);
+
 }
