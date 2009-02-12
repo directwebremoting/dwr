@@ -1305,6 +1305,15 @@ public final class LocalUtil
     {
         Class<?> real = pojo.getClass();
 
+        /*
+        Once 3.0 is out we should uncomment this and check it still works
+        String prefix = "get";
+        if (type == Boolean.class || type == Boolean.TYPE)
+        {
+            prefix = "is";
+        }
+        */
+
         String getterName = "get" + propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
 
         try
