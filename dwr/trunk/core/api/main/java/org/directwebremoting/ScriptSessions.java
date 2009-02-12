@@ -41,19 +41,13 @@ public class ScriptSessions
      * @param value the object to be bound
      * @throws IllegalStateException if the page has been invalidated
      */
-    public static void setAttribute(final String name, final Object value)
+    public static void setAttribute(String name, Object value)
     {
-        Browser.withAllSessions(new Runnable()
+        Collection<ScriptSession> sessions = Browser.getTargetSessions();
+        for (ScriptSession scriptSession : sessions)
         {
-            public void run()
-            {
-                Collection<ScriptSession> sessions = Browser.getTargetSessions();
-                for (ScriptSession scriptSession : sessions)
-                {
-                    scriptSession.setAttribute(name, value);
-                }
-            }
-        });
+            scriptSession.setAttribute(name, value);
+        }
     }
 
     /**
@@ -66,38 +60,26 @@ public class ScriptSessions
      * @param name the name of the object to remove from this session
      * @throws IllegalStateException if the page has been invalidated
      */
-    public static void removeAttribute(final String name)
+    public static void removeAttribute(String name)
     {
-        Browser.withAllSessions(new Runnable()
+        Collection<ScriptSession> sessions = Browser.getTargetSessions();
+        for (ScriptSession scriptSession : sessions)
         {
-            public void run()
-            {
-                Collection<ScriptSession> sessions = Browser.getTargetSessions();
-                for (ScriptSession scriptSession : sessions)
-                {
-                    scriptSession.removeAttribute(name);
-                }
-            }
-        });
+            scriptSession.removeAttribute(name);
+        }
     }
 
     /**
      * Add a script to the list waiting for remote execution.
      * @param script The script to execute
      */
-    public static void addScript(final ScriptBuffer script)
+    public static void addScript(ScriptBuffer script)
     {
-        Browser.withAllSessions(new Runnable()
+        Collection<ScriptSession> sessions = Browser.getTargetSessions();
+        for (ScriptSession scriptSession : sessions)
         {
-            public void run()
-            {
-                Collection<ScriptSession> sessions = Browser.getTargetSessions();
-                for (ScriptSession scriptSession : sessions)
-                {
-                    scriptSession.addScript(script);
-                }
-            }
-        });
+            scriptSession.addScript(script);
+        }
     }
 
     /**
@@ -107,19 +89,7 @@ public class ScriptSessions
      */
     public static void addScript(String scriptString)
     {
-        final ScriptBuffer script = new ScriptBuffer(scriptString);
-
-        Browser.withAllSessions(new Runnable()
-        {
-            public void run()
-            {
-                Collection<ScriptSession> sessions = Browser.getTargetSessions();
-                for (ScriptSession scriptSession : sessions)
-                {
-                    scriptSession.addScript(script);
-                }
-            }
-        });
+        addScript(new ScriptBuffer(scriptString));
     }
 
     /**
