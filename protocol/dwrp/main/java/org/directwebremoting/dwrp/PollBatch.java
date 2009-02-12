@@ -35,8 +35,8 @@ public class PollBatch extends Batch
         super(request);
 
         debug = request.getHeader("User-Agent");
-        batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID);
-        String prString = extractParameter(ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE);
+        batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID, THROW);
+        String prString = extractParameter(ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE, THROW);
         partialResponse = PartialResponse.fromOrdinal(prString);
     }
 
