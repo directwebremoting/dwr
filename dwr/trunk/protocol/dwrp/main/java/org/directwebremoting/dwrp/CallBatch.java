@@ -66,7 +66,7 @@ public class CallBatch extends Batch
     private void parseParameters()
     {
         // Work out how many calls are in this packet
-        String callStr = extractParameter(ProtocolConstants.INBOUND_CALL_COUNT);
+        String callStr = extractParameter(ProtocolConstants.INBOUND_CALL_COUNT, THROW);
         int callCount;
         try
         {
@@ -83,7 +83,7 @@ public class CallBatch extends Batch
         }
 
         // Extract the batch id
-        String batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID);
+        String batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID, THROW);
         calls.setBatchId(batchId);
         if (!LocalUtil.isLetterOrDigitOrUnderline(batchId))
         {
@@ -99,19 +99,19 @@ public class CallBatch extends Batch
             String prefix = ProtocolConstants.INBOUND_CALLNUM_PREFIX + callNum + ProtocolConstants.INBOUND_CALLNUM_SUFFIX;
 
             // The special values
-            String callId = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_ID);
+            String callId = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_ID, THROW);
             if (!LocalUtil.isLetterOrDigitOrUnderline(callId))
             {
                 throw new SecurityException("Call IDs may only contain Java Identifiers");
             }
 
-            String scriptName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_SCRIPTNAME);
+            String scriptName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_SCRIPTNAME, THROW);
             if (!LocalUtil.isLetterOrDigitOrUnderline(scriptName))
             {
                 throw new SecurityException("Script names may only contain Java Identifiers");
             }
 
-            String methodName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_METHODNAME);
+            String methodName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_METHODNAME, THROW);
             if (!LocalUtil.isLetterOrDigitOrUnderline(methodName))
             {
                 throw new SecurityException("Method names may only contain Java Identifiers");

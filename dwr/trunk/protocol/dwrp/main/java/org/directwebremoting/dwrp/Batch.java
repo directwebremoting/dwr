@@ -56,10 +56,10 @@ public class Batch
             extraParameters = parsePost(request);
         }
 
-        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
-        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID);
-        page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE));
-        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME);
+        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
+        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID, THROW);
+        page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
+        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
 
     /**
@@ -70,10 +70,10 @@ public class Batch
         this.extraParameters = allParameters;
         this.get = get;
 
-        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID);
-        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID);
-        page = extractParameter(ProtocolConstants.INBOUND_KEY_PAGE);
-        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME);
+        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
+        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID, THROW);
+        page = extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW);
+        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
 
     /**
@@ -83,15 +83,22 @@ public class Batch
      * @param paramName The name of the parameter sent
      * @return The found value
      */
-    protected String extractParameter(String paramName)
+    protected String extractParameter(String paramName, String defaultValue)
     {
         FormField formField = extraParameters.remove(paramName);
-        if (formField == null)
+        if (formField != null)
+        {
+            return formField.getString();
+        }
+
+        if (defaultValue == THROW)
         {
             throw new IllegalArgumentException("Failed to find parameter: " + paramName);
         }
-
-        return formField.getString();
+        else
+        {
+            return defaultValue;
+        }
     }
 
     /**
@@ -418,6 +425,11 @@ public class Batch
      * What implementation of FileUpload are we using?
      */
     private static final FileUpload UPLOADER;
+
+    /**
+     * A special marker for the default value for extractParameter
+     */
+    protected static final String THROW = "throw";
 
     /**
      * The log stream
