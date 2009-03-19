@@ -1502,8 +1502,8 @@ if (typeof window['dwr'] == 'undefined') {
           batch.form = div.firstChild;
           for (var prop in batch.map) {
             var value = batch.map[prop];
-            if (value && typeof value != "function") {
-              if (value.tagName && value.tagName.toLowerCase() == "input" && value.type && value.type.toLowerCase() == "file") {
+            if (typeof value != "function") {
+              if (value && value.tagName && value.tagName.toLowerCase() == "input" && value.type && value.type.toLowerCase() == "file") {
                 // Since we can not set the value of a file object, we must post the actual file object
                 // that the user clicked browse on. We will put a clone in it's place.
                 var clone = value.cloneNode(true);
