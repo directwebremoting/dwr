@@ -584,12 +584,13 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
             {
                 converterConfig.addExclude(child.getAttribute("method"));
             }
-            /* TODO Why is this only a property of ObjectConverter?
-             else if (child.getNodeName().equals("dwr:force"))
-             {
-             converterConfig.setForce(Boolean.parseBoolean(child.getAttribute("value")));
-             }
-             */
+            else if ("dwr:param".equals(node.getNodeName()))
+            {
+                Element element = (Element) node;
+                String name = element.getAttribute("name");
+                String value = element.getAttribute("value");
+                converterConfig.getParams().put(name, value);
+            }
             else
             {
                 throw new RuntimeException("an unknown dwr:remote sub node was found: " + node.getNodeName());
@@ -817,7 +818,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
 
     protected static final String DEFAULT_SPRING_CONFIGURATOR_ID = "__dwrConfiguration";
 
-    /**
+    /*
      * The log stream
      */
     private static final Log log = LogFactory.getLog(DwrNamespaceHandler.class);
