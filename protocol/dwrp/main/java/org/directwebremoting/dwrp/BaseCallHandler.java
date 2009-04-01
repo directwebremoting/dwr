@@ -151,19 +151,10 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // Which method are we using?
                 call.findMethod(creatorManager, converterManager, inctx, callNum);
                 Method method = call.getMethod();
-
                 if (method == null)
                 {
                     log.warn("No methods to match " + call.getScriptName() + '.' + call.getMethodName());
                     throw new IllegalArgumentException("Missing method or missing parameter converters");
-                }
-
-                // If a converter is not specified for the Return type than we need to set a MarshalException on the call and
-                // ensure that this call is not executed per JIRA DWR-322.
-                Class<?> returnType = method.getReturnType();
-                if (null != returnType && !converterManager.isConvertable(returnType))
-                {
-                    call.setMarshallFailure(new ConversionException(returnType, "A converter has not been specified for the return type of the " + method.getName() + " method cannot be executed."));
                 }
 
                 // We are now sure we have the set of inputs lined up. They may
