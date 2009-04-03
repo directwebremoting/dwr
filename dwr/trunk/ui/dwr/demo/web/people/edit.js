@@ -61,4 +61,3 @@ function clearPerson() {
   viewed = -1;
   dwr.util.setValues({ id:-1, name:null, address:null, salary:null });
 }
-s
