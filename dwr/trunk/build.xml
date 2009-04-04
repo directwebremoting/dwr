@@ -104,7 +104,7 @@
         <zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo"/>
       </action>
     </if-not-uptodate>
-    <!-- Copy over testdwr.war -->
+    <!-- Copy over test-dwr.war -->
     <if>
       <available file="${testdwr.home}/build.xml"/>
       <then>
@@ -112,9 +112,9 @@
       </then>      
     </if>
     <if>
-      <available file="${testdwr.home}/target/ant/testdwr.war"/>
+      <available file="${testdwr.home}/target/ant/test-dwr.war"/>
       <then>
-        <copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}"/>
+        <copy file="${testdwr.home}/target/ant/test-dwr.war" todir="${target.root}"/>
       </then>      
     </if>
     <!-- Documentation: Javadoc and DTDDoc -->
