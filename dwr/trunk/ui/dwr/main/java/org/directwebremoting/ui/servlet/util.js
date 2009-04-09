@@ -151,7 +151,7 @@ dwr.util._getId = function(elem) {
   // the attributes collection may cause problems in IE7 together with 
   // cloneNode so we avoid hitting it when possible.  
   var elemId = elem.getAttribute("id");
-  if (elemId && typeof elemId == "object") {
+  if (dwr.util._isObject(elemId)) {
     elemId = elem.attributes.id.value;
   }
   return elemId;
@@ -301,7 +301,7 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
           for (var prop in data) {
             var propvalue = data[prop];
             if (isDomObject) {
-              if (!propvalue) continue;
+              if (propvalue == null) continue;
               if (typeof propvalue == "function") continue;
               if (skipDomProperties[prop]) continue;
               if (prop.toUpperCase() == prop) continue;
@@ -424,7 +424,7 @@ dwr.util._yellowFadeProcess = function(ele, colorIndex) {
   ele = dwr.util.byId(ele);
   if (colorIndex < dwr.util._yellowFadeSteps.length) {
     ele.style.backgroundColor = "#ffff" + dwr.util._yellowFadeSteps[colorIndex];
-    setTimeout("dwr.util._yellowFadeProcess('" + ele.id + "'," + (colorIndex + 1) + ")", 200);
+    setTimeout("dwr.util._yellowFadeProcess('" + dwr.util._getId(ele) + "'," + (colorIndex + 1) + ")", 200);
   }
   else {
     ele.style.backgroundColor = "transparent";
@@ -444,7 +444,7 @@ dwr.util._borderFadeProcess = function(ele, colorIndex) {
   ele = dwr.util.byId(ele);
   if (colorIndex < dwr.util._borderFadeSteps.length) {
     ele.style.borderColor = "#ff" + dwr.util._borderFadeSteps[colorIndex] + dwr.util._borderFadeSteps[colorIndex];
-    setTimeout("dwr.util._borderFadeProcess('" + ele.id + "'," + (colorIndex + 1) + ")", 200);
+    setTimeout("dwr.util._borderFadeProcess('" + dwr.util._getId(ele) + "'," + (colorIndex + 1) + ")", 200);
   }
   else {
     ele.style.backgroundColor = "transparent";
@@ -712,8 +712,8 @@ dwr.util.getValue = function(ele, options) {
   }
 
   if (dwr.util._shouldEscapeHtml(options)) {
-    if (ele.textContent) return ele.textContent;
-    else if (ele.innerText) return ele.innerText;
+    if ("textContent" in ele) return ele.textContent;
+    else if ("innerText" in ele) return ele.innerText;
   }
   return ele.innerHTML;
 };
@@ -750,8 +750,8 @@ dwr.util.getText = function(ele) {
 dwr.util.setValues = function(data, options) {
   var prefix = "";
   var depth = 100;
-  if (options && options.prefix) prefix = options.prefix;
-  if (options && options.idPrefix) prefix = options.idPrefix;
+  if (options && "prefix" in options) prefix = options.prefix;
+  if (options && "idPrefix" in options) prefix = options.idPrefix;
   if (options && "depth" in options) depth = options.depth;
   dwr.util._setValuesRecursive(data, prefix, depth, options);
 };
@@ -808,8 +808,8 @@ dwr.util.getValues = function(data, options) {
   else {
     var prefix = "";
     var depth = 100;
-    if (options != null && options.prefix) prefix = options.prefix;
-    if (options != null && options.idPrefix) prefix = options.idPrefix;
+    if (options != null && "prefix" in options) prefix = options.prefix;
+    if (options != null && "idPrefix" in options) prefix = options.idPrefix;
     if (options != null && "depth" in options) depth = options.depth;
     dwr.util._getValuesRecursive(data, prefix, depth, options);
     return data;
@@ -983,7 +983,7 @@ dwr.util.addOptions = function(ele, data/*, options*/) {
     for (var prop in data) {
       if (typeof data[prop] == "function") continue;
       options.data = data[prop];
-      if (!arg3) {
+      if (arg3 == null) {
         options.value = prop;
         options.text = data[prop];
       }
@@ -1112,7 +1112,7 @@ dwr.util._addRowInner = function(cellFuncs, options) {
     options.cellNum = cellNum;
     var td = options.cellCreator(options);
     if (td != null) {
-      if (options.data) {
+      if ("data" in options) {
         if (dwr.util._isHTMLElement(options.data)) td.appendChild(options.data);
         else {
           if (dwr.util._shouldEscapeHtml(options) && typeof(options.data) == "string") {
@@ -1223,7 +1223,7 @@ dwr.util.cloneNode = function(ele, options) {
   if (ele == null) return null;
   if (options == null) options = {};
   var clone = ele.cloneNode(true);
-  if (options.idPrefix || options.idSuffix) {
+  if ("idPrefix" in options || "idSuffix" in options) {
     dwr.util._updateIds(clone, options);
   }
   else {
@@ -1238,8 +1238,11 @@ dwr.util.cloneNode = function(ele, options) {
  */
 dwr.util._updateIds = function(ele, options) {
   if (options == null) options = {};
-  if (ele.id) {
-    ele.setAttribute("id", (options.idPrefix || "") + ele.id + (options.idSuffix || ""));
+  if (dwr.util._getId(ele)) {
+    ele.setAttribute("id", 
+      ("idPrefix" in options ? options.idPrefix : "") 
+      + dwr.util._getId(ele) 
+      + ("idSuffix" in options ? options.idSuffix : ""));
   }
   var children = ele.childNodes;
   for (var i = 0; i < children.length; i++) {
@@ -1254,7 +1257,7 @@ dwr.util._updateIds = function(ele, options) {
  * @private Remove all the Ids from an element
  */
 dwr.util._removeIds = function(ele) {
-  if (ele.id) ele.removeAttribute("id");
+  if (dwr.util._getId(ele)) ele.removeAttribute("id");
   var children = ele.childNodes;
   for (var i = 0; i < children.length; i++) {
     var child = children.item(i);
@@ -1276,7 +1279,7 @@ dwr.util.cloneNodeForValues = function(templateEle, data, options) {
   if (options.idPrefix != null)
     idpath = options.idPrefix;
   else
-    idpath = templateEle.id || ""; 
+    idpath = dwr.util._getId(templateEle) || ""; 
   return dwr.util._cloneNodeForValuesRecursive(templateEle, data, idpath, options);
 };
 
@@ -1306,7 +1309,7 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
         clone.style[propname] = options.updateCloneStyle[propname];
       }
     }
-    dwr.util._replaceIds(clone, templateEle.id, idpath);
+    dwr.util._replaceIds(clone, dwr.util._getId(templateEle), idpath);
     templateEle.parentNode.insertBefore(clone, templateEle);
     dwr.util._cloneSubArrays(data, idpath, options);
     return clone;
@@ -1321,16 +1324,17 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
  * element ids tree, and remove ids that don't match the idpath. 
  */
 dwr.util._replaceIds = function(ele, oldidpath, newidpath) {
-  if (ele.id) {
+  var currId = dwr.util._getId(ele);
+  if (currId) {
     var newId = null;
-    if (ele.id == oldidpath) {
+    if (currId == oldidpath) {
       newId = newidpath;
     }
-    else if (ele.id.length > oldidpath.length) {
-      if (ele.id.substr(0, oldidpath.length) == oldidpath) {
-        var trailingChar = ele.id.charAt(oldidpath.length);
+    else if (currId.length > oldidpath.length) {
+      if (currId.substr(0, oldidpath.length) == oldidpath) {
+        var trailingChar = currId.charAt(oldidpath.length);
         if (trailingChar == "." || trailingChar == "[") {
-          newId = newidpath + ele.id.substr(oldidpath.length);
+          newId = newidpath + currId.substr(oldidpath.length);
         }
       }
     }
