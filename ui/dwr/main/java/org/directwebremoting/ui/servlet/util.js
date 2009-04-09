@@ -121,13 +121,12 @@ dwr.util.byId = function() {
     if (typeof idOrElem == 'string') {
       var elem = document.getElementById(idOrElem);
       // Workaround for IE and Opera that may return element based on name
-      // (note use of elem.attributes.id.value due to IE bug for elem.getAttribute) 
-      if (document.all && elem && elem.attributes.id.value != idOrElem) {
+      if (document.all && elem && dwr.util._getId(elem) != idOrElem) {
         elem = null;
         var maybeElems = document.all[idOrElem];
         if (maybeElems.tagName) maybeElems = [maybeElems];
         for (var j = 0; j < maybeElems.length; j++) {
-          if (maybeElems[j].attributes.id.value == idOrElem) {
+          if (dwr.util._getId(maybeElems[j]) == idOrElem) {
             elem = maybeElems[j];
             break;
           }
@@ -144,6 +143,19 @@ dwr.util.byId = function() {
   }
   return elems;
 }
+
+dwr.util._getId = function(elem) {
+  // Get the element's real id. In some situations IE may (wrongly)
+  // return another element from the getAttribute() call so we watch out for 
+  // this case and use the attributes.id value instead. Note that the use of 
+  // the attributes collection may cause problems in IE7 together with 
+  // cloneNode so we avoid hitting it when possible.  
+  var elemId = elem.getAttribute("id");
+  if (elemId && typeof elemId == "object") {
+    elemId = elem.attributes.id.value;
+  }
+  return elemId;
+};
 
 /**
  * Alias $ to dwr.util.byId
