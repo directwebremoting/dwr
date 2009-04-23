@@ -62,13 +62,7 @@ public class DefaultTaskDispatcher implements TaskDispatcher
      */
     public Collection<ScriptSession> getTargetSessions()
     {
-        Collection<ScriptSession> sessions = target.get();
-        if (sessions != null)
-        {
-            return sessions;
-        }
-
-        throw new IllegalStateException("No current UI to manipulate. See org.directwebremoting.Browser to set one.");
+        return target.get();
     }
 
     /**
