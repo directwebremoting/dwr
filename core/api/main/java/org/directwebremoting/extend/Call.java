@@ -230,6 +230,32 @@ public class Call
             checkProxiedMethod(creatorManager);
             return;
         }
+        else if (exactParamCountMatches.size() == 2)
+        {
+            // Two methods with same name, the correct number of parameters and convertible inputs.
+            // Hope it's due to generics (DWR-343). Still check
+            int choose = -1;
+            boolean compatible = true;
+            Class<?>[] params1 = exactParamCountMatches.get(0).getParameterTypes();
+            Class<?>[] params2 = exactParamCountMatches.get(1).getParameterTypes();
+            for (int i = 0; i < params1.length; i++)
+            {
+                if (compatible && !params1[i].equals(params2[i]))
+                {
+                    if (choose < 0)
+                    {
+                        choose = params1[i].isAssignableFrom(params2[i]) ? 1 : 0;
+                    }
+                    compatible &= ((choose == 1) || params2[i].isAssignableFrom(params1[i]));
+                }
+            }
+            if (compatible && (choose >= 0))
+            {
+                method = exactParamCountMatches.get(choose); // Select the most concrete of the two
+                checkProxiedMethod(creatorManager);
+                return;
+            }
+        }
 
         // Lots of methods with the right name, but none with the right
         // parameter count. If we have exactly one varargs method, then we
