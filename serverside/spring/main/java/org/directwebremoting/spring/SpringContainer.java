@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
-import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.impl.DefaultContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -149,31 +148,6 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
     protected void callInitializingBeans()
     {
         callInitializingBeans(super.getBeanNames());
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.impl.DefaultContainer#destroy()
-     */
-    @Override
-    public void contextDestroyed()
-    {
-        // This override prevents us from trying to poke around in the Spring
-        // BeanFactory which gets Spring all confused
-        log.debug("ServletContext destroying for container: " + getClass().getSimpleName());
-
-        // We're being destroyed, we shouldn't be touching Spring beans
-        Collection<String> names = super.getBeanNames();
-        for (String beanName : names)
-        {
-            Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean)
-            {
-                UninitializingBean scl = (UninitializingBean) bean;
-                log.debug("- For contained bean: " + beanName);
-
-                scl.contextDestroyed();
-            }
-        }
     }
 
     /**

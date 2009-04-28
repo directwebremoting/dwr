@@ -38,7 +38,6 @@ import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.IdGenerator;
 import org.directwebremoting.util.Loggers;
 
@@ -52,7 +51,7 @@ import org.directwebremoting.util.Loggers;
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean, UninitializingBean
+public class DefaultScriptSessionManager implements ScriptSessionManager, InitializingBean
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.InitializingBean#afterContainerSetup(org.directwebremoting.Container)

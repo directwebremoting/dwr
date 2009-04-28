@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.dwr.Util;
 
 /**
@@ -36,7 +37,7 @@ public class Clock implements Runnable
      */
     public Clock()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
         executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
     }
 

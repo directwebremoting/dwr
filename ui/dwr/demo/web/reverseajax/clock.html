@@ -89,7 +89,7 @@ dwr.engine.setActiveReverseAjax(true);
 <pre>
 public class Clock implements Runnable {
     public Clock() {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
         executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
     }
 

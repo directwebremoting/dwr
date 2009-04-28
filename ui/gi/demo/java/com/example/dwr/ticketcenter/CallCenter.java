@@ -39,6 +39,7 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.browser.Window;
 
 import com.example.dwr.people.RandomData;
@@ -59,7 +60,7 @@ public class CallCenter implements Runnable
         addRandomUnknownCall();
         addRandomUnknownCall();
 
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
         //noinspection ThisEscapedInObjectConstruction
         executor.scheduleAtFixedRate(this, 2, 2, TimeUnit.SECONDS);
     }

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.impl.DaemonThreadFactory;
 
 /**
  * A generator of random objects to push to GI
@@ -33,7 +34,7 @@ public class Publisher implements Runnable
      */
     public Publisher()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
         executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
     }
 
