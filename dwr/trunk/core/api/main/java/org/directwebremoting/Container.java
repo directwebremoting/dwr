@@ -49,29 +49,6 @@ public interface Container
     Collection<String> getBeanNames();
 
     /**
-     * This should be called <em>only</em> by
-     * {@link org.directwebremoting.servlet.DwrListener}. It requests all
-     * reverse ajax threads to stop.
-     * <p>
-     * {@link javax.servlet.http.HttpServlet#destroy()} is called only when all
-     * connections are closed. If a DwrListener is configured then we can close
-     * down the connections in a timely way. All other tidy-up is done by
-     * {@link #servletDestroyed()} which will work even when a DwrListener has
-     * not been configured.
-     * @see #servletDestroyed()
-     */
-    void contextDestroyed();
-
-    /**
-     * Should be called only by {@link org.directwebremoting.servlet.DwrServlet}
-     * (or other servlet implementations). It requests all other threads to
-     * stop, and any tidy-up that can be done after the context has been fully
-     * destroyed.
-     * @see #contextDestroyed()
-     */
-    void servletDestroyed();
-
-    /**
      * Sometimes we need to create a bean as a one-off object and have it
      * injected with settings by the container.
      * This does not make the object part of the container.

@@ -28,7 +28,6 @@ import javax.servlet.ServletContext;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.ContainerConfigurationException;
-import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
 
@@ -305,48 +304,6 @@ public class DefaultContainer extends AbstractContainer implements Container
     public Collection<String> getBeanNames()
     {
         return Collections.unmodifiableCollection(beans.keySet());
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.Container#contextDestroyed()
-     */
-    public void contextDestroyed()
-    {
-        Loggers.STARTUP.debug("ContextDestroyed for container: " + getClass().getSimpleName());
-
-        Collection<String> beanNames = getBeanNames();
-        for (String beanName : beanNames)
-        {
-            Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean)
-            {
-                UninitializingBean scl = (UninitializingBean) bean;
-                Loggers.STARTUP.debug("- For contained bean: " + beanName);
-
-                scl.contextDestroyed();
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.Container#servletDestroyed()
-     */
-    public void servletDestroyed()
-    {
-        Loggers.STARTUP.debug("ServletDestroyed for container: " + getClass().getSimpleName());
-
-        Collection<String> beanNames = getBeanNames();
-        for (String beanName : beanNames)
-        {
-            Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean)
-            {
-                UninitializingBean scl = (UninitializingBean) bean;
-                Loggers.STARTUP.debug("- For contained bean: " + beanName);
-
-                scl.servletDestroyed();
-            }
-        }
     }
 
     /**

@@ -23,7 +23,6 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ServerLoadMonitor;
-import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.extend.WaitController;
 
 /**
@@ -31,38 +30,13 @@ import org.directwebremoting.extend.WaitController;
  * functionality, mostly to provide {@link ServletContextListener#contextDestroyed}
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, UninitializingBean
+public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
      */
     public void servletDestroyed()
     {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
-     */
-    public void contextDestroyed()
-    {
-        if (shutdownCalled)
-        {
-            return;
-        }
-
-        synchronized (waitControllers)
-        {
-            List<WaitController> copy = new ArrayList<WaitController>();
-            copy.addAll(waitControllers);
-
-            for (WaitController controller : copy)
-            {
-                controller.shutdown();
-            }
-
-            log.debug(" - shutdown on: " + this);
-            shutdownCalled = true;
-        }
     }
 
     /* (non-Javadoc)
@@ -102,11 +76,6 @@ public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, Un
             }
         }
     }
-
-    /**
-     * Have we been shutdown already?
-     */
-    private boolean shutdownCalled = false;
 
     /**
      * The known wait controllers
