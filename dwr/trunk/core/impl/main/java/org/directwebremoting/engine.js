@@ -89,12 +89,19 @@ if (typeof window['dwr'] == 'undefined') {
   };
 
   /**
-   * Custom parameters for all DWR calls
-   * @param {Object} parameters Object containing name/value pairs for extra request parameters
-   * @see getahead.org/dwr/????
+   * @Deprecated - use setRequestAttributes
    */
   dwr.engine.setParameters = function(parameters) {
-    dwr.engine._parameters = parameters;
+    dwr.engine.setRequestAttributes(parameters);
+  };
+
+  /**
+   * Custom request attributes for all DWR calls
+   * @param {Object} attributes Object containing name/value pairs for request attributes
+   * @see getahead.org/dwr/????
+   */
+  dwr.engine.setRequestAttributes = function(attributes) {
+    dwr.engine._requestAttributes = attributes;
   };
 
   /**
@@ -352,8 +359,8 @@ if (typeof window['dwr'] == 'undefined') {
   /** If you wish to send custom headers with every request */
   dwr.engine._headers = null;
 
-  /** If you wish to send extra custom request parameters with each request */
-  dwr.engine._parameters = null;
+  /** If you wish to send extra custom request attributes with each request */
+  dwr.engine._requestAttributes = null;
 
   /** Batch ids allow us to know which batch the server is answering */
   dwr.engine._nextBatchId = 0;
@@ -1760,11 +1767,11 @@ if (typeof window['dwr'] == 'undefined') {
           if (typeof data != "function") batch.headers[propname] = data;
         }
       }
-      batch.parameters = {};
-      if (dwr.engine._parameters) {
-        for (propname in dwr.engine._parameters) {
-          data = dwr.engine._parameters[propname];
-          if (typeof data != "function") batch.parameters[propname] = data;
+      batch.attributes = {}; // props to add as request attributes
+      if (dwr.engine._requestAttributes) {
+        for (propname in dwr.engine._requestAttributes) {
+          data = dwr.engine._requestAttributes[propname];
+          if (typeof data != "function") batch.attributes[propname] = data;
         }
       }
     },
@@ -1835,12 +1842,15 @@ if (typeof window['dwr'] == 'undefined') {
           if (typeof data != "function") batch.headers[propname] = data;
         }
       }
-      if (overrides.parameters) {
-        for (propname in overrides.parameters) {
-          data = overrides.parameters[propname];
+      var reqAttrs = null;
+      if (overrides.parameters) reqAttrs = overrides.parameters;
+      if (overrides.requestAttributes) reqAttrs = overrides.requestAttributes;
+      if (reqAttrs) {  
+        for (propname in reqAttrs) {
+          data = reqAttrs[propname];
           if (typeof data != "function") batch.map["p-" + propname] = "" + data;
         }
-      }
+      }      
     },
 
     /**
