@@ -1907,7 +1907,7 @@ if (typeof window['dwr'] == 'undefined') {
         urlBuffer.push(".dwr");
       }
       // Play nice with url re-writing
-      var sessionMatch = location.href.match(/jsessionid=([^?]+)/);
+      var sessionMatch = location.href.match(/jsessionid=([^?#]+)/);
       if (sessionMatch != null) {
         urlBuffer.push(";jsessionid=");
         urlBuffer.push(sessionMatch[1]);
