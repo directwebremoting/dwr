@@ -24,8 +24,8 @@ import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.PageNormalizer;
@@ -97,6 +97,14 @@ public class DefaultPageNormalizer implements PageNormalizer
             if (queryPos != -1)
             {
                 normalized = normalized.substring(0, queryPos);
+            }
+        }
+
+        if (!normalizeIncludesSessionID)
+        {
+            if(normalized.matches("(?i).*;" + sessionCookieName + "=.*"))
+            {
+                normalized = normalized.replaceFirst("(?i);" + sessionCookieName + "=.*","");
             }
         }
 
@@ -223,6 +231,24 @@ public class DefaultPageNormalizer implements PageNormalizer
     }
 
     /**
+     * Does the page normalizer include the session id if it is being appended to the url in it's definition of
+     * pages?
+     * @param normalizeIncludesSessionID The new value
+     */
+    public void setNormalizeIncludesSessionID(boolean normalizeIncludesSessionID)
+    {
+        this.normalizeIncludesSessionID = normalizeIncludesSessionID;
+    }
+
+    /**
+     * The session cookie name, needed for normalizeIncludesSessionID
+     */
+    public void setSessionCookieName(String sessionCookieName)
+    {
+        this.sessionCookieName = sessionCookieName;
+    }
+
+    /**
      * @param servletContext the servletContext to set
      */
     public void setServletContext(ServletContext servletContext)
@@ -240,6 +266,17 @@ public class DefaultPageNormalizer implements PageNormalizer
      * pages?
      */
     protected boolean normalizeIncludesQueryString = false;
+
+    /**
+     * Does the page normalizer include the session id if it is being appended to the url in it's definition of
+     * pages?
+     */
+    protected boolean normalizeIncludesSessionID = false;
+
+    /**
+     * The session cookie name, needed for normalizeIncludesSessionID
+     */
+    private String sessionCookieName = "JSESSIONID";
 
     /**
      * How we create new documents
