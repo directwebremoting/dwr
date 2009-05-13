@@ -1467,9 +1467,19 @@ if (typeof window['dwr'] == 'undefined') {
         }
         var idname = dwr.engine.transport.iframe.getId(batch);
         batch.div = document.createElement("div");
-        // Add the div to the document first, otherwise IE 6 will ignore onload handler.
-        document.body.appendChild(batch.div);
-        batch.div.innerHTML = "<iframe src='javascript:void(0)' frameborder='0' style='width:0px;height:0px;border:0;' id='" + idname + "' name='" + idname + "' onload='dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");'></iframe>";
+        if (dwr.engine.isIE) {
+             document.body.appendChild(batch.div);
+             batch.div.innerHTML = "<iframe src='javascript:void(0)' frameborder='0' style='width:0px;height:0px;border:0;' id='" + idname + "' name='" + idname + "' onload='dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");'></iframe>";
+             batch.iframe = batch.div.firstChild;
+         } else {
+           batch.iframe = document.createElement("iframe");
+           batch.iframe.setAttribute("id", idname);
+           batch.iframe.setAttribute("name", idname);
+           batch.iframe.setAttribute("frameborder", "0");
+           batch.iframe.setAttribute("src", "about:blank");
+           batch.iframe.setAttribute("onload", "dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");");
+           document.body.appendChild(batch.iframe);
+        }
         batch.document = document;
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
@@ -1488,8 +1498,7 @@ if (typeof window['dwr'] == 'undefined') {
        * This is abstracted from send() because the same logic will do for htmlfile
        * @param {Object} batch
        */
-      beginLoader:function(batch, idname) {
-        batch.iframe = batch.document.getElementById(idname);
+      beginLoader:function(batch, idname) {        
         batch.iframe.batch = batch;
         batch.mode = batch.isPoll ? dwr.engine._ModeHtmlPoll : dwr.engine._ModeHtmlCall;
         if (batch.isPoll) dwr.engine._outstandingIFrames.push(batch.iframe);
