@@ -8,6 +8,7 @@
   <init>
     <creator id="none" class="org.directwebremoting.create.NullCreator"/>
     <creator id="new" class="org.directwebremoting.create.NewCreator"/>
+    <creator id="static" class="org.directwebremoting.create.StaticCreator"/>
     <creator id="pageflow" class="org.directwebremoting.beehive.PageFlowCreator"/>
     <creator id="spring" class="org.directwebremoting.spring.SpringCreator"/>
     <creator id="script" class="org.directwebremoting.create.ScriptedCreator"/>
