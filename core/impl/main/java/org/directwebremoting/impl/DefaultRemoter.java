@@ -737,7 +737,16 @@ public class DefaultRemoter implements Remoter
                     }
                     else
                     {
-                        return meth.invoke(obj, params);
+                        if (meth.getDeclaringClass().equals(obj.getClass()))
+                        {
+                            return meth.invoke(obj, params);
+                        }
+                        else
+                        {
+                            // A proxied method
+                            Method m = obj.getClass().getMethod(meth.getName(), meth.getParameterTypes());
+                            return m.invoke(obj, params);
+                        }
                     }
                 }
             };

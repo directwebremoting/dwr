@@ -16,6 +16,7 @@
 package org.directwebremoting.extend;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -310,7 +311,6 @@ public class Call
      */
     private void checkProxiedMethod(CreatorManager creatorManager)
     {
-        /*
         if (method != null)
         {
             Creator c = creatorManager.getCreator(scriptName, true);
@@ -333,28 +333,6 @@ public class Call
                 }
             }
         }
-        */
-
-        /*
-        try
-        {
-            if (method != null && advisedClass != null && advisedClass.isAssignableFrom(method.getDeclaringClass()))
-            {
-                Creator creator = creatorManager.getCreator(scriptName, true);
-                if (Proxy.isProxyClass(creator.getType()))
-                {
-                    Object target = creator.getInstance(); // Should be a singleton
-                    Method targetClassMethod = target.getClass().getMethod("getTargetClass");
-                    Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                    method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            // Probably not in Spring context so no Advised proxies at all
-        }
-        */
     }
 
     /* (non-Javadoc)
