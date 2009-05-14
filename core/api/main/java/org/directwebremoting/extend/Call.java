@@ -311,21 +311,17 @@ public class Call
      */
     private void checkProxiedMethod(CreatorManager creatorManager)
     {
-        if (method != null)
+        if ((method != null) && (advisedClass != null) && advisedClass.isAssignableFrom(method.getDeclaringClass()))
         {
             Creator c = creatorManager.getCreator(scriptName, true);
             if (Proxy.isProxyClass(c.getType()))
             {
                 try
                 {
-                    advisedClass = Class.forName("org.springframework.aop.framework.Advised");
-                    if (advisedClass.isAssignableFrom(method.getDeclaringClass()))
-                    {
-                        Object target = c.getInstance(); // Should be a singleton
-                        Method targetClassMethod = target.getClass().getMethod("getTargetClass");
-                        Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                        method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                    }
+                    Object target = c.getInstance(); // Should be a singleton
+                    Method targetClassMethod = target.getClass().getMethod("getTargetClass");
+                    Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
+                    method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
                 }
                 catch (Exception ex)
                 {
