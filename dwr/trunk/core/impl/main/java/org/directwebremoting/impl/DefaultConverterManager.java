@@ -617,10 +617,15 @@ public class DefaultConverterManager implements ConverterManager
 
         // Let's search it in paramType superClass
         converter = getConverterAssignableFrom(paramType.getSuperclass());
-        if (converter != null)
+        /* David Marginian - This is causing some issues so
+         * we are commenting it out for now.
+         *
+         * See: http://bugs.directwebremoting.org/bugs/browse/DWR-373
+         *
+         * if (converter != null && paramType.isAnonymousClass())
         {
             converters.put(lookup, converter);
-        }
+        }*/
 
         return converter;
     }
