@@ -1468,19 +1468,21 @@ if (typeof window['dwr'] == 'undefined') {
         var idname = dwr.engine.transport.iframe.getId(batch);
         batch.div = document.createElement("div");
         if (dwr.engine.isIE) {
-             document.body.appendChild(batch.div);
-             batch.div.innerHTML = "<iframe src='javascript:void(0)' frameborder='0' style='width:0px;height:0px;border:0;' id='" + idname + "' name='" + idname + "' onload='dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");'></iframe>";
-             batch.iframe = batch.div.firstChild;
-         } else {
-           batch.iframe = document.createElement("iframe");
-           batch.iframe.setAttribute("id", idname);
-           batch.iframe.setAttribute("name", idname);
-           batch.iframe.setAttribute("frameborder", "0");
-           batch.iframe.setAttribute("src", "about:blank");
-           batch.iframe.setAttribute("onload", "dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");");
-           document.body.appendChild(batch.iframe);
+          batch.div = document.createElement("div");
+          document.body.appendChild(batch.div);
+          batch.div.innerHTML = "<iframe src='about:blank' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
+          batch.iframe = batch.div.firstChild;
+        } else {
+          batch.iframe = document.createElement("iframe");
+          batch.iframe.setAttribute("id", idname);
+          batch.iframe.setAttribute("name", idname);
+          batch.iframe.setAttribute("frameborder", "0");
+          batch.iframe.setAttribute("src", "about:blank");
+          batch.iframe.setAttribute("style", "width:0px;height:0px;border:0;display:none;");
+          document.body.appendChild(batch.iframe);
         }
         batch.document = document;
+        batch.iframe.batch = batch;
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
 
@@ -1499,7 +1501,6 @@ if (typeof window['dwr'] == 'undefined') {
        * @param {Object} batch
        */
       beginLoader:function(batch, idname) {        
-        batch.iframe.batch = batch;
         batch.mode = batch.isPoll ? dwr.engine._ModeHtmlPoll : dwr.engine._ModeHtmlCall;
         if (batch.isPoll) dwr.engine._outstandingIFrames.push(batch.iframe);
         var request = dwr.engine.batch.constructRequest(batch, batch.httpMethod);
@@ -1510,21 +1511,26 @@ if (typeof window['dwr'] == 'undefined') {
           // TODO: On firefox we can now get the values of file fields, maybe we should use this
           // See http://soakedandsoaped.com/articles/read/firefox-3-native-ajax-file-upload
           // setting enctype via the DOM does not work in IE, create the form using innerHTML instead
-          var formHtml = "<form id='dwr-form' action='" + request.url + "' target='" + idname + "' style='display:none;' method='" + batch.httpMethod + "'";
-          if (batch.encType) formHtml += " enctype='" + batch.encType + "'";
-          formHtml += "></form>";
-          var div = batch.document.createElement("div");
-          div.innerHTML = formHtml;
-          batch.form = div.firstChild;
+          batch.form = batch.document.createElement("form");
+          batch.form.setAttribute("id", "dwr-form-" + idname);
+          batch.form.setAttribute("action", request.url);
+          batch.form.setAttribute("target", idname);
+          batch.form.setAttribute("style", "display:none");
+          batch.form.setAttribute("method", batch.httpMethod);
+          if (batch.encType) {
+            batch.form.setAttribute("encType", batch.encType);
+            batch.form.setAttribute("encoding", batch.encType);
+          }
           for (var prop in batch.map) {
             var value = batch.map[prop];
             if (typeof value != "function") {
               if (value && value.tagName && value.tagName.toLowerCase() == "input" && value.type && value.type.toLowerCase() == "file") {
                 // Since we can not set the value of a file object, we must post the actual file object
                 // that the user clicked browse on. We will put a clone in it's place.
-                var clone = value.cloneNode(true);
+            	var clone = value.cloneNode(true);
                 value.removeAttribute("id", prop);
                 value.setAttribute("name", prop);
+                value.style.display = "none";
                 value.parentNode.insertBefore(clone, value);
                 value.parentNode.removeChild(value);
                 batch.form.appendChild(value);
@@ -1573,6 +1579,7 @@ if (typeof window['dwr'] == 'undefined') {
          * @param {int} batchId
          */
         endIFrameResponse:function(batchId) {
+          dwr.engine.transport.iframe.loadingComplete(batchId);
           dwr.engine.batch.remove(dwr.engine._receivedBatch);
           dwr.engine._receivedBatch = null;
         }
