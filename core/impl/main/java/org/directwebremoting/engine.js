@@ -1457,10 +1457,16 @@ if (typeof window['dwr'] == 'undefined') {
      */
     iframe:{
       /**
+       * The default HTTP method to use
+       */
+      httpMethod:"POST",
+
+      /**
        * Setup a batch for transfer through IFrame
        * @param {Object} batch The batch to alter for IFrame transmit
        */
       send:function(batch) {
+        batch.httpMethod = dwr.engine.transport.iframe.httpMethod;
         if (batch.fileUpload) {
           batch.httpMethod = "POST";
           batch.encType = "multipart/form-data";
@@ -1527,7 +1533,7 @@ if (typeof window['dwr'] == 'undefined') {
               if (value && value.tagName && value.tagName.toLowerCase() == "input" && value.type && value.type.toLowerCase() == "file") {
                 // Since we can not set the value of a file object, we must post the actual file object
                 // that the user clicked browse on. We will put a clone in it's place.
-            	var clone = value.cloneNode(true);
+                var clone = value.cloneNode(true);
                 value.removeAttribute("id", prop);
                 value.setAttribute("name", prop);
                 value.style.display = "none";
