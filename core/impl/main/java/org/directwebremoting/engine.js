@@ -1472,7 +1472,6 @@ if (typeof window['dwr'] == 'undefined') {
           batch.encType = "multipart/form-data";
         }
         var idname = dwr.engine.transport.iframe.getId(batch);
-        batch.div = document.createElement("div");
         if (dwr.engine.isIE) {
           batch.div = document.createElement("div");
           document.body.appendChild(batch.div);
@@ -1592,16 +1591,12 @@ if (typeof window['dwr'] == 'undefined') {
       },
 
       remove:function(batch) {
-        // TODO: make it so that we don't need these if statements
-        if (batch.div) {
-            batch.div.parentNode.removeChild(batch.div);
-        }
-        if (batch.iframe) {
+        if (batch.iframe && batch.iframe.parentNode)
           batch.iframe.parentNode.removeChild(batch.iframe);
-        }
-        if (batch.form) {
+        if (batch.div && batch.div.parentNode)
+          batch.div.parentNode.removeChild(batch.div);
+        if (batch.form && batch.form.parentNode)
           batch.form.parentNode.removeChild(batch.form);
-        }
       }
 
       /*
