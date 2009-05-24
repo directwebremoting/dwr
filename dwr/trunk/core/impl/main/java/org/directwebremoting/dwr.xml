@@ -28,6 +28,7 @@
     <converter id="map" class="org.directwebremoting.convert.MapConverter"/>
     <converter id="collection" class="org.directwebremoting.convert.CollectionConverter"/>
     <converter id="date" class="org.directwebremoting.convert.DateConverter"/>
+    <converter id="jodaLocalDateTime" class="org.directwebremoting.convert.LocalDateTimeConverter"/>
     <converter id="dom" class="org.directwebremoting.convert.DOMConverter"/>
     <converter id="dom4j" class="org.directwebremoting.convert.DOM4JConverter"/>
     <converter id="jdom" class="org.directwebremoting.convert.JDOMConverter"/>
