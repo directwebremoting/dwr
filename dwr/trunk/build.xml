@@ -225,10 +225,11 @@
         </java>
         <copy todir="${target.root}/web/demo/widgets">
           <fileset dir="${dojo.temp}">
-            <include name="dojo/custom/**"/>
+          	<include name="dojo/dojox/**"/>
+            <include name="dojo/custom/**"/>          	
             <include name="dojo/dojo/dojo.js"/>
             <include name="dojo/dojo/resources/**"/>
-            <include name="dojo/dijit/themes/tundra/**"/>
+            <include name="dojo/dijit/themes/**"/>
           </fileset>
         </copy>
       </sequential>
