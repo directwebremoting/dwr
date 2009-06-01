@@ -1591,8 +1591,14 @@ if (typeof window['dwr'] == 'undefined') {
       },
 
       remove:function(batch) {
-        if (batch.iframe && batch.iframe.parentNode)
-          batch.iframe.parentNode.removeChild(batch.iframe);
+        if (batch.iframe && batch.iframe.parentNode) {
+          // Safari 3 and Chrome 1 will show endless loading spinner if removing 
+          // iframe during execution of iframe script, so we delay it a bit
+          setTimeout(function(){
+            batch.iframe.parentNode.removeChild(batch.iframe);
+            batch.iframe = null;
+          }, 100);
+        }
         if (batch.div && batch.div.parentNode)
           batch.div.parentNode.removeChild(batch.div);
         if (batch.form && batch.form.parentNode)
