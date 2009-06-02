@@ -122,6 +122,7 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/generated/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
+	<classpathentry kind="lib" path="core/impl/lib/joda-time-1.6.jar"/>
 	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
