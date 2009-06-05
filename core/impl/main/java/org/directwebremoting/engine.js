@@ -2223,6 +2223,13 @@ dwr.data = {
     if (!region.start) region.start = 0;
     if (!region.count) region.count = -1;
     if (!region.sort) region.sort = [];
+    else {
+    	for (var index = 0; index < region.sort.length; index++) {
+    		if (typeof region.sort[index].descending == "undefined") {
+    			region.sort[index].descending = false;
+    		}
+    	}
+    }
     if (!region.query) region.query = {};
 
     return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewRegion', [ this.storeId, region, this.listener, callbackObj ]);

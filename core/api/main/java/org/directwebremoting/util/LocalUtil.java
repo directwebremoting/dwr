@@ -31,6 +31,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1319,7 +1320,7 @@ public final class LocalUtil
         try
         {
             Method method = real.getMethod(getterName);
-            if (!type.isAssignableFrom(method.getReturnType()))
+            if (!type.isAssignableFrom(primitiveToWrapper(method.getReturnType())))
             {
                 log.debug("Expected that the type of " + real.getName() + "." + propertyName + " was " + type.getName() + " but found " + method.getReturnType().getName() + ".");
                 return null;
@@ -1386,6 +1387,22 @@ public final class LocalUtil
     }
 
     /**
+     * Converts the specified primitive Class object to its corresponding wrapper Class object.
+     *
+     * @param clazz the class to convert, may be null
+     * @return the wrapper class for cls or cls if cls is not a primitive. null if null input.
+     */
+    public static Class<?> primitiveToWrapper(Class<?> clazz)
+    {
+        Class<?> convertedClass = clazz;
+        if ((clazz != null) && (clazz.isPrimitive()))
+        {
+            convertedClass = primitiveWrapperMap.get(clazz);
+        }
+        return convertedClass;
+    }
+
+    /**
     /**
      * Get a timestamp for the earliest time that we know the JVM started
      * @return a JVM start time
@@ -1408,6 +1425,20 @@ public final class LocalUtil
         // Browsers are only accurate to the second
         long now = System.currentTimeMillis();
         CLASSLOAD_TIME = now - (now % 1000);
+    }
+
+    private static Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<Class<?>, Class<?>>();
+
+    static
+    {
+        primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
+        primitiveWrapperMap.put(Byte.TYPE, Byte.class);
+        primitiveWrapperMap.put(Character.TYPE, Character.class);
+        primitiveWrapperMap.put(Short.TYPE, Short.class);
+        primitiveWrapperMap.put(Integer.TYPE, Integer.class);
+        primitiveWrapperMap.put(Long.TYPE, Long.class);
+        primitiveWrapperMap.put(Double.TYPE, Double.class);
+        primitiveWrapperMap.put(Float.TYPE, Float.class);
     }
 
     /**

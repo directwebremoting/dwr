@@ -41,6 +41,25 @@ public class DefaultComparatorFactory<T> implements ComparatorFactory<T>
                 Object value1 = extractor.getValue(o1, property);
                 Object value2 = extractor.getValue(o2, property);
 
+                if (value1 == null)
+                {
+                    if (value2 == null)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    if (value2 == null)
+                    {
+                        return 1;
+                    }
+                }
+
                 Comparable comp1 = (Comparable) value1;
                 Comparable comp2 = (Comparable) value2;
 
