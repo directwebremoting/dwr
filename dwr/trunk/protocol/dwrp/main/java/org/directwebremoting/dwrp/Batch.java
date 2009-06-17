@@ -174,14 +174,15 @@ public class Batch
         BufferedReader in = null;
         try
         {
-            // I've had reports of data loss in Tomcat 5.0 that relate to this bug
-            //   http://issues.apache.org/bugzilla/show_bug.cgi?id=27447
-            // See mails to users@dwr.dev.java.net:
-            //   Subject: "Tomcat 5.x read-ahead problem"
-            //   From: CAKALIC, JAMES P [AG-Contractor/1000]
-            // It would be more normal to do the following:
-            // BufferedReader in = req.getReader();
-            in = new BufferedReader(new InputStreamReader(req.getInputStream()));
+            String charEncoding = req.getCharacterEncoding();
+            if (charEncoding != null)
+            {
+                in = new BufferedReader(new InputStreamReader(req.getInputStream(), charEncoding));
+            }
+            else
+            {
+                in = new BufferedReader(new InputStreamReader(req.getInputStream()));
+            }
 
             while (true)
             {
