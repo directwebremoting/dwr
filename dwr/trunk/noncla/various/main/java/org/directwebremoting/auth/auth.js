@@ -17,8 +17,8 @@
 /**
  * Declare an object to which we can add real functions.
  */
-if (typeof this['dwr'] == 'undefined') this.dwr = {};
-if (typeof dwr['auth'] == 'undefined') dwr.auth = {};
+if (typeof dwr == 'undefined') dwr = {};
+if (typeof dwr.auth == 'undefined') dwr.auth = {};
 
 //
 // Application-wide stuff
