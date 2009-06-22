@@ -106,7 +106,7 @@ public class DefaultRemoter implements Remoter
      */
     protected String createDojoProvides(String scriptName)
     {
-        return "if (window['dojo']) dojo.provide('dwr.interface." + scriptName + "');\n\n";
+        return "if (typeof dojo != 'undefined') dojo.provide('dwr.interface." + scriptName + "');\n\n";
     }
 
     /**
@@ -118,7 +118,7 @@ public class DefaultRemoter implements Remoter
      */
     protected String createClassDefinition(String scriptName)
     {
-        return "if (typeof this['" + scriptName + "'] == 'undefined') " + scriptName + " = {};\n\n";
+        return "if (typeof " + scriptName + " == 'undefined') " + scriptName + " = {};\n\n";
     }
 
     /**
@@ -340,23 +340,23 @@ public class DefaultRemoter implements Remoter
     protected String createDtoClassDefinition(NamedConverter namedConv)
     {
         // The desired output should follow this scheme:
-        // (1)  if (!('pkg1' in this)) this.pkg1 = {};
-        // (1)  if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
-        // (2)  if (typeof this.pkg1.pkg2.MyClass != 'function') {
-        // (2)    this.pkg1.pkg2.MyClass = function() {
+        // (1)  if (typeof pkg1 == 'undefined') pkg1 = {};
+        // (1)  if (typeof pkg1.pkg2 == 'undefined') pkg1.pkg2 = {};
+        // (2)  if (typeof pkg1.pkg2.MyClass != 'function') {
+        // (2)    pkg1.pkg2.MyClass = function() {
         // (3)      this.myProp = <initial value>;
         // (3)      ...
         // (3)    }
-        // (4)    this.pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
-        // (5)    this.pkg1.pkg2.MyClass.$dwrClassMembers = {};
-        // (6)    this.pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {}; // object is placeholder for additional info in the future and also evals to true
+        // (4)    pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
+        // (5)    pkg1.pkg2.MyClass.$dwrClassMembers = {};
+        // (6)    pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {}; // object is placeholder for additional info in the future and also evals to true
         // (6)    ...
-        // (7)    this.pkg1.pkg2.MyClass.createFromMap = function(map) {
+        // (7)    pkg1.pkg2.MyClass.createFromMap = function(map) {
         // (7)      var obj = new this(); // this = MyClass = constructor function
         // (8)      for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
         // (8)      return obj;
         // (8)    }
-        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
+        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = pkg1.pkg2.MyClass;
         // (10)  }
         String jsClassName = namedConv.getJavascript();
         try
@@ -364,28 +364,27 @@ public class DefaultRemoter implements Remoter
             StringBuilder buf = new StringBuilder();
             String[] parts = jsClassName.split("\\.");
 
-            // Generate (1): if (!('pkg2' in this.pkg1)) this.pkg1.pkg2 = {};
+            // Generate (1): if (typeof pkg1.pkg2 == 'undefined') pkg1.pkg2 = {};
             String path = "";
             for (int i = 0; i < parts.length-1; i++)
             {
-                String leaf = parts[i];
-                buf.append("if (!('");
-                buf.append(leaf);
-                buf.append("' in this");
+                if (i > 0)
+                {
+                    path += ".";
+                }
+                path += parts[i];
+                buf.append("if (typeof ");
                 buf.append(path);
-                buf.append(")) this");
+                buf.append(" == 'undefined') ");
                 buf.append(path);
-                buf.append(".");
-                buf.append(leaf);
                 buf.append(" = {};\n");
-                path += "." + leaf;
             }
 
-            // Generate (2): if (typeof this.pkg1.pkg2.MyClass != 'function') { this.pkg1.pkg2.MyClass = function() {
-            buf.append("if (typeof this.");
+            // Generate (2): if (typeof pkg1.pkg2.MyClass != 'function') { pkg1.pkg2.MyClass = function() {
+            buf.append("if (typeof ");
             buf.append(jsClassName);
             buf.append(" != 'function') {\n");
-            buf.append("  this.");
+            buf.append("  ");
             buf.append(jsClassName);
             buf.append(" = function() {\n");
 
@@ -425,31 +424,31 @@ public class DefaultRemoter implements Remoter
 
             buf.append("  }\n");
 
-            // Generate (4): this.pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
-            buf.append("  this.");
+            // Generate (4): pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
+            buf.append("  ");
             buf.append(jsClassName);
             buf.append(".$dwrClassName = '");
             buf.append(jsClassName);
             buf.append("';\n");
 
-            // Generate (5): this.pkg1.pkg2.MyClass.$dwrClassMembers = {};
-            buf.append("  this.");
+            // Generate (5): pkg1.pkg2.MyClass.$dwrClassMembers = {};
+            buf.append("  ");
             buf.append(jsClassName);
             buf.append(".$dwrClassMembers = {};\n");
 
-            // Generate (6): this.pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {};
+            // Generate (6): pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {};
             for (Entry<String, Property> entry : properties.entrySet())
             {
                 String name = entry.getKey();
-                buf.append("  this.");
+                buf.append("  ");
                 buf.append(jsClassName);
                 buf.append(".$dwrClassMembers.");
                 buf.append(name);
                 buf.append(" = {};\n");
             }
 
-            // Generate (7): this.pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this.pkg1.pkg2.MyClass();
-            buf.append("  this.");
+            // Generate (7): pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this();
+            buf.append("  ");
             buf.append(jsClassName);
             buf.append(".createFromMap = function(map) {\n");
             buf.append("    var obj = new this();\n");
@@ -459,10 +458,10 @@ public class DefaultRemoter implements Remoter
             buf.append("    return obj;\n");
             buf.append("  }\n");
 
-            // Generate (9): dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = this.pkg1.pkg2.MyClass;
+            // Generate (9): dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = pkg1.pkg2.MyClass;
             buf.append("  dwr.engine._mappedClasses['");
             buf.append(jsClassName);
-            buf.append("'] = this.");
+            buf.append("'] = ");
             buf.append(jsClassName);
             buf.append(";\n");
 

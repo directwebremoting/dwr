@@ -17,13 +17,11 @@
 /**
  * The DWR object is also defined by dwr.util etc.
  */
-if (window['dojo']) dojo.provide('dwr.engine');
-if (typeof window['dwr'] == 'undefined') {
-  dwr = { };
-}
+if (typeof dojo != 'undefined') dojo.provide('dwr.engine');
+if (typeof dwr == 'undefined') dwr = {};
 
 (function() {
-  dwr.engine = { };
+  dwr.engine = {};
 
   /**
     * Set an alternative error handler from the default alert box.
@@ -381,7 +379,7 @@ if (typeof window['dwr'] == 'undefined') {
    * (dwrClassName -> constructor function)
    * This could have been pre-created by interface scripts, so we need to check.
    */
-  if (typeof dwr.engine['_mappedClasses'] == 'undefined') {
+  if (typeof dwr.engine._mappedClasses == 'undefined') {
     dwr.engine._mappedClasses = {};
   }
 
