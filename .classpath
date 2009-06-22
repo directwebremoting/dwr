@@ -11,7 +11,7 @@
 			<attribute name="javadoc_location" value="http://java.sun.com/products/servlet/2.5/docs/servlet-2_5-mr2/"/>
 		</attributes>
 	</classpathentry>
-    <classpathentry exported="true" kind="lib" path="core/api/lib/jsp-api-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="core/api/lib/jsp-api-2.0.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/commons-fileupload-1.2.1.jar" sourcepath="/librarydwr/source/commons-fileupload-1.2.1-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-fileupload-1.2.1-javadoc.jar!/"/>
@@ -43,6 +43,7 @@
 	<classpathentry kind="lib" path="core/api/lib/tomcat-juli.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/annotations-api.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/api/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/api/test/java"/>
 	<classpathentry kind="lib" path="core/impl/lib/bsf-2.4.0.jar" sourcepath="/librarydwr/source/bsf-src-2.4.0.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/source/bsf-src-2.4.0.zip!/bsf-2.4.0/docs/api"/>
@@ -73,7 +74,7 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/legacy/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/dwrp/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/json/main/java"/>
-    <classpathentry kind="src" output="target/eclipse/test/classes" path="protocol/json/test/java"/>
+	<classpathentry kind="src" output="target/eclipse/test/classes" path="protocol/json/test/java"/>
 	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-api-0.9.20080221.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
 	<classpathentry kind="lib" path="protocol/bayeux/lib/cometd-bayeux-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/bayeux/main/java"/>
