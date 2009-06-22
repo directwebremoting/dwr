@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -99,10 +100,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
                 String testValue = entry.getValue();
 
                 String realValue = LocalUtil.getProperty(pojo, testProperty, String.class);
-                if (!testValue.equals(realValue))
-                {
-                    return false;
-                }
+                return testPattern(testValue, realValue);
             }
         }
         catch (Exception ex)
@@ -112,6 +110,26 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         }
 
         return true;
+    }
+
+    protected static boolean testPattern(String pattern, String value)
+    {
+        boolean result = pattern.equals(value);
+        if (!result && LocalUtil.hasText(value))
+        {
+            String javaPattern = pattern;
+            if (pattern.indexOf('?') > 0)
+            {
+                javaPattern = javaPattern.replace("?", ".{1}");
+            }
+            if (pattern.indexOf('*') > 0)
+            {
+                javaPattern = javaPattern.replace("*", ".*");
+            }
+            result = Pattern.matches(javaPattern, value);
+
+        }
+        return result;
     }
 
     /**
