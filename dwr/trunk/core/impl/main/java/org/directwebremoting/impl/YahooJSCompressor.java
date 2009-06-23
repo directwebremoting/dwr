@@ -30,7 +30,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 /**
  * JavaScript Compression Implementation using the YUI Compressor.
- * 
+ *
  * @author David Marginian [david at butterdev dot com]
  */
 public class YahooJSCompressor implements Compressor
@@ -45,11 +45,24 @@ public class YahooJSCompressor implements Compressor
 
     /**
      * Constructor: YahooJSCompressor using the property map passed in.
-     * 
+     *
      * @param specifiedCompressorParameters
      */
-    public YahooJSCompressor(Map<String, Object> specifiedCompressorParameters)
+    public YahooJSCompressor(Map<String, Object> specifiedCompressorParameters) throws InstantiationException
     {
+        try
+        {
+            new JavaScriptCompressor(new StringReader(""), new YahooJSErrorReporter());
+        }
+        catch (NoClassDefFoundError ncdf)
+        {
+            throw new InstantiationException("com.yahoo.platform.yui.compressor.JavaScriptCompressor is not available, assuming Yahoo Compressor is not here from yuicompressor.jar ");
+        }
+        catch (Exception e)
+        {
+            // We don't care about this!  The instansiation above is just to ensure that the Yahoo compressor is
+            // on the classpath.  If the actual test compression fails we don't need to do anything.
+        }
         setCompressorParameters(specifiedCompressorParameters);
     }
 
@@ -70,11 +83,11 @@ public class YahooJSCompressor implements Compressor
 
     /**
      * Builds the compressor parameter map using the parameters specified or
-     * the default parameters.  
-     * 
-     * @param configuredCompressorParameters - 
+     * the default parameters.
+     *
+     * @param configuredCompressorParameters -
      *   Parameters specified by the applications configuration. We still need
-     *   to validate these parameters and use defaults if all of the parameters 
+     *   to validate these parameters and use defaults if all of the parameters
      *   were not specified.
      */
     private void setCompressorParameters(Map<String, Object> configuredCompressorParameters)
@@ -138,9 +151,9 @@ public class YahooJSCompressor implements Compressor
 
     protected static final Logger log = Logger.getLogger(YahooJSCompressor.class);
 
-    private Map<String, Object> compressorParameters = new HashMap<String, Object>();
+    private final Map<String, Object> compressorParameters = new HashMap<String, Object>();
 
-    // Fields representing the parameters that can be configured for this Compressor.    
+    // Fields representing the parameters that can be configured for this Compressor.
     // Obfuscates the script
     private static final String PARAMETER_MUNGE = "munge";
 
