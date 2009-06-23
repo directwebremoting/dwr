@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.ItemUpdate;
 import org.directwebremoting.io.MatchedItems;
+import org.directwebremoting.io.QueryOptions;
 import org.directwebremoting.io.SortCriterion;
 import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.io.StoreRegion;
@@ -79,7 +80,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
     public MapStoreProvider(Map<String, T> map, Class<T> type, List<SortCriterion> defaultCriteria, ComparatorFactory<T> comparatorFactory)
     {
         super(type);
-        this.baseRegion = new StoreRegion(0, -1, defaultCriteria, null);
+        this.baseRegion = new StoreRegion(0, -1, defaultCriteria, null, new QueryOptions());
         this.comparatorFactory = comparatorFactory;
 
         Index index = new Index(baseRegion, map);
@@ -170,29 +171,39 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
             T t = getObject(entry.getKey());
             Collection<String> changedAttributes = new HashSet<String>();
 
-            for (ItemUpdate itemUpdate : changes)
+            for (ItemUpdate itemUpdate : entry.getValue())
             {
                 String attribute = itemUpdate.getAttribute();
-                Class<?> convertTo = LocalUtil.getPropertyType(t.getClass(), attribute);
-                Object value = convert(itemUpdate.getNewValue(), convertTo);
+                if (attribute.equals("$delete"))
+                {
+                    put(itemUpdate.getItemId(), (T) null);
+                }
+                else
+                {
+                    Class<?> convertTo = LocalUtil.getPropertyType(t.getClass(), attribute);
+                    Object value = convert(itemUpdate.getNewValue(), convertTo);
 
-                try
-                {
-                    LocalUtil.setProperty(t, attribute, value);
-                    changedAttributes.add(attribute);
-                }
-                catch (SecurityException ex)
-                {
-                    throw ex;
-                }
-                catch (Exception ex)
-                {
-                    throw new SecurityException(ex);
+                    try
+                    {
+                        LocalUtil.setProperty(t, attribute, value);
+                        changedAttributes.add(attribute);
+                    }
+                    catch (SecurityException ex)
+                    {
+                        throw ex;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SecurityException(ex);
+                    }
                 }
             }
 
-            Item item = new Item(entry.getKey(), t);
-            fireItemChanged(item, changedAttributes);
+            if (!changedAttributes.isEmpty())
+            {
+                Item item = new Item(entry.getKey(), t);
+                fireItemChanged(item, changedAttributes);
+            }
         }
     }
 
@@ -307,7 +318,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         if (region.getSort() == null)
         {
             // we need to change to the default sorting
-            region = new StoreRegion(region.getStart(), region.getCount(), baseRegion.getSort(), region.getQuery());
+            region = new StoreRegion(region.getStart(), region.getCount(), baseRegion.getSort(), region.getQuery(), region.getQueryOptions());
         }
 
         Index index = data.get(region);
@@ -347,6 +358,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
             sort = baseRegion.getSort();
             query = baseRegion.getQuery();
             sortedData = createEmptySortedData();
+            options = baseRegion.getQueryOptions();
 
             for (Map.Entry<String, T> entry : map.entrySet())
             {
@@ -363,6 +375,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         {
             sort = region.getSort();
             query = region.getQuery();
+            options = region.getQueryOptions();
             sortedData = createEmptySortedData();
 
             for (Pair<String, T> pair : original.sortedData)
@@ -473,7 +486,7 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
          */
         private boolean isRelevant(T t)
         {
-            return query == null || query.isEmpty() || passesFilter(t, query);
+            return query == null || query.isEmpty() || passesFilter(t, query, options);
         }
 
         /* (non-Javadoc)
@@ -482,7 +495,54 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         @Override
         public String toString()
         {
-            return "Map.Index[sortedData.size=" + sortedData.size() + ",index.size=" + index.size() + ",sort=" + sort + ",query=" + query + "]";
+            return "Map.Index[sortedData.size=" + sortedData.size() + ",index.size=" + index.size() + ",sort=" + sort + ",query=" + query + ", options=" + options + "]";
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (obj == this)
+            {
+                return true;
+            }
+
+            if (!this.getClass().equals(obj.getClass()))
+            {
+                return false;
+            }
+
+            Index that = (Index) obj;
+            if (!LocalUtil.equals(this.options, that.options))
+            {
+                return false;
+            }
+
+            if (!LocalUtil.equals(this.query, that.query))
+            {
+                return false;
+            }
+
+            if (!LocalUtil.equals(this.sort, that.sort))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int hash = 99211;
+            hash += sort != null ? sort.hashCode() : 42835;
+            hash += query != null ? query.hashCode() : 52339;
+            hash += options != null ? options.hashCode() : 39832;
+            return hash;
         }
 
         /**
@@ -504,6 +564,12 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
          * The way we are filtering the data
          */
         private final Map<String, String> query;
+
+        /**
+         * Criteria to filter the query matches.
+         */
+        private final QueryOptions options;
+
     }
 
     /* (non-Javadoc)

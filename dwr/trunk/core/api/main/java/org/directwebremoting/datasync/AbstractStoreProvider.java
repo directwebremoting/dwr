@@ -33,6 +33,7 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.io.Item;
 import org.directwebremoting.io.MatchedItems;
+import org.directwebremoting.io.QueryOptions;
 import org.directwebremoting.io.RawData;
 import org.directwebremoting.io.StoreChangeListener;
 import org.directwebremoting.util.LocalUtil;
@@ -85,7 +86,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
      * @param query The set of property/matches to test the value against
      * @return True if the value contains properties that match the filter
      */
-    protected static boolean passesFilter(Object pojo, Map<String, String> query)
+    protected static boolean passesFilter(Object pojo, Map<String, String> query, QueryOptions options)
     {
         if (query == null || query.isEmpty())
         {
@@ -100,7 +101,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
                 String testValue = entry.getValue();
 
                 String realValue = LocalUtil.getProperty(pojo, testProperty, String.class);
-                return testPattern(testValue, realValue);
+                return testPattern(testValue, realValue, options.isIgnoreCase());
             }
         }
         catch (Exception ex)
@@ -112,7 +113,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         return true;
     }
 
-    protected static boolean testPattern(String pattern, String value)
+    protected static boolean testPattern(String pattern, String value, boolean caseInsensitive)
     {
         boolean result = pattern.equals(value);
         if (!result && LocalUtil.hasText(value))
@@ -126,8 +127,15 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
             {
                 javaPattern = javaPattern.replace("*", ".*");
             }
-            result = Pattern.matches(javaPattern, value);
+            Pattern p = caseInsensitive
+                ? Pattern.compile(javaPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
+                : Pattern.compile(javaPattern);
+            result = p.matcher(value).matches();
 
+        }
+        if (log.isDebugEnabled())
+        {
+            log.debug("Testing [" + value + "] against pattern [" + pattern + "]: " + result);
         }
         return result;
     }
@@ -196,7 +204,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
      */
     protected Object convert(RawData rawData, Class<?> toType)
     {
-        if (rawData == null)
+        if ((rawData == null) || (toType == null))
         {
             return null;
         }
@@ -317,7 +325,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
         if (listeners != null)
         {
-            log.debug("Firing item added to " + listeners.size() + " listeners. Changed: " + itemId);
+            log.debug("Firing item removed to " + listeners.size() + " listeners. Changed: " + itemId);
 
             for (StoreChangeListener<T> listener : listeners)
             {

@@ -143,8 +143,11 @@
     <convert converter="proxyFunction" match="org.directwebremoting.io.JavascriptFunction"/>
     <convert converter="proxyObject" match="org.directwebremoting.io.JavascriptObject"/>
     <convert converter="raw" match="org.directwebremoting.io.RawData"/>
+    <convert converter="bean" match="org.directwebremoting.io.QueryOptions">
+      <param name="constructor" value="boolean deep, boolean ignoreCase" />
+    </convert>
     <convert converter="bean" match="org.directwebremoting.io.StoreRegion">
-      <param name="constructor" value="int start, int count, java.util.List sort, java.util.Map query"/>
+      <param name="constructor" value="int start, int count, java.util.List sort, java.util.Map query, org.directwebremoting.io.QueryOptions queryOptions"/>
     </convert>
     <convert converter="proxyInterface" match="org.directwebremoting.io.StoreChangeListener"/>
     <convert converter="null" match="org.directwebremoting.datasync.StoreProvider"/>

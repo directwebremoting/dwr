@@ -47,7 +47,7 @@ public final class StoreRegion
         this.count = -1;
         this.sort = new ArrayList<SortCriterion>();
         this.query = new HashMap<String, String>();
-        this.queryOptions = new HashMap<String, String>();
+        this.queryOptions = new QueryOptions();
     }
 
     /**
@@ -57,10 +57,11 @@ public final class StoreRegion
      * @param sort The sort criteria to be used before the range is extracted
      * @param query The filter criteria to be used before the range is extracted
      */
-    public StoreRegion(int start, int count, List<SortCriterion> sort, Map<String, String> query)
+    public StoreRegion(int start, int count, List<SortCriterion> sort, Map<String, String> query, QueryOptions queryOptions)
     {
         this.start = start;
         this.count = count;
+        this.queryOptions = queryOptions == null ? new QueryOptions() : queryOptions;
 
         this.sort = new ArrayList<SortCriterion>();
         if (sort != null)
@@ -83,7 +84,6 @@ public final class StoreRegion
             }
         }
 
-        this.queryOptions = new HashMap<String, String>();
     }
 
     /**
@@ -157,26 +157,22 @@ public final class StoreRegion
     }
 
     /**
-     * DWR does not support query options, however they are sometimes sent by
-     * the client, and maybe we will support them one day.
+     * Partially supported by DWR (ignoreCase attribute only).
+     *
      * @return Filter criteria to be used before the range is extracted.
      */
-    public Map<String, String> getQueryOptions()
+    public QueryOptions getQueryOptions()
     {
-        return Collections.unmodifiableMap(queryOptions);
+        return queryOptions;
     }
 
     /**
      * @deprecated For DWR internal use only. Use constructor injection
      */
     @Deprecated
-    public void setQueryOptions(Map<String, String> queryOptions)
+    public void setQueryOptions(QueryOptions queryOptions)
     {
-        this.queryOptions.clear();
-        if (queryOptions != null)
-        {
-            this.queryOptions.putAll(queryOptions);
-        }
+        throw new IllegalAccessError();
     }
 
     /* (non-Javadoc)
@@ -185,7 +181,7 @@ public final class StoreRegion
     @Override
     public String toString()
     {
-        return "StoreRegion[start=" + start + ",count=" + count + ",sort=" + sort + ",query=" + query + "]";
+        return "StoreRegion[start=" + start + ",count=" + count + ",sort=" + sort + ",query=" + query + ", options=" + queryOptions + "]";
     }
 
     /* (non-Javadoc)
@@ -197,6 +193,7 @@ public final class StoreRegion
         int hash = 342;
         hash += sort != null ? sort.hashCode() : 4835;
         hash += query != null ? query.hashCode() : 5239;
+        hash += queryOptions != null ? queryOptions.hashCode() : 3982;
         return hash;
     }
 
@@ -233,6 +230,10 @@ public final class StoreRegion
             return false;
         }
 
+        if (!LocalUtil.equals(this.queryOptions, that.queryOptions))
+        {
+            return false;
+        }
         // Testing for equality within search queries is complex because
         // { name:"*" } is equivalent to {}.
 
@@ -299,5 +300,6 @@ public final class StoreRegion
     /**
      * @see #getQueryOptions
      */
-    private final Map<String, String> queryOptions;
+    private final QueryOptions queryOptions;
+
 }

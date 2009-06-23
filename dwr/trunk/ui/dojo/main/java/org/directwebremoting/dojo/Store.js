@@ -86,7 +86,12 @@ dojo.declare("dwr.data.Store", null, {
         // attribute: The attribute to look for in the data referenced by id
         // defaultValue: The value to return if the attribute could not be found
         var entry = this._entries[id];
-        if (entry == null) throw new Error("non item");
+        if (entry == null) {
+        	entry = this._updated[id];
+        	if (entry == null) {
+        		throw new Error("non item passed to _getAttributeValue() from [" + arguments.callee.caller + "]: " + id);
+        	}
+        }
         if (attribute == "$id") return entry.$id;
         if (attribute == "$label") return entry.$label;
         var value = entry.updates[attribute];
@@ -155,15 +160,22 @@ dojo.declare("dwr.data.Store", null, {
         var store = this;
         var scope = request.scope || dojo.global;
 
-        if (request.queryOptions != null) {
-            console.log("queryOptions is not currently supported by DwrStore");
+        var qOptions = request.queryOptions ? request.queryOptions : {deep: false, ignoreCase: false};
+
+        if (typeof qOptions.deep == "undefined") {
+        	qOptions.deep = false;
+        }
+
+        if (typeof qOptions.ignoreCase == "undefined") {
+        	qOptions.ignoreCase = false;
         }
 
         var region = {
             count: request.count,
             start: request.start,
             query: request.query,
-            sort: request.sort
+            sort: request.sort,
+            queryOptions:qOptions
         };
 
         var callbackObj = {
@@ -232,7 +244,11 @@ dojo.declare("dwr.data.Store", null, {
         // Summary: See `dojo.data.api.Read.getLabel`
         // org.directwebremoting.io.Item exposes Object#toString as a label on
         // our items if the data implements ExposeToStringToTheOutside.
-        return this._getAttributeValue(id, "$label");
+        try {
+        	return this._getAttributeValue(id, "$label");
+        } catch (err) {
+        	return "Item was deleted";
+        }
     },
 
     getLabelAttributes: function(/*item*/ id) {
@@ -244,7 +260,11 @@ dojo.declare("dwr.data.Store", null, {
     getIdentity: function(/*item*/ id) {
         // Summary: See `dojo.data.api.Identity.getIdentity`
         // We could just return id, however we should be checking validity, which this does
-        return this._getAttributeValue(id, "$id");
+        try {
+        	return this._getAttributeValue(id, "$id");
+        } catch (error) {
+        	return null;
+        }
     },
 
     getIdentityAttributes: function(/*item*/ id) {
@@ -301,10 +321,11 @@ dojo.declare("dwr.data.Store", null, {
 
     itemRemoved: function(/*StoreProvider*/ source, /*string*/ itemId) {
         // Summary: See `dwr.data.StoreChangeListener.itemRemoved`
+    	var label = this.getLabel(itemId);
         delete this._entries[itemId];
         delete this._updated[itemId];
         if (dojo.isFunction(this.onDelete)) {
-            console.log("Firing onDelete(", itemId, ")");
+        	if (console && console.log) console.log("Firing onDelete(", itemId, ",", label, ")");
             this.onDelete(itemId);
         }
     },
@@ -313,7 +334,7 @@ dojo.declare("dwr.data.Store", null, {
         // Summary: See `dwr.data.StoreChangeListener.itemAdded`
         this._importItem(item);
         if (dojo.isFunction(this.onNew)) {
-            console.log("Firing onNew(", item.itemId, ", null)");
+        	if (console && console.log) console.log("Firing onNew(", item.itemId, ", null)");
             this.onNew(item.itemId, null);
         }
     },
@@ -321,14 +342,14 @@ dojo.declare("dwr.data.Store", null, {
     itemChanged: function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
         // Summary: See `dwr.data.StoreChangeListener.itemChanged`
         if (this._updated[item.itemId]) {
-            console.log("Warning server changes to " + item.itemId + " override local changes");
+        	if (console && console.log) console.log("Warning server changes to " + item.itemId + " override local changes");
         }
         this._importItem(item);
         var store = this;
         if (dojo.isFunction(this.onSet)) {
             dojo.forEach(changedAttributes, function(attribute) {
                 var oldValue = store._getAttributeValue(item.itemId, attribute);
-                console.log("Firing onSet(", item.itemId, attribute, oldValue, item.data[attribute], ")");
+                if (console && console.log) console.log("Firing onSet(", item.itemId, attribute, oldValue, item.data[attribute], ")");
                 store.onSet(item.itemId, attribute, oldValue, item.data[attribute]);
             });
         }
@@ -336,22 +357,24 @@ dojo.declare("dwr.data.Store", null, {
 
     onSet: function(/*item*/ item, /*string*/ attribute, /*object|array*/ oldValue, /*object|array*/ newValue) {
         // Summary: See `dojo.data.api.Notification.onSet`
-        console.log("Original onSet function used");
+        if (console && console.log) console.log("Original onSet function called");
     },
 
     onNew: function(/*item*/ newItem, /*object?*/ parentInfo) {
         // Summary: See `dojo.data.api.Notification.onNew`
+    	if (console && console.log) console.log("Original onNew function called");
     },
 
     onDelete:function(/*item*/ deletedItem) {
         // Summary: See `dojo.data.api.Notification.onDelete`
+    	if (console && console.log) console.log("Original onDelete function called");
     },
 
     newItem: function(/*object?*/ data, /*object?*/ parentInfo) {
         // Summary: See `dojo.data.api.Write.newItem`
         var entry = {
             itemId:-1,
-            $id:DwrStore.prototype.autoIdPrefix + this._nextLocalId,
+            $id:dwr.data.Store.prototype.autoIdPrefix + this._nextLocalId,
             data:data,
             $label:"",
             isDeleted:false,
@@ -372,7 +395,7 @@ dojo.declare("dwr.data.Store", null, {
     deleteItem: function(/*item*/ item) {
         // Summary: See `dojo.data.api.Write.onDelete`
         var entry = this._entries[item];
-        if (entry == null) throw new Error("non item passed to deleteItem()");
+        if (entry == null) throw new Error("non item passed to deleteItem(): " + item);
         delete this._entries[entry.$id];
         entry.isDeleted = true;
         this._updated[entry.$id] = entry;
@@ -432,18 +455,22 @@ dojo.declare("dwr.data.Store", null, {
     save: function(/*object*/ keywordArgs) {
         // Summary: See `dojo.data.api.Write.save`
         var entriesToSend = [];
-        for (var itemId in this._updated) {
-            var entry = this._updated[itemId];
+        var sentEntries = this._updated;
+        this._updated = {};
+        for (var itemId in sentEntries) {
+            var entry = sentEntries[itemId];
             if (entry.isDeleted) {
                 entriesToSend.push({
                     itemId:itemId,
-                    attribute:"$delete"
+                    attribute:"$delete",
+                    newValue:null
                 });
             }
             if (entry.isNew) {
                 entriesToSend.push({
                     itemId:itemId,
-                    attribute:"$create"
+                    attribute:"$create",
+                    newValue:null
                 });
             }
             else {
@@ -456,12 +483,20 @@ dojo.declare("dwr.data.Store", null, {
                 }
             }
         }
-
-        this.dwrCache.update(entriesToSend, {
-            callback:keywordArgs.onComplete,
-            exceptionHandler:function(msg, ex) { keywordArgs.onError(ex); },
-            scope:keywordArgs.scope
-        });
+        if (entriesToSend.length > 0) {
+        	if (console && console.log) console.log("Sending: " + dwr.util.toDescriptiveString(entriesToSend, 3));
+	        this.dwrCache.update(entriesToSend, {
+	            callback: function() {
+	        		sentEntries = null;
+	        		if (keywordArgs.onComplete) keywordArgs.onComplete();
+	        	}, exceptionHandler: function(msg, ex) {
+	        		this._updated = dojo.mixin(this._updated, sentEntries); 
+	        		if (keywordArgs.onError) keywordArgs.onError(ex);
+	    		}, scope: keywordArgs.scope
+	        });
+        } else {
+        	if (console && console.log) console.log("No updates to process");
+        }
     },
 
     revert: function() {
