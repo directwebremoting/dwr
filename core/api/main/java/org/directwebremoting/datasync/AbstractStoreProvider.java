@@ -119,23 +119,28 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         if (!result && LocalUtil.hasText(value))
         {
             String javaPattern = pattern;
+
             if (pattern.indexOf('?') > 0)
             {
                 javaPattern = javaPattern.replace("?", ".{1}");
             }
+
             if (pattern.indexOf('*') > 0)
             {
                 javaPattern = javaPattern.replace("*", ".*");
             }
-            Pattern p = caseInsensitive
+
+            if (LocalUtil.hasText(pattern))
+            {
+                Pattern p = caseInsensitive
                 ? Pattern.compile(javaPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
                 : Pattern.compile(javaPattern);
-            result = p.matcher(value).matches();
-
-        }
-        if (log.isDebugEnabled())
-        {
-            log.debug("Testing [" + value + "] against pattern [" + pattern + "]: " + result);
+                result = p.matcher(value).matches();
+            }
+            else
+            {
+                result = true;
+            }
         }
         return result;
     }

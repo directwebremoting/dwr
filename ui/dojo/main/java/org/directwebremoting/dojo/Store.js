@@ -171,8 +171,8 @@ dojo.declare("dwr.data.Store", null, {
         }
 
         var region = {
-            count: request.count,
-            start: request.start,
+            count: Number.POSITIVE_INFINITY == request.count ? -1 : request.count,
+            start: Number.POSITIVE_INFINITY == request.start ? 0 : request.start,
             query: request.query,
             sort: request.sort,
             queryOptions:qOptions
@@ -315,6 +315,7 @@ dojo.declare("dwr.data.Store", null, {
         item.isDeleted = false;
         item.isDirty = false;
         item.$id = item.itemId;
+        item.$label = item.label;
         this._entries[item.$id] = item;
         delete this._updated[item.$id];
     },
