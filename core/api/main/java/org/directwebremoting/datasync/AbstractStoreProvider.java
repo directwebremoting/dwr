@@ -237,10 +237,31 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     }
 
     /**
+     * Starts listening for a new itemId.
      *
-     * @param listener
-     * @param itemIds
+     * @param listener the client store that will be notifed
+     * @param itemId the new item that is being monitored
      */
+    protected synchronized void addWatched(StoreChangeListener<T> listener, String itemId)
+    {
+        Collection<String> ids = watched.get(listener);
+        Collection<StoreChangeListener<T>> listeners = watchers.get(itemId);
+
+        if (ids == null)
+        {
+            ids = new HashSet<String>();
+            watched.put(listener, ids);
+        }
+        ids.add(itemId);
+
+        if (listeners == null)
+        {
+            listeners = new HashSet<StoreChangeListener<T>>();
+            watchers.put(itemId, listeners);
+        }
+        listeners.add(listener);
+    }
+
     protected synchronized void addWatchedSet(StoreChangeListener<T> listener, Collection<String> itemIds)
     {
         if (itemIds == null || itemIds.isEmpty())
@@ -285,6 +306,20 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
             }
 
             watched.remove(listener);
+        }
+    }
+
+    /**
+     * If called all listeners (clients) are informed when a new item
+     * is added to the store.
+     *
+     * @param itemId the new item
+     */
+    protected synchronized void updateWatcherSets(String itemId)
+    {
+        for (StoreChangeListener<T> listener : watched.keySet())
+        {
+            addWatched(listener, itemId);
         }
     }
 

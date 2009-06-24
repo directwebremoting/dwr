@@ -141,9 +141,14 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
      */
     public synchronized void put(String itemId, T value)
     {
+        put(itemId, value, true);
+    }
+
+    public synchronized void put(String itemId, T value, boolean notify)
+    {
         for (Index index : data.values())
         {
-            index.put(itemId, value, true);
+            index.put(itemId, value, notify);
         }
     }
 
@@ -169,7 +174,21 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
         for (Map.Entry<String, List<ItemUpdate>> entry : groupedChanges.entrySet())
         {
             T t = getObject(entry.getKey());
+            boolean newItem = t == null;
             Collection<String> changedAttributes = new HashSet<String>();
+            if (newItem)
+            {
+                try
+                {
+                    t = type.newInstance();
+                    put(entry.getKey(), t, false);
+                    updateWatcherSets(entry.getKey());
+                }
+                catch (Exception ex)
+                {
+                    throw new SecurityException(ex);
+                }
+            }
 
             for (ItemUpdate itemUpdate : entry.getValue())
             {
@@ -180,11 +199,10 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                 }
                 else
                 {
-                    Class<?> convertTo = LocalUtil.getPropertyType(t.getClass(), attribute);
-                    Object value = convert(itemUpdate.getNewValue(), convertTo);
-
                     try
                     {
+                        Class<?> convertTo = LocalUtil.getPropertyType(type, attribute);
+                        Object value = convert(itemUpdate.getNewValue(), convertTo);
                         LocalUtil.setProperty(t, attribute, value);
                         changedAttributes.add(attribute);
                     }
@@ -202,7 +220,14 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
             if (!changedAttributes.isEmpty())
             {
                 Item item = new Item(entry.getKey(), t);
-                fireItemChanged(item, changedAttributes);
+                if (newItem)
+                {
+                    fireItemAdded(item);
+                }
+                else
+                {
+                    fireItemChanged(item, changedAttributes);
+                }
             }
         }
     }

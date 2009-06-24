@@ -333,11 +333,13 @@ dojo.declare("dwr.data.Store", null, {
 
     itemAdded: function(/*StoreProvider*/ source, /*Item*/ item) {
         // Summary: See `dwr.data.StoreChangeListener.itemAdded`
-        this._importItem(item);
-        if (dojo.isFunction(this.onNew)) {
-        	if (console && console.log) console.log("Firing onNew(", item.itemId, ", null)");
-            this.onNew(item.itemId, null);
-        }
+    	if (this._entries[item.itemId] === undefined) {
+	        this._importItem(item);
+	        if (dojo.isFunction(this.onNew)) {
+	        	if (console && console.log) console.log("Firing onNew(", item.itemId, ", null)");
+	            this.onNew(item.itemId, null);
+	        }
+    	}
     },
 
     itemChanged: function(/*StoreProvider*/ source, /*Item*/ item, /*string[]*/ changedAttributes) {
@@ -363,7 +365,7 @@ dojo.declare("dwr.data.Store", null, {
 
     onNew: function(/*item*/ newItem, /*object?*/ parentInfo) {
         // Summary: See `dojo.data.api.Notification.onNew`
-    	if (console && console.log) console.log("Original onNew function called");
+    	if (console && console.log) console.log("The store has been notified of an item [" + newItem + "] creation. Are you interested?");
     },
 
     onDelete:function(/*item*/ deletedItem) {
@@ -466,15 +468,7 @@ dojo.declare("dwr.data.Store", null, {
                     attribute:"$delete",
                     newValue:null
                 });
-            }
-            if (entry.isNew) {
-                entriesToSend.push({
-                    itemId:itemId,
-                    attribute:"$create",
-                    newValue:null
-                });
-            }
-            else {
+            } else {
                 for (var attribute in entry.updates) {
                     entriesToSend.push({
                         itemId:itemId,
@@ -485,7 +479,6 @@ dojo.declare("dwr.data.Store", null, {
             }
         }
         if (entriesToSend.length > 0) {
-        	if (console && console.log) console.log("Sending: " + dwr.util.toDescriptiveString(entriesToSend, 3));
 	        this.dwrCache.update(entriesToSend, {
 	            callback: function() {
 	        		sentEntries = null;
