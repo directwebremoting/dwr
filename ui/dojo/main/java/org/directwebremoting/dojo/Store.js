@@ -19,7 +19,7 @@ dojo.declare("dwr.data.Store", null, {
     // Either I can't read, or the author of simpleFetch can't read, wibble.
 
     // When we need to generate a local $id from a call to newItem()
-    autoIdPrefix:"_auto_",
+    autoIdPrefix:"_auto_" + Math.floor(Math.random()*100000) + "_",
 
     constructor: function(/*string*/ storeId, /*object*/ params) {
         // Summary: Create a new data store
