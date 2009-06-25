@@ -1,9 +1,8 @@
 
 dojo.provide("dwr.data.Store");
-
+dojo.require("dojo.data.util.filter");
 dojo.declare("dwr.data.Store", null, {
     // Summary: An implementation of all 4 DataStore APIs
-    // TODO: Consider support for queryOptions (see fetch)
     // TODO: Consider caching attributes for dojo.data.api.Read.getAttributes
     // Since we're generally going to be storing sets of homogeneous objects
     // we might pass an official attribute list across the wire and cache it
@@ -11,15 +10,19 @@ dojo.declare("dwr.data.Store", null, {
     // TODO: I only discovered from reading the QueryReadStore that the param
     // passed into fetch() is a dojo.data.api.Request. I'm assuming that the same
     // is true for fetchItemByIdentity()
-    // TODO: do we need to check that we don't have prototype polution?
+    // TODO: do we need to check that we don't have prototype pollution?
     // save() and (maybe) other functions do 'for(a in b) {...}' without checking
     // that b[a] isn't a function.
     // TODO: The logic for the call to onComplete in the callback in simpleFetch
     // is different to our implementation.I thought that I'd followed the spec.
     // Either I can't read, or the author of simpleFetch can't read, wibble.
+	// NOTE: Cache implementation based on dojox.data.ClientFilter
 
     // When we need to generate a local $id from a call to newItem()
     autoIdPrefix:"_auto_" + Math.floor(Math.random()*100000) + "_",
+
+    // Save queries once executed
+    _executedQueries:[],
 
     constructor: function(/*string*/ storeId, /*object*/ params) {
         // Summary: Create a new data store
@@ -154,7 +157,152 @@ dojo.declare("dwr.data.Store", null, {
         return true;
     },
 
+    _complete: function(request, total, items) {
+    	if (dojo.isFunction(request.onBegin)) {
+            request.onBegin.call(this, total, request);
+        }
+
+    	if (dojo.isFunction(request.onItem)) {
+            dojo.forEach(items, function(entry) {
+                if (!request.aborted) {
+                    request.onItem.call(this, entry.$id, request);
+                }
+            });
+        }
+
+        if (dojo.isFunction(request.onComplete) && !request.aborted) {
+            if (dojo.isFunction(request.onItem)) {
+                request.onComplete.call(this, null, request);
+            }
+            else {
+                var all = [];
+                dojo.forEach(items, function(entry) {
+                    all.push(entry.$id);
+                });
+                request.onComplete.call(this, all, request);
+            }
+        }
+    },
+
+    // Check cache and try a local fetch first
     fetch: function(/*object*/ request) {
+    	request.aborted = false;
+    	var results = this.getResults();
+    	var cached = this.isCached(request, results); 
+    	if (cached != null) {
+    		var total = cached.found === undefined ? cached._totalMatchedItems : cached.found;
+    		var results = this.clientSideFetch(request, results);
+    		this._complete(request, total, this.clientSidePaging(request, results));
+    	} else {
+    		return this._fetch(request);
+    	}
+    	
+    },
+
+    isCached: function(request, baseResults) {
+    	if (request.start === undefined) request.start = 0;
+    	if (request.count === undefined) request.count = 1;
+    	for (var i = 0; i < this._executedQueries.length; i++) {
+    		var cachedRequest = this._executedQueries[i];
+    		var clientQuery = this.querySuperSet(cachedRequest, request);
+    		if (clientQuery !== false) {
+    			var found = this.clientSideFetch({start:0, count:Infinity, query:request.query, queryOptions:request.queryOptions}, baseResults).length;
+    			if (request.start + request.count <= found) {
+    				delete cachedRequest.found;
+					return cachedRequest;
+				} else {
+	    			var foundParent = this.clientSideFetch({start:0, count:Infinity, query:cachedRequest.query, queryOptions:cachedRequest.queryOptions}, baseResults).length;
+	    			if (cachedRequest._totalMatchedItems <= foundParent) {
+	    				cachedRequest.found = found; 
+	    				return cachedRequest;
+	    			}
+    			}
+    		}
+    	}
+    	return null;
+    },
+
+    containedInterval: function(init, end, start, finish) {
+    	if (init > start) return false;
+    	if (end != Number.POSITIVE_INFINITY) {
+	    	if (end < finish) {
+	    		return false;
+	    	}
+    	}
+    	return true;
+    },
+
+    querySuperSet: function(argsSuper, argsSub){
+		if (argsSuper.query == argsSub.query) {
+			return {};
+		}
+
+		if (!(argsSub.query instanceof Object && (!argsSuper.query || typeof argsSuper.query == 'object'))) {
+			return false;
+		}
+
+		var clientQuery = dojo.mixin({}, argsSub.query);
+		for (var i in argsSuper.query) {
+			if (clientQuery[i] == argsSuper.query[i]) {
+				delete clientQuery[i];
+			} else if(!(typeof argsSuper.query[i] == 'string' && dojo.data.util.filter.patternToRegExp(argsSuper.query[i]).test(clientQuery[i]))){  
+				return false;
+			}
+		}
+		return clientQuery;
+	},
+
+    getResults: function() {
+    	var data = [];
+    	for (var index in this._entries) {
+    		data.push(this._entries[index]);
+    	}
+    	return data;
+    },
+
+    clientSideFetch: function(/*Object*/ request,/*Array*/ baseResults) {
+    	var results;
+		if (request.query) {
+			// filter by the query
+			results = [];
+			for (var i = 0; i < baseResults.length; i++){
+				var value = baseResults[i];
+				if (value && this.matchesQuery(value, request)) {
+					results.push(baseResults[i]);
+				}
+			}
+		} else {
+			results = baseResults;
+		}
+		return results;
+	},
+
+    matchesQuery: function(item, request){
+		var ignoreCase = false;
+		if (request.queryOptions && request.queryOptions.ignoreCase) ignoreCase = request.queryOptions.ignoreCase;
+		for(var i in request.query) {
+			// if anything doesn't match, than this should be in the query
+			var match = request.query[i];
+			var value = this.getValue(item.$id, i);
+			var test = (typeof match == 'string') && ((match.match(/[\*\.]/) != null) || ignoreCase);
+			test = test
+				? !dojo.data.util.filter.patternToRegExp(match, ignoreCase).test(value)
+				: value != match;
+			if (test) {
+				return false;
+			}
+		}
+		return true;
+	},
+
+	clientSidePaging: function(/*Object*/ request,/*Array*/ baseResults){
+		var start = request.start || 0;
+		var finalResults = (start || request.count) ? baseResults.slice(start,start + (request.count || baseResults.length)) : baseResults;
+		return finalResults; 
+	},
+
+    // Fetch items by querying the server
+    _fetch: function(/*object*/ request) {
         // Summary: See `dojo.data.api.Read.fetch`
         request = request || {};
         var store = this;
@@ -180,41 +328,21 @@ dojo.declare("dwr.data.Store", null, {
 
         var callbackObj = {
             callback: function(matchedItems) {
-                var aborted = false;
                 var originalAbort = request.abort;
                 request.abort = function() {
-                    aborted = true;
+                    request.aborted = true;
                     if (dojo.isFunction(originalAbort)) {
                         originalAbort.call(request);
                     }
                 };
 
+                store._executedQueries.push(request);
+
                 dojo.forEach(matchedItems.viewedMatches, store._importItem, store);
 
-                if (dojo.isFunction(request.onBegin)) {
-                    request.onBegin.call(scope, matchedItems.totalMatchCount, request);
-                }
+            	request._totalMatchedItems = matchedItems.totalMatchCount;
 
-                if (dojo.isFunction(request.onItem)) {
-                    dojo.forEach(matchedItems.viewedMatches, function(entry) {
-                        if (!aborted) {
-                            request.onItem.call(scope, entry.$id, request);
-                        }
-                    });
-                }
-
-                if (dojo.isFunction(request.onComplete) && !aborted) {
-                    if (dojo.isFunction(request.onItem)) {
-                        request.onComplete.call(scope, null, request);
-                    }
-                    else {
-                        var all = [];
-                        dojo.forEach(matchedItems.viewedMatches, function(entry) {
-                            all.push(entry.$id);
-                        });
-                        request.onComplete.call(scope, all, request);
-                    }
-                }
+                store._complete(request, matchedItems.totalMatchCount, matchedItems.viewedMatches);
             },
 
             errorHandler: function(msg, ex) {
@@ -510,7 +638,11 @@ dojo.declare("dwr.data.Store", null, {
         var entry = this._entries[item];
         if (entry == null) throw new Error("non item passed to isDirty()");
         return entry.isDirty;
-    }
+    },
+
+    clearCache: function() {
+		this._executedQueries = [];
+	}
 });
 
 // vim:ts=4:noet:tw=0:
