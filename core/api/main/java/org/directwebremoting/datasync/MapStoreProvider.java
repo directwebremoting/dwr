@@ -181,8 +181,6 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                 try
                 {
                     t = type.newInstance();
-                    put(entry.getKey(), t, false);
-                    updateWatcherSets(entry.getKey());
                 }
                 catch (Exception ex)
                 {
@@ -222,6 +220,8 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                 Item item = new Item(entry.getKey(), t);
                 if (newItem)
                 {
+                    put(entry.getKey(), t, false);
+                    updateWatcherSets(entry.getKey());
                     fireItemAdded(item);
                 }
                 else

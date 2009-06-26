@@ -21,6 +21,12 @@ dojo.declare("dwr.data.Store", null, {
     // When we need to generate a local $id from a call to newItem()
     autoIdPrefix:"_auto_" + Math.floor(Math.random()*100000) + "_",
 
+    // Activate client cache (useful with subscribe)
+    _clientCache: false,
+
+    // Current filter that is being applied
+    _currentQuery: null,
+
     // Save queries once executed
     _executedQueries:[],
 
@@ -38,6 +44,7 @@ dojo.declare("dwr.data.Store", null, {
             throw new Error("storeId is null or not a string");
         }
         var listener = (params && params.subscribe) ? this : null;
+        this._clientCache = params && (params.cache !== undefined) ? params.cache : false;
         this.dwrCache = new dwr.data.Cache(storeId, listener);
 
         // Important: you'll need to know this to grok the rest of the file.
@@ -187,16 +194,18 @@ dojo.declare("dwr.data.Store", null, {
     // Check cache and try a local fetch first
     fetch: function(/*object*/ request) {
     	request.aborted = false;
-    	var results = this.getResults();
-    	var cached = this.isCached(request, results); 
-    	if (cached != null) {
-    		var total = cached.found === undefined ? cached._totalMatchedItems : cached.found;
-    		var results = this.clientSideFetch(request, results);
-    		this._complete(request, total, this.clientSidePaging(request, results));
-    	} else {
-    		return this._fetch(request);
+    	this._currentQuery = request.query;
+    	if (this._clientCache) {
+	    	var results = this.getResults();
+	    	var cached = this.isCached(request, results); 
+	    	if (cached != null) {
+	    		var total = cached.found === undefined ? cached._totalMatchedItems : cached.found;
+	    		var results = this.clientSideFetch(request, results);
+	    		this._complete(request, total, this.clientSidePaging(request, results));
+	    		return request;
+	    	}
     	}
-    	
+		return this._fetch(request);
     },
 
     isCached: function(request, baseResults) {
@@ -463,7 +472,8 @@ dojo.declare("dwr.data.Store", null, {
         // Summary: See `dwr.data.StoreChangeListener.itemAdded`
     	if (this._entries[item.itemId] === undefined) {
 	        this._importItem(item);
-	        if (dojo.isFunction(this.onNew)) {
+	        var valid = this.clientSideFetch({start:0, count:Infinity, query:this._currentQuery, queryOptions:{ignoreCase:true}}, [this._entries[item.$id]]).length == 1;
+	        if (dojo.isFunction(this.onNew) && valid) {
 	        	if (console && console.log) console.log("Firing onNew(", item.itemId, ", null)");
 	            this.onNew(item.itemId, null);
 	        }
@@ -504,15 +514,14 @@ dojo.declare("dwr.data.Store", null, {
     newItem: function(/*object?*/ data, /*object?*/ parentInfo) {
         // Summary: See `dojo.data.api.Write.newItem`
         var entry = {
-            itemId:-1,
-            $id:dwr.data.Store.prototype.autoIdPrefix + this._nextLocalId,
-            data:data,
-            $label:"",
-            isDeleted:false,
-            isDirty:true,
-            updates:data
+            itemId: -1,
+            $id: dwr.data.Store.prototype.autoIdPrefix + this._nextLocalId++,
+            data: data,
+            $label: "",
+            isDeleted: false,
+            isDirty: true,
+            updates: data
         };
-        this._nextLocalId++;
         this._entries[entry.$id] = entry;
         this._updated[entry.$id] = entry;
 
