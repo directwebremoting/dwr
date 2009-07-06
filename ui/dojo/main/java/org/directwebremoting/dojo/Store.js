@@ -1,6 +1,6 @@
+dojo.require("dojo.data.util.filter");
 
 dojo.provide("dwr.data.Store");
-dojo.require("dojo.data.util.filter");
 dojo.declare("dwr.data.Store", null, {
     // Summary: An implementation of all 4 DataStore APIs
     // TODO: Consider caching attributes for dojo.data.api.Read.getAttributes
