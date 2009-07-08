@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.util.Loggers;
 
 /**
  * A simple utility class to extract a {@link String} from a {@link ScriptBuffer}.
@@ -62,6 +61,8 @@ public class ScriptBufferUtil
         boolean outboundError = false;
 
         // First convert everything into OutboundVariables
+        // TODO - something for IE 7 bug here?
+        int variableCount = 0;
         for (Object part : script.getParts())
         {
             OutboundVariable ov = converterManager.convertOutbound(part, context);
@@ -69,7 +70,9 @@ public class ScriptBufferUtil
             {
                 outboundError = true;
             }
+
             scriptParts.add(ov);
+            variableCount++;
         }
 
         StringBuilder buffer = new StringBuilder();
@@ -112,7 +115,6 @@ public class ScriptBufferUtil
             }
         }
 
-        Loggers.SCRIPTS.debug(output);
         return output;
     }
 }

@@ -21,9 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
-
 /**
  * A PrintWriter that also sends its output to a log stream
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -310,7 +307,7 @@ public class DebuggingPrintWriter extends PrintWriter
     {
         if (buffer.length() > 0)
         {
-            log.debug(prefix + buffer.toString());
+            Loggers.ACCESS.info(prefix + buffer.toString());
             buffer.setLength(0);
         }
     }
@@ -342,9 +339,4 @@ public class DebuggingPrintWriter extends PrintWriter
      * A buffer where we store stuff before a newline
      */
     protected final StringBuffer buffer = new StringBuffer();
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DebuggingPrintWriter.class);
 }
