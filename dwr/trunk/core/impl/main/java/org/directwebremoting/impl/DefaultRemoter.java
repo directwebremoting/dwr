@@ -47,13 +47,13 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
-import org.directwebremoting.filter.LogAjaxFilter;
 import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
- * In implementation of Remoter that delegates requests to a set of Modules
+ * An implementation of Remoter that delegates requests to a set of Modules
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @author Mike Wilson
  */
@@ -603,10 +603,6 @@ public class DefaultRemoter implements Remoter
      */
     public Reply execute(Call call)
     {
-        // We set this up here because if something goes wrong we want to know
-        // if there are any LogAjaxFilter implementations to provide any logging
-        List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
-
         try
         {
             Method method = call.getMethod();
@@ -654,11 +650,22 @@ public class DefaultRemoter implements Remoter
                 }
                 // Creator.PAGE scope means we create one every time anyway
 
-                // If we don't have an object the call the creator
-                if (object == null)
+                // If we don't have an object then call the creator
+                try
                 {
-                    create = true;
-                    object = creator.getInstance();
+                    if (object == null)
+                    {
+                        create = true;
+                        object = creator.getInstance();
+                    }
+                }
+                catch (InstantiationException ex)
+                {
+                    // Allow Jetty RequestRetry exception to propagate to container
+                    Continuation.rethrowIfContinuation(ex);
+                    // We should log this regardless of the accessLogLevel.
+                    log.info("Error creating an instance of the following DWR Creator: " + ((null != creator.getClass()) ? creator.getClass().getName() : "None Specified") + ".", ex);
+                    return new Reply(call.getCallId(), null, ex);
                 }
 
                 // Remember it for next time
@@ -686,9 +693,8 @@ public class DefaultRemoter implements Remoter
                 }
             }
 
-            // Some debug
-            /*
-            if (log.isDebugEnabled())
+            // Log the call details if the accessLogLevel is call.
+            if (AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
             {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append("Exec: ")
@@ -719,11 +725,11 @@ public class DefaultRemoter implements Remoter
                 buffer.append("id=");
                 buffer.append(call.getCallId());
 
-                log.debug(buffer.toString());
+                Loggers.ACCESS.info(buffer.toString());
             }
-            //*/
 
             // Execute the filter chain method.toString()
+            List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
             final Iterator<AjaxFilter> it = filters.iterator();
             AjaxFilterChain chain = new AjaxFilterChain()
             {
@@ -749,16 +755,13 @@ public class DefaultRemoter implements Remoter
                     }
                 }
             };
+
             Object reply = chain.doFilter(object, method, call.getParameters());
             return new Reply(call.getCallId(), reply);
         }
         catch (SecurityException ex)
         {
-            if (!filtersIncludeLogging(filters))
-            {
-                log.warn("Security Exception: " + ex.getMessage());
-            }
-
+            writeExceptionToAccessLog(ex);
             // If we are in live mode, then we don't even say what went wrong
             if (debug)
             {
@@ -773,53 +776,43 @@ public class DefaultRemoter implements Remoter
         {
             // Allow Jetty RequestRetry exception to propagate to container
             Continuation.rethrowIfContinuation(ex);
-            debugException(filters, ex.getTargetException());
+            writeExceptionToAccessLog(ex.getTargetException());
             return new Reply(call.getCallId(), null, ex.getTargetException());
         }
         catch (Exception ex)
         {
             // Allow Jetty RequestRetry exception to propagate to container
             Continuation.rethrowIfContinuation(ex);
-            debugException(filters, ex);
+            writeExceptionToAccessLog(ex);
             return new Reply(call.getCallId(), null, ex);
         }
     }
 
     /**
-     * Do logging output if there are no logging filters and add a note of
-     * explanation the first time
-     * @param filters The configured filters
+     * Writes exceptions to the log based on the accessLogLevel init-param. Options are:
+     * 1) exception (checked) - default for debug.
+     * 2) runtimeexception (unchecked).
+     * 3) error - default for production.
+     * 4) off.
      * @param ex The exception saying what broke
      */
-    private void debugException(List<AjaxFilter> filters, Throwable ex)
+    private void writeExceptionToAccessLog(Throwable ex)
     {
-        if (debug && !filtersIncludeLogging(filters))
-        {
-            if (!givenAuditLogHint)
-            {
-                log.debug("No logging filters defined. Minimal execption logging. For more detail add <filter class='org.directwebremoting.filter.AuditLogAjaxFilter'/> to dwr.xml");
-                givenAuditLogHint = true;
-            }
-            log.debug("Method execution failed: ", ex);
-        }
-    }
+        // This call is null safe and will always return an AccessLogLevel.
+        AccessLogLevel accessLogLevelEnum = AccessLogLevel.getValue(this.accessLogLevel, debug);
 
-    /**
-     * A quick check to see if we are already doing some form of logging
-     * @param filters The list of configured filters
-     * @return true if we are logging
-     */
-    private boolean filtersIncludeLogging(List<AjaxFilter> filters)
-    {
-        for (AjaxFilter element : filters)
+        if (accessLogLevelEnum.hierarchy() <= 1 && ex instanceof Exception)
         {
-            if (element instanceof LogAjaxFilter)
-            {
-                return true;
-            }
+            Loggers.ACCESS.info("Method execution failed: ", ex);
         }
-
-        return false;
+        else if (accessLogLevelEnum.hierarchy() <= 2 && ex instanceof RuntimeException)
+        {
+            Loggers.ACCESS.info("Method execution failed: ", ex);
+        }
+        else if (accessLogLevelEnum.hierarchy() <= 3 && ex instanceof Error)
+        {
+            Loggers.ACCESS.info("Method execution failed: ", ex);
+        }
     }
 
     /**
@@ -880,6 +873,19 @@ public class DefaultRemoter implements Remoter
     }
 
     /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    public void setAccessLogLevel(String accessLogLevel)
+    {
+        this.accessLogLevel = accessLogLevel;
+    }
+
+    /**
      * Do we allow impossible tests for debug purposes
      * @param allowImpossibleTests The allowImpossibleTests to set.
      */
@@ -906,11 +912,6 @@ public class DefaultRemoter implements Remoter
     {
         this.debug = debug;
     }
-
-    /**
-     * Have we given the hint about {@link org.directwebremoting.filter.AuditLogAjaxFilter}
-     */
-    protected boolean givenAuditLogHint = false;
 
     /**
      * Are we in debug-mode and therefore more helpful at the expense of security?
@@ -941,6 +942,16 @@ public class DefaultRemoter implements Remoter
      * If we need to override the default path
      */
     protected String overridePath = null;
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    protected String accessLogLevel = null;
 
     /**
      * @see #setUseAbsolutePath(boolean)

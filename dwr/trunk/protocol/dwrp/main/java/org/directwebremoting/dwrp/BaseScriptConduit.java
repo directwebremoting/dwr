@@ -29,6 +29,7 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.impl.AccessLogLevel;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**
@@ -60,7 +61,7 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
         response.setContentType(getOutboundMimeType());
         out = response.getWriter();
 
-        if (debugScriptOutput && log.isDebugEnabled())
+        if (debugScriptOutput || AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
         {
             // This might be considered evil - altering the program flow
             // depending on the log status, however DebuggingPrintWriter is
@@ -164,6 +165,28 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
     }
 
     /**
+     * Set the debug status
+     * @param debug The new debug setting
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    public void setAccessLogLevel(String accessLogLevel)
+    {
+        this.accessLogLevel = accessLogLevel;
+    }
+
+    /**
      * Do we debug all the scripts that we output?
      * @param debugScriptOutput true to debug all of the output scripts (verbose)
      */
@@ -181,6 +204,21 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
      * Are we outputting in JSON mode?
      */
     protected boolean jsonOutput = false;
+
+    /**
+     * Are we in debug-mode and therefore more helpful at the expense of security?
+     */
+    private boolean debug = false;
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    protected String accessLogLevel = null;
 
     /**
      * How we convert parameters

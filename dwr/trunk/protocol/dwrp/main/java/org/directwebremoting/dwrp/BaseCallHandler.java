@@ -48,6 +48,7 @@ import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.SimpleInputStreamFactory;
+import org.directwebremoting.impl.AccessLogLevel;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
@@ -275,7 +276,9 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         // Basic setup
         response.setContentType(getOutboundMimeType());
         PrintWriter out;
-        if (debugScriptOutput && log.isDebugEnabled())
+
+        // AccessLogLevel.getValue is null safe, it will always return an AccessLogLevel.
+        if (debugScriptOutput || AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
         {
             // This might be considered evil - altering the program flow
             // depending on the log status, however DebuggingPrintWriter is
@@ -352,7 +355,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 log.error("--ConversionException: batchId=" + batchId + " message=" + ex.toString());
             }
         }
-
         sendOutboundScriptSuffix(out, replies.getCalls().getBatchId());
     }
 
@@ -541,6 +543,29 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * Are we outputting in JSON mode?
      */
     protected boolean jsonOutput = false;
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    public void setAccessLogLevel(String accessLogLevel)
+    {
+        this.accessLogLevel = accessLogLevel;
+    }
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    protected String accessLogLevel = null;
 
     /**
      * Accessor for the PageNormalizer.

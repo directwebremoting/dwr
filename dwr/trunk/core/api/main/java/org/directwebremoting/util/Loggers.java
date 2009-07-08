@@ -25,6 +25,11 @@ import org.apache.commons.logging.LogFactory;
 public interface Loggers
 {
     /**
+     * Log destination for method access and exceptions caught outside of DWR's code base.
+     */
+    public static final Log ACCESS = LogFactory.getLog("org.directwebremoting.log.accessLog");
+
+    /**
      * Log destination for startup messages
      */
     public static final Log STARTUP = LogFactory.getLog("org.directwebremoting.log.startup");

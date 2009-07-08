@@ -651,11 +651,16 @@ public class StartupUtil
      */
     public static boolean configureFromAnnotations(Container container)
     {
-        Configurator configurator = new AnnotationsConfigurator();
-        configurator.configure(container);
+        Object data = container.getBean("classes");
+        if (null != data)
+        {
+            Configurator configurator = new AnnotationsConfigurator();
+            configurator.configure(container);
 
-        Loggers.STARTUP.debug("Java5 AnnotationsConfigurator enabled");
-        return true;
+            Loggers.STARTUP.debug("Java5 AnnotationsConfigurator enabled");
+            return true;
+        }
+        return false;
     }
 
     /**
