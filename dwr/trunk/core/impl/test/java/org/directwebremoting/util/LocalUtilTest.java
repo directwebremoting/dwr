@@ -30,10 +30,31 @@ public class LocalUtilTest
     class Bean
     {
         private String aux;
+        private int prim;
 
         public Bean(String aux)
         {
             this.aux = aux;
+        }
+
+        public String getAux()
+        {
+            return aux;
+        }
+
+        public void setAux(String aux)
+        {
+            this.aux = aux;
+        }
+
+        public int getPrim()
+        {
+            return prim;
+        }
+
+        public void setPrim(int prim)
+        {
+            this.prim = prim;
         }
 
         @Override
@@ -43,9 +64,9 @@ public class LocalUtilTest
         }
     }
 
-    private Bean zero = new Bean("0");
+    private final Bean zero = new Bean("0");
 
-    private Bean one = new Bean("1");
+    private final Bean one = new Bean("1");
 
     @Test
     public void testJoin()
@@ -69,132 +90,21 @@ public class LocalUtilTest
     }
 
     @Test
-    public void testIsJavaIdentifier()
+    public void testIsWrapper()
     {
-    }
-
-    @Test
-    public void testIsLetterOrDigitOrUnderline()
-    {
-    }
-
-    @Test
-    public void testIsEquivalent()
-    {
-    }
-
-    @Test
-    public void testEquals()
-    {
-    }
-
-    @Test
-    public void testShrink()
-    {
-    }
-
-    @Test
-    public void testGetNonPrimitiveType()
-    {
-    }
-
-    @Test
-    public void testAddNoCacheHeaders()
-    {
-    }
-
-    @Test
-    public void testIsServletClass()
-    {
-    }
-
-    @Test
-    public void testDebugRequest()
-    {
-    }
-
-    @Test
-    public void testIterableizer()
-    {
-    }
-
-    @Test
-    public void testDecode()
-    {
-    }
-
-    @Test
-    public void testSetParams()
-    {
+        assertFalse(LocalUtil.isWrapper(null));
+        assertFalse(LocalUtil.isWrapper("me"));
+        assertTrue(LocalUtil.isWrapper(new Float(2.0)));
     }
 
     @Test
     public void testSetProperty() throws Exception
     {
+        Bean bean = new Bean("whatever");
+        LocalUtil.setProperty(bean, "aux", "new");
+        assertEquals("new", bean.getAux());
+        LocalUtil.setProperty(bean, "prim", 2);
+        assertTrue(bean.getPrim() == 2);
     }
 
-    @Test
-    public void testGetPropertyType()
-    {
-    }
-
-    @Test
-    public void testIsTypeSimplyConvertable()
-    {
-    }
-
-    @Test
-    public void testSimpleConvert()
-    {
-    }
-
-    @Test
-    public void testIsSimpleName()
-    {
-    }
-
-    @Test
-    public void testClassForName_String() throws Exception
-    {
-    }
-
-    @Test
-    public void testInvoke()
-    {
-    }
-
-    @Test
-    public void testClassForName_3args()
-    {
-    }
-
-    @Test
-    public void testClassNewInstance()
-    {
-    }
-
-    @Test
-    public void testClose()
-    {
-    }
-
-    @Test
-    public void testGetAllSuperclasses()
-    {
-    }
-
-    @Test
-    public void testGetAllFields()
-    {
-    }
-
-    @Test
-    public void testGetSystemClassloadTime()
-    {
-    }
-
-    @Test
-    public void testGetProperty() throws Exception
-    {
-    }
 }

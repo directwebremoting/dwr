@@ -633,7 +633,7 @@ public final class LocalUtil
         {
             // If it is a string then next we try to coerce it to the right type
             // otherwise we give up.
-            if (!(value instanceof String))
+            if (!(value instanceof String || isWrapper(value)))
             {
                 throw ex;
             }
@@ -646,7 +646,11 @@ public final class LocalUtil
                 Class<?> propertyType = setter.getParameterTypes()[0];
                 try
                 {
-                    Object param = simpleConvert((String) value, propertyType);
+                    Object param = value;
+                    if (value instanceof String)
+                    {
+                        param = simpleConvert((String) value, propertyType);
+                    }
                     setter.invoke(object, param);
                     return;
                 }
@@ -659,6 +663,22 @@ public final class LocalUtil
         }
 
         throw new NoSuchMethodException("Failed to find a property called: " + key + " on " + object.getClass().getName());
+    }
+
+    /**
+     * Checks if this object is an instance of a primitive wrapper.
+     *
+     * @param object anything
+     * @return true if this object is an Integer, Long, Float, Double, Boolean...
+     */
+    public static final boolean isWrapper(Object object)
+    {
+        boolean wrapper = false;
+        if (object != null)
+        {
+            wrapper = primitiveWrapperMap.containsValue(object.getClass());
+        }
+        return wrapper;
     }
 
     /**
