@@ -24,11 +24,11 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-  
+
   <scm>
-    <connection>svn:https://davidmarginian:k3nd1ll1@svn.directwebremoting.org/dwr</connection>
-    <developerConnection>svn:https://davidmarginian:k3nd1ll1@svn.directwebremoting.org/dwr</developerConnection>
-    <url>https://svn.directwebremoting.org/source/browse/dwr/</url>
+    <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dwr</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@cvs.dev.java.net:/cvs:dwr</developerConnection>
+    <url>https://dwr.dev.java.net/source/browse/dwr/</url>
   </scm>
   
   <description>
@@ -301,13 +301,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>RELEASE</version>
-      </extension>
-    </extensions>
     <defaultGoal>install</defaultGoal>
   </build>
   
