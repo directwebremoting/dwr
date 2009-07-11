@@ -165,28 +165,29 @@ dojo.declare("dwr.data.Store", null, {
     },
 
     _complete: function(request, total, items) {
+    	var scope = request.scope || dojo.global;
     	if (dojo.isFunction(request.onBegin)) {
-            request.onBegin.call(this, total, request);
+            request.onBegin.call(scope, total, request);
         }
 
     	if (dojo.isFunction(request.onItem)) {
             dojo.forEach(items, function(entry) {
                 if (!request.aborted) {
-                    request.onItem.call(this, entry.$id, request);
+                    request.onItem.call(scope, entry.$id, request);
                 }
             });
         }
 
         if (dojo.isFunction(request.onComplete) && !request.aborted) {
             if (dojo.isFunction(request.onItem)) {
-                request.onComplete.call(this, null, request);
+                request.onComplete.call(scope, null, request);
             }
             else {
                 var all = [];
                 dojo.forEach(items, function(entry) {
                     all.push(entry.$id);
                 });
-                request.onComplete.call(this, all, request);
+                request.onComplete.call(scope, all, request);
             }
         }
     },
@@ -315,7 +316,6 @@ dojo.declare("dwr.data.Store", null, {
         // Summary: See `dojo.data.api.Read.fetch`
         request = request || {};
         var store = this;
-        var scope = request.scope || dojo.global;
 
         var qOptions = request.queryOptions ? request.queryOptions : {deep: false, ignoreCase: false};
 
