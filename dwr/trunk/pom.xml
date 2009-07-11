@@ -7,9 +7,9 @@
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.0.116.rc1</version>
+  <version>3.0.0-rc2-SNAPSHOT</version>
   <name>Direct Web Remoting</name>
-  <url>http://getahead.org/dwr</url>
+  <url>http://directwebremoting.org/dwr/index.html</url>
 
   <developers>
     <developer>
@@ -26,25 +26,34 @@
   </licenses>
 
   <scm>
-    <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dwr</connection>
-    <developerConnection>scm:cvs:pserver:${maven.username}@cvs.dev.java.net:/cvs:dwr</developerConnection>
+    <connection>scm:svn:http://svn.directwebremoting.org/dwr/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/trunk/</developerConnection>
     <url>https://dwr.dev.java.net/source/browse/dwr/</url>
   </scm>
-  
+
   <description>
-    DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript. 
+    DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
     It gets rid of almost all the boiler plate code between the web browser and your Java code.
   </description>
-  
+
   <modules>
     <module>core</module>
-    <module>protocol/dwrp</module>
     <module>protocol/bayeux</module>
+    <module>protocol/dwrp</module>
+    <module>protocol/json</module>
+    <module>serverside/guice</module>
     <module>serverside/hibernate</module>
     <module>serverside/spring</module>
     <module>serverside/struts</module>
+    <module>serverside/various</module>
+    <module>serverside/webwork</module>
+    <module>ui/dojo</module>
+    <module>ui/dwr</module>
+    <module>ui/gi</module>
+    <module>ui/jaxer</module>
+    <module>ui/scriptaculous</module>
   </modules>
-  
+
   <repositories>
     <repository>
       <id>codehaus</id>
@@ -55,13 +64,26 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+
+    <repository>
+      <id>maven2-repository.dev.java.net</id>
+      <name>Java.net Repository for Maven</name>
+      <url>http://download.java.net/maven/2/</url>
+      <layout>default</layout>
+    </repository>
+
   </repositories>
-  
+
   <!-- This section 'declares' all the libraries we're using in the project with
-       the corresponding version numbers. 'sub-projects' should not ever need to 
+       the corresponding version numbers. 'sub-projects' should not ever need to
        specify a version only declare the dependency. -->
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>aopalliance</groupId>
+        <artifactId>aopalliance</artifactId>
+        <version>1.0</version>
+      </dependency>
       <dependency>
         <groupId>backport-util-concurrent</groupId>
         <artifactId>backport-util-concurrent</artifactId>
@@ -98,6 +120,11 @@
         <version>1.0</version>
       </dependency>
       <dependency>
+        <groupId>javax.jms</groupId>
+        <artifactId>jms</artifactId>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jsp-api</artifactId>
         <version>2.0</version>
@@ -108,6 +135,11 @@
         <artifactId>servlet-api</artifactId>
         <version>2.5</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>1.6</version>
       </dependency>
       <dependency>
         <groupId>oro</groupId>
@@ -174,7 +206,7 @@
         <groupId>org.apache.tomcat</groupId>
         <artifactId>catalina</artifactId>
         <version>6.0.16</version>
-      </dependency>       
+      </dependency>
 
       <!--  Libraries we integrate with -->
       <dependency>
@@ -188,7 +220,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
+
       <dependency>
         <groupId>hibernate</groupId>
         <artifactId>hibernate</artifactId>
@@ -200,26 +232,44 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
         <version>1.1.2</version>
       </dependency>
-      
+
       <!-- Spring -->
+      <!--<dependency>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring</artifactId>-->
+        <!--<version>2.5.5</version>-->
+      <!--</dependency>-->
+
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring</artifactId>
+        <artifactId>spring-aop</artifactId>
         <version>2.5.5</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>2.5.5</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>2.5.5</version>
+      </dependency>
+
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
         <version>2.5.5</version>
       </dependency>
-      
+
       <dependency>
         <groupId>struts</groupId>
         <artifactId>struts</artifactId>
@@ -230,7 +280,7 @@
         <artifactId>guice</artifactId>
         <version>1.0</version>
       </dependency>
-      
+
       <!-- Jetty -->
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
@@ -252,13 +302,13 @@
         <artifactId>jetty-util</artifactId>
         <version>6.1.10</version>
       </dependency>
-      
+
       <dependency>
         <groupId>xmlbeans</groupId>
         <artifactId>xmlbeans</artifactId>
         <version>2.2.0</version>
       </dependency>
-      
+
       <!-- Testing dependencies -->
       <dependency>
         <groupId>junit</groupId>
@@ -266,7 +316,7 @@
         <version>4.4</version>
         <scope>test</scope>
       </dependency>
-     
+
     </dependencies>
   </dependencyManagement>
   <build>
@@ -303,8 +353,8 @@
     </pluginManagement>
     <defaultGoal>install</defaultGoal>
   </build>
-  
-  <!-- 
+
+  <!--
   <reporting>
 
     <outputDirectory>target/maven2/site</outputDirectory>
@@ -340,12 +390,12 @@
           <configLocation>etc/checkstyle/custom.xml</configLocation>
         </configuration>
       </plugin>
-      
+
     </plugins>
 
   </reporting>
    -->
-   
+
   <!--
   <distributionManagement>
     <snapshotRepository>
