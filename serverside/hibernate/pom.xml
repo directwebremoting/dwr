@@ -5,8 +5,7 @@
   <parent>
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
-    <version>3.0.0.109.dev</version>
-    <relativePath>../../pom.xml</relativePath>
+    <version>3.0.0-rc2-SNAPSHOT</version>
   </parent>
   <artifactId>dwr-hibernate</artifactId>
   <name>DWR Hibernate Integration</name>
@@ -18,9 +17,15 @@
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
-      <version>3.0.0.109.dev</version>
+      <version>${project.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+     
     <!-- TODO Do we really support both Hibernate 2 and 3 in the same jar? -->
     <!-- Hibernate 2  -->
     <dependency>

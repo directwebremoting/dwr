@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
-    <version>3.0.0.109.dev</version>
+    <version>3.0.0-rc2-SNAPSHOT</version>
   </parent>
   <artifactId>dwr-core</artifactId>
   <name>DWR Core</name>
@@ -31,6 +31,10 @@
     <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
     </dependency>
     <dependency>
       <groupId>xom</groupId>
