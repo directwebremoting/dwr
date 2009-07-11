@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
-    <version>3.0.0.109.dev</version>
+    <version>3.0.0-rc2-SNAPSHOT</version>
   </parent>
   <artifactId>dwr-protocol-json</artifactId>
   <name>DWR Protocol JSON</name>
@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
-      <version>3.0.0.109.dev</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   
