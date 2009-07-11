@@ -7,49 +7,30 @@
     <artifactId>dwr</artifactId>
     <version>3.0.0-rc2-SNAPSHOT</version>
   </parent>
-  <artifactId>dwr-spring</artifactId>
-  <name>DWR Spring Integration</name>
+  <artifactId>dwr-ui-dojo</artifactId>
+  <name>DWR UI Dojo</name>
   <packaging>jar</packaging>
-  <description>DWR Spring Integration</description>
-  
+  <description>Dojo Support for DWR</description>
+
   <dependencies>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-     
+
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-    </dependency>
   </dependencies>
-  
+
   <build>
     <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-    <resources>
-      <!--  Include spring.handler and spring.schemas files  -->
-      <resource>
-        <directory>main/java</directory>
-        <includes>
-          <include>**/spring.*</include>
-          <include>org/directwebremoting/spring/spring-dwr-2.0.xsd</include>
-          <include>org/directwebremoting/spring/spring-dwr-3.0.xsd</include>
-        </includes>
-      </resource>
-    </resources>
   </build>
-  
+
 </project>
