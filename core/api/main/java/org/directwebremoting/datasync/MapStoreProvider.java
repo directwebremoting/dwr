@@ -221,7 +221,6 @@ public class MapStoreProvider<T> extends AbstractStoreProvider<T> implements Sto
                 if (newItem)
                 {
                     put(entry.getKey(), t, false);
-                    updateWatcherSets(entry.getKey());
                     fireItemAdded(item);
                 }
                 else

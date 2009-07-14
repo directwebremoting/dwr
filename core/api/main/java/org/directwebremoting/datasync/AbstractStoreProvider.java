@@ -345,6 +345,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
      */
     protected synchronized void fireItemAdded(Item item)
     {
+        updateWatcherSets(item.getItemId());
         Collection<StoreChangeListener<T>> listeners = watchers.get(item.getItemId());
         if (listeners != null)
         {
