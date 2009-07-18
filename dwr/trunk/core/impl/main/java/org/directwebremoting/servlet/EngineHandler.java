@@ -88,9 +88,9 @@ public class EngineHandler extends FileJavaScriptHandler
                 replace.put("${pathToDwrServlet}", pathToDwrServlet);
             }
         }
-        else
+        else if (log.isDebugEnabled())
         {
-            log.warn("Unable to detect DWR servlet path (no web context found). Is this a DWR thread?");
+            log.debug("Unable to detect DWR servlet path (no web context found). Is this a DWR thread?");
         }
 
         // Under what cookie name is the session id stored?
