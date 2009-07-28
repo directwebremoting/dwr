@@ -6,31 +6,20 @@
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
   <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
-  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script>
-  <script type="text/javascript">
-    dojo.require("dojox.rpc.Service");
-  </script>
+  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script>  
   <script type='text/javascript' src='../tabs/tabs.js'> </script>
   <script type='text/javascript'>
-    var services = new dojox.rpc.Service({
-        target:"../../../dwr/jsonp",
-        transport:"POST",
-        envelope:"JSON-RPC-1.0",
-        contentType:"application/json",
-        services:{
-            "Demo.sayHello":{
-                returns:{"type":"string"},
-                parameters:[{"type":"string"}]
-            }
-        }
-    });
-
-    function update() {
+      function update() {
         var name = dojo.byId("demoName").value;
-        var deferred = services.Demo.sayHello(name);
-        deferred.addCallback(function(result) {
-            dojo.byId("demoReply").innerHTML = result;
-        });
+        dojo.xhrGet( {
+        // The following URL must match that used to test the server.
+        url: "http://localhost:8181/dwr/dwr/jsonp/Demo/sayHello/" + name,
+        handleAs: "json",
+        load: function(responseObject, ioArgs) {
+          // Now you can just use the object
+          dojo.byId("demoReply").innerHTML = responseObject.reply;
+        }
+      });
     }
   </script>
 </head>
