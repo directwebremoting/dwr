@@ -17,13 +17,23 @@
     <display-name>DWR Servlet</display-name>
     <description>Direct Web Remoter Servlet</description>
     <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
-
+	
+	<init-param>
+     <param-name>jsonpEnabled</param-name>
+     <param-value>true</param-value>
+    </init-param>	
+	
     <!-- This should NEVER be present in live -->
     <init-param>
       <param-name>debug</param-name>
       <param-value>true</param-value>
     </init-param>
-
+  
+	<init-param>
+      <param-name>accessLogLevel</param-name>
+      <param-value>runtimeexception</param-value>
+    </init-param>
+    
     <!-- Remove this unless you want to use active reverse ajax -->
     <init-param>
       <param-name>activeReverseAjaxEnabled</param-name>

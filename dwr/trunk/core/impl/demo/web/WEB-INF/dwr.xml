@@ -36,7 +36,7 @@
     <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.people.People"/>
     </create>
-    <convert match="com.example.dwr.people.Person" javascript="Person" converter="bean"/>
+    <convert match="com.example.dwr.people.Person" converter="bean"/>
 
     <!-- simple text -->
     <create creator="new">
