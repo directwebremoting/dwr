@@ -3,17 +3,17 @@
 <head>
   <title>Simple Text Generation Demo</title>
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
-  <link rel="stylesheet" type="text/css" href="../generic.css" />
-  <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
-  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script> 
+  <link rel="stylesheet" type="text/css" href="../../../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../../../generic.css" />
+  <script type="text/javascript" src="../../dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
+  <script type="text/javascript" src="../../dojo/custom/storeDemo.js"> </script> 
   <script type="text/javascript" src="text.js"> </script>   
-  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../../../tabs/tabs.js'> </script>
 </head>
 <body onload="Tabs.init('tabList', 'tabContents');">
 <div id="page-title">[
   <a href="http://getahead.org/dwr/">DWR Website</a> |
-  <a href="..">Web Application Index</a>
+  <a href="../../../">Web Application Index</a>
 ]</div>
 
 <h1>Dynamically Updating Text</h1>
@@ -105,7 +105,7 @@ deferred.addCallback(function(result) {
 <h2>Javascript source:</h2>
 <pre>
 var services = new dojox.rpc.Service({
-    target:"../dwr/jsonrpc",
+    target:"../../../dwr/jsonrpc",
     transport:"POST",
     envelope:"JSON-RPC-1.0",
     contentType:"application/json",
