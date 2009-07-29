@@ -6,22 +6,9 @@
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
   <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
-  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script>  
+  <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script> 
+  <script type="text/javascript" src="text.js"> </script>   
   <script type='text/javascript' src='../tabs/tabs.js'> </script>
-  <script type='text/javascript'>
-      function update() {
-        var name = dojo.byId("demoName").value;
-        dojo.xhrGet({
-          // The following URL must match that used to test the server.
-          url: "../dwr/jsonp/Demo/sayHello/" + name,
-          handleAs: "json",
-          load: function(responseObject, ioArgs) {
-            // Now you can just use the object
-            dojo.byId("demoReply").innerHTML = responseObject.reply;
-          }
-        });
-      }
-  </script>
 </head>
 <body onload="Tabs.init('tabList', 'tabContents');">
 <div id="page-title">[
