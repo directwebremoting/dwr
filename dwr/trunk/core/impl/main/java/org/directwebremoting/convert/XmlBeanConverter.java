@@ -117,7 +117,7 @@ public class XmlBeanConverter extends BeanConverter
             for (Entry<String, Object> entry : tokens.entrySet())
             {
                 String key = entry.getKey();
-                String val = entry.getValue().toString();
+                String val = (String) entry.getValue();
 
                 log.debug("token entry (" + key + ") with value (" + val + ")");
 
