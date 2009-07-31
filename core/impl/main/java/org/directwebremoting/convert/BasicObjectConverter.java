@@ -158,7 +158,7 @@ public abstract class BasicObjectConverter implements NamedConverter
         {
             Object argument = tokens.get(parameter.right);
             ConstructorProperty property = new ConstructorProperty(constructor, parameter.right, paramNum);
-            Object output = convert(argument.toString(), parameter.left, data.getContext(), property);
+            Object output = convert((String) argument, parameter.left, data.getContext(), property);
             arguments.add(output);
             paramNum++;
         }
@@ -235,7 +235,7 @@ public abstract class BasicObjectConverter implements NamedConverter
                 continue;
             }
 
-            Object output = convert(entry.getValue().toString(), property.getPropertyType(), data.getContext(), property);
+            Object output = convert((String) entry.getValue(), property.getPropertyType(), data.getContext(), property);
             property.setValue(bean, output);
         }
         return bean;
