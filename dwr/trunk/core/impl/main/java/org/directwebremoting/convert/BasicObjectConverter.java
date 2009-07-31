@@ -39,6 +39,7 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
+import org.directwebremoting.json.JsonUtil;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
@@ -78,13 +79,20 @@ public abstract class BasicObjectConverter implements NamedConverter
             throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
+        String valuePreSubstring = new String(value); // used to parse json
         value = value.substring(1, value.length() - 1);
 
         try
         {
             // Loop through the properties passed in
-            Map<String, String> tokens = extractInboundTokens(paramType, value);
-
+            Map<String, Object> tokens = null;
+            if (!data.getContext().isJsonInput())
+            {
+                tokens = extractInboundTokens(paramType, value);
+            } else
+            {
+                tokens = JsonUtil.toSimpleObject(valuePreSubstring);
+            }
             if (paramsString == null)
             {
                 return createUsingSetterInjection(paramType, data, tokens);
@@ -112,7 +120,7 @@ public abstract class BasicObjectConverter implements NamedConverter
      * We're using constructor injection, create and populate a bean using
      * a constructor
      */
-    private Object createUsingConstructorInjection(Class<?> paramType, InboundVariable data, Map<String, String> tokens) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException
+    private Object createUsingConstructorInjection(Class<?> paramType, InboundVariable data, Map<String, Object> tokens) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         Class<?> type;
         if (instanceType != null)
@@ -148,9 +156,9 @@ public abstract class BasicObjectConverter implements NamedConverter
         int paramNum = 0;
         for (Pair<Class<?>, String> parameter : parameters)
         {
-            String argument = tokens.get(parameter.right);
+            Object argument = tokens.get(parameter.right);
             ConstructorProperty property = new ConstructorProperty(constructor, parameter.right, paramNum);
-            Object output = convert(argument, parameter.left, data.getContext(), property);
+            Object output = convert(argument.toString(), parameter.left, data.getContext(), property);
             arguments.add(output);
             paramNum++;
         }
@@ -184,7 +192,7 @@ public abstract class BasicObjectConverter implements NamedConverter
      * We're using setter injection, create and populate a bean using property
      * setters
      */
-    private Object createUsingSetterInjection(Class<?> paramType, InboundVariable data, Map<String, String> tokens) throws InstantiationException, IllegalAccessException
+    private Object createUsingSetterInjection(Class<?> paramType, InboundVariable data, Map<String, Object> tokens) throws InstantiationException, IllegalAccessException
     {
         Object bean;
         if (instanceType != null)
@@ -209,7 +217,7 @@ public abstract class BasicObjectConverter implements NamedConverter
 
         Map<String, Property> properties = getPropertyMapFromObject(bean, false, true);
 
-        for (Entry<String, String> entry : tokens.entrySet())
+        for (Entry<String, Object> entry : tokens.entrySet())
         {
             String key = entry.getKey();
 
@@ -227,7 +235,7 @@ public abstract class BasicObjectConverter implements NamedConverter
                 continue;
             }
 
-            Object output = convert(entry.getValue(), property.getPropertyType(), data.getContext(), property);
+            Object output = convert(entry.getValue().toString(), property.getPropertyType(), data.getContext(), property);
             property.setValue(bean, output);
         }
         return bean;
@@ -416,9 +424,9 @@ public abstract class BasicObjectConverter implements NamedConverter
      * @return A Map of the tokens in the string
      * @throws ConversionException If the marshalling fails
      */
-    protected static Map<String, String> extractInboundTokens(Class<?> paramType, String value) throws ConversionException
+    protected static Map<String, Object> extractInboundTokens(Class<?> paramType, String value) throws ConversionException
     {
-        Map<String, String> tokens = new HashMap<String, String>();
+        Map<String, Object> tokens = new HashMap<String, Object>();
         StringTokenizer st = new StringTokenizer(value, ProtocolConstants.INBOUND_MAP_SEPARATOR);
         int size = st.countTokens();
 
