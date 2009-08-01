@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
+import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ServerException;
@@ -116,7 +118,9 @@ public class Batch
 
         if (isMultipartContent(req))
         {
-            paramMap = UPLOADER.parseRequest(req);
+            Container container = WebContextFactory.get().getContainer();
+            FileUpload uploader = container.getBean(FileUpload.class);
+            paramMap = uploader.parseRequest(req);
         }
         else
         {
@@ -423,11 +427,6 @@ public class Batch
     private final Map<String, FormField> extraParameters;
 
     /**
-     * What implementation of FileUpload are we using?
-     */
-    private static final FileUpload UPLOADER;
-
-    /**
      * A special marker for the default value for extractParameter
      */
     protected static final String THROW = "throw";
@@ -436,29 +435,4 @@ public class Batch
      * The log stream
      */
     private static final Log log = LogFactory.getLog(Batch.class);
-
-    /**
-     * Work out which is the correct implementation of FileUpload
-     */
-    static
-    {
-        FileUpload test;
-        try
-        {
-            test = new CommonsFileUpload();
-            log.debug("Using commons-file-upload.");
-        }
-        catch (NoClassDefFoundError ex)
-        {
-            test = new UnsupportedFileUpload();
-            log.debug("Failed to find commons-file-upload. File upload is not supported.");
-        }
-        catch (Exception ex)
-        {
-            test = new UnsupportedFileUpload();
-            log.debug("Failed to start commons-file-upload. File upload is not supported.");
-        }
-
-        UPLOADER = test;
-    }
 }
