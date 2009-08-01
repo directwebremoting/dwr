@@ -38,6 +38,7 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
+import org.directwebremoting.dwrp.FileUpload;
 import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
@@ -337,6 +338,7 @@ public class StartupUtil
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
         resolveMultipleImplementation(container, Compressor.class);
+        resolveMultipleImplementation(container, FileUpload.class);
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);

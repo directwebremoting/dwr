@@ -60,7 +60,10 @@ public class CommonsFileUpload implements FileUpload
         File location = new File(System.getProperty("java.io.tmpdir"));
         DiskFileItemFactory itemFactory = new DiskFileItemFactory(DEFAULT_SIZE_THRESHOLD, location);
         ServletFileUpload fileUploader = new ServletFileUpload(itemFactory);
-
+        if (getFileUploadMaxBytes() > 0)
+        {
+          fileUploader.setFileSizeMax(getFileUploadMaxBytes());
+        }
         HttpSession session = req.getSession(false);
         if (session != null)
         {
@@ -99,6 +102,31 @@ public class CommonsFileUpload implements FileUpload
             throw new ServerException("Input read failed", ex);
         }
     }
+
+    /**
+     * Retrieves the maximum allowed size of a single uploaded file, in bytes.
+     *
+     * @return long fileUploadMaxBytes
+     */
+    public long getFileUploadMaxBytes()
+    {
+        return fileUploadMaxBytes;
+    }
+
+    /**
+     * Sets the maximum allowed size of a single uploaded file.
+     *
+     * @param fileUploadMaxBytes
+     */
+    public void setFileUploadMaxBytes(long fileUploadMaxBytes)
+    {
+        this.fileUploadMaxBytes = fileUploadMaxBytes;
+    }
+
+    /**
+     * The maximum allowed size of a single uploaded file in bytes.
+     */
+    private long fileUploadMaxBytes = 0;
 
     /**
      * The name of the attribute that stores the progress of an upload in a session.
