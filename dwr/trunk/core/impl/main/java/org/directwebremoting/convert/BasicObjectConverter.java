@@ -91,7 +91,17 @@ public abstract class BasicObjectConverter implements NamedConverter
                 tokens = extractInboundTokens(paramType, value);
             } else
             {
-                return JsonUtil.toSimpleObject(valuePreSubstring);
+                // If the input is JSON, delegate to our JSON serializer.
+                Object bean;
+                if (instanceType != null)
+                {
+                    bean = instanceType.newInstance();
+                }
+                else
+                {
+                    bean = paramType.newInstance();
+                }
+                return JsonUtil.toReflectedTypes(bean.getClass(), valuePreSubstring);
             }
             if (paramsString == null)
             {
