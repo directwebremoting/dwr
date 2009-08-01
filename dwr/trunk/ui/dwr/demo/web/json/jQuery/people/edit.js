@@ -51,7 +51,7 @@ function deleteClicked(eleid) {
 function writePerson() {
   var person = { id:viewed, name:null, address:null, age:null, superhero:null };
   dwr.util.getValues(person);
-  $.post("../../../dwr/jsonp/People/setPerson?param0=" + escape($.toJSON(person)), { },
+  $.post("../../../dwr/jsonp/People/setPerson?param0=" + encodeURIComponent($.toJSON(person)), { },
 	fillTable, "json"); 
 }
 
