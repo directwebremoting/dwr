@@ -118,9 +118,7 @@ public class Batch
 
         if (isMultipartContent(req))
         {
-            Container container = WebContextFactory.get().getContainer();
-            FileUpload uploader = container.getBean(FileUpload.class);
-            paramMap = uploader.parseRequest(req);
+            paramMap = UPLOADER.parseRequest(req);
         }
         else
         {
@@ -430,6 +428,20 @@ public class Batch
      * A special marker for the default value for extractParameter
      */
     protected static final String THROW = "throw";
+
+    /**
+     * What implementation of FileUpload are we using?
+     */
+    private static final FileUpload UPLOADER;
+
+    /**
+     * Retrieve the File Upload implem
+     */
+    static
+    {
+        Container container = WebContextFactory.get().getContainer();
+        UPLOADER = container.getBean(FileUpload.class);
+    }
 
     /**
      * The log stream
