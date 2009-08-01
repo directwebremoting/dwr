@@ -113,11 +113,11 @@ public class XmlBeanConverter extends BeanConverter
             Map<String, Property> properties = getPropertyMapFromClass(paramType, false, true);
 
             // Loop through the properties passed in
-            Map<String, Object> tokens = extractInboundTokens(paramType, value);
-            for (Entry<String, Object> entry : tokens.entrySet())
+            Map<String, String> tokens = extractInboundTokens(paramType, value);
+            for (Entry<String, String> entry : tokens.entrySet())
             {
                 String key = entry.getKey();
-                String val = (String) entry.getValue();
+                String val = entry.getValue();
 
                 log.debug("token entry (" + key + ") with value (" + val + ")");
 
