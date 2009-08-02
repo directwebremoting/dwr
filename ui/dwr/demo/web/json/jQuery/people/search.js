@@ -1,6 +1,5 @@
 
 function init() {
-  dwr.util.useLoadingMessage();
   Tabs.init('tabList', 'tabContents');
   dwr.util.setValue("filter", "");
   addSingleRow("peoplebody", "Please enter a search filter");
@@ -10,6 +9,7 @@ var peopleCache = [ ];
 var lastFilter = "";
 
 function fillTable(people) {
+  people = people.reply;
   var filter = dwr.util.getValue("filter");
   var pattern = new RegExp("(" + filter + ")", "i");
   var filtered = [];
@@ -40,10 +40,13 @@ function filterChanged() {
   }
   else {
     if (filter.charAt(0) == lastFilter.charAt(0)) {
-      fillTable(peopleCache);
+        var people = {};
+        people.reply = peopleCache;        
+      	fillTable(reply);
     }
     else {
-      People.getMatchingFromLargeCrowd(filter.charAt(0), fillTable);
+   	  $.post("../../../dwr/jsonp/People/getMatchingFromLargeCrowd/" + filter.charAt(0), { },
+ 		fillTable, "json"); 
     }
   }
   lastFilter = filter;
