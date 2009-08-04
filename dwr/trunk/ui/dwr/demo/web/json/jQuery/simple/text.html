@@ -50,7 +50,7 @@ text fetched from a web server.</p>
 <pre>
  function update() {
     var name = dwr.util.getValue(&quot;demoName&quot;);
-    $.post(&quot;../../dwr/jsonp/Demo/sayHello/&quot; + name, {},
+    $.post(&quot;../../../dwr/jsonp/Demo/sayHello/&quot; + name, {},
 	function(data) {
 	    dwr.util.setValue(&quot;demoReply&quot;, data.reply);
         }, &quot;jsonp&quot;); 
@@ -61,9 +61,9 @@ text fetched from a web server.</p>
     element, in this case an input field, but it could be a div or a select
     box.</p>
 
-    <p>The next line is using the <a href="http://docs.jquery.com/Ajax/jQuery.post#urldatacallbacktype" target="new">jQuery post function</a> to make an asynchronous call to the server utilizing DWR's JSONP capabilities. The first parameter is the URL for DWR's JSONP service. The URL can be broken down as follows:<ul><li>../../dwr/ - The path to the DWR servlet.</li><li>jsonp - Tells DWR to use JSONP.</li><li>Demo - The name of the class you have exposed to DWR.</li><li>sayHello - The name of the method you would like to call on the exposed class</li></ul>The third parameter is the callback function and will be invoked when the remote call returns.  The first parameter of the callback function (in this case "data") will contain the data returned from the remote call.</p>
+    <p>The next line is using the <a href="http://docs.jquery.com/Ajax/jQuery.post#urldatacallbacktype" target="new">jQuery post function</a> to make an asynchronous call to the server utilizing DWR's JSON capabilities. The first parameter is the URL for DWR's JSON service. The URL can be broken down as follows:<ul><li>../../dwr/ - The path to the DWR servlet.</li><li>jsonp - Tells DWR to use JSONP.</li><li>Demo - The name of the class you have exposed to DWR.</li><li>sayHello - The name of the method you would like to call on the exposed class</li></ul>The third parameter is the callback function and will be invoked when the remote call returns.  The first parameter of the callback function (in this case "data") will contain the data returned from the remote call.</p>
     
-    <p>The result of the $.post function is that  DWR will call  the <code>Demo.sayHello()</code> Java method:</p>
+    <p>The result of the $.post function is that DWR will call  the <code>Demo.sayHello()</code> Java method:</p>
     
 <pre>
 public String sayHello(String name) {
@@ -97,7 +97,7 @@ public String sayHello(String name) {
 <pre>
   function update() {
       var name = dwr.util.getValue(&quot;demoName&quot;);
-      $.post(&quot;../../dwr/jsonp/Demo/sayHello/&quot; + name, { },
+      $.post(&quot;../../../dwr/jsonp/Demo/sayHello/&quot; + name, { },
           function(data) {
               dwr.util.setValue(&quot;demoReply&quot;, data.reply);
           }, &quot;jsonp&quot;); 
@@ -115,7 +115,7 @@ public class Demo {
 }
 </pre>
 <h2>web.xml</h2>
-      <p>Note: In order to enable JSONP you must add the following init-param to your DWR servlet definition in your web.xml (This is a snippet and is not a complete web.xml).<pre><code>
+      <p>Note: In order to enable JSON/JSONP you must add the following init-param to your DWR servlet definition in your web.xml (This is a snippet and is not a complete web.xml).<pre><code>
    ...
   &lt;servlet&gt;
     &lt;servlet-name>dwr-invoker&lt;/servlet-name&gt;
