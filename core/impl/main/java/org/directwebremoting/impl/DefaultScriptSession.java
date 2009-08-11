@@ -163,10 +163,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean isInvalidated()
     {
-        synchronized (invalidLock)
-        {
-            return invalidated;
-        }
+        return invalidated;
     }
 
     /* (non-Javadoc)
