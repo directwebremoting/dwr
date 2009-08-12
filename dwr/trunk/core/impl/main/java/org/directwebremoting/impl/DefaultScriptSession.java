@@ -140,22 +140,18 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void invalidate()
     {
-        synchronized (invalidLock)
+        for (Map.Entry<String, Object> entry : attributes.entrySet())
         {
-            for (Map.Entry<String, Object> entry : attributes.entrySet())
+            Object value = entry.getValue();
+
+            if (value instanceof ScriptSessionBindingListener)
             {
-                Object value = entry.getValue();
-
-                if (value instanceof ScriptSessionBindingListener)
-                {
-                    ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
-                    listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
-                }
+                ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+                listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
             }
-
-            invalidated = true;
-            manager.invalidate(this);
         }
+        invalidated = true;
+        manager.invalidate(this);
     }
 
     /* (non-Javadoc)
@@ -188,16 +184,13 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public long getLastAccessedTime()
     {
-        synchronized (invalidLock)
-        {
-            // For many accesses here we check to see if we should invalidate
-            // ourselves, but getLastAccessedTime() is used as part of the process
-            // that DefaultScriptSessionManager goes through in order to check
-            // everything for validity. So if we do this check here then DSSM will
-            // give a ConcurrentModificationException if anything does timeout
-            // checkNotInvalidated();
-            return lastAccessedTime;
-        }
+        // For many accesses here we check to see if we should invalidate
+        // ourselves, but getLastAccessedTime() is used as part of the process
+        // that DefaultScriptSessionManager goes through in order to check
+        // everything for validity. So if we do this check here then DSSM will
+        // give a ConcurrentModificationException if anything does timeout
+        // checkNotInvalidated();
+        return lastAccessedTime;
     }
 
     /* (non-Javadoc)
@@ -400,13 +393,8 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void updateLastAccessedTime()
     {
-        // It's a bad idea to call native methods with locks held
         long temp = System.currentTimeMillis();
-
-        synchronized (invalidLock)
-        {
-            lastAccessedTime = temp;
-        }
+        lastAccessedTime = temp;
     }
 
     /**
@@ -421,16 +409,11 @@ public class DefaultScriptSession implements RealScriptSession
             return;
         }
 
-        // It's a bad idea to call native methods with locks held
         long now = System.currentTimeMillis();
-
-        synchronized (invalidLock)
+        long age = now - lastAccessedTime;
+        if (age > manager.getScriptSessionTimeout())
         {
-            long age = now - lastAccessedTime;
-            if (age > manager.getScriptSessionTimeout())
-            {
-                invalidate();
-            }
+            invalidate();
         }
     }
 
@@ -511,21 +494,13 @@ public class DefaultScriptSession implements RealScriptSession
 
     /**
      * When the the web page that we represent last contact us using DWR?
-     * <p>GuardedBy("invalidLock")
      */
-    private long lastAccessedTime = 0L;
+    private volatile long lastAccessedTime = 0L;
 
     /**
      * Have we been made invalid?
-     * <p>GuardedBy("invalidLock")
      */
     private volatile boolean invalidated = false;
-
-    /**
-     * The object that we use to synchronize against when we want to work with
-     * the invalidation state of this object
-     */
-    private final Object invalidLock = new Object();
 
     /**
      * The script conduits that we can use to transfer data to the browser.
