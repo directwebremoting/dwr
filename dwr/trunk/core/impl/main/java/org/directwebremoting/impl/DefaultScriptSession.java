@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +65,7 @@ public class DefaultScriptSession implements RealScriptSession
         this.page = page;
         this.manager = manager;
         this.creationTime = System.currentTimeMillis();
-        this.lastAccessedTime = creationTime;
+        this.lastAccessedTime.set(creationTime);
     }
 
     /* (non-Javadoc)
@@ -150,7 +152,7 @@ public class DefaultScriptSession implements RealScriptSession
                 listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
             }
         }
-        invalidated = true;
+        invalidated.set(true);
         manager.invalidate(this);
     }
 
@@ -159,7 +161,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean isInvalidated()
     {
-        return invalidated;
+        return invalidated.get();
     }
 
     /* (non-Javadoc)
@@ -190,7 +192,7 @@ public class DefaultScriptSession implements RealScriptSession
         // everything for validity. So if we do this check here then DSSM will
         // give a ConcurrentModificationException if anything does timeout
         // checkNotInvalidated();
-        return lastAccessedTime;
+        return lastAccessedTime.get();
     }
 
     /* (non-Javadoc)
@@ -394,7 +396,7 @@ public class DefaultScriptSession implements RealScriptSession
     public void updateLastAccessedTime()
     {
         long temp = System.currentTimeMillis();
-        lastAccessedTime = temp;
+        lastAccessedTime.set(temp);
     }
 
     /**
@@ -404,13 +406,13 @@ public class DefaultScriptSession implements RealScriptSession
      */
     protected void invalidateIfNeeded()
     {
-        if (invalidated)
+        if (invalidated.get())
         {
             return;
         }
 
         long now = System.currentTimeMillis();
-        long age = now - lastAccessedTime;
+        long age = now - lastAccessedTime.get();
         if (age > manager.getScriptSessionTimeout())
         {
             invalidate();
@@ -495,12 +497,12 @@ public class DefaultScriptSession implements RealScriptSession
     /**
      * When the the web page that we represent last contact us using DWR?
      */
-    private volatile long lastAccessedTime = 0L;
+    private final AtomicLong lastAccessedTime = new AtomicLong(0L);
 
     /**
      * Have we been made invalid?
      */
-    private volatile boolean invalidated = false;
+    private final AtomicBoolean invalidated = new AtomicBoolean(false);
 
     /**
      * The script conduits that we can use to transfer data to the browser.
