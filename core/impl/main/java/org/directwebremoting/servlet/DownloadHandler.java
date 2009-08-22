@@ -53,6 +53,11 @@ public class DownloadHandler implements Handler
         }
         else
         {
+            if (transfer.getSize() > 0)
+            {
+                response.setContentLength((int) transfer.getSize());
+            }
+
             String filename = transfer.getFilename();
             if (filename != null)
             {

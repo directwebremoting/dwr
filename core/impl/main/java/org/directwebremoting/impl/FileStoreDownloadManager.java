@@ -149,7 +149,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
         String filename = parts[3];
         final InputStream in = new FileInputStream(matched);
 
-        return new FileTransfer(filename, mimeType, -1, new InputStreamFactory()
+        return new FileTransfer(filename, mimeType, matched.length(), new InputStreamFactory()
         {
             public InputStream getInputStream() throws IOException
             {
