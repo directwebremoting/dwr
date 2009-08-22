@@ -38,12 +38,10 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.annotations.AnnotationsConfigurator;
-import org.directwebremoting.dwrp.FileUpload;
 import org.directwebremoting.event.ScriptSessionListener;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.CallbackHelperFactory;
-import org.directwebremoting.extend.Compressor;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ContainerConfigurationException;
@@ -337,8 +335,8 @@ public class StartupUtil
     @SuppressWarnings("unchecked")
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
-        resolveMultipleImplementation(container, Compressor.class);
-        resolveMultipleImplementation(container, FileUpload.class);
+        resolveMultipleImplementation(container, "org.directwebremoting.dwrp.FileUpload");
+        resolveMultipleImplementation(container, "org.directwebremoting.extend.Compressor");
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
@@ -387,10 +385,19 @@ public class StartupUtil
      * can construct. The assumption is that multiple implementations are
      * held as strings concatenated, separated with spaces.
      * @param container The container which has a multiple implementation
-     * @param toResolve The class which needs disambiguating
+     * @param toResolveString The class name which needs disambiguating
      */
-    protected static void resolveMultipleImplementation(DefaultContainer container, Class<?> toResolve)
+    protected static void resolveMultipleImplementation(DefaultContainer container, String toResolveString)
     {
+        Class toResolve = null;
+        try
+        {
+            toResolve = Class.forName(toResolveString);
+        } catch (Exception ex)
+        {
+            Loggers.STARTUP.debug(toResolveString + " is not available. Details: " + ex);
+        }
+
         String implNames = container.getParameter(toResolve.getName());
         Loggers.STARTUP.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
 
