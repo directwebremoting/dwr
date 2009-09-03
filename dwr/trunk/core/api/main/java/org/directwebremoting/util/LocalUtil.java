@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -1363,25 +1365,27 @@ public final class LocalUtil
      */
     public static Class<?> toClass(Type parameterType, String debugContext)
     {
-        if (parameterType instanceof ParameterizedType)
+        if (parameterType instanceof Class)
         {
-            ParameterizedType ptype = (ParameterizedType) parameterType;
-            Type rawType = ptype.getRawType();
-
-            if (rawType instanceof Class)
+            return (Class<?>) parameterType;
+        }
+        else if (parameterType instanceof ParameterizedType)
+        {
+            return toClass(((ParameterizedType) parameterType).getRawType(), debugContext);
+        }
+        else if (parameterType instanceof GenericArrayType)
+        {
+            Type componentType = ((GenericArrayType) parameterType).getGenericComponentType();
+            Class<?> componentClass = toClass(componentType, debugContext);
+            if (componentClass != null)
             {
-                Class<?> type = (Class<?>) rawType;
-                // log.debug("Using type info from JDK5 ParameterizedType of " + type.getName() + " for " + debugContext);
-                return type;
+                return Array.newInstance(componentClass, 0).getClass();
+            }
+            else
+            {
+                log.warn("The inbound Arrays component class is null.");
             }
         }
-        else if (parameterType instanceof Class)
-        {
-            Class<?> type = (Class<?>) parameterType;
-            // log.debug("Using type info from JDK5 reflection of " + type.getName() + " for " + debugContext);
-            return type;
-        }
-
         log.warn("Missing type info for " + debugContext + ". Assuming this is a map with String keys. Please add to <signatures> in dwr.xml");
         return String.class;
     }
