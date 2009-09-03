@@ -38,9 +38,9 @@ public class YahooJSCompressor implements Compressor
     /**
      * Constructor: YahooJSCompressor using default property values.
      */
-    public YahooJSCompressor()
+    public YahooJSCompressor() throws InstantiationException
     {
-        setCompressorParameters(null);
+        this(null);
     }
 
     /**
