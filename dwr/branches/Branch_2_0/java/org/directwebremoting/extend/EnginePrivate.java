@@ -125,7 +125,7 @@ public class EnginePrivate extends ScriptProxy
                   .appendScript("\',\'")
                   .appendScript(callId)
                   .appendScript("\',")
-                  .appendData(ex)
+                  .appendData(mex)
                   .appendScript(");");
 
             addScriptWithoutException(conduit, script);
