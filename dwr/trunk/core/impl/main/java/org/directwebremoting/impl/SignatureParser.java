@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.impl;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
@@ -212,6 +215,18 @@ public class SignatureParser
     private Class<?> findClass(String type)
     {
         String itype = type;
+        Class<?> clazz = null;
+
+        // If type is an Array work it.
+        try
+        {
+            if (type.contains("[]"))
+            {
+                itype = type.substring(0, type.indexOf('['));
+            }
+        } catch (Exception ex) {
+            log.debug("SignatureParser can't find class: " + ex.getMessage());
+        }
 
         // Handle inner classes
         if (itype.indexOf('.') != -1)
@@ -220,42 +235,30 @@ public class SignatureParser
             itype = itype.replace('.', '$');
         }
 
-        try
+        clazz = retrieveClassFromClassImports(itype);
+        if (null == clazz)
         {
-            String full = classImports.get(itype);
-            if (full == null)
-            {
-                full = itype;
-            }
-
-            return LocalUtil.classForName(full);
+            clazz = retrieveClassFromPackageImports(itype);
         }
-        catch (Exception ex)
+        if (null == clazz)
         {
-            // log.debug("Trying to find class in package imports");
-        }
-
-        for (String pkg : packageImports)
-        {
-            String lookup = pkg + '.' + itype;
-
-            try
+            // So we've failed to find a Java class name. We can also lookup by
+            // Javascript name to help the situation where there is a dynamic proxy
+            // in the way.
+            Creator creator = creatorManager.getCreator(type, false);
+            if (creator != null)
             {
-                return LocalUtil.classForName(lookup);
-            }
-            catch (Exception ex)
-            {
-                // log.debug("Not found: " + lookup);
+                clazz = creator.getType();
             }
         }
 
-        // So we've failed to find a Java class name. We can also lookup by
-        // Javascript name to help the situation where there is a dynamic proxy
-        // in the way.
-        Creator creator = creatorManager.getCreator(type, false);
-        if (creator != null)
+        if (null != clazz)
         {
-            return creator.getType();
+            if (type.contains("[]"))
+            {
+                return Array.newInstance(clazz, 0).getClass();
+            }
+            return clazz;
         }
 
         Loggers.STARTUP.error("Failed to find class: '" + itype + "' from <signature> block.");
@@ -269,7 +272,56 @@ public class SignatureParser
         {
             Loggers.STARTUP.info("  - " + pkg);
         }
+        return null;
+    }
 
+    /**
+     * Attempts to retrieve a Class from the signatures class imports.  Returns null
+     * if no class can be found.
+     *
+     * @param itype
+     * @return
+     */
+    private Class<?> retrieveClassFromClassImports(String itype)
+    {
+        try
+        {
+            String full = classImports.get(itype);
+            if (full == null)
+            {
+                full = itype;
+            }
+            return LocalUtil.classForName(full);
+        }
+        catch (Exception ex)
+        {
+            log.debug("SignatureParser - Can't find class in signature class imports, will attempt package imports.");
+        }
+        return null;
+    }
+
+    /**
+     * Attempts to retrieve a Class from the package imports.  Returns null
+     * if no class can be found.
+     *
+     * @param itype
+     * @return
+     */
+    private Class<?> retrieveClassFromPackageImports(String itype)
+    {
+        for (String pkg : packageImports)
+        {
+            String lookup = pkg + '.' + itype;
+
+            try
+            {
+                return LocalUtil.classForName(lookup);
+            }
+            catch (Exception ex)
+            {
+                log.debug("SignatureParser - Can't find class in package imports: " + lookup);
+            }
+        }
         return null;
     }
 
@@ -438,4 +490,9 @@ public class SignatureParser
      * If we can't find a class by Java name we can lookup by Javascript name
      */
     private final CreatorManager creatorManager;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(SignatureParser.class);
 }
