@@ -280,7 +280,7 @@ public class SignatureParser
      * if no class can be found.
      *
      * @param itype
-     * @return
+     * @return Class<?>
      */
     private Class<?> retrieveClassFromClassImports(String itype)
     {
@@ -305,7 +305,7 @@ public class SignatureParser
      * if no class can be found.
      *
      * @param itype
-     * @return
+     * @return Class<?>
      */
     private Class<?> retrieveClassFromPackageImports(String itype)
     {
