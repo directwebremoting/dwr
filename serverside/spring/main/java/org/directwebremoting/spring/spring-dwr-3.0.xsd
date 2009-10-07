@@ -144,6 +144,7 @@
 	<xsd:complexType name="convert">
 		<xsd:sequence>
 			<xsd:element name="param" type="config-param" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- exclusion/inclusions are based on the property name not the accessor method (getter/setter) -->
 			<xsd:element name="include" type="include" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:element name="exclude" type="exclude" minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:sequence>
