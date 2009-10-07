@@ -15,12 +15,15 @@
  */
 package org.directwebremoting.server.jetty;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.ThreadWaitSleeper;
+import org.directwebremoting.server.SleeperState;
 import org.directwebremoting.util.Continuation;
 
 /**
@@ -34,8 +37,7 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public JettyContinuationSleeper(HttpServletRequest request)
     {
-        continuation = new Continuation(request);
-
+        continuation = new AtomicReference(request);
         // At this point JettyContinuationSleeper is fully initialized so it is
         // safe to allow other classes to see and use us.
         //noinspection ThisEscapedInObjectConstruction
@@ -75,30 +77,26 @@ public class JettyContinuationSleeper implements Sleeper
     {
         this.onAwakening = awakening;
 
-        synchronized (wakeUpCalledLock)
+        if (state.get().equals(SleeperState.WAKE_UP_CALLED))
         {
-            if (wakeUpCalled)
+            onAwakening.run();
+        }
+        else
+        {
+            try
             {
-                onAwakening.run();
+                // This throws a RuntimeException that must propagate to the
+                // container. The docs say that a value of 0 should suspend
+                // forever, but that did not to happen in 6.1.1 so we
+                // suspend for BigNum
+                continuation.get().suspend(Integer.MAX_VALUE);
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    // This throws a RuntimeException that must propagate to the
-                    // container. The docs say that a value of 0 should suspend
-                    // forever, but that did not to happen in 6.1.1 so we
-                    // suspend for BigNum
-                    continuation.suspend(Integer.MAX_VALUE);
-                }
-                catch (Exception ex)
-                {
-                    Continuation.rethrowIfContinuation(ex);
-
-                    log.warn("Exception", ex);
-                    proxy = new ThreadWaitSleeper();
-                    proxy.goToSleep(onAwakening);
-                }
+                Continuation.rethrowIfContinuation(ex);
+                log.warn("Exception", ex);
+                proxy = new ThreadWaitSleeper();
+                proxy.goToSleep(onAwakening);
             }
         }
     }
@@ -108,51 +106,39 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        synchronized (wakeUpCalledLock)
+        if (state.get().equals(SleeperState.WAKE_UP_CALLED))
         {
-            if (wakeUpCalled)
-            {
-                return;
-            }
+            return;
+        }
 
-            wakeUpCalled = true;
+        state.set(SleeperState.WAKE_UP_CALLED);
 
-            if (proxy != null)
+        if (proxy != null)
+        {
+            proxy.wakeUp();
+        }
+        else
+        {
+            if (!SleeperState.RESUMED.equals(state.get()))
             {
-                proxy.wakeUp();
-            }
-            else
-            {
-                synchronized (continuation)
+                try
                 {
-                    if (!resumed)
-                    {
-                        try
-                        {
-                            continuation.resume();
-                        }
-                        catch (Exception ex)
-                        {
-                            log.error("Broken reflection", ex);
-                        }
-
-                        resumed = true;
-                    }
+                    continuation.get().resume();
                 }
+                catch (Exception ex)
+                {
+                    log.error("Broken reflection", ex);
+                }
+
+                state.set(SleeperState.RESUMED);
             }
         }
     }
 
     /**
-     * All operations that involve going to sleep of waking up must hold this
-     * lock before they take action.
+     * Atomic enum to manage state.
      */
-    private Object wakeUpCalledLock = new Object();
-
-    /**
-     * Has wakeUp been called?
-     */
-    private boolean wakeUpCalled = false;
+    private final AtomicReference<SleeperState> state = new AtomicReference<SleeperState>(SleeperState.INITIAL);
 
     /**
      * If continuations fail, we proxy to a Thread Wait version
@@ -167,12 +153,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * The continuation object
      */
-    protected final Continuation continuation;
-
-    /**
-     * Has the continuation been restarted already?
-     */
-    protected boolean resumed = false;
+    private final AtomicReference<Continuation> continuation;
 
     /**
      * We remember the notify conduit so we can reuse it
