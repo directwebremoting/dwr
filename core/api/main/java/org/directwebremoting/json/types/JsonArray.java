@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.json.types;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -263,5 +264,5 @@ public class JsonArray extends JsonValue implements List<JsonValue>
         return proxy.toArray(toFill);
     }
 
-    private List<JsonValue> proxy;
+    private final List<JsonValue> proxy = new ArrayList<JsonValue>();
 }
