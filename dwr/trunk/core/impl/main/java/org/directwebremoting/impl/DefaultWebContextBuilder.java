@@ -64,7 +64,11 @@ public class DefaultWebContextBuilder implements WebContextBuilder
      */
     public void disengageThread()
     {
-        user.set(null);
+        // null check for DWR-426 - DefaultWebContextBuilder disengageThread throws null pointer exception.
+        if (null != user)
+        {
+            user.set(null);
+        }
     }
 
     /**
