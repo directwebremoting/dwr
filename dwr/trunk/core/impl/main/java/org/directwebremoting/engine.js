@@ -362,6 +362,9 @@ if (typeof dwr == 'undefined') dwr = {};
   /** How many milliseconds between internal comet polls */
   dwr.engine._pollCometInterval = 200;
 
+  /** Default SSL secure URL used for iframe src */
+  dwr.engine.SSL_SECURE_URL = "about:blank";
+
   /** How many times have we re-tried a call? */
   dwr.engine._retries = 0;
   dwr.engine._maxRetries = 10;
@@ -1515,14 +1518,14 @@ if (typeof dwr == 'undefined') dwr = {};
         if (dwr.engine.isIE) {
           batch.div = document.createElement("div");
           document.body.appendChild(batch.div);
-          batch.div.innerHTML = "<iframe src='about:blank' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
+          batch.div.innerHTML = "<iframe src='" + dwr.engine.SSL_SECURE_URL + "' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
           batch.iframe = batch.div.firstChild;
         } else {
           batch.iframe = document.createElement("iframe");
           batch.iframe.setAttribute("id", idname);
           batch.iframe.setAttribute("name", idname);
           batch.iframe.setAttribute("frameborder", "0");
-          batch.iframe.setAttribute("src", "about:blank");
+          batch.iframe.setAttribute("src", dwr.engine.SSL_SECURE_URL);
           batch.iframe.setAttribute("style", "width:0px;height:0px;border:0;display:none;");
           document.body.appendChild(batch.iframe);
         }
