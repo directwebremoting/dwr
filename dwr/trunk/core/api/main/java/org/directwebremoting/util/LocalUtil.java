@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.util;
 
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -1365,7 +1366,7 @@ public final class LocalUtil
      */
     public static Class<?> toClass(Type parameterType, String debugContext)
     {
-        if (parameterType instanceof Class)
+        if (parameterType instanceof Class<?>)
         {
             return (Class<?>) parameterType;
         }
@@ -1426,6 +1427,79 @@ public final class LocalUtil
         return convertedClass;
     }
 
+    /**
+     * Changes the first letter to upper case. No other letters are affected.
+     *
+     * @param input any
+     * @return any
+     */
+    public static String capitalize(String input)
+    {
+        String capitalized = input;
+        if (hasText(input))
+        {
+            StringBuffer buf = new StringBuffer(input.length());
+            buf.append(Character.toUpperCase(input.charAt(0)));
+            buf.append(input.substring(1));
+            return buf.toString();
+        }
+        return capitalized;
+    }
+
+    /**
+     * Obtains the write method for a property.
+     *
+     * @param property any
+     * @return any
+     */
+    public static Method getWriteMethod(Class<?> clazz, PropertyDescriptor property)
+    {
+        Method setter = null;
+        if (property != null)
+        {
+            Method getter = property.getReadMethod();
+            setter = property.getWriteMethod();
+            if ((getter != null) && (setter == null) && (clazz != null))
+            {
+                Class<?> type = getter.getReturnType();
+                String setterName = "set" + capitalize(property.getName());
+                try
+                {
+                    setter = clazz.getMethod(setterName, new Class[] {type});
+                }
+                catch (Exception ex)
+                {
+                    setter = find(setterName, type, clazz.getMethods());
+                    if (setter == null)
+                    {
+                        setter = find(setterName, type, clazz.getDeclaredMethods());
+                    }
+
+                }
+            }
+        }
+        return setter;
+    }
+
+    private static Method find(String name, Class<?> type, Method[] methods)
+    {
+        if (methods != null)
+        {
+            for (int index = 0; index < methods.length; index++)
+            {
+                Method method = methods[index];
+                Class<?>[] params = method.getParameterTypes();
+                if (name.equals(method.getName()) && (params != null) && (params.length == 1))
+                {
+                    if (type.isAssignableFrom(params[0]))
+                    {
+                        return method;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     /**
     /**
      * Get a timestamp for the earliest time that we know the JVM started

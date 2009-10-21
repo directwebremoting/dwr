@@ -33,6 +33,7 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
 import org.directwebremoting.extend.ProtocolConstants;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A Converter for Apache XMLBeans.
@@ -222,7 +223,7 @@ public class XmlBeanConverter extends BeanConverter
                         continue;
                     }
 
-                    if (writeRequired && descriptor.getWriteMethod() == null)
+                    if (writeRequired && LocalUtil.getWriteMethod(paramType, descriptor) == null)
                     {
                         continue;
                     }

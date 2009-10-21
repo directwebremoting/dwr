@@ -88,7 +88,12 @@ public class PropertyDescriptorProperty implements Property
     {
         try
         {
-            descriptor.getWriteMethod().invoke(bean, value);
+            Method setter = descriptor.getWriteMethod();
+            if (setter == null)
+            {
+                setter = LocalUtil.getWriteMethod(bean.getClass(), descriptor);
+            }
+            setter.invoke(bean, value);
         }
         catch (InvocationTargetException ex)
         {
@@ -171,4 +176,5 @@ public class PropertyDescriptorProperty implements Property
      * The PropertyDescriptor that we are proxying to
      */
     protected PropertyDescriptor descriptor;
+
 }

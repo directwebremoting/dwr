@@ -26,6 +26,7 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.PropertyDescriptorProperty;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * Convert a Javascript associative array into a JavaBean
@@ -73,7 +74,7 @@ public class BeanConverter extends BasicObjectConverter
                     continue;
                 }
 
-                if (writeRequired && descriptor.getWriteMethod() == null)
+                if (writeRequired && LocalUtil.getWriteMethod(type, descriptor) == null)
                 {
                     continue;
                 }
