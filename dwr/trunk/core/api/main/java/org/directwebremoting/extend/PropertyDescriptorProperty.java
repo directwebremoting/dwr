@@ -88,11 +88,7 @@ public class PropertyDescriptorProperty implements Property
     {
         try
         {
-            Method setter = descriptor.getWriteMethod();
-            if (setter == null)
-            {
-                setter = LocalUtil.getWriteMethod(bean.getClass(), descriptor);
-            }
+            Method setter = LocalUtil.getWriteMethod(bean.getClass(), descriptor);
             setter.invoke(bean, value);
         }
         catch (InvocationTargetException ex)
