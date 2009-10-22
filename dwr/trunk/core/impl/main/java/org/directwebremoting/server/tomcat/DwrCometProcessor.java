@@ -37,11 +37,11 @@ public class DwrCometProcessor extends DwrServlet implements CometProcessor
     @Override
     public void init(ServletConfig servletConfig) throws ServletException
     {
-        super.init(servletConfig);
-
         // Rather than messing with server names, we just declare to
         // TomcatContainerAbstraction that we are running in tomcat
+        // DWR-423, we need to do this before calling init on DwrServlet.
         servletConfig.getServletContext().setAttribute(ATTRIBUTE_ENABLED, true);
+        super.init(servletConfig);
     }
 
     /* (non-Javadoc)
