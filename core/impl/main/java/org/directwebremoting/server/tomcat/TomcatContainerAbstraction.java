@@ -25,7 +25,7 @@ import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
 
 /**
- * An abstraction of the servlet container that is specific to Jetty
+ * An abstraction of the servlet container that is specific to Tomcat
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class TomcatContainerAbstraction implements ContainerAbstraction
