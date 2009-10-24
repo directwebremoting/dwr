@@ -214,7 +214,11 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map converters)
     {
-        this.converters = converters;
+        synchronized (this.converters) 
+        {
+            this.converters.clear();
+            this.converters.putAll(converters);
+        }
     }
 
     /**
@@ -421,7 +425,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * Where we store real type information behind generic types
      */
-    private Map extraTypeInfoMap = new HashMap();
+    private final Map extraTypeInfoMap = Collections.synchronizedMap(new HashMap());
 
     /**
      * The log stream
@@ -431,12 +435,12 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * The list of the available converters
      */
-    private Map converterTypes = new HashMap();
+    private final Map converterTypes = Collections.synchronizedMap(new HashMap());
 
     /**
      * The list of the configured converters
      */
-    private Map converters = new HashMap();
+    private final Map converters = Collections.synchronizedMap(new HashMap());
 
     /**
      * The properties that we don't warn about if they don't exist.
