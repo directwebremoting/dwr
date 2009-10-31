@@ -214,7 +214,7 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map converters)
     {
-        synchronized (this.converters) 
+        synchronized (this.converters)
         {
             this.converters.clear();
             this.converters.putAll(converters);
@@ -254,39 +254,42 @@ public class DefaultConverterManager implements ConverterManager
             String javascriptClassName = type.substring("Object_".length());
 
             // Locate a converter for this JavaScript classname
-            Iterator it = converters.entrySet().iterator();
-            while (it.hasNext())
+            synchronized (converters)
             {
-                Map.Entry entry = (Map.Entry) it.next();
-                String match = (String) entry.getKey();
-                Converter conv = (Converter) entry.getValue();
-
-                // JavaScript mapping is only applicable for compound converters
-                if (conv instanceof NamedConverter)
+                Iterator it = converters.entrySet().iterator();
+                while (it.hasNext())
                 {
-                    NamedConverter boConv = (NamedConverter) conv;
-                    if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String match = (String) entry.getKey();
+                    Converter conv = (Converter) entry.getValue();
+
+                    // JavaScript mapping is only applicable for compound converters
+                    if (conv instanceof NamedConverter)
                     {
-                        // We found a potential converter! But is the
-                        // converter's Java class compatible with the
-                        // parameter type?
-                        try
+                        NamedConverter boConv = (NamedConverter) conv;
+                        if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
                         {
-                            Class inboundClass = LocalUtil.classForName(match);
-                            if (paramType.isAssignableFrom(inboundClass))
+                            // We found a potential converter! But is the
+                            // converter's Java class compatible with the
+                            // parameter type?
+                            try
                             {
-                                // Hack: We also want to make sure that the
-                                // converter creates its object based on the
-                                // inbound class instead of the parameter
-                                // type, and we have to use the other ref
-                                // for this:
-                                boConv.setInstanceType(inboundClass);
-                                return boConv;
+                                Class inboundClass = LocalUtil.classForName(match);
+                                if (paramType.isAssignableFrom(inboundClass))
+                                {
+                                    // Hack: We also want to make sure that the
+                                    // converter creates its object based on the
+                                    // inbound class instead of the parameter
+                                    // type, and we have to use the other ref
+                                    // for this:
+                                    boConv.setInstanceType(inboundClass);
+                                    return boConv;
+                                }
                             }
-                        }
-                        catch (ClassNotFoundException ex)
-                        {
-                            throw new MarshallException(paramType, ex);
+                            catch (ClassNotFoundException ex)
+                            {
+                                throw new MarshallException(paramType, ex);
+                            }
                         }
                     }
                 }
@@ -435,7 +438,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * The list of the available converters
      */
-    private final Map converterTypes = Collections.synchronizedMap(new HashMap());
+    private final Map converterTypes = new HashMap();
 
     /**
      * The list of the configured converters
