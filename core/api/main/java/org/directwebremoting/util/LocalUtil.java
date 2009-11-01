@@ -468,11 +468,14 @@ public final class LocalUtil
         finally {
             try
             {
-                in.close();
+                if (null != in)
+                {
+                    in.close();
+                }
             }
             catch(Exception e)
             {
-                // ok to ignore
+                log.error(e.getMessage());
             }
         }
         log.debug(" " + buffer);
