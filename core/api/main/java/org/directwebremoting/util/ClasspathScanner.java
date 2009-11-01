@@ -141,17 +141,25 @@ public class ClasspathScanner
         Set<String> classes = new HashSet<String>();
         String jarPath = path.substring(0, path.indexOf("!")).substring(path.indexOf(":") + 1);
         JarInputStream jarFile = new JarInputStream(new FileInputStream(jarPath));
-
-        while (true)
+        try
         {
-            JarEntry jarEntry = jarFile.getNextJarEntry();
-            if (jarEntry == null)
+            while (true)
             {
-                break;
+                JarEntry jarEntry = jarFile.getNextJarEntry();
+                if (jarEntry == null)
+                {
+                    break;
+                }
+                addIfMatches(classes, jarEntry.getName());
             }
-            addIfMatches(classes, jarEntry.getName());
         }
-
+        finally
+        {
+            if (null != jarFile)
+            {
+                jarFile.close();
+            }
+        }
         return classes;
     }
 
