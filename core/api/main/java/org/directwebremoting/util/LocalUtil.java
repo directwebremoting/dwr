@@ -443,9 +443,10 @@ public final class LocalUtil
         }
 
         StringWriter buffer = new StringWriter();
+        ServletInputStream in = null;
         try
         {
-            ServletInputStream in = request.getInputStream();
+            in = request.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             int length = 0;
             while (length < 256)
@@ -463,6 +464,16 @@ public final class LocalUtil
         catch (IOException ex)
         {
             buffer.append("[Unable to read body: " + ex + "]\n");
+        }
+        finally {
+            try
+            {
+                in.close();
+            }
+            catch(Exception e)
+            {
+                // ok to ignore
+            }
         }
         log.debug(" " + buffer);
 
