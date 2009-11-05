@@ -36,19 +36,18 @@ public class ShrinkSafeCompressor implements Compressor
     /**
      * @throws Exception Likely if YUI is present, and not ShrinkSafe
      */
-    public ShrinkSafeCompressor() throws Throwable
+    public ShrinkSafeCompressor() throws Exception
     {
-        global = Main.getGlobal();
-        ToolErrorReporter errorReporter = new ToolErrorReporter(false, global.getErr());
-        Main.shellContextFactory.setErrorReporter(errorReporter);
-        global.init(Main.shellContextFactory);
-
         // This should fail if ShrinkSafe is not in classpath
         try
         {
+            global = Main.getGlobal();
+            ToolErrorReporter errorReporter = new ToolErrorReporter(false, global.getErr());
+            Main.shellContextFactory.setErrorReporter(errorReporter);
+            global.init(Main.shellContextFactory);
             compressReaderMethod = Context.class.getMethod("compressReader", Context.class, Scriptable.class, Script .class, String.class, String.class, Integer.TYPE, Object.class);
         }
-        catch (NoSuchMethodException ex)
+        catch (Throwable t)
         {
             throw new InstantiationException("Context.compressReader() is not available, assuming Rhino is not here from custom_rhino.jar, aka ShrinkSafe");
         }
