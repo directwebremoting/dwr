@@ -38,7 +38,7 @@ public class YahooJSCompressor implements Compressor
     /**
      * Constructor: YahooJSCompressor using default property values.
      */
-    public YahooJSCompressor() throws InstantiationException
+    public YahooJSCompressor() throws Throwable
     {
         this(null);
     }
@@ -48,7 +48,7 @@ public class YahooJSCompressor implements Compressor
      *
      * @param specifiedCompressorParameters
      */
-    public YahooJSCompressor(Map<String, Object> specifiedCompressorParameters) throws InstantiationException
+    public YahooJSCompressor(Map<String, Object> specifiedCompressorParameters) throws Throwable
     {
         try
         {
