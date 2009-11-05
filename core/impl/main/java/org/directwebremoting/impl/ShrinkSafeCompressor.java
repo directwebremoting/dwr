@@ -36,7 +36,7 @@ public class ShrinkSafeCompressor implements Compressor
     /**
      * @throws Exception Likely if YUI is present, and not ShrinkSafe
      */
-    public ShrinkSafeCompressor() throws Exception
+    public ShrinkSafeCompressor() throws Throwable
     {
         global = Main.getGlobal();
         ToolErrorReporter errorReporter = new ToolErrorReporter(false, global.getErr());

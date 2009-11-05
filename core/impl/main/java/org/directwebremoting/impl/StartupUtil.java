@@ -393,7 +393,8 @@ public class StartupUtil
         try
         {
             toResolve = Class.forName(toResolveString);
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             Loggers.STARTUP.debug(toResolveString + " is not available. Details: " + ex);
         }
@@ -426,9 +427,9 @@ public class StartupUtil
             {
                 Loggers.STARTUP.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
-            catch (NoClassDefFoundError ex)
+            catch (Throwable t)
             {
-                Loggers.STARTUP.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + implName + " to implement " + toResolve.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + t);
             }
         }
     }
