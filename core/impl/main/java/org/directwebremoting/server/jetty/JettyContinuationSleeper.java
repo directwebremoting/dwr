@@ -37,7 +37,7 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public JettyContinuationSleeper(HttpServletRequest request)
     {
-        continuation = new AtomicReference(request);
+        continuation = new AtomicReference(new Continuation(request));
         // At this point JettyContinuationSleeper is fully initialized so it is
         // safe to allow other classes to see and use us.
         //noinspection ThisEscapedInObjectConstruction
