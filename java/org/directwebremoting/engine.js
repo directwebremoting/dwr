@@ -393,8 +393,9 @@ dwr.engine._execute = function(path, scriptName, methodName, vararg_params) {
   batch.map[prefix + "scriptName"] = scriptName;
   batch.map[prefix + "methodName"] = methodName;
   batch.map[prefix + "id"] = batch.map.callCount;
+  var refctx = [];
   for (i = 0; i < args.length; i++) {
-    dwr.engine._serializeAll(batch, [], args[i], prefix + "param" + i);
+    dwr.engine._serializeAll(batch, refctx, args[i], prefix + "param" + i);
   }
 
   // Now we have finished remembering the call, we incr the call count
