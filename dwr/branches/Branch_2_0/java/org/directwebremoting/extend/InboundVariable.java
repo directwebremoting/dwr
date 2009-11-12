@@ -63,7 +63,7 @@ public final class InboundVariable
                     return false;
                 }
 
-                key = value; // Let the variable name follow the dereferenced value
+                key = cd.key;
                 type = cd.type;
                 value = cd.value;
 
