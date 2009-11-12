@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -432,7 +433,11 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map<String, Converter> converters)
     {
-        this.converters = converters;
+        synchronized (this.converters)
+        {
+            this.converters.clear();
+            this.converters.putAll(converters);
+        }
     }
 
     /**
@@ -463,35 +468,38 @@ public class DefaultConverterManager implements ConverterManager
     protected NamedConverter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
     {
         // Locate a converter for this JavaScript classname
-        for (Map.Entry<String, Converter> entry : converters.entrySet())
+        synchronized (this.converters)
         {
-            String match = entry.getKey();
-            Converter conv = entry.getValue();
-
-            // JavaScript mapping is only applicable for compound converters
-            if (conv instanceof NamedConverter)
+            for (Map.Entry<String, Converter> entry : converters.entrySet())
             {
-                NamedConverter boConv = (NamedConverter) conv;
-                if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
+                String match = entry.getKey();
+                Converter conv = entry.getValue();
+
+                // JavaScript mapping is only applicable for compound converters
+                if (conv instanceof NamedConverter)
                 {
-                    // We found a potential converter! But is the converter's
-                    // Java class compatible with the parameter type?
-                    try
+                    NamedConverter boConv = (NamedConverter) conv;
+                    if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
                     {
-                        Class<?> inboundClass = LocalUtil.classForName(match);
-                        if (paramType.isAssignableFrom(inboundClass))
+                        // We found a potential converter! But is the converter's
+                        // Java class compatible with the parameter type?
+                        try
                         {
-                            // Hack: We also want to make sure that the
-                            // converter creates its object based on the inbound
-                            // class instead of the parameter type, and we have
-                            // to use the other reference for this:
-                            boConv.setInstanceType(inboundClass);
-                            return boConv;
+                            Class<?> inboundClass = LocalUtil.classForName(match);
+                            if (paramType.isAssignableFrom(inboundClass))
+                            {
+                                // Hack: We also want to make sure that the
+                                // converter creates its object based on the inbound
+                                // class instead of the parameter type, and we have
+                                // to use the other reference for this:
+                                boConv.setInstanceType(inboundClass);
+                                return boConv;
+                            }
                         }
-                    }
-                    catch (ClassNotFoundException ex)
-                    {
-                        throw new ConversionException(paramType, ex);
+                        catch (ClassNotFoundException ex)
+                        {
+                            throw new ConversionException(paramType, ex);
+                        }
                     }
                 }
             }
@@ -643,7 +651,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * The list of the configured converters
      */
-    protected Map<String, Converter> converters = new HashMap<String, Converter>();
+    protected final Map<String, Converter> converters = new ConcurrentHashMap<String, Converter>();
 
     /**
      * The properties that we don't warn about if they don't exist.
