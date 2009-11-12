@@ -31,6 +31,19 @@
     <url>https://dwr.dev.java.net/source/browse/dwr/</url>
   </scm>
 
+  <distributionManagement>
+    <repository>
+      <id>dwr-releases</id>
+      <url>http://slurm.dojotoolkit.org/nexus/content/repositories/dwr-releases</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>dwr-snapshots</id>
+      <url>http://slurm.dojotoolkit.org/nexus/content/repositories/dwr-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
   <description>
     DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
     It gets rid of almost all the boiler plate code between the web browser and your Java code.
@@ -349,6 +362,19 @@
             </excludes>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0-beta-9</version>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <preparationGoals>clean install</preparationGoals>
+            <arguments>-Dmaven.test.skip=true</arguments>
+            <goals>deploy</goals>
+            <useReleaseProfile>false</useReleaseProfile>
+            <remoteTagging/>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <defaultGoal>install</defaultGoal>
@@ -396,16 +422,5 @@
   </reporting>
    -->
 
-  <!--
-  <distributionManagement>
-    <snapshotRepository>
-      <id>dwr-snapshots</id>
-      <url>${snapshot.repo.url}</url>
-    </snapshotRepository>
-    <repository>
-      <id>local-repository</id>
-      <url>${m2-repo.java.net.url}</url>
-    </repository>
-  </distributionManagement>
-  -->
+
 </project>

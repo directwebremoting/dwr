@@ -15,6 +15,7 @@
     <dependency>
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -27,22 +28,27 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
+       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
+       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
+       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xom</groupId>
       <artifactId>xom</artifactId>
+       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xmlbeans</groupId>
       <artifactId>xmlbeans</artifactId>
+       <optional>true</optional>
     </dependency>
     
     <!-- Servlet APIs -->

@@ -31,12 +31,14 @@
     <dependency>
       <groupId>hibernate</groupId>
       <artifactId>hibernate</artifactId>
+      <optional>true</optional>
     </dependency>
     
     <!-- Hibernate 3 -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
+      <optional>true</optional>
     </dependency>
           
   </dependencies>
