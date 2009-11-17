@@ -22,8 +22,11 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.jar.JarFile;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -101,13 +104,15 @@ public class ClasspathScanner
             Enumeration<URL> resources = classLoader.getResources(match + "/");
             while (resources.hasMoreElements())
             {
-                String path = sanitizePath(resources.nextElement().getFile());
+                URL resource = resources.nextElement();
+                String path = sanitizePath(resource.getFile());
                 if ((path == null) || (path.trim().length() <= 0))
                 {
                     continue;
                 }
-
-                if (isJARPath(path))
+                if ("vfszip".equals(resource.getProtocol())) {
+                    classes.addAll(getClassesFromVFS(path));
+                } else if (isJARPath(path))
                 {
                     classes.addAll(getClassesFromJAR(path));
                 }
@@ -182,6 +187,48 @@ public class ClasspathScanner
                 else if (recursive)
                 {
                     classes.addAll(getClassesFromDirectory(path + file + "/"));
+                }
+            }
+        }
+        return classes;
+    }
+
+    /**
+     * Extract the classes from a set of classes within a JBoss 5 vfszip protocol URL
+     */
+    protected Set<String> getClassesFromVFS(String path) throws IOException
+    {
+        Set<String> classes = new HashSet<String>();
+        Pattern vfsPattern = Pattern.compile("(.*\\.[wej]ar)(/.*)");
+        Matcher vfsMatcher = vfsPattern.matcher(path);
+        if (vfsMatcher.matches()) {
+            JarInputStream jarFile = new JarInputStream(new FileInputStream(vfsMatcher.group(1)));
+            try
+            {
+                Pattern vfsEntryPattern;
+                if (recursive) {
+                    vfsEntryPattern = Pattern.compile(".*(" + packageName + ".*/)([^/]+)\\.class");
+                } else {
+                    vfsEntryPattern = Pattern.compile(".*(" + packageName + "/)([^/]+)\\.class");
+                }
+                while (true)
+                {
+                    JarEntry jarEntry = jarFile.getNextJarEntry();
+                    if (jarEntry == null)
+                    {
+                        break;
+                    }
+                    Matcher vfsEntryMatcher = vfsEntryPattern.matcher(jarEntry.getName());
+                    if (vfsEntryMatcher.matches()) {
+                        classes.add(vfsEntryMatcher.group(1).replace("/", ".") + vfsEntryMatcher.group(2));
+                    }
+                }
+            }
+            finally
+            {
+                if (null != jarFile)
+                {
+                    jarFile.close();
                 }
             }
         }
