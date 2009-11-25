@@ -343,7 +343,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             {
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                 addScriptHandleExceptions(conduit, script);
-                //log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
+                log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
             }
             catch (Exception ex)
             {
