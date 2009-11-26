@@ -74,7 +74,7 @@ public class YahooJSCompressorTest
     }
 
     @Test
-    public void testCompression() throws Exception
+    public void testCompression() throws Throwable
     {
         YahooJSCompressor yahooJsCompressor = new YahooJSCompressor(null);
         String compressedScript = yahooJsCompressor.compressJavaScript(scriptToCompress);
