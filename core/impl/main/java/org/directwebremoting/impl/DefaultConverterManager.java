@@ -612,7 +612,7 @@ public class DefaultConverterManager implements ConverterManager
             converter = getConverterAssignableFrom(anInterface);
             if (converter != null)
             {
-                converters.put(lookup, converter);
+                converters.putIfAbsent(lookup, converter);
                 return converter;
             }
         }
