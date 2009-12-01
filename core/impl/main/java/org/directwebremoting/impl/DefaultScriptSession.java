@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -39,9 +40,7 @@ import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * An implementation of ScriptSession and RealScriptSession.
- * <p>There are synchronization constraints on this class. See the field
- * comments of the type: <code>GuardedBy("lock")</code>.
- * <p>In addition you should note that {@link DefaultScriptSession} and
+ * <p>You should note that {@link DefaultScriptSession} and
  * {@link DefaultScriptSessionManager} make calls to each other and you should
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -61,7 +60,6 @@ public class DefaultScriptSession implements RealScriptSession
         {
             throw new IllegalArgumentException("id can not be null");
         }
-
         this.page = page;
         this.manager = manager;
         this.creationTime = System.currentTimeMillis();
@@ -74,10 +72,8 @@ public class DefaultScriptSession implements RealScriptSession
     public Object getAttribute(String name)
     {
         invalidateIfNeeded();
-        synchronized (attributes)
-        {
-            return attributes.get(name);
-        }
+        return attributes.get(name);
+
     }
 
     /* (non-Javadoc)
@@ -86,22 +82,18 @@ public class DefaultScriptSession implements RealScriptSession
     public void setAttribute(String name, Object value)
     {
         invalidateIfNeeded();
-        synchronized (attributes)
+        if (value != null)
         {
-            if (value != null)
+            if (value instanceof ScriptSessionBindingListener)
             {
-                if (value instanceof ScriptSessionBindingListener)
-                {
-                    ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
-                    listener.valueBound(new ScriptSessionBindingEvent(this, name));
-                }
-
-                attributes.put(name, value);
+                ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+                listener.valueBound(new ScriptSessionBindingEvent(this, name));
             }
-            else
-            {
-                removeAttribute(name);
-            }
+            attributes.put(name, value);
+        }
+        else
+        {
+            removeAttribute(name);
         }
     }
 
@@ -111,16 +103,11 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeAttribute(String name)
     {
         invalidateIfNeeded();
-
-        synchronized (attributes)
+        Object value = attributes.remove(name);
+        if (value != null && value instanceof ScriptSessionBindingListener)
         {
-            Object value = attributes.remove(name);
-
-            if (value != null && value instanceof ScriptSessionBindingListener)
-            {
-                ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
-                listener.valueUnbound(new ScriptSessionBindingEvent(this, name));
-            }
+            ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
+            listener.valueUnbound(new ScriptSessionBindingEvent(this, name));
         }
     }
 
@@ -130,11 +117,9 @@ public class DefaultScriptSession implements RealScriptSession
     public Iterator<String> getAttributeNames()
     {
         invalidateIfNeeded();
-        synchronized (attributes)
-        {
-            Set<String> keys = Collections.unmodifiableSet(attributes.keySet());
-            return keys.iterator();
-        }
+        Set<String> keys = Collections.unmodifiableSet(attributes.keySet());
+        return keys.iterator();
+
     }
 
     /* (non-Javadoc)
@@ -142,10 +127,10 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void invalidate()
     {
+        // attributes is a concurrent map and can be safely iterated.
         for (Map.Entry<String, Object> entry : attributes.entrySet())
         {
             Object value = entry.getValue();
-
             if (value instanceof ScriptSessionBindingListener)
             {
                 ScriptSessionBindingListener listener = (ScriptSessionBindingListener) value;
@@ -208,41 +193,42 @@ public class DefaultScriptSession implements RealScriptSession
         }
 
         // First we try to add the script to an existing conduit
-        synchronized (scriptLock)
+        if (conduits.isEmpty())
         {
-            if (conduits.isEmpty())
+            boolean written = false;
+
+            // This would be an excellent solution to the connection limit
+            // problem, however browsers are extending their limits, and
+            // we don't have inter-window communication sorted yet.
+            // If we do sort out I-W comms, then uncomment this, add a
+            // member: private String httpSessionId;
+            // which is passed into the constructor from the Manager
+
+            /*
+            // Are there any other script sessions in the same browser
+            // that could proxy the script for us?
+            Collection<RealScriptSession> sessions = manager.getScriptSessionsByHttpSessionId(httpSessionId);
+            ScriptBuffer proxyScript = EnginePrivate.createForeignWindowProxy(getWindowName(), script);
+
+            for (Iterator<RealScriptSession> it = sessions.iterator(); !written && it.hasNext();)
             {
-                boolean written = false;
-
-                // This would be an excellent solution to the connection limit
-                // problem, however browsers are extending their limits, and
-                // we don't have inter-window communication sorted yet.
-                // If we do sort out I-W comms, then uncomment this, add a
-                // member: private String httpSessionId;
-                // which is passed into the constructor from the Manager
-
-                /*
-                // Are there any other script sessions in the same browser
-                // that could proxy the script for us?
-                Collection<RealScriptSession> sessions = manager.getScriptSessionsByHttpSessionId(httpSessionId);
-                ScriptBuffer proxyScript = EnginePrivate.createForeignWindowProxy(getWindowName(), script);
-
-                for (Iterator<RealScriptSession> it = sessions.iterator(); !written && it.hasNext();)
-                {
-                    RealScriptSession session = it.next();
-                    written = session.addScriptImmediately(proxyScript);
-                }
-                */
-
-                if (!written)
-                {
-                    scripts.add(script);
-                }
+                RealScriptSession session = it.next();
+                written = session.addScriptImmediately(proxyScript);
             }
-            else
+            */
+
+            if (!written)
             {
-                // Try all the conduits, starting with the first
-                boolean written = false;
+                scripts.add(script);
+            }
+        }
+        else
+        {
+            // Try all the conduits, starting with the first
+            boolean written = false;
+            // synchronized collections can throw exceptions when being iterated through without manual synchronization.
+            synchronized (this)
+            {
                 for (Iterator<ScriptConduit> it = conduits.iterator(); !written && it.hasNext();)
                 {
                     ScriptConduit conduit = it.next();
@@ -256,11 +242,11 @@ public class DefaultScriptSession implements RealScriptSession
                         log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
                     }
                 }
+            }
 
-                if (!written)
-                {
-                    scripts.add(script);
-                }
+            if (!written)
+            {
+                scripts.add(script);
             }
         }
     }
@@ -279,11 +265,15 @@ public class DefaultScriptSession implements RealScriptSession
     public int countPersistentConnections()
     {
         int persistentConnections = 0;
-        for (ScriptConduit conduit : conduits)
+        // synchronized collections can throw exceptions when being iterated through without manual synchronization.
+        synchronized (this)
         {
-            if (conduit.isHoldingConnectionToBrowser())
+            for (ScriptConduit conduit : conduits)
             {
-                persistentConnections++;
+                if (conduit.isHoldingConnectionToBrowser())
+                {
+                    persistentConnections++;
+                }
             }
         }
         return persistentConnections;
@@ -295,12 +285,8 @@ public class DefaultScriptSession implements RealScriptSession
     public void addScriptConduit(ScriptConduit conduit) throws IOException
     {
         invalidateIfNeeded();
-
-        synchronized (scriptLock)
-        {
-            writeScripts(conduit);
-            conduits.add(conduit);
-        }
+        writeScripts(conduit);
+        conduits.add(conduit);
     }
 
     /* (non-Javadoc)
@@ -309,8 +295,8 @@ public class DefaultScriptSession implements RealScriptSession
     public void writeScripts(ScriptConduit conduit) throws IOException
     {
         invalidateIfNeeded();
-
-        synchronized (scriptLock)
+        // synchronized collections can throw exceptions when being iterated through without manual synchronization.
+        synchronized (this)
         {
             for (Iterator<ScriptBuffer> it = scripts.iterator(); it.hasNext();)
             {
@@ -343,8 +329,7 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-
-        synchronized (scriptLock)
+        synchronized (this)
         {
             boolean removed = conduits.remove(conduit);
             if (!removed)
@@ -360,10 +345,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean hasWaitingScripts()
     {
-        synchronized (scriptLock)
-        {
-            return !scripts.isEmpty();
-        }
+        return !scripts.isEmpty();
     }
 
     /* (non-Javadoc)
@@ -410,7 +392,6 @@ public class DefaultScriptSession implements RealScriptSession
         {
             return;
         }
-
         long now = System.currentTimeMillis();
         long age = now - lastAccessedTime.get();
         if (age > manager.getScriptSessionTimeout())
@@ -492,7 +473,7 @@ public class DefaultScriptSession implements RealScriptSession
      * The server side attributes for this page.
      * <p>GuardedBy("attributes")
      */
-    protected final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>();
+    protected final ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 
     /**
      * When the the web page that we represent last contact us using DWR?
@@ -506,21 +487,15 @@ public class DefaultScriptSession implements RealScriptSession
 
     /**
      * The script conduits that we can use to transfer data to the browser.
-     * <p>GuardedBy("scriptLock")
+     * <p>GuardedBy("this") for iteration and compound actions.
      */
-    protected final SortedSet<ScriptConduit> conduits = new TreeSet<ScriptConduit>();
+    protected final SortedSet<ScriptConduit> conduits = Collections.synchronizedSortedSet(new TreeSet<ScriptConduit>());
 
     /**
      * The list of waiting scripts.
-     * <p>GuardedBy("scriptLock")
+     * <p>GuardedBy("this") for iteration and compound actions.
      */
-    protected final List<ScriptBuffer> scripts = new ArrayList<ScriptBuffer>();
-
-    /**
-     * The object that we use to synchronize against when we want to alter
-     * the path of scripts (to conduits or the scripts list)
-     */
-    private final Object scriptLock = new Object();
+    protected final List<ScriptBuffer> scripts = Collections.synchronizedList(new ArrayList<ScriptBuffer>());
 
     /**
      * What is our page session id?
