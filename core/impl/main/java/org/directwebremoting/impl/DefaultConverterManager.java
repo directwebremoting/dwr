@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -433,11 +434,8 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map<String, Converter> converters)
     {
-        synchronized (this.converters)
-        {
-            this.converters.clear();
-            this.converters.putAll(converters);
-        }
+        this.converters.clear();
+        this.converters.putAll(converters);
     }
 
     /**
@@ -468,43 +466,39 @@ public class DefaultConverterManager implements ConverterManager
     protected NamedConverter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
     {
         // Locate a converter for this JavaScript classname
-        synchronized (this.converters)
+        for (Map.Entry<String, Converter> entry : converters.entrySet())
         {
-            for (Map.Entry<String, Converter> entry : converters.entrySet())
-            {
-                String match = entry.getKey();
-                Converter conv = entry.getValue();
+            String match = entry.getKey();
+            Converter conv = entry.getValue();
 
-                // JavaScript mapping is only applicable for compound converters
-                if (conv instanceof NamedConverter)
+            // JavaScript mapping is only applicable for compound converters
+            if (conv instanceof NamedConverter)
+            {
+                NamedConverter boConv = (NamedConverter) conv;
+                if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
                 {
-                    NamedConverter boConv = (NamedConverter) conv;
-                    if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
+                    // We found a potential converter! But is the converter's
+                    // Java class compatible with the parameter type?
+                    try
                     {
-                        // We found a potential converter! But is the converter's
-                        // Java class compatible with the parameter type?
-                        try
+                        Class<?> inboundClass = LocalUtil.classForName(match);
+                        if (paramType.isAssignableFrom(inboundClass))
                         {
-                            Class<?> inboundClass = LocalUtil.classForName(match);
-                            if (paramType.isAssignableFrom(inboundClass))
-                            {
-                                // Hack: We also want to make sure that the
-                                // converter creates its object based on the inbound
-                                // class instead of the parameter type, and we have
-                                // to use the other reference for this:
-                                boConv.setInstanceType(inboundClass);
-                                return boConv;
-                            }
+                            // Hack: We also want to make sure that the
+                            // converter creates its object based on the inbound
+                            // class instead of the parameter type, and we have
+                            // to use the other reference for this:
+                            boConv.setInstanceType(inboundClass);
+                            return boConv;
                         }
-                        catch (ClassNotFoundException ex)
-                        {
-                            throw new ConversionException(paramType, ex);
-                        }
+                    }
+                    catch (ClassNotFoundException ex)
+                    {
+                        throw new ConversionException(paramType, ex);
                     }
                 }
             }
         }
-
         return null;
     }
 
@@ -651,7 +645,7 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * The list of the configured converters
      */
-    protected final Map<String, Converter> converters = new ConcurrentHashMap<String, Converter>();
+    protected final ConcurrentMap<String, Converter> converters = new ConcurrentHashMap<String, Converter>();
 
     /**
      * The properties that we don't warn about if they don't exist.
