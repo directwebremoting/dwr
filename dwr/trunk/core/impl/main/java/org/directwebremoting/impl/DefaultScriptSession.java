@@ -446,7 +446,6 @@ public class DefaultScriptSession implements RealScriptSession
         }
 
         DefaultScriptSession that = (DefaultScriptSession) obj;
-
         return this.id.equals(that.id);
 
     }
