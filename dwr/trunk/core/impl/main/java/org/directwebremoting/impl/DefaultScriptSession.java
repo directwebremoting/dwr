@@ -18,13 +18,13 @@ package org.directwebremoting.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -492,7 +492,7 @@ public class DefaultScriptSession implements RealScriptSession
      * The server side attributes for this page.
      * <p>GuardedBy("attributes")
      */
-    protected final Map<String, Object> attributes = Collections.synchronizedMap(new HashMap<String, Object>());
+    protected final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 
     /**
      * When the the web page that we represent last contact us using DWR?
