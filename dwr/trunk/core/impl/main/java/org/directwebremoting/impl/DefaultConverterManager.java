@@ -50,6 +50,10 @@ import org.directwebremoting.util.Loggers;
 public class DefaultConverterManager implements ConverterManager
 {
     /* (non-Javadoc)
+     *
+     * Called only at start-up! It is important that this method only be called at start-up.  Otherwise we
+     * will need to modify it so it is thread safe.
+     *
      * @see org.directwebremoting.ConverterManager#addConverterType(java.lang.String, java.lang.String)
      */
     public void addConverterType(String id, String className)
@@ -69,6 +73,10 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     *
+     * Called only at start-up! It is important that this method only be called at start-up.  Otherwise we
+     * will need to modify it so it is thread safe.
+     *
      * @see org.directwebremoting.ConverterManager#addConverter(java.lang.String, java.lang.String, java.util.Map)
      */
     public void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException
@@ -88,6 +96,10 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     *
+     * Called only at start-up! It is important that this method only be called at start-up.  Otherwise we
+     * will need to modify it so it is thread safe.
+     *
      * @see org.directwebremoting.ConverterManager#addConverter(java.lang.String, org.directwebremoting.Converter)
      */
     public void addConverter(String match, Converter converter) throws IllegalArgumentException
@@ -430,6 +442,10 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     *
+     * Called only at start-up! It is important that this method only be called at start-up.  Otherwise we
+     * will need to modify it so it is thread safe.
+     *
      * @see org.directwebremoting.ConverterManager#setConverters(java.util.Map)
      */
     public void setConverters(Map<String, Converter> converters)
