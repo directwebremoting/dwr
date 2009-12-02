@@ -25,9 +25,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +60,7 @@ public class DefaultScriptSession implements RealScriptSession
         this.page = page;
         this.manager = manager;
         this.creationTime = System.currentTimeMillis();
-        this.lastAccessedTime.set(creationTime);
+        this.lastAccessedTime = creationTime;
     }
 
     /* (non-Javadoc)
@@ -119,7 +116,6 @@ public class DefaultScriptSession implements RealScriptSession
         invalidateIfNeeded();
         Set<String> keys = Collections.unmodifiableSet(attributes.keySet());
         return keys.iterator();
-
     }
 
     /* (non-Javadoc)
@@ -137,7 +133,7 @@ public class DefaultScriptSession implements RealScriptSession
                 listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
             }
         }
-        invalidated.set(true);
+        invalidated = true;
         manager.invalidate(this);
     }
 
@@ -146,7 +142,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean isInvalidated()
     {
-        return invalidated.get();
+        return invalidated;
     }
 
     /* (non-Javadoc)
@@ -177,7 +173,7 @@ public class DefaultScriptSession implements RealScriptSession
         // everything for validity. So if we do this check here then DSSM will
         // give a ConcurrentModificationException if anything does timeout
         // checkNotInvalidated();
-        return lastAccessedTime.get();
+        return lastAccessedTime;
     }
 
     /* (non-Javadoc)
@@ -266,7 +262,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         int persistentConnections = 0;
         // synchronized collections can throw exceptions when being iterated through without manual synchronization.
-        synchronized (this)
+        synchronized (this.conduits)
         {
             for (ScriptConduit conduit : conduits)
             {
@@ -296,7 +292,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         invalidateIfNeeded();
         // synchronized collections can throw exceptions when being iterated through without manual synchronization.
-        synchronized (this)
+        synchronized (this.scripts)
         {
             for (Iterator<ScriptBuffer> it = scripts.iterator(); it.hasNext();)
             {
@@ -329,14 +325,11 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-        synchronized (this)
+        boolean removed = conduits.remove(conduit);
+        if (!removed)
         {
-            boolean removed = conduits.remove(conduit);
-            if (!removed)
-            {
-                log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
-                debug();
-            }
+            log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
+            debug();
         }
     }
 
@@ -377,8 +370,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void updateLastAccessedTime()
     {
-        long temp = System.currentTimeMillis();
-        lastAccessedTime.set(temp);
+        lastAccessedTime = System.currentTimeMillis();
     }
 
     /**
@@ -388,12 +380,12 @@ public class DefaultScriptSession implements RealScriptSession
      */
     protected void invalidateIfNeeded()
     {
-        if (invalidated.get())
+        if (invalidated)
         {
             return;
         }
         long now = System.currentTimeMillis();
-        long age = now - lastAccessedTime.get();
+        long age = now - lastAccessedTime;
         if (age > manager.getScriptSessionTimeout())
         {
             invalidate();
@@ -472,27 +464,27 @@ public class DefaultScriptSession implements RealScriptSession
      * The server side attributes for this page.
      * <p>GuardedBy("attributes")
      */
-    protected final ConcurrentMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
+    protected final Map<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 
     /**
      * When the the web page that we represent last contact us using DWR?
      */
-    private final AtomicLong lastAccessedTime = new AtomicLong(0L);
+    private volatile long lastAccessedTime = 0L;
 
     /**
      * Have we been made invalid?
      */
-    private final AtomicBoolean invalidated = new AtomicBoolean(false);
+    private volatile boolean invalidated = false;
 
     /**
      * The script conduits that we can use to transfer data to the browser.
-     * <p>GuardedBy("this") for iteration and compound actions.
+     * <p>GuardedBy("self") for iteration and compound actions.
      */
     protected final SortedSet<ScriptConduit> conduits = Collections.synchronizedSortedSet(new TreeSet<ScriptConduit>());
 
     /**
      * The list of waiting scripts.
-     * <p>GuardedBy("this") for iteration and compound actions.
+     * <p>GuardedBy("self") for iteration and compound actions.
      */
     protected final List<ScriptBuffer> scripts = Collections.synchronizedList(new ArrayList<ScriptBuffer>());
 
