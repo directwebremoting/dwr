@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.impl.DefaultAjaxFilterManager;
+import org.directwebremoting.util.LocalUtil;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -112,7 +113,7 @@ public class InternalAjaxFilterManager implements AjaxFilterManager
         try
         {
             @SuppressWarnings("unchecked")
-            Class<? extends AjaxFilterManager> cls = (Class<? extends AjaxFilterManager>) Class.forName(name);
+            Class<? extends AjaxFilterManager> cls = (Class<? extends AjaxFilterManager>) LocalUtil.classForName(name);
             return cls.newInstance();
         }
         catch (Exception e)

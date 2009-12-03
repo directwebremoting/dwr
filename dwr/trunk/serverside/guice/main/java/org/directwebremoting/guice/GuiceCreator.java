@@ -15,12 +15,13 @@
  */
 package org.directwebremoting.guice;
 
+import org.directwebremoting.create.NewCreator;
+import org.directwebremoting.extend.Creator;
+import org.directwebremoting.util.LocalUtil;
+
 import com.google.inject.Injector;
 
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.create.NewCreator;
-
-import static org.directwebremoting.guice.DwrGuiceUtil.getInjector;
+import static org.directwebremoting.guice.DwrGuiceUtil.*;
 
 /**
  * A creator that uses Guice dependency injection to create remoted objects.
@@ -46,7 +47,7 @@ public class GuiceCreator extends NewCreator implements Creator
             // Don't use LocalUtil.classForName because it insists
             // on a default constructor, and we want to be able to
             // use an @Inject constructor.
-            this.type = Class.forName(classname);
+            this.type = LocalUtil.classForName(classname);
         }
         catch (ClassNotFoundException ex)
         {

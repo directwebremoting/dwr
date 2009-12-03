@@ -351,7 +351,7 @@ public class StartupUtil
                     continue;
                 }
 
-                Class<ContainerAbstraction> abstractionImpl = (Class<ContainerAbstraction>) Class.forName(abstractionImplName);
+                Class<ContainerAbstraction> abstractionImpl = (Class<ContainerAbstraction>) LocalUtil.classForName(abstractionImplName);
                 ContainerAbstraction abstraction = abstractionImpl.newInstance();
                 if (abstraction.isNativeEnvironment(servletConfig))
                 {
@@ -392,7 +392,7 @@ public class StartupUtil
         Class toResolve = null;
         try
         {
-            toResolve = Class.forName(toResolveString);
+            toResolve = LocalUtil.classForName(toResolveString);
         }
         catch (Exception ex)
         {
@@ -412,7 +412,7 @@ public class StartupUtil
 
             try
             {
-                Class<?> impl = Class.forName(implName);
+                Class<?> impl = LocalUtil.classForName(implName);
                 if (!toResolve.isAssignableFrom(impl))
                 {
                     Loggers.STARTUP.error("  - Can't cast: " + impl.getName() + " to " + toResolve.getName());
@@ -464,7 +464,7 @@ public class StartupUtil
 
             try
             {
-                Class<?> impl = Class.forName(implName);
+                Class<?> impl = LocalUtil.classForName(implName);
                 if (!ScriptSessionListener.class.isAssignableFrom(impl))
                 {
                     Loggers.STARTUP.error("  - Can't cast: " + impl.getName() + " to " + ScriptSessionListener.class.getName());

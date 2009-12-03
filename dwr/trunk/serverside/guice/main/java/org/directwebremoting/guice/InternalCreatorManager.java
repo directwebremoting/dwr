@@ -23,11 +23,12 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.DefaultCreatorManager;
+import org.directwebremoting.util.LocalUtil;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
-import static org.directwebremoting.guice.DwrGuiceUtil.getInjector;
+import static org.directwebremoting.guice.DwrGuiceUtil.*;
 
 /**
  * Extends an existing creator manager with an injected list of creators
@@ -194,7 +195,7 @@ public class InternalCreatorManager implements CreatorManager
         try
         {
             @SuppressWarnings("unchecked")
-            Class<? extends CreatorManager> cls = (Class<? extends CreatorManager>) Class.forName(name);
+            Class<? extends CreatorManager> cls = (Class<? extends CreatorManager>) LocalUtil.classForName(name);
             return cls.newInstance();
         }
         catch (Exception e)
