@@ -75,11 +75,11 @@ public class XmlBeanConverter extends BeanConverter
         {
             if (instanceType != null)
             {
-                Class.forName(instanceType.getName());
+               LocalUtil.classForName(instanceType.getName());
             }
             else
             {
-                Class.forName(paramType.getName());
+                LocalUtil.classForName(paramType.getName());
             }
 
             Class<?>[] innerClasses = paramType.getClasses();

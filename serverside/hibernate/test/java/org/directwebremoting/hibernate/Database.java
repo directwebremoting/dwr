@@ -5,8 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * Database abstraction code to help Hibernate tests
@@ -38,10 +39,10 @@ public class Database
 
         Connection con = null;
         Statement stmt = null;
-    
+
         try
         {
-            Class.forName("org.hsqldb.jdbcDriver");
+            LocalUtil.classForName("org.hsqldb.jdbcDriver");
             con = DriverManager.getConnection("jdbc:hsqldb:mem:dwr-test", "sa", "");
             stmt = con.createStatement();
             for (String sql : STARTUP)

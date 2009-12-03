@@ -30,6 +30,7 @@ import javax.jms.Topic;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.util.LocalUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -108,7 +109,7 @@ public class JmsTest
     {
         try
         {
-            Class<?> factoryClass = Class.forName(FACTORY_CLASSNAME);
+            Class<?> factoryClass = LocalUtil.classForName(FACTORY_CLASSNAME);
             ConnectionFactory factory = (ConnectionFactory) factoryClass.newInstance();
             connection = factory.createConnection();
             connection.setClientID(CLIENT_ID);

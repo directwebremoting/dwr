@@ -138,7 +138,7 @@ public class DefaultConverterManager implements ConverterManager
                     // Set up stuff for mapped JavaScript class (if any)
                     if (LocalUtil.hasLength(namedConverter.getJavascript()))
                     {
-                        Class<?> javaClass = Class.forName(match);
+                        Class<?> javaClass = LocalUtil.classForName(match);
                         namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
                         namedConverter.setInstanceType(javaClass);
 

@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.filter.ExtraLatencyAjaxFilter;
+import org.directwebremoting.util.LocalUtil;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
@@ -743,7 +744,7 @@ public abstract class DwrNamespaceHandler extends NamespaceHandlerSupport
                 {
                     try
                     {
-                        Class<?> clazz = Class.forName(creatorClass);
+                        Class<?> clazz = LocalUtil.classForName(creatorClass);
                         creator = BeanDefinitionBuilder.rootBeanDefinition(clazz);
                         creatorConfig.addPropertyValue("creator", creator.getBeanDefinition());
                         String className = element.getAttribute("class");

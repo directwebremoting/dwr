@@ -29,6 +29,7 @@ import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.impl.DefaultConverterManager;
 import org.directwebremoting.io.RawData;
+import org.directwebremoting.util.LocalUtil;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -251,7 +252,7 @@ public class InternalConverterManager implements ConverterManager
         try
         {
             @SuppressWarnings("unchecked")
-            Class<? extends ConverterManager> cls = (Class<? extends ConverterManager>) Class.forName(name);
+            Class<? extends ConverterManager> cls = (Class<? extends ConverterManager>) LocalUtil.classForName(name);
             return cls.newInstance();
         }
         catch (Exception e)
