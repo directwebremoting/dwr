@@ -1973,10 +1973,10 @@ if (typeof dwr == 'undefined') dwr = {};
         urlBuffer.push(".dwr");
       }
       // Play nice with url re-writing
-       var sessionMatchExpr = eval("/" + dwr.engine._sessionCookieName + "=([^?#]+)/"); 
+       var sessionMatchExpr = eval("/" + dwr.engine._sessionCookieName.toLowerCase() + "=([^?#]+)/"); 
 	   var sessionMatch = location.href.match(sessionMatchExpr); 
 	   if (sessionMatch != null) { 
-	       urlBuffer.push(";" + dwr.engine._sessionCookieName + "="); 
+	       urlBuffer.push(";" + dwr.engine._sessionCookieName.toLowerCase() + "="); 
 	       urlBuffer.push(sessionMatch[1]); 
 	   } 
 
