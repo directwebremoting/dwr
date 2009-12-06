@@ -1973,12 +1973,11 @@ if (typeof dwr == 'undefined') dwr = {};
         urlBuffer.push(".dwr");
       }
       // Play nice with url re-writing
-       var sessionMatchExpr = eval("/" + dwr.engine._sessionCookieName.toLowerCase() + "=([^?#]+)/"); 
-	   var sessionMatch = location.href.match(sessionMatchExpr); 
-	   if (sessionMatch != null) { 
-	       urlBuffer.push(";" + dwr.engine._sessionCookieName.toLowerCase() + "="); 
-	       urlBuffer.push(sessionMatch[1]); 
-	   } 
+      var sessionMatchExpr = new RegExp("/(" + dwr.engine._sessionCookieName + ")=([^?#]+)/", "i"); 
+      var sessionMatch = location.href.match(sessionMatchExpr); 
+      if (sessionMatch != null) { 
+        urlBuffer.push(";" + sessionMatch[1] + "=" + sessionMatch[2]); 
+      } 
 
       var request = {};
       var prop;
