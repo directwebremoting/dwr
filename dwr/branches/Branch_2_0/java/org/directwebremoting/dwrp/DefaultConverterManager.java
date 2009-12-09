@@ -397,31 +397,34 @@ public class DefaultConverterManager implements ConverterManager
         String lookup = paramType.getName();
 
         // Can we find the converter for paramType in the converters HashMap?
-        Converter converter = (Converter) converters.get(lookup);
-        if (converter != null)
+        Converter converter = null;
+        synchronized (this.converters) 
         {
-            return converter;
-        }
+            converter = (Converter) converters.get(lookup);
+            if (converter != null)
+            {
+                return converter;
+            }
 
-        // Lookup all of the interfaces of this class for a match
-        Class[] interfaces = paramType.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++)
-        {
-            converter = getConverterAssignableFrom(interfaces[i]);
+            // Lookup all of the interfaces of this class for a match
+            Class[] interfaces = paramType.getInterfaces();
+            for (int i = 0; i < interfaces.length; i++)
+            {
+                converter = getConverterAssignableFrom(interfaces[i]);
+                if (converter != null)
+                {
+                    converters.put(lookup, converter);
+                    return converter;
+                }
+            }
+
+            // Let's search it in paramType superClass
+            converter = getConverterAssignableFrom(paramType.getSuperclass());
             if (converter != null)
             {
                 converters.put(lookup, converter);
-                return converter;
-            }
-        }
-
-        // Let's search it in paramType superClass
-        converter = getConverterAssignableFrom(paramType.getSuperclass());
-        if (converter != null)
-        {
-            converters.put(lookup, converter);
-        }
-
+            }            
+        }   
         return converter;
     }
 
