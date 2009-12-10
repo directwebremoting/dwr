@@ -22,11 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.event.EventListenerList;
 
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptBuffer;
@@ -134,7 +135,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
             associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
 
             // Maybe we should update the access time of the ScriptSession?
-            //  scriptSession.updateLastAccessedTime();
+            // scriptSession.updateLastAccessedTime();
             // Since this call could come from outside of a call from the
             // browser, it's not really an indication that this session is still
             // alive, so we don't.
@@ -219,7 +220,11 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         if (pageSessions == null)
         {
             pageSessions = new HashSet<DefaultScriptSession>();
-            pageSessionMap.put(normalizedPage, pageSessions);
+            Set<DefaultScriptSession> prev = pageSessionMap.putIfAbsent(normalizedPage, pageSessions);
+            if (prev != null)
+            {
+                pageSessions = prev;
+            }
         }
 
         pageSessions.add(scriptSession);
@@ -360,7 +365,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     public void addScriptSessionListener(ScriptSessionListener li)
     {
-        scriptSessionListeners.add(ScriptSessionListener.class, li);
+        scriptSessionListeners.add(li);
     }
 
     /* (non-Javadoc)
@@ -368,7 +373,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     public void removeScriptSessionListener(ScriptSessionListener li)
     {
-        scriptSessionListeners.remove(ScriptSessionListener.class, li);
+        scriptSessionListeners.remove(li);
     }
 
     /**
@@ -378,19 +383,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     protected void fireScriptSessionCreatedEvent(ScriptSession scriptSession)
     {
         ScriptSessionEvent ev = null;
-
-        Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
+        for (int i = scriptSessionListeners.size() - 2; i >= 0; i -= 2)
         {
-            if (listeners[i] == ScriptSessionListener.class)
+            if (ev == null)
             {
-                if (ev == null)
-                {
-                    ev = new ScriptSessionEvent(scriptSession);
-                }
-
-                ((ScriptSessionListener) listeners[i + 1]).sessionCreated(ev);
+                ev = new ScriptSessionEvent(scriptSession);
             }
+            scriptSessionListeners.get(i + 1).sessionCreated(ev);
         }
     }
 
@@ -401,19 +400,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     protected void fireScriptSessionDestroyedEvent(ScriptSession scriptSession)
     {
         ScriptSessionEvent ev = null;
-
-        Object[] listeners = scriptSessionListeners.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
+        for (int i = scriptSessionListeners.size() - 2; i >= 0; i -= 2)
         {
-            if (listeners[i] == ScriptSessionListener.class)
+            if (ev == null)
             {
-                if (ev == null)
-                {
-                    ev = new ScriptSessionEvent(scriptSession);
-                }
-
-                ((ScriptSessionListener) listeners[i + 1]).sessionDestroyed(ev);
+                ev = new ScriptSessionEvent(scriptSession);
             }
+            scriptSessionListeners.get(i + 1).sessionDestroyed(ev);
         }
     }
 
@@ -530,7 +523,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /**
      * The list of current {@link ScriptSessionListener}s
      */
-    protected EventListenerList scriptSessionListeners = new EventListenerList();
+    protected List<ScriptSessionListener> scriptSessionListeners = new CopyOnWriteArrayList<ScriptSessionListener>();
 
     /**
      * How we create script session ids.
@@ -546,7 +539,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * We check for sessions that need timing out every
      * {@link #scriptSessionCheckTime}; this is when we last checked.
      */
-    protected long lastSessionCheckAt = System.currentTimeMillis();
+    protected volatile long lastSessionCheckAt = System.currentTimeMillis();
 
     /**
      * What we synchronize against when we want to access either sessionMap or
@@ -574,5 +567,5 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * known to be currently visiting the page
      * <p>GuardedBy("sessionLock")
      */
-    protected final Map<String, Set<DefaultScriptSession>> pageSessionMap = new HashMap<String, Set<DefaultScriptSession>>();
+    protected final ConcurrentMap<String, Set<DefaultScriptSession>> pageSessionMap = new ConcurrentHashMap<String, Set<DefaultScriptSession>>();
 }
