@@ -93,7 +93,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
         DefaultScriptSession scriptSession;
 
-        synchronized (sessionLock)
+        synchronized (this.sessionMap)
         {
             scriptSession = sessionMap.get(sentScriptId);
             if (scriptSession == null)
@@ -527,12 +527,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * {@link #scriptSessionCheckTime}; this is when we last checked.
      */
     protected volatile long lastSessionCheckAt = System.currentTimeMillis();
-
-    /**
-     * What we synchronize against when we want to access either sessionMap or
-     * pageSessionMap
-     */
-    protected final Object sessionLock = new Object();
 
     /**
      * Allows us to associate script sessions with http sessions.
