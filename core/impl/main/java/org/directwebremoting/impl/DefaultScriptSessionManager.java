@@ -17,7 +17,6 @@ package org.directwebremoting.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -251,18 +250,15 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     {
         Collection<RealScriptSession> reply = new ArrayList<RealScriptSession>();
 
-        synchronized (sessionLock)
+        Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
+        if (scriptSessionIds != null)
         {
-            Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-            if (scriptSessionIds != null)
+            for (String scriptSessionId : scriptSessionIds)
             {
-                for (String scriptSessionId : scriptSessionIds)
+                DefaultScriptSession scriptSession = sessionMap.get(scriptSessionId);
+                if (scriptSession != null)
                 {
-                    DefaultScriptSession scriptSession = sessionMap.get(scriptSessionId);
-                    if (scriptSession != null)
-                    {
-                        reply.add(scriptSession);
-                    }
+                    reply.add(scriptSession);
                 }
             }
         }
@@ -275,12 +271,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     public Collection<ScriptSession> getAllScriptSessions()
     {
-        synchronized (sessionLock)
-        {
-            Set<ScriptSession> reply = new HashSet<ScriptSession>();
-            reply.addAll(sessionMap.values());
-            return reply;
-        }
+        Set<ScriptSession> reply = new HashSet<ScriptSession>();
+        reply.addAll(sessionMap.values());
+        return reply;
     }
 
     /**
@@ -292,19 +285,16 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     {
         Loggers.SESSION.debug("Invalidating " + scriptSession + " from " + scriptSession.getPage());
 
-        synchronized (sessionLock)
-        {
-            // Due to the way systems get a number of script sessions for a page
-            // and the perform a number of actions on them, we may get a number
-            // of invalidation checks, and therefore calls to invalidate().
-            // We could protect ourselves from this by having a
-            // 'hasBeenInvalidated' flag, but we're taking the simple option
-            // here of just allowing multiple invalidations.
-            sessionMap.remove(scriptSession.getId());
+        // Due to the way systems get a number of script sessions for a page
+        // and the perform a number of actions on them, we may get a number
+        // of invalidation checks, and therefore calls to invalidate().
+        // We could protect ourselves from this by having a
+        // 'hasBeenInvalidated' flag, but we're taking the simple option
+        // here of just allowing multiple invalidations.
+        sessionMap.remove(scriptSession.getId());
 
-            disassociateScriptSessionAndPage(scriptSession);
-            disassociateScriptSessionAndHttpSession(scriptSession);
-        }
+        disassociateScriptSessionAndPage(scriptSession);
+        disassociateScriptSessionAndHttpSession(scriptSession);
 
         // Are there any risks from doing this outside the locks?
         // The initial analysis is that 'Destroyed' is past tense so you would
@@ -336,27 +326,24 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         long now = System.currentTimeMillis();
         List<ScriptSession> timeouts = new ArrayList<ScriptSession>();
 
-        synchronized (sessionLock)
+        for (DefaultScriptSession session : sessionMap.values())
         {
-            for (DefaultScriptSession session : sessionMap.values())
+            if (session.isInvalidated())
             {
-                if (session.isInvalidated())
-                {
-                    continue;
-                }
-
-                long age = now - session.getLastAccessedTime();
-                if (age > scriptSessionTimeout)
-                {
-                    timeouts.add(session);
-                }
+                continue;
             }
 
-            for (ScriptSession scriptSession : timeouts)
+            long age = now - session.getLastAccessedTime();
+            if (age > scriptSessionTimeout)
             {
-                DefaultScriptSession session = (DefaultScriptSession) scriptSession;
-                session.invalidate();
+                timeouts.add(session);
             }
+        }
+
+        for (ScriptSession scriptSession : timeouts)
+        {
+            DefaultScriptSession session = (DefaultScriptSession) scriptSession;
+            session.invalidate();
         }
     }
 
@@ -552,14 +539,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The key is an http session id, the
      * <p>GuardedBy("sessionLock")
      */
-    protected final Map<String, Set<String>> sessionXRef = new HashMap<String, Set<String>>();
+    protected final Map<String, Set<String>> sessionXRef = new ConcurrentHashMap<String, Set<String>>();
 
     /**
      * The map of all the known sessions.
      * The key is the script session id, the value is the session data
      * <p>GuardedBy("sessionLock")
      */
-    protected final Map<String, DefaultScriptSession> sessionMap = new HashMap<String, DefaultScriptSession>();
+    protected final Map<String, DefaultScriptSession> sessionMap = new ConcurrentHashMap<String, DefaultScriptSession>();
 
     /**
      * The map of pages that have sessions.
