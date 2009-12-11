@@ -520,7 +520,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /**
      * The session timeout checker function so we can shutdown cleanly
      */
-    private ScheduledFuture<?> future;
+    private volatile ScheduledFuture<?> future;
 
     /**
      * We check for sessions that need timing out every
