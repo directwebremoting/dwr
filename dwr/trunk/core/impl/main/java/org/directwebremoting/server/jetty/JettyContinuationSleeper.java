@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.server.jetty;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +24,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.impl.ThreadWaitSleeper;
-import org.directwebremoting.server.SleeperState;
 import org.directwebremoting.util.Continuation;
 
 /**
  * A Sleeper that works with Jetty Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Tim Peierls [tim at peierls dot net]
  */
 public class JettyContinuationSleeper implements Sleeper
 {
@@ -37,11 +38,8 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public JettyContinuationSleeper(HttpServletRequest request)
     {
-        continuation = new AtomicReference(new Continuation(request));
-        // At this point JettyContinuationSleeper is fully initialized so it is
-        // safe to allow other classes to see and use us.
-        //noinspection ThisEscapedInObjectConstruction
-        request.setAttribute(ATTRIBUTE_CONDUIT, this);
+        this.continuation = new Continuation(request);
+        this.request = request;
     }
 
     /**
@@ -51,7 +49,7 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public static boolean isRestart(HttpServletRequest request)
     {
-        return request.getAttribute(ATTRIBUTE_CONDUIT) != null;
+        return getSleeper(request) != null;
     }
 
     /**
@@ -60,14 +58,13 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public static void restart(HttpServletRequest request)
     {
-        JettyContinuationSleeper sleeper = (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_CONDUIT);
+        JettyContinuationSleeper sleeper = getSleeper(request);
         if (sleeper == null)
         {
             throw new IllegalStateException("No JettyContinuationSleeper in HttpServletRequest");
         }
 
-        request.removeAttribute(ATTRIBUTE_CONDUIT);
-        sleeper.onAwakening.run();
+        sleeper.resume(); // calls onAwakening
     }
 
     /* (non-Javadoc)
@@ -75,13 +72,12 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public void goToSleep(Runnable awakening)
     {
-        this.onAwakening = awakening;
-
-        if (state.get().equals(SleeperState.WAKE_UP_CALLED))
+        if (awakening == null)
         {
-            onAwakening.run();
+            throw new NullPointerException("Null value for awakening");
         }
-        else
+
+        if (state.compareAndSet(State.INITIAL, State.ABOUT_TO_SLEEP))
         {
             try
             {
@@ -89,15 +85,47 @@ public class JettyContinuationSleeper implements Sleeper
                 // container. The docs say that a value of 0 should suspend
                 // forever, but that did not to happen in 6.1.1 so we
                 // suspend for BigNum
-                continuation.get().suspend(Integer.MAX_VALUE);
+                continuation.suspend(Integer.MAX_VALUE);
             }
             catch (Exception ex)
             {
                 Continuation.rethrowIfContinuation(ex);
+
+                // Log unsuccessful attempt to use Jetty continuation.
                 log.warn("Exception", ex);
+
+                // Revert to thread waiting.
                 proxy = new ThreadWaitSleeper();
-                proxy.goToSleep(onAwakening);
+
+                state.set(State.BLOCKED); // write volatile
+
+                // Block until wakeUp call.
+                proxy.goToSleep(awakening);
+            } finally {
+                if (state.compareAndSet(State.BLOCKED, State.FINAL))
+                {
+                    // We have just been awakened from BLOCKED and
+                    // awakening task has run.
+                }
+                else // state.get() == ABOUT_TO_SLEEP
+                {
+                    // This is a rethrow for a Jetty continuation,
+                    // so we store the onAwakening task and tell the
+                    // request how to restart on continuation resume.
+                    onAwakening = awakening;
+                    saveSleeperOnRequest();
+
+                    state.set(State.SLEEPING); // write volatile
+                }
             }
+        }
+        else if (state.compareAndSet(State.PRE_AWAKENED, State.FINAL))
+        {
+            awakening.run();
+        }
+        else
+        {
+            throw new IllegalStateException("Attempt to goToSleep in state " + state.get());
         }
     }
 
@@ -106,54 +134,130 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        if (state.get().equals(SleeperState.WAKE_UP_CALLED))
-        {
-            return;
-        }
+        switch (state.get()) {  // read volatile
+            case INITIAL:
+                // We might have been awakened before goToSleep.
+                state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
+                wakeUp(); // retry
+                break;
 
-        state.set(SleeperState.WAKE_UP_CALLED);
+            case PRE_AWAKENED:
+                // Do nothing now; goToSleep will eventually run
+                // its onAwakening argument.
+                break;
 
-        if (proxy != null)
-        {
-            proxy.wakeUp();
-        }
-        else
-        {
-            if (!SleeperState.RESUMED.equals(state.get()))
-            {
+            case ABOUT_TO_SLEEP:
+                // Spin until we're either SLEEPING or BLOCKED.
+                // This case is unlikely, but if it does occur,
+                // the spin won't be for very long.
                 try
                 {
-                    continuation.get().resume();
+                    do
+                    {
+                        TimeUnit.MILLISECONDS.sleep(1);
+                    }
+                    while (state.get() == State.ABOUT_TO_SLEEP);
                 }
-                catch (Exception ex)
+                catch (InterruptedException ex)
                 {
-                    log.error("Broken reflection", ex);
+                    Thread.currentThread().interrupt();
+                    return; // give up on wakeUp
                 }
+                wakeUp(); // retry
+                break;
 
-                state.set(SleeperState.RESUMED);
-            }
+            case SLEEPING:
+                if (state.compareAndSet(State.SLEEPING, State.RESUMING))
+                {
+                    try
+                    {
+                        continuation.resume();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.error("Broken reflection", ex);
+                    }
+                }
+                else
+                {
+                    // Someone else got in first. The only states
+                    // we could be in now are going to ignore the
+                    // wakeUp call, but for completeness we retry.
+                    wakeUp(); // retry
+                }
+                break;
+
+            case BLOCKED:
+                // Cause onAwakening to be called in blocked thread.
+                proxy.wakeUp();
+                break;
+
+            case RESUMING:
+            case FINAL:
+                // wakeUp called already, nothing to do.
+                break;
         }
     }
+
+    private void resume()
+    {
+        if (!state.compareAndSet(State.RESUMING, State.FINAL)) // read-volatile
+        {
+            throw new IllegalStateException("Attempt to resume from state " + state.get());
+        }
+
+        request.removeAttribute(ATTRIBUTE_CONDUIT);
+
+        onAwakening.run();
+    }
+
+    private void saveSleeperOnRequest()
+    {
+        request.setAttribute(ATTRIBUTE_CONDUIT, this);
+    }
+
+    private static JettyContinuationSleeper getSleeper(HttpServletRequest request)
+    {
+        return (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_CONDUIT);
+    }
+
+
+    enum State
+    {
+        INITIAL,        // the state at construction time
+        PRE_AWAKENED,   // wakeUp called before goToSleep
+        ABOUT_TO_SLEEP, // trying to sleep
+        SLEEPING,       // sleeping using continuation
+        BLOCKED,        // sleeping by blocking with ThreadWaitSleeper
+        RESUMING,       // resuming from continuation sleep
+        FINAL,          // the state after resumption or pre-awakened sleep attempt
+    }
+
 
     /**
      * Atomic enum to manage state.
      */
-    private final AtomicReference<SleeperState> state = new AtomicReference<SleeperState>(SleeperState.INITIAL);
+    private final AtomicReference<State> state = new AtomicReference<State>(State.INITIAL);
 
     /**
      * If continuations fail, we proxy to a Thread Wait version
      */
-    private ThreadWaitSleeper proxy = null;
-
-    /**
-     * What we do when we are woken up
-     */
-    private Runnable onAwakening;
+    /* @GuardedBy("state") */ private ThreadWaitSleeper proxy = null;
 
     /**
      * The continuation object
      */
-    private final AtomicReference<Continuation> continuation;
+    private final Continuation continuation;
+
+    /**
+     * What we do when we are woken up
+     */
+    /* @GuardedBy("state") */ private Runnable onAwakening;
+
+    /**
+     * The request on which we save this Sleeper for later retrieval.
+     */
+    private final HttpServletRequest request;
 
     /**
      * We remember the notify conduit so we can reuse it
