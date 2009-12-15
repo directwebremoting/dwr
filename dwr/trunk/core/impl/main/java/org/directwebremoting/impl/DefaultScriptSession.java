@@ -223,7 +223,7 @@ public class DefaultScriptSession implements RealScriptSession
             // Try all the conduits, starting with the first
             boolean written = false;
             // synchronized collections can throw exceptions when being iterated through without manual synchronization.
-            synchronized (this)
+            synchronized (this.conduits)
             {
                 for (Iterator<ScriptConduit> it = conduits.iterator(); !written && it.hasNext();)
                 {
