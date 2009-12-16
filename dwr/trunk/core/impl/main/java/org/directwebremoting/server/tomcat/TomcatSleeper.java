@@ -15,7 +15,8 @@
  */
 package org.directwebremoting.server.tomcat;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.catalina.CometEvent;
 import org.apache.commons.logging.Log;
@@ -46,18 +47,26 @@ public class TomcatSleeper implements Sleeper
      */
     public void goToSleep(Runnable awakening)
     {
-        this.onAwakening = awakening;
-
-        // Signal to DwrCometProcessor.event that we're finishing, not because
-        // we're done, but because we want to sleep.
-        event.getHttpServletRequest().setAttribute(DwrCometProcessor.ATTRIBUTE_SLEEP, true);
-
-        synchronized (wakeUpCalledLock)
+        if (awakening == null)
         {
-            if (wakeUpCalled)
-            {
-                onAwakening.run();
-            }
+            throw new NullPointerException("Null value for awakening");
+        }
+
+        if (state.compareAndSet(State.INITIAL, State.ABOUT_TO_SLEEP))
+        {
+            // Signal to DwrCometProcessor.event that we're finishing, not because
+            // we're done, but because we want to sleep.
+            event.getHttpServletRequest().setAttribute(DwrCometProcessor.ATTRIBUTE_SLEEP, true);
+            onAwakening = awakening;
+            state.set(State.SLEEPING); // write volatile
+        }
+        else if (state.compareAndSet(State.PRE_AWAKENED, State.FINAL))
+        {
+            awakening.run();
+        }
+        else
+        {
+            throw new IllegalStateException("Attempt to goToSleep in state " + state.get());
         }
     }
 
@@ -66,30 +75,85 @@ public class TomcatSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        synchronized (wakeUpCalledLock)
+        switch (state.get()) // read volatile
         {
-            if (wakeUpCalled)
-            {
-                return;
-            }
+            case INITIAL:
+                // We might have been awakened before goToSleep.
+                state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
+                wakeUp(); // retry
+                break;
 
-            wakeUpCalled = true;
+            case PRE_AWAKENED:
+                // Do nothing now; goToSleep will eventually run
+                // its onAwakening argument.
+                break;
 
-            if (onAwakening != null)
-            {
-                onAwakening.run();
-            }
+            case ABOUT_TO_SLEEP:
+                // Spin until we're SLEEPING.
+                // This case is unlikely, but if it does occur,
+                // the spin won't be for very long.
+                try
+                {
+                    do
+                    {
+                        TimeUnit.MILLISECONDS.sleep(1);
+                    }
+                    while (state.get() == State.ABOUT_TO_SLEEP);
+                }
+                catch (InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                    return; // give up on wakeUp
+                }
+                wakeUp(); // retry
+                break;
 
-            try
-            {
-                event.close();
-            }
-            catch (IOException ex)
-            {
-                log.warn("Error while closing the event", ex);
-            }
+            case SLEEPING:
+                if (state.compareAndSet(State.SLEEPING, State.RESUMING))
+                {
+                    if (onAwakening != null)
+                    {
+                        onAwakening.run();
+                    }
+                    try
+                    {
+                        event.close();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.error("Error while closing the event", ex);
+                    }
+                }
+                else
+                {
+                    // Someone else got in first. The only states
+                    // we could be in now are going to ignore the
+                    // wakeUp call, but for completeness we retry.
+                    wakeUp(); // retry
+                }
+                break;
+
+            case RESUMING:
+            case FINAL:
+                // wakeUp called already, nothing to do.
+                break;
         }
     }
+
+    enum State
+    {
+        INITIAL, // the state at construction time
+        PRE_AWAKENED, // wakeUp called before goToSleep
+        ABOUT_TO_SLEEP, // trying to sleep
+        SLEEPING, // sleeping
+        RESUMING, // sleeping by blocking with ThreadWaitSleeper
+        FINAL, // the state after resumption or pre-awakened sleep attempt
+    }
+
+    /**
+     * Atomic enum to manage state.
+     */
+    private final AtomicReference<State> state = new AtomicReference<State>(State.INITIAL);
 
     /**
      * Tomcat's container for the request/response for this transaction
@@ -97,20 +161,9 @@ public class TomcatSleeper implements Sleeper
     private final CometEvent event;
 
     /**
-     * All operations that involve going to sleep of waking up must hold this
-     * lock before they take action.
-     */
-    private final Object wakeUpCalledLock = new Object();
-
-    /**
-     * Has wakeUp been called?
-     */
-    private boolean wakeUpCalled = false;
-
-    /**
      * What we do when we are woken up
      */
-    private Runnable onAwakening;
+    /* @GuardedBy("state") */private Runnable onAwakening;
 
     /**
      * The log stream
