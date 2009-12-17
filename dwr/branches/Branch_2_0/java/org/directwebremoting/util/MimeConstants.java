@@ -32,10 +32,10 @@ public class MimeConstants
     /**
      * MIME constant for HTML
      */
-    public static final String MIME_HTML = "text/html";
+    public static final String MIME_HTML = "text/html ";
 
     /**
      * MIME constant for Javascript
      */
-    public static final String MIME_JS = "text/javascript";
+    public static final String MIME_JS = "text/javascript; charset=utf-8";
 }
