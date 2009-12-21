@@ -156,9 +156,7 @@
 
 	<target name="warDeployToTomcatAndClean" depends="package" description="Creates the war, cleans the deploy directory and copies the war to the deploy directory.">
 		<delete file="${tomcat.home}/webapps/dwr.war" failonerror="false"/>
-		<delete includeemptydirs="true" failonerror="false">
-	      <fileset dir="${tomcat.home}/webapps/dwr" includes="**/*" />
-		</delete>
+		<delete dir="${tomcat.home}/webapps/dwr" includeemptydirs="true" failonerror="false"/>
 		<copy file="${target.root}/dwr.war" todir="${tomcat.home}/webapps"/>
 	</target>
 
