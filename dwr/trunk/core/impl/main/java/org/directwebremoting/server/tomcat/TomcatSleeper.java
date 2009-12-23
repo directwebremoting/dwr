@@ -35,10 +35,6 @@ public class TomcatSleeper implements Sleeper
     public TomcatSleeper(CometEvent event)
     {
         this.event = event;
-
-        // At this point JettyContinuationSleeper is fully initialized so it is
-        // safe to allow other classes to see and use us.
-        //noinspection ThisEscapedInObjectConstruction
         event.getHttpServletRequest().setAttribute(DwrCometProcessor.ATTRIBUTE_EVENT, this);
     }
 
