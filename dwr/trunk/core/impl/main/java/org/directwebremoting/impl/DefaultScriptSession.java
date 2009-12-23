@@ -222,20 +222,30 @@ public class DefaultScriptSession implements RealScriptSession
         {
             // Try all the conduits, starting with the first
             boolean written = false;
-            // synchronized collections can throw exceptions when being iterated through without manual synchronization.
-            synchronized (this.conduits)
+            // The conduit.addScript call is an external call which eventually makes its way back here
+            // and into the removeScriptConduit method.  Since removeScriptConduit may modify the conduits
+            // collection we need to make a protective copy here to prevent ConcurrentModExceptions.
+            List<ScriptConduit> conduitsList;
+            synchronized (conduits)
             {
-                for (Iterator<ScriptConduit> it = conduits.iterator(); !written && it.hasNext();)
+                conduitsList = new ArrayList<ScriptConduit>(conduits);
+            } // lock synchronized wrapper
+
+            for (ScriptConduit conduit : conduitsList)
+            {
+                try
                 {
-                    ScriptConduit conduit = it.next();
-                    try
+                    written = conduit.addScript(script);
+                } catch (Exception ex)
+                {
+                    conduits.remove(conduit);
+                    log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
+                }
+                finally
+                {
+                    if (written)
                     {
-                        written = conduit.addScript(script);
-                    }
-                    catch (Exception ex)
-                    {
-                        it.remove();
-                        log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
+                        break;
                     }
                 }
             }
