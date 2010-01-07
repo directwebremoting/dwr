@@ -444,10 +444,11 @@ public final class LocalUtil
 
         StringWriter buffer = new StringWriter();
         ServletInputStream in = null;
+        BufferedReader reader = null;
         try
         {
             in = request.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            reader = new BufferedReader(new InputStreamReader(in));
             int length = 0;
             while (length < 256)
             {
@@ -471,6 +472,10 @@ public final class LocalUtil
                 if (null != in)
                 {
                     in.close();
+                }
+                if (null != reader)
+                {
+                    reader.close();
                 }
             }
             catch(Exception e)
