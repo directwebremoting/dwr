@@ -186,5 +186,5 @@ public class CallBatch extends Batch
     /**
      * We don't want to allow too many calls in a batch
      */
-    private final int maxCallsPerBatch = 1000;
+    private static final int maxCallsPerBatch = 1000;
 }
