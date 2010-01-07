@@ -742,11 +742,7 @@ public class DefaultRemoter implements Remoter
                     }
                     else
                     {
-                        if (Modifier.isStatic(meth.getModifiers())) {
-                            // obj can be null for static invocation.
-                            return meth.invoke(obj, params);
-                        }
-                        else if (meth.getDeclaringClass().equals(obj.getClass()))
+                        if ((null != obj && meth.getDeclaringClass().equals(obj.getClass())) || Modifier.isStatic(meth.getModifiers()))
                         {
                             return meth.invoke(obj, params);
                         }
