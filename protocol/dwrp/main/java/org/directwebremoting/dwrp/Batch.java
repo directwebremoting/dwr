@@ -264,15 +264,16 @@ public class Batch
         log.debug("Using Broken Safari POST mode");
 
         // Iterators insist that we call hasNext() before we start
-        Iterator<String> it = paramMap.keySet().iterator();
+        Iterator<Map.Entry<String, FormField>> it = paramMap.entrySet().iterator();
         if (!it.hasNext())
         {
             throw new IllegalStateException("No entries in non empty map!");
         }
 
         // So get the first
-        String key = it.next();
-        String value = paramMap.get(key).getString();
+        Map.Entry<String, FormField> entry = it.next();
+        String key = entry.getKey();
+        String value = entry.getValue().getString();
         String line = key + ProtocolConstants.INBOUND_DECL_SEPARATOR + value;
 
         StringTokenizer st = new StringTokenizer(line, "\n");
