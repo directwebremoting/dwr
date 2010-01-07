@@ -105,6 +105,10 @@ public class ContainerMap extends AbstractMap<String, Object> implements Map<Str
     @Override
     public boolean equals(Object o)
     {
+        if (null == o)
+        {
+            return false;
+        }
         if (this == o)
         {
             return true;
@@ -219,12 +223,12 @@ public class ContainerMap extends AbstractMap<String, Object> implements Map<Str
     /**
      * Are we filtering non-string values from the container
      */
-    private boolean filterNonStringValues;
+    private final boolean filterNonStringValues;
 
     /**
      * The Container that we proxy to.
      */
-    private Container container;
+    private final Container container;
 
     /**
      * The cache of filtered values
