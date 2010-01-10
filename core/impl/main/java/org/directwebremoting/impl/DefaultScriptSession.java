@@ -37,7 +37,7 @@ import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * An implementation of ScriptSession and RealScriptSession.
- * <p>You should note that {@link DefaultScriptSession} and
+ * <p>You should note that {@link CopyOfDefaultScriptSession} and
  * {@link DefaultScriptSessionManager} make calls to each other and you should
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -134,7 +134,7 @@ public class DefaultScriptSession implements RealScriptSession
             }
         }
         invalidated = true;
-        manager.invalidate(this);
+        //manager.invalidate(this);
     }
 
     /* (non-Javadoc)
@@ -187,72 +187,75 @@ public class DefaultScriptSession implements RealScriptSession
         {
             throw new NullPointerException("null script");
         }
-
-        // First we try to add the script to an existing conduit
-        if (conduits.isEmpty())
+        synchronized (this.scripts)
         {
-            boolean written = false;
-
-            // This would be an excellent solution to the connection limit
-            // problem, however browsers are extending their limits, and
-            // we don't have inter-window communication sorted yet.
-            // If we do sort out I-W comms, then uncomment this, add a
-            // member: private String httpSessionId;
-            // which is passed into the constructor from the Manager
-
-            /*
-            // Are there any other script sessions in the same browser
-            // that could proxy the script for us?
-            Collection<RealScriptSession> sessions = manager.getScriptSessionsByHttpSessionId(httpSessionId);
-            ScriptBuffer proxyScript = EnginePrivate.createForeignWindowProxy(getWindowName(), script);
-
-            for (Iterator<RealScriptSession> it = sessions.iterator(); !written && it.hasNext();)
+            // First we try to add the script to an existing conduit
+            if (conduits.isEmpty())
             {
-                RealScriptSession session = it.next();
-                written = session.addScriptImmediately(proxyScript);
-            }
-            */
+                boolean written = false;
 
-            if (!written)
-            {
-                scripts.add(script);
-            }
-        }
-        else
-        {
-            // Try all the conduits, starting with the first
-            boolean written = false;
-            // The conduit.addScript call is an external call which eventually makes its way back here
-            // and into the removeScriptConduit method.  Since removeScriptConduit may modify the conduits
-            // collection we need to make a protective copy here to prevent ConcurrentModExceptions.
-            List<ScriptConduit> conduitsList;
-            synchronized (conduits)
-            {
-                conduitsList = new ArrayList<ScriptConduit>(conduits);
-            } // lock synchronized wrapper
+                // This would be an excellent solution to the connection limit
+                // problem, however browsers are extending their limits, and
+                // we don't have inter-window communication sorted yet.
+                // If we do sort out I-W comms, then uncomment this, add a
+                // member: private String httpSessionId;
+                // which is passed into the constructor from the Manager
 
-            for (ScriptConduit conduit : conduitsList)
-            {
-                try
+                /*
+                // Are there any other script sessions in the same browser
+                // that could proxy the script for us?
+                Collection<RealScriptSession> sessions = manager.getScriptSessionsByHttpSessionId(httpSessionId);
+                ScriptBuffer proxyScript = EnginePrivate.createForeignWindowProxy(getWindowName(), script);
+
+                for (Iterator<RealScriptSession> it = sessions.iterator(); !written && it.hasNext();)
                 {
-                    written = conduit.addScript(script);
-                } catch (Exception ex)
-                {
-                    conduits.remove(conduit);
-                    log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
+                    RealScriptSession session = it.next();
+                    written = session.addScriptImmediately(proxyScript);
                 }
-                finally
+                */
+
+                if (!written)
                 {
-                    if (written)
+                    scripts.add(script);
+                }
+            }
+            else
+            {
+                // Try all the conduits, starting with the first
+                boolean written = false;
+                // The conduit.addScript call is an external call which eventually makes its way back here
+                // and into the removeScriptConduit method.  Since removeScriptConduit may modify the conduits
+                // collection we need to make a protective copy here to prevent ConcurrentModExceptions.
+                List<ScriptConduit> conduitsList;
+                synchronized (conduits)
+                {
+                    conduitsList = new ArrayList<ScriptConduit>(conduits);
+                } // lock synchronized wrapper
+
+                for (ScriptConduit conduit : conduitsList)
+                {
+                    try
                     {
-                        break;
+                        written = conduit.addScript(script);
+                    }
+                    catch (Exception ex)
+                    {
+                        conduits.remove(conduit);
+                        log.debug("Failed to write to ScriptConduit, removing conduit from list: " + conduit);
+                    }
+                    finally
+                    {
+                        if (written)
+                        {
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!written)
-            {
-                scripts.add(script);
+                if (!written)
+                {
+                    scripts.add(script);
+                }
             }
         }
     }
@@ -291,8 +294,11 @@ public class DefaultScriptSession implements RealScriptSession
     public void addScriptConduit(ScriptConduit conduit) throws IOException
     {
         invalidateIfNeeded();
-        writeScripts(conduit);
-        conduits.add(conduit);
+        synchronized (this.scripts)
+        {
+            writeScripts(conduit);
+            conduits.add(conduit);
+        }
     }
 
     /* (non-Javadoc)
@@ -335,11 +341,14 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-        boolean removed = conduits.remove(conduit);
-        if (!removed)
+        synchronized (this.scripts)
         {
-            log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
-            debug();
+            boolean removed = conduits.remove(conduit);
+            if (!removed)
+            {
+                log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
+                debug();
+            }
         }
     }
 
