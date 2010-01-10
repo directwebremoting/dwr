@@ -294,11 +294,8 @@ public class DefaultScriptSession implements RealScriptSession
     public void addScriptConduit(ScriptConduit conduit) throws IOException
     {
         invalidateIfNeeded();
-        synchronized (this.scripts)
-        {
-            writeScripts(conduit);
-            conduits.add(conduit);
-        }
+        writeScripts(conduit);
+        conduits.add(conduit);
     }
 
     /* (non-Javadoc)
@@ -341,14 +338,11 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-        synchronized (this.scripts)
+        boolean removed = conduits.remove(conduit);
+        if (!removed)
         {
-            boolean removed = conduits.remove(conduit);
-            if (!removed)
-            {
-                log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
-                debug();
-            }
+            log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
+            debug();
         }
     }
 
