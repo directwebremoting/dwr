@@ -11,6 +11,7 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.proxy.ScriptProxy;
 import org.directwebremoting.util.Logger;
+import org.getahead.dwrdemo.filter.ContextPathRequestFilter;
 
 /**
  * A generator of random objects to push to GI
@@ -56,7 +57,7 @@ public class Publisher implements Runnable
 
             while (!Thread.currentThread().isInterrupted())
             {
-                Collection sessions = serverContext.getScriptSessionsByPage("/dwr/gi/index.html");
+                Collection sessions = serverContext.getScriptSessionsByPage(ContextPathRequestFilter.getContextPath() + "/gi/index.html");
                 ScriptProxy proxy = new ScriptProxy(sessions);
 
                 Corporation corp = corporations.getNextChangedCorporation();

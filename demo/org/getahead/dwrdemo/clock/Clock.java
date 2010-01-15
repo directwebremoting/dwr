@@ -25,6 +25,7 @@ import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.proxy.dwr.Util;
 import org.directwebremoting.util.Logger;
+import org.getahead.dwrdemo.filter.ContextPathRequestFilter;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -64,7 +65,7 @@ public class Clock implements Runnable
 
             while (active)
             {
-                Collection sessions = sctx.getScriptSessionsByPage("/dwr/clock/index.html");
+                Collection sessions = sctx.getScriptSessionsByPage(ContextPathRequestFilter.getContextPath() + "/clock/index.html");
                 Util pages = new Util(sessions);
                 pages.setValue("clockDisplay", new Date().toString());
 
@@ -72,7 +73,7 @@ public class Clock implements Runnable
                 Thread.sleep(1000);
             }
 
-            Collection sessions = sctx.getScriptSessionsByPage("/dwr/clock/index.html");
+            Collection sessions = sctx.getScriptSessionsByPage(ContextPathRequestFilter.getContextPath() + "/clock/index.html");
             Util pages = new Util(sessions);
             pages.setValue("clockDisplay", "");
 
