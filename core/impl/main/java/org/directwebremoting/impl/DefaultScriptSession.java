@@ -18,6 +18,7 @@ package org.directwebremoting.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,6 @@ public class DefaultScriptSession implements RealScriptSession
     {
         invalidateIfNeeded();
         return attributes.get(name);
-
     }
 
     /* (non-Javadoc)
@@ -114,7 +114,7 @@ public class DefaultScriptSession implements RealScriptSession
     public Iterator<String> getAttributeNames()
     {
         invalidateIfNeeded();
-        Set<String> keys = Collections.unmodifiableSet(attributes.keySet());
+        Set<String> keys = Collections.unmodifiableSet(new HashSet<String>(attributes.keySet()));
         return keys.iterator();
     }
 
@@ -134,7 +134,7 @@ public class DefaultScriptSession implements RealScriptSession
             }
         }
         invalidated = true;
-        //manager.invalidate(this);
+        manager.invalidate(this);
     }
 
     /* (non-Javadoc)
@@ -294,8 +294,11 @@ public class DefaultScriptSession implements RealScriptSession
     public void addScriptConduit(ScriptConduit conduit) throws IOException
     {
         invalidateIfNeeded();
-        writeScripts(conduit);
-        conduits.add(conduit);
+        synchronized (this.scripts)
+        {
+            writeScripts(conduit);
+            conduits.add(conduit);
+        }
     }
 
     /* (non-Javadoc)
@@ -338,11 +341,14 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-        boolean removed = conduits.remove(conduit);
-        if (!removed)
+        synchronized (this.scripts)
         {
-            log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
-            debug();
+            boolean removed = conduits.remove(conduit);
+            if (!removed)
+            {
+                log.debug("removeScriptConduit called with ScriptConduit not in our list. conduit=" + conduit);
+                debug();
+            }
         }
     }
 
@@ -351,7 +357,10 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean hasWaitingScripts()
     {
-        return !scripts.isEmpty();
+        synchronized (this.scripts)
+        {
+            return !scripts.isEmpty();
+        }
     }
 
     /* (non-Javadoc)
