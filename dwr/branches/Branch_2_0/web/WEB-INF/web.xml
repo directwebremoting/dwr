@@ -8,6 +8,16 @@
   <display-name>DWR (Direct Web Remoting)</display-name>
   <description>A Simple Demo DWR</description>
 
+  <filter>
+    <filter-name>contextpath-filter</filter-name>
+    <filter-class>org.getahead.dwrdemo.filter.ContextPathRequestFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>contextpath-filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
   <listener>
     <listener-class>org.directwebremoting.servlet.EfficientShutdownServletContextAttributeListener</listener-class>
   </listener>
