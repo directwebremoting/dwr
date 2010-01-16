@@ -50,8 +50,6 @@ public class Servlet3Sleeper implements Sleeper
             }
             else
             {
-                // request.suspend();
-
                 try
                 {
                     suspendMethod.invoke(request);
@@ -80,8 +78,6 @@ public class Servlet3Sleeper implements Sleeper
 
             try
             {
-                // request.complete();
-
                 completeMethod.invoke(request);
             }
             catch (Exception ex)
@@ -116,7 +112,7 @@ public class Servlet3Sleeper implements Sleeper
     /**
      * The request object that we call suspend/resume on
      */
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     /**
      * All operations that involve going to sleep of waking up must hold this
