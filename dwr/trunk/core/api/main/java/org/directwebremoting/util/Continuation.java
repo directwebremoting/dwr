@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
  * A wrapper around Jetty Ajax Continuations
@@ -36,22 +37,22 @@ public class Continuation
     public Continuation(HttpServletRequest request)
     {
         // The attribute under which Jetty stores it's Continuations.
-        Object temp = request.getAttribute("org.mortbay.jetty.ajax.Continuation");
-        if (temp == null && isGrizzly())
+        Object tempContinuation = ContinuationSupport.getContinuation(request);
+        if (tempContinuation == null && isGrizzly())
         {
             try
             {
                 // The attribute under which Grizzly stores it's Continuations.
                 Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
                 Method gMethod = gContinuation.getMethod("getContinuation");
-                temp = gMethod.invoke(null, (Object[]) null);
+                tempContinuation = gMethod.invoke(null, (Object[]) null);
             }
             catch (Throwable ignored)
             {
+                log.debug("Throwable caught in Continuation(request)", ignored);
             }
         }
-
-        proxy = temp;
+        proxy = tempContinuation;
     }
 
     /**
@@ -66,14 +67,13 @@ public class Continuation
 
     /**
      * Suspend the thread for a maximum of sleepTime milliseconds
-     * @param sleepTime The maximum time to wait
      * @throws Exception If reflection breaks
      */
-    public void suspend(long sleepTime) throws Exception
+    public void suspend() throws Exception
     {
         try
         {
-            suspendMethod.invoke(proxy, sleepTime);
+            suspendMethod.invoke(proxy);
         }
         catch (InvocationTargetException ex)
         {
@@ -82,7 +82,7 @@ public class Continuation
     }
 
     /**
-     * Resume an continuation.
+     * Resume a continuation.
      * For Jetty: does not work like a real continuation because it restarts
      * the http request.
      * @throws Exception If reflection breaks
@@ -92,40 +92,6 @@ public class Continuation
         try
         {
             resumeMethod.invoke(proxy);
-        }
-        catch (InvocationTargetException ex)
-        {
-            rethrowWithoutWrapper(ex);
-        }
-    }
-
-    /**
-     * Accessor for the object associated with this continuation
-     * @return the object associated with this continuation
-     * @throws Exception If reflection breaks
-     */
-    public Object getObject() throws Exception
-    {
-        try
-        {
-            return getObject.invoke(proxy);
-        }
-        catch (InvocationTargetException ex)
-        {
-            return rethrowWithoutWrapper(ex);
-        }
-    }
-
-    /**
-     * Accessor for the object associated with this continuation
-     * @param object the object associated with this continuation
-     * @throws Exception If reflection breaks
-     */
-    public void setObject(Object object) throws Exception
-    {
-        try
-        {
-            setObject.invoke(proxy, object);
         }
         catch (InvocationTargetException ex)
         {
@@ -201,16 +167,6 @@ public class Continuation
     protected static final Method resumeMethod;
 
     /**
-     * How we get the associated continuation object
-     */
-    protected static final Method getObject;
-
-    /**
-     * How we set the associated continuation object
-     */
-    protected static final Method setObject;
-
-    /**
      * Are we using Jetty at all?
      */
     protected static boolean isJetty = false;
@@ -230,7 +186,7 @@ public class Continuation
         {
             try
             {
-                tempContinuationClass = LocalUtil.classForName("org.mortbay.util.ajax.Continuation");
+                tempContinuationClass = LocalUtil.classForName("org.eclipse.jetty.continuation.Continuation");
                 isJetty = true;
             }
             catch (Exception ex)
@@ -248,11 +204,8 @@ public class Continuation
         }
 
         continuationClass = tempContinuationClass;
-
-        suspendMethod = getMethod("suspend", Long.TYPE);
+        suspendMethod = getMethod("suspend");
         resumeMethod = getMethod("resume");
-        getObject = getMethod("getObject");
-        setObject = getMethod("setObject", Object.class);
     }
 
     /**
