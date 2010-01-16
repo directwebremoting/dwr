@@ -54,12 +54,12 @@ public class GrizzlyContinuationSleeper implements Sleeper
             {
                 try
                 {
-                    continuation.suspend(-1);
+                    continuation.suspend();
                 }
                 catch (Exception ex)
                 {
                     Continuation.rethrowIfContinuation(ex);
-        
+
                     log.warn("Exception", ex);
                     proxy = new ThreadWaitSleeper();
                     proxy.goToSleep(onAwakening);
@@ -94,13 +94,13 @@ public class GrizzlyContinuationSleeper implements Sleeper
                     {
                         try
                         {
-                            // Flush bytes if any first as before resuming the 
+                            // Flush bytes if any first as before resuming the
                             // as Grizzly Comet isn't allowing writes once the
-                            // continuation is resumed. 
+                            // continuation is resumed.
                             // This can be achieved using Grizzly CometHandler,
                             // which isn't exposed with DWR.
                             onAwakening.run();
-                            continuation.resume();                      
+                            continuation.resume();
                         }
                         catch (Exception ex)
                         {
@@ -118,7 +118,7 @@ public class GrizzlyContinuationSleeper implements Sleeper
      * All operations that involve going to sleep of waking up must hold this
      * lock before they take action.
      */
-    private Object wakeUpCalledLock = new Object();
+    private final Object wakeUpCalledLock = new Object();
 
     /**
      * Has wakeUp been called?
