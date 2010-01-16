@@ -81,11 +81,8 @@ public class JettyContinuationSleeper implements Sleeper
         {
             try
             {
-                // This throws a RuntimeException that must propagate to the
-                // container. The docs say that a value of 0 should suspend
-                // forever, but that did not to happen in 6.1.1 so we
-                // suspend for BigNum
-                continuation.suspend(Integer.MAX_VALUE);
+                //continuation.setTimeout(Long.MAX_VALUE);
+                continuation.suspend();
             }
             catch (Exception ex)
             {
@@ -101,13 +98,16 @@ public class JettyContinuationSleeper implements Sleeper
 
                 // Block until wakeUp call.
                 proxy.goToSleep(awakening);
-            } finally {
+            }
+            finally
+            {
                 if (state.compareAndSet(State.BLOCKED, State.FINAL))
                 {
                     // We have just been awakened from BLOCKED and
                     // awakening task has run.
                 }
-                else // state.get() == ABOUT_TO_SLEEP
+                else
+                // state.get() == ABOUT_TO_SLEEP
                 {
                     // This is a rethrow for a Jetty continuation,
                     // so we store the onAwakening task and tell the
@@ -134,68 +134,69 @@ public class JettyContinuationSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        switch (state.get()) {  // read volatile
-            case INITIAL:
-                // We might have been awakened before goToSleep.
-                state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
-                wakeUp(); // retry
-                break;
+        switch (state.get())
+        { // read volatile
+        case INITIAL:
+            // We might have been awakened before goToSleep.
+            state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
+            wakeUp(); // retry
+            break;
 
-            case PRE_AWAKENED:
-                // Do nothing now; goToSleep will eventually run
-                // its onAwakening argument.
-                break;
+        case PRE_AWAKENED:
+            // Do nothing now; goToSleep will eventually run
+            // its onAwakening argument.
+            break;
 
-            case ABOUT_TO_SLEEP:
-                // Spin until we're either SLEEPING or BLOCKED.
-                // This case is unlikely, but if it does occur,
-                // the spin won't be for very long.
+        case ABOUT_TO_SLEEP:
+            // Spin until we're either SLEEPING or BLOCKED.
+            // This case is unlikely, but if it does occur,
+            // the spin won't be for very long.
+            try
+            {
+                do
+                {
+                    TimeUnit.MILLISECONDS.sleep(1);
+                }
+                while (state.get() == State.ABOUT_TO_SLEEP);
+            }
+            catch (InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();
+                return; // give up on wakeUp
+            }
+            wakeUp(); // retry
+            break;
+
+        case SLEEPING:
+            if (state.compareAndSet(State.SLEEPING, State.RESUMING))
+            {
                 try
                 {
-                    do
-                    {
-                        TimeUnit.MILLISECONDS.sleep(1);
-                    }
-                    while (state.get() == State.ABOUT_TO_SLEEP);
+                    continuation.resume();
                 }
-                catch (InterruptedException ex)
+                catch (Exception ex)
                 {
-                    Thread.currentThread().interrupt();
-                    return; // give up on wakeUp
+                    log.error("Broken reflection", ex);
                 }
+            }
+            else
+            {
+                // Someone else got in first. The only states
+                // we could be in now are going to ignore the
+                // wakeUp call, but for completeness we retry.
                 wakeUp(); // retry
-                break;
+            }
+            break;
 
-            case SLEEPING:
-                if (state.compareAndSet(State.SLEEPING, State.RESUMING))
-                {
-                    try
-                    {
-                        continuation.resume();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.error("Broken reflection", ex);
-                    }
-                }
-                else
-                {
-                    // Someone else got in first. The only states
-                    // we could be in now are going to ignore the
-                    // wakeUp call, but for completeness we retry.
-                    wakeUp(); // retry
-                }
-                break;
+        case BLOCKED:
+            // Cause onAwakening to be called in blocked thread.
+            proxy.wakeUp();
+            break;
 
-            case BLOCKED:
-                // Cause onAwakening to be called in blocked thread.
-                proxy.wakeUp();
-                break;
-
-            case RESUMING:
-            case FINAL:
-                // wakeUp called already, nothing to do.
-                break;
+        case RESUMING:
+        case FINAL:
+            // wakeUp called already, nothing to do.
+            break;
         }
     }
 
@@ -221,18 +222,16 @@ public class JettyContinuationSleeper implements Sleeper
         return (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_CONDUIT);
     }
 
-
     enum State
     {
-        INITIAL,        // the state at construction time
-        PRE_AWAKENED,   // wakeUp called before goToSleep
+        INITIAL, // the state at construction time
+        PRE_AWAKENED, // wakeUp called before goToSleep
         ABOUT_TO_SLEEP, // trying to sleep
-        SLEEPING,       // sleeping using continuation
-        BLOCKED,        // sleeping by blocking with ThreadWaitSleeper
-        RESUMING,       // resuming from continuation sleep
-        FINAL,          // the state after resumption or pre-awakened sleep attempt
+        SLEEPING, // sleeping using continuation
+        BLOCKED, // sleeping by blocking with ThreadWaitSleeper
+        RESUMING, // resuming from continuation sleep
+        FINAL, // the state after resumption or pre-awakened sleep attempt
     }
-
 
     /**
      * Atomic enum to manage state.
@@ -242,7 +241,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * If continuations fail, we proxy to a Thread Wait version
      */
-    /* @GuardedBy("state") */ private ThreadWaitSleeper proxy = null;
+    /* @GuardedBy("state") */private ThreadWaitSleeper proxy = null;
 
     /**
      * The continuation object
@@ -252,7 +251,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * What we do when we are woken up
      */
-    /* @GuardedBy("state") */ private Runnable onAwakening;
+    /* @GuardedBy("state") */private Runnable onAwakening;
 
     /**
      * The request on which we save this Sleeper for later retrieval.
