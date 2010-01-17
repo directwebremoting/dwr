@@ -113,7 +113,7 @@ public class Continuation
         }
 
         // Allow Jetty RequestRetry exception to propagate to container!
-        if ("org.mortbay.jetty.RetryRequest".equals(ex.getClass().getName()))
+        if ("org.eclipse.jetty.RetryRequest".equals(ex.getClass().getName()))
         {
             throw (RuntimeException) ex;
         }
