@@ -78,7 +78,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
     protected abstract T getObject(String itemId);
 
     /**
-     * Return true iff the <code>value</code> passed in contains a property
+     * Return true if the <code>value</code> passed in contains a property
      * by the name of each and every key in the <code>query</code>, and where
      * the string value (using {@link #toString()}) of the property is equal to
      * the value from the <code>filter</code> map.

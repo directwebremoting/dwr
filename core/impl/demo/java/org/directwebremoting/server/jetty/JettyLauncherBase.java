@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.log.Log;
-import org.mortbay.util.Scanner;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.Scanner;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * Launch Jetty embedded. Do not use this outside of DWR it is not supported.
@@ -85,13 +87,19 @@ public class JettyLauncherBase
         Log.info("#### Initializing context: " + contextPath);
         final WebAppContext context = new WebAppContext(contextRoot.getAbsolutePath(), contextPath);
 
-        server.addHandler(context);
+        Handler handler = server.getHandler();
+        if(handler instanceof ContextHandlerCollection)
+        {
+            ContextHandlerCollection handlerCollection = (ContextHandlerCollection) handler;
+            handlerCollection.addHandler(context);
+            server.setHandler(handlerCollection);
+        }
 
         // This should prevent Jetty from using memory mapped buffers (which
         // causes file locking on windows). If we discover that it doesn't then
         // we need to investigate this more:
         // http://docs.codehaus.org/display/JETTY/Files+locked+on+Windows
-        context.getInitParams().put("useFileMappedBuffer", "false");
+        WebAppContext.getCurrentWebAppContext().getInitParams().put("useFileMappedBuffer", "false");
         //context.setCopyWebDir(true);
 
         scanner.addListener(new Scanner.BulkListener()
@@ -101,10 +109,10 @@ public class JettyLauncherBase
                 try
                 {
                     Log.info("#### Stopping context: " + contextPath + " from " + contextRoot.getAbsolutePath());
-                    context.stop();
+                    WebAppContext.getCurrentWebAppContext().stop();
 
                     Log.info("#### Starting context: " + contextPath + " from " + contextRoot.getAbsolutePath());
-                    context.start();
+                    WebAppContext.getCurrentWebAppContext().start();
                 }
                 catch (Exception ex)
                 {

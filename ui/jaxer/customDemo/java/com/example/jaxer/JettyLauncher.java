@@ -15,9 +15,11 @@
  */
 package com.example.jaxer;
 
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * Launch Jetty embedded.
@@ -38,7 +40,14 @@ public class JettyLauncher
         server.addConnector(connector);
         server.setStopAtShutdown(true);
 
-        server.addHandler(new WebAppContext("ui/jaxer/customDemo/web", "/demoServer"));
+        final WebAppContext context = new WebAppContext("ui/jaxer/customDemo/web", "/demoServer");
+        Handler handler = server.getHandler();
+        if(handler instanceof ContextHandlerCollection)
+        {
+            ContextHandlerCollection handlerCollection = (ContextHandlerCollection) handler;
+            handlerCollection.addHandler(context);
+            server.setHandler(handlerCollection);
+        }
 
         server.start();
         server.join();
