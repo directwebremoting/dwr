@@ -73,8 +73,9 @@
     <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty</artifactId>
+      <artifactId>jetty-continuation-7.0.1</artifactId>
       <scope>provided</scope>
+      <version>v20091125</version>
     </dependency>
     
     <!-- Tomcat Needed for TomcatSleeper -->
