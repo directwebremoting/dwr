@@ -72,7 +72,7 @@
     
     <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
-      <groupId>org.mortbay.jetty</groupId>
+      <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty</artifactId>
       <scope>provided</scope>
     </dependency>
