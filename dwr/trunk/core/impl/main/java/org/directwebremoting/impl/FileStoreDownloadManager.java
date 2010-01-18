@@ -98,7 +98,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
         OutputStreamLoader loader = null;
         try
         {
-            out = new FileOutputStream(filename);
+            out = new FileOutputStream(new File(downloadFileCache, filename));
             loader = transfer.getOutputStreamLoader();
             loader.load(out);
         }
