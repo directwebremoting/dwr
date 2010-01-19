@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
  * A wrapper around Jetty Ajax Continuations
@@ -37,7 +36,7 @@ public class Continuation
     public Continuation(HttpServletRequest request)
     {
         // The attribute under which Jetty stores it's Continuations.
-        Object tempContinuation = ContinuationSupport.getContinuation(request);
+        Object tempContinuation = org.eclipse.jetty.continuation.ContinuationSupport.getContinuation(request);
         if (tempContinuation == null && isGrizzly())
         {
             try
