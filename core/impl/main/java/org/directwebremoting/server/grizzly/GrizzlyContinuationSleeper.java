@@ -15,6 +15,9 @@
  */
 package org.directwebremoting.server.grizzly;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -25,7 +28,7 @@ import org.directwebremoting.util.Continuation;
 
 /**
  * A Sleeper that works with Grizzly Continuations
- * @author Jeanfrancois Arcand [jeanfrancois dot arcand at sun dot com]
+ * @author Tim Peierls [tim at peierls dot net]
  */
 public class GrizzlyContinuationSleeper implements Sleeper
 {
@@ -34,7 +37,7 @@ public class GrizzlyContinuationSleeper implements Sleeper
      */
     public GrizzlyContinuationSleeper(HttpServletRequest request)
     {
-        continuation = new Continuation(request);
+        this.continuation = new Continuation(request);
     }
 
     /* (non-Javadoc)
@@ -42,29 +45,57 @@ public class GrizzlyContinuationSleeper implements Sleeper
      */
     public void goToSleep(Runnable awakening)
     {
-        this.onAwakening = awakening;
-
-        synchronized (wakeUpCalledLock)
+        if (awakening == null)
         {
-            if (wakeUpCalled)
-            {
-                onAwakening.run();
-            }
-            else
-            {
-                try
-                {
-                    continuation.suspend();
-                }
-                catch (Exception ex)
-                {
-                    Continuation.rethrowIfContinuation(ex);
+            throw new NullPointerException("Null value for awakening");
+        }
 
-                    log.warn("Exception", ex);
-                    proxy = new ThreadWaitSleeper();
-                    proxy.goToSleep(onAwakening);
+        if (state.compareAndSet(State.INITIAL, State.ABOUT_TO_SLEEP))
+        {
+            try
+            {
+                continuation.suspend();
+            }
+            catch (Exception ex)
+            {
+                Continuation.rethrowIfContinuation(ex);
+
+                // Log unsuccessful attempt to use Jetty continuation.
+                log.warn("Exception", ex);
+
+                // Revert to thread waiting.
+                proxy = new ThreadWaitSleeper();
+
+                state.set(State.BLOCKED); // write volatile
+
+                // Block until wakeUp call.
+                proxy.goToSleep(awakening);
+            }
+            finally
+            {
+                if (state.compareAndSet(State.BLOCKED, State.FINAL))
+                {
+                    // We have just been awakened from BLOCKED and
+                    // awakening task has run.
+                }
+                else
+                // state.get() == ABOUT_TO_SLEEP
+                {
+                    // This is a rethrow for a Jetty continuation,
+                    // so we store the onAwakening task and tell the
+                    // request how to restart on continuation resume.
+                    onAwakening = awakening;
+                    state.set(State.SLEEPING); // write volatile
                 }
             }
+        }
+        else if (state.compareAndSet(State.PRE_AWAKENED, State.FINAL))
+        {
+            awakening.run();
+        }
+        else
+        {
+            throw new IllegalStateException("Attempt to goToSleep in state " + state.get());
         }
     }
 
@@ -73,80 +104,111 @@ public class GrizzlyContinuationSleeper implements Sleeper
      */
     public void wakeUp()
     {
-        synchronized (wakeUpCalledLock)
-        {
-            if (wakeUpCalled)
+        switch (state.get())
+        { // read volatile
+        case INITIAL:
+            // We might have been awakened before goToSleep.
+            state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
+            wakeUp(); // retry
+            break;
+
+        case PRE_AWAKENED:
+            // Do nothing now; goToSleep will eventually run
+            // its onAwakening argument.
+            break;
+
+        case ABOUT_TO_SLEEP:
+            // Spin until we're either SLEEPING or BLOCKED.
+            // This case is unlikely, but if it does occur,
+            // the spin won't be for very long.
+            try
             {
-                return;
+                do
+                {
+                    TimeUnit.MILLISECONDS.sleep(1);
+                }
+                while (state.get() == State.ABOUT_TO_SLEEP);
             }
-
-            wakeUpCalled = true;
-
-            if (proxy != null)
+            catch (InterruptedException ex)
             {
-                proxy.wakeUp();
+                Thread.currentThread().interrupt();
+                return; // give up on wakeUp
+            }
+            wakeUp(); // retry
+            break;
+
+        case SLEEPING:
+            if (state.compareAndSet(State.SLEEPING, State.RESUMING))
+            {
+                try
+                {
+                    // Flush bytes if any first as before resuming the
+                    // as Grizzly Comet isn't allowing writes once the
+                    // continuation is resumed.
+                    // This can be achieved using Grizzly CometHandler,
+                    // which isn't exposed with DWR.
+                    onAwakening.run();
+                    continuation.resume();
+                }
+                catch (Exception ex)
+                {
+                    log.error("Broken reflection", ex);
+                }
             }
             else
             {
-                synchronized (continuation)
-                {
-                    if (!resumed)
-                    {
-                        try
-                        {
-                            // Flush bytes if any first as before resuming the
-                            // as Grizzly Comet isn't allowing writes once the
-                            // continuation is resumed.
-                            // This can be achieved using Grizzly CometHandler,
-                            // which isn't exposed with DWR.
-                            onAwakening.run();
-                            continuation.resume();
-                        }
-                        catch (Exception ex)
-                        {
-                            log.error("Broken reflection", ex);
-                        }
-
-                        resumed = true;
-                    }
-                }
+                // Someone else got in first. The only states
+                // we could be in now are going to ignore the
+                // wakeUp call, but for completeness we retry.
+                wakeUp(); // retry
             }
+            break;
+
+        case BLOCKED:
+            // Cause onAwakening to be called in blocked thread.
+            proxy.wakeUp();
+            break;
+
+        case RESUMING:
+        case FINAL:
+            // wakeUp called already, nothing to do.
+            break;
         }
     }
 
-    /**
-     * All operations that involve going to sleep of waking up must hold this
-     * lock before they take action.
-     */
-    private final Object wakeUpCalledLock = new Object();
+    enum State
+    {
+        INITIAL, // the state at construction time
+        PRE_AWAKENED, // wakeUp called before goToSleep
+        ABOUT_TO_SLEEP, // trying to sleep
+        SLEEPING, // sleeping using continuation
+        BLOCKED, // sleeping by blocking with ThreadWaitSleeper
+        RESUMING, // resuming from continuation sleep
+        FINAL, // the state after resumption or pre-awakened sleep attempt
+    }
 
     /**
-     * Has wakeUp been called?
+     * Atomic enum to manage state.
      */
-    private boolean wakeUpCalled = false;
+    private final AtomicReference<State> state = new AtomicReference<State>(State.INITIAL);
 
     /**
      * If continuations fail, we proxy to a Thread Wait version
      */
-    protected ThreadWaitSleeper proxy = null;
-
-    /**
-     * What we do when we are woken up
-     */
-    protected Runnable onAwakening;
+    /* @GuardedBy("state") */private ThreadWaitSleeper proxy = null;
 
     /**
      * The continuation object
      */
-    protected final Continuation continuation;
+    private final Continuation continuation;
 
     /**
-     * Has the continuation been restarted already?
+     * What we do when we are woken up
      */
-    protected boolean resumed = false;
+    /* @GuardedBy("state") */private Runnable onAwakening;
 
     /**
-     * Log stream
+     * The log stream
      */
     private static final Log log = LogFactory.getLog(GrizzlyContinuationSleeper.class);
 }
