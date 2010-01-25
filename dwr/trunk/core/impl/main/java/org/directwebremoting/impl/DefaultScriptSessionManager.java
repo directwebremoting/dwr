@@ -370,13 +370,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     protected void fireScriptSessionCreatedEvent(ScriptSession scriptSession)
     {
         ScriptSessionEvent ev = null;
-        for (int i = scriptSessionListeners.size() - 2; i >= 0; i -= 2)
+        for (int i = scriptSessionListeners.size() - 1; i >= 0; i--)
         {
             if (ev == null)
             {
                 ev = new ScriptSessionEvent(scriptSession);
             }
-            scriptSessionListeners.get(i + 1).sessionCreated(ev);
+            scriptSessionListeners.get(i).sessionCreated(ev);
         }
     }
 
@@ -387,13 +387,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     protected void fireScriptSessionDestroyedEvent(ScriptSession scriptSession)
     {
         ScriptSessionEvent ev = null;
-        for (int i = scriptSessionListeners.size() - 2; i >= 0; i -= 2)
+        for (int i = scriptSessionListeners.size() - 1; i >= 0; i--)
         {
             if (ev == null)
             {
                 ev = new ScriptSessionEvent(scriptSession);
             }
-            scriptSessionListeners.get(i + 1).sessionDestroyed(ev);
+            scriptSessionListeners.get(i).sessionDestroyed(ev);
         }
     }
 
