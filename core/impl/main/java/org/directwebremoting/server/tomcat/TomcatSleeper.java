@@ -111,10 +111,7 @@ public class TomcatSleeper implements Sleeper
                 case SLEEPING:
                     if (state.compareAndSet(State.SLEEPING, State.RESUMING))
                     {
-                        if (onAwakening != null)
-                        {
-                            onAwakening.run();
-                        }
+                        onAwakening.run();
                         try
                         {
                             event.close();
