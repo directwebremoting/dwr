@@ -161,7 +161,6 @@ public class JettyContinuationSleeper implements Sleeper
                             TimeUnit.MILLISECONDS.sleep(1);
                         }
                         while (state.get() == State.ABOUT_TO_SLEEP);
-
                         retry = true;
                     }
                     catch (InterruptedException ex)
