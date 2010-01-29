@@ -52,6 +52,7 @@ public class Servlet3Sleeper implements Sleeper
             }
             catch (Exception ex)
             {
+                state.set(State.SUSPEND_FAILED);
                 throw new RuntimeException(ex);
             }
             state.set(State.SLEEPING); // write volatile
@@ -71,65 +72,72 @@ public class Servlet3Sleeper implements Sleeper
      */
     public void wakeUp()
     {
-        switch (state.get()) // read volatile
+        boolean retry;
+        do
         {
-            case INITIAL:
-                // We might have been awakened before goToSleep.
-                state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
-                wakeUp(); // retry
-                break;
+            retry = false;
+            switch (state.get())
+            // read volatile
+            {
+                case INITIAL:
+                    // We might have been awakened before goToSleep.
+                    state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
+                    retry=true; // retry
+                    break;
 
-            case PRE_AWAKENED:
-                // Do nothing now; goToSleep will eventually run
-                // its onAwakening argument.
-                break;
+                case PRE_AWAKENED:
+                    // Do nothing now; goToSleep will eventually run
+                    // its onAwakening argument.
+                    break;
 
-            case ABOUT_TO_SLEEP:
-                // Spin until we're SLEEPING.
-                // This case is unlikely, but if it does occur,
-                // the spin won't be for very long.
-                try
-                {
-                    do
-                    {
-                        TimeUnit.MILLISECONDS.sleep(1);
-                    }
-                    while (state.get() == State.ABOUT_TO_SLEEP);
-                }
-                catch (InterruptedException ex)
-                {
-                    Thread.currentThread().interrupt();
-                    return; // give up on wakeUp
-                }
-                wakeUp(); // retry
-                break;
-
-            case SLEEPING:
-                if (state.compareAndSet(State.SLEEPING, State.RESUMING))
-                {
+                case ABOUT_TO_SLEEP:
+                    // Spin until we're SLEEPING.
+                    // This case is unlikely, but if it does occur,
+                    // the spin won't be for very long.
                     try
                     {
-                        completeMethod.invoke(request);
+                        do
+                        {
+                            TimeUnit.MILLISECONDS.sleep(1);
+                        }
+                        while (state.get() == State.ABOUT_TO_SLEEP);
                     }
-                    catch (Exception ex)
+                    catch (InterruptedException ex)
                     {
-                        log.warn("Error completing comet request", ex);
+                        Thread.currentThread().interrupt();
+                        return; // give up on wakeUp
                     }
-                }
-                else
-                {
-                    // Someone else got in first. The only states
-                    // we could be in now are going to ignore the
-                    // wakeUp call, but for completeness we retry.
-                    wakeUp(); // retry
-                }
-                break;
+                    retry=true; // retry
+                    break;
 
-            case RESUMING:
-            case FINAL:
-                // wakeUp called already, nothing to do.
-                break;
+                case SLEEPING:
+                    if (state.compareAndSet(State.SLEEPING, State.RESUMING))
+                    {
+                        try
+                        {
+                            completeMethod.invoke(request);
+                        }
+                        catch (Exception ex)
+                        {
+                            log.warn("Error completing comet request", ex);
+                        }
+                    }
+                    else
+                    {
+                        // Someone else got in first. The only states
+                        // we could be in now are going to ignore the
+                        // wakeUp call, but for completeness we retry.
+                        retry=true; // retry
+                    }
+                    break;
+
+                case RESUMING:
+                case FINAL:
+                    // wakeUp called already, nothing to do.
+                    break;
+            }
         }
+        while (retry);
     }
 
     /**
@@ -152,6 +160,7 @@ public class Servlet3Sleeper implements Sleeper
      * When the server supports servlet 3 ...
      */
     private static final Method suspendMethod;
+
     private static final Method completeMethod;
 
     /**
@@ -163,6 +172,7 @@ public class Servlet3Sleeper implements Sleeper
     {
         INITIAL, // the state at construction time
         PRE_AWAKENED, // wakeUp called before goToSleep
+        SUSPEND_FAILED,
         ABOUT_TO_SLEEP, // trying to sleep
         SLEEPING, // sleeping
         RESUMING, // sleeping by blocking with ThreadWaitSleeper
