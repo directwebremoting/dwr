@@ -97,13 +97,16 @@ public class JettyContinuationSleeper implements Sleeper
 
                 // Block until wakeUp call.
                 proxy.goToSleep(awakening);
-            } finally {
+            }
+            finally
+            {
                 if (state.compareAndSet(State.BLOCKED, State.FINAL))
                 {
                     // We have just been awakened from BLOCKED and
                     // awakening task has run.
                 }
-                else // state.get() == ABOUT_TO_SLEEP
+                else
+                // state.get() == ABOUT_TO_SLEEP
                 {
                     // This is a rethrow for a Jetty continuation,
                     // so we store the onAwakening task and tell the
@@ -134,7 +137,8 @@ public class JettyContinuationSleeper implements Sleeper
         do
         {
             retry = false;
-            switch (state.get()) {  // read volatile
+            switch (state.get()) // read volatile
+            {
                 case INITIAL:
                     // We might have been awakened before goToSleep.
                     state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
@@ -202,7 +206,6 @@ public class JettyContinuationSleeper implements Sleeper
         while (retry);
     }
 
-
     /**
      * Internal transition after request is restarted.
      */
@@ -234,18 +237,16 @@ public class JettyContinuationSleeper implements Sleeper
         return (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_CONDUIT);
     }
 
-
     enum State
     {
-        INITIAL,        // the state at construction time
-        PRE_AWAKENED,   // wakeUp called before goToSleep
+        INITIAL, // the state at construction time
+        PRE_AWAKENED, // wakeUp called before goToSleep
         ABOUT_TO_SLEEP, // trying to sleep
-        SLEEPING,       // sleeping using continuation
-        BLOCKED,        // sleeping by blocking with ThreadWaitSleeper
-        RESUMING,       // resuming from continuation sleep
-        FINAL,          // the state after resumption or pre-awakened sleep attempt
+        SLEEPING, // sleeping using continuation
+        BLOCKED, // sleeping by blocking with ThreadWaitSleeper
+        RESUMING, // resuming from continuation sleep
+        FINAL, // the state after resumption or pre-awakened sleep attempt
     }
-
 
     /**
      * Atomic enum to manage state.
@@ -255,7 +256,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * If continuations fail, we proxy to a Thread Wait version
      */
-    /* @GuardedBy("state") */ private ThreadWaitSleeper proxy = null;
+    /* @GuardedBy("state") */private ThreadWaitSleeper proxy = null;
 
     /**
      * The continuation object
@@ -265,7 +266,7 @@ public class JettyContinuationSleeper implements Sleeper
     /**
      * What we do when we are woken up
      */
-    /* @GuardedBy("state") */ private Runnable onAwakening;
+    /* @GuardedBy("state") */private Runnable onAwakening;
 
     /**
      * The request on which we save this Sleeper for later retrieval.
