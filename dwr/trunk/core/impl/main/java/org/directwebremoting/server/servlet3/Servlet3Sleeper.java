@@ -52,7 +52,7 @@ public class Servlet3Sleeper implements Sleeper
             }
             catch (Exception ex)
             {
-                state.set(State.SUSPEND_FAILED);
+                state.set(State.FAILED);
                 throw new RuntimeException(ex);
             }
             state.set(State.SLEEPING); // write volatile
@@ -132,9 +132,13 @@ public class Servlet3Sleeper implements Sleeper
                     break;
 
                 case RESUMING:
+
                 case FINAL:
                     // wakeUp called already, nothing to do.
                     break;
+
+                case FAILED:
+                    throw new IllegalStateException("Attempt to wake in state FAILED");
             }
         }
         while (retry);
@@ -172,7 +176,7 @@ public class Servlet3Sleeper implements Sleeper
     {
         INITIAL, // the state at construction time
         PRE_AWAKENED, // wakeUp called before goToSleep
-        SUSPEND_FAILED,
+        FAILED,
         ABOUT_TO_SLEEP, // trying to sleep
         SLEEPING, // sleeping
         RESUMING, // sleeping by blocking with ThreadWaitSleeper
