@@ -35,6 +35,7 @@ public class Servlet2ContainerAbstraction implements ContainerAbstraction
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
+        // return servletConfig.getServletContext().getMajorVersion() < 3;
         return true;
     }
 
