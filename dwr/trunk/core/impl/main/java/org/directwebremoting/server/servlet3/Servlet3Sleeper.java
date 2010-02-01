@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
 
 /**
- * A Sleeper that works with Jetty Continuations
+ * A Sleeper that works with Servlet 3 Async.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Servlet3Sleeper implements Sleeper
@@ -48,7 +48,7 @@ public class Servlet3Sleeper implements Sleeper
         {
             try
             {
-                suspendMethod.invoke(request);
+                suspendMethod.invoke(request, 60000);
             }
             catch (Exception ex)
             {
@@ -151,7 +151,7 @@ public class Servlet3Sleeper implements Sleeper
     {
         try
         {
-            suspendMethod = HttpServletRequest.class.getMethod("suspend");
+            suspendMethod = HttpServletRequest.class.getMethod("suspend", long.class);
             completeMethod = HttpServletRequest.class.getMethod("complete");
         }
         catch (Exception ex)
