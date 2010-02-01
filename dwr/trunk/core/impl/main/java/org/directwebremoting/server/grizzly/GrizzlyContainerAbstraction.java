@@ -35,7 +35,7 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
         String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("Sun Java System Application Server "))
+        if (serverInfo.startsWith("Sun Java System Application Server ") || serverInfo.startsWith("GlassFish "))
         {
             // TODO: some number versioning
             return true;
@@ -59,7 +59,7 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     {
         return false;
     }
- 
+
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
