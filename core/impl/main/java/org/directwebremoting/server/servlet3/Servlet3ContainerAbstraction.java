@@ -34,7 +34,8 @@ public class Servlet3ContainerAbstraction implements ContainerAbstraction
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        return false; // servletConfig.getServletContext().getMajorVersion() >= 3;
+       // TODO - eventually we will uncomment this - return servletConfig.getServletContext().getMajorVersion() >= 3;
+       return false;
     }
 
     /* (non-Javadoc)
