@@ -2071,7 +2071,7 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine.transport.remove(batch);
 
       // Timeout tidyup
-      if (batch.timeoutId) {
+      if (batch.timeoutId != null) {
         clearTimeout(batch.timeoutId);
         delete batch.timeoutId;
       }
