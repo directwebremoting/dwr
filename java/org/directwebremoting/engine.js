@@ -1025,7 +1025,7 @@ dwr.engine._clearUp = function(batch) {
   }
 
   // Timeout tidyup
-  if (batch.timeoutId) {
+  if (batch.timeoutId != null) {
     clearTimeout(batch.timeoutId);
     delete batch.timeoutId;
   }
