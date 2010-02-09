@@ -1,0 +1,79 @@
+### Eclipse Workspace Patch 1.0
+#P dwr
+Index: java/org/directwebremoting/spring/DwrSpringServlet.java
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/spring/DwrSpringServlet.java,v
+retrieving revision 1.13
+diff -u -r1.13 DwrSpringServlet.java
+--- java/org/directwebremoting/spring/DwrSpringServlet.java	28 Feb 2007 14:45:38 -0000	1.13
++++ java/org/directwebremoting/spring/DwrSpringServlet.java	14 Mar 2007 11:29:11 -0000
+@@ -31,10 +31,11 @@
+ import org.directwebremoting.impl.StartupUtil;
+ import org.directwebremoting.servlet.UrlProcessor;
+ import org.directwebremoting.util.Logger;
++import org.springframework.beans.BeansException;
+ import org.springframework.beans.factory.BeanCreationException;
++import org.springframework.beans.factory.BeanFactory;
++import org.springframework.beans.factory.BeanFactoryAware;
+ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+-import org.springframework.web.context.WebApplicationContext;
+-import org.springframework.web.context.support.WebApplicationContextUtils;
+ 
+ /**
+  * The servlet that handles all calls to DWR. <br>
+@@ -53,8 +54,22 @@
+  * @author Bram Smeets
+  * @author Joe Walker [joe at getahead dot ltd dot uk]
+  */
+-public class DwrSpringServlet extends HttpServlet
++public class DwrSpringServlet extends HttpServlet implements BeanFactoryAware
+ {
++	/**
++     * Is called by the Spring container to set the bean factory. <br/>
++     * This bean factory is then used to obtain the global DWR configuration from. This global configuration is
++     * optional as DWR will provide defaults where possible.
++     * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
++     */
++    public void setBeanFactory(BeanFactory beanFactory) throws BeansException
++    {
++        this.beanFactory = beanFactory;
++
++        container = new SpringContainer();
++        container.setBeanFactory(beanFactory);
++    }
++    
+     /**
+      * Setter for use by the Spring IoC container to tell us what Configurators
+      * exist for us to configure ourselves.
+@@ -85,10 +100,6 @@
+ 
+         try
+         {
+-            WebApplicationContext webappContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+-
+-            container = new SpringContainer();
+-            container.setBeanFactory(webappContext);
+             ContainerUtil.setupDefaults(container);
+             ContainerUtil.setupFromServletConfig(container, servletConfig);
+ 
+@@ -101,7 +112,7 @@
+             // retrieve the configurators from Spring (loaded by the ContextLoaderListener)
+             try
+             {
+-                configurators.add(webappContext.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID));
++                configurators.add(beanFactory.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID));
+             }
+             catch (NoSuchBeanDefinitionException ex)
+             {
+@@ -162,6 +173,11 @@
+             webContextBuilder.unset();
+         }
+     }
++
++    /**
++     * The Spring container
++     */
++    private BeanFactory beanFactory;
+ 
+     /**
+      * DWRs IoC container (that passes stuff to Spring in this case)
