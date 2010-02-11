@@ -294,7 +294,6 @@ public final class LocalUtil
         {
             return c2 == Void.class || c2 == Void.TYPE;
         }
-
         return false;
     }
 
@@ -1037,8 +1036,6 @@ public final class LocalUtil
                 return Void.TYPE;
             }
         }
-
-        // Class.forName(className);
         return Thread.currentThread().getContextClassLoader().loadClass(className);
     }
 
