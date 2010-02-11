@@ -30,14 +30,17 @@ import org.apache.commons.logging.LogFactory;
 public class Continuation
 {
     /**
-     * Fish the Jetty continuation out of the request if it exists
+     * Fish the continuation out of the request if it exists.
      * @param request The http request
      */
     public Continuation(HttpServletRequest request)
     {
-        // The attribute under which Jetty stores it's Continuations.
-        Object tempContinuation = org.eclipse.jetty.continuation.ContinuationSupport.getContinuation(request);
-        if (tempContinuation == null && isGrizzly())
+        Object tempContinuation = null;
+        if (isJetty())
+        {
+            tempContinuation = org.eclipse.jetty.continuation.ContinuationSupport.getContinuation(request);
+        }
+        else if (isGrizzly())
         {
             try
             {
@@ -57,7 +60,7 @@ public class Continuation
     /**
      * Are continuations working?
      * If this method returns false then all the other methods will fail.
-     * @return true if Jetty continuations are working
+     * @return true if Continuations are working
      */
     public boolean isAvailable()
     {
@@ -201,7 +204,6 @@ public class Continuation
             isJetty = false;
             log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
         }
-
         continuationClass = tempContinuationClass;
         suspendMethod = getMethod("suspend");
         resumeMethod = getMethod("resume");
