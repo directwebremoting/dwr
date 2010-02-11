@@ -209,9 +209,6 @@ public class Continuation
         resumeMethod = getMethod("resume");
     }
 
-    /**
-     *
-     */
     private static Method getMethod(String name, Class<?>... args)
     {
         if (continuationClass == null)
