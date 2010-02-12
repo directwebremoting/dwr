@@ -1128,8 +1128,36 @@ public final class LocalUtil
                 return null;
             }
         }
-
         return clazz;
+    }
+
+    /**
+     * Utility to retrieve a method.
+     *
+     * @param clazz - The class where the method exists.
+     * @param name - The name of the method to retrieve.
+     * @param args - The arguments the method takes.
+     * @return - The method, null if an exception is thrown or clazz is null.
+     */
+    public static Method getMethod(Class<?> clazz, String name, Class<?>... args)
+    {
+        if (clazz == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return clazz.getMethod(name, args);
+        }
+        catch (SecurityException ex)
+        {
+            return null;
+        }
+        catch (NoSuchMethodException ex)
+        {
+            return null;
+        }
     }
 
     /**
