@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A wrapper around Jetty Ajax Continuations
+ * A wrapper around Jetty and Grizzly Ajax Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Continuation
@@ -75,7 +75,14 @@ public class Continuation
     {
         try
         {
-            suspendMethod.invoke(proxy);
+            if (isJetty())
+            {
+                suspendMethod.invoke(proxy);
+            }
+            else if (isGrizzly())
+            {
+                suspendMethod.invoke(proxy, 500);
+            }
         }
         catch (InvocationTargetException ex)
         {
@@ -179,7 +186,7 @@ public class Continuation
     protected static boolean isGrizzly = false;
 
     /**
-     * Can we use Jetty?
+     * Can we use Jetty/Grizzly?
      */
     static
     {
@@ -205,29 +212,19 @@ public class Continuation
             log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
         }
         continuationClass = tempContinuationClass;
-        suspendMethod = getMethod("suspend");
-        resumeMethod = getMethod("resume");
-    }
-
-    private static Method getMethod(String name, Class<?>... args)
-    {
-        if (continuationClass == null)
+        if (isJetty())
         {
-            return null;
+            suspendMethod = LocalUtil.getMethod(continuationClass, "suspend");
         }
-
-        try
+        else if (isGrizzly)
         {
-            return continuationClass.getMethod(name, args);
+            suspendMethod = LocalUtil.getMethod(continuationClass, "suspend", long.class);
         }
-        catch (SecurityException ex)
+        else
         {
-            return null;
+            suspendMethod = null;
         }
-        catch (NoSuchMethodException ex)
-        {
-            return null;
-        }
+        resumeMethod = LocalUtil.getMethod(continuationClass, "resume");
     }
 
     /**
