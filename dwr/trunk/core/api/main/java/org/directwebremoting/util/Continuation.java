@@ -81,7 +81,7 @@ public class Continuation
             }
             else if (isGrizzly())
             {
-                suspendMethod.invoke(proxy, 500);
+                suspendMethod.invoke(proxy, 60000); // Suspend for 1 minute?
             }
         }
         catch (InvocationTargetException ex)
