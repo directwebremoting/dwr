@@ -48,7 +48,7 @@ public class Servlet3Sleeper implements Sleeper
         {
             try
             {
-                suspendMethod.invoke(request, 60000);
+                suspendMethod.invoke(request, 60000); // Suspend for 1 minute?
             }
             catch (Exception ex)
             {
