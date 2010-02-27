@@ -1582,7 +1582,7 @@ public final class LocalUtil
         {
             return isJavaScriptDateConvertableTo(clazz);
         }
-        else if ("reference".equals(javaScriptType))
+        else if ("reference".equals(javaScriptType) || "Object_Object".equals(javaScriptType) || "null".equals(javaScriptType))
         {
             return true;
         }
