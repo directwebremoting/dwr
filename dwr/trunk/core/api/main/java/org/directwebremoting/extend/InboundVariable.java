@@ -169,6 +169,14 @@ public final class InboundVariable
     }
 
     /**
+     * @return Returns the JavaScript type.
+     */
+    public String getType()
+    {
+        return type;
+    }
+
+    /**
      * Nasty hack to get around varargs
      */
     public InboundVariable[] getMembers()
