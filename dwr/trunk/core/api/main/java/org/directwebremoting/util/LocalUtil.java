@@ -1595,6 +1595,7 @@ public final class LocalUtil
     }
 
     /**
+     * Can a JavaScript "array" be converted to type?
      *
      * @param type
      * @return boolean
@@ -1605,6 +1606,7 @@ public final class LocalUtil
     }
 
     /**
+     * Can a JavaScript "object" be converted to type?
      *
      * @param type
      * @return boolean
@@ -1615,6 +1617,7 @@ public final class LocalUtil
     }
 
     /**
+     * Can a JavaScript "boolean" be converted to type?
      *
      * @param type
      * @return boolean
@@ -1627,6 +1630,7 @@ public final class LocalUtil
     private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { Byte.TYPE, Byte.class, Short.TYPE, Short.class, Integer.class, Integer.class, Long.TYPE, Long.class, Float.TYPE, Float.class, Double.TYPE, Double.class, BigDecimal.class, BigInteger.class });
 
     /**
+     * Can a JavaScript "number" be converted to type?
      *
      * @param type
      * @return boolean
@@ -1637,6 +1641,7 @@ public final class LocalUtil
     }
 
     /**
+     * Can a JavaScript "string" be converted to type?
      *
      * @param type
      * @return boolean
