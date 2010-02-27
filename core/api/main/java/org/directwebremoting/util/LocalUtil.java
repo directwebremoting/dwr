@@ -1586,7 +1586,7 @@ public final class LocalUtil
         }
         else if ("Object_Object".equals(javaScriptType))
         {
-            return !(isTypeSimplyConvertable(clazz) || isJavaScriptArrayConvertableTo(clazz));
+            return isJavaScriptObjectConvertableTo(clazz);
         }
         // TODO - Finish up, we can handle this better.
         // Currently we aren't doing anything for the following JS Types:
@@ -1602,6 +1602,16 @@ public final class LocalUtil
     private static boolean isJavaScriptArrayConvertableTo(Class<?> type)
     {
         return (type.isArray() || Collection.class.isAssignableFrom(type));
+    }
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptObjectConvertableTo(Class<?> type)
+    {
+        return !(isTypeSimplyConvertable(type) || isJavaScriptArrayConvertableTo(type));
     }
 
     /**
