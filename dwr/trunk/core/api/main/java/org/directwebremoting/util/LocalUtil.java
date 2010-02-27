@@ -1584,9 +1584,13 @@ public final class LocalUtil
         {
             return isJavaScriptDateConvertableTo(clazz);
         }
+        else if ("Object_Object".equals(javaScriptType))
+        {
+            return !(isTypeSimplyConvertable(clazz) || isJavaScriptArrayConvertableTo(clazz));
+        }
         // TODO - Finish up, we can handle this better.
         // Currently we aren't doing anything for the following JS Types:
-        // "reference", "Object_Object", "null", "Object_ObjectWithLightClassMapping", etc.
+        // "reference", "null", "Object_ObjectWithLightClassMapping", etc.
         return true;
     }
 
@@ -1610,7 +1614,7 @@ public final class LocalUtil
         return (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type));
     }
 
-    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class, BigDecimal.class, BigInteger.class });
+    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { Byte.TYPE, Byte.class, Short.TYPE, Short.class, Integer.class, Integer.class, Long.TYPE, Long.class, Float.TYPE, Float.class, Double.TYPE, Double.class, BigDecimal.class, BigInteger.class });
 
     /**
      *
