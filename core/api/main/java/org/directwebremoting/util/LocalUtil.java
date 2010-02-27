@@ -34,6 +34,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +64,7 @@ import org.directwebremoting.io.OutputStreamLoader;
  * TODO: This probably needs cutting up into
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+
 public final class LocalUtil
 {
     /**
@@ -1549,6 +1552,92 @@ public final class LocalUtil
         }
         return null;
     }
+
+    /**
+     * Determines if a JavaScript type is assignable to the passed in Java class.
+     *
+     * @param javaScriptType
+     * @param clazz
+     * @return boolean
+     */
+    public static boolean isJavaScriptTypeAssignableTo(String javaScriptType, Class<?> clazz)
+    {
+        if ("array".equals(javaScriptType))
+        {
+            return isJavaScriptArrayConvertableTo(clazz);
+        }
+        else if ("boolean".equals(javaScriptType))
+        {
+            return isJavaScriptBooleanConvertableTo(clazz);
+        }
+        else if ("number".equals(javaScriptType))
+        {
+            return isJavaScriptNumberConvertableTo(clazz);
+        }
+        else if ("string".equals(javaScriptType))
+        {
+            return isJavaScriptStringConvertableTo(clazz);
+        }
+        else if ("date".equals(javaScriptType))
+        {
+            return isJavaScriptDateConvertableTo(clazz);
+        }
+        // TODO - Handle JavaScript "object" type?
+        return false;
+    }
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptArrayConvertableTo(Class<?> type)
+    {
+        return (type.isArray() || Collection.class.isAssignableFrom(type));
+    }
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptBooleanConvertableTo(Class<?> type)
+    {
+        return (type == boolean.class || type == Boolean.class);
+    }
+
+    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class });
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptNumberConvertableTo(Class<?> type)
+    {
+        return (TYPES_COMPATIBLE_WITH_JS_NUMBER.contains(type));
+    }
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptStringConvertableTo(Class<?> type)
+    {
+        return (String.class.isAssignableFrom(type) || type == char.class);
+    }
+
+    /**
+     *
+     * @param type
+     * @return boolean
+     */
+    private static boolean isJavaScriptDateConvertableTo(Class<?> type)
+    {
+        return (Date.class.isAssignableFrom(type));
+    }
+
     /**
     /**
      * Get a timestamp for the earliest time that we know the JVM started
