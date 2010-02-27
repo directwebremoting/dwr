@@ -1603,7 +1603,7 @@ public final class LocalUtil
      */
     private static boolean isJavaScriptBooleanConvertableTo(Class<?> type)
     {
-        return (type == boolean.class || type == Boolean.class);
+        return (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type));
     }
 
     private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class });
@@ -1625,7 +1625,7 @@ public final class LocalUtil
      */
     private static boolean isJavaScriptStringConvertableTo(Class<?> type)
     {
-        return (String.class.isAssignableFrom(type) || type == char.class);
+        return (String.class.isAssignableFrom(type) || char.class.equals(type));
     }
 
     /**
