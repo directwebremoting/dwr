@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -1610,7 +1611,7 @@ public final class LocalUtil
         return (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type));
     }
 
-    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class });
+    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class, float.class, Float.class, double.class, Double.class, BigDecimal.class });
 
     /**
      *
