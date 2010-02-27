@@ -200,7 +200,7 @@ public class Call
 
                 // Is the inbound JavaScript type assignable to methodParamType?
                 // We are limited to what JavaScript gives us (number, date, boolean, etc.)
-                if (LocalUtil.isJavaScriptTypeAssignableTo(param.getType(), methodParamType))
+                if (!LocalUtil.isJavaScriptTypeAssignableTo(param.getType(), methodParamType))
                 {
                     it.remove();
                     continue allMethodsLoop;
