@@ -1627,7 +1627,7 @@ public final class LocalUtil
         return (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type));
     }
 
-    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { Byte.TYPE, Byte.class, Short.TYPE, Short.class, Integer.class, Integer.class, Long.TYPE, Long.class, Float.TYPE, Float.class, Double.TYPE, Double.class, BigDecimal.class, BigInteger.class });
+    private static final List<?> TYPES_COMPATIBLE_WITH_JS_NUMBER =  Arrays.asList(new Class[] { Byte.TYPE, Byte.class, Short.TYPE, Short.class, Integer.TYPE, Integer.class, Long.TYPE, Long.class, Float.TYPE, Float.class, Double.TYPE, Double.class, BigDecimal.class, BigInteger.class });
 
     /**
      * Can a JavaScript "number" be converted to type?
