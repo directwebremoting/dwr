@@ -1585,11 +1585,9 @@ public final class LocalUtil
             return isJavaScriptDateConvertableTo(clazz);
         }
         // TODO - Finish up, we can handle this better.
-        else if ("reference".equals(javaScriptType) || "Object_Object".equals(javaScriptType) || "null".equals(javaScriptType))
-        {
-            return true;
-        }
-        return false;
+        // Currently we aren't doing anything for the following JS Types:
+        // "reference", "Object_Object", "null", "Object_ObjectWithLightClassMapping", etc.
+        return true;
     }
 
     /**
