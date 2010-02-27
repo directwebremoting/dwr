@@ -1583,11 +1583,11 @@ public final class LocalUtil
         {
             return isJavaScriptDateConvertableTo(clazz);
         }
+        // TODO - Finish up, we can handle this better.
         else if ("reference".equals(javaScriptType) || "Object_Object".equals(javaScriptType) || "null".equals(javaScriptType))
         {
             return true;
         }
-        // TODO - Handle JavaScript "object" type?
         return false;
     }
 
