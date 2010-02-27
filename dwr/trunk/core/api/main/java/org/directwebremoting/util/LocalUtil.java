@@ -1588,8 +1588,7 @@ public final class LocalUtil
         {
             return isJavaScriptObjectConvertableTo(clazz);
         }
-        // TODO - Finish up, we can handle this better.
-        // Currently we aren't doing anything for the following JS Types:
+        // We may need to revisit this, we aren't explicitly handling some types including:
         // "reference", "null", "Object_ObjectWithLightClassMapping", etc.
         return true;
     }
