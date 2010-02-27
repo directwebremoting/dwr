@@ -201,9 +201,10 @@ public class Call
                 // Is the inbound JavaScript type assignable to methodParamType?
                 // We are limited to what JavaScript gives us (number, date, boolean, etc.)
                 String javaScriptType = param.getType();
-                // If this method takes a vararg param, the JavaScript type being passed is not
+                // If this method takes a vararg, the JavaScript type being passed is not
                 // an array, and this is the var argument we need to use the component type of the argument.
-                // Otherwise this method will be removed because methodParamType and array won't match.
+                // Otherwise this method will be removed because javaScriptType (not array) and methodParamType
+                // (Array - this is the vararg) won't match.
                 if (m.isVarArgs() && !"array".equals(javaScriptType) && i == methodParamTypes.length - 1)
                 {
                     methodParamType=methodParamType.getComponentType();
