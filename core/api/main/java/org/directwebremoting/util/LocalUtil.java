@@ -1583,7 +1583,7 @@ public final class LocalUtil
             return isJavaScriptDateConvertableTo(clazz);
         }
         // TODO - Handle JavaScript "object" type?
-        return false;
+        return true;
     }
 
     /**
