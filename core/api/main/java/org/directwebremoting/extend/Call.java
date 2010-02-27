@@ -278,25 +278,25 @@ public class Call
         // Lots of methods with the right name, but none with the right
         // parameter count. If we have exactly one varargs method, then we
         // try that, otherwise we bail.
-        List<Method> varargsMathods = new ArrayList<Method>();
+        List<Method> varargsMethods = new ArrayList<Method>();
         for (Method m : allMethods)
         {
             if (m.isVarArgs())
             {
-                varargsMathods.add(m);
+                varargsMethods.add(m);
             }
         }
 
-        if (varargsMathods.size() == 1)
+        if (varargsMethods.size() == 1)
         {
-            method = varargsMathods.get(0);
+            method = varargsMethods.get(0);
             checkProxiedMethod(creatorManager);
             return;
         }
 
         log.warn("Can't find single method to match " + creator.getType() + "." + methodName);
         log.warn("- DWR does not continue where there is ambiguity about which method to execute.");
-        log.warn("- Input parameters: " + inputArgCount + ".Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMathods.size());
+        log.warn("- Input parameters: " + inputArgCount + ".Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMethods.size());
         log.warn("- Potential matches include:");
         for (Method m : allMethods)
         {
