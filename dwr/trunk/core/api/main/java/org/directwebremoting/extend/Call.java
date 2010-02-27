@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * Call is a POJO to encapsulate the information required to make a single java
@@ -134,7 +135,6 @@ public class Call
         }
 
         int inputArgCount = inctx.getParameterCount(callNum);
-
         // Get a mutable list of all methods on the type specified by the creator
         Creator creator = creatorManager.getCreator(scriptName, true);
         List<Method> allMethods = new ArrayList<Method>();
@@ -193,6 +193,14 @@ public class Call
 
                 // Remove methods where the client passed a type and we can't use it.
                 if (inputType != null && !methodParamType.isAssignableFrom(inputType))
+                {
+                    it.remove();
+                    continue allMethodsLoop;
+                }
+
+                // Is the inbound JavaScript type assignable to methodParamType?
+                // We are limited to what JavaScript gives us (number, date, boolean, etc.)
+                if (LocalUtil.isJavaScriptTypeAssignableTo(param.getType(), methodParamType))
                 {
                     it.remove();
                     continue allMethodsLoop;
