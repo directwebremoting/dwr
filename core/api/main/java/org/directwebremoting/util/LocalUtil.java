@@ -1582,8 +1582,12 @@ public final class LocalUtil
         {
             return isJavaScriptDateConvertableTo(clazz);
         }
+        else if ("reference".equals(javaScriptType))
+        {
+            return true;
+        }
         // TODO - Handle JavaScript "object" type?
-        return true;
+        return false;
     }
 
     /**
