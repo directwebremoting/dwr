@@ -315,12 +315,9 @@ if (typeof dwr == 'undefined') dwr = {};
    *  is defined before engine.js is included _pathToDwrServlet will
    *  be used.
    */
-  if (_pathToDwrServlet) 
-  {
+  try {
       dwr.engine._pathToDwrServlet = _pathToDwrServlet;
-  }
-  else 
-  {
+  } catch (e) {
       dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
   }
 
