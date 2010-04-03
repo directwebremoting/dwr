@@ -310,8 +310,19 @@ if (typeof dwr == 'undefined') dwr = {};
   /** The script prefix to strip in the case of scriptTagProtection. */
   dwr.engine._scriptTagProtection = "${scriptTagProtection}";
 
-  /** The default path to the DWR servlet */
-  dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
+  /** The default path to the DWR servlet 
+   *  _pathToDwrServlet is aids cross-domain. If _pathToDwrServlet
+   *  is defined before engine.js is included _pathToDwrServlet will
+   *  be used.
+   */
+  if (_pathToDwrServlet) 
+  {
+      dwr.engine._pathToDwrServlet = _pathToDwrServlet;
+  }
+  else 
+  {
+      dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
+  }
 
   /** Do we use XHR for reverse ajax because we are not streaming? */
   dwr.engine._pollWithXhr = "${pollWithXhr}";
