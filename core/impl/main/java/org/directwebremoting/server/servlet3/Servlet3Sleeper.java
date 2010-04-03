@@ -15,11 +15,11 @@
  */
 package org.directwebremoting.server.servlet3;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,9 +34,10 @@ public class Servlet3Sleeper implements Sleeper
     /**
      * @param request The request into which we store this as an attribute
      */
-    public Servlet3Sleeper(HttpServletRequest request)
+    public Servlet3Sleeper(HttpServletRequest request, HttpServletResponse response)
     {
         this.request = request;
+        this.response = response;
     }
 
     /* (non-Javadoc)
@@ -48,7 +49,7 @@ public class Servlet3Sleeper implements Sleeper
         {
             try
             {
-                suspendMethod.invoke(request, 60000); // Suspend for 1 minute?
+                request.startAsync(request, response);
             }
             catch (Exception ex)
             {
@@ -115,7 +116,10 @@ public class Servlet3Sleeper implements Sleeper
                     {
                         try
                         {
-                            completeMethod.invoke(request);
+                            if (request.isAsyncStarted())
+                            {
+                                request.getAsyncContext().complete();
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -145,32 +149,14 @@ public class Servlet3Sleeper implements Sleeper
     }
 
     /**
-     * We want this to compile on Servlet 2.4
-     */
-    static
-    {
-        try
-        {
-            suspendMethod = HttpServletRequest.class.getMethod("suspend", long.class);
-            completeMethod = HttpServletRequest.class.getMethod("complete");
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * When the server supports servlet 3 ...
-     */
-    private static final Method suspendMethod;
-
-    private static final Method completeMethod;
-
-    /**
      * The request object that we call suspend/resume on
      */
     private final HttpServletRequest request;
+
+    /**
+     * The response object
+     */
+    private final HttpServletResponse response;
 
     enum State
     {
