@@ -49,14 +49,21 @@ public class Servlet3Sleeper implements Sleeper
         {
             try
             {
-                request.startAsync(request, response);
+                if (request.isAsyncSupported())
+                {
+                    request.startAsync(request, response);
+                    state.set(State.SLEEPING); // write volatile
+                }
+                else
+                {
+                    throw new IllegalStateException("Async processing is not supported by this request.  Have you added the async-supported flag to the DWR servlet?");
+                }
             }
             catch (Exception ex)
             {
                 state.set(State.FAILED);
                 throw new RuntimeException(ex);
             }
-            state.set(State.SLEEPING); // write volatile
         }
         else if (state.compareAndSet(State.PRE_AWAKENED, State.FINAL))
         {
