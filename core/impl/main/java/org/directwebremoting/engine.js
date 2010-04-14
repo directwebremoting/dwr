@@ -311,12 +311,12 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._scriptTagProtection = "${scriptTagProtection}";
 
   /** The default path to the DWR servlet 
-   *  _pathToDwrServlet is aids cross-domain. If _pathToDwrServlet
-   *  is defined before engine.js is included _pathToDwrServlet will
+   *  pathToDwrServlet is aids cross-domain. If pathToDwrServlet
+   *  is defined before engine.js is included pathToDwrServlet will
    *  be used.
    */
   try {
-      dwr.engine._pathToDwrServlet = _pathToDwrServlet;
+      dwr.engine._pathToDwrServlet = pathToDwrServlet;
   } catch (e) {
       dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
   }
