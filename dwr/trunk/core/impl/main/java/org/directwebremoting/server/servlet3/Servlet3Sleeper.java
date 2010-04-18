@@ -123,10 +123,7 @@ public class Servlet3Sleeper implements Sleeper
                     {
                         try
                         {
-                            if (request.isAsyncStarted())
-                            {
-                                request.getAsyncContext().complete();
-                            }
+                            request.getAsyncContext().dispatch();
                         }
                         catch (Exception ex)
                         {
