@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -504,10 +504,10 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @param name The header name to lookup
      * @return The data behind this header
      */
-    public Object getHeader(String name)
+ /*   public Object getHeader(String name)
     {
         return headers.get(name);
-    }
+    }*/
 
     /**
      * If there are multiple values for a given header, get them as a list
@@ -515,7 +515,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @return The data behind this header
      */
     @SuppressWarnings("unchecked")
-    public List<Object> getHeaders(String name)
+/*    public List<Object> getHeaders(String name)
     {
         Object value = headers.get(name);
         if (value instanceof List)
@@ -530,7 +530,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
         {
             return Collections.EMPTY_LIST;
         }
-    }
+    }*/
 
     //---------------------------------------------------------------------
     // Methods for FakeRequestDispatcher
@@ -630,5 +630,25 @@ public class FakeHttpServletResponse implements HttpServletResponse
     {
         // From Servlet 3.0 from Greg
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#getHeader(java.lang.String)
+     */
+    @Override
+    public String getHeader(String arg0)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#getHeaders(java.lang.String)
+     */
+    @Override
+    public Collection<String> getHeaders(String arg0)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

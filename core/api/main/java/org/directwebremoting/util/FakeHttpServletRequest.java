@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -38,7 +41,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,9 +90,9 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServletRequest#getHeaders(java.lang.String)
      */
-    public Enumeration<String[]> getHeaders(String name)
+    public Enumeration<String> getHeaders(String name)
     {
-        return Collections.enumeration(Collections.<String[]>emptySet());
+        return Collections.enumeration(Collections.<String>emptySet());
     }
 
     /* (non-Javadoc)
@@ -528,7 +533,7 @@ public class FakeHttpServletRequest implements HttpServletRequest
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequest#getParameterMap()
      */
-    public Map<String, String> getParameterMap()
+    public Map<String, String[]> getParameterMap()
     {
         return Collections.emptyMap();
     }
@@ -778,5 +783,115 @@ public class FakeHttpServletRequest implements HttpServletRequest
     public void suspend(long arg0)
     {
         // From Servlet 3.0 from Greg
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequest#authenticate(javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequest#getPart(java.lang.String)
+     */
+    @Override
+    public Part getPart(String arg0) throws IOException, ServletException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequest#getParts()
+     */
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequest#login(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void login(String arg0, String arg1) throws ServletException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletRequest#logout()
+     */
+    @Override
+    public void logout() throws ServletException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#getAsyncContext()
+     */
+    @Override
+    public AsyncContext getAsyncContext()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#getDispatcherType()
+     */
+    @Override
+    public DispatcherType getDispatcherType()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isAsyncStarted()
+     */
+    @Override
+    public boolean isAsyncStarted()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#isAsyncSupported()
+     */
+    @Override
+    public boolean isAsyncSupported()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#startAsync()
+     */
+    @Override
+    public AsyncContext startAsync() throws IllegalStateException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.ServletRequest#startAsync(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     */
+    @Override
+    public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

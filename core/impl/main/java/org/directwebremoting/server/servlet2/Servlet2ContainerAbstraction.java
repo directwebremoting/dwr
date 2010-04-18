@@ -17,6 +17,7 @@ package org.directwebremoting.server.servlet2;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
@@ -58,7 +59,7 @@ public class Servlet2ContainerAbstraction implements ContainerAbstraction
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
-    public Sleeper createSleeper(HttpServletRequest request)
+    public Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response)
     {
         return new ThreadWaitSleeper();
     }
