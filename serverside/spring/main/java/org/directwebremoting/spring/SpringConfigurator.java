@@ -49,9 +49,12 @@ public class SpringConfigurator implements Configurator
         CreatorManager creatorManager = container.getBean(CreatorManager.class);
 
         // Configure the global filters
-        for (AjaxFilter filter : filters)
+        if (null != filters)
         {
-            ajaxFilterManager.addAjaxFilter(filter);
+            for (AjaxFilter filter : filters)
+            {
+                ajaxFilterManager.addAjaxFilter(filter);
+            }
         }
 
         // Configure the creator types
