@@ -85,6 +85,8 @@ class DwrGuiceServletModule extends AbstractDwrModule
                 .toProvider(responseProvider);
             bind(HttpSession.class)
                 .toProvider(sessionProvider);
+            bind(ServletContext.class)
+                .toProvider(servletContextProvider);
         }
 
         bind(ServletRequest.class)
@@ -102,6 +104,9 @@ class DwrGuiceServletModule extends AbstractDwrModule
         bind(HttpSession.class)
             .annotatedWith(Dwr.class)
             .toProvider(sessionProvider);
+        bind(ServletContext.class)
+            .annotatedWith(Dwr.class)
+            .toProvider(servletContextProvider);
 
         bind(new TypeLiteral<Map<String, String[]>>() {})
             .annotatedWith(RequestParameters.class)
@@ -109,8 +114,6 @@ class DwrGuiceServletModule extends AbstractDwrModule
 
         bind(ScriptSession.class)
             .toProvider(scriptSessionProvider);
-        bind(ServletContext.class)
-            .toProvider(servletContextProvider);
         bind(WebContext.class)
             .toProvider(webContextProvider);
         bind(ServerContext.class)
