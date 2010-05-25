@@ -131,7 +131,7 @@ public class BasePollHandler extends BaseDwrpHandler
         final RealScriptSession scriptSession = (RealScriptSession) webContext.getScriptSession();
 
         // So we're going to go to sleep. How do we wake up?
-        Sleeper sleeper = containerAbstraction.createSleeper(request, response);
+        Sleeper sleeper = containerAbstraction.createSleeper(request);
 
         // Create a conduit depending on the type of request (from the URL)
         final BaseScriptConduit conduit = createScriptConduit(sleeper, batch, response);
