@@ -15,18 +15,16 @@
  */
 package org.directwebremoting.server.servlet3;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Sleeper;
 
 /**
- * A Sleeper that works with Servlet 3 Async.
+ * A Sleeper that works with Jetty Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Servlet3Sleeper implements Sleeper
@@ -34,44 +32,35 @@ public class Servlet3Sleeper implements Sleeper
     /**
      * @param request The request into which we store this as an attribute
      */
-    public Servlet3Sleeper(HttpServletRequest request, HttpServletResponse response)
+    public Servlet3Sleeper(HttpServletRequest request)
     {
         this.request = request;
-        this.response = response;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.Sleeper#goToSleep(java.lang.Runnable)
      */
-    public void goToSleep(Runnable awakening)
+    public void goToSleep(Runnable onAwakening)
     {
-        if (state.compareAndSet(State.INITIAL, State.ABOUT_TO_SLEEP))
+        synchronized (wakeUpCalledLock)
         {
-            try
+            if (wakeUpCalled)
             {
-                if (request.isAsyncSupported())
+                onAwakening.run();
+            }
+            else
+            {
+                // request.suspend();
+
+                try
                 {
-                    request.startAsync(request, response);
-                    state.set(State.SLEEPING); // write volatile
+                    suspendMethod.invoke(request);
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw new IllegalStateException("Async processing is not supported by this request.  Have you added the async-supported flag to the DWR servlet?");
+                    throw new RuntimeException(ex);
                 }
             }
-            catch (Exception ex)
-            {
-                state.set(State.FAILED);
-                throw new RuntimeException(ex);
-            }
-        }
-        else if (state.compareAndSet(State.PRE_AWAKENED, State.FINAL))
-        {
-            awakening.run();
-        }
-        else
-        {
-            throw new IllegalStateException("Attempt to goToSleep in state " + state.get());
         }
     }
 
@@ -80,103 +69,70 @@ public class Servlet3Sleeper implements Sleeper
      */
     public void wakeUp()
     {
-        boolean retry;
-        do
+        synchronized (wakeUpCalledLock)
         {
-            retry = false;
-            switch (state.get())
-            // read volatile
+            if (wakeUpCalled)
             {
-                case INITIAL:
-                    // We might have been awakened before goToSleep.
-                    state.compareAndSet(State.INITIAL, State.PRE_AWAKENED);
-                    retry=true; // retry
-                    break;
+                return;
+            }
 
-                case PRE_AWAKENED:
-                    // Do nothing now; goToSleep will eventually run
-                    // its onAwakening argument.
-                    break;
+            wakeUpCalled = true;
 
-                case ABOUT_TO_SLEEP:
-                    // Spin until we're SLEEPING.
-                    // This case is unlikely, but if it does occur,
-                    // the spin won't be for very long.
-                    try
-                    {
-                        do
-                        {
-                            TimeUnit.MILLISECONDS.sleep(1);
-                        }
-                        while (state.get() == State.ABOUT_TO_SLEEP);
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        Thread.currentThread().interrupt();
-                        return; // give up on wakeUp
-                    }
-                    retry=true; // retry
-                    break;
+            try
+            {
+                // request.complete();
 
-                case SLEEPING:
-                    if (state.compareAndSet(State.SLEEPING, State.RESUMING))
-                    {
-                        try
-                        {
-                            request.getAsyncContext().dispatch();
-                        }
-                        catch (Exception ex)
-                        {
-                            log.warn("Error completing comet request", ex);
-                        }
-                    }
-                    else
-                    {
-                        // Someone else got in first. The only states
-                        // we could be in now are going to ignore the
-                        // wakeUp call, but for completeness we retry.
-                        retry=true; // retry
-                    }
-                    break;
-
-                case RESUMING:
-
-                case FINAL:
-                    // wakeUp called already, nothing to do.
-                    break;
-
-                case FAILED:
-                    throw new IllegalStateException("Attempt to wake in state FAILED");
+                completeMethod.invoke(request);
+            }
+            catch (Exception ex)
+            {
+                log.warn("Error completing comet request", ex);
             }
         }
-        while (retry);
     }
+
+    /**
+     * We want this to compile on Servlet 2.4
+     */
+    static
+    {
+        try
+        {
+            suspendMethod = HttpServletRequest.class.getMethod("suspend");
+            completeMethod = HttpServletRequest.class.getMethod("complete");
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * When the server supports servlet 3 ...
+     */
+    private static final Method suspendMethod;
+    private static final Method completeMethod;
 
     /**
      * The request object that we call suspend/resume on
      */
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
 
     /**
-     * The response object
+     * All operations that involve going to sleep of waking up must hold this
+     * lock before they take action.
      */
-    private final HttpServletResponse response;
-
-    enum State
-    {
-        INITIAL, // the state at construction time
-        PRE_AWAKENED, // wakeUp called before goToSleep
-        FAILED,
-        ABOUT_TO_SLEEP, // trying to sleep
-        SLEEPING, // sleeping
-        RESUMING, // sleeping by blocking with ThreadWaitSleeper
-        FINAL, // the state after resumption or pre-awakened sleep attempt
-    }
+    private final Object wakeUpCalledLock = new Object();
 
     /**
-     * Atomic enum to manage state.
+     * Has wakeUp been called?
      */
-    private final AtomicReference<State> state = new AtomicReference<State>(State.INITIAL);
+    private boolean wakeUpCalled = false;
+
+    /**
+     * Has the continuation been restarted already?
+     */
+    protected boolean resumed = false;
 
     /**
      * The log stream

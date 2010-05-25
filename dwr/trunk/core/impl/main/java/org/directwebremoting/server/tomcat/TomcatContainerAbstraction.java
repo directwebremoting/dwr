@@ -17,7 +17,6 @@ package org.directwebremoting.server.tomcat;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.CometEvent;
 import org.directwebremoting.extend.ContainerAbstraction;
@@ -51,7 +50,7 @@ public class TomcatContainerAbstraction implements ContainerAbstraction
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
-    public Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response)
+    public Sleeper createSleeper(HttpServletRequest request)
     {
         CometEvent event = (CometEvent) request.getAttribute(DwrCometProcessor.ATTRIBUTE_EVENT);
         return new TomcatSleeper(event);
