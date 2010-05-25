@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry exported="true" kind="lib" path="core/api/lib/commons-logging-1.1.1.jar" sourcepath="/librarydwr/source/commons-logging-1.1.1-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-logging-1.1.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="core/api/lib/servlet-api-2.4.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/products/servlet/2.5/docs/servlet-2_5-mr2/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="core/api/lib/jsp-api-2.0.jar"/>
@@ -26,16 +20,6 @@
 	<classpathentry kind="lib" path="core/api/lib/easymock-2.3.jar" sourcepath="/librarydwr/source/easymock-2.3-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/easymock2.3.zip!/easymock2.3/javadoc"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/jetty-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.mortbay.org/jetty-6/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/jetty-util-6.1.10.jar" sourcepath="/librarydwr/source/jetty-6.1.10-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.mortbay.org/jetty-6/apidocs/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="core/api/lib/catalina.jar" sourcepath="/librarydwr/source/apache-tomcat-6.0.16-src.zip"/>
@@ -67,7 +51,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="core/impl/lib/xbean-2.2.0.jar"/>
-	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
+	<classpathentry excluding="org/directwebremoting/server/servlet3/CopyOfServlet3Sleeper.java" kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/generated/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
@@ -95,7 +79,7 @@
 	<classpathentry kind="lib" path="serverside/hibernate/lib/jta.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/hibernate/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/hibernate/test/java"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.5.jar" sourcepath="/librarydwr/source/spring-sources-2.5.5.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.5.jar" sourcepath=""/>
 	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-2.5.2.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/spring/main/java"/>
@@ -130,5 +114,15 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-continuation-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-server-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-util-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-http-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-webapp-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-io-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/jetty-servlet-7.0.1.v20091125.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.4.jar"/>
+	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>

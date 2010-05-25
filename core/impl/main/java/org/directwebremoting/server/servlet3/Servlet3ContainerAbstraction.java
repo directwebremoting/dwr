@@ -17,7 +17,6 @@ package org.directwebremoting.server.servlet3;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
@@ -35,7 +34,7 @@ public class Servlet3ContainerAbstraction implements ContainerAbstraction
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-       return servletConfig.getServletContext().getMajorVersion() >= 3;
+        return false; // servletConfig.getServletContext().getMajorVersion() >= 3;
     }
 
     /* (non-Javadoc)
@@ -57,8 +56,8 @@ public class Servlet3ContainerAbstraction implements ContainerAbstraction
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
-    public Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response)
+    public Sleeper createSleeper(HttpServletRequest request)
     {
-        return new Servlet3Sleeper(request, response);
+        return new Servlet3Sleeper(request);
     }
 }

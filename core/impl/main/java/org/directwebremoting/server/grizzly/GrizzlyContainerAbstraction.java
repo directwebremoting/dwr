@@ -17,7 +17,6 @@ package org.directwebremoting.server.grizzly;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.extend.ContainerAbstraction;
 import org.directwebremoting.extend.ServerLoadMonitor;
@@ -64,7 +63,7 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
      */
-    public Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response)
+    public Sleeper createSleeper(HttpServletRequest request)
     {
         return new GrizzlyContinuationSleeper(request);
     }

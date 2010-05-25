@@ -17,7 +17,6 @@ package org.directwebremoting.extend;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * We need to keep container specific logic out of BasePollHandler, and other
@@ -57,5 +56,5 @@ public interface ContainerAbstraction
      * @param request The Sleeper will probably need to know about the request
      * @return A method of sending threads to sleep.
      */
-    Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response);
+    Sleeper createSleeper(HttpServletRequest request);
 }
