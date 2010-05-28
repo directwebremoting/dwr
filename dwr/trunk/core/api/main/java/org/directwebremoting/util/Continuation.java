@@ -18,6 +18,7 @@ package org.directwebremoting.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -36,23 +37,26 @@ public class Continuation
     public Continuation(HttpServletRequest request)
     {
         Object tempContinuation = null;
-        if (isJetty())
+        try
         {
-            tempContinuation = org.eclipse.jetty.continuation.ContinuationSupport.getContinuation(request);
-        }
-        else if (isGrizzly())
-        {
-            try
+            if (isJetty())
             {
-                // The attribute under which Grizzly stores it's Continuations.
+                // Get Continuation through Jetty API
+                Class<?> jContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
+                Method jMethod = jContinuation.getMethod("getContinuation", ServletRequest.class);
+                tempContinuation = jMethod.invoke(null, (Object[]) null);
+            }
+            else if (isGrizzly())
+            {
+                // Get Continuation through Grizzly API
                 Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
                 Method gMethod = gContinuation.getMethod("getContinuation");
                 tempContinuation = gMethod.invoke(null, (Object[]) null);
             }
-            catch (Throwable ignored)
-            {
-                log.debug("Throwable caught in Continuation(request)", ignored);
-            }
+        }
+        catch (Throwable ignored)
+        {
+            log.debug("Throwable caught when trying to get server Continuation", ignored);
         }
         proxy = tempContinuation;
     }
