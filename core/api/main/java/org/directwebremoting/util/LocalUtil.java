@@ -37,6 +37,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Currency;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1647,7 +1648,7 @@ public final class LocalUtil
      */
     private static boolean isJavaScriptStringConvertableTo(Class<?> type)
     {
-        return (String.class.isAssignableFrom(type) || char.class.equals(type));
+        return String.class.isAssignableFrom(type) || char.class.equals(type) || Locale.class.equals(type) || Currency.class.equals(type);
     }
 
     /**
