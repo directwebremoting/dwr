@@ -16,7 +16,9 @@
     <servlet-name>dwr-invoker</servlet-name>
     <display-name>DWR Servlet</display-name>
     <description>Direct Web Remoter Servlet</description>
-    <!--  <servlet-class>org.directwebremoting.server.tomcat.DwrCometProcessor</servlet-class>-->
+    <!-- Uncomment for Tomcat Async Processing.
+     <servlet-class>org.directwebremoting.server.tomcat.DwrCometProcessor</servlet-class>
+    -->
     <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
 	
 	<!--  <init-param>
@@ -92,12 +94,6 @@
     - http://getahead.org/dwr/reverse-ajax/configuration
     -->
     <load-on-startup>1</load-on-startup>
-  </servlet>
-  
-  <servlet>
-    <servlet-name>ScriptSessionInit</servlet-name>
-    <servlet-class>org.directwebremoting.event.ScriptSessionInit</servlet-class>
-    <load-on-startup>2</load-on-startup>
   </servlet>
    
   <servlet-mapping>
