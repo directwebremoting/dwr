@@ -1244,13 +1244,8 @@ if (typeof dwr == 'undefined') dwr = {};
         if (batch.isPoll && dwr.engine._pollWithXhr == "true") {
           batch.map.partialResponse = dwr.engine._partialResponseNo;
         }
-        // Is the client IE?  
-        if (dwr.engine.isIE > 0) {
-            if (batch.isPoll && dwr.engine.isIE < 8) {
-              batch.map.partialResponse = dwr.engine._partialResponseNo;
-            } else if (batch.isPoll && dwr.engine.isIE >= 8) {
-              batch.map.partialResponse = dwr.engine._partialResponseFlush;
-            }
+        if (batch.isPoll && dwr.engine.isIE) {
+          batch.map.partialResponse = dwr.engine._partialResponseNo;
         }
 
         if (window.XMLHttpRequest) {
