@@ -60,13 +60,4 @@ public interface RealScriptSession extends ScriptSession
      * @return true if there are no waiting scripts
      */
     boolean hasWaitingScripts();
-
-    /**
-     * Accessor for an object that we use to announce to people that might be
-     * waiting on output from this ScriptSession that there is some output
-     * ready for action.
-     * @return The mutex object used by the script session
-     * @deprecated
-     */
-    Object getScriptLock();
 }

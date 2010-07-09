@@ -67,10 +67,8 @@ public class DefaultScriptSession implements RealScriptSession
     public Object getAttribute(String name)
     {
         checkNotInvalidated();
-        synchronized (attributes)
-        {
-            return attributes.get(name);
-        }
+        return attributes.get(name);
+
     }
 
     /* (non-Javadoc)
@@ -79,10 +77,8 @@ public class DefaultScriptSession implements RealScriptSession
     public void setAttribute(String name, Object value)
     {
         checkNotInvalidated();
-        synchronized (attributes)
-        {
-            attributes.put(name, value);
-        }
+
+        attributes.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -91,10 +87,7 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeAttribute(String name)
     {
         checkNotInvalidated();
-        synchronized (attributes)
-        {
-            attributes.remove(name);
-        }
+        attributes.remove(name);
     }
 
     /* (non-Javadoc)
@@ -103,11 +96,8 @@ public class DefaultScriptSession implements RealScriptSession
     public Iterator getAttributeNames()
     {
         checkNotInvalidated();
-        synchronized (attributes)
-        {
-            Set keys = Collections.unmodifiableSet(attributes.keySet());
-            return keys.iterator();
-        }
+        Set keys = Collections.unmodifiableSet(attributes.keySet());
+        return keys.iterator();
     }
 
     /* (non-Javadoc)
@@ -115,11 +105,8 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void invalidate()
     {
-        synchronized (invalidLock)
-        {
-            invalidated = true;
-            manager.invalidate(this);
-        }
+        invalidated = true;
+        manager.invalidate(this);
     }
 
     /* (non-Javadoc)
@@ -127,10 +114,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean isInvalidated()
     {
-        synchronized (invalidLock)
-        {
-            return invalidated;
-        }
+        return invalidated;
     }
 
     /* (non-Javadoc)
@@ -155,16 +139,13 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public long getLastAccessedTime()
     {
-        synchronized (invalidLock)
-        {
-            // For many accesses here we check to see if we should invalidate
-            // ourselves, but getLastAccessedTime() is used as part of the process
-            // that DefaultScriptSessionManager goes through in order to check
-            // everything for validity. So if we do this check here then DSSM will
-            // give a ConcurrentModificationException if anything does timeout
-            // checkNotInvalidated();
-            return lastAccessedTime;
-        }
+        // For many accesses here we check to see if we should invalidate
+        // ourselves, but getLastAccessedTime() is used as part of the process
+        // that DefaultScriptSessionManager goes through in order to check
+        // everything for validity. So if we do this check here then DSSM will
+        // give a ConcurrentModificationException if anything does timeout
+        // checkNotInvalidated();
+        return lastAccessedTime;
     }
 
     /* (non-Javadoc)
@@ -182,7 +163,7 @@ public class DefaultScriptSession implements RealScriptSession
         // log.debug("addScript() to " + this);
 
         // First we try to add the script to an existing conduit
-        synchronized (scriptLock)
+        synchronized (this.scripts)
         {
             if (conduits.size() == 0)
             {
@@ -194,7 +175,16 @@ public class DefaultScriptSession implements RealScriptSession
             {
                 // Try all the conduits, starting with the first
                 boolean written = false;
-                for (Iterator it = conduits.iterator(); !written && it.hasNext();)
+                // The conduit.addScript call is an external call which eventually makes its way back here
+                // and into the removeScriptConduit method.  Since removeScriptConduit may modify the conduits
+                // collection we need to make a protective copy here to prevent ConcurrentModExceptions.
+                List conduitsList;
+                synchronized (conduits)
+                {
+                    conduitsList = new ArrayList(conduits);
+                } // lock synchronized wrapper
+
+                for (Iterator it = conduitsList.iterator(); !written && it.hasNext();)
                 {
                     ScriptConduit conduit = (ScriptConduit) it.next();
                     try
@@ -225,7 +215,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         checkNotInvalidated();
 
-        synchronized (scriptLock)
+        synchronized (this.scripts)
         {
             writeScripts(conduit);
             conduits.add(conduit);
@@ -242,7 +232,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         checkNotInvalidated();
 
-        synchronized (scriptLock)
+        synchronized (this.scripts)
         {
             for (Iterator it = scripts.iterator(); it.hasNext();)
             {
@@ -276,7 +266,7 @@ public class DefaultScriptSession implements RealScriptSession
     {
         checkNotInvalidated();
 
-        synchronized (scriptLock)
+        synchronized (this.scripts)
         {
             boolean removed = conduits.remove(conduit);
             if (!removed)
@@ -285,17 +275,8 @@ public class DefaultScriptSession implements RealScriptSession
                 debug();
             }
         }
-
         // log.debug("Removing Conduit: conduit=" + conduit + " scriptsession=" + this);
         // log.debug("-- conduits=" + conduits);
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.RealScriptSession#getScriptLock()
-     */
-    public Object getScriptLock()
-    {
-        return scriptLock;
     }
 
     /* (non-Javadoc)
@@ -303,7 +284,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public boolean hasWaitingScripts()
     {
-        synchronized (scriptLock)
+        synchronized (this.scripts)
         {
             return !scripts.isEmpty();
         }
@@ -314,10 +295,7 @@ public class DefaultScriptSession implements RealScriptSession
      */
     protected void updateLastAccessedTime()
     {
-        synchronized (invalidLock)
-        {
-            lastAccessedTime = System.currentTimeMillis();
-        }
+        lastAccessedTime = System.currentTimeMillis();
     }
 
     /**
@@ -327,19 +305,16 @@ public class DefaultScriptSession implements RealScriptSession
      */
     protected void checkNotInvalidated()
     {
-        synchronized (invalidLock)
+        long now = System.currentTimeMillis();
+        long age = now - lastAccessedTime;
+        if (age > manager.getScriptSessionTimeout())
         {
-            long now = System.currentTimeMillis();
-            long age = now - lastAccessedTime;
-            if (age > manager.getScriptSessionTimeout())
-            {
-                invalidate();
-            }
+            invalidate();
+        }
 
-            if (invalidated)
-            {
-                log.debug("ScriptSession has been invalidated.");
-            }
+        if (invalidated)
+        {
+            log.debug("ScriptSession has been invalidated.");
         }
     }
 
@@ -415,19 +390,13 @@ public class DefaultScriptSession implements RealScriptSession
      * When the the web page that we represent last contact us using DWR?
      * <p>GuardedBy("invalidLock")
      */
-    protected long lastAccessedTime = 0L;
+    protected volatile long lastAccessedTime = 0L;
 
     /**
      * Have we been made invalid?
      * <p>GuardedBy("invalidLock")
      */
-    protected boolean invalidated = false;
-
-    /**
-     * The object that we use to synchronize against when we want to work with
-     * the invalidation state of this object
-     */
-    private final Object invalidLock = new Object();
+    protected volatile boolean invalidated = false;
 
     /**
      * The script conduits that we can use to transfer data to the browser.
@@ -439,13 +408,7 @@ public class DefaultScriptSession implements RealScriptSession
      * The list of waiting scripts.
      * <p>GuardedBy("scriptLock")
      */
-    protected final List scripts = new ArrayList();
-
-    /**
-     * The object that we use to synchronize against when we want to alter
-     * the path of scripts (to conduits or the scripts list)
-     */
-    private final Object scriptLock = new Object();
+    protected final List scripts = Collections.synchronizedList(new ArrayList());
 
     /**
      * What is our page session id?
