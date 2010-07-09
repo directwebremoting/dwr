@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,7 +49,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     {
         maybeCheckTimeouts();
 
-        synchronized (sessionLock)
+        synchronized (this.sessionMap)
         {
             DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
             if (scriptSession == null)
@@ -71,7 +72,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public void setPageForScriptSession(RealScriptSession scriptSession, String page)
     {
         String normalizedPage = pageNormalizer.normalizePage(page);
-        synchronized (sessionLock)
+        synchronized (this.pageSessionMap)
         {
             Set pageSessions = (Set) pageSessionMap.get(normalizedPage);
             if (pageSessions == null)
@@ -90,7 +91,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public Collection getScriptSessionsByPage(String page)
     {
         String normalizedPage = pageNormalizer.normalizePage(page);
-        synchronized (sessionLock)
+        synchronized (this.pageSessionMap)
         {
             Set pageSessions = (Set) pageSessionMap.get(normalizedPage);
             if (pageSessions == null)
@@ -109,7 +110,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
      */
     public Collection getAllScriptSessions()
     {
-        synchronized (sessionLock)
+        synchronized (this.sessionMap)
         {
             Set reply = new HashSet();
             reply.addAll(sessionMap.values());
@@ -126,7 +127,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     {
         // Can we think of a reason why we need to sync both together?
         // It feels like a deadlock risk to do so
-        synchronized (sessionLock)
+        synchronized (this.sessionMap)
         {
             RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
             if (!scriptSession.equals(removed))
@@ -177,7 +178,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         long now = System.currentTimeMillis();
         List timeouts = new ArrayList();
 
-        synchronized (sessionLock)
+        synchronized (this.sessionMap)
         {
             for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
             {
@@ -249,36 +250,30 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     /**
      * How long do we wait before we timeout script sessions?
      */
-    protected long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
+    protected volatile long scriptSessionTimeout = DEFAULT_TIMEOUT_MILLIS;
 
     /**
      * How often do we check for script sessions that need timing out
      */
-    protected long scriptSessionCheckTime = DEFAULT_SESSION_CHECK_TIME;
+    protected volatile long scriptSessionCheckTime = DEFAULT_SESSION_CHECK_TIME;
 
     /**
      * We check for sessions that need timing out every
      * {@link #scriptSessionCheckTime}; this is when we last checked.
      */
-    protected long lastSessionCheckAt = System.currentTimeMillis();
-
-    /**
-     * What we synchronize against when we want to access either sessionMap or
-     * pageSessionMap
-     */
-    protected final Object sessionLock = new Object();
+    protected volatile long lastSessionCheckAt = System.currentTimeMillis();
 
     /**
      * The map of all the known sessions
      * <p>GuardedBy("sessionLock")
      */
-    protected Map sessionMap = new HashMap();
+    protected Map sessionMap = Collections.synchronizedMap(new HashMap());
 
     /**
      * The map of pages that have sessions
      * <p>GuardedBy("sessionLock")
      */
-    protected Map pageSessionMap = new HashMap();
+    protected Map pageSessionMap = Collections.synchronizedMap(new HashMap());
 
     /**
      * The log stream
