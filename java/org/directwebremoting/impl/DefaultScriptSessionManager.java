@@ -48,22 +48,21 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public RealScriptSession getScriptSession(String id)
     {
         maybeCheckTimeouts();
-
-        synchronized (this.sessionMap)
+        DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
+        if (scriptSession == null)
         {
-            DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
-            if (scriptSession == null)
+            scriptSession = new DefaultScriptSession(id, this);
+            synchronized (this.sessionMap)
             {
-                scriptSession = new DefaultScriptSession(id, this);
                 sessionMap.put(id, scriptSession);
             }
-            else
-            {
-                scriptSession.updateLastAccessedTime();
-            }
-
-            return scriptSession;
         }
+        else
+        {
+            scriptSession.updateLastAccessedTime();
+        }
+
+        return scriptSession;
     }
 
     /* (non-Javadoc)
@@ -127,30 +126,27 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     {
         // Can we think of a reason why we need to sync both together?
         // It feels like a deadlock risk to do so
-        synchronized (this.sessionMap)
+        RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
+        if (!scriptSession.equals(removed))
         {
-            RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
-            if (!scriptSession.equals(removed))
-            {
-                log.debug("ScriptSession already removed from manager. scriptSession=" + scriptSession + " removed=" + removed);
-            }
+            log.debug("ScriptSession already removed from manager. scriptSession=" + scriptSession + " removed=" + removed);
+        }
 
-            int removeCount = 0;
-            for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
-            {
-                Set pageSessions = (Set) it.next();
-                boolean isRemoved = pageSessions.remove(scriptSession);
+        int removeCount = 0;
+        for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
+        {
+            Set pageSessions = (Set) it.next();
+            boolean isRemoved = pageSessions.remove(scriptSession);
 
-                if (isRemoved)
-                {
-                    removeCount++;
-                }
-            }
-
-            if (removeCount != 1)
+            if (isRemoved)
             {
-                log.debug("DefaultScriptSessionManager.invalidate(): removeCount=" + removeCount + " when invalidating: " + scriptSession);
+                removeCount++;
             }
+        }
+
+        if (removeCount != 1)
+        {
+            log.debug("DefaultScriptSessionManager.invalidate(): removeCount=" + removeCount + " when invalidating: " + scriptSession);
         }
     }
 
@@ -178,29 +174,26 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         long now = System.currentTimeMillis();
         List timeouts = new ArrayList();
 
-        synchronized (this.sessionMap)
+        for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
         {
-            for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
+            DefaultScriptSession session = (DefaultScriptSession) it.next();
+
+            if (session.isInvalidated())
             {
-                DefaultScriptSession session = (DefaultScriptSession) it.next();
-
-                if (session.isInvalidated())
-                {
-                    continue;
-                }
-
-                long age = now - session.getLastAccessedTime();
-                if (age > scriptSessionTimeout)
-                {
-                    timeouts.add(session);
-                }
+                continue;
             }
 
-            for (Iterator it = timeouts.iterator(); it.hasNext();)
+            long age = now - session.getLastAccessedTime();
+            if (age > scriptSessionTimeout)
             {
-                DefaultScriptSession session = (DefaultScriptSession) it.next();
-                session.invalidate();
+                timeouts.add(session);
             }
+        }
+
+        for (Iterator it = timeouts.iterator(); it.hasNext();)
+        {
+            DefaultScriptSession session = (DefaultScriptSession) it.next();
+            session.invalidate();
         }
     }
 
