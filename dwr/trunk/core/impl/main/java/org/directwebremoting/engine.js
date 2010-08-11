@@ -1411,12 +1411,7 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine._eval(toEval);
         dwr.engine._receivedBatch = null;
         dwr.engine.batch.validate(batch);
-        if (!batch.completed) {
-          if (batch.isPoll) {
-            dwr.engine._pollErrorHandler(batch, { message: "Error"});
-          }
-          dwr.engine.batch.remove(batch);
-        }
+        if (!batch.completed) dwr.engine.batch.remove(batch);
       },
 
       /**
@@ -2052,7 +2047,6 @@ if (typeof dwr == 'undefined') dwr = {};
       // If some call left unreplied, report an error.
       if (!batch.completed) {
         for (var i = 0; i < batch.map.callCount; i++) {
-          // TODO or if completed is not defined?
           if (batch.handlers[i].completed !== true) {
             dwr.engine._handleWarning(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
             break;
