@@ -623,6 +623,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleWarning = function(batch, ex) {
+    // If this is a poll, we should retry! 
     dwr.engine._prepareException(ex); 
     if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
     else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
@@ -1815,8 +1816,8 @@ if (typeof dwr == 'undefined') dwr = {};
         postHooks:[],
         timeout:0,
         windowName:window.name,
-        errorHandler:dwr.engine._pollErrorHandler,
-        warningHandler:dwr.engine._pollErrorHandler,
+        errorHandler:dwr.engine._errorHandler,
+        warningHandler:dwr.engine._warningHandler,
         textHtmlHandler:dwr.engine._textHtmlHandler
       };     
       
