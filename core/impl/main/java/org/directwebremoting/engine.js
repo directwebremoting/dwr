@@ -375,12 +375,15 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** How many times have we re-tried a call? */
   dwr.engine._retries = 0;
-  dwr.engine._maxRetries = 10;
+  dwr.engine._maxRetries = -1; // Unlimited retries
 
   /** The intervals between successive retries in seconds */
   dwr.engine._retryIntervals = [];
-  /** Used as the default for reverse ajax/polling */
-  dwr.engine._defaultRetryIntervals = [ 2, 5, 10, 60, 300 ]; 
+  /** Used as the default for reverse ajax/polling 
+   *  Retry immediately twice with two second intervals between.
+   *  Then retry every 10 seconds.
+   */
+  dwr.engine._defaultRetryIntervals = [ 1, 1, 10 ];
   
   /** Do we do a document.reload if we get a text/html reply? */
   dwr.engine._textHtmlHandler = null;
@@ -549,27 +552,32 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} msg
    * @param {Object} ex
    */
-  dwr.engine._retryHandler = function(batch, ex) {
-    if (dwr.engine._retries >= dwr.engine._maxRetries) {
-      dwr.engine._activeReverseAjax = false;
+  dwr.engine._pollErrorHandler = function(batch, ex) {
+    // Always call the error handler, unless we are retrying.
+    if (dwr.engine._retries == 0) {      
       if (batch && typeof batch.errorHandler == "function") {
         batch.errorHandler(ex.message, ex);
       } else if (dwr.engine._errorHandler) {
         dwr.engine._errorHandler(ex.message, ex);
       }
+    }
+    // If we have reached the maximum number of retries - quit.
+    if (dwr.engine._maxRetries != -1 && (dwr.engine._retries >= dwr.engine._maxRetries)) {
+      dwr.engine._activeReverseAjax = false;      
       if (batch) dwr.engine.batch.remove(batch);
-      return;
-    }
-
-    var index = dwr.engine._retries;
-    if (index >= dwr.engine._retryIntervals.length) {
-      index = dwr.engine._retryIntervals.length - 1;
-    }
-    
-    dwr.engine._debug("Reverse Ajax poll failed (retries=" + dwr.engine._retries + "). Trying again in " + dwr.engine._retryIntervals[index] + "s: " + ex.name + " : " + ex.message);
-    setTimeout(dwr.engine._poll, 1000 * dwr.engine._retryIntervals[index]);	
-    
-    dwr.engine._retries++; 
+    } else {
+      // Otherwise retry
+      var retryIndex = dwr.engine._retries;
+      var retryInterval = 0;
+      if (retryIndex >= dwr.engine._retryIntervals.length) {
+        retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1];
+      } else {
+        retryInterval = dwr.engine._retryIntervals[retryIndex];
+      }  
+      dwr.engine._debug("Reverse Ajax poll failed (retries=" + dwr.engine._retries + "). Trying again in " + retryInterval + "s: " + ex.name + " : " + ex.message);
+      setTimeout(dwr.engine._poll, 1000 * retryInterval);    
+      dwr.engine._retries++;
+    } 
   };      
     
   /** @private This is a hack to make the context be this window */
@@ -603,14 +611,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handleError = function(batch, ex) {
     dwr.engine._prepareException(ex);
-    // If a retry policy has been specified, call the retryHandler.
-    if (dwr.engine._retryIntervals.length > 0) {
-      dwr.engine._retryHandler(batch, ex);
-    } else {       
-      if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-      else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-      if (batch) dwr.engine.batch.remove(batch);
-    }
+    if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+    else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+    if (batch) dwr.engine.batch.remove(batch);
   };
 
   /**
@@ -621,14 +624,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handleWarning = function(batch, ex) {
     dwr.engine._prepareException(ex); 
-    // If a retry policy has been specified, call the retryHandler.
-    if (dwr.engine._retryIntervals.length > 0) {
-      return dwr.engine._retryHandler(batch, ex);      
-    } else {     
-      if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
-      else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
-      if (batch) dwr.engine.batch.remove(batch);
-    }
+    if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
+    else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
+    if (batch) dwr.engine.batch.remove(batch);
   };
   
   /**
@@ -1309,6 +1307,7 @@ if (typeof dwr == 'undefined') dwr = {};
           catch (ex) {
             dwr.engine._handleWarning(batch, ex);
           }
+
           batch.req.send(request.body);
           if (batch.async == false) {
             dwr.engine.transport.xhr.stateChange(batch);
@@ -1412,7 +1411,12 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine._eval(toEval);
         dwr.engine._receivedBatch = null;
         dwr.engine.batch.validate(batch);
-        if (!batch.completed) dwr.engine.batch.remove(batch);
+        if (!batch.completed) {
+          if (batch.isPoll) {
+            dwr.engine._pollErrorHandler(batch, { message: "Error"});
+          }
+          dwr.engine.batch.remove(batch);
+        }
       },
 
       /**
@@ -1425,11 +1429,11 @@ if (typeof dwr == 'undefined') dwr = {};
           var text = req.responseText;
           if (text != null) {
             dwr.engine.transport.xhr.processCometResponse(text, req.batch);
-          }
+          }          
+        }      
+        // If the poll resources are still there, come back again
+        if (dwr.engine._pollReq) {
           setTimeout(dwr.engine.transport.xhr.checkCometPoll, dwr.engine._pollCometInterval);
-        } else {
-          // if _pollReq is null, something bad has happened.  Calling _poll will initiate the retry policy.
-          dwr.engine._poll();
         }
       },
 
@@ -1809,15 +1813,15 @@ if (typeof dwr == 'undefined') dwr = {};
           }
         }],
         isPoll:true,
-        map:{ windowName:window.name },
+        map:{ windowName:window.name, callCount:1 },
         paramCount:0,
         path:dwr.engine._pathToDwrServlet,
         preHooks:[],
         postHooks:[],
         timeout:0,
         windowName:window.name,
-        errorHandler:dwr.engine._retryHandler,
-        warningHandler:dwr.engine._retryHandler,
+        errorHandler:dwr.engine._pollErrorHandler,
+        warningHandler:dwr.engine._pollErrorHandler,
         textHtmlHandler:dwr.engine._textHtmlHandler
       };     
       
@@ -2048,6 +2052,7 @@ if (typeof dwr == 'undefined') dwr = {};
       // If some call left unreplied, report an error.
       if (!batch.completed) {
         for (var i = 0; i < batch.map.callCount; i++) {
+          // TODO or if completed is not defined?
           if (batch.handlers[i].completed !== true) {
             dwr.engine._handleWarning(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
             break;
