@@ -42,9 +42,9 @@ public class Continuation
             if (isJetty())
             {
                 // Get Continuation through Jetty API
-                Class<?> jContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
+                Class<?> jContinuation = LocalUtil.classForName("org.eclipse.jetty.continuation.ContinuationSupport");
                 Method jMethod = jContinuation.getMethod("getContinuation", ServletRequest.class);
-                tempContinuation = jMethod.invoke(null, (Object[]) null);
+                tempContinuation = jMethod.invoke(null, request);
             }
             else if (isGrizzly())
             {
