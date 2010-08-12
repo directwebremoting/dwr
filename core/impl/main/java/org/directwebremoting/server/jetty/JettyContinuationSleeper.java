@@ -63,8 +63,8 @@ public class JettyContinuationSleeper implements Sleeper
         {
             throw new IllegalStateException("No JettyContinuationSleeper in HttpServletRequest");
         }
-
-        sleeper.resume(); // calls onAwakening
+        request.removeAttribute(ATTRIBUTE_CONDUIT);
+        sleeper.onAwakening.run();
     }
 
     /* (non-Javadoc)
@@ -214,9 +214,7 @@ public class JettyContinuationSleeper implements Sleeper
         {
             throw new IllegalStateException("Attempt to resume from state " + state.get());
         }
-
         request.removeAttribute(ATTRIBUTE_CONDUIT);
-
         onAwakening.run();
     }
 
