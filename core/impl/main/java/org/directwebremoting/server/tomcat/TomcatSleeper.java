@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.server.tomcat;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -116,9 +117,9 @@ public class TomcatSleeper implements Sleeper
                         {
                             event.close();
                         }
-                        catch (Exception ex)
+                        catch (IOException ex)
                         {
-                            log.error("Error while closing the event", ex);
+                            log.warn("Error while closing the event", ex);
                         }
                     }
                     else
