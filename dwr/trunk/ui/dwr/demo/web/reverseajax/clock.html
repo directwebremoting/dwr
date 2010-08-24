@@ -9,9 +9,26 @@
   <script type='text/javascript' src='../tabs/tabs.js'> </script>
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <script>
+      window.onload=function()
+      {
+           if (dwr.engine._scriptSessionId == null) {
+               setTimeout("window.onload()", 2000);
+           } else {
+               dwr.engine.setActiveReverseAjax(true);
+			   dwr.engine.setPollStatusHandler(updatePollStatus);
+			   updatePollStatus(true);
+               Tabs.init('tabList', 'tabContents');
+           }          
+      }
+	  
+	  function updatePollStatus(pollStatus) {
+	  	dwr.util.setValue("pollStatus", pollStatus ? "Online" : "Offline");
+	  }
+  </script>
 </head>
 
-<body onload="dwr.engine.setActiveReverseAjax(true); Tabs.init('tabList', 'tabContents');">
+<body>
 <div id="page-title">[
   <a href="http://getahead.org/dwr/">DWR Website</a> |
   <a href="..">Web Application Index</a>
@@ -33,6 +50,7 @@ a number of browsers.</p>
 
   <div id="demoDiv">
     <input type="button" value="Start / Stop" onclick="Clock.toggle();"/>
+	Server status: <span id="pollStatus"></span>
     <p></p>
     <h2 id="clockDisplay"></h2>
   </div>
