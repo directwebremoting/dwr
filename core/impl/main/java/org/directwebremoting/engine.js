@@ -49,6 +49,10 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.setTextHtmlHandler = function(handler) {
     dwr.engine._textHtmlHandler = handler;
   };
+  
+  dwr.engine.setPollStatusHandler = function(handler) {
+    dwr.engine._pollStatusHandler = handler;
+  };
 
   /**
     * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
@@ -196,6 +200,16 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.defaultWarningHandler = function(message, ex) {
     dwr.engine._debug(message);
   };
+  
+  /**
+   * The default poll status handler.
+   * @param {boolean} newStatus - true = online, false = offline
+   * @param {object} ex - The exception if one exists (offline).
+   * @see getahead.org/dwr/browser/engine/errors
+   */
+  dwr.engine.defaultPollStatusHandler = function(newStatus, ex) {
+    dwr.engine._debug("pollStatusHandler - online: " + newStatus);    
+  };
 
   /**
    * For reduced latency you can group several remote calls together using a batch.
@@ -323,7 +337,9 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** Do we use XHR for reverse ajax because we are not streaming? */
   dwr.engine._pollWithXhr = "${pollWithXhr}";
-
+    
+  dwr.engine._pollOnline = true;  
+    
   /** These URLs can be configured from the server */
   dwr.engine._ModePlainCall = "${plainCallHandlerUrl}";
   dwr.engine._ModePlainPoll = "${plainPollHandlerUrl}";
@@ -375,13 +391,14 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** How many times have we re-tried a call? */
   dwr.engine._retries = 0;
-  dwr.engine._maxRetries = -1; // Unlimited retries
+  dwr.engine._maxRetries = -1; // Unlimited retries TODO - this is not being used
 
   /** The intervals between successive retries in seconds */
   dwr.engine._retryIntervals = [];
+  
   /** Used as the default for reverse ajax/polling 
-   *  Retry immediately twice with two second intervals between.
-   *  Then retry every 10 seconds.
+   *  Retry immediately twice with one second intervals between, then go offline.
+   *  Retry every 10 seconds when offline.
    */
   dwr.engine._defaultRetryIntervals = [ 1, 1, 10 ];
   
@@ -439,6 +456,8 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** For debugging when something unexplained happens. */
   dwr.engine._warningHandler = dwr.engine.defaultWarningHandler;
+
+  dwr.engine._pollStatusHandler = dwr.engine.defaultPollStatusHandler;
 
   /** Undocumented interceptors - do not use */
   dwr.engine._postSeperator = "\n";
@@ -545,40 +564,7 @@ if (typeof dwr == 'undefined') dwr = {};
     }
     var batch = dwr.engine.batch.createPoll();
     dwr.engine.transport.send(batch);
-  };
-
-  /**
-   * Try to recover from errors
-   * @param {Object} msg
-   * @param {Object} ex
-   */
-  dwr.engine._pollErrorHandler = function(batch, ex) {
-    // Always call the error handler, unless we are retrying.
-    if (dwr.engine._retries == 0) {      
-      if (batch && typeof batch.errorHandler == "function") {
-        batch.errorHandler(ex.message, ex);
-      } else if (dwr.engine._errorHandler) {
-        dwr.engine._errorHandler(ex.message, ex);
-      }
-    }
-    // If we have reached the maximum number of retries - quit.
-    if (dwr.engine._maxRetries != -1 && (dwr.engine._retries >= dwr.engine._maxRetries)) {
-      dwr.engine._activeReverseAjax = false;      
-      if (batch) dwr.engine.batch.remove(batch);
-    } else {
-      // Otherwise retry
-      var retryIndex = dwr.engine._retries;
-      var retryInterval = 0;
-      if (retryIndex >= dwr.engine._retryIntervals.length) {
-        retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1];
-      } else {
-        retryInterval = dwr.engine._retryIntervals[retryIndex];
-      }  
-      dwr.engine._debug("Reverse Ajax poll failed (retries=" + dwr.engine._retries + "). Trying again in " + retryInterval + "s: " + ex.name + " : " + ex.message);
-      setTimeout(dwr.engine._poll, 1000 * retryInterval);    
-      dwr.engine._retries++;
-    } 
-  };      
+  }; 
     
   /** @private This is a hack to make the context be this window */
   dwr.engine._eval = function(script) {
@@ -610,14 +596,62 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleError = function(batch, ex) {
-    dwr.engine._prepareException(ex);
-    if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-    else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-    if (batch) dwr.engine.batch.remove(batch);
+    dwr.engine._handlePollRetry(batch, ex);
+    if (dwr.engine._retries <= 1) {    
+      dwr.engine._prepareException(ex);
+      if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+      else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+      if (batch) dwr.engine.batch.remove(batch);
+    }
   };
-
+  
   /**
-   * Generic error handling routing to save having null checks everywhere
+   * Handle retries for polling as well as online/offline status.
+   * @private
+   * @param {Object} batch
+   * @param {Object} ex
+   */
+  dwr.engine._handlePollRetry = function(batch, ex) {
+    var retryInterval;
+	if (batch && batch.isPoll) {
+      if (dwr.engine._retries < dwr.engine._retryIntervals.length) {
+        // We are still online, try the next interval.
+        retryInterval = dwr.engine._retryIntervals[dwr.engine._retries] * 1000;
+      } else {
+        // The last interval in retryIntervals is the number that will be used to poll when offline.
+        retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
+      }
+      dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
+      // Call supplied pollStatusHandler and go offline.        
+      if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
+        dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
+        dwr.engine._handlePollStatusChange(false, ex);       
+      }
+      dwr.engine._retries++;
+      dwr.engine.batch.remove(batch);
+      setTimeout(dwr.engine._poll, retryInterval);      
+    }
+  }
+  
+  /**
+   * Handles polling status changes - online or offline.  
+   * @param {boolean} newStatus - true = online, false = offline
+   * @param {object} ex - The exception if one exists (offline).
+   * @see getahead.org/dwr/browser/engine/errors
+   */
+  dwr.engine._handlePollStatusChange = function(newStatus, ex) {
+    if (!newStatus) {
+      dwr.engine._pollOnline = false;
+    }   
+    if (typeof dwr.engine._pollStatusHandler) dwr.engine._pollStatusHandler(newStatus, ex);
+    if (newStatus) {
+      dwr.engine._pollOnline = true;
+      dwr.engine._retries = 0; 
+    }   
+  }
+  
+  /**
+   * Generic error handling routing to save having null checks everywhere.
    * @private
    * @param {Object} batch
    * @param {Object} ex
@@ -629,7 +663,7 @@ if (typeof dwr == 'undefined') dwr = {};
     else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
     if (batch) dwr.engine.batch.remove(batch);
   };
-  
+      
   /**
    * Prepares an exception for an error/warning handler.  
    * @private
@@ -1339,20 +1373,34 @@ if (typeof dwr == 'undefined') dwr = {};
           return;
         }
 
+		// Try to get the response HTTP status if applicable
         var req = batch.req;
-        try {
-          var readyState = req.readyState;
-          var notReady = (req.readyState != 4);
-          if (notReady) {
-            return;
-          }
-        }
-        catch (ex) {
-          dwr.engine._handleWarning(batch, ex);
-          // It's broken - clear up and forget this call
-          dwr.engine.batch.remove(batch);
-          return;
-        }
+		var status = 0;
+		try {
+		  if (req.readyState >= 2) {
+		    status = req.status; // causes Mozilla to except on page moves
+		  }
+		}
+		catch(ignore) {}
+
+		// If we couldn't get the status we bail out, unless the request is
+		// complete, which means error (handled further below)
+		if (status == 0 && req.readyState < 4) {
+	      return;
+		}
+		
+        // If the status is 200, we are now online. 
+        // Future improvement per Mike W. - A solution where we only use the callbacks/handlers of the poll call to trigger 
+        // the retry handling would be ideal.  We would need something like a new internal callback that reports 
+        // progress back to the caller, and the design should be compatible with getting it to work with iframes as well.   
+        if (status == 200 && !dwr.engine._pollOnline) {
+          dwr.engine._handlePollStatusChange(true);    
+        }  
+
+        // The rest of this function only deals with request completion
+		if (req.readyState != 4) {
+		  return;
+		}
 
         if (dwr.engine._unloading && !dwr.engine.isJaxerServer) {
           dwr.engine._debug("Ignoring reply from server as page is unloading.");
@@ -1362,15 +1410,14 @@ if (typeof dwr == 'undefined') dwr = {};
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
-          var status = req.status; // causes Mozilla to except on page moves
-			
+          			
 		  if (reply == null || reply == "") {
             dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
           }
           else if (status != 200) {
             dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:req.statusText });
           }
-          else {
+          else {                     
             var contentType = req.getResponseHeader("Content-Type");
             if (dwr.engine.isJaxerServer) {
               // HACK! Jaxer does something b0rken with Content-Type
@@ -1420,8 +1467,8 @@ if (typeof dwr == 'undefined') dwr = {};
        * @private
        */       
       checkCometPoll:function() {
-        if (dwr.engine._pollReq) {
-          var req = dwr.engine._pollReq;
+        var req = dwr.engine._pollReq;
+        if (req) {         
           var text = req.responseText;
           if (text != null) {
             dwr.engine.transport.xhr.processCometResponse(text, req.batch);
@@ -1756,7 +1803,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
     }
   };
-
+  
   /**
    * Functions to manipulate batches
    * @private
@@ -1803,8 +1850,7 @@ if (typeof dwr == 'undefined') dwr = {};
         async:true,
         charsProcessed:0,
         handlers:[{
-          callback:function(pause) {
-            dwr.engine._retries = 0;
+          callback:function(pause) {     
             setTimeout(dwr.engine._poll, pause);
           }
         }],
@@ -1820,7 +1866,6 @@ if (typeof dwr == 'undefined') dwr = {};
         warningHandler:dwr.engine._warningHandler,
         textHtmlHandler:dwr.engine._textHtmlHandler
       };     
-      
       dwr.engine.batch.populateHeadersAndParameters(batch);
       return batch;
     },
@@ -2049,7 +2094,7 @@ if (typeof dwr == 'undefined') dwr = {};
       if (!batch.completed) {
         for (var i = 0; i < batch.map.callCount; i++) {
           if (batch.handlers[i].completed !== true) {
-            dwr.engine._handleWarning(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
+            dwr.engine._handleError(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
             break;
           }
         }
