@@ -620,16 +620,18 @@ if (typeof dwr == 'undefined') dwr = {};
       } else {
         // The last interval in retryIntervals is the number that will be used to poll when offline.
         retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
-      }
-      dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
-      // Call supplied pollStatusHandler and go offline.        
-      if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
-        dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
-        dwr.engine._handlePollStatusChange(false, ex);       
-      }
-      dwr.engine._retries++;
-      dwr.engine.batch.remove(batch);
-      setTimeout(dwr.engine._poll, retryInterval);      
+      }      
+      if (dwr.engine._maxRetries == -1 || dwr.engine.retries <= dwr.engine._maxRetries) {
+        // Call supplied pollStatusHandler and go offline.        
+        if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
+          dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
+          dwr.engine._handlePollStatusChange(false, ex);       
+        }
+        dwr.engine._retries++;
+        dwr.engine.batch.remove(batch);
+        dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
+        setTimeout(dwr.engine._poll, retryInterval);
+      }      
     }
   }
   
