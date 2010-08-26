@@ -162,7 +162,7 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /*
-   * The maximum number of retries after we are offline, when reached we will no longer attempt to check for server status.
+   * The maximum number of retries, when reached we will no longer attempt to check for server status.
    * @param - maxRetries
    */
   dwr.engine.setMaxRetries = function(maxRetries) {
