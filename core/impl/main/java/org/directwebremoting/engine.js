@@ -162,8 +162,8 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /*
-   * The maximum number of retries before failure.
-   * @param - maxRetries - The maximum number of retries before failure.
+   * The maximum number of retries after we are offline, when reached we will no longer attempt to check for server status.
+   * @param - maxRetries
    */
   dwr.engine.setMaxRetries = function(maxRetries) {
     dwr.engine._maxRetries = maxRetries;
