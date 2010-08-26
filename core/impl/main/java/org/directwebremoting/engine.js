@@ -621,7 +621,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // The last interval in retryIntervals is the number that will be used to poll when offline.
         retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
       }      
-      if (dwr.engine._maxRetries == -1 || dwr.engine.retries <= dwr.engine._maxRetries) {
+      if (dwr.engine._maxRetries == -1 || dwr.engine._retries <= dwr.engine._maxRetries) {
         // Call supplied pollStatusHandler and go offline.        
         if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
           dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
