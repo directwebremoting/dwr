@@ -631,7 +631,9 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine.batch.remove(batch);
         dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
         setTimeout(dwr.engine._poll, retryInterval);
-      }      
+      } else {
+        dwr.engine._debug("max retries reached, stop polling for server status.");
+      }
     }
   }
   
