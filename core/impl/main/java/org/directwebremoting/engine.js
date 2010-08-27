@@ -1865,10 +1865,7 @@ if (typeof dwr == 'undefined') dwr = {};
         preHooks:[],
         postHooks:[],
         timeout:0,
-        windowName:window.name,
-        errorHandler:dwr.engine._errorHandler,
-        warningHandler:dwr.engine._warningHandler,
-        textHtmlHandler:dwr.engine._textHtmlHandler
+        windowName:window.name
       };     
       dwr.engine.batch.populateHeadersAndParameters(batch);
       return batch;
