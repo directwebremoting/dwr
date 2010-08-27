@@ -16,14 +16,20 @@
                setTimeout("window.onload()", 2000);
            } else {
                dwr.engine.setActiveReverseAjax(true);
+			   dwr.engine.setErrorHandler(errorHandler);
 			   dwr.engine.setPollStatusHandler(updatePollStatus);
 			   updatePollStatus(true);
                Tabs.init('tabList', 'tabContents');
            }          
       }
 	  
+	  function errorHandler(message, ex) {
+	    dwr.util.setValue("error", "<font color='red'>Cannot connect to server. Initializing retry logic.</font>", {escapeHtml:false});
+	    setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
+	  }
+	  
 	  function updatePollStatus(pollStatus) {
-	  	dwr.util.setValue("pollStatus", pollStatus ? "Online" : "Offline");
+	  	dwr.util.setValue("pollStatus", pollStatus ? "<font color='green'>Online</font>" : "<font color='red'>Offline</font>", {escapeHtml:false});
 	  }
   </script>
 </head>
@@ -51,6 +57,7 @@ a number of browsers.</p>
   <div id="demoDiv">
     <input type="button" value="Start / Stop" onclick="Clock.toggle();"/>
 	Server status: <span id="pollStatus"></span>
+	<div id="error"></div>
     <p></p>
     <h2 id="clockDisplay"></h2>
   </div>
