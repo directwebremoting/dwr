@@ -104,7 +104,9 @@ public class Continuation
     {
         try
         {
-            resumeMethod.invoke(proxy);
+            if (!((Boolean)isExpiredMethod.invoke(proxy)).booleanValue()) {
+                resumeMethod.invoke(proxy);
+            }
         }
         catch (InvocationTargetException ex)
         {
@@ -180,6 +182,11 @@ public class Continuation
     protected static final Method resumeMethod;
 
     /**
+     * Is this Continuation expired?
+     */
+    protected static final Method isExpiredMethod;
+
+    /**
      * Are we using Jetty at all?
      */
     protected static boolean isJetty = false;
@@ -219,14 +226,17 @@ public class Continuation
         if (isJetty())
         {
             suspendMethod = LocalUtil.getMethod(continuationClass, "suspend");
+            isExpiredMethod = LocalUtil.getMethod(continuationClass, "isExpired");
         }
         else if (isGrizzly)
         {
             suspendMethod = LocalUtil.getMethod(continuationClass, "suspend", long.class);
+            isExpiredMethod = null;
         }
         else
         {
             suspendMethod = null;
+            isExpiredMethod = null;
         }
         resumeMethod = LocalUtil.getMethod(continuationClass, "resume");
     }
