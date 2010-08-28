@@ -18,8 +18,8 @@ package org.directwebremoting.convert;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -192,6 +192,12 @@ public class MapConverter implements Converter
             Object key = entry.getKey();
             Object value = entry.getValue();
 
+            // If the key is null, retrieve the configured null key value from the configuration of this converter.
+            if (null == key && null != nullKey) {
+                log.debug("MapConverter: A null key was encountered DWR is using the configured nullKey string: " + nullKey);
+                key = nullKey;
+            }
+
             // It would be nice to check for Enums here
             if (!(key instanceof String) && !sentNonStringWarning)
             {
@@ -218,6 +224,22 @@ public class MapConverter implements Converter
     }
 
     /**
+     * @return the nullKey
+     */
+    public String getNullKey()
+    {
+        return nullKey;
+    }
+
+    /**
+     * @param nullKey the nullKey to set
+     */
+    public void setNullKey(String nullKey)
+    {
+        this.nullKey = nullKey;
+    }
+
+    /**
      * We don't want to give the non-string warning too many times.
      */
     private static boolean sentNonStringWarning = false;
@@ -226,6 +248,14 @@ public class MapConverter implements Converter
      * To forward marshalling requests
      */
     private ConverterManager converterManager = null;
+
+    /**
+     * Used by DWR if a null key is encountered.  Configure in the init section when the map converter is declared.
+     * <converter id="map" class="org.directwebremoting.convert.MapConverter">
+     *     <param name="nullKey" value="null" />
+     * </converter>
+     */
+    private String nullKey = null;
 
     /**
      * The log stream
