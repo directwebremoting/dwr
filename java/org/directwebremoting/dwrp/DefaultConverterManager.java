@@ -19,9 +19,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
@@ -103,7 +105,13 @@ public class DefaultConverterManager implements ConverterManager
      */
     public Collection getConverterMatchStrings()
     {
-        return Collections.unmodifiableSet(converters.keySet());
+        Set converterMatchStrings;
+        synchronized (converters)
+        {
+            // Copy for safe iteration.
+            converterMatchStrings = new HashSet(Collections.unmodifiableSet(converters.keySet()));
+        }         
+        return converterMatchStrings ;
     }
 
     /* (non-Javadoc)
