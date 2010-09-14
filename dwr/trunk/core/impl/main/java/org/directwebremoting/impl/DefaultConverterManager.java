@@ -450,8 +450,11 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map<String, Converter> converters)
     {
-        this.converters.clear();
-        this.converters.putAll(converters);
+        synchronized (this.converters)
+        {
+            this.converters.clear();
+            this.converters.putAll(converters);
+        }
     }
 
     /**
