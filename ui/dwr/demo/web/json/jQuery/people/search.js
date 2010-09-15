@@ -42,7 +42,7 @@ function filterChanged() {
     if (filter.charAt(0) == lastFilter.charAt(0)) {
         var people = {};
         people.reply = peopleCache;        
-      	fillTable(reply);
+      	fillTable(people.reply);
     }
     else {
    	  $.post("../../../dwr/jsonp/People/getMatchingFromLargeCrowd/" + filter.charAt(0), { },
