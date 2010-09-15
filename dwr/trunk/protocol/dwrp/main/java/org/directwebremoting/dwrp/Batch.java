@@ -59,7 +59,14 @@ public class Batch
         }
 
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
-        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID, THROW);
+        if (scriptSessionId.contains("/"))
+        {
+            dwrSessionId = scriptSessionId.substring(0, scriptSessionId.indexOf('/'));
+        }
+        else
+        {
+            dwrSessionId = "";
+        }
         page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
         windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
@@ -73,7 +80,14 @@ public class Batch
         this.get = get;
 
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
-        httpSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_HTTP_SESSIONID, THROW);
+        if (scriptSessionId.contains("/"))
+        {
+            dwrSessionId = scriptSessionId.substring(0, scriptSessionId.indexOf('/'));
+        }
+        else
+        {
+            dwrSessionId = "";
+        }
         page = extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW);
         windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
@@ -376,15 +390,15 @@ public class Batch
     /**
      * @return the httpSessionId
      */
-    public String getHttpSessionId()
+    public String getDwrSessionId()
     {
-        return httpSessionId;
+        return dwrSessionId;
     }
 
     /**
      * The unique ID sent to the browser in the session cookie
      */
-    private final String httpSessionId;
+    private final String dwrSessionId;
 
     /**
      * @return the page

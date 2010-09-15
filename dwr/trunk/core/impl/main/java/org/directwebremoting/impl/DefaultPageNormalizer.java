@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -102,9 +104,15 @@ public class DefaultPageNormalizer implements PageNormalizer
 
         if (!normalizeIncludesSessionID)
         {
-            if(normalized.matches("(?i).*;" + sessionCookieName + "=.*"))
+            final Pattern p = Pattern.compile(
+                "([^;\\?#]+)" // group 1: protocol, host, and path (up to first of ; ? or #)
+                + ";[^\\?#]+" // sessionid (up to first of ? or #)
+                + "(.*)"); // group 2: remainder (any ? or # segments)
+            Matcher m = p.matcher(normalized);
+            if (m.matches())
             {
-                normalized = normalized.replaceFirst("(?i);" + sessionCookieName + "=.*","");
+                // Concatenate the parts without sessionid
+                normalized = m.group(1) + m.group(2);
             }
         }
 
@@ -241,14 +249,6 @@ public class DefaultPageNormalizer implements PageNormalizer
     }
 
     /**
-     * The session cookie name, needed for normalizeIncludesSessionID
-     */
-    public void setSessionCookieName(String sessionCookieName)
-    {
-        this.sessionCookieName = sessionCookieName;
-    }
-
-    /**
      * @param servletContext the servletContext to set
      */
     public void setServletContext(ServletContext servletContext)
@@ -272,11 +272,6 @@ public class DefaultPageNormalizer implements PageNormalizer
      * pages?
      */
     protected boolean normalizeIncludesSessionID = false;
-
-    /**
-     * The session cookie name, needed for normalizeIncludesSessionID
-     */
-    private String sessionCookieName = "JSESSIONID";
 
     /**
      * How we create new documents

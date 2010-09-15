@@ -24,12 +24,12 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.CallbackHelper;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.ui.Callback;
-import org.directwebremoting.util.IdGenerator;
 
 /**
  * The default implementation of CallbackHelper
@@ -101,15 +101,23 @@ public class DefaultCallbackHelper implements CallbackHelper
     /**
      * Callbacks need a unique ID
      */
-    public static String createUniqueId()
+    public String createUniqueId()
     {
-        return idGenerator.generateId(16);
+        return idGenerator.generate();
     }
 
     /**
-     * Callbacks need a unique ID
+     * The id generator
      */
-    private static IdGenerator idGenerator = new IdGenerator();
+    public void setIdGenerator(IdGenerator idGenerator)
+    {
+        this.idGenerator = idGenerator;
+    }
+
+    /**
+     * The id generator
+     */
+    private IdGenerator idGenerator;
 
     /**
      * The key that we use in a script session to store Callbacks

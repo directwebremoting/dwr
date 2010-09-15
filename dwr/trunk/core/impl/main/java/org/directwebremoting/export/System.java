@@ -30,6 +30,7 @@ import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.extend.RealRawData;
 import org.directwebremoting.impl.DefaultCallbackHelper;
 
@@ -40,6 +41,17 @@ import org.directwebremoting.impl.DefaultCallbackHelper;
  */
 public class System
 {
+    /**
+     * Generates and returns a new unique id suitable to use for the
+     * CSRF session cookie. This method is itself exempted from CSRF checking.
+     */
+    public String generateId()
+    {
+        WebContext webContext = WebContextFactory.get();
+        IdGenerator idGenerator = webContext.getContainer().getBean(IdGenerator.class);
+        return idGenerator.generate();
+    }
+
     /**
      * A method designed to be called on page load so the client knows about
      * the http and script sessions. This method doesn't actually do anything

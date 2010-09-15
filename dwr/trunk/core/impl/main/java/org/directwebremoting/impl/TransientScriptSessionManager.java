@@ -41,7 +41,7 @@ public class TransientScriptSessionManager implements ScriptSessionManager
      */
     public RealScriptSession getScriptSession(String id, String page, String httpSessionId)
     {
-        return new TransientScriptSession(this, page);
+        return new TransientScriptSession(id, this, page);
     }
 
     /* (non-Javadoc)

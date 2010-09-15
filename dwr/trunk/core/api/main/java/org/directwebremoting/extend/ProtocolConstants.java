@@ -58,9 +58,9 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_ID = "id";
 
     /**
-     * The parameter that specifies the http session identifier
+     * The parameter that specifies DWR's session identifier
      */
-    public static final String INBOUND_KEY_HTTP_SESSIONID = "httpSessionId";
+    public static final String INBOUND_KEY_DWR_SESSIONID = "dwrSessionId";
 
     /**
      * The parameter that specifies the batch identifier

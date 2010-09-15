@@ -83,6 +83,7 @@ public class EngineHandler extends FileJavaScriptHandler
             HttpServletRequest request = context.getHttpServletRequest();
             if (request != null)
             {
+                replace.put("${contextPath}", request.getContextPath());
                 String contextServletPath = request.getContextPath() + request.getServletPath();
                 String pathToDwrServlet = remoter.getPathToDwrServlet(contextServletPath);
                 replace.put("${pathToDwrServlet}", pathToDwrServlet);
@@ -92,9 +93,6 @@ public class EngineHandler extends FileJavaScriptHandler
         {
             log.debug("Unable to detect DWR servlet path (no web context found). Is this a DWR thread?");
         }
-
-        // Under what cookie name is the session id stored?
-        replace.put("${sessionCookieName}", sessionCookieName);
 
         // Does engine.js do GETs for Safari
         replace.put("${allowGetForSafariButMakeForgeryEasier}", String.valueOf(allowGetForSafariButMakeForgeryEasier));
@@ -149,15 +147,6 @@ public class EngineHandler extends FileJavaScriptHandler
     public void setScriptTagProtection(String scriptTagProtection)
     {
         this.scriptTagProtection = scriptTagProtection;
-    }
-
-    /**
-     * Alter the session cookie name from the default JSESSIONID.
-     * @param sessionCookieName the sessionCookieName to set
-     */
-    public void setSessionCookieName(String sessionCookieName)
-    {
-        this.sessionCookieName = sessionCookieName;
     }
 
     /**
@@ -243,11 +232,6 @@ public class EngineHandler extends FileJavaScriptHandler
      * The source of the commands to we give to the client on startup?
      */
     private ScriptSessionManager scriptSessionManager;
-
-    /**
-     * The session cookie name
-     */
-    private String sessionCookieName = "JSESSIONID";
 
     /**
      * Sometimes with proxies, you need to close the stream all the time to

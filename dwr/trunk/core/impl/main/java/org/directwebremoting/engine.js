@@ -49,7 +49,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.setTextHtmlHandler = function(handler) {
     dwr.engine._textHtmlHandler = handler;
   };
-  
+
   dwr.engine.setPollStatusHandler = function(handler) {
     dwr.engine._pollStatusHandler = handler;
   };
@@ -117,7 +117,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /**
    * Do we ask the XHR object to be asynchronous? (Default: true)
-   * Warning: it is <strong>highly</strong> advised to use the default ofasync
+   * Warning: it is <strong>highly</strong> advised to use the default of async
    * processing, especially when dealing with Internet based requests.
    * @param {boolean} async false to enable sync processing for XHR queries
    * @see getahead.org/dwr/browser/engine/options
@@ -168,7 +168,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.setMaxRetries = function(maxRetries) {
     dwr.engine._maxRetries = maxRetries;
   };
-  
+
   /*
    * The intervals between successive retries in seconds
    * @param - array of integers representing the retry interval in seconds.
@@ -176,7 +176,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.setRetryIntervals = function(intervalsArray) {
     dwr.engine._retryIntervals = intervalsArray;
   };
-   
+
   /**
    * The default message handler.
    * @param {String} message The text of the error message
@@ -200,7 +200,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.defaultWarningHandler = function(message, ex) {
     dwr.engine._debug(message);
   };
-  
+
   /**
    * The default poll status handler.
    * @param {boolean} newStatus - true = online, false = offline
@@ -245,7 +245,8 @@ if (typeof dwr == 'undefined') dwr = {};
     }
 
     // In ordered mode, we don't send unless the list of sent items is empty
-    if (dwr.engine._ordered && dwr.engine._batchesLength != 0) {
+    // (queuing is not possible for sync calls so let them slip through)
+    if (batch.async && (dwr.engine._ordered || dwr.engine._internalOrdered) && dwr.engine._batchesLength != 0) {
       dwr.engine._batchQueue[dwr.engine._batchQueue.length] = batch;
     }
     else {
@@ -315,9 +316,6 @@ if (typeof dwr == 'undefined') dwr = {};
   // Only private stuff below here
   //==============================================================================
 
-  /** The session cookie name */
-  dwr.engine._sessionCookieName = "${sessionCookieName}"; // JSESSIONID
-
   /** Is GET enabled for the benefit of Safari? */
   dwr.engine._allowGetForSafariButMakeForgeryEasier = "${allowGetForSafariButMakeForgeryEasier}";
 
@@ -335,11 +333,14 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
   }
 
+  /** The webapp's context path (used for setting cookie path) */
+  dwr.engine._contextPath = "${contextPath}";
+
   /** Do we use XHR for reverse ajax because we are not streaming? */
   dwr.engine._pollWithXhr = "${pollWithXhr}";
-    
+
   dwr.engine._pollOnline = true;  
-    
+
   /** These URLs can be configured from the server */
   dwr.engine._ModePlainCall = "${plainCallHandlerUrl}";
   dwr.engine._ModePlainPoll = "${plainPollHandlerUrl}";
@@ -349,7 +350,13 @@ if (typeof dwr == 'undefined') dwr = {};
   /** Do we make the calls async? Default to 'true' */
   dwr.engine._async = Boolean("${defaultToAsync}");
 
-  /** The page id */
+  /** The local page id */
+  dwr.engine._pageId = null;
+
+  /** The browser instance id */
+  dwr.engine._dwrSessionId = null;
+
+  /** The global page id (browser instance + local page id) */
   dwr.engine._scriptSessionId = null;
 
   /** A function to be called before requests are marshalled. Can be null. */
@@ -367,9 +374,11 @@ if (typeof dwr == 'undefined') dwr = {};
   /** In ordered mode, the array of batches waiting to be sent */
   dwr.engine._batchQueue = [];
 
-  /** Do we attempt to ensure that calls happen in the order in which they were
-  sent? This starts true until we have fetched the ids, when it is to false */
-  dwr.engine._ordered = true;
+  /** User setting for saying that calls should execute one by one in the order in which they were sent */
+  dwr.engine._ordered = false;
+
+  /** Internal state forcing calls to execute one by one in the order in which they were sent */
+  dwr.engine._internalOrdered = false;
 
   /** The current batch (if we are in batch mode) */
   dwr.engine._batch = null;
@@ -395,16 +404,16 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** The intervals between successive retries in seconds */
   dwr.engine._retryIntervals = [];
-  
+
   /** Used as the default for reverse ajax/polling 
    *  Retry immediately twice with one second intervals between, then go offline.
    *  Retry every 10 seconds when offline.
    */
   dwr.engine._defaultRetryIntervals = [ 1, 1, 10 ];
-  
+
   /** Do we do a document.reload if we get a text/html reply? */
   dwr.engine._textHtmlHandler = null;
-    
+
   /** If you wish to send custom headers with every request */
   dwr.engine._headers = null;
 
@@ -433,23 +442,6 @@ if (typeof dwr == 'undefined') dwr = {};
   if (typeof dwr.engine._mappedClasses == 'undefined') {
     dwr.engine._mappedClasses = {};
   }
-
-  /**
-   * Find the HTTP session id sent by the web server
-   * @private
-   */
-  dwr.engine._getHttpSessionId = function() {
-    // try to find the httpSessionId
-    var cookies = document.cookie.split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i];
-      while (cookie.charAt(0) == ' ') cookie = cookie.substring(1, cookie.length);
-      if (cookie.indexOf(dwr.engine._sessionCookieName + "=") == 0) {
-        return cookie.substring(dwr.engine._sessionCookieName.length + 1, cookie.length);
-      }
-    }
-    return "";
-  };
 
   /** A function to call if something fails. */
   dwr.engine._errorHandler = dwr.engine.defaultErrorHandler;
@@ -565,7 +557,7 @@ if (typeof dwr == 'undefined') dwr = {};
     var batch = dwr.engine.batch.createPoll();
     dwr.engine.transport.send(batch);
   }; 
-    
+
   /** @private This is a hack to make the context be this window */
   dwr.engine._eval = function(script) {
     if (script == null) {
@@ -604,7 +596,7 @@ if (typeof dwr == 'undefined') dwr = {};
       if (batch) dwr.engine.batch.remove(batch);
     }
   };
-  
+
   /**
    * Handle retries for polling as well as online/offline status.
    * @private
@@ -613,7 +605,7 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handlePollRetry = function(batch, ex) {
     var retryInterval;
-	if (batch && batch.isPoll) {
+    if (batch && batch.isPoll) {
       if (dwr.engine._retries < dwr.engine._retryIntervals.length) {
         // We are still online, try the next interval.
         retryInterval = dwr.engine._retryIntervals[dwr.engine._retries] * 1000;
@@ -636,7 +628,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
     }
   }
-  
+
   /**
    * Handles polling status changes - online or offline.  
    * @param {boolean} newStatus - true = online, false = offline
@@ -653,7 +645,7 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine._retries = 0; 
     }   
   }
-  
+
   /**
    * Generic error handling routing to save having null checks everywhere.
    * @private
@@ -667,7 +659,7 @@ if (typeof dwr == 'undefined') dwr = {};
     else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
     if (batch) dwr.engine.batch.remove(batch);
   };
-      
+
   /**
    * Prepares an exception for an error/warning handler.  
    * @private
@@ -678,7 +670,7 @@ if (typeof dwr == 'undefined') dwr = {};
     if (ex.message == null) ex.message = "";
     if (ex.name == null) ex.name = "unknown";
   };
-  
+
   /**
    * Used internally when some message needs to get to the programmer
    * @private
@@ -845,19 +837,7 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     /**
-     * Called by the server when we need to set a new script session id
-     * @param {Object} newSessionId The new script session id to be used from now
-     */
-    handleNewScriptSession:function(newSessionId) {
-      if (dwr.engine._scriptSessionId != null) {
-        dwr.engine._debug("Server side script session id timed out. New session automatically created");
-      }
-      dwr.engine._scriptSessionId = newSessionId;
-    },
-
-    /**
-     * Called by the server when we need to set a new script session id
-     * @param {Object} newSessionId The new script session id to be used from now
+     * Called by the server when we need to set a new window name
      */
     handleNewWindowName:function(windowName) {
       dwr.engine._debug("Setting new window name: " + windowName);
@@ -1188,11 +1168,53 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine.transport = {
     /**
-     * Actually send the block of data in the batch object.
+     * Manage the DWR session and then send.
      * @private
      * @param {Object} batch
      */
     send:function(batch) {
+      dwr.engine.transport.updateDwrSessionFromCookie();
+      if (!dwr.engine._dwrSessionId) {
+        dwr.engine._internalOrdered = true;
+        var idbatch = {
+          map:{
+            callCount:1,
+            'c0-scriptName':'__System',
+            'c0-methodName':'generateId',
+            'c0-id':0
+          },
+          paramCount:0, isPoll:false, async:batch.async,
+          headers:{}, preHooks:[], 
+          postHooks:[function() {
+            dwr.engine._internalOrdered = false;
+          }],
+          timeout:dwr.engine._timeout,
+          errorHandler:batch.errorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler,
+          path:batch.path,
+          handlers:[{
+            exceptionHandler:null, 
+            callback:function(id) {
+              dwr.engine.transport.updateDwrSessionFromCookie();
+              if (!dwr.engine._dwrSessionId) {
+                dwr.engine.transport.setDwrSession(id);
+              }
+              dwr.engine.transport.send2(batch);
+            }
+          }]
+        };
+        dwr.engine.transport.send2(idbatch);
+      }
+      else {
+        dwr.engine.transport.send2(batch);
+      }
+    },
+
+    /**
+     * Actually send the block of data in the batch object.
+     * @private
+     * @param {Object} batch
+     */
+    send2:function(batch) {
       dwr.engine.batch.prepareToSend(batch);
 
       // Work out if we are going cross domain
@@ -1249,6 +1271,21 @@ if (typeof dwr == 'undefined') dwr = {};
 
         dwr.engine.transport.remove(batch);
         dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
+      }
+    },
+
+    setDwrSession:function(dwrsess) {
+      dwr.engine._dwrSessionId = dwrsess;
+      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + dwr.engine._contextPath;
+      dwr.engine._scriptSessionId = dwrsess + "/" + dwr.engine._pageId;
+    },
+
+    updateDwrSessionFromCookie:function() {
+      if (!dwr.engine._dwrSessionId) {
+        var match = document.cookie.match(/(?:^|; )DWRSESSIONID=([^;]+)/);
+        if (match) {
+          dwr.engine.transport.setDwrSession(match[1]);
+        }
       }
     },
 
@@ -1377,22 +1414,22 @@ if (typeof dwr == 'undefined') dwr = {};
           return;
         }
 
-		// Try to get the response HTTP status if applicable
+        // Try to get the response HTTP status if applicable
         var req = batch.req;
-		var status = 0;
-		try {
-		  if (req.readyState >= 2) {
-		    status = req.status; // causes Mozilla to except on page moves
-		  }
-		}
-		catch(ignore) {}
+        var status = 0;
+        try {
+          if (req.readyState >= 2) {
+            status = req.status; // causes Mozilla to except on page moves
+          }
+        }
+        catch(ignore) {}
 
-		// If we couldn't get the status we bail out, unless the request is
-		// complete, which means error (handled further below)
-		if (status == 0 && req.readyState < 4) {
-	      return;
-		}
-		
+        // If we couldn't get the status we bail out, unless the request is
+        // complete, which means error (handled further below)
+        if (status == 0 && req.readyState < 4) {
+          return;
+        }
+
         // If the status is 200, we are now online. 
         // Future improvement per Mike W. - A solution where we only use the callbacks/handlers of the poll call to trigger 
         // the retry handling would be ideal.  We would need something like a new internal callback that reports 
@@ -1402,9 +1439,9 @@ if (typeof dwr == 'undefined') dwr = {};
         }  
 
         // The rest of this function only deals with request completion
-		if (req.readyState != 4) {
-		  return;
-		}
+        if (req.readyState != 4) {
+          return;
+        }
 
         if (dwr.engine._unloading && !dwr.engine.isJaxerServer) {
           dwr.engine._debug("Ignoring reply from server as page is unloading.");
@@ -1414,8 +1451,8 @@ if (typeof dwr == 'undefined') dwr = {};
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
-          			
-		  if (reply == null || reply == "") {
+
+          if (reply == null || reply == "") {
             dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
           }
           else if (status != 200) {
@@ -1691,18 +1728,18 @@ if (typeof dwr == 'undefined') dwr = {};
       },
 
       remove:function(batch) {
-        if (batch.iframe && batch.iframe.parentNode) {
-          // Safari 3 and Chrome 1 will show endless loading spinner if removing 
-          // iframe during execution of iframe script, so we delay it a bit
-          setTimeout(function(){
+        // Safari 3 and Chrome 1 will show endless loading spinner if removing 
+        // iframe during execution of iframe script, so we delay it a bit
+        setTimeout(function(){
+          if (batch.iframe && batch.iframe.parentNode) {
             batch.iframe.parentNode.removeChild(batch.iframe);
             batch.iframe = null;
-          }, 100);
-        }
-        if (batch.div && batch.div.parentNode)
-          batch.div.parentNode.removeChild(batch.div);
-        if (batch.form && batch.form.parentNode)
-          batch.form.parentNode.removeChild(batch.form);
+          }
+          if (batch.div && batch.div.parentNode)
+            batch.div.parentNode.removeChild(batch.div);
+          if (batch.form && batch.form.parentNode)
+            batch.form.parentNode.removeChild(batch.form);
+        }, 100);
       }
 
       /*
@@ -1807,7 +1844,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
     }
   };
-  
+
   /**
    * Functions to manipulate batches
    * @private
@@ -1985,7 +2022,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
       // security details are filled in late so previous batches have completed
       batch.map.page = encodeURIComponent(window.location.pathname + window.location.search);
-      batch.map.httpSessionId = dwr.engine._getHttpSessionId();
       batch.map.scriptSessionId = dwr.engine._scriptSessionId;
       batch.map.windowName = window.name;
 
@@ -2025,10 +2061,13 @@ if (typeof dwr == 'undefined') dwr = {};
         urlBuffer.push(".dwr");
       }
       // Play nice with url re-writing
-      var sessionMatchExpr = new RegExp(dwr.engine._sessionCookieName + "=[^?#]+", "i"); 
+      var sessionMatchExpr = new RegExp(
+        "^"               // start of string
+        + "[^;\\?#]+"     // protocol, host, and path (up to first of ; ? or #)
+        + "(;[^\\?#]+)"); // group 1: ; and sessionid (up to first of ? or #)
       var sessionMatch = location.href.match(sessionMatchExpr); 
       if (sessionMatch != null) { 
-        urlBuffer.push(";" + sessionMatch[0]); 
+        urlBuffer.push(sessionMatch[1]); 
       }
 
       var request = {};
@@ -2163,6 +2202,21 @@ if (typeof dwr == 'undefined') dwr = {};
         catch (ex) { /* ignore */ }
       }
       return returnValue;
+    },
+
+    /**
+     * Transform a number into a token string suitable for ids
+     */
+    tokenify: function(number) {
+      var tokenbuf = [];
+      var charmap = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*$";
+      var remainder = number;
+      while (remainder > 0)
+      {
+        tokenbuf.push(charmap.charAt(remainder & 0x3F));
+        remainder = remainder >>> 6;
+      }
+      return tokenbuf.join("");
     }
   };
 
@@ -2193,7 +2247,13 @@ if (typeof dwr == 'undefined') dwr = {};
   }
   catch(ex) { }
 
-  // Fetch the scriptSessionId from the server
+  // Make random local page id
+  dwr.engine._pageId = dwr.engine.util.tokenify(new Date().getTime()) + "-" + dwr.engine.util.tokenify(Math.random() * 1E16);
+
+  // Reuse any existing dwr session
+  dwr.engine.transport.updateDwrSessionFromCookie();
+
+  // Run page init code as desired by server
   eval("${initCode}");
 
   /**
@@ -2270,14 +2330,14 @@ dwr.data = {
      * @param {string} itemId The ID of the item
      */
     itemRemoved:function(source, itemId) { },
-  
+
     /**
      * Something has added an item to the store
      * @param {StoreProvider} source The store from which it was moved
      * @param {Item} item The thing that has changed
      */
     itemAdded:function(source, item) { },
-  
+
     /**
      * Something has updated an item in the store
      * @param {StoreProvider} source The store from which it was moved
@@ -2319,11 +2379,11 @@ dwr.data = {
     if (!region.count) region.count = -1;
     if (!region.sort) region.sort = [];
     else {
-    	for (var index = 0; index < region.sort.length; index++) {
-    		if (typeof region.sort[index].descending == "undefined") {
-    			region.sort[index].descending = false;
-    		}
-    	}
+      for (var index = 0; index < region.sort.length; index++) {
+        if (typeof region.sort[index].descending == "undefined") {
+          region.sort[index].descending = false;
+        }
+      }
     }
     if (!region.query) region.query = {};
 

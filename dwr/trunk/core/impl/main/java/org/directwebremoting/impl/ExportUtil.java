@@ -30,4 +30,15 @@ public class ExportUtil
     {
         return "__System".equals(scriptName);
     }
+
+    /**
+     * Is this class the System export as from the system dwr.xml?
+     * @param scriptName The script name of the exported object
+     * @return True if the scriptName represents the System export
+     * @see org.directwebremoting.export.System
+     */
+    public static boolean isUnprotectedSystemMethod(String scriptName, String methodName)
+    {
+        return "__System".equals(scriptName) && "generateId".equals(methodName);
+    }
 }
