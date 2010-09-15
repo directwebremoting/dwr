@@ -26,7 +26,7 @@ import org.directwebremoting.util.LocalUtil;
  * <p>By default this creator uses a static method with the signature:
  * <code>SomeClass.getInstance()</code> to create new instances. The name of
  * the singleton constructor method can be customized using the
- * <code>getInstance</code> parameter.
+ * <code>factoryMethod</code> parameter.
  * @author David Marginian [david at butterdev dot com]
  */
 public class SingletonCreator extends AbstractCreator implements Creator
