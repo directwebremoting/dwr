@@ -53,18 +53,6 @@ public class EnginePrivate
     }
 
     /**
-     * Call dwr.engine.remote.handleNewScriptSession() in the browser
-     * @param newSessionId The new script session id for the browser to reuse
-     * @return The script to send to the browser
-     */
-    public static ScriptBuffer getRemoteHandleNewScriptSessionScript(String newSessionId)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleNewScriptSession", newSessionId);
-        return script;
-    }
-
-    /**
      * Call dwr.engine.remote.handleNewWindowName() in the browser
      * @param windowName The new window name for the page
      * @return The script to send to the browser

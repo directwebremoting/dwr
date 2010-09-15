@@ -49,6 +49,7 @@ import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.impl.AccessLogLevel;
+import org.directwebremoting.impl.ExportUtil;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
@@ -74,7 +75,19 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
             // Security checks first, once we've parsed the input
             checkGetAllowed(batch);
-            checkNotCsrfAttack(request, batch);
+            boolean checkCsrf = false;
+            for (int i = 0; i < batch.getCalls().getCallCount(); i++)
+            {
+                Call call = batch.getCalls().getCall(i);
+                if (!ExportUtil.isUnprotectedSystemMethod(call.getScriptName(), call.getMethodName()))
+                {
+                    checkCsrf = true;
+                    break;
+                }
+            }
+            if (checkCsrf) {
+                checkNotCsrfAttack(request, batch);
+            }
 
             // Save the batch so marshallException can get at a batch id
             request.setAttribute(ATTRIBUTE_BATCH, batch);

@@ -29,16 +29,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Container;
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
-import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.util.IdGenerator;
 import org.directwebremoting.util.Loggers;
 
 /**
@@ -95,43 +92,44 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
         synchronized (this.sessionMap)
         {
-            scriptSession = sessionMap.get(sentScriptId);
-            if (scriptSession == null)
+            // We only use a "full" script session when we got an id from the
+            // client layer. When there is no script session id we just create
+            // a temporary script session for the duration of the call
+            if (sentScriptId.equals(""))
             {
-                // Force creation of a new script session
-                String newSessionId = generator.generateId(16);
-
-                scriptSession = new DefaultScriptSession(newSessionId, this, page);
-                Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
-
-                sessionMap.put(newSessionId, scriptSession);
-
-                // See notes on synchronization in invalidate()
-                fireScriptSessionCreatedEvent(scriptSession);
-
-                // Inject a (new) script session id into the page
-                ScriptBuffer script = EnginePrivate.getRemoteHandleNewScriptSessionScript(newSessionId);
-                scriptSession.addScript(script);
-
-                // Use the new script session id not the one passed in
-                Loggers.SESSION.debug("ScriptSession re-sync: " + simplifyId(sentScriptId) + " has become " + simplifyId(newSessionId) + " on " + page);
+                scriptSession = new DefaultScriptSession("", this, page);
+                Loggers.SESSION.debug("Creating temporary script session on " + scriptSession.getPage());
             }
             else
             {
-                // This could be called from a poll or an rpc call, so this is a
-                // good place to update the session access time
-                scriptSession.updateLastAccessedTime();
-
-                String storedPage = scriptSession.getPage();
-                if (!storedPage.equals(page))
+                scriptSession = sessionMap.get(sentScriptId);
+                if (scriptSession == null)
                 {
-                    Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
-                    throw new SecurityException("Invalid Page");
-                }
-            }
+                    scriptSession = new DefaultScriptSession(sentScriptId, this, page);
+                    Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
 
-            associateScriptSessionAndPage(scriptSession, page);
-            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
+                    sessionMap.put(sentScriptId, scriptSession);
+
+                    // See notes on synchronization in invalidate()
+                    fireScriptSessionCreatedEvent(scriptSession);
+                }
+                else
+                {
+                    // This could be called from a poll or an rpc call, so this is a
+                    // good place to update the session access time
+                    scriptSession.updateLastAccessedTime();
+
+                    String storedPage = scriptSession.getPage();
+                    if (!storedPage.equals(page))
+                    {
+                        Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
+                        throw new SecurityException("Invalid Page");
+                    }
+                }
+
+                associateScriptSessionAndPage(scriptSession, page);
+                associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
+            }
 
             // Maybe we should update the access time of the ScriptSession?
             // scriptSession.updateLastAccessedTime();
@@ -405,30 +403,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         return "dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'pageLoaded', [ function() { dwr.engine._ordered = false; }]);";
     }
 
-    /**
-     * ScriptSession IDs are too long to be useful to humans. We shorten them
-     * to the first 4 characters.
-     */
-    private String simplifyId(String id)
-    {
-        if (id == null)
-        {
-            return "[null]";
-        }
-
-        if (id.length() == 0)
-        {
-            return "[blank]";
-        }
-
-        if (id.length() < 4)
-        {
-            return id;
-        }
-
-        return id.substring(0, 4);
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSessionTimeout()
      */
@@ -511,11 +485,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The list of current {@link ScriptSessionListener}s
      */
     protected List<ScriptSessionListener> scriptSessionListeners = new CopyOnWriteArrayList<ScriptSessionListener>();
-
-    /**
-     * How we create script session ids.
-     */
-    private static IdGenerator generator = new IdGenerator();
 
     /**
      * The session timeout checker function so we can shutdown cleanly

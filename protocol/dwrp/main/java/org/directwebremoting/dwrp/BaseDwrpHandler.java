@@ -55,34 +55,27 @@ public abstract class BaseDwrpHandler implements Handler
         // A check to see that this isn't a csrf attack
         // http://en.wikipedia.org/wiki/Cross-site_request_forgery
         // http://www.tux.org/~peterw/csrf.txt
-        if (request.isRequestedSessionIdValid() && request.isRequestedSessionIdFromCookie())
+
+        // If there is a DWRSESSIONID cookie on the request then the
+        // corresponding session value in the batch must match
+        if (request.getCookies() != null)
         {
-            String headerSessionId = request.getRequestedSessionId();
-            if (headerSessionId.length() > 0)
+            for (Cookie cookie : request.getCookies())
             {
-                String bodySessionId = batch.getHttpSessionId();
-
-                // Normal case; if same session cookie is supplied by DWR and
-                // in HTTP header then all is ok
-                if (headerSessionId.equals(bodySessionId))
+                if (cookie.getName().equals("DWRSESSIONID"))
                 {
-                    return;
-                }
-
-                // Weblogic adds creation time to the end of the incoming
-                // session cookie string (even for request.getRequestedSessionId()).
-                // Use the raw cookie instead
-                for (Cookie cookie : request.getCookies())
-                {
-                    if (cookie.getName().equals(sessionCookieName) && cookie.getValue().equals(bodySessionId))
+                    if (cookie.getValue().equals(batch.getDwrSessionId()))
                     {
-                        return;
+                        // All is well, we can exit from the cookie test loop
+                        break;
+                    }
+                    else
+                    {
+                        // Values don't match which is probably an attack
+                        log.error("A request has been denied as a potential CSRF attack. This security check is performed as DWR's crossDomainSessionSecurity setting is active. Read more in the DWR documentation.");
+                        throw new SecurityException("CSRF Security Error (see server log for details).");
                     }
                 }
-
-                // Otherwise error
-                log.error("A request has been denied as a potential CSRF attack.");
-                throw new SecurityException("CSRF Security Error");
             }
         }
     }
@@ -113,20 +106,6 @@ public abstract class BaseDwrpHandler implements Handler
      * By default we disable GET, but this hinders old Safaris
      */
     private boolean allowGetForSafariButMakeForgeryEasier = false;
-
-    /**
-     * Alter the session cookie name from the default JSESSIONID.
-     * @param sessionCookieName the sessionCookieName to set
-     */
-    public void setSessionCookieName(String sessionCookieName)
-    {
-        this.sessionCookieName = sessionCookieName;
-    }
-
-    /**
-     * The session cookie name
-     */
-    private String sessionCookieName = "JSESSIONID";
 
     /**
      * The log stream

@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.DownloadManager;
+import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.io.FileTransfer;
-import org.directwebremoting.util.IdGenerator;
 
 /**
  * A {@link DownloadManager} that simply stores downloads in memory until they
@@ -38,7 +38,7 @@ public abstract class PurgingDownloadManager implements DownloadManager
      */
     public String addFileTransfer(FileTransfer generator) throws IOException
     {
-        String id = idGenerator.generateId(16);
+        String id = idGenerator.generate();
         putFileTransfer(id, generator);
 
         HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
@@ -69,6 +69,14 @@ public abstract class PurgingDownloadManager implements DownloadManager
     {
         this.executor = executor;
         this.executor.scheduleWithFixedDelay(downloadPurge, queueSleepTime, queueSleepTime, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * @param idGenerator The configured ID generator
+     */
+    public void setIdGenerator(IdGenerator idGenerator)
+    {
+        this.idGenerator = idGenerator;
     }
 
     /**
@@ -127,5 +135,5 @@ public abstract class PurgingDownloadManager implements DownloadManager
     /**
      * Unique id so we can retrieve downloads when asked
      */
-    protected IdGenerator idGenerator = new IdGenerator();
+    protected IdGenerator idGenerator;
 }

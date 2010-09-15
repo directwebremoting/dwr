@@ -32,7 +32,7 @@ import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.util.IdGenerator;
+import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 /**
@@ -93,7 +93,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         {
             if (windowName == null || "".equals(windowName))
             {
-                windowName = "DWR-" + generator.generateId(16);
+                windowName = "DWR-" +  this.getContainer().getBean(IdGenerator.class).generate();
                 ScriptBuffer script = EnginePrivate.getRemoteHandleNewWindowNameScript(windowName);
                 scriptSession.addScript(script);
             }
@@ -210,12 +210,6 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
      * We can turn connection limit avoidance off
      */
     private boolean avoidConnectionLimitWithWindowName = false;
-
-    /**
-     * If a window does not have a name, we give it one so we can avoid the
-     * 2 connection limit
-     */
-    private static final IdGenerator generator = new IdGenerator();
 
     /**
      * The unique ID (like a session ID) assigned to the current page
