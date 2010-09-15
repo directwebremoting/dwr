@@ -27,8 +27,7 @@ import org.directwebremoting.util.LocalUtil;
  * <code>SomeClass.getInstance()</code> to create new instances. The name of
  * the singleton constructor method can be customized using the
  * <code>getInstance</code> parameter.
- * @author Ahmed Hashim [hashim at egjug dot org]
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author David Marginian [david at butterdev dot com]
  */
 public class SingletonCreator extends AbstractCreator implements Creator
 {
@@ -71,7 +70,7 @@ public class SingletonCreator extends AbstractCreator implements Creator
     {
         return clazz;
     }
-    
+
     /**
      * @return the factoryMethod function name
      * */
@@ -79,9 +78,9 @@ public class SingletonCreator extends AbstractCreator implements Creator
     {
         return factoryMethod;
     }
-    
+
     /**
-     * @param functionToCall the name of the factory function. 
+     * @param functionToCall the name of the factory function.
      * */
     public void setFactoryMethod(String functionToCall)
     {
@@ -89,9 +88,9 @@ public class SingletonCreator extends AbstractCreator implements Creator
     }
 
     /**
-     * The function which will return an instance from the object, the common 
+     * The function which will return an instance from the object, the common
      * function name used in singleton class is 'getInstance', this will be the
-     * default value. 
+     * default value.
      * */
     private String factoryMethod = "getInstance";
 
