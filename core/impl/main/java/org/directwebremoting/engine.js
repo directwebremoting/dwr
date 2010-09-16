@@ -2214,7 +2214,7 @@ if (typeof dwr == 'undefined') dwr = {};
       while (remainder > 0)
       {
         tokenbuf.push(charmap.charAt(remainder & 0x3F));
-        remainder = remainder >>> 6;
+        remainder = Math.floor(remainder / 64); // Can't use shift operator due to 32-bit limit in JS
       }
       return tokenbuf.join("");
     }
