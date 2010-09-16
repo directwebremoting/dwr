@@ -38,7 +38,7 @@ import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * An implementation of ScriptSession and RealScriptSession.
- * <p>You should note that {@link CopyOfDefaultScriptSession} and
+ * <p>You should note that {@link DefaultScriptSession} and
  * {@link DefaultScriptSessionManager} make calls to each other and you should
  * take care not to break any constraints in inheriting from these classes.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
@@ -470,7 +470,6 @@ public class DefaultScriptSession implements RealScriptSession
     @Override
     public String toString()
     {
-        // The first 4 hex digits of the id are enough for human distinction
         return "DefaultScriptSession[id=" + getDebugName() + "]";
     }
 
@@ -479,7 +478,8 @@ public class DefaultScriptSession implements RealScriptSession
      */
     protected String getDebugName()
     {
-        return id.substring(0, 4);
+        int slashPos = id.indexOf('/');
+        return id.substring(0, 4) + (slashPos >= 0 ? id.substring(slashPos, slashPos+5) : "");
     }
 
     /**
