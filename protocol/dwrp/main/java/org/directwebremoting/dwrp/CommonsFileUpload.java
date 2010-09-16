@@ -34,6 +34,7 @@ import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.ServerException;
 import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.io.InputStreamFactory;
+import org.directwebremoting.util.Logger;
 
 
 /**
@@ -95,7 +96,8 @@ public class CommonsFileUpload implements FileUpload
         }
         catch (FileSizeLimitExceededException fsle)
         {
-            throw new ServerException("One or more files is larger (" + fsle.getActualSize() + ") than the configured limit (" + fsle.getPermittedSize() + ").", fsle);
+            log.warn("One or more files is larger than the configured limit.  Please see DWR's fileUploadMaxBytes init-param to increase this limit.", fsle);
+            throw new ServerException("One or more files is larger (" + fsle.getActualSize() + " bytes) than the configured limit (" + fsle.getPermittedSize() + " bytes).");
         }
         catch (IOException ex)
         {
@@ -141,4 +143,9 @@ public class CommonsFileUpload implements FileUpload
      * The threshold, in bytes, below which items will be retained in memory and above which they will be stored as a file
      */
     private static final int DEFAULT_SIZE_THRESHOLD = 256 * 1024;
+
+    /**
+     * The log stream
+     */
+    private static final Logger log = Logger.getLogger(CommonsFileUpload.class);
 }
