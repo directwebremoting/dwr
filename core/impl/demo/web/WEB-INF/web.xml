@@ -16,19 +16,11 @@
     <servlet-name>dwr-invoker</servlet-name>
     <display-name>DWR Servlet</display-name>
     <description>Direct Web Remoter Servlet</description>
-    <!-- Uncomment for Tomcat Async Processing.
-     <servlet-class>org.directwebremoting.server.tomcat.DwrCometProcessor</servlet-class>
-    -->
     <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
-	
-	<!--  <init-param>
-      <param-name>org.directwebremoting.dwrp.FileUpload</param-name>
-      <param-value>org.directwebremoting.dwrp.TestFileUpload</param-value>
-    </init-param>-->
 	
 	<init-param>
      <param-name>fileUploadMaxBytes</param-name>
-     <param-value>5000</param-value>
+     <param-value>25000</param-value>
     </init-param>
 	
 	<init-param>
