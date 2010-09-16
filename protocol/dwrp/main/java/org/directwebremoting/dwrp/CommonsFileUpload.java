@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -90,16 +91,19 @@ public class CommonsFileUpload implements FileUpload
                 }
                 map.put(fileItem.getFieldName(), formField);
             }
-
             return map;
+        }
+        catch (FileSizeLimitExceededException fsle)
+        {
+            throw new ServerException("One or more files is larger (" + fsle.getActualSize() + ") than the configured limit (" + fsle.getPermittedSize() + ").", fsle);
         }
         catch (IOException ex)
         {
-            throw new ServerException("Input read failed", ex);
+            throw new ServerException("Upload failed: " + ex.getMessage(), ex);
         }
         catch (FileUploadException ex)
         {
-            throw new ServerException("Input read failed", ex);
+            throw new ServerException("Upload failed: " + ex.getMessage(), ex);
         }
     }
 
