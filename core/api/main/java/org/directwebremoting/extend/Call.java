@@ -198,6 +198,7 @@ public class Call
                     continue allMethodsLoop;
                 }
 
+                /** Added to increase our ability to call overloaded methods accurately! */
                 // Is the inbound JavaScript type assignable to methodParamType?
                 // We are limited to what JavaScript gives us (number, date, boolean, etc.)
                 String javaScriptType = param.getType();
@@ -209,11 +210,13 @@ public class Call
                 {
                     methodParamType=methodParamType.getComponentType();
                 }
+                // TODO - comment this out and test calling a method (long) with a string in jscript.
                 if (!LocalUtil.isJavaScriptTypeAssignableTo(javaScriptType, methodParamType))
                 {
                     it.remove();
                     continue allMethodsLoop;
                 }
+                /** end overloaded section */
             }
         }
 
