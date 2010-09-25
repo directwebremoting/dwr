@@ -15,25 +15,19 @@
  */
 package org.directwebremoting.spring;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.annotations.GlobalFilter;
 import org.directwebremoting.annotations.Param;
-import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.spring.namespace.ConfigurationParser;
+import org.directwebremoting.spring.namespace.CreatorParserHelper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.util.ClassUtils;
@@ -42,8 +36,10 @@ import org.springframework.util.StringUtils;
 /**
  * @author Jose Noheda [jose.noheda@gmail.com]
  */
-public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
+public class DwrAnnotationPostProcessor extends CreatorParserHelper implements BeanFactoryPostProcessor
 {
+
+    private static final Log log = LogFactory.getLog(DwrAnnotationPostProcessor.class);
 
     @SuppressWarnings("unchecked")
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
@@ -51,7 +47,7 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
         BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
         for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames())
         {
-            BeanDefinition springConfigurator = DwrNamespaceHandler.registerSpringConfiguratorIfNecessary(beanDefinitionRegistry);
+            BeanDefinition springConfigurator = ConfigurationParser.registerConfigurationIfNecessary(beanDefinitionRegistry);
             BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinitionRegistry.getBeanDefinition(beanName), beanName);
             Class<?> beanDefinitionClass = getBeanDefinitionClass(beanDefinitionHolder, beanDefinitionRegistry);
             if (beanDefinitionClass != null)
@@ -96,7 +92,7 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
     {
         try
         {
-            String beanClassName = DwrNamespaceHandler.resolveBeanClassname(beanDefinitionHolder.getBeanDefinition(), beanDefinitionRegistry);
+            String beanClassName = resolveBeanClassname(beanDefinitionHolder.getBeanDefinition(), beanDefinitionRegistry);
             return ClassUtils.forName(beanClassName);
         }
         catch (Exception cne)
@@ -108,49 +104,5 @@ public class DwrAnnotationPostProcessor implements BeanFactoryPostProcessor
             return null;
         }
     }
-
-    protected static void registerCreator(BeanDefinitionHolder beanDefinitionHolder, BeanDefinitionRegistry beanDefinitionRegistry, Class<?> beanDefinitionClass, String javascript)
-    {
-        String creatorConfigName = "__" + javascript;
-        if (beanDefinitionRegistry.containsBeanDefinition(creatorConfigName))
-        {
-            log.info("[" + javascript + "] remote bean definition already detected. Mixed use of <dwr:annotation-config /> and <dwr:annotation-scan />? Re-scanned package?");
-        }
-        else
-        {
-            BeanDefinitionBuilder beanCreator = BeanDefinitionBuilder.rootBeanDefinition(BeanCreator.class);
-            try {
-                beanCreator.addPropertyValue("beanClass", beanDefinitionClass);
-                String name = beanDefinitionHolder.getBeanName();
-                if (name.startsWith("scopedTarget."))
-                {
-                    name = name.substring(name.indexOf(".") + 1);
-                }
-                beanCreator.addPropertyValue("beanId", name);
-                beanCreator.addDependsOn(name);
-                beanCreator.addPropertyValue("javascript", javascript);
-                BeanDefinitionBuilder creatorConfig = BeanDefinitionBuilder.rootBeanDefinition(CreatorConfig.class);
-                creatorConfig.addPropertyValue("creator", beanCreator.getBeanDefinition());
-                List<String> includes = new ArrayList<String>();
-                for (Method method : beanDefinitionClass.getMethods()) {
-                    if (method.getAnnotation(RemoteMethod.class) != null)
-                    {
-                        includes.add(method.getName());
-                    }
-                }
-                creatorConfig.addPropertyValue("includes", includes);
-                BeanDefinitionHolder aux = new BeanDefinitionHolder(creatorConfig.getBeanDefinition(), creatorConfigName);
-                BeanDefinitionReaderUtils.registerBeanDefinition(aux, beanDefinitionRegistry);
-                DwrNamespaceHandler.lookupCreators(beanDefinitionRegistry).put(javascript, new RuntimeBeanReference(creatorConfigName));
-            } catch (Exception ex) {
-                throw new FatalBeanException("Unable to create DWR bean creator for '" + beanDefinitionHolder.getBeanName() + "'. ", ex);
-            }
-        }
-    }
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DwrAnnotationPostProcessor.class);
 
 }
