@@ -33,7 +33,6 @@ public class SignatureDecorator implements BeanDefinitionDecorator
 
     private static final Log log = LogFactory.getLog(SignatureDecorator.class);
 
-    @Override
     public BeanDefinitionHolder decorate(Node signatureElement, BeanDefinitionHolder bean, ParserContext parserContext)
     {
         BeanDefinitionRegistry registry = parserContext.getRegistry();

@@ -38,7 +38,6 @@ public class ProxyParser extends CreatorParserHelper implements BeanDefinitionPa
 
     private static final Log log = LogFactory.getLog(ProxyParser.class);
 
-    @Override
     public BeanDefinition parse(Element proxyElement, ParserContext parserContext)
     {
         String beanRef = proxyElement.getAttribute("bean");

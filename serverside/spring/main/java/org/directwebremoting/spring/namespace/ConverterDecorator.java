@@ -31,7 +31,6 @@ import org.w3c.dom.Node;
 public class ConverterDecorator extends ConverterParserHelper implements BeanDefinitionDecorator
 {
 
-    @Override
     public BeanDefinitionHolder decorate(Node node, BeanDefinitionHolder parent, ParserContext parserContext)
     {
         Element element = (Element) node;
