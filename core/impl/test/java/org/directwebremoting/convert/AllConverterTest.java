@@ -53,7 +53,6 @@ public class AllConverterTest
     public static void setup() throws ParseException
     {
         testDate = format.parse("01-01-2005");
-
         TestEnvironment.engageThread();
     }
 
@@ -274,12 +273,12 @@ public class AllConverterTest
     @Test
     public void dateConvert() throws Exception
     {
-        assertInboundConversion("1104537600000", Date.class, testDate);
+        assertInboundConversion("1104562800000", Date.class, testDate);
         assertInboundConversion("null", Date.class, null);
-        assertInboundConversion("1104537600000", java.sql.Date.class, testDate);
+        assertInboundConversion("1104562800000", java.sql.Date.class, testDate);
         assertInboundConversion("null", java.sql.Date.class, null);
 
-        assertOutboundConversion(testDate, "new Date(1104537600000)");
+        assertOutboundConversion(testDate, "new Date(1104562800000)");
     }
 
     @Ignore
@@ -339,7 +338,8 @@ public class AllConverterTest
         {
             try
             {
-                new InboundVariable(ctx, null, "type", input);
+                InboundVariable iv=new InboundVariable(ctx, null, "type", input);
+                iv.dereference();
                 Assert.fail();
             }
             catch (Exception ex)
@@ -352,6 +352,7 @@ public class AllConverterTest
             try
             {
                 InboundVariable iv = new InboundVariable(ctx, null, "type", input);
+                iv.dereference();
                 Object result = converterManager.convertInbound(convertTo, iv, null);
                 Assert.assertEquals(explanation, result, expected);
             }
@@ -373,6 +374,7 @@ public class AllConverterTest
         try
         {
             InboundVariable iv = new InboundVariable(ctx, null, "type", input);
+            iv.dereference();
             converterManager.convertInbound(convertTo, iv, null);
             Assert.fail();
         }
