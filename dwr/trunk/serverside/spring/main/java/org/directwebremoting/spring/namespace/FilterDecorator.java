@@ -30,7 +30,6 @@ import org.w3c.dom.Node;
 public class FilterDecorator extends FilterParserHelper implements BeanDefinitionDecorator
 {
 
-    @Override
     public BeanDefinitionHolder decorate(Node filterElement, BeanDefinitionHolder parent, ParserContext parserContext)
     {
         String name = parent.getBeanName();

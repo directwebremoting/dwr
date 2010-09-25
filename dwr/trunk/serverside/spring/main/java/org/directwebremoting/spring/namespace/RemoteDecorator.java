@@ -38,7 +38,6 @@ public class RemoteDecorator extends CreatorParserHelper implements BeanDefiniti
 
     private static final Log log = LogFactory.getLog(RemoteDecorator.class);
 
-    @Override
     public BeanDefinitionHolder decorate(Node remoteElement, BeanDefinitionHolder bean, ParserContext parserContext)
     {
         String name = bean.getBeanName();
