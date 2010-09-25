@@ -30,6 +30,7 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.UrlProcessor;
+import org.directwebremoting.spring.namespace.ConfigurationParser;
 import org.directwebremoting.util.FakeServletConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -159,7 +160,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         {
             try
             {
-                Object parentConfigurator = parent.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID);
+                Object parentConfigurator = parent.getBean(ConfigurationParser.DEFAULT_SPRING_CONFIGURATOR_ID);
                 if ((parentConfigurator != null) && (!configurators.contains(parentConfigurator)))
                 {
                     configurators.add((Configurator) parentConfigurator);

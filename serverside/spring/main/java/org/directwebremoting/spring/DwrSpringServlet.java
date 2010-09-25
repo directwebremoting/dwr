@@ -28,6 +28,7 @@ import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.impl.StartupUtil;
 import org.directwebremoting.servlet.DwrServlet;
+import org.directwebremoting.spring.namespace.ConfigurationParser;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -75,7 +76,7 @@ public class DwrSpringServlet extends DwrServlet
         try
         {
             ApplicationContext appContext = getApplicationContext(servletConfig.getServletContext());
-            configurators.add((Configurator) appContext.getBean(DwrNamespaceHandler.DEFAULT_SPRING_CONFIGURATOR_ID));
+            configurators.add((Configurator) appContext.getBean(ConfigurationParser.DEFAULT_SPRING_CONFIGURATOR_ID));
         }
         catch (NoSuchBeanDefinitionException ex)
         {
@@ -88,7 +89,7 @@ public class DwrSpringServlet extends DwrServlet
             {
                 StartupUtil.configureFromSystemDwrXml(container);
             }
-    
+
             StartupUtil.configureFromInitParams(container, servletConfig);
             StartupUtil.configure(container, configurators);
         }
@@ -132,13 +133,13 @@ public class DwrSpringServlet extends DwrServlet
     }
 
     /**
-     * Allow easy override when retrieving the application context. 
+     * Allow easy override when retrieving the application context.
      * @param servletContext
      * @return the default application context.
      */
     protected ApplicationContext getApplicationContext(ServletContext servletContext)
     {
-        return this.applicationContext == null 
+        return this.applicationContext == null
                 ? WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext)
                 : this.applicationContext;
     }

@@ -28,6 +28,9 @@ import org.directwebremoting.annotations.GlobalFilter;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProperty;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.spring.namespace.ConfigurationParser;
+import org.directwebremoting.spring.namespace.ConverterParserHelper;
+import org.directwebremoting.spring.namespace.CreatorParserHelper;
 import org.directwebremoting.util.LocalUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -50,6 +53,8 @@ import org.springframework.util.StringUtils;
  */
 public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
 {
+
+    private static final Log log = LogFactory.getLog(DwrClassPathBeanDefinitionScanner.class);
 
     public DwrClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry)
     {
@@ -83,7 +88,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                 {
                     log.info("Dwr classpath scanning detected candidate bean [" + definitionHolder.getBeanName() + "]. Remoting using " + javascript);
                 }
-                DwrAnnotationPostProcessor.registerCreator(definitionHolder, registry, beanDefinitionClass, javascript);
+                CreatorParserHelper.registerCreator(definitionHolder, registry, beanDefinitionClass, javascript);
             }
             else if (converter != null)
             {
@@ -109,7 +114,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                     }
                     converterConfig.setParams(parameters);
                 }
-                DwrNamespaceHandler.lookupConverters(registry).put(beanDefinitionClass.getName(), converterConfig);
+                ConverterParserHelper.lookupConverters(registry).put(beanDefinitionClass.getName(), converterConfig);
             }
             else if (globalFilter != null)
             {
@@ -117,7 +122,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
                 {
                     log.info("Dwr classpath scanning detected candidate global filter [" + beanDefinitionClass + "]");
                 }
-                BeanDefinition springConfigurator = DwrNamespaceHandler.registerSpringConfiguratorIfNecessary(registry);
+                BeanDefinition springConfigurator = ConfigurationParser.registerConfigurationIfNecessary(registry);
                 ManagedList filters = (ManagedList) springConfigurator.getPropertyValues().getPropertyValue("filters").getValue();
                 Param[] params = globalFilter.params();
                 if (params != null)
@@ -170,8 +175,4 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
         }
     }
 
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DwrClassPathBeanDefinitionScanner.class);
 }
