@@ -49,6 +49,7 @@ public class AnnotationScannerParser implements BeanDefinitionParser
     private boolean scanProxies = true;
     private boolean scanConverters = true;
 
+    @Override
     public BeanDefinition parse(Element element, ParserContext parserContext)
     {
         ClassPathBeanDefinitionScanner scanner = new DwrClassPathBeanDefinitionScanner(parserContext.getRegistry());
