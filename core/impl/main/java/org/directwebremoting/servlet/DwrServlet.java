@@ -152,6 +152,7 @@ public class DwrServlet extends HttpServlet
     @Override
     public void destroy()
     {
+        container.servletDestroyed();
         super.destroy();
     }
 
