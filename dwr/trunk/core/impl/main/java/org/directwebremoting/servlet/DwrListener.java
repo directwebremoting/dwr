@@ -56,6 +56,11 @@ public class DwrListener implements ServletContextListener
             log.debug("No containers to shutdown");
             return;
         }
+
+        for (Container container : containers)
+        {
+            container.contextDestroyed();
+        }
     }
 
     /**

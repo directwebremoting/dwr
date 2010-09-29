@@ -36,6 +36,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
@@ -100,7 +101,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  * @author Bram Smeets
  */
-public class DwrController extends AbstractController implements BeanNameAware, InitializingBean, BeanFactoryAware
+public class DwrController extends AbstractController implements BeanNameAware, InitializingBean, DisposableBean, BeanFactoryAware
 {
     /**
      * Is called by the Spring container to set the bean factory. <br/>
@@ -260,6 +261,15 @@ public class DwrController extends AbstractController implements BeanNameAware, 
     {
         Assert.notNull(configParams, "configParams cannot be null");
         this.configParams = configParams;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.DisposableBean#destroy()
+     */
+    public void destroy() throws Exception
+    {
+        container.servletDestroyed();
+        container.contextDestroyed();
     }
 
     /**
