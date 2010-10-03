@@ -149,7 +149,7 @@ public final class InboundVariable
      */
     public boolean isNull()
     {
-        return type.equals(ProtocolConstants.INBOUND_NULL);
+        return ProtocolConstants.INBOUND_NULL.equals(type);
     }
 
     /**
