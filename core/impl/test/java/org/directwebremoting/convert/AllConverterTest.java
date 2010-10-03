@@ -17,9 +17,7 @@ package org.directwebremoting.convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -52,7 +50,7 @@ public class AllConverterTest
     @BeforeClass
     public static void setup() throws ParseException
     {
-        testDate = format.parse("01-01-2005");
+        testDate = new Date(1104562800000L);
         TestEnvironment.engageThread();
     }
 
@@ -270,7 +268,7 @@ public class AllConverterTest
         assertInboundConversionFailure("null", BigDecimal.class);
     }
 
-    //TODO - fix this.
+    @Test
     public void dateConvert() throws Exception
     {
         assertInboundConversion("1104562800000", Date.class, testDate);
@@ -400,6 +398,5 @@ public class AllConverterTest
     }
 
     private static final Log log = LogFactory.getLog(AllConverterTest.class);
-    private static final DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
     private static Date testDate;
 }
