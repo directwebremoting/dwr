@@ -35,7 +35,7 @@ public class ClasspathScannerTest
         scanner = new ClasspathScanner("org.directwebremoting");
         classes = scanner.getClasses();
         assertTrue(classes.size() > 5);
-        assertTrue(classes.size() < 20);
+        assertTrue(classes.size() <= 25);
         assertTrue(classes.contains(org.directwebremoting.ScriptSession.class.getName()));
         assertFalse(classes.contains(this.getClass().getName()));
         assertFalse(classes.contains(ClasspathScanner.class.getName()));
