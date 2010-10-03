@@ -377,6 +377,8 @@
 							<exclude name="**/DwrServletTest.java" />
 							<!-- Not actually a test case, just a utility for helping with JSON tests -->
 							<exclude name="**/TestUtil.java" />
+							<!-- Not actually a test case -->
+							<exclude name="**/TestCreatedObject.java" />
 							<!-- In order to test this we need an db instance, too complicated for now -->
 							<exclude name="**/HibernateConverterTest.java" />
 						</fileset>
