@@ -15,9 +15,13 @@
  */
 package org.directwebremoting.impl;
 
+import java.lang.reflect.Method;
+
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
+import org.directwebremoting.impl.test.SignatureTestsObject;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,10 +55,12 @@ public class SignatureParserTest
     }
 
     @Test
-    public void testParse1()
+    public void testParse1() throws NoSuchMethodException
     {
+        Method expectedMethod = SignatureTestsObject.class.getMethod("setLotteryResults", java.util.List.class);
+        Property expectedProperty = new ParameterProperty(expectedMethod, 0);
+        EasyMock.expect(converterManager.checkOverride(EasyMock.isA(Property.class))).andReturn(expectedProperty);
         converterManager.setOverrideProperty(EasyMock.isA(Property.class), EasyMock.isA(Property.class));
-
         EasyMock.replay(converterManager);
         parser.parse("import java.util.*;\n" + "  import org.directwebremoting.impl.test.SignatureTestsObject;\n"
             + "  public void SignatureTestsObject.setLotteryResults(List<Integer> nos);");
