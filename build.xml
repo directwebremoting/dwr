@@ -155,9 +155,9 @@
 	</target>
 
 	<target name="warDeployToTomcatAndClean" depends="package" description="Creates the war, cleans the deploy directory and copies the war to the deploy directory.">
-		<delete file="${tomcat.home}/webapps/dwr.war" failonerror="false"/>
-		<delete dir="${tomcat.home}/webapps/dwr" includeemptydirs="true" failonerror="false"/>
-		<copy file="${target.root}/dwr.war" todir="${tomcat.home}/webapps"/>
+		<delete file="${tomcat.home}/webapps/dwr.war" failonerror="false" />
+		<delete dir="${tomcat.home}/webapps/dwr" includeemptydirs="true" failonerror="false" />
+		<copy file="${target.root}/dwr.war" todir="${tomcat.home}/webapps" />
 	</target>
 
 	<!--=======================================================================-->
@@ -274,6 +274,9 @@
 				<param name="target" value="@{target}" />
 				<param name="include" value="@{include}" />
 			</foreach>
+			<foreach list="@{modules}" param="module" trim="true" target="run-tests-for-module">
+				<param name="target" value="@{target}" />
+			</foreach>
 		</sequential>
 	</macrodef>
 
@@ -349,6 +352,41 @@
 					<fileset dir="${source.root}/${module}/demo/web" />
 				</copy>
 			</then>
+		</if>
+	</target>
+
+	<target name="run-tests-for-module" description="Run the JUnit tests for a module">
+		<echo message="Running tests for module: ${module}" />
+		<if>
+			<available file="${source.root}/${module}/test/java" />
+			<then>
+				<junit printsummary="yes" haltonfailure="yes">
+					<classpath>
+						<fileset dir="${target}/lib" includes="**/*.jar" />
+						<pathelement location="${target.root}/classes/demo" />
+						<pathelement location="${target.root}/classes/main" />
+						<pathelement location="${target.root}/classes/test" />
+						<!-- needed for log4j -->
+						<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
+					</classpath>
+					<batchtest>
+						<fileset dir="${source.root}/${module}/test/java">
+							<include name="**/*Test.java" />
+							<include name="**/Test*.java" />
+							<!-- In order to test this we need the jetty instance running, too complicated for now -->
+							<exclude name="**/DwrServletTest.java" />
+							<!-- Not actually a test case, just a utility for helping with JSON tests -->
+							<exclude name="**/TestUtil.java" />
+							<!-- In order to test this we need an db instance, too complicated for now -->
+							<exclude name="**/HibernateConverterTest.java" />
+						</fileset>
+					</batchtest>
+					<formatter type="plain" usefile="false" />
+				</junit>
+			</then>
+			<else>
+				<echo message="Skipping, no tests exists for: ${module}" />
+			</else>
 		</if>
 	</target>
 
