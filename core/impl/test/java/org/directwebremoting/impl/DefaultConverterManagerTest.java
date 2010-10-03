@@ -48,9 +48,9 @@ public class DefaultConverterManagerTest
     public void convertInbound5() throws Exception
     {
         manager.addConverter("java.lang.String", new StringConverter());
-
         InboundContext ctx = new InboundContext();
         InboundVariable iv = new InboundVariable(ctx, "e_1", "string", "bla");
+        iv.dereference();
         manager.convertInbound(String.class, iv, null);
     }
 
