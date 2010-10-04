@@ -381,7 +381,7 @@
 							<exclude name="**/TestCreatedObject.java" />
 							<!-- In order to test this we need an db instance, too complicated for now -->
 							<exclude name="**/HibernateConverterTest.java" />
-							<!- Exclude the id generator - it is hanging bamboo -->
+							<!-- Exclude the id generator - it is hanging bamboo -->
 							<exclude name="**/DefaultSecureIdGeneratorTest.java" />
 						</fileset>
 					</batchtest>
