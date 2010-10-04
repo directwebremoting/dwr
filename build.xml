@@ -360,7 +360,7 @@
 		<if>
 			<available file="${source.root}/${module}/test/java" />
 			<then>
-				<junit printsummary="yes" haltonfailure="yes">
+				<junit printsummary="yes" fork="true" haltonfailure="yes">
 					<classpath>
 						<fileset dir="${target}/lib" includes="**/*.jar" />
 						<pathelement location="${target.root}/classes/demo" />
