@@ -36,7 +36,7 @@ public class DefaultSecureIdGeneratorTest
     public void testMany() throws Exception
     {
         HashSet<String> tokenset = new HashSet<String>();
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 1000; i++)
         {
             for(int j = 0; j < 100; j++)
             {
@@ -56,7 +56,7 @@ public class DefaultSecureIdGeneratorTest
     public void testDifferentMilliseconds() throws Exception
     {
         HashSet<String> tokenset = new HashSet<String>();
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 100; i++)
         {
             tokenset.add(idGenerator.generate());
             long time1 = System.currentTimeMillis();
