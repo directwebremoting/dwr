@@ -153,6 +153,10 @@ public class DefaultSecureIdGenerator implements IdGenerator
         if (needReseed)
         {
             reseed();
+
+            // Update bookkeeping
+            seedTime = time;
+            countSinceSeed = 0;
         }
     }
 
@@ -161,18 +165,14 @@ public class DefaultSecureIdGenerator implements IdGenerator
      */
     protected void reseed()
     {
-        // Reseed using nano time.
-        random.setSeed(System.nanoTime());
-
         // We would really like to reseed using:
         //   random.setSeed(random.generateSeed(20));
         // to get 160 bits (SHA1 width) truly random data, but as most
         // Linuxes don't come configured with the driver for the Intel
         // hardware RNG, this usually blocks the whole server...
 
-        // Update bookkeeping
-        seedTime = System.currentTimeMillis();
-        countSinceSeed = 0;
+        // Reseed using nano time.
+        random.setSeed(System.nanoTime());
     }
 
     /**
