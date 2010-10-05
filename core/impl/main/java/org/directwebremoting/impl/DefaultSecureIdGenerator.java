@@ -59,6 +59,9 @@ public class DefaultSecureIdGenerator implements IdGenerator
         {
             random = new SecureRandom();
         }
+
+        // Now seed the generator
+        reseed();
     }
 
     /**
@@ -128,34 +131,48 @@ public class DefaultSecureIdGenerator implements IdGenerator
     }
 
     /**
-     *
+     * Trigger reseed at desired intervals.
      */
     protected void reseedIfNeeded()
     {
-        boolean reseed = false;
+        boolean needReseed = false;
 
         // Reseed if more than 15 minutes have passed since last reseed
         long time = System.currentTimeMillis();
         if (time - seedTime > 15 * 60 * 1000)
         {
-            reseed = true;
+            needReseed = true;
         }
 
         // Reseed if more than 1000 ids have been generated
         if (countSinceSeed > 1000)
         {
-            reseed = true;
+            needReseed = true;
         }
 
-        if (reseed)
+        if (needReseed)
         {
-            // Reseed using 8*20 = 160 bits (same as SHA1)
-            random.setSeed(random.generateSeed(20));
-
-            // Update bookkeeping
-            seedTime = time;
-            countSinceSeed = 0;
+            reseed();
         }
+    }
+
+    /**
+     * Set up entropy in random number generator
+     */
+    protected void reseed()
+    {
+        // Reseed using nano time.
+        random.setSeed(System.nanoTime());
+
+        // We would really like to reseed using:
+        //   random.setSeed(random.generateSeed(20));
+        // to get 160 bits (SHA1 width) truly random data, but as most
+        // Linuxes don't come configured with the driver for the Intel
+        // hardware RNG, this usually blocks the whole server...
+
+        // Update bookkeeping
+        seedTime = System.currentTimeMillis();
+        countSinceSeed = 0;
     }
 
     /**
