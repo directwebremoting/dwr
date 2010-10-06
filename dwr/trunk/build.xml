@@ -120,7 +120,27 @@
 		<!-- Documentation: Javadoc and DTDDoc -->
 		<mkdir dir="${target.root}/javadoc" />
 		<javadoc access="public" author="true" destdir="${target.root}/javadoc" doctitle="DWR Version ${label}" use="true" splitindex="true" version="true">
-			<sourcepath path="${source.root}/core/api/main/java" />
+			<sourcepath>
+			    <pathelement path="${source.root}/core/api/main/java"/>	
+			    <pathelement path="${source.root}/core/impl/main/java"/>	
+			    <pathelement path="${source.root}/core/legacy/main/java"/>			    
+			    <pathelement path="${source.root}/noncla/various/main/java"/>			    	
+			    <pathelement path="${source.root}/protocol/bayeux/main/java"/>
+			    <pathelement path="${source.root}/protocol/dwrp/main/java"/>
+			    <pathelement path="${source.root}/protocol/json/main/java"/>			    	
+			    <pathelement path="${source.root}/serverside/guice/main/java"/>
+			    <pathelement path="${source.root}/serverside/hibernate/main/java"/>
+			    <pathelement path="${source.root}/serverside/spring/main/java"/>
+			    <pathelement path="${source.root}/serverside/strutsy/main/java"/>
+			    <pathelement path="${source.root}/serverside/various/main/java"/>
+			    <pathelement path="${source.root}/serverside/webwork/main/java"/>			    
+			    <pathelement path="${source.root}/ui/dojo/main/java"/>
+			    <pathelement path="${source.root}/ui/dwr/main/java"/>
+			    <pathelement path="${source.root}/ui/scriptaculous/main/java"/>
+			    <pathelement path="${source.root}/ui/yui/main/java"/>
+			    <pathelement path="${source.root}/ui/jaxer/main/java"/>
+			    <pathelement path="${source.root}/ui/gi/main/java"/>		    		
+			</sourcepath>
 			<classpath>
 				<pathelement location="${target.root}/classes/main" />
 				<fileset dir="${target.root}/lib" includes="**/*.jar" />
