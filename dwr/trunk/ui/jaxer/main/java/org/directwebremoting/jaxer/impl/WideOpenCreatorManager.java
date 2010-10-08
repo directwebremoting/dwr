@@ -91,7 +91,7 @@ public class WideOpenCreatorManager extends DefaultCreatorManager
 
                 LocalUtil.setParams(creator, params, ignore);
                 creator.setProperties(params);
-                addCreator(scriptName, creator);
+                addCreator(creator);
                 shortNames.put(creator.getJavascript(), creator);
 
                 creator = creators.get(scriptName);
@@ -115,7 +115,7 @@ public class WideOpenCreatorManager extends DefaultCreatorManager
     /**
      * We index creators by short name as well as full name
      */
-    private Map<String, Creator> shortNames = new HashMap<String, Creator>();
+    private final Map<String, Creator> shortNames = new HashMap<String, Creator>();
 
     /**
      * The log stream

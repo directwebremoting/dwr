@@ -54,7 +54,7 @@ public class JsonRpcCallHandlerTest
         NewCreator creator = new NewCreator();
         creator.setClassName("com.example.dwr.simple.Demo");
         creator.setJavascript("Demo");
-        creatorManager.addCreator(creator.getJavascript(), creator);
+        creatorManager.addCreator(creator);
 
         List<String> validTests = TestUtil.parseTestInput(getClass(), "validJsonRpc.txt");
         for (String test : validTests)

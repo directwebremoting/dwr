@@ -27,7 +27,6 @@ import java.util.Set;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.convert.BeanConverter;
-import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Configurator;
@@ -150,33 +149,42 @@ public class AnnotationsConfigurator implements Configurator
      */
     protected void processCreate(Class<?> clazz, RemoteProxy createAnn, Container container)
     {
-        Class<? extends Creator> creator = createAnn.creator();
-        String creatorClass = creator.getName();
-        Map<String, String> creatorParams = getParamsMap(createAnn.creatorParams());
-        ScriptScope scope = createAnn.scope();
+        Class<? extends Creator> creatorClass = createAnn.creator();
+        String creatorClassName = creatorClass.getName();
 
         CreatorManager creatorManager = container.getBean(CreatorManager.class);
-        String creatorName = creatorClass.replace(".", "_");
-        creatorManager.addCreatorType(creatorName, creatorClass);
 
+        // Add a phony creator type just so we are able to do addCreator with the params collection later
+        String creatorName = creatorClassName.replace(".", "_");
+        creatorManager.addCreatorType(creatorName, creatorClassName);
+
+        // Set up the params map from specific attributes and parameter attribute annotations
         Map<String, String> params = new HashMap<String, String>();
-        if (NewCreator.class.isAssignableFrom(creator))
+        params.putAll(getParamsMap(createAnn.creatorParams()));
+        if (createAnn.name() != null && !createAnn.name().equals(""))
+        {
+            params.put("javascript", createAnn.name());
+        }
+        params.put("scope", createAnn.scope().getValue());
+
+        // Add default class (remoted class)
+        if (params.get("class") == null)
         {
             params.put("class", clazz.getName());
         }
-        params.putAll(creatorParams);
-        params.put("scope", scope.getValue());
 
-        String name = createAnn.name();
-        if (name == null || name.length() == 0)
+        // Add default scriptName
+        String scriptName = params.get("javascript");
+        if (scriptName == null || scriptName.equals(""))
         {
-            name = clazz.getSimpleName();
+            scriptName = clazz.getSimpleName();
+            params.put("javascript", scriptName);
         }
 
         try
         {
-            Loggers.STARTUP.debug("Adding class " + clazz.getName() + " as " + name);
-            creatorManager.addCreator(name, creatorName, params);
+            Loggers.STARTUP.debug("Adding class " + clazz.getName() + " as " + scriptName);
+            creatorManager.addCreator(creatorName, params);
         }
         catch (Exception ex)
         {
@@ -188,14 +196,14 @@ public class AnnotationsConfigurator implements Configurator
         {
             if (method.getAnnotation(RemoteMethod.class) != null)
             {
-                accessControl.addIncludeRule(name, method.getName());
+                accessControl.addIncludeRule(scriptName, method.getName());
 
                 Auth authAnn = method.getAnnotation(Auth.class);
                 if (authAnn != null)
                 {
                     for (String role : authAnn.role())
                     {
-                        accessControl.addRoleRestriction(name, method.getName(), role);
+                        accessControl.addRoleRestriction(scriptName, method.getName(), role);
                     }
                 }
             }
@@ -207,7 +215,7 @@ public class AnnotationsConfigurator implements Configurator
             Filter[] fs = filtersAnn.value();
             for (Filter filter : fs)
             {
-                processFilter(filter, name, container);
+                processFilter(filter, scriptName, container);
             }
         }
         // process single filter for convenience
@@ -216,7 +224,7 @@ public class AnnotationsConfigurator implements Configurator
             Filter filterAnn = clazz.getAnnotation(Filter.class);
             if (filterAnn != null)
             {
-                processFilter(filterAnn, name, container);
+                processFilter(filterAnn, scriptName, container);
             }
         }
     }

@@ -265,7 +265,7 @@ public class DwrXmlConfigurator implements Configurator
         try
         {
             Map<String, String> params = createSettingMap(allower);
-            creatorManager.addCreator(javascript, type, params);
+            creatorManager.addCreator(type, params);
 
             processPermissions(javascript, allower);
             processAuth(javascript, allower);
