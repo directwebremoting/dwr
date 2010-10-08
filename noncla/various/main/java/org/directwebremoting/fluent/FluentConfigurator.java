@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.AjaxFilter;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.AccessControl;
@@ -99,32 +99,32 @@ public abstract class FluentConfigurator implements Configurator
 
     /**
      * Add a new {@link Creator} definition.
-     * @param id The id referred to by the {@link #withCreator(String, String)}
+     * @param typeName The id referred to by the {@link #withCreator(String, String)}
      * @param creatorClassName The implementation of {@link Creator} to instantiate.
      * @return <code>this</code> to continue the fluency
      */
-    public FluentConfigurator withCreatorType(String id, String creatorClassName)
+    public FluentConfigurator withCreatorType(String typeName, String creatorClassName)
     {
         setState(STATE_INIT_CREATE);
-        creatorManager.addCreatorType(id, creatorClassName);
+        creatorManager.addCreatorType(typeName, creatorClassName);
         return this;
     }
 
     /**
      * Use a {@link Creator} to instantiate a class
-     * @param newTypeName A predefined {@link Creator} or one defined by
+     * @param typeName A predefined {@link Creator} or one defined by
      * {@link #withCreatorType(String, String)}.
      * @param newScriptName The javascript name of this component
      * @return <code>this</code> to continue the fluency
      */
-    public FluentConfigurator withCreator(String newTypeName, String newScriptName)
+    public FluentConfigurator withCreator(String typeName, String newScriptName)
     {
         setState(STATE_ALLOW_CREATE);
-        this.typeName = newTypeName;
+        this.creatorTypeName = typeName;
         this.scriptName = newScriptName;
         return this;
     }
-    
+
     /**
      * @param newFilterClassName filter class name
      * @return <code>this</code> to continue the fluency
@@ -273,7 +273,7 @@ public abstract class FluentConfigurator implements Configurator
             try
             {
                 if (params == null)
-                { 
+                {
                     converterManager.addConverter(match, converter, EMPTY_MAP);
                 }
                 else
@@ -294,14 +294,15 @@ public abstract class FluentConfigurator implements Configurator
             try
             {
                 if (params == null)
-                { 
-                    creatorManager.addCreator(scriptName, typeName, EMPTY_MAP);
-                }
-                else
                 {
-                    creatorManager.addCreator(scriptName, typeName, params);
+                    params = new HashMap<String, String>();
                 }
-                
+                if (!params.containsKey("javascript"))
+                {
+                    params.put("javascript", scriptName);
+                }
+                creatorManager.addCreator(creatorTypeName, params);
+
                 if (filters != null)
                 {
                     for (String className : filters)
@@ -319,14 +320,14 @@ public abstract class FluentConfigurator implements Configurator
             }
             catch (Exception e)
             {
-                log.warn("Failed to add creator of type='" + typeName + "', scriptName=" + scriptName + ": ", e);
+                log.warn("Failed to add creator of type='" + creatorTypeName + "', scriptName=" + scriptName + ": ", e);
             }
             params = null;
             scriptName = null;
-            typeName = null;
+            creatorTypeName = null;
             filters = null;
             break;
-            
+
         case STATE_ALLOW_FILTER:
             try
             {
@@ -337,7 +338,7 @@ public abstract class FluentConfigurator implements Configurator
                 {
                     LocalUtil.setParams(object, params, Collections.<String>emptyList());
                 }
-                
+
                 ajaxFilterManager.addAjaxFilter(object);
             }
             catch (ClassCastException ex)
@@ -352,10 +353,10 @@ public abstract class FluentConfigurator implements Configurator
             {
                 log.error("Failed to add filter: class=" + filterClassName, ex);
             }
-            
+
             params = null;
             filterClassName = null;
-            
+
             break;
 
         case STATE_SIGNATURE:
@@ -389,7 +390,7 @@ public abstract class FluentConfigurator implements Configurator
     /**
      * Used for <allow create .../>
      */
-    private String typeName = null;
+    private String creatorTypeName = null;
 
     /**
      * Used for <allow create .../>
@@ -400,7 +401,7 @@ public abstract class FluentConfigurator implements Configurator
      * Used for <allow filter .../>
      */
     private String filterClassName = null;
-    
+
     /**
      * Used for <allow convert .../>
      */
@@ -415,7 +416,7 @@ public abstract class FluentConfigurator implements Configurator
      * holds name / value pairs used in <allow create|convert ... />
      */
     private Map<String, String> params = null;
-    
+
     /**
      * holds classNames of filters used in <allow create/ filter />
      */
@@ -440,7 +441,7 @@ public abstract class FluentConfigurator implements Configurator
      * What AjaxFilters apply to which Ajax calls?
      */
     private AjaxFilterManager ajaxFilterManager = null;
-    
+
     /**
      * The ConverterManager that we are configuring
      */
@@ -470,7 +471,7 @@ public abstract class FluentConfigurator implements Configurator
      * {@link #state} to say we are working in {@link #withCreator(String, String)}
      */
     private static final int STATE_ALLOW_CREATE = 2;
-    
+
     /**
      * {@link #state} to say we are working in {@link #withFilter(String)}
      */

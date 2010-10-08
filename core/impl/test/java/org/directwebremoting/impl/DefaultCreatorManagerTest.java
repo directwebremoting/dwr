@@ -26,7 +26,7 @@ import org.junit.Test;
  */
 public class DefaultCreatorManagerTest
 {
-    private DefaultCreatorManager manager = new DefaultCreatorManager();
+    private final DefaultCreatorManager manager = new DefaultCreatorManager();
 
     @Test
     public void addCreatorTypeNull()
@@ -55,6 +55,6 @@ public class DefaultCreatorManagerTest
     public void addCreator()
     {
         NewCreator creator = new NewCreator();
-        manager.addCreator(null, creator);
+        manager.addCreator(creator);
     }
 }

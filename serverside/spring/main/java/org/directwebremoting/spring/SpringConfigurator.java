@@ -94,13 +94,13 @@ public class SpringConfigurator implements Configurator
                     if (creatorConfig.getCreator() != null)
                     {
                         Creator creator = creatorConfig.getCreator();
-                        creatorManager.addCreator(scriptName, creator);
+                        creatorManager.addCreator(creator);
                     }
                     else
                     {
                         String creatorName = creatorConfig.getCreatorType();
                         Map<String, String> params = creatorConfig.getParams();
-                        creatorManager.addCreator(scriptName, creatorName, params);
+                        creatorManager.addCreator(creatorName, params);
                     }
 
                     for (String exclude : creatorConfig.getExcludes())

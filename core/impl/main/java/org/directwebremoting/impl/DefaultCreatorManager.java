@@ -60,12 +60,12 @@ public class DefaultCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#addCreator(java.lang.String, java.lang.String, java.util.Map)
      */
-    public void addCreator(String scriptName, String creatorName, Map<String, String> params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
+    public void addCreator(String typeName, Map<String, String> params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
     {
-        Class<? extends Creator> clazz = creatorTypes.get(creatorName);
+        Class<? extends Creator> clazz = creatorTypes.get(typeName);
         if (clazz == null)
         {
-            Loggers.STARTUP.error("Missing creator: " + creatorName + " (while initializing creator for: " + scriptName + ".js)");
+            Loggers.STARTUP.error("Missing creator: " + typeName + " (while initializing creator for: " + params.get("javascript") + ".js)");
             return;
         }
 
@@ -75,19 +75,19 @@ public class DefaultCreatorManager implements CreatorManager
         creator.setProperties(params);
 
         // add the creator for the script name
-        addCreator(creator.getJavascript(), creator);
+        addCreator(creator);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#addCreator(java.lang.String, org.directwebremoting.Creator)
      */
-    public void addCreator(String scriptName, Creator creator) throws IllegalArgumentException
+    public void addCreator(Creator creator) throws IllegalArgumentException
     {
         // Check that we don't have this one already
-        Creator other = creators.get(scriptName);
+        Creator other = creators.get(creator.getJavascript());
         if (other != null)
         {
-            Loggers.STARTUP.error("Javascript name " + scriptName + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
+            Loggers.STARTUP.error("Javascript name " + creator.getJavascript() + " is used by 2 classes (" + other.getType().getName() + " and " + creator + ")");
             throw new IllegalArgumentException("Duplicate name found. See logs for details.");
         }
 
@@ -97,12 +97,12 @@ public class DefaultCreatorManager implements CreatorManager
             Class<?> test = creator.getType();
             if (test == null)
             {
-                Loggers.STARTUP.error("Creator: '" + creator + "' for " + scriptName + ".js is returning null for type queries.");
+                Loggers.STARTUP.error("Creator: '" + creator + "' for " + creator.getJavascript() + ".js is returning null for type queries.");
             }
             else
             {
-                Loggers.STARTUP.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + scriptName);
-                creators.put(scriptName, creator);
+                Loggers.STARTUP.debug("- adding creator: " + creator.getClass().getSimpleName() + " for " + creator.getJavascript());
+                creators.put(creator.getJavascript(), creator);
             }
         }
         catch (NoClassDefFoundError ex)
@@ -273,7 +273,7 @@ public class DefaultCreatorManager implements CreatorManager
 
     /**
      * The properties that we don't warn about if they don't exist.
-     * @see DefaultCreatorManager#addCreator(String, String, Map)
+     * @see DefaultCreatorManager#addCreator(String, Map)
      */
     protected static final List<String> ignore = Arrays.asList("creator", "class");
 

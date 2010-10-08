@@ -80,17 +80,17 @@ public class InternalCreatorManager implements CreatorManager
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.CreatorManager#addCreator(java.lang.String, java.lang.String, java.util.Map)
      */
-    public void addCreator(String scriptName, String type, Map<String, String> params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
+    public void addCreator(String type, Map<String, String> params) throws InstantiationException, IllegalAccessException, IllegalArgumentException
     {
-        creatorManager.addCreator(scriptName, type, params);
+        creatorManager.addCreator(type, params);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.CreatorManager#addCreator(java.lang.String, org.directwebremoting.extend.Creator)
      */
-    public void addCreator(String scriptName, Creator creator) throws IllegalArgumentException
+    public void addCreator(Creator creator) throws IllegalArgumentException
     {
-        creatorManager.addCreator(scriptName, creator);
+        creatorManager.addCreator(creator);
     }
 
     /* (non-Javadoc)
@@ -174,7 +174,7 @@ public class InternalCreatorManager implements CreatorManager
                     Class<?> cls = (Class<?>) key.getTypeLiteral().getType();
                     scriptName = cls.getSimpleName();
                 }
-                addCreator(scriptName, new InternalCreator(injector, key, scriptName));
+                addCreator(new InternalCreator(injector, key, scriptName));
             }
         }
     }
