@@ -312,17 +312,19 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public void contextDestroyed()
     {
-        Loggers.STARTUP.debug("ContextDestroyed for container: " + getClass().getSimpleName());
+        contextDestroyed(getBeanNames());
+    }
 
-        Collection<String> beanNames = getBeanNames();
+    public void contextDestroyed(Collection<String> beanNames)
+    {
+        Loggers.STARTUP.debug("ContextDestroyed for container: " + getClass().getSimpleName());
         for (String beanName : beanNames)
         {
             Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean)
+            if (bean instanceof UninitializingBean && !(bean instanceof Container))
             {
                 UninitializingBean scl = (UninitializingBean) bean;
                 Loggers.STARTUP.debug("- For contained bean: " + beanName);
-
                 scl.contextDestroyed();
             }
         }
@@ -333,17 +335,22 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public void servletDestroyed()
     {
-        Loggers.STARTUP.debug("ServletDestroyed for container: " + getClass().getSimpleName());
+        servletDestroyed(getBeanNames());
+    }
 
-        Collection<String> beanNames = getBeanNames();
+    /* (non-Javadoc)
+     * @see org.directwebremoting.Container#servletDestroyed()
+     */
+    public void servletDestroyed(Collection<String> beanNames)
+    {
+        Loggers.STARTUP.debug("ServletDestroyed for container: " + getClass().getSimpleName());
         for (String beanName : beanNames)
         {
             Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean)
+            if (bean instanceof UninitializingBean && !(bean instanceof Container))
             {
                 UninitializingBean scl = (UninitializingBean) bean;
                 Loggers.STARTUP.debug("- For contained bean: " + beanName);
-
                 scl.servletDestroyed();
             }
         }
