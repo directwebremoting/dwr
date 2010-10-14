@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.MethodDeclaration;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.impl.test.SignatureTestsObject;
@@ -58,7 +59,7 @@ public class SignatureParserTest
     public void testParse1() throws NoSuchMethodException
     {
         Method expectedMethod = SignatureTestsObject.class.getMethod("setLotteryResults", java.util.List.class);
-        Property expectedProperty = new ParameterProperty(expectedMethod, 0);
+        Property expectedProperty = new ParameterProperty(new MethodDeclaration(expectedMethod), 0);
         EasyMock.expect(converterManager.checkOverride(EasyMock.isA(Property.class))).andReturn(expectedProperty);
         converterManager.setOverrideProperty(EasyMock.isA(Property.class), EasyMock.isA(Property.class));
         EasyMock.replay(converterManager);

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.AccessDeniedException;
-import org.directwebremoting.extend.Creator;
+import org.directwebremoting.extend.MethodDeclaration;
 
 /**
  * Control who should be accessing which methods on which classes.
@@ -39,27 +39,46 @@ import org.directwebremoting.extend.Creator;
 public class DefaultAccessControl implements AccessControl
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.AccessControl#assertExecutionIsPossible(org.directwebremoting.extend.Creator, java.lang.String, java.lang.reflect.Method)
+     * @see org.directwebremoting.extend.AccessControl#assertGeneralExecutionIsPossible(java.lang.String, org.directwebremoting.extend.MethodDeclaration)
      */
-    public void assertExecutionIsPossible(Creator creator, String className, Method method) throws SecurityException
+    public void assertGeneralExecutionIsPossible(String scriptName, MethodDeclaration method) throws SecurityException
     {
-        assertIsRestrictedByRole(className, method);
-        assertIsDisplayable(creator, className, method);
+        assertRoleRestriction(scriptName, method.getName());
+        assertGeneralDisplayable(scriptName, method);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.AccessControl#getReasonToNotDisplay(org.directwebremoting.Creator, java.lang.String, java.lang.reflect.Method)
+     * @see org.directwebremoting.extend.AccessControl#assertMethodExecutionIsPossible(java.lang.Class, java.lang.reflect.Method)
      */
-    public void assertIsDisplayable(Creator creator, String className, Method method) throws SecurityException
+    public void assertMethodExecutionIsPossible(Class<?> clazz, Method method) throws SecurityException
+    {
+        assertMethodDisplayable(clazz, method);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.AccessControl#assertGeneralDisplayable(java.lang.String, org.directwebremoting.extend.MethodDeclaration)
+     */
+    public void assertGeneralDisplayable(String scriptName, MethodDeclaration method) throws SecurityException
+    {
+        assertIsExecutable(scriptName, method.getName());
+
+        if (!exposeInternals)
+        {
+            assertParametersNotDwrInternal(method);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.AccessControl#assertMethodDisplayable(java.lang.Class, java.lang.reflect.Method)
+     */
+    public void assertMethodDisplayable(Class<?> clazz, Method method) throws SecurityException
     {
         assertIsMethodPublic(method);
-        assertIsExecutable(className, method.getName());
         assertIsNotOnBaseObject(method);
 
         if (!exposeInternals)
         {
-            assertIsClassDwrInternal(creator);
-            assertAreParametersDwrInternal(method);
+            assertClassNotDwrInternal(clazz);
         }
     }
 
@@ -92,7 +111,7 @@ public class DefaultAccessControl implements AccessControl
         {
             if (!policy.rules.isEmpty())
             {
-                throw new IllegalArgumentException("The Creator '" + scriptName + "' uses mixed include and exclude statements");
+                throw new IllegalArgumentException("The module '" + scriptName + "' uses mixed include and exclude statements");
             }
 
             policy.defaultAllow = false;
@@ -115,7 +134,7 @@ public class DefaultAccessControl implements AccessControl
         {
             if (!policy.rules.isEmpty())
             {
-                throw new IllegalArgumentException("The Creator '" + scriptName + "' uses mixed include and exclude statements");
+                throw new IllegalArgumentException("The module '" + scriptName + "' uses mixed include and exclude statements");
             }
 
             policy.defaultAllow = true;
@@ -127,12 +146,10 @@ public class DefaultAccessControl implements AccessControl
 
     /**
      * @param scriptName The name of the creator to Javascript
-     * @param method The method to execute
+     * @param methodName The method to execute
      */
-    protected void assertIsRestrictedByRole(String scriptName, Method method)
+    protected void assertRoleRestriction(String scriptName, String methodName)
     {
-        String methodName = method.getName();
-
         // What if there is some J2EE role based restriction?
         Set<String> roles = getRoleRestrictions(scriptName, methodName);
         if (roles != null && !roles.isEmpty())
@@ -274,7 +291,7 @@ public class DefaultAccessControl implements AccessControl
      * Check the parameters are not DWR internal either
      * @param method The method that we want to execute
      */
-    protected static void assertAreParametersDwrInternal(Method method)
+    protected static void assertParametersNotDwrInternal(MethodDeclaration method)
     {
         for (int j = 0; j < method.getParameterTypes().length; j++)
         {
@@ -290,11 +307,11 @@ public class DefaultAccessControl implements AccessControl
 
     /**
      * Is the class that we are executing a method on part of DWR?
-     * @param creator The {@link Creator} that exposes the class
+     * @param clazz
      */
-    protected static void assertIsClassDwrInternal(Creator creator)
+    protected static void assertClassNotDwrInternal(Class<?> clazz)
     {
-        String name = creator.getType().getName();
+        String name = clazz.getName();
 
         // Access to org.directwebremoting is denied except for .export
         if (name.startsWith(PACKAGE_DWR_DENY) && !name.startsWith(PACKAGE_ALLOW_CREATE))

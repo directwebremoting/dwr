@@ -17,8 +17,8 @@ package org.directwebremoting.impl;
 
 import java.lang.reflect.Method;
 
-import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.Creator;
+import org.directwebremoting.extend.MethodDeclaration;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,49 +45,38 @@ public class DefaultAccessControlTest
     @Test(expected = SecurityException.class)
     public void testReasonToNotDisplayDwrObject() throws Exception
     {
-        NewCreator creator = new NewCreator();
-        creator.setClass("org.directwebremoting.impl.DefaultRemoter");
-        accessControl.assertIsDisplayable(creator, "", getMethod());
+        accessControl.assertMethodDisplayable(Class.forName("org.directwebremoting.impl.DefaultRemoter"), getMethod());
     }
 
     @Test
     public void testReasonToNotDisplay() throws Exception
     {
-        NewCreator creator = new NewCreator();
-        creator.setClass("java.lang.Object");
-
-        accessControl.assertIsDisplayable(creator, "", getMethod());
+        accessControl.assertMethodDisplayable(Class.forName("java.lang.Object"), getMethod());
     }
 
     @Test(expected = SecurityException.class)
     public void testReasonToNotDisplayWithNonPublicMethod() throws Exception
     {
-        accessControl.assertIsDisplayable(null, null, getPrivateMethod());
+        accessControl.assertMethodDisplayable(Class.forName("java.lang.Object"), getPrivateMethod());
     }
 
     @Test(expected = SecurityException.class)
     public void testReasonToNotDisplayWithNonExecutableMethod() throws Exception
     {
-        accessControl.addExcludeRule("className", "someMethod");
-        accessControl.assertIsDisplayable(null, "className", getMethod());
+        accessControl.addExcludeRule("scriptName", "someMethod");
+        accessControl.assertGeneralDisplayable("scriptName", new MethodDeclaration(getMethod()));
     }
 
     @Test(expected = SecurityException.class)
     public void testReasonToNotDisplayWithMethodWithDwrParameter() throws Exception
     {
-        NewCreator creator = new NewCreator();
-        creator.setClass("java.lang.Object");
-
-        accessControl.assertIsDisplayable(creator, "className", getMethodWithDwrParameter());
+        accessControl.assertGeneralDisplayable("scriptName", new MethodDeclaration(getMethodWithDwrParameter()));
     }
 
     @Test(expected = SecurityException.class)
     public void testReasonToNotDisplayWithObjectMethod() throws Exception
     {
-        NewCreator creator = new NewCreator();
-        creator.setClass("java.lang.Object");
-
-        accessControl.assertIsDisplayable(creator, "className", getHashCodeMethod());
+        accessControl.assertMethodDisplayable(Class.forName("java.lang.Object"), getHashCodeMethod());
     }
 
     @Ignore
@@ -98,12 +87,9 @@ public class DefaultAccessControlTest
         //builder.engageThread(null, new FakeHttpServletRequest(), new FakeHttpServletResponse());
         //WebContextFactory.setBuilder(builder);
 
-        NewCreator creator = new NewCreator();
-        creator.setClass(DefaultAccessControl.class.getName());
-
         try
         {
-            accessControl.assertExecutionIsPossible(creator, "className", getMethod());
+            accessControl.assertMethodExecutionIsPossible(DefaultAccessControl.class, getMethod());
             fail();
         }
         catch (SecurityException ex)
@@ -116,7 +102,7 @@ public class DefaultAccessControlTest
 
         try
         {
-            accessControl.assertExecutionIsPossible(creator, "className", getMethod());
+            accessControl.assertMethodExecutionIsPossible(DefaultAccessControl.class, getMethod());
             fail();
         }
         catch (SecurityException ex)
@@ -128,7 +114,7 @@ public class DefaultAccessControlTest
 
         try
         {
-            accessControl.assertExecutionIsPossible(creator, "className", getMethod());
+            accessControl.assertMethodExecutionIsPossible(DefaultAccessControl.class, getMethod());
             fail();
         }
         catch (SecurityException ex)

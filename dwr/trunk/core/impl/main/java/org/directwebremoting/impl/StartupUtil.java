@@ -50,6 +50,7 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.TaskDispatcherFactory;
@@ -389,7 +390,7 @@ public class StartupUtil
      */
     protected static void resolveMultipleImplementation(DefaultContainer container, String toResolveString)
     {
-        Class toResolve = null;
+        Class<?> toResolve = null;
         try
         {
             toResolve = LocalUtil.classForName(toResolveString);
@@ -871,6 +872,11 @@ public class StartupUtil
                 Creator creator = creatorManager.getCreator(creatorName, false);
                 Loggers.STARTUP.debug("  Creator: " + creatorName + " = " + creator + " (" + creator.getClass().getName() + ")");
             }
+
+            // ModuleManager debugging
+            ModuleManager moduleManager = container.getBean(ModuleManager.class);
+            Loggers.STARTUP.debug("ModuleManager");
+            Loggers.STARTUP.debug("  Type: " + moduleManager.getClass().getName());
         }
     }
 

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,10 +30,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.DebugPageGenerator;
 import org.directwebremoting.extend.DwrConstants;
+import org.directwebremoting.extend.MethodDeclaration;
+import org.directwebremoting.extend.Module;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.util.CopyUtils;
 import org.directwebremoting.util.JavascriptUtil;
@@ -51,7 +51,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
      */
     public String generateIndexPage(final String root) throws SecurityException
     {
-        if (!creatorManager.isDebug())
+        if (!debug)
         {
             log.warn("Failed attempt to access test pages outside of debug mode. Set the debug init-parameter to true to enable.");
             throw new SecurityException("Access to debug pages is denied.");
@@ -63,11 +63,11 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("<head><title>DWR Test Index</title></head>\n");
         buffer.append("<body>\n");
 
-        buffer.append("<h2>Classes known to DWR:</h2>\n");
+        buffer.append("<h2>Modules known to DWR:</h2>\n");
         buffer.append("<ul>\n");
-        for (String name : creatorManager.getCreatorNames(false))
+        for (String name : moduleManager.getModuleNames(false))
         {
-            Creator creator = creatorManager.getCreator(name, false);
+            Module module = moduleManager.getModule(name, false);
 
             buffer.append("<li><a href='");
             buffer.append(root);
@@ -76,7 +76,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             buffer.append("'>");
             buffer.append(name);
             buffer.append("</a> (");
-            buffer.append(creator.getType().getName());
+            buffer.append(module.toString());
             buffer.append(")</li>\n");
         }
         buffer.append("</ul>\n");
@@ -91,7 +91,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
      */
     public String generateTestPage(final String root, final String scriptName) throws SecurityException
     {
-        if (!creatorManager.isDebug())
+        if (!debug)
         {
             log.warn("Failed attempt to access test pages outside of debug mode. Set the debug init-parameter to true to enable.");
             throw new SecurityException("Access to debug pages is denied.");
@@ -105,8 +105,8 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         String proxyEngineURL = PATH_UP + engineHandlerUrl;
         String proxyUtilURL = PATH_UP + utilHandlerUrl;
 
-        Creator creator = creatorManager.getCreator(scriptName, true);
-        Method[] methods = creator.getType().getMethods();
+        Module module = moduleManager.getModule(scriptName, true);
+        MethodDeclaration[] methods = module.getMethods();
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("<html>\n");
@@ -144,7 +144,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("</head>\n");
         buffer.append("<body onload='dwr.util.useLoadingMessage()'>\n");
 
-        buffer.append("<h2>Methods For: " + scriptName + " (" + creator.getType().getName() + ")</h2>\n");
+        buffer.append("<h2>Methods For: " + scriptName + " (" + module.toString() + ")</h2>\n");
         buffer.append("<p>To use this class in your javascript you will need the following script includes:</p>\n");
         buffer.append("<pre>\n");
         buffer.append("  &lt;script type='text/javascript' src='<a href='" + interfaceURL + "'>" + interfaceURL + "</a>'&gt;&lt;/script&gt;\n");
@@ -161,7 +161,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
 
         for (int i = 0; i < methods.length; i++)
         {
-            Method method = methods[i];
+            MethodDeclaration method = methods[i];
             String methodName = method.getName();
 
             // Is it on the list of banned names
@@ -272,7 +272,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             // See also the call to getReasonToNotExecute() above
             try
             {
-                accessControl.assertIsDisplayable(creator, scriptName, method);
+                accessControl.assertGeneralDisplayable(scriptName, method);
             }
             catch (SecurityException ex)
             {
@@ -290,7 +290,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
 
         buffer.append("<h2>Other Links</h2>\n");
         buffer.append("<ul>\n");
-        buffer.append("<li>Back to <a href='" + root + "/'>class index</a>.</li>\n");
+        buffer.append("<li>Back to <a href='" + root + "/'>module index</a>.</li>\n");
         buffer.append("</ul>\n");
 
         synchronized (scriptCache)
@@ -373,7 +373,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     }
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
+     * Accessor for the DefaultConverterManager that we configure
      * @param converterManager The new DefaultConverterManager
      */
     public void setConverterManager(ConverterManager converterManager)
@@ -382,12 +382,12 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     }
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param creatorManager The new DefaultConverterManager
+     * Accessor for the ModuleManager that we configure
+     * @param moduleManager
      */
-    public void setCreatorManager(CreatorManager creatorManager)
+    public void setModuleManager(ModuleManager moduleManager)
     {
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /**
@@ -433,6 +433,15 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     }
 
     /**
+     * Setter for debug enabling
+     * @param debug
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
      * The URL for the {@link org.directwebremoting.servlet.EngineHandler}
      */
     protected String engineHandlerUrl;
@@ -460,7 +469,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
     /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected ModuleManager moduleManager = null;
 
     /**
      * The security manager
@@ -477,6 +486,11 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
      * only util.js, but may be expanded in the future.
      */
     private Collection<String> availableLibraries = null;
+
+    /**
+     * Debug setting
+     */
+    private boolean debug = false;
 
     /**
      * 2 dots

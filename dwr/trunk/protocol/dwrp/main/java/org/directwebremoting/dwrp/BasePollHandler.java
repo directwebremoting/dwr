@@ -386,7 +386,7 @@ public class BasePollHandler extends BaseDwrpHandler
     protected ServerLoadMonitor pollingServerLoadMonitor = new PollingServerLoadMonitor();
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
+     * Accessor for the DefaultConverterManager that we configure
      * @param converterManager The new DefaultConverterManager
      */
     public void setConverterManager(ConverterManager converterManager)

@@ -17,7 +17,6 @@ package org.directwebremoting.dwrp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +30,12 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.FormField;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.MethodDeclaration;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
@@ -163,8 +163,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // that method.
 
                 // Which method are we using?
-                call.findMethod(creatorManager, converterManager, inctx, callNum);
-                Method method = call.getMethod();
+                call.findMethod(moduleManager, converterManager, inctx, callNum);
+                MethodDeclaration method = call.getMethodDeclaration();
                 if (method == null)
                 {
                     log.warn("No methods to match " + call.getScriptName() + '.' + call.getMethodName());
@@ -595,8 +595,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     protected PageNormalizer pageNormalizer = null;
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param converterManager The new DefaultConverterManager
+     * Accessor for the ConverterManager that we configure
+     * @param converterManager
      */
     public void setConverterManager(ConverterManager converterManager)
     {
@@ -609,18 +609,18 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     protected ConverterManager converterManager = null;
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param creatorManager The new DefaultConverterManager
+     * Accessor for the ModuleManager that we configure
+     * @param moduleManager
      */
-    public void setCreatorManager(CreatorManager creatorManager)
+    public void setModuleManager(ModuleManager moduleManager)
     {
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected ModuleManager moduleManager = null;
 
     /**
      * How we stash away the results of the request parse

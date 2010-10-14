@@ -31,13 +31,21 @@ public interface AccessControl
      * <p>This is not a great because it mixes 2 bits of information in the same
      * variable (is it wrong, and what is wrong) but without multi-value returns
      * in Java this seems like the most simple implementation.
-     * @param creator Where does the method come from?
-     * @param className The Javascript name of the class
-     * @param method What is the method to execute?
+     * @param scriptName The Javascript name of the class
+     * @param method A logical method declaration
      * @throws SecurityException If the given method is disallowed
-     * @see AccessControl#assertIsDisplayable(Creator, String, Method)
+     * @see AccessControl#assertGeneralDisplayable(String, MethodDeclaration)
      */
-    void assertExecutionIsPossible(Creator creator, String className, Method method) throws SecurityException;
+    void assertGeneralExecutionIsPossible(String scriptName, MethodDeclaration method) throws SecurityException;
+
+    /**
+     * Complementing checks for a remoted Java class and method.
+     * @param clazz An actual Java class
+     * @param method An actual reflected Java method
+     * @throws SecurityException
+     * @see AccessControl#assertGeneralExecutionIsPossible(String, MethodDeclaration)
+     */
+    void assertMethodExecutionIsPossible(Class<?> clazz, Method method) throws SecurityException;
 
     /**
      * Check the method for accessibility at 'compile-time' (i.e. when the application
@@ -50,13 +58,21 @@ public interface AccessControl
      * <p>This is not a great because it mixes 2 bits of information in the same
      * variable (is it wrong, and what is wrong) but without multi-value returns
      * in Java this seems like the most simple implementation.
-     * @param creator Where does the method come from?
-     * @param className The Javascript name of the class
-     * @param method What is the method to execute?
+     * @param scriptName The Javascript name of the class
+     * @param method A logical method declaration
      * @throws SecurityException If the given method is disallowed
-     * @see AccessControl#assertExecutionIsPossible(Creator, String, Method)
+     * @see AccessControl#assertGeneralExecutionIsPossible(String, MethodDeclaration)
      */
-    void assertIsDisplayable(Creator creator, String className, Method method) throws SecurityException;
+    void assertGeneralDisplayable(String scriptName, MethodDeclaration method) throws SecurityException;
+
+    /**
+     * Complementing checks for a remoted Java class and method.
+     * @param clazz An actual Java class
+     * @param method An actual reflected Java method
+     * @throws SecurityException
+     * @see AccessControl#assertGeneralDisplayable(String, MethodDeclaration)
+     */
+    void assertMethodDisplayable(Class<?> clazz, Method method) throws SecurityException;
 
     /**
      * J2EE role based security allows us to restrict methods to only being used

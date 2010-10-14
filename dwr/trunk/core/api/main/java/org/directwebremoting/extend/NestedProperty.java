@@ -161,7 +161,7 @@ public class NestedProperty implements Property
             Method method = (Method) object;
             return "(method=" + method.toGenericString() + ", parameter: " + parameterNumber + ")";
         }
-        else if (object instanceof Constructor)
+        else if (object instanceof Constructor<?>)
         {
             Constructor<?> ctor = (Constructor<?>) object;
             return "(method=" + ctor.toGenericString() + ", parameter: " + parameterNumber + ")";

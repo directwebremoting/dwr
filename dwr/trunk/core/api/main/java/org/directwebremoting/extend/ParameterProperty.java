@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.extend;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import org.directwebremoting.ConversionException;
@@ -28,7 +27,7 @@ import org.directwebremoting.util.LocalUtil;
  */
 public class ParameterProperty implements Property
 {
-    public ParameterProperty(Method method, int parameterNumber)
+    public ParameterProperty(MethodDeclaration method, int parameterNumber)
     {
         this.method = method;
         this.parameterNumber = parameterNumber;
@@ -131,7 +130,7 @@ public class ParameterProperty implements Property
         return "ParameterProperty[method=" + method.getName() + ",p#=" + parameterNumber + "]";
     }
 
-    private final Method method;
+    private final MethodDeclaration method;
 
     private final int parameterNumber;
 }

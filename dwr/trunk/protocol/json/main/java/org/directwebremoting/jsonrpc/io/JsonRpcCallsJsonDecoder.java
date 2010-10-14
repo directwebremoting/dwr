@@ -15,7 +15,6 @@
  */
 package org.directwebremoting.jsonrpc.io;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,8 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.MethodDeclaration;
+import org.directwebremoting.extend.Module;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.json.parse.JsonParseException;
 import org.directwebremoting.json.parse.impl.StatefulJsonDecoder;
 import org.directwebremoting.util.JavascriptUtil;
@@ -45,10 +45,10 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
     /**
      * Force creators to give us the beans we need
      */
-    public JsonRpcCallsJsonDecoder(ConverterManager converterManager, CreatorManager creatorManager)
+    public JsonRpcCallsJsonDecoder(ConverterManager converterManager, ModuleManager moduleManager)
     {
         this.converterManager = converterManager;
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /* (non-Javadoc)
@@ -219,8 +219,8 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
      */
     protected void convertParams()
     {
-        Creator creator = creatorManager.getCreator(scriptName, false);
-        if (creator == null)
+        Module module = moduleManager.getModule(scriptName, false);
+        if (module == null)
         {
             log.warn("No creator found: " + scriptName);
             throw new JsonRpcCallException(calls, "Object not valid", ERROR_CODE_INVALID, SC_BAD_REQUEST);
@@ -229,8 +229,6 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
         // Fill out the Calls structure
         try
         {
-            Class<?> type = creator.getType();
-
             // Get the types of the parameters
             List<Class<?>> paramTypes = new ArrayList<Class<?>>();
             for (Object param : params)
@@ -239,11 +237,11 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
             }
             Class<?>[] typeArray = paramTypes.toArray(new Class[paramTypes.size()]);
 
-            Method method = type.getMethod(methodName, typeArray);
+            MethodDeclaration method = module.getMethod(methodName, typeArray);
 
             Call call = new Call(null, scriptName, methodName);
             calls.addCall(call);
-            call.setMethod(method);
+            call.setMethodDeclaration(method);
             call.setParameters(params.toArray());
         }
         catch (SecurityException ex)
@@ -266,7 +264,7 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
     /**
      * How we create new beans
      */
-    protected final CreatorManager creatorManager;
+    protected final ModuleManager moduleManager;
 
     /**
      *

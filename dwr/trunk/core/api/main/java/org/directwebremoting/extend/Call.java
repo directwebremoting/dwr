@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.extend;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -46,7 +44,7 @@ public class Call
     public void setMarshallFailure(Throwable exception)
     {
         this.exception = exception;
-        this.method = null;
+        this.methodDeclaration = null;
         this.parameters = null;
     }
 
@@ -61,17 +59,17 @@ public class Call
     /**
      * @return the method
      */
-    public Method getMethod()
+    public MethodDeclaration getMethodDeclaration()
     {
-        return method;
+        return methodDeclaration;
     }
 
     /**
-     * @param method the method to set
+     * @param methodDeclaration the method to set
      */
-    public void setMethod(Method method)
+    public void setMethodDeclaration(MethodDeclaration methodDeclaration)
     {
-        this.method = method;
+        this.methodDeclaration = methodDeclaration;
     }
 
     /**
@@ -122,7 +120,7 @@ public class Call
      * matches methods, but able to find more matches. If we discover that this
      * version creates problems, the old version was around up to revision 2317.
      */
-    public void findMethod(CreatorManager creatorManager, ConverterManager converterManager, InboundContext inctx, int callNum)
+    public void findMethod(ModuleManager moduleManager, ConverterManager converterManager, InboundContext inctx, int callNum)
     {
         if (scriptName == null)
         {
@@ -136,12 +134,12 @@ public class Call
 
         int inputArgCount = inctx.getParameterCount(callNum);
         // Get a mutable list of all methods on the type specified by the creator
-        Creator creator = creatorManager.getCreator(scriptName, true);
-        List<Method> allMethods = new ArrayList<Method>();
-        allMethods.addAll(Arrays.asList(creator.getType().getMethods()));
+        Module module = moduleManager.getModule(scriptName, true);
+        List<MethodDeclaration> allMethods = new ArrayList<MethodDeclaration>();
+        allMethods.addAll(Arrays.asList(module.getMethods()));
 
         // Remove all methods that don't have a matching name
-        for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
+        for (Iterator<MethodDeclaration> it = allMethods.iterator(); it.hasNext();)
         {
             if (!it.next().getName().equals(methodName))
             {
@@ -152,15 +150,15 @@ public class Call
         if (allMethods.isEmpty())
         {
             // Not even a name match
-            log.warn("No method called '" + methodName + "' found in " + creator.getType());
+            log.warn("No method called '" + methodName + "' found in " + module.toString());
             throw new IllegalArgumentException("Method name not found. See logs for details");
         }
 
         // Remove all the methods where we can't convert the parameters
         allMethodsLoop:
-        for (Iterator<Method> it = allMethods.iterator(); it.hasNext();)
+        for (Iterator<MethodDeclaration> it = allMethods.iterator(); it.hasNext();)
         {
-            Method m = it.next();
+            MethodDeclaration m = it.next();
             Class<?>[] methodParamTypes = m.getParameterTypes();
 
             // Remove non-varargs methods which declare less params than were passed
@@ -223,20 +221,19 @@ public class Call
         if (allMethods.isEmpty())
         {
             // Not even a name match
-            log.warn("No methods called " + creator.getType() + "." + methodName + "' are applicable for the passed parameters.");
+            log.warn("No methods called '" + methodName + "' in " + module.toString() + " are applicable for the passed parameters.");
             throw new IllegalArgumentException("Method not found. See logs for details");
         }
         else if (allMethods.size() == 1)
         {
-            method = allMethods.get(0);
-            checkProxiedMethod(creatorManager);
+            methodDeclaration = allMethods.get(0);
             return;
         }
 
         // If we have methods that exactly match the param count we use a
         // different matching algorithm, to when we don't
-        List<Method> exactParamCountMatches = new ArrayList<Method>();
-        for (Method m : allMethods)
+        List<MethodDeclaration> exactParamCountMatches = new ArrayList<MethodDeclaration>();
+        for (MethodDeclaration m : allMethods)
         {
             if (!m.isVarArgs() && m.getParameterTypes().length == inputArgCount)
             {
@@ -247,8 +244,7 @@ public class Call
         if (exactParamCountMatches.size() == 1)
         {
             // One method with the right number of params - use that
-            method = exactParamCountMatches.get(0);
-            checkProxiedMethod(creatorManager);
+            methodDeclaration = exactParamCountMatches.get(0);
             return;
         }
         else if (exactParamCountMatches.size() == 2)
@@ -272,8 +268,7 @@ public class Call
             }
             if (compatible && (choose >= 0))
             {
-                method = exactParamCountMatches.get(choose); // Select the most concrete of the two
-                checkProxiedMethod(creatorManager);
+                methodDeclaration = exactParamCountMatches.get(choose); // Select the most concrete of the two
                 return;
             }
         }
@@ -281,8 +276,8 @@ public class Call
         // Lots of methods with the right name, but none with the right
         // parameter count. If we have exactly one varargs method, then we
         // try that, otherwise we bail.
-        List<Method> varargsMethods = new ArrayList<Method>();
-        for (Method m : allMethods)
+        List<MethodDeclaration> varargsMethods = new ArrayList<MethodDeclaration>();
+        for (MethodDeclaration m : allMethods)
         {
             if (m.isVarArgs())
             {
@@ -292,63 +287,20 @@ public class Call
 
         if (varargsMethods.size() == 1)
         {
-            method = varargsMethods.get(0);
-            checkProxiedMethod(creatorManager);
+            methodDeclaration = varargsMethods.get(0);
             return;
         }
 
-        log.warn("Can't find single method to match " + creator.getType() + "." + methodName);
+        log.warn("Can't find single method to match method '" + methodName + "' in " + module.toString());
         log.warn("- DWR does not continue where there is ambiguity about which method to execute.");
         log.warn("- Input parameters: " + inputArgCount + ".Matching methods with param count match: " + exactParamCountMatches.size() + ". Number of matching varargs methods: " + varargsMethods.size());
         log.warn("- Potential matches include:");
-        for (Method m : allMethods)
+        for (MethodDeclaration m : allMethods)
         {
-            log.warn("  - " + m.toGenericString());
+            log.warn("  - " + m.toString());
         }
 
         throw new IllegalArgumentException("Method not found. See logs for details");
-    }
-
-    /**
-     * The main issue here happens with JDK proxies, that is, those based on
-     * interfaces and is easily noticeable with Spring because it's designed to
-     * generate proxies on the fly for many different purposes (security, tx,..)
-     * For some unknown reasons but probably related to erasure, when a proxy is
-     * created and it contains a method with at least one generic parameter,
-     * that generic type information is lost. Those that rely on reflection to
-     * detect that info at runtime (our case when detecting the matching method
-     * for an incoming call) face a dead end. The solution involves detecting
-     * the proxy interface and obtain the original class (which holds the
-     * required information).
-     * <p>Here comes the problematic area. In the case of Spring all proxies
-     * implement the Advised interface which includes a method that returns the
-     * target class (and so fulfills our need). Of course, this means that:
-     * a) A Spring dependency appears and
-     * b) The solution only applies to Spring contexts.
-     * The first concern is solvable using Class.forName. The current fix does
-     * not solve the second. Probably a better solution should be implemented
-     * (for example, something that works under the AOP alliance umbrella).
-     */
-    private void checkProxiedMethod(CreatorManager creatorManager)
-    {
-        if ((method != null) && (advisedClass != null) && advisedClass.isAssignableFrom(method.getDeclaringClass()))
-        {
-            Creator c = creatorManager.getCreator(scriptName, true);
-            if (Proxy.isProxyClass(c.getType()))
-            {
-                try
-                {
-                    Object target = c.getInstance(); // Should be a singleton
-                    Method targetClassMethod = target.getClass().getMethod("getTargetClass");
-                    Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                    method = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                }
-                catch (Exception ex)
-                {
-                    // Probably not in Spring context so no Advised proxies at all
-                }
-            }
-        }
     }
 
     /* (non-Javadoc)
@@ -373,7 +325,7 @@ public class Call
 
     private final String methodName;
 
-    private Method method = null;
+    private MethodDeclaration methodDeclaration = null;
 
     private Object[] parameters = null;
 
@@ -383,28 +335,5 @@ public class Call
      * The log stream
      */
     private static final Log log = LogFactory.getLog(Call.class);
-
-    /**
-     * Spring/AOP hack
-     * @see #checkProxiedMethod(CreatorManager)
-     */
-    private static Class<?> advisedClass;
-
-    /**
-     * Spring/AOP hack
-     * @see #checkProxiedMethod(CreatorManager)
-     */
-    static
-    {
-        try
-        {
-            advisedClass = Class.forName("org.springframework.aop.framework.Advised");
-            log.debug("Found org.springframework.aop.framework.Advised enabling AOP checks");
-        }
-        catch (ClassNotFoundException ex)
-        {
-            log.debug("ClassNotFoundException on org.springframework.aop.framework.Advised skipping AOP checks");
-        }
-    }
 
 }
