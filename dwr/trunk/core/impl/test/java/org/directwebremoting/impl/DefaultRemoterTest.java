@@ -15,13 +15,22 @@
  */
 package org.directwebremoting.impl;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class DefaultRemoterTest
 {
-// TODO: test needs updating
+    // TODO: this whole test file needs updating
+    @Test
+    @Ignore
+    public void dummyTestMethodToAvoidJunitComplaintsAboutNoMethods()
+    {
+
+    }
 /*
     private final DefaultRemoter defaultRemoter = new DefaultRemoter();
 
