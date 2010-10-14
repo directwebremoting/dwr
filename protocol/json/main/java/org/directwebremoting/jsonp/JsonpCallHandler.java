@@ -17,7 +17,6 @@ package org.directwebremoting.jsonp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +30,11 @@ import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.MethodDeclaration;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.ParameterProperty;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
@@ -172,12 +171,11 @@ public class JsonpCallHandler implements Handler
         calls.addCall(call);
 
         // Which method are we using?
-        call.findMethod(creatorManager, converterManager, inboundContext, 0);
-        Method method = call.getMethod();
+        call.findMethod(moduleManager, converterManager, inboundContext, 0);
+        MethodDeclaration method = call.getMethodDeclaration();
 
         // Check this method is accessible
-        Creator creator = creatorManager.getCreator(call.getScriptName(), true);
-        accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
+        accessControl.assertGeneralExecutionIsPossible(call.getScriptName(), method);
 
         // We are now sure we have the set of input lined up. They may
         // cross-reference so we do the de-referencing all in one go.
@@ -269,8 +267,8 @@ public class JsonpCallHandler implements Handler
     }
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param converterManager The new DefaultConverterManager
+     * Accessor for the ConverterManager that we configure
+     * @param converterManager
      */
     public void setConverterManager(ConverterManager converterManager)
     {
@@ -283,18 +281,18 @@ public class JsonpCallHandler implements Handler
     protected ConverterManager converterManager = null;
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param creatorManager The new DefaultConverterManager
+     * Accessor for the ModuleManager that we configure
+     * @param moduleManager
      */
-    public void setCreatorManager(CreatorManager creatorManager)
+    public void setModuleManager(ModuleManager moduleManager)
     {
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected ModuleManager moduleManager = null;
 
     /**
      * Accessor for the security manager

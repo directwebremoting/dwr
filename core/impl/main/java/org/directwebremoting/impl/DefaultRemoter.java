@@ -16,12 +16,8 @@
 package org.directwebremoting.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,19 +25,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.AjaxFilter;
-import org.directwebremoting.AjaxFilterChain;
-import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
-import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.EnginePrivate;
+import org.directwebremoting.extend.MethodDeclaration;
+import org.directwebremoting.extend.Module;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.Remoter;
@@ -55,7 +48,7 @@ import org.directwebremoting.util.Loggers;
 /**
  * An implementation of Remoter that delegates requests to a set of Modules
  * @author Joe Walker [joe at getahead dot ltd dot uk]
- * @author Mike Wilson
+ * @author Mike Wilson [mikewse at g mail dot com]
  */
 public class DefaultRemoter implements Remoter
 {
@@ -174,17 +167,16 @@ public class DefaultRemoter implements Remoter
 
     /**
      * Create a list of method definitions for the given creator.
-     * @param fullCreatorName To allow AccessControl to allow/deny requests
+     * @param scriptName To allow AccessControl to allow/deny requests
      */
-    protected String createMethodDefinitions(String fullCreatorName)
+    protected String createMethodDefinitions(String scriptName)
     {
-        Creator creator = creatorManager.getCreator(fullCreatorName, false);
-        String scriptName = creator.getJavascript();
+        Module module = moduleManager.getModule(scriptName, false);
 
         StringBuilder buffer = new StringBuilder();
 
-        Method[] methods = creator.getType().getMethods();
-        for (Method method : methods)
+        MethodDeclaration[] methods = module.getMethods();
+        for (MethodDeclaration method : methods)
         {
             String methodName = method.getName();
 
@@ -193,7 +185,7 @@ public class DefaultRemoter implements Remoter
             // check if we can display it
             try
             {
-                accessControl.assertIsDisplayable(creator, scriptName, method);
+                accessControl.assertGeneralDisplayable(scriptName, method);
             }
             catch (SecurityException ex)
             {
@@ -213,7 +205,7 @@ public class DefaultRemoter implements Remoter
             // If it is, then do not cache the generated Javascript
             // See the notes on creator.isCacheable().
             String script;
-            if (!creator.isCacheable())
+            if (!module.isCacheable())
             {
                 script = getMethodJS(scriptName, method);
             }
@@ -519,7 +511,7 @@ public class DefaultRemoter implements Remoter
      * @param method Target method
      * @return Javascript implementing the DWR call for the target method
      */
-    protected String getMethodJS(String scriptName, Method method)
+    protected String getMethodJS(String scriptName, MethodDeclaration method)
     {
         StringBuffer buffer = new StringBuffer();
 
@@ -605,93 +597,20 @@ public class DefaultRemoter implements Remoter
     {
         try
         {
-            Method method = call.getMethod();
+            Module module = moduleManager.getModule(call.getScriptName(), true);
+
+            MethodDeclaration method = call.getMethodDeclaration();
+
+            // Do we already have an error?
             if (method == null || call.getException() != null)
             {
                 return new Reply(call.getCallId(), null, call.getException());
             }
 
-            // Get a list of the available matching methods with the coerced
-            // parameters that we will use to call it if we choose to use that
-            // method.
-            Creator creator = creatorManager.getCreator(call.getScriptName(), true);
-
             // We don't need to check accessControl.getReasonToNotExecute()
             // because the checks are made by the doExec method, but we do check
             // if we can display it
-            accessControl.assertExecutionIsPossible(creator, call.getScriptName(), method);
-
-            // Get ourselves an object to execute a method on unless the
-            // method is static
-            Object object = null;
-            String scope = creator.getScope();
-            boolean create = false;
-
-            if (!Modifier.isStatic(method.getModifiers()))
-            {
-                WebContext webcx = WebContextFactory.get();
-
-                // Check the various scopes to see if it is there
-                if (scope.equals(Creator.APPLICATION))
-                {
-                    object = webcx.getServletContext().getAttribute(call.getScriptName());
-                }
-                else if (scope.equals(Creator.SESSION))
-                {
-                    object = webcx.getSession().getAttribute(call.getScriptName());
-                }
-                else if (scope.equals(Creator.SCRIPT))
-                {
-                    object = webcx.getScriptSession().getAttribute(call.getScriptName());
-                }
-                else if (scope.equals(Creator.REQUEST))
-                {
-                    object = webcx.getHttpServletRequest().getAttribute(call.getScriptName());
-                }
-                // Creator.PAGE scope means we create one every time anyway
-
-                // If we don't have an object then call the creator
-                try
-                {
-                    if (object == null)
-                    {
-                        create = true;
-                        object = creator.getInstance();
-                    }
-                }
-                catch (InstantiationException ex)
-                {
-                    // Allow Jetty RequestRetry exception to propagate to container
-                    Continuation.rethrowIfContinuation(ex);
-                    // We should log this regardless of the accessLogLevel.
-                    log.info("Error creating an instance of the following DWR Creator: " + ((null != creator.getClass()) ? creator.getClass().getName() : "None Specified") + ".", ex);
-                    return new Reply(call.getCallId(), null, ex);
-                }
-
-                // Remember it for next time
-                if (create)
-                {
-                    if (scope.equals(Creator.APPLICATION))
-                    {
-                        // This might also be done at application startup by
-                        // DefaultCreatorManager.addCreator(String, Creator)
-                        webcx.getServletContext().setAttribute(call.getScriptName(), object);
-                    }
-                    else if (scope.equals(Creator.SESSION))
-                    {
-                        webcx.getSession().setAttribute(call.getScriptName(), object);
-                    }
-                    else if (scope.equals(Creator.SCRIPT))
-                    {
-                        webcx.getScriptSession().setAttribute(call.getScriptName(), object);
-                    }
-                    else if (scope.equals(Creator.REQUEST))
-                    {
-                        webcx.getHttpServletRequest().setAttribute(call.getScriptName(), object);
-                    }
-                    // Creator.PAGE scope means we create one every time anyway
-                }
-            }
+            accessControl.assertGeneralExecutionIsPossible(call.getScriptName(), method);
 
             // Log the call details if the accessLogLevel is call.
             if (AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
@@ -700,63 +619,17 @@ public class DefaultRemoter implements Remoter
                 buffer.append("Exec: ")
                       .append(call.getScriptName())
                       .append(".")
-                      .append(call.getMethodName())
-                      .append("()");
+                      .append(call.getMethodDeclaration().toString());
 
-                if (create)
-                {
-                    buffer.append(" Object created, ");
-                    if (!scope.equals(Creator.PAGE))
-                    {
-                        buffer.append(" stored in ");
-                        buffer.append(scope);
-                    }
-                    else
-                    {
-                        buffer.append(" not stored");
-                    }
-                }
-                else
-                {
-                    buffer.append(" Object found in ");
-                    buffer.append(scope);
-                }
-                buffer.append(". ");
+                buffer.append(", ");
                 buffer.append("id=");
                 buffer.append(call.getCallId());
 
                 Loggers.ACCESS.info(buffer.toString());
             }
 
-            // Execute the filter chain method.toString()
-            List<AjaxFilter> filters = ajaxFilterManager.getAjaxFilters(call.getScriptName());
-            final Iterator<AjaxFilter> it = filters.iterator();
-            AjaxFilterChain chain = new AjaxFilterChain()
-            {
-                public Object doFilter(Object obj, Method meth, Object[] params) throws Exception
-                {
-                    if (it.hasNext())
-                    {
-                        AjaxFilter next = it.next();
-                        return next.doFilter(obj, meth, params, this);
-                    }
-                    else
-                    {
-                        if ((null != obj && meth.getDeclaringClass().equals(obj.getClass())) || Modifier.isStatic(meth.getModifiers()))
-                        {
-                            return meth.invoke(obj, params);
-                        }
-                        else
-                        {
-                            // A proxied method
-                            Method m = obj.getClass().getMethod(meth.getName(), meth.getParameterTypes());
-                            return m.invoke(obj, params);
-                        }
-                    }
-                }
-            };
+            Object reply = module.executeMethod(method, call.getParameters());
 
-            Object reply = chain.doFilter(object, method, call.getParameters());
             return new Reply(call.getCallId(), reply);
         }
         catch (SecurityException ex)
@@ -828,12 +701,12 @@ public class DefaultRemoter implements Remoter
     }
 
     /**
-     * Accessor for the CreatorManager that we configure
-     * @param creatorManager The new ConverterManager
+     * Accessor for the ModuleManager that we configure
+     * @param moduleManager The new ModuleManager
      */
-    public void setCreatorManager(CreatorManager creatorManager)
+    public void setModuleManager(ModuleManager moduleManager)
     {
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /**
@@ -852,15 +725,6 @@ public class DefaultRemoter implements Remoter
     public void setAccessControl(AccessControl accessControl)
     {
         this.accessControl = accessControl;
-    }
-
-    /**
-     * Accessor for the AjaxFilterManager
-     * @param ajaxFilterManager The AjaxFilterManager to set.
-     */
-    public void setAjaxFilterManager(AjaxFilterManager ajaxFilterManager)
-    {
-        this.ajaxFilterManager = ajaxFilterManager;
     }
 
     /**
@@ -919,14 +783,9 @@ public class DefaultRemoter implements Remoter
     private boolean debug = false;
 
     /**
-     * What AjaxFilters apply to which Ajax calls?
-     */
-    private AjaxFilterManager ajaxFilterManager = null;
-
-    /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected ModuleManager moduleManager = null;
 
     /**
      * How we convert beans - or in this case create client side classes

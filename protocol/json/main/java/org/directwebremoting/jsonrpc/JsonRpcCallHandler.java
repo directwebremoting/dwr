@@ -26,9 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.Creator;
-import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
@@ -75,7 +74,7 @@ public class JsonRpcCallHandler implements Handler
             // So I'm not rushing to fix this error
             Reader in = request.getReader();
             JsonParser parser = JsonParserFactory.get();
-            calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder(converterManager, creatorManager));
+            calls = (JsonRpcCalls) parser.parse(in, new JsonRpcCallsJsonDecoder(converterManager, moduleManager));
 
             if (calls.getCallCount() != 1)
             {
@@ -94,8 +93,7 @@ public class JsonRpcCallHandler implements Handler
             // Check the methods are accessible
             for (Call c : calls)
             {
-                Creator creator = creatorManager.getCreator(c.getScriptName(), true);
-                accessControl.assertExecutionIsPossible(creator, c.getScriptName(), c.getMethod());
+                accessControl.assertGeneralExecutionIsPossible(c.getScriptName(), c.getMethodDeclaration());
             }
 
             Replies replies = remoter.execute(calls);
@@ -154,8 +152,8 @@ public class JsonRpcCallHandler implements Handler
     }
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param converterManager The new DefaultConverterManager
+     * Accessor for the ConverterManager that we configure
+     * @param converterManager
      */
     public void setConverterManager(ConverterManager converterManager)
     {
@@ -209,18 +207,18 @@ public class JsonRpcCallHandler implements Handler
     protected AccessControl accessControl = null;
 
     /**
-     * Accessor for the DefaultCreatorManager that we configure
-     * @param creatorManager The new DefaultConverterManager
+     * Accessor for the ModuleManager that we configure
+     * @param moduleManager
      */
-    public void setCreatorManager(CreatorManager creatorManager)
+    public void setModuleManager(ModuleManager moduleManager)
     {
-        this.creatorManager = creatorManager;
+        this.moduleManager = moduleManager;
     }
 
     /**
      * How we create new beans
      */
-    protected CreatorManager creatorManager = null;
+    protected ModuleManager moduleManager = null;
 
     /**
      * The log stream

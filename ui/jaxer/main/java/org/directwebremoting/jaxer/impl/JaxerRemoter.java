@@ -17,8 +17,8 @@ package org.directwebremoting.jaxer.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.EnginePrivate;
+import org.directwebremoting.extend.Module;
 import org.directwebremoting.impl.DefaultRemoter;
 
 /**
@@ -34,19 +34,21 @@ public class JaxerRemoter extends DefaultRemoter
     @Override
     public String generateInterfaceScript(String fullCreatorName, boolean includeDto, String contextServletPath) throws SecurityException
     {
-        Creator creator = creatorManager.getCreator(fullCreatorName, false);
-        if (creator == null)
+        Module module = moduleManager.getModule(fullCreatorName, false);
+        if (module == null)
         {
             log.warn("Failed to find creator using: " + fullCreatorName);
             throw new SecurityException("Failed to find creator");
         }
 
-        String scriptName = creator.getJavascript();
+        String scriptName = module.getName();
 
         StringBuilder buffer = new StringBuilder();
 
         if (includeDto)
+        {
             buffer.append(createParameterDefinitions(scriptName));
+        }
         buffer.append(EnginePrivate.getEngineInitScript());
         buffer.append(createClassDefinition(scriptName));
         buffer.append(createPathDefinition(scriptName, contextServletPath));
