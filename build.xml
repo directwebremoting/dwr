@@ -377,6 +377,7 @@
 
 	<target name="run-tests-for-module" description="Run the JUnit tests for a module">
 		<echo message="Running tests for module: ${module}" />
+		<mkdir dir="${target}/junitReports" />
 		<if>
 			<available file="${source.root}/${module}/test/java" />
 			<then>
@@ -390,7 +391,7 @@
 						<!-- needed for log4j -->
 						<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
 					</classpath>
-					<batchtest todir="${target}">
+					<batchtest todir="${target}/junitReports">
 						<fileset dir="${source.root}/${module}/test/java">
 							<include name="**/*Test.java" />
 							<include name="**/Test*.java" />
