@@ -381,6 +381,7 @@
 			<available file="${source.root}/${module}/test/java" />
 			<then>
 				<junit printsummary="yes" fork="true" haltonfailure="yes">
+					<formatter type="xml"/>
 					<classpath>
 						<fileset dir="${target}/lib" includes="**/*.jar" />
 						<pathelement location="${target.root}/classes/demo" />
@@ -389,7 +390,7 @@
 						<!-- needed for log4j -->
 						<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
 					</classpath>
-					<batchtest>
+					<batchtest todir="${target}">
 						<fileset dir="${source.root}/${module}/test/java">
 							<include name="**/*Test.java" />
 							<include name="**/Test*.java" />
