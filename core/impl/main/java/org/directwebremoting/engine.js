@@ -1093,7 +1093,7 @@ if (typeof dwr == 'undefined') dwr = {};
       var elementset = (data.constructor && data.constructor.$dwrClassMembers ? data.constructor.$dwrClassMembers : data);
       var element;
       for (element in elementset) {
-        if (typeof data[element] != "function") {
+        if (element.charAt(0) != "$" && typeof data[element] != "function") {
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
           dwr.engine.serialize.convert(batch, referto, data[element], childName, depth + 1);
@@ -1129,21 +1129,30 @@ if (typeof dwr == 'undefined') dwr = {};
      * @see dwr.engine.serialize.convert() for parameter details
      */
     lookup:function(referto, data, name) {
-      var lookup;
-      // Can't use a map: getahead.org/ajax/javascript-gotchas
-      for (var i = 0; i < referto.length; i++) {
-        if (referto[i].data == data) {
-          lookup = referto[i];
-          break;
+      try {
+        if ("$_dwrConversion" in data) {
+          var dwrConversion = data.$_dwrConversion;
+          if (dwrConversion && referto[dwrConversion] == data)
+            return "reference:" + dwrConversion;
         }
+        data.$_dwrConversion = name;
+        referto[name] = data;
       }
-      if (lookup) {
-        return "reference:" + lookup.name;
-      }
-      referto.push({ data:data, name:name });
+      catch(err) { /*squelch*/ }
       return null;
     },
 
+    /**
+     * Clean up our conversion markers from user data
+     * @private
+     */
+    cleanup:function(referto) {
+      for(name in referto) {
+        var data = referto[name];
+        delete data.$_dwrConversion;
+      }
+    },
+    
     /**
      * Returns the classname of supplied argument obj. Similar to typeof, but
      * which returns the name of the constructor that created the object rather
@@ -1971,10 +1980,11 @@ if (typeof dwr == 'undefined') dwr = {};
       batch.map[prefix + "scriptName"] = scriptName;
       batch.map[prefix + "methodName"] = methodName;
       batch.map[prefix + "id"] = batch.map.callCount;
-      var converted = [];
+      var converted = {};
       for (var i = 0; i < stopAt; i++) {
         dwr.engine.serialize.convert(batch, converted, args[i], prefix + "param" + i, 0);
       }
+      dwr.engine.serialize.cleanup(converted);
     },
 
     /**
