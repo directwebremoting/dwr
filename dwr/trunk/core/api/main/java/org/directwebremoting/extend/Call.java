@@ -196,25 +196,28 @@ public class Call
                     continue allMethodsLoop;
                 }
 
-                /** Added to increase our ability to call overloaded methods accurately! */
-                // Is the inbound JavaScript type assignable to methodParamType?
-                // We are limited to what JavaScript gives us (number, date, boolean, etc.)
-                String javaScriptType = param.getType();
-                // If this method takes a vararg, the JavaScript type being passed is not
-                // an array, and this is the var argument we need to use the component type of the argument.
-                // Otherwise this method will be removed because javaScriptType (not array) and methodParamType
-                // (Array - this is the vararg) won't match.
-                if (m.isVarArgs() && !"array".equals(javaScriptType) && i == methodParamTypes.length - 1)
-                {
-                    methodParamType=methodParamType.getComponentType();
+                /** Added to increase our ability to call overloaded methods accurately!
+                 * Is the inbound JavaScript type assignable to methodParamType?
+                 * We are limited to what JavaScript gives us (number, date, boolean, etc.)
+                 * We only want to performn this if there are multiple methods with the same name (hack for now).
+                 */
+                if (allMethods.size() > 1) {
+                    String javaScriptType = param.getType();
+                    // If this method takes a vararg, the JavaScript type being passed is not
+                    // an array, and this is the var argument we need to use the component type of the argument.
+                    // Otherwise this method will be removed because javaScriptType (not array) and methodParamType
+                    // (Array - this is the vararg) won't match.
+                    if (m.isVarArgs() && !"array".equals(javaScriptType) && i == methodParamTypes.length - 1)
+                    {
+                        methodParamType=methodParamType.getComponentType();
+                    }
+                    if (!LocalUtil.isJavaScriptTypeAssignableTo(javaScriptType, methodParamType))
+                    {
+                        it.remove();
+                        continue allMethodsLoop;
+                    }
+                    /** end overloaded section */
                 }
-                // TODO - comment this out and test calling a method (long) with a string in jscript.
-                if (!LocalUtil.isJavaScriptTypeAssignableTo(javaScriptType, methodParamType))
-                {
-                    it.remove();
-                    continue allMethodsLoop;
-                }
-                /** end overloaded section */
             }
         }
 
