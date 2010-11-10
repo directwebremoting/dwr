@@ -66,7 +66,7 @@ a number of browsers.</p>
     you very long latency, not what we need for a clock, so we turn on comet or
     polling (whatever the server is configured to prefer).</p>
 	
-	<p>Next we specify our errorHandler and retry logic.  DWR's has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read more about this feature on our site</a>.</p> 
+	<p>Next we specify our errorHandler and retry logic.  DWR has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read more about this feature on our site</a>.</p> 
      
 	
     <p>The server code uses a ScheduledThreadPoolExecutor to call update the
