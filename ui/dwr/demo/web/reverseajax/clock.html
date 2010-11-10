@@ -12,15 +12,11 @@
   <script>
       window.onload=function()
       {
-           if (dwr.engine._scriptSessionId == null) {
-               setTimeout("window.onload()", 2000);
-           } else {
-               dwr.engine.setActiveReverseAjax(true);
-			   dwr.engine.setErrorHandler(errorHandler);
-			   dwr.engine.setPollStatusHandler(updatePollStatus);
-			   updatePollStatus(true);
-               Tabs.init('tabList', 'tabContents');
-           }          
+           dwr.engine.setActiveReverseAjax(true);
+		   dwr.engine.setErrorHandler(errorHandler);
+		   dwr.engine.setPollStatusHandler(updatePollStatus);
+		   updatePollStatus(true);
+           Tabs.init('tabList', 'tabContents');       
       }
 	  
 	  function errorHandler(message, ex) {
@@ -64,12 +60,15 @@ a number of browsers.</p>
 
   <div id="explainDiv">
     <h2>Client side script</h2>
-    <p>Virtually none. Other than setting up the tabs, all we do is to turn
+    <p>We  turn
     active Reverse Ajax on: <code>dwr.engine.setActiveReverseAjax(true);</code>.
     Reverse Ajax will work without comet, by using piggyback, however this gives
     you very long latency, not what we need for a clock, so we turn on comet or
     polling (whatever the server is configured to prefer).</p>
-
+	
+	<p>Next we specify our errorHandler and retry logic.  DWR's has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read more about this feature on our site</a>.</p> 
+     
+	
     <p>The server code uses a ScheduledThreadPoolExecutor to call update the
     screen once a second. The setClockDisplay looks like this:</p>
 
@@ -107,8 +106,23 @@ Browser.withPage(page, new Runnable()
 
 <h2>Javascript source:</h2>
 <pre>
-dwr.engine.setActiveReverseAjax(true);
-</pre>
+window.onload=function()
+{
+    dwr.engine.setActiveReverseAjax(true);
+    dwr.engine.setErrorHandler(errorHandler); // Called when a call and all retry attempts fail
+    dwr.engine.setPollStatusHandler(updatePollStatus); // Called when a retry changes the status
+    updatePollStatus(true); // Set the default status to true, we are online!
+    Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display      
+}
+	  
+function errorHandler(message, ex) {
+    dwr.util.setValue(&quot;error&quot;, &quot;&lt;font color='red'&gt;Cannot connect to server. Initializing retry logic.&lt;/font&gt;&quot;, {escapeHtml:false});
+    setTimeout(function() { dwr.util.setValue(&quot;error&quot;, &quot;&quot;); }, 5000)
+}
+	  
+function updatePollStatus(pollStatus) {
+    dwr.util.setValue(&quot;pollStatus&quot;, pollStatus ? &quot;&lt;font color='green'&gt;Online&lt;/font&gt;&quot; : &quot;&lt;font color='red'&gt;Offline&lt;/font&gt;&quot;, {escapeHtml:false});
+}</pre>
 
 <h2>Java source:</h2>
 <pre>
