@@ -2118,16 +2118,6 @@ if (typeof dwr == 'undefined') dwr = {};
             }
           }
         }
-        var bodyBuffer = [];
-        for (prop in batch.map) {
-          if (typeof batch.map[prop] != "function") {
-            bodyBuffer.push(prop);
-            bodyBuffer.push("=");
-            bodyBuffer.push(batch.map[prop]);
-            bodyBuffer.push(dwr.engine._postSeperator);
-          }
-        }
-        request.body = dwr.engine._contentRewriteHandler(bodyBuffer.join(""));
       }
       request.url = dwr.engine._urlRewriteHandler(urlBuffer.join(""));
       return request;
