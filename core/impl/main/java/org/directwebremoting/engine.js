@@ -400,7 +400,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** How many times have we re-tried a call? */
   dwr.engine._retries = 0;
-  dwr.engine._maxRetries = -1; // Unlimited retries TODO - this is not being used
+  dwr.engine._maxRetries = -1; // Unlimited retries
 
   /** The intervals between successive retries in seconds */
   dwr.engine._retryIntervals = [];
