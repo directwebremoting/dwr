@@ -2013,7 +2013,7 @@ if (typeof dwr == 'undefined') dwr = {};
       if (reqAttrs) {  
         for (propname in reqAttrs) {
           data = reqAttrs[propname];
-          if (typeof data != "function") batch.map["p-" + propname] = "" + data;
+          if (typeof data != "function") batch.attributes[propname] = data;
         }
       }      
     },
@@ -2078,6 +2078,14 @@ if (typeof dwr == 'undefined') dwr = {};
       var sessionMatch = location.href.match(sessionMatchExpr); 
       if (sessionMatch != null) { 
         urlBuffer.push(sessionMatch[1]); 
+      }
+
+      // Add attributes to the output map
+      if (batch.attributes) {
+        for (var attrname in batch.attributes) {
+          var data = batch.attributes[attrname];
+          if (typeof data != "function") batch.map["p-" + attrname] = "" + data;
+        }
       }
 
       var request = {};
