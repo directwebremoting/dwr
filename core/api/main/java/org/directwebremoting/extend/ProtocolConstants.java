@@ -106,7 +106,7 @@ public interface ProtocolConstants
     /**
      * What prefix do we put to the meta-data parameters
      */
-    public static final String INBOUND_KEY_METADATA = "p-";
+    public static final String INBOUND_KEY_METADATA = "a-";
 
     /**
      * The inbound key to declare if the XHR.responseText is readable when half filled

@@ -91,19 +91,12 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
-   * @Deprecated - use setRequestAttributes
-   */
-  dwr.engine.setParameters = function(parameters) {
-    dwr.engine.setRequestAttributes(parameters);
-  };
-
-  /**
-   * Custom request attributes for all DWR calls
-   * @param {Object} attributes Object containing name/value pairs for request attributes
+   * Custom attributes transferred to server for all DWR calls
+   * @param {Object} attributes Object containing name/value pairs for attributes
    * @see getahead.org/dwr/????
    */
-  dwr.engine.setRequestAttributes = function(attributes) {
-    dwr.engine._requestAttributes = attributes;
+  dwr.engine.setAttributes = function(attributes) {
+    dwr.engine._attributes = attributes;
   };
 
   /**
@@ -418,7 +411,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._headers = null;
 
   /** If you wish to send extra custom request attributes with each request */
-  dwr.engine._requestAttributes = null;
+  dwr.engine._attributes = null;
 
   /** Batch ids allow us to know which batch the server is answering */
   dwr.engine._nextBatchId = 0;
@@ -1886,7 +1879,7 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.postHooks.push(dwr.engine._postHook);
       }
 
-      dwr.engine.batch.populateHeadersAndParameters(batch);
+      dwr.engine.batch.populateHeadersAndAttributes(batch);
       return batch;
     },
 
@@ -1913,7 +1906,7 @@ if (typeof dwr == 'undefined') dwr = {};
         timeout:0,
         windowName:window.name
       };     
-      dwr.engine.batch.populateHeadersAndParameters(batch);
+      dwr.engine.batch.populateHeadersAndAttributes(batch);
       return batch;
     },
 
@@ -1922,7 +1915,7 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @param {Object} batch The destination
      */
-    populateHeadersAndParameters:function(batch) {
+    populateHeadersAndAttributes:function(batch) {
       var propname, data;
       batch.headers = {};
       if (dwr.engine._headers) {
@@ -1932,9 +1925,9 @@ if (typeof dwr == 'undefined') dwr = {};
         }
       }
       batch.attributes = {}; // props to add as request attributes
-      if (dwr.engine._requestAttributes) {
-        for (propname in dwr.engine._requestAttributes) {
-          data = dwr.engine._requestAttributes[propname];
+      if (dwr.engine._attributes) {
+        for (propname in dwr.engine._attributes) {
+          data = dwr.engine._attributes[propname];
           if (typeof data != "function") batch.attributes[propname] = data;
         }
       }
@@ -2007,12 +2000,11 @@ if (typeof dwr == 'undefined') dwr = {};
           if (typeof data != "function") batch.headers[propname] = data;
         }
       }
-      var reqAttrs = null;
-      if (overrides.parameters) reqAttrs = overrides.parameters;
-      if (overrides.requestAttributes) reqAttrs = overrides.requestAttributes;
-      if (reqAttrs) {  
-        for (propname in reqAttrs) {
-          data = reqAttrs[propname];
+      var attrs = null;
+      if (overrides.attributes) attrs = overrides.attributes;
+      if (attrs) {  
+        for (propname in attrs) {
+          data = attrs[propname];
           if (typeof data != "function") batch.attributes[propname] = data;
         }
       }      
@@ -2084,7 +2076,7 @@ if (typeof dwr == 'undefined') dwr = {};
       if (batch.attributes) {
         for (var attrname in batch.attributes) {
           var data = batch.attributes[attrname];
-          if (typeof data != "function") batch.map["p-" + attrname] = "" + data;
+          if (typeof data != "function") batch.map["a-" + attrname] = "" + data;
         }
       }
 
