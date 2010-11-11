@@ -2118,6 +2118,7 @@ if (typeof dwr == 'undefined') dwr = {};
             }
           }
         }
+        request.body = dwr.engine._contentRewriteHandler(request.body);
       }
       request.url = dwr.engine._urlRewriteHandler(urlBuffer.join(""));
       return request;
