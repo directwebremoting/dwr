@@ -2100,6 +2100,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       else {
         // PERFORMANCE: for iframe mode this is thrown away.
+        request.body = "";
         if (dwr.engine.isIE <= 7) {
           // Use array joining on IE1-7 (fastest)
           var buf = [];
