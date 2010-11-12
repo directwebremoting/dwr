@@ -119,7 +119,7 @@ public class DefaultConverterManager implements ConverterManager
         else
         {
             // Check that we don't have this one already
-            Converter other = converters.get(match);
+            Converter other = convertersByMatch.get(match);
             if (other != null)
             {
                 Loggers.STARTUP.warn("Clash of converters for " + match + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
@@ -134,56 +134,8 @@ public class DefaultConverterManager implements ConverterManager
                 try
                 {
                     NamedConverter namedConverter = (NamedConverter) converter;
-
-                    // Set up stuff for mapped JavaScript class (if any)
-                    if (LocalUtil.hasLength(namedConverter.getJavascript()))
-                    {
-                        Class<?> javaClass = LocalUtil.classForName(match);
-                        namedConverter.setJavascript(inferClassName(match, namedConverter.getJavascript()));
-                        namedConverter.setInstanceType(javaClass);
-
-                        // Set up stuff for mapped JavaScript superclass (if not already assigned)
-                        if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
-                        {
-                            // (Here we depend on that the match string is a non-wildcarded
-                            // Java class name and the relevant match strings in the
-                            // converters collection are also non-wildcarded Java
-                            // class/interface names)
-
-                            // First check if any of our super-classes are mapped
-                            Class<?> javaSuperClass = javaClass.getSuperclass();
-                            while(javaSuperClass != null)
-                            {
-                                String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
-                                if (jsSuperClassName != null)
-                                {
-                                    namedConverter.setJavascriptSuperClass(jsSuperClassName);
-                                    break;
-                                }
-
-                                // Continue with next class
-                                javaSuperClass = javaSuperClass.getSuperclass();
-                            }
-
-                            // If we still have no superclass then continue trying with interfaces
-                            if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
-                            {
-                                Class<?> checkInterfacesOnClass = javaClass;
-                                while(checkInterfacesOnClass != null)
-                                {
-                                    String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
-                                    if (jsSuperClassName != null)
-                                    {
-                                        namedConverter.setJavascriptSuperClass(jsSuperClassName);
-                                        break;
-                                    }
-
-                                    // Continue with next class
-                                    checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
-                                }
-                            }
-                        }
-                    }
+                    Class<?> javaClass = LocalUtil.classForName(match);
+                    setUpClassMapping(namedConverter, javaClass);
                 }
                 catch (Exception cne)
                 {
@@ -191,7 +143,96 @@ public class DefaultConverterManager implements ConverterManager
                 }
             }
 
-            converters.put(match, converter);
+            convertersByMatch.put(match, converter);
+        }
+    }
+
+    /* (non-Javadoc)
+     *
+     * Called only at start-up! It is important that this method only be called at start-up.  Otherwise we
+     * will need to modify it so it is thread safe.
+     *
+     * @see org.directwebremoting.extend.ConverterManager#addConverter(java.lang.Class, org.directwebremoting.extend.Converter)
+     */
+    public void addConverter(Class<?> clazz, Converter converter)
+    {
+        // Check that we don't have this one already
+        Converter other = convertersByClass.get(clazz);
+        if (other != null)
+        {
+            Loggers.STARTUP.warn("Clash of converters for " + clazz.getName() + ". Using " + converter.getClass().getName() + " in place of " + other.getClass().getName());
+        }
+
+        Loggers.STARTUP.debug("- adding converter: " + converter.getClass().getSimpleName() + " for " + clazz.getName());
+
+        converter.setConverterManager(this);
+
+        if (converter instanceof NamedConverter)
+        {
+            NamedConverter namedConverter = (NamedConverter) converter;
+            setUpClassMapping(namedConverter, clazz);
+        }
+
+        convertersByClass.put(clazz, converter);
+    }
+
+    /**
+     * Does all the initializations for converters using class-mapping (set up
+     * superclass, expand wildcards, etc)
+     * @param namedConverter converter that may use class-mapping
+     * @param clazz the java class to convert using class-mapping
+     */
+    protected void setUpClassMapping(NamedConverter namedConverter, Class<?> clazz)
+    {
+        // Set up stuff for mapped JavaScript class (if any)
+        if (LocalUtil.hasLength(namedConverter.getJavascript()))
+        {
+            namedConverter.setJavascript(inferClassName(clazz.getName(), namedConverter.getJavascript()));
+            namedConverter.setInstanceType(clazz);
+
+            // Set up stuff for mapped JavaScript superclass (if not already assigned)
+            if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+            {
+                // (Here we depend on that the match string is a non-wildcarded
+                // Java class name and the relevant match strings in the
+                // converters collection are also non-wildcarded Java
+                // class/interface names)
+
+                // First check if any of our super-classes are mapped
+                Class<?> javaSuperClass = clazz.getSuperclass();
+                while(javaSuperClass != null)
+                {
+                    String jsSuperClassName = getMappedJavaScriptClassName(javaSuperClass);
+                    if (jsSuperClassName != null)
+                    {
+                        namedConverter.setJavascriptSuperClass(jsSuperClassName);
+                        break;
+                    }
+
+                    // Continue with next class
+                    javaSuperClass = javaSuperClass.getSuperclass();
+                }
+
+                // If we still have no superclass then continue trying with interfaces
+                if (!LocalUtil.hasLength(namedConverter.getJavascriptSuperClass()))
+                {
+                    Class<?> checkInterfacesOnClass = clazz;
+                    while(checkInterfacesOnClass != null)
+                    {
+                        String jsSuperClassName = findMappedJavaScriptClassNameForAnyInterface(checkInterfacesOnClass);
+                        if (jsSuperClassName != null)
+                        {
+                            namedConverter.setJavascriptSuperClass(jsSuperClassName);
+                            break;
+                        }
+
+                        // Continue with next class
+                        checkInterfacesOnClass = checkInterfacesOnClass.getSuperclass();
+                    }
+                }
+            }
+
+            convertersByJavascript.put(namedConverter.getJavascript(), namedConverter);
         }
     }
 
@@ -231,12 +272,12 @@ public class DefaultConverterManager implements ConverterManager
     /**
      * Convenience method to find a class's mapped JavaScript class name IF
      * the Java class is being converted and IF there is a mapped class name.
-     * @param javaClass the java class
+     * @param clazz the java class
      * @return a non-empty classname, or null if not found
      */
-    protected String getMappedJavaScriptClassName(Class<?> javaClass)
+    protected String getMappedJavaScriptClassName(Class<?> clazz)
     {
-        Converter conv = converters.get(javaClass.getName());
+        Converter conv = getConverter(clazz);
         if (conv != null)
         {
             // Check if mapped
@@ -286,7 +327,7 @@ public class DefaultConverterManager implements ConverterManager
      */
     public Collection<String> getConverterMatchStrings()
     {
-        return Collections.unmodifiableSet(converters.keySet());
+        return Collections.unmodifiableSet(convertersByMatch.keySet());
     }
 
     /* (non-Javadoc)
@@ -294,15 +335,15 @@ public class DefaultConverterManager implements ConverterManager
      */
     public Converter getConverterByMatchString(String match)
     {
-        return converters.get(match);
+        return convertersByMatch.get(match);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#isConvertable(java.lang.Class)
      */
-    public boolean isConvertable(Class<?> paramType)
+    public boolean isConvertable(Class<?> clazz)
     {
-        return getConverter(paramType) != null;
+        return getConverter(clazz) != null;
     }
 
     /* (non-Javadoc)
@@ -318,7 +359,7 @@ public class DefaultConverterManager implements ConverterManager
         String objectName = data.getNamedObjectType();
         if (objectName != null)
         {
-            NamedConverter converter = getNamedConverter(Object.class, objectName);
+            NamedConverter converter = getNamedConverter(objectName, Object.class);
             if (converter != null)
             {
                 return converter.getInstanceType();
@@ -353,7 +394,7 @@ public class DefaultConverterManager implements ConverterManager
             String type = data.getNamedObjectType();
             if (type != null)
             {
-                converter = getNamedConverter(paramType, type);
+                converter = getNamedConverter(type, paramType);
             }
 
             // Fall back to the standard way of locating a converter if we
@@ -450,10 +491,10 @@ public class DefaultConverterManager implements ConverterManager
      */
     public void setConverters(Map<String, Converter> converters)
     {
-        synchronized (this.converters)
+        synchronized (this.convertersByMatch)
         {
-            this.converters.clear();
-            this.converters.putAll(converters);
+            this.convertersByMatch.clear();
+            this.convertersByMatch.putAll(converters);
         }
     }
 
@@ -480,69 +521,55 @@ public class DefaultConverterManager implements ConverterManager
      * @param paramType The class that we are converting to
      * @param javascriptClassName The type name as passed in from the client
      * @return The Converter that matches this request (if any)
-     * @throws ConversionException IF marshalling fails
+     * @throws ConversionException If marshalling fails
      */
-    protected NamedConverter getNamedConverter(Class<?> paramType, String javascriptClassName) throws ConversionException
+    protected NamedConverter getNamedConverter(String javascriptClassName, Class<?> paramType) throws ConversionException
     {
-        // Locate a converter for this JavaScript classname
-        for (Map.Entry<String, Converter> entry : converters.entrySet())
+        NamedConverter namedConv = getNamedConverter(javascriptClassName);
+        if (namedConv != null)
         {
-            String match = entry.getKey();
-            Converter conv = entry.getValue();
-
-            // JavaScript mapping is only applicable for compound converters
-            if (conv instanceof NamedConverter)
+            if (paramType.isAssignableFrom(namedConv.getInstanceType()))
             {
-                NamedConverter boConv = (NamedConverter) conv;
-                if (boConv.getJavascript() != null && boConv.getJavascript().equals(javascriptClassName))
-                {
-                    // We found a potential converter! But is the converter's
-                    // Java class compatible with the parameter type?
-                    try
-                    {
-                        Class<?> inboundClass = LocalUtil.classForName(match);
-                        if (paramType.isAssignableFrom(inboundClass))
-                        {
-                            // Hack: We also want to make sure that the
-                            // converter creates its object based on the inbound
-                            // class instead of the parameter type, and we have
-                            // to use the other reference for this:
-                            boConv.setInstanceType(inboundClass);
-                            return boConv;
-                        }
-                    }
-                    catch (ClassNotFoundException ex)
-                    {
-                        throw new ConversionException(paramType, ex);
-                    }
-                }
+                return namedConv;
             }
         }
         return null;
     }
 
     /**
-     * @param paramType The type to find a converter for
+     * Find a converter based on class-mapped JavaScript class name.
+     * @param javascriptClassName The type name as passed in from the client
+     * @return The Converter that matches this request (if any)
+     * @throws ConversionException If marshalling fails
+     */
+    protected NamedConverter getNamedConverter(String javascriptClassName) throws ConversionException
+    {
+        return convertersByJavascript.get(javascriptClassName);
+    }
+
+    /**
+     * @param clazz The type to find a converter for
      * @return The converter for the given type, or null if one can't be found
      */
-    private Converter getConverter(Class<?> paramType)
+    private Converter getConverter(Class<?> clazz)
     {
-        // Can we find a converter assignable to paramType in the HashMap?
-        Converter converter = getConverterAssignableFrom(paramType);
+        // Can we find a converter assignable to clazz in the HashMap?
+        Converter converter = getConverterAssignableFrom(clazz);
         if (converter != null)
         {
             return converter;
         }
 
-        String lookup = paramType.getName();
+        String lookup = clazz.getName();
 
         // Before we start trying for a match on package parts we check for
         // dynamic proxies
         if (lookup.startsWith("$Proxy"))
         {
-            converter = converters.get("$Proxy*");
+            converter = convertersByMatch.get("$Proxy*");
             if (converter != null)
             {
+                converterCache.putIfAbsent(clazz, converter);
                 return converter;
             }
         }
@@ -550,16 +577,18 @@ public class DefaultConverterManager implements ConverterManager
         while (true)
         {
             // Can we find a converter using wildcards?
-            converter = converters.get(lookup + ".*");
+            converter = convertersByMatch.get(lookup + ".*");
             if (converter != null)
             {
+                converterCache.putIfAbsent(clazz, converter);
                 return converter;
             }
 
             // Arrays can have wildcards like [L* so we don't require a '.'
-            converter = converters.get(lookup + '*');
+            converter = convertersByMatch.get(lookup + '*');
             if (converter != null)
             {
+                converterCache.putIfAbsent(clazz, converter);
                 return converter;
             }
 
@@ -594,9 +623,10 @@ public class DefaultConverterManager implements ConverterManager
                 lookup = lookup.substring(arrayMarkers - 1, arrayMarkers + 1);
 
                 // Now can we find it?
-                converter = converters.get(lookup);
+                converter = convertersByMatch.get(lookup);
                 if (converter != null)
                 {
+                    converterCache.putIfAbsent(clazz, converter);
                     return converter;
                 }
             }
@@ -606,49 +636,63 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /**
-     * @param paramType The type to find a converter for
+     * @param clazz The type to find a converter for
      * @return The converter assignable for the given type, or null if one can't be found
      */
-    private Converter getConverterAssignableFrom(Class<?> paramType)
+    private Converter getConverterAssignableFrom(Class<?> clazz)
     {
-        if (paramType == null)
+        if (clazz == null)
         {
             return null;
         }
 
-        String lookup = paramType.getName();
-
-        // Can we find the converter for paramType in the converters HashMap?
-        Converter converter = converters.get(lookup);
+        // Can we find a suitable converter already in the converter cache?
+        Converter converter = converterCache.get(clazz);
         if (converter != null)
         {
             return converter;
         }
 
-        // Lookup all of the interfaces of this class for a match
-        for (Class<?> anInterface : paramType.getInterfaces())
-        {
-            converter = getConverterAssignableFrom(anInterface);
+        try {
+            // Can we find a matching converter supplied by class?
+            converter = convertersByClass.get(clazz);
             if (converter != null)
             {
-                converters.putIfAbsent(lookup, converter);
                 return converter;
             }
+
+            // Can we find a matching converter supplied by class name?
+            converter = convertersByMatch.get(clazz.getName());
+            if (converter != null)
+            {
+                return converter;
+            }
+
+            // Lookup all of the interfaces of this class for a match
+            for (Class<?> anInterface : clazz.getInterfaces())
+            {
+                converter = getConverterAssignableFrom(anInterface);
+                if (converter != null)
+                {
+                    return converter;
+                }
+            }
+
+            // Let's search it in superClass
+            converter = getConverterAssignableFrom(clazz.getSuperclass());
+            if (converter != null)
+            {
+                return converter;
+            }
+
+            return null;
         }
-
-        // Let's search it in paramType superClass
-        converter = getConverterAssignableFrom(paramType.getSuperclass());
-        /* David Marginian - This is causing some issues so
-         * we are commenting it out for now.
-         *
-         * See: http://bugs.directwebremoting.org/bugs/browse/DWR-373
-         *
-         * if (converter != null && paramType.isAnonymousClass())
-        {
-            converters.put(lookup, converter);
-        }*/
-
-        return converter;
+        finally {
+            if (converter != null)
+            {
+                converterCache.putIfAbsent(clazz, converter);
+            }
+        }
     }
 
     /**
@@ -657,14 +701,29 @@ public class DefaultConverterManager implements ConverterManager
     protected Map<Property, Property> propertyOverrideMap = new HashMap<Property, Property>();
 
     /**
-     * The list of the available converters
+     * The list of the registered converter types
      */
     protected Map<String, Class<? extends Converter>> converterTypes = new HashMap<String, Class<? extends Converter>>();
 
     /**
-     * The list of the configured converters
+     * The list of converters registered by class name match string
      */
-    protected final ConcurrentMap<String, Converter> converters = new ConcurrentHashMap<String, Converter>();
+    protected Map<String, Converter> convertersByMatch = new HashMap<String, Converter>();
+
+    /**
+     * The list of converters registered by class
+     */
+    protected Map<Class<?>, Converter> convertersByClass = new HashMap<Class<?>, Converter>();
+
+    /**
+     * The converter cache used during conversion (gets populated based on registered converters)
+     */
+    protected final Map<String, NamedConverter> convertersByJavascript = new HashMap<String, NamedConverter>();
+
+    /**
+     * The converter cache used during conversion (gets populated based on registered converters)
+     */
+    protected final ConcurrentMap<Class<?>, Converter> converterCache = new ConcurrentHashMap<Class<?>, Converter>();
 
     /**
      * The properties that we don't warn about if they don't exist.

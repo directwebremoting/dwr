@@ -35,7 +35,7 @@ public interface ConverterManager
     void addConverterType(String id, String className);
 
     /**
-     * Add a new converter
+     * Add a new converter based on a match string
      * @param match The class name(s) to match
      * @param type The name of the converter type
      * @param params The extra parameters to allow the creator to configure itself
@@ -46,12 +46,21 @@ public interface ConverterManager
     void addConverter(String match, String type, Map<String, String> params) throws IllegalArgumentException, InstantiationException, IllegalAccessException;
 
     /**
-     * Add a new converter
+     * Add a new converter based on a match string
      * @param match The class name(s) to match
      * @param converter The converter to add
      * @throws IllegalArgumentException If we have a duplicate name
      */
     void addConverter(String match, Converter converter) throws IllegalArgumentException;
+
+    /**
+     * Add a new converter based on a loaded class. DWR will not make any decisions
+     * based on the class's name, which allows for multiple registrations for the
+     * same class name (f ex needed in OSGI).
+     * @param clazz The class to match
+     * @param converter The converter to add
+     */
+    void addConverter(Class<?> clazz, Converter converter);
 
     /**
      * In order to be able to create stub remote objects we need to know what

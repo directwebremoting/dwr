@@ -80,6 +80,14 @@ public class InternalConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#addConverter(java.lang.Class, org.directwebremoting.extend.Converter)
+     */
+    public void addConverter(Class<?> clazz, Converter converter)
+    {
+        converterManager.addConverter(clazz, converter);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#getConverterMatchStrings()
      */
     public Collection<String> getConverterMatchStrings()
