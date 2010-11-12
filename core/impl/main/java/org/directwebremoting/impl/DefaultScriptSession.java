@@ -341,7 +341,7 @@ public class DefaultScriptSession implements RealScriptSession
     public void removeScriptConduit(ScriptConduit conduit)
     {
         invalidateIfNeeded();
-        synchronized (this.conduits)
+        synchronized (this.scripts)
         {
             boolean removed = conduits.remove(conduit);
             if (!removed)
