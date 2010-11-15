@@ -18,6 +18,8 @@ package org.directwebremoting.extend;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
+import org.directwebremoting.util.LocalUtil;
+
 /**
  * An immutable value object for method declaration information.
  * @author Mike Wilson [mikewse at g mail dot com]
@@ -30,28 +32,33 @@ public class MethodDeclaration
      */
     public MethodDeclaration(Method method)
     {
-        this(method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes(), method.getGenericParameterTypes(), method.isVarArgs(), method.getReturnType(), method.getGenericReturnType());
+        this(method.getDeclaringClass().getName(), method.getName(), method.getGenericParameterTypes(), method.isVarArgs(), method.getGenericReturnType());
     }
 
     /**
      * Initializes the logical method declaration from primitive data.
      * @param moduleName
      * @param methodName
-     * @param parameterTypes
      * @param genericParameterTypes
      * @param varArgs
-     * @param returnType
      * @param genericReturnType
      */
-    public MethodDeclaration(String moduleName, String methodName, Class<?>[] parameterTypes, Type[] genericParameterTypes, boolean varArgs, Class<?> returnType, Type genericReturnType)
+    public MethodDeclaration(String moduleName, String methodName, Type[] genericParameterTypes, boolean varArgs, Type genericReturnType)
     {
         this.moduleName = moduleName;
         this.methodName = methodName;
-        this.parameterTypes = parameterTypes;
         this.genericParameterTypes = genericParameterTypes;
         this.varArgs = varArgs;
-        this.returnType = returnType;
         this.genericReturnType = genericReturnType;
+
+        // Interpolate raw parameter types
+        parameterTypes = new Class<?>[genericParameterTypes.length];
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            parameterTypes[i] = LocalUtil.toClass(genericParameterTypes[i], toString());
+        }
+
+        // Interpolate raw return type
+        returnType = LocalUtil.toClass(genericReturnType, toString());
     }
 
     public String getModuleName()
@@ -125,7 +132,7 @@ public class MethodDeclaration
         StringBuilder buf = new StringBuilder();
         buf.append(methodName + "(");
         boolean first = true;
-        for(Class<?> p : parameterTypes)
+        for(Type p : genericParameterTypes)
         {
             if (!first)
             {
