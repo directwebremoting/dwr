@@ -347,16 +347,6 @@ public final class InboundContext
         return buffer.toString();
     }
 
-    public boolean isJsonInput()
-    {
-        return jsonInput;
-    }
-
-    public void setJsonInput(boolean jsonInput)
-    {
-        this.jsonInput = jsonInput;
-    }
-
     /**
      * A variable to use if we need to tell someone that we got nothing.
      */
@@ -390,8 +380,4 @@ public final class InboundContext
      */
     private static final Log log = LogFactory.getLog(InboundContext.class);
 
-    /**
-     *
-     */
-    private boolean jsonInput = false;
 }
