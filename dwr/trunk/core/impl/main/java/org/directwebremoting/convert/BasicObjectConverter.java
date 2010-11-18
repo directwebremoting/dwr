@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +39,6 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.json.JsonUtil;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Pair;
 
@@ -79,30 +78,13 @@ public abstract class BasicObjectConverter implements NamedConverter
             throw new ConversionException(paramType, "Data conversion error. See logs for more details.");
         }
 
-        String valuePreSubstring = new String(value); // used to parse json
         value = value.substring(1, value.length() - 1);
 
         try
         {
             // Loop through the properties passed in
-            Map<String, String> tokens = null;
-            if (!data.getContext().isJsonInput())
-            {
-                tokens = extractInboundTokens(paramType, value);
-            } else
-            {
-                // If the input is JSON, delegate to our JSON serializer.
-                Object bean;
-                if (instanceType != null)
-                {
-                    bean = instanceType.newInstance();
-                }
-                else
-                {
-                    bean = paramType.newInstance();
-                }
-                return JsonUtil.toReflectedTypes(bean.getClass(), valuePreSubstring);
-            }
+            Map<String, String> tokens = extractInboundTokens(paramType, value);
+
             if (paramsString == null)
             {
                 return createUsingSetterInjection(paramType, data, tokens);
