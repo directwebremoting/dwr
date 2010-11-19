@@ -122,7 +122,6 @@ public class JsonpCallHandler implements Handler
     public Calls convertToCalls(HttpServletRequest request)
     {
         InboundContext inboundContext = new InboundContext();
-        inboundContext.setJsonInput(true);
         String pathInfo = request.getPathInfo();
         String[] pathParts = pathInfo.split("/");
 
