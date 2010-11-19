@@ -70,7 +70,7 @@ public class UrlProcessor implements Handler, InitializingBean
                 }
                 else if (bean instanceof String)
                 {
-                    log.error("Discarding non Handler for " + name + " (" + bean + " can not be loaded)");
+                    log.info("Probably not an issue: the " + name + " (" + bean + ") Handler is not available. This is only an problem if you wanted to use it.");
                 }
                 else
                 {
