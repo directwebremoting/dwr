@@ -131,30 +131,12 @@ public class Util
     @SuppressWarnings("unused")
     public static void addRows(String elementId, String[][] data, String options)
     {
-        StringBuffer functions = new StringBuffer();
-
-        int rowCount = 0;
-        for (Object ignore : data)
-        {
-            functions.append("function(data) { return data[").append(rowCount++).append("]},");
+        if (null == data || data.length == 0 || null == data[0]) {
+            return;
         }
-
-        if (rowCount > 0)
-        {
-            functions.deleteCharAt(functions.length() - 1);
-
-            ScriptBuffer script = new ScriptBuffer();
-            script.appendScript("dwr.util.addRows(")
-                  .appendData(elementId)
-                  .appendScript(",")
-                  .appendData(data)
-                  .appendScript(",")
-                  .appendScript("[" + functions.toString() + "]")
-                  .appendScript(options == null ? "" : ", " + options)
-                  .appendScript(");");
-
-            ScriptSessions.addScript(script);
-        }
+        int rowCount = data.length;
+        int colCount = data[0].length;
+        buildAddRowsScript(elementId, data, options, rowCount, colCount);
     }
 
     /**
@@ -178,30 +160,12 @@ public class Util
     @SuppressWarnings("unused")
     public static void addRows(String elementId, Collection<Collection<String>> data, String options)
     {
-        StringBuffer functions = new StringBuffer();
-
-        int rowCount = 0;
-        for (Object ignore : data)
-        {
-            functions.append("function(data) { return data[").append(rowCount++).append("]},");
+        if (null == data || data.size() == 0 || data.iterator().hasNext()) {
+            return;
         }
-
-        if (rowCount > 0)
-        {
-            functions.deleteCharAt(functions.length() - 1);
-
-            ScriptBuffer script = new ScriptBuffer();
-            script.appendScript("dwr.util.addRows(")
-                  .appendData(elementId)
-                  .appendScript(",")
-                  .appendData(data)
-                  .appendScript(",")
-                  .appendScript("[" + functions.toString() + "]")
-                  .appendScript(options == null ? "" : ", " + options)
-                  .appendScript(");");
-
-            ScriptSessions.addScript(script);
-        }
+        int rowCount = data.size();
+        int colCount = data.iterator().next().size();
+        buildAddRowsScript(elementId, data, options, rowCount, colCount);
     }
 
     /**
@@ -213,6 +177,37 @@ public class Util
     public static void addRows(String elementId, Collection<Collection<String>> data)
     {
         addRows(elementId, data, null);
+    }
+
+    /**
+     * Create rows inside a the table, tbody, thead or tfoot element (given by id).
+     * <p><a href="http://getahead.org/dwr/browser/tables">More</a>.
+     * @param elementId The HTML element to update (by id)
+     * @param data The cells to add to the table
+     * @param options See link above for documentation on the options
+     * @param rowCount The number of rows that are being added
+     * @param colCount The number of columns that are being added
+     */
+    private static void buildAddRowsScript(String elementId, Object data, String options, int rowCount, int colCount) {
+        StringBuffer functions = new StringBuffer();
+        for (int i=0; i < colCount; i++)
+        {
+            functions.append("function(data) { return data[").append(i).append("]},");
+        }
+        if (rowCount > 0)
+        {
+            functions.deleteCharAt(functions.length() - 1);
+            ScriptBuffer script = new ScriptBuffer();
+            script.appendScript("dwr.util.addRows(")
+                  .appendData(elementId)
+                  .appendScript(",")
+                  .appendData(data)
+                  .appendScript(",")
+                  .appendScript("[" + functions.toString() + "]")
+                  .appendScript(options == null ? "" : ", " + options)
+                  .appendScript(");");
+            ScriptSessions.addScript(script);
+        }
     }
 
     /**
