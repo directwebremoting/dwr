@@ -19,7 +19,7 @@
 		   updatePollStatus(true);
            Tabs.init('tabList', 'tabContents');  
            PeopleTable.updateTableDisplay(); 
- 	       dwr.util.byId("disable").style.display = 'none';    
+ 	       addAttributeToScriptSession();    
       }
 	  
 	  function errorHandler(message, ex) {
@@ -53,9 +53,9 @@
 
 <h1>Server Side Reverse Ajax Clock</h1>
 
-<p>Creating a clock in a web page is easy, but what about a clock controlled by
-the server? This demo shows how use use a separate server side thread to control
-a number of browsers.</p>
+<p>Creating a table in a web page is easy, but what about a table controlled by
+the server? This demo shows how to use a separate server side thread to control
+a number of browsers.  When enabled updates will be sent to this pages table every 10 seconds.</p>
 
 <ul id="tabList">
   <li><a href="#" tabId="demoDiv">Demo</a></li>
@@ -92,17 +92,17 @@ a number of browsers.</p>
 <h2>HTML source:</h2>
 <pre>
 &lt;input type="button" value="Enable page updates" onclick="addAttributeToScriptSession();"/&gt;
-    &lt;input type="button" value="Disable page updates" onclick="removeAttributeToScriptSession();"/&gt;
-    &lt;table&gt;
-      &lt;thead&gt;
-       &lt;th>Id&lt;/th&gt;
-       &lt;th>Name&lt;/th&gt;
-       &lt;th>Address&lt;/th&gt;
-       &lt;th>Age&lt;/th&gt;
-       &lt;th>Is Superhero?&lt;/th&gt;
-      &lt;/thead&gt;
-      &lt;tbody id="peopleTable">&lt;/tbody&gt;
-    &lt;/table&gt;    
+&lt;input type="button" value="Disable page updates" onclick="removeAttributeToScriptSession();"/&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;th>Id&lt;/th&gt;
+      &lt;th>Name&lt;/th&gt;
+      &lt;th>Address&lt;/th&gt;
+      &lt;th>Age&lt;/th&gt;
+      &lt;th>Is Superhero?&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody id="peopleTable">&lt;/tbody&gt;
+  &lt;/table&gt;    
 </pre>
 
 <h2>Javascript source:</h2>
@@ -116,6 +116,7 @@ window.onload=function()
 	dwr.engine.setNotifyServerOnPageUnload(true); // Optional - When the page is unloaded, remove this ScriptSession.	
     Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display    
     PeopleTable.updateTableDisplay(); // Make a call to the server to begin updating the table!   
+    addAttributeToScriptSession(); // Make a remote call to the server to add an attribute onto the ScriptSession which will be used in determining what pages receive updates!
 }
 	  
 function errorHandler(message, ex) {
@@ -144,12 +145,12 @@ function removeAttributeToScriptSession() {
 public class PeopleTable implements Runnable
 {
 	/**
-	 * Constructor - Creates a thread pool that runs every 30 seconds.
+	 * Constructor - Creates a thread pool that runs every 10 seconds.
 	 */
     public PeopleTable()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 30, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 10, TimeUnit.SECONDS);
     }
 
     /* (non-Javadoc)
