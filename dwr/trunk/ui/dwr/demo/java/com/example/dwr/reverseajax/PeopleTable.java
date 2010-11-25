@@ -40,7 +40,6 @@ public class PeopleTable implements Runnable
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
-    @Override
     public void run()
     {
         updateTableDisplay();
