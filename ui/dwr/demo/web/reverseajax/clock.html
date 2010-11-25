@@ -108,10 +108,10 @@ Browser.withPage(page, new Runnable()
 <pre>
 window.onload=function()
 {
-    dwr.engine.setActiveReverseAjax(true);
-    dwr.engine.setErrorHandler(errorHandler); // Called when a call and all retry attempts fail
-    dwr.engine.setPollStatusHandler(updatePollStatus); // Called when a retry changes the status
-    updatePollStatus(true); // Set the default status to true, we are online!
+    dwr.engine.setActiveReverseAjax(true); // Initiate reverse ajax polling
+    dwr.engine.setErrorHandler(errorHandler); // Optional - Called when a call and all retry attempts fail
+    dwr.engine.setPollStatusHandler(updatePollStatus); // Optional - function to call when the reverse ajax status changes (e.g. online to offline)
+    updatePollStatus(true); // Optional - We are online right now!  Until DWR determines we are not!
     Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display      
 }
 	  
