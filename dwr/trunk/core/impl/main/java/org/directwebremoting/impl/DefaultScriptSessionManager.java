@@ -96,7 +96,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
             // We only use a "full" script session when we got an id from the
             // client layer. When there is no script session id we just create
             // a temporary script session for the duration of the call
-            if (sentScriptId.equals(""))
+            if ("".equals(sentScriptId))
             {
                 scriptSession = new DefaultScriptSession("", this, page);
                 Loggers.SESSION.debug("Creating temporary script session on " + scriptSession.getPage());
