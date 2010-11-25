@@ -30,6 +30,10 @@
     <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.reverseajax.Clock"/>
     </create>
+    
+    <create creator="new" scope="application">
+      <param name="class" value="com.example.dwr.reverseajax.PeopleTable"/>
+    </create>
 
     <!-- people -->
     <create creator="new" scope="application">
