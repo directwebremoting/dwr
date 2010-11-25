@@ -52,7 +52,6 @@ public class PeopleTable implements Runnable
         ScriptSessionFilter attributeFilter = new AttributeScriptSessionFilter(SCRIPT_SESSION_ATTR);
         Browser.withPageFiltered(page, attributeFilter, new Runnable()
         {
-            @Override
             public void run()
             {
                 Person person = new Person(true);
@@ -84,7 +83,6 @@ public class PeopleTable implements Runnable
         /* (non-Javadoc)
          * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
          */
-        @Override
         public boolean match(ScriptSession session)
         {
             Object check = session.getAttribute(attributeName);
