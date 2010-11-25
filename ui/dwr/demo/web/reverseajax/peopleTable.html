@@ -19,7 +19,7 @@
 		   updatePollStatus(true);
            Tabs.init('tabList', 'tabContents');  
            PeopleTable.updateTableDisplay(); 
- 	       dwr.util.byId(disable).style.display = 'none';    
+ 	       dwr.util.byId("disable").style.display = 'none';    
       }
 	  
 	  function errorHandler(message, ex) {
@@ -33,14 +33,14 @@
 	  
 	  function addAttributeToScriptSession() {
 	      PeopleTable.addAttributeToScriptSession();
-	      dwr.util.byId(enable).style.display = 'none';
-	      dwr.util.byId(disable).style.display = '';
+	      dwr.util.byId("enable").style.display = 'none';
+	      dwr.util.byId("disable").style.display = 'block';
 	  }
 	  
 	  function removeAttributeToScriptSession() {
 	      PeopleTable.removeAttributeToScriptSession();
-	      dwr.util.byId(enable).style.display = '';
-	      dwr.util.byId(disable).style.display = 'none';
+	      dwr.util.byId("enable").style.display = 'block';
+	      dwr.util.byId("disable").style.display = 'none';
 	  }
   </script>
 </head>
