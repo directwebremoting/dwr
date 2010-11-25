@@ -34,7 +34,7 @@ public class PeopleTable implements Runnable
     public PeopleTable()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 30, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 10, TimeUnit.SECONDS);
     }
 
     /* (non-Javadoc)
