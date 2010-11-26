@@ -350,7 +350,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._dwrSessionId = null;
 
   /** The global page id (browser instance + local page id) */
-  dwr.engine._scriptSessionId = null;
+  dwr.engine._scriptSessionId = ""; // we must use "" and not null
 
   /** A function to be called before requests are marshalled. Can be null. */
   dwr.engine._preHook = null;
