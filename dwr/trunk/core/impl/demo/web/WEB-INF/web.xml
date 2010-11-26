@@ -73,13 +73,6 @@
       <param-value>false</param-value>
     </init-param>
 
-    <!-- This enables full streaming mode. It's probably better to leave this
-    out if you are running across the Internet -->
-    <init-param>
-      <param-name>maxWaitAfterWrite</param-name>
-      <param-value>-1</param-value>
-    </init-param>
-
     <!--
     For more information on these parameters, see:
     - http://getahead.org/dwr/server/servlet
