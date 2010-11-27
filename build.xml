@@ -65,8 +65,7 @@
 					<entry key="minor" value="${minor}"/>
 					<entry key="revision" value="${revision}"/>
 					<entry key="title" value="${title}"/>
-					<entry key="build.number" value="${bamboo.buildNumber}"/>
-		  		    <entry key="build.date" type="date" value="now" pattern="MM.dd.yyyy HH:mm"/>
+					<entry key="bamboo.build.number" value="${bamboo.buildNumber}"/>
 				</propertyfile>	
 		   	</then>
 		</if>
