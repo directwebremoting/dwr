@@ -55,7 +55,7 @@
 
 	<!-- Updates dwr-version.properties with build values from Bamboo 
 		 Designed to be executed from Bamboo builds only -->
-	<target name="setBambooVersioning" depends="prepare,source">
+	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
 		<if>
 		   <isset  property="bamboo.buildNumber"/>
 		   <then> 
@@ -65,7 +65,7 @@
 					<entry key="revision" value="${revision}"/>
 					<entry key="title" value="${title}"/>
 					<entry key="build.number" value="${bamboo.buildNumber}"/>
-		  		  <entry key="build.date" type="date" value="now" pattern="MM.dd.yyyy HH:mm"/>
+		  		    <entry key="build.date" type="date" value="now" pattern="MM.dd.yyyy HH:mm"/>
 				</propertyfile>	
 		   	</then>
 		</if>
@@ -74,6 +74,8 @@
 	<!--=======================================================================-->
 	<target name="jar" depends="prepare,source,setBambooVersioning" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
+		<!-- Set Bamboo properties in dwr-version.properties -->
+		<antcall target="setBambooVersioning"/>
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main"/>
 		</jar>
