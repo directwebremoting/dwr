@@ -27,7 +27,11 @@
 	<!-- Updates dwr-version.properties with build values from Bamboo -->
 	<target name="setBambooVersioning">
 		<propertyfile file="${source.root}/core/impl/main/java/dwr-version.properties">
-		    <entry key="build.number" value="${bamboo.buildNumber}"/>
+			<entry key="major" value="${major}"/>
+			<entry key="minor" value="${minor}"/>
+			<entry key="revision" value="${revision}"/>
+			<entry key="title" value="${title}"/>
+			<entry key="build.number" value="${bamboo.buildNumber}"/>
 		    <entry key="build.date" type="date" value="now" pattern="MM.dd.yyyy HH:mm"/>
 		</propertyfile>		
 	</target>
@@ -65,9 +69,7 @@
 	<target name="jar" depends="prepare,source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
-			<fileset dir="${target.root}/classes/main">
-				<exclude name="dwr-version.properties.*"/>
-		    </fileset>
+			<fileset dir="${target.root}/classes/main"/>
 		</jar>
 		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
 		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
