@@ -27,7 +27,7 @@
 	<!-- Updates dwr-version.properties with build values from Bamboo -->
 	<target name="setBambooVersioning">
 		<propertyfile file="${source.root}/core/impl/main/java/dwr-version.properties">
-		    <entry key="build" value="${bamboo.buildNumber}"/>
+		    <entry key="build.number" value="${bamboo.buildNumber}"/>
 		    <entry key="build.date" type="date" value="now" pattern="MM.dd.yyyy HH:mm"/>
 			<entry key="svn.revision" value="${svn.revision.number}"/>			
 		</propertyfile>		
