@@ -55,7 +55,7 @@
 
 	<!-- Updates dwr-version.properties with build values from Bamboo 
 		 Designed to be executed from Bamboo builds only -->
-	<target name="setBambooVersioning">
+	<target name="setBambooVersioning" depends="prepare,source">
 		<if>
 		   <isset  property="bamboo.buildNumber"/>
 		   <then> 
