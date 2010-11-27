@@ -54,7 +54,8 @@
 	</target>
 
 	<!-- Updates dwr-version.properties with build values from Bamboo 
-		 Designed to be executed from Bamboo builds only -->
+		 Will not be executed unless the bamboo.buildNumber property is set.
+		 This property is passed into this script by Bamboo -->
 	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
 		<if>
 		   <isset  property="bamboo.buildNumber"/>
@@ -72,7 +73,7 @@
 	</target>
 	
 	<!--=======================================================================-->
-	<target name="jar" depends="prepare,source,setBambooVersioning" description="Create dwr.jar">
+	<target name="jar" depends="prepare,source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
 		<!-- Set Bamboo properties in dwr-version.properties -->
 		<antcall target="setBambooVersioning"/>
