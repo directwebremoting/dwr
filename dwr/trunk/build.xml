@@ -65,7 +65,9 @@
 	<target name="jar" depends="prepare,source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
-			<fileset dir="${target.root}/classes/main" />
+			<fileset dir="${target.root}/classes/main">
+				<exclude name="dwr-version.properties.*"/>
+		    </fileset>
 		</jar>
 		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
 		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
