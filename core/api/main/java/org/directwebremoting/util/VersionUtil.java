@@ -38,26 +38,6 @@ import java.util.Properties;
  */
 public class VersionUtil
 {
-    /**
-     * Fish the version number out of the dwr.properties file.
-     * @return The current version number.
-     */
-    public static String getSourceControlInfo()
-    {
-        loadProperties();
-        return sccInfo;
-    }
-
-    /**
-     * Fish the version number out of the dwr.properties file.
-     * @return The current version number.
-     * @deprecated Use {@link #getLabel()}
-     */
-    @Deprecated
-    public static String getVersion()
-    {
-        return getLabel();
-    }
 
     /**
      * @return The major version number of this release
@@ -125,7 +105,6 @@ public class VersionUtil
             Properties props = new Properties();
             props.load(in);
 
-            sccInfo = props.getProperty(KEY_SCC_INFO);
             major = Integer.parseInt(props.getProperty(KEY_MAJOR));
             minor = Integer.parseInt(props.getProperty(KEY_MINOR));
             revision = Integer.parseInt(props.getProperty(KEY_REVISION));
@@ -162,7 +141,7 @@ public class VersionUtil
     private static final String KEY_REVISION = "revision";
     private static int revision;
 
-    private static final String KEY_BUILD = "build";
+    private static final String KEY_BUILD = "bamboo.build.number";
     private static int build;
 
     private static final String KEY_TITLE = "title";
@@ -170,6 +149,4 @@ public class VersionUtil
 
     private static String label;
 
-    private static final String KEY_SCC_INFO = "scc-info";
-    private static String sccInfo;
 }
