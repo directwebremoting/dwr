@@ -23,7 +23,16 @@
 			<fileset dir="${source.root}/etc/ant" includes="**/*" />
 		</classpath>
 	</taskdef>
-
+	
+	<!-- Updates dwr-version.properties with build values from Bamboo -->
+	<target name="setBambooVersioning">
+		<propertyfile file="${source.root}/core/impl/main/java/dwr-version.properties">
+		    <entry key="build" value="${bamboo.buildNumber}"/>
+		    <entry key="build.date" type="date" value="now" pattern="dd.MM.yyyy HH:mm"/>
+			<entry key="scc-info" value="${svn.revision.number}"/>			
+		</propertyfile>		
+	</target>
+	
 	<!-- The modules that we are working with -->
 	<property name="modules" value="
     core/api, core/impl, core/legacy,
