@@ -65,7 +65,7 @@
     </create>
     -->
 
-    <!-- The TIBCO GI Demos -->
+    <!-- The TIBCO GI Demos - No longer supported.
     <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.gidemo.Publisher"/>
     </create>
@@ -80,7 +80,8 @@
     <create creator="new" scope="application">
       <param name="class" value="com.example.dwr.reverse.Reverse"/>
     </create>
-
+    -->
+    
     <!-- file upload and download -->
     <create creator="new">
       <param name="class" value="com.example.dwr.simple.UploadDownload"/>
