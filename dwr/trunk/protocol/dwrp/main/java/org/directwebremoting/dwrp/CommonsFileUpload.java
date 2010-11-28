@@ -96,7 +96,6 @@ public class CommonsFileUpload implements FileUpload
         }
         catch (FileSizeLimitExceededException fsle)
         {
-            log.warn("One or more files is larger than the configured limit.  Please see DWR's fileUploadMaxBytes init-param to increase this limit.", fsle);
             throw new ServerException("One or more files is larger (" + fsle.getActualSize() + " bytes) than the configured limit (" + fsle.getPermittedSize() + " bytes).");
         }
         catch (IOException ex)
