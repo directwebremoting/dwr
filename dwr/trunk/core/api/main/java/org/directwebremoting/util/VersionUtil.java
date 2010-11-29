@@ -108,7 +108,9 @@ public class VersionUtil
             major = Integer.parseInt(props.getProperty(KEY_MAJOR));
             minor = Integer.parseInt(props.getProperty(KEY_MINOR));
             revision = Integer.parseInt(props.getProperty(KEY_REVISION));
-            build = Integer.parseInt(props.getProperty(KEY_BUILD));
+            if (null != props.getProperty(KEY_BUILD)) {
+                build = Integer.parseInt(props.getProperty(KEY_BUILD));
+            }
             title = props.getProperty(KEY_TITLE);
 
             if (title.length() == 0)
@@ -142,7 +144,7 @@ public class VersionUtil
     private static int revision;
 
     private static final String KEY_BUILD = "bamboo.build.number";
-    private static int build;
+    private static int build = -1;
 
     private static final String KEY_TITLE = "title";
     private static String title;
