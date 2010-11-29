@@ -108,7 +108,8 @@ public class VersionUtil
             major = Integer.parseInt(props.getProperty(KEY_MAJOR));
             minor = Integer.parseInt(props.getProperty(KEY_MINOR));
             revision = Integer.parseInt(props.getProperty(KEY_REVISION));
-            if (null != props.getProperty(KEY_BUILD)) {
+            String buildString = props.getProperty(KEY_BUILD);
+            if (null != buildString && buildString.length() > 0) {
                 build = Integer.parseInt(props.getProperty(KEY_BUILD));
             }
             title = props.getProperty(KEY_TITLE);
