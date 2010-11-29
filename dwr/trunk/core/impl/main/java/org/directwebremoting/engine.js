@@ -1142,7 +1142,12 @@ if (typeof dwr == 'undefined') dwr = {};
     cleanup:function(referto) {
       for(name in referto) {
         var data = referto[name];
-        delete data.$_dwrConversion;
+        try {
+          delete data.$_dwrConversion;
+        }
+        catch(err) {
+          data.$_dwrConversion = undefined;
+        }
       }
     },
     
