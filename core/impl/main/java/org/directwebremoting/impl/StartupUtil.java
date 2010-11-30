@@ -499,7 +499,7 @@ public class StartupUtil
     {
         try
         {
-            InputStream in = StartupUtil.class.getResourceAsStream(DwrConstants.FILE_DEFAULT_PROPERTIES);
+            InputStream in = LocalUtil.getInternalResourceAsStream(DwrConstants.SYSTEM_DEFAULT_PROPERTIES_PATH);
             Properties defaults = new Properties();
             defaults.load(in);
 
@@ -580,7 +580,7 @@ public class StartupUtil
     public static void configureFromSystemDwrXml(Container container) throws IOException, ParserConfigurationException, SAXException
     {
         DwrXmlConfigurator system = new DwrXmlConfigurator();
-        system.setClassResourceName(DwrConstants.FILE_DWR_XML);
+        system.setClassResourceName(DwrConstants.SYSTEM_DWR_XML_PATH);
         system.configure(container);
     }
 
@@ -594,7 +594,7 @@ public class StartupUtil
     public static void configureFromDefaultDwrXml(Container container, ServletConfig servletConfig) throws IOException, ParserConfigurationException, SAXException
     {
         DwrXmlConfigurator local = new DwrXmlConfigurator();
-        local.setServletResourceName(servletConfig.getServletContext(), DwrConstants.DEFAULT_DWR_XML);
+        local.setServletResourceName(servletConfig.getServletContext(), DwrConstants.USER_DWR_XML_PATH);
         local.configure(container);
     }
 

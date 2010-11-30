@@ -19,6 +19,7 @@ import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -58,6 +59,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.io.OutputStreamLoader;
 
 /**
@@ -1070,7 +1072,12 @@ public final class LocalUtil
                 return Void.TYPE;
             }
         }
-        return Thread.currentThread().getContextClassLoader().loadClass(className);
+        String adjustedClassName = className;
+        if (className.startsWith(DwrConstants.PACKAGE_NAME + "."))
+        {
+            adjustedClassName = packageNamePrefix + className;
+        }
+        return Thread.currentThread().getContextClassLoader().loadClass(adjustedClassName);
     }
 
     /**
@@ -1295,6 +1302,35 @@ public final class LocalUtil
         }
 
         return reply;
+    }
+
+    /**
+     * Adjust a resource path to match any remapping done to the DWR package path.
+     *
+     * @param path original resource path
+     * @return path adjusted wrt package remapping
+     */
+    public static String adjustInternalResourcePath(String path)
+    {
+        if (resourcePathPrefix.length() > 0)
+        {
+            return resourcePathPrefix + (path.startsWith("/") ? "" : "/") + path;
+        }
+        else
+        {
+            return path;
+        }
+    }
+
+    /**
+     * Open a stream to an internal file resource located in the DWR package tree.
+     *
+     * @param path
+     * @return an open stream
+     */
+    public static InputStream getInternalResourceAsStream(String path)
+    {
+        return LocalUtil.class.getResourceAsStream(adjustInternalResourcePath(path));
     }
 
     /**
@@ -1690,7 +1726,6 @@ public final class LocalUtil
     }
 
     /**
-    /**
      * Get a timestamp for the earliest time that we know the JVM started
      * @return a JVM start time
      */
@@ -1700,19 +1735,21 @@ public final class LocalUtil
     }
 
     /**
+     * Package to add as prefix to DWR's default Java package (when remapping
+     * DWR in classpath)
+     */
+    private static String packageNamePrefix;
+
+    /**
+     * Path to add as prefix to DWR's default resource path (when remapping DWR
+     * in classpath)
+     */
+    private static String resourcePathPrefix;
+
+    /**
      * The time on the script files
      */
     private static final long CLASSLOAD_TIME;
-
-    /**
-     * Initialize the container start time
-     */
-    static
-    {
-        // Browsers are only accurate to the second
-        long now = System.currentTimeMillis();
-        CLASSLOAD_TIME = now - (now % 1000);
-    }
 
     private static Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<Class<?>, Class<?>>();
 
@@ -1732,5 +1769,30 @@ public final class LocalUtil
      * The log stream
      */
     private static final Log log = LogFactory.getLog(LocalUtil.class);
+
+    /**
+     * Initialize at start time
+     */
+    static
+    {
+        // Container start time (browsers are only accurate to the second)
+        long now = System.currentTimeMillis();
+        CLASSLOAD_TIME = now - (now % 1000);
+
+        // Set up remapping paths
+        String expectedPackage = DwrConstants.PACKAGE_NAME + ".util";
+        String actualPackage = LocalUtil.class.getPackage().getName();
+        if (!actualPackage.endsWith(expectedPackage))
+        {
+            log.error("Disallowed remapping of DWR classes - only change of prefix is allowed and the org.directwebremoting package tree must be kept intact.");
+            throw new Error("Disallowed remapping of DWR classes.");
+        }
+        packageNamePrefix = actualPackage.substring(0, actualPackage.indexOf(expectedPackage));
+        resourcePathPrefix = packageNamePrefix.replace('.', '/');
+        if (resourcePathPrefix.length() > 0)
+        {
+            resourcePathPrefix = "/" + resourcePathPrefix;
+        }
+    }
 
 }

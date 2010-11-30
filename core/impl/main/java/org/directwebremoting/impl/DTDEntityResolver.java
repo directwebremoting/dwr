@@ -20,6 +20,7 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.DwrConstants;
+import org.directwebremoting.util.LocalUtil;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -50,8 +51,8 @@ public final class DTDEntityResolver implements EntityResolver
                     log.warn("Deprecated public id in dwr.xml. Use: " + doctype);
                 }
 
-                String dtdname = DwrConstants.PACKAGE + MAPPINGS[i][1];
-                InputStream raw = getClass().getResourceAsStream(dtdname);
+                String dtdname = DwrConstants.PACKAGE_PATH + MAPPINGS[i][1];
+                InputStream raw = LocalUtil.getInternalResourceAsStream(dtdname);
                 return new InputSource(raw);
             }
         }

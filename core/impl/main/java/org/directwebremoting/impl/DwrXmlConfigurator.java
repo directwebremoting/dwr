@@ -98,7 +98,7 @@ public class DwrXmlConfigurator implements Configurator
     {
         this.classResourceName = classResourceName;
 
-        InputStream in = getClass().getResourceAsStream(classResourceName);
+        InputStream in = LocalUtil.getInternalResourceAsStream(classResourceName);
         if (in == null)
         {
             throw new IOException("Missing config file: '" + classResourceName + "'");

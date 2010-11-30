@@ -54,7 +54,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
 
         try
         {
-            raw = FileJavaScriptHandler.class.getResourceAsStream(resource);
+            raw = LocalUtil.getInternalResourceAsStream(resource);
             if (raw == null)
             {
                 throw new IOException("Failed to find resource: " + resource);
@@ -76,7 +76,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     @Override
     protected long getLastModifiedTime()
     {
-        URL url = FileJavaScriptHandler.class.getResource(resource);
+        URL url = FileJavaScriptHandler.class.getResource(LocalUtil.adjustInternalResourcePath(resource));
         if ("file".equals(url.getProtocol()))
         {
             File file = new File(url.getFile());

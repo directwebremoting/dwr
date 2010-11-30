@@ -29,6 +29,6 @@ public class UtilHandler extends FileJavaScriptHandler
      */
     public UtilHandler()
     {
-        super(DwrConstants.PACKAGE + "/ui/servlet/util.js");
+        super(DwrConstants.PACKAGE_PATH + "/ui/servlet/util.js");
     }
 }
