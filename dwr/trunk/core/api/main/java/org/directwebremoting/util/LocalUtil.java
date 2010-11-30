@@ -257,6 +257,34 @@ public final class LocalUtil
     }
 
     /**
+     * Tests if a string contains only characters that will not open up security
+     * holes when included in an html tag.
+     *
+     * @param test
+     * @return true if string is safe
+     */
+    public static boolean isSafeIdentifierInHtml(String test)
+    {
+        for(int i=0; i<test.length(); i++) {
+            char ch = test.charAt(i);
+
+            // Exclude characters that may change parsing mode in HTML
+            if ("<>&'\"".indexOf(ch) >= 0)
+            {
+                return false;
+            }
+
+            // Exclude characters outside the normal-characters ascii range that
+            // are not letters or digits
+            if ((ch < 32 || 126 < ch) && !Character.isLetterOrDigit(ch))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * True if c1 is java.lang.Boolean and c2 is boolean, etc.
      * @param c1 the first class to test
      * @param c2 the second class to test
@@ -1704,4 +1732,5 @@ public final class LocalUtil
      * The log stream
      */
     private static final Log log = LogFactory.getLog(LocalUtil.class);
+
 }
