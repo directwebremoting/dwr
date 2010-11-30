@@ -41,7 +41,7 @@ public class EngineHandler extends FileJavaScriptHandler
      */
     public EngineHandler()
     {
-        super(DwrConstants.PACKAGE + "/engine.js");
+        super(DwrConstants.PACKAGE_PATH + "/engine.js");
     }
 
     /* (non-Javadoc)

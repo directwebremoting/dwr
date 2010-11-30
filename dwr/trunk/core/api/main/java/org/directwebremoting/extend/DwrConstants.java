@@ -23,22 +23,27 @@ package org.directwebremoting.extend;
 public interface DwrConstants
 {
     /**
-     * The package name because people need to load resources in this package.
+     * The package name.
      */
-    public static final String PACKAGE = "/org/directwebremoting";
+    public static final String PACKAGE_NAME = "org.directwebremoting";
+
+    /**
+     * The package path because people need to load resources in this package.
+     */
+    public static final String PACKAGE_PATH = "/" + PACKAGE_NAME.replace('.', '/');
 
     /**
      * The system dwr.xml resource name
      */
-    public static final String FILE_DWR_XML = PACKAGE + "/dwr.xml";
+    public static final String SYSTEM_DWR_XML_PATH = PACKAGE_PATH + "/dwr.xml";
 
     /**
      * The default set of entries into the container
      */
-    public static final String FILE_DEFAULT_PROPERTIES = PACKAGE + "/defaults.properties";
+    public static final String SYSTEM_DEFAULT_PROPERTIES_PATH = PACKAGE_PATH + "/defaults.properties";
 
     /**
      * The default dwr.xml file path
      */
-    public static final String DEFAULT_DWR_XML = "/WEB-INF/dwr.xml";
+    public static final String USER_DWR_XML_PATH = "/WEB-INF/dwr.xml";
 }

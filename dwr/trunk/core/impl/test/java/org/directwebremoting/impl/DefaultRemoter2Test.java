@@ -32,7 +32,7 @@ public class DefaultRemoter2Test
     public static void setup() throws Exception
     {
         TestEnvironment.engageThread();
-        TestEnvironment.configureFromClassResource(DwrConstants.PACKAGE + "/impl/dwr.xml");
+        TestEnvironment.configureFromClassResource(DwrConstants.PACKAGE_PATH + "/impl/dwr.xml");
         container = TestEnvironment.getContainer();
         remoter = container.getBean(Remoter.class);
     }

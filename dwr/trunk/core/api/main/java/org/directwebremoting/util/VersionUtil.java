@@ -101,7 +101,7 @@ public class VersionUtil
 
         try
         {
-            InputStream in = VersionUtil.class.getResourceAsStream(FILENAME_VERSION);
+            InputStream in = LocalUtil.getInternalResourceAsStream(VERSION_FILE_PATH);
             Properties props = new Properties();
             props.load(in);
 
@@ -133,7 +133,7 @@ public class VersionUtil
 
     private static boolean loaded = false;
 
-    private static final String FILENAME_VERSION = "/dwr-version.properties";
+    private static final String VERSION_FILE_PATH = "/dwr-version.properties";
 
     private static final String KEY_MAJOR = "major";
     private static int major;

@@ -23,7 +23,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 
 import org.directwebremoting.extend.DwrConstants;
-import org.directwebremoting.servlet.EngineHandler;
+import org.directwebremoting.util.LocalUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class YahooJSCompressorTest
     public void setUp()
     {
         StringBuffer scriptBuffer = new StringBuffer();
-        InputStream scriptStream = EngineHandler.class.getResourceAsStream(DwrConstants.PACKAGE + "/engine.js");
+        InputStream scriptStream = LocalUtil.getInternalResourceAsStream(DwrConstants.PACKAGE_PATH + "/engine.js");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(scriptStream));
         try
         {

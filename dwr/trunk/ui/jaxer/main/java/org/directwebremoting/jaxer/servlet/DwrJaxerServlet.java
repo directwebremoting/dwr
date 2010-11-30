@@ -65,7 +65,7 @@ public class DwrJaxerServlet extends DwrServlet
         try
         {
             DwrXmlConfigurator system = new DwrXmlConfigurator();
-            system.setClassResourceName(DwrConstants.FILE_DWR_XML);
+            system.setClassResourceName(DwrConstants.SYSTEM_DWR_XML_PATH);
             system.configure(container);
 
             DwrXmlConfigurator custom = new DwrXmlConfigurator();

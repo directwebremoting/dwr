@@ -28,6 +28,6 @@ public class AuthHandler extends FileJavaScriptHandler
      */
     public AuthHandler()
     {
-        super(DwrConstants.PACKAGE + "/auth/auth.js");
+        super(DwrConstants.PACKAGE_PATH + "/auth/auth.js");
     }
 }

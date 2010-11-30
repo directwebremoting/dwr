@@ -298,7 +298,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             String output = scriptCache.get(PathConstants.FILE_HELP);
             if (output == null)
             {
-                InputStream raw = getClass().getResourceAsStream(DwrConstants.PACKAGE + PathConstants.FILE_HELP);
+                InputStream raw = LocalUtil.getInternalResourceAsStream(DwrConstants.PACKAGE_PATH + PathConstants.FILE_HELP);
                 if (raw == null)
                 {
                     log.error("Missing file " + PathConstants.FILE_HELP + ". Check the dwr.jar file was built to include html files.");
