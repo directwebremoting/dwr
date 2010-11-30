@@ -12,7 +12,7 @@
 	<condition property="label" value="${major}.${minor}.${revision}">
 		<equals arg1="${title}" arg2="" />
 	</condition>
-	<condition property="label" value="${major}.${minor}.${revision}.${build}.${title}">
+	<condition property="label" value="${major}.${minor}.${revision}.${title}">
 		<not>
 			<equals arg1="${title}" arg2="" />
 		</not>
