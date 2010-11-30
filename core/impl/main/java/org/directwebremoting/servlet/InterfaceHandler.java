@@ -47,10 +47,10 @@ public class InterfaceHandler extends GeneratedJavaScriptHandler
         scriptName = scriptName.replace(interfaceHandlerUrl, "");
         scriptName = scriptName.replace(PathConstants.EXTENSION_JS, "");
 
-        if (!LocalUtil.isJavaIdentifier(scriptName))
+        if (!LocalUtil.isSafeIdentifierInHtml(scriptName))
         {
             log.debug("Throwing at request for script with name: '" + scriptName + "'");
-            throw new SecurityException("Script names may only contain Java Identifiers");
+            throw new SecurityException("Script name contains unsafe HTML characters");
         }
 
         String contextServletPath = request.getContextPath() + request.getServletPath();
@@ -74,7 +74,7 @@ public class InterfaceHandler extends GeneratedJavaScriptHandler
     {
         this.generateDtoClasses = generateDtoClasses;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
