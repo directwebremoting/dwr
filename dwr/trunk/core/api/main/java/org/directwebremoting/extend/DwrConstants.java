@@ -23,14 +23,14 @@ package org.directwebremoting.extend;
 public interface DwrConstants
 {
     /**
-     * The package name.
-     */
-    public static final String PACKAGE_NAME = "org.directwebremoting";
-
-    /**
      * The package path because people need to load resources in this package.
      */
-    public static final String PACKAGE_PATH = "/" + PACKAGE_NAME.replace('.', '/');
+    public static final String PACKAGE_PATH = "/org/directwebremoting";
+
+    /**
+     * The package name.
+     */
+    public static final String PACKAGE_NAME = PACKAGE_PATH.replace('/', '.').substring(1); // obfuscated algorithm to avoid renames at repackaging (shading)
 
     /**
      * The system dwr.xml resource name

@@ -336,8 +336,9 @@ public class StartupUtil
     @SuppressWarnings("unchecked")
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
-        resolveMultipleImplementation(container, "org.directwebremoting.dwrp.FileUpload");
-        resolveMultipleImplementation(container, "org.directwebremoting.extend.Compressor");
+        // Use DwrConstants to avoid rename if DWR repackaged (shaded)
+        resolveMultipleImplementation(container, DwrConstants.PACKAGE_NAME + ".dwrp.FileUpload");
+        resolveMultipleImplementation(container, DwrConstants.PACKAGE_NAME + ".extend.Compressor");
 
         String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);

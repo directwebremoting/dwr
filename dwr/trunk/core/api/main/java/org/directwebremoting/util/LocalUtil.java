@@ -1788,10 +1788,14 @@ public final class LocalUtil
             throw new Error("Disallowed remapping of DWR classes.");
         }
         packageNamePrefix = actualPackage.substring(0, actualPackage.indexOf(expectedPackage));
-        resourcePathPrefix = packageNamePrefix.replace('.', '/');
-        if (resourcePathPrefix.length() > 0)
+        if (packageNamePrefix.length() > 0)
         {
-            resourcePathPrefix = "/" + resourcePathPrefix;
+            resourcePathPrefix = "/" + packageNamePrefix.replace('.', '/').substring(0, packageNamePrefix.length() - 1);
+            log.info("Detected repackaging of DWR - using packageNamePrefix=" + packageNamePrefix + ", resourcePathPrefix=" +   resourcePathPrefix);
+        }
+        else
+        {
+            resourcePathPrefix = "";
         }
     }
 
