@@ -118,9 +118,13 @@ public class VersionUtil
             {
                 label = major + "." + minor + "." + revision;
             }
+            else if (build > -1)
+            {
+                label = major + "." + minor + "." + revision + "-" + title + "-" + build;
+            }
             else
             {
-                label = major + "." + minor + "." + revision + "." + build + "." + title;
+                label = major + "." + minor + "." + revision + "-" + title;
             }
 
             loaded = true;
