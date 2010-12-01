@@ -50,7 +50,7 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public <T> void addBean(Class<T> base, T bean)
     {
-        addParameter(base.getName(), bean);
+        addParameter(LocalUtil.originalDwrClassName(base.getName()), bean);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DefaultContainer extends AbstractContainer implements Container
      */
     public <T> void addImplementation(Class<T> base, Class<? extends T> implementation)
     {
-        addParameter(base.getName(), implementation.getName());
+        addParameter(LocalUtil.originalDwrClassName(base.getName()), implementation.getName());
     }
 
     /**
@@ -75,11 +75,11 @@ public class DefaultContainer extends AbstractContainer implements Container
         Object existingOptions = beans.get(base.getName());
         if (existingOptions == null)
         {
-            beans.put(base.getName(), implementation.getName());
+            beans.put(LocalUtil.originalDwrClassName(base.getName()), implementation.getName());
         }
         else
         {
-            beans.put(base.getName(), existingOptions + " " + implementation.getName());
+            beans.put(LocalUtil.originalDwrClassName(base.getName()), existingOptions + " " + implementation.getName());
         }
     }
 
@@ -253,7 +253,7 @@ public class DefaultContainer extends AbstractContainer implements Container
                     }
 
                     // Next we try autowire-by-type
-                    Object value = beans.get(propertyType.getName());
+                    Object value = beans.get(LocalUtil.originalDwrClassName(propertyType.getName()));
                     if (value != null)
                     {
                         Loggers.STARTUP.debug("  - by type: " + name + " = " + value.getClass().getName());

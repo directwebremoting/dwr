@@ -560,7 +560,7 @@ public class DefaultConverterManager implements ConverterManager
             return converter;
         }
 
-        String lookup = clazz.getName();
+        String lookup = LocalUtil.originalDwrClassName(clazz.getName());
 
         // Before we start trying for a match on package parts we check for
         // dynamic proxies
@@ -662,7 +662,7 @@ public class DefaultConverterManager implements ConverterManager
             }
 
             // Can we find a matching converter supplied by class name?
-            converter = convertersByMatch.get(clazz.getName());
+            converter = convertersByMatch.get(LocalUtil.originalDwrClassName(clazz.getName()));
             if (converter != null)
             {
                 return converter;

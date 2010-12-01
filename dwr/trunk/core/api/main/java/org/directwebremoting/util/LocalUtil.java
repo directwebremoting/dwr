@@ -1072,14 +1072,85 @@ public final class LocalUtil
                 return Void.TYPE;
             }
         }
-        String adjustedClassName = className;
-        if (className.startsWith(DwrConstants.PACKAGE_NAME + "."))
-        {
-            adjustedClassName = packageNamePrefix + className;
-        }
-        return Thread.currentThread().getContextClassLoader().loadClass(adjustedClassName);
+        return Thread.currentThread().getContextClassLoader().loadClass(remappedDwrClassName(className));
     }
 
+    /**
+     * Converts a remapped DWR classname to the corresponding original name in 
+     * the org.directwebremoting package.
+     * 
+     * @param className
+     * @return
+     */
+    public static String originalDwrClassName(String className)
+    {
+        if (isClassNameInDwrRemappedPackage(className))
+        {
+            return className.substring(packageNamePrefixAndDot.length());
+        }
+        return className;
+    }
+    
+    /**
+     * Converts a DWR classname in the original org.directwebremoting package
+     * to the corresponding name in the remapped package, if applicable.
+     * 
+     * @param className
+     * @return
+     */
+    public static String remappedDwrClassName(String className)
+    {
+        if (isClassNameInDwrOriginalPackage(className))
+        {
+            return packageNamePrefixAndDot + className;
+        }
+        return className;
+    }
+
+    /**
+     * Determines if a classname resides in the DWR original package
+     * (org.directwebremoting).
+     * 
+     * @param className
+     * @return
+     */
+    public static boolean isClassNameInDwrOriginalPackage(String className)
+    {
+        if (!className.startsWith(DwrConstants.PACKAGE_NAME))
+        {
+            return false;
+        }
+        
+        if (className.indexOf(DwrConstants.PACKAGE_NAME, 1) >= 0)
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Determines if a classname resides in the remapped package, if
+     * applicable.
+     * 
+     * @param className
+     * @return
+     */
+    public static boolean isClassNameInDwrRemappedPackage(String className)
+    {
+        if (packageNamePrefixAndDot.length() == 0)
+        {
+            return false;
+        }
+
+        if (!className.startsWith(packageNamePrefixAndDot + DwrConstants.PACKAGE_NAME))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
     /**
      * Utility to essentially do Class forName with the assumption that the
      * environment expects failures for missing jar files and can carry on if
@@ -1310,7 +1381,7 @@ public final class LocalUtil
      * @param path original resource path
      * @return path adjusted wrt package remapping
      */
-    public static String adjustInternalResourcePath(String path)
+    public static String remappedResourcePath(String path)
     {
         if (resourcePathPrefix.length() > 0)
         {
@@ -1330,7 +1401,7 @@ public final class LocalUtil
      */
     public static InputStream getInternalResourceAsStream(String path)
     {
-        return LocalUtil.class.getResourceAsStream(adjustInternalResourcePath(path));
+        return LocalUtil.class.getResourceAsStream(remappedResourcePath(path));
     }
 
     /**
@@ -1738,7 +1809,7 @@ public final class LocalUtil
      * Package to add as prefix to DWR's default Java package (when remapping
      * DWR in classpath)
      */
-    private static String packageNamePrefix;
+    private static String packageNamePrefixAndDot;
 
     /**
      * Path to add as prefix to DWR's default resource path (when remapping DWR
@@ -1787,11 +1858,11 @@ public final class LocalUtil
             log.error("Disallowed remapping of DWR classes - only change of prefix is allowed and the org.directwebremoting package tree must be kept intact.");
             throw new Error("Disallowed remapping of DWR classes.");
         }
-        packageNamePrefix = actualPackage.substring(0, actualPackage.indexOf(expectedPackage));
-        if (packageNamePrefix.length() > 0)
+        packageNamePrefixAndDot = actualPackage.substring(0, actualPackage.indexOf(expectedPackage));
+        if (packageNamePrefixAndDot.length() > 0)
         {
-            resourcePathPrefix = "/" + packageNamePrefix.replace('.', '/').substring(0, packageNamePrefix.length() - 1);
-            log.info("Detected repackaging of DWR - using packageNamePrefix=" + packageNamePrefix + ", resourcePathPrefix=" +   resourcePathPrefix);
+            resourcePathPrefix = "/" + packageNamePrefixAndDot.replace('.', '/').substring(0, packageNamePrefixAndDot.length() - 1);
+            log.info("Detected repackaging of DWR - using packageNamePrefix=" + packageNamePrefixAndDot + ", resourcePathPrefix=" +   resourcePathPrefix);
         }
         else
         {
