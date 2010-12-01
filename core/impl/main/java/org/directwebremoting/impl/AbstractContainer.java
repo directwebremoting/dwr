@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.InitializingBean;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * An implementation of some of the simpler methods from {@link Container}
@@ -62,7 +63,7 @@ public abstract class AbstractContainer implements Container
      */
     public <T> T getBean(Class<T> type)
     {
-        Object bean = getBean(type.getName());
+        Object bean = getBean(LocalUtil.originalDwrClassName(type.getName()));
         try
         {
             return type.cast(bean);

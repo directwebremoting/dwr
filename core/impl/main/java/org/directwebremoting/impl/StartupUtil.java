@@ -170,7 +170,7 @@ public class StartupUtil
 
         try
         {
-            String typeName = servletConfig.getInitParameter(Container.class.getName());
+            String typeName = servletConfig.getInitParameter(LocalUtil.originalDwrClassName(Container.class.getName()));
             if (typeName == null)
             {
                 container = new DefaultContainer();
@@ -214,7 +214,7 @@ public class StartupUtil
     {
         try
         {
-            String typeName = servletConfig.getInitParameter(Container.class.getName());
+            String typeName = servletConfig.getInitParameter(LocalUtil.originalDwrClassName(Container.class.getName()));
             if (typeName == null)
             {
                 return new DefaultContainer();
@@ -337,10 +337,10 @@ public class StartupUtil
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
         // Use DwrConstants to avoid rename if DWR repackaged (shaded)
-        resolveMultipleImplementation(container, DwrConstants.PACKAGE_NAME + ".dwrp.FileUpload");
-        resolveMultipleImplementation(container, DwrConstants.PACKAGE_NAME + ".extend.Compressor");
+        resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.dwrp.FileUpload"));
+        resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.extend.Compressor"));
 
-        String abstractionImplNames = container.getParameter(ContainerAbstraction.class.getName());
+        String abstractionImplNames = container.getParameter(LocalUtil.originalDwrClassName(ContainerAbstraction.class.getName()));
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 
         abstractionImplNames = abstractionImplNames.replace(',', ' ');
@@ -359,7 +359,7 @@ public class StartupUtil
                 {
                     container.addImplementation(ContainerAbstraction.class, abstractionImpl);
 
-                    String loadMonitorImplName = container.getParameter(ServerLoadMonitor.class.getName());
+                    String loadMonitorImplName = container.getParameter(LocalUtil.originalDwrClassName(ServerLoadMonitor.class.getName()));
                     if (loadMonitorImplName == null)
                     {
                         Class<? extends ServerLoadMonitor> loadMonitorImpl = abstraction.getServerLoadMonitorImplementation();
@@ -401,8 +401,8 @@ public class StartupUtil
             Loggers.STARTUP.debug(toResolveString + " is not available. Details: " + ex);
         }
 
-        String implNames = container.getParameter(toResolve.getName());
-        Loggers.STARTUP.debug("- Selecting a " + toResolve.getSimpleName() + " from " + implNames);
+        String implNames = container.getParameter(toResolveString);
+        Loggers.STARTUP.debug("- Selecting a " + toResolveString + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
         for (String implName : implNames.split(" "))
@@ -421,7 +421,7 @@ public class StartupUtil
                 }
 
                 impl.newInstance();
-                container.addParameter(toResolve.getName(), impl.getName());
+                container.addParameter(LocalUtil.originalDwrClassName(toResolve.getName()), impl.getName());
 
                 return;
             }
@@ -447,7 +447,7 @@ public class StartupUtil
     {
         ScriptSessionManager manager = container.getBean(ScriptSessionManager.class);
 
-        String implNames = container.getParameter(ScriptSessionListener.class.getName());
+        String implNames = container.getParameter(LocalUtil.originalDwrClassName(ScriptSessionListener.class.getName()));
         if (implNames == null)
         {
             Loggers.STARTUP.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");

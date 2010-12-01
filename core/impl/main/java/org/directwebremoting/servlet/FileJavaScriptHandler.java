@@ -76,7 +76,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
     @Override
     protected long getLastModifiedTime()
     {
-        URL url = FileJavaScriptHandler.class.getResource(LocalUtil.adjustInternalResourcePath(resource));
+        URL url = FileJavaScriptHandler.class.getResource(LocalUtil.remappedResourcePath(resource));
         if ("file".equals(url.getProtocol()))
         {
             File file = new File(url.getFile());

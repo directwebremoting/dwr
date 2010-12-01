@@ -28,6 +28,7 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.servlet.DwrServlet;
 import org.directwebremoting.util.FakeServletConfig;
+import org.directwebremoting.util.LocalUtil;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -185,17 +186,17 @@ public class DwrGuiceServlet extends DwrServlet
     /**
      * The name DWR uses to look up a CreatorManager implementation class name
      */
-    private static final String INIT_CREATOR_MANAGER = CreatorManager.class.getName();
+    private static final String INIT_CREATOR_MANAGER = LocalUtil.originalDwrClassName(CreatorManager.class.getName());
 
     /**
      * The name DWR uses to look up a ConverterManager implementation class name
      */
-    private static final String INIT_CONVERTER_MANAGER = ConverterManager.class.getName();
+    private static final String INIT_CONVERTER_MANAGER = LocalUtil.originalDwrClassName(ConverterManager.class.getName());
 
     /**
      * The name DWR uses to look up an AjaxFilterManager implementation class name
      */
-    private static final String INIT_AJAX_FILTER_MANAGER = AjaxFilterManager.class.getName();
+    private static final String INIT_AJAX_FILTER_MANAGER = LocalUtil.originalDwrClassName(AjaxFilterManager.class.getName());
 
     /**
      * The log stream
