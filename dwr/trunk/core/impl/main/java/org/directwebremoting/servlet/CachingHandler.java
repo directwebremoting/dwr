@@ -52,7 +52,7 @@ public abstract class CachingHandler implements Handler
         CachedResource resource;
         synchronized (scriptCache)
         {
-            String url = request.getPathInfo();
+            String url = getCachingKey(request);
             resource = scriptCache.get(url);
 
             if (resource == null || lastModified > resource.lastModifiedTime)
@@ -140,7 +140,7 @@ public abstract class CachingHandler implements Handler
             modifiedSince -= modifiedSince % 1000;
         }
         String givenEtag = req.getHeader(HttpConstants.HEADER_IF_NONE);
-        String pathInfo = req.getPathInfo();
+        String cachedPath = getCachingKey(req);
 
         // Deal with missing etags
         if (givenEtag == null)
@@ -150,7 +150,7 @@ public abstract class CachingHandler implements Handler
             {
                 if (log.isDebugEnabled())
                 {
-                    log.debug("Sending 304 for " + pathInfo + " If-Modified-Since=" + modifiedSince + ", Last-Modified=" + lastModified);
+                    log.debug("Sending 304 for " + cachedPath + " If-Modified-Since=" + modifiedSince + ", Last-Modified=" + lastModified);
                 }
                 return true;
             }
@@ -167,7 +167,7 @@ public abstract class CachingHandler implements Handler
                 // There is an ETag, but no If-Modified-Since
                 if (log.isDebugEnabled())
                 {
-                    log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=-1, Old ETag=" + givenEtag + ", New ETag=" + etag);
+                    log.debug("Sending 304 for " + cachedPath + ", If-Modified-Since=-1, Old ETag=" + givenEtag + ", New ETag=" + etag);
                 }
                 return true;
             }
@@ -181,15 +181,25 @@ public abstract class CachingHandler implements Handler
         {
             if (log.isDebugEnabled())
             {
-                log.debug("Sending 304 for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
+                log.debug("Sending 304 for " + cachedPath + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
             }
             return true;
         }
 
-        log.debug("Sending content for " + pathInfo + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
+        log.debug("Sending content for " + cachedPath + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
         return false;
     }
-
+	
+	/**
+	 * Returns the caching key which is based on the servlet path (DWR-470) 
+	 * as well as the  cachedPath.
+     *   	 
+     * @param HttpServletRequest request.
+     */
+	private String getCachingKey(HttpServletRequest request) {
+	    return request.getServletPath() + "/" + request.getPathInfo();
+	}
+	
     /**
      * @param ignoreLastModified The ignoreLastModified to set.
      */
