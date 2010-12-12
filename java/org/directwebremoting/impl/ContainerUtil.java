@@ -427,7 +427,23 @@ public class ContainerUtil
             }
         }
 
-        if (!configureFromAnnotations(container))
+        // Find out if we are on Java 5 or later
+        boolean java5Runtime = true;
+        String versionString = System.getProperty("java.specification.version");
+        try 
+        {
+            float version = Float.parseFloat(versionString);
+            if (version < 1.5)
+            {
+                java5Runtime = false;
+            }
+        }
+        catch(NumberFormatException ignore)
+        {
+        }
+        
+        // Annotations
+        if (!java5Runtime || !configureFromAnnotations(container))
         {
             log.debug("Java5 AnnotationsConfigurator disabled");
 
