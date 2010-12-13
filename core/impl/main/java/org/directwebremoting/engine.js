@@ -320,10 +320,11 @@ if (typeof dwr == 'undefined') dwr = {};
    *  is defined before engine.js is included pathToDwrServlet will
    *  be used.
    */
-  try {
-      dwr.engine._pathToDwrServlet = pathToDwrServlet;
-  } catch (e) {
-      dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
+  if (typeof pathToDwrServlet != "undefined") {
+    dwr.engine._pathToDwrServlet = pathToDwrServlet;
+  }
+  else {
+    dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
   }
 
   /** The webapp's context path (used for setting cookie path) */
