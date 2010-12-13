@@ -51,7 +51,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="core/impl/lib/xbean-2.2.0.jar"/>
-	<classpathentry excluding="org/directwebremoting/server/servlet3/CopyOfServlet3Sleeper.java" kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
+	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/generated/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
@@ -108,11 +108,8 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
 	<classpathentry kind="lib" path="core/impl/lib/joda-time-1.6.jar"/>
-	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/javaee/5/docs/api/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api-2.0.2.jar"/>
+	<classpathentry kind="lib" path="noncla/various/lib/el-api.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="core/api/lib/jetty-continuation-7.0.1.v20091125.jar"/>
