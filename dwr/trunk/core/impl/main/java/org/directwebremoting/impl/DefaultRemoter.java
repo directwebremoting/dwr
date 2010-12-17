@@ -16,8 +16,6 @@
 package org.directwebremoting.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,7 +27,6 @@ import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
-import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.MethodDeclaration;
@@ -53,75 +50,229 @@ import org.directwebremoting.util.Loggers;
 public class DefaultRemoter implements Remoter
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.Remoter#generateInterfaceScript(java.lang.String, java.lang.String)
+     * @see org.directwebremoting.extend.Remoter#generateInterfaceScript(java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateInterfaceScript(String scriptName, boolean includeDto, String contextServletPath) throws SecurityException
+    public String generateInterfaceScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException
     {
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(EnginePrivate.getEngineInitScript());
+        buffer
+            .append(indent + assignVariable + " = {};\n")
+            .append(indent + assignVariable + "._path = '" + getPathToDwrServlet(contextServletPath) + "';\n");
 
-        if (includeDto)
+        Module module = moduleManager.getModule(scriptName, false);
+
+        MethodDeclaration[] methods = module.getMethods();
+        for (MethodDeclaration method : methods)
         {
-            buffer.append(createParameterDefinitions(scriptName));
-        }
+            String methodName = method.getName();
 
-        buffer.append(createDojoProvides(scriptName));
-        buffer.append(createClassDefinition(scriptName));
-        buffer.append(createPathDefinition(scriptName, contextServletPath));
-        buffer.append(createMethodDefinitions(scriptName));
+            // We don't need to check accessControl.getReasonToNotExecute()
+            // because the checks are made by the execute() method, but we do
+            // check if we can display it
+            try
+            {
+                accessControl.assertGeneralDisplayable(scriptName, method);
+            }
+            catch (SecurityException ex)
+            {
+                if (!allowImpossibleTests)
+                {
+                    continue;
+                }
+            }
+
+            // Is it on the list of banned names
+            if (JavascriptUtil.isReservedWord(methodName))
+            {
+                continue;
+            }
+
+            Class<?>[] paramTypes = method.getParameterTypes();
+
+            // Create the sdoc comment
+            buffer.append("\n");
+            buffer.append(indent + "/**\n");
+            for (int j = 0; j < paramTypes.length; j++)
+            {
+                if (!LocalUtil.isServletClass(paramTypes[j]))
+                {
+                    buffer.append(indent + " * @param {");
+                    buffer.append(paramTypes[j]);
+                    buffer.append("} p");
+                    buffer.append(j);
+                    buffer.append(" a param\n");
+                }
+            }
+            buffer.append(indent + " * @param {function|Object} callback callback function or options object\n");
+            buffer.append(indent + " */\n");
+
+            // Create the function definition
+            buffer.append(indent + assignVariable + "." + methodName + " = function(");
+            for (int j = 0; j < paramTypes.length; j++)
+            {
+                if (!LocalUtil.isServletClass(paramTypes[j]))
+                {
+                    buffer.append("p");
+                    buffer.append(j);
+                    buffer.append(", ");
+                }
+            }
+            buffer.append("callback) {\n");
+
+            // The method body calls into engine.js
+            buffer.append(indent + "  return ");
+            buffer.append(EnginePrivate.getExecuteFunctionName());
+            buffer.append("(");
+            buffer.append(assignVariable);
+            buffer.append("._path, '");
+            buffer.append(scriptName);
+            buffer.append("', '");
+            buffer.append(methodName);
+            buffer.append("\', arguments);\n");
+            buffer.append(indent + "};\n");
+        }
 
         return buffer.toString();
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Remoter#generateDtoScript(java.lang.String)
+     * @see org.directwebremoting.extend.Remoter#generateDtoScript(java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateDtoScript(String jsClassName) throws SecurityException
+    public String generateDtoScript(String jsClassName, String indent, String assignVariable) throws SecurityException
     {
-        return createDtoClassDefinition(jsClassName, true);
+        NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
+        if (namedConv != null)
+        {
+            // The desired output should follow this scheme:
+            // (1) <assignVariable> = function() {
+            // (2)   this.i = 0;
+            // (2) }
+            // (3) <assignVariable>.$dwrClassName = 'pkg.MyData';
+            // (4) <assignVariable>.$dwrClassMembers = {};
+            // (5) <assignVariable>.$dwrClassMembers.i = {};
+            // (6) <assignVariable>.createFromMap = function(map) {
+            // (6)   var obj = new this();
+            // (6)   for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
+            // (6)   return obj;
+            // (6) }
+            StringBuilder buf = new StringBuilder();
+
+            // Generate (1): <assignVariable> = function() {
+            buf.append(indent + assignVariable + " = function() {\n");
+
+            // Generate (2): this.myProp = <initial value>;
+            Map<String, Property> properties = namedConv.getPropertyMapFromClass(namedConv.getInstanceType(), true, true);
+            for (Entry<String, Property> entry : properties.entrySet())
+            {
+                String name = entry.getKey();
+                Property property = entry.getValue();
+                Class<?> propType = property.getPropertyType();
+
+                // Property name
+                buf.append(indent + "  this.");
+                buf.append(name);
+                buf.append(" = ");
+
+                // Default property values
+                if (propType.isArray())
+                {
+                    buf.append("[]");
+                }
+                else if (propType == boolean.class)
+                {
+                    buf.append("false");
+                }
+                else if (propType.isPrimitive())
+                {
+                    buf.append("0");
+                }
+                else
+                {
+                    buf.append("null");
+                }
+
+                buf.append(";\n");
+            }
+
+            buf.append(indent + "}\n");
+
+            // Generate (3): <assignVariable>.$dwrClassName = 'pkg.MyData';
+            buf.append(indent);
+            buf.append(assignVariable);
+            buf.append(".$dwrClassName = '");
+            buf.append(jsClassName);
+            buf.append("';\n");
+
+            // Generate (4): <assignVariable>.$dwrClassMembers = {};
+            buf.append(indent + assignVariable);
+            buf.append(".$dwrClassMembers = {};\n");
+
+            // Generate (5): <assignVariable>.$dwrClassMembers.i = {};
+            for (Entry<String, Property> entry : properties.entrySet())
+            {
+                String name = entry.getKey();
+                buf.append(indent);
+                buf.append(assignVariable);
+                buf.append(".$dwrClassMembers.");
+                buf.append(name);
+                buf.append(" = {};\n");
+            }
+
+            // Generate (6): <assignVariable>.createFromMap = function(map) {
+            buf.append(indent);
+            buf.append(assignVariable);
+            buf.append(".createFromMap = function(map) {\n");
+            buf.append(indent + "  var obj = new this();\n");
+            buf.append(indent + "  for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];\n");
+            buf.append(indent + "  return obj;\n");
+            buf.append(indent + "}\n");
+
+            return buf.toString();
+        }
+        else
+        {
+            log.warn("Failed to create class definition for JS class " + jsClassName + " because it was not found.");
+            return null;
+        }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Remoter#generateAllDtoScripts()
+     * @see org.directwebremoting.extend.Remoter#generateDtoInheritanceScript(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateAllDtoScripts() throws SecurityException
+    public String generateDtoInheritanceScript(String jsClassName, String indent, String classLookupExpression, String superclassLookupFunction) throws SecurityException
     {
-        return createAllDtoClassDefinitions();
-    }
-
-    /**
-     * Create a class definition string.
-     * This is similar to {@link EnginePrivate#getEngineInitScript()} except
-     * that it creates scripts for a specific class not for dwr.engine
-     * @see EnginePrivate#getEngineInitScript()
-     * @param scriptName
-     */
-    protected String createDojoProvides(String scriptName)
-    {
-        return "if (typeof dojo != 'undefined') dojo.provide('dwr.interface." + scriptName + "');\n\n";
-    }
-
-    /**
-     * Create a class definition string.
-     * This is similar to {@link EnginePrivate#getEngineInitScript()} except
-     * that it creates scripts for a specific class not for dwr.engine
-     * @see EnginePrivate#getEngineInitScript()
-     * @param scriptName
-     */
-    protected String createClassDefinition(String scriptName)
-    {
-        return "if (typeof " + scriptName + " == 'undefined') " + scriptName + " = {};\n\n";
-    }
-
-    /**
-     * Create a _path member to point at DWR
-     * @param scriptName The class that we are creating a member for
-     * @param path The default path to the DWR servlet
-     */
-    protected String createPathDefinition(String scriptName, String path)
-    {
-        return scriptName + "._path = '" + getPathToDwrServlet(path) + "';\n\n";
+        NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
+        if (namedConv != null)
+        {
+            // The desired output is something like this:
+            //   <classLookupExpression>.prototype =
+            //     dwr.engine._delegate(<superclassLookupFunction>('pkg.MyParentData').prototype);
+            //   <classLookupExpression>.prototype.constructor = <classLookupExpression>;
+            String superclass = namedConv.getJavascriptSuperClass();
+            if (LocalUtil.hasLength(superclass))
+            {
+                StringBuilder buf = new StringBuilder();
+                buf.append(indent + classLookupExpression);
+                buf.append(".prototype = dwr.engine._delegate(");
+                buf.append(superclassLookupFunction);
+                buf.append("('" + superclass + "').prototype);\n");
+                buf.append(indent + classLookupExpression);
+                buf.append(".prototype.constructor = ");
+                buf.append(classLookupExpression);
+                buf.append(";\n");
+                return buf.toString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            log.warn("Failed to create inheritance definition for JS class " + jsClassName + " because it was not found.");
+            return null;
+        }
     }
 
     /* (non-Javadoc)
@@ -163,406 +314,6 @@ public class DefaultRemoter implements Remoter
         }
 
         return actualPath;
-    }
-
-    /**
-     * Create a list of method definitions for the given creator.
-     * @param scriptName To allow AccessControl to allow/deny requests
-     */
-    protected String createMethodDefinitions(String scriptName)
-    {
-        Module module = moduleManager.getModule(scriptName, false);
-
-        StringBuilder buffer = new StringBuilder();
-
-        MethodDeclaration[] methods = module.getMethods();
-        for (MethodDeclaration method : methods)
-        {
-            String methodName = method.getName();
-
-            // We don't need to check accessControl.getReasonToNotExecute()
-            // because the checks are made by the execute() method, but we do
-            // check if we can display it
-            try
-            {
-                accessControl.assertGeneralDisplayable(scriptName, method);
-            }
-            catch (SecurityException ex)
-            {
-                if (!allowImpossibleTests)
-                {
-                    continue;
-                }
-            }
-
-            // Is it on the list of banned names
-            if (JavascriptUtil.isReservedWord(methodName))
-            {
-                continue;
-            }
-
-            // Check to see if the creator is reloadable
-            // If it is, then do not cache the generated Javascript
-            // See the notes on creator.isCacheable().
-            String script;
-            if (!module.isCacheable())
-            {
-                script = getMethodJS(scriptName, method);
-            }
-            else
-            {
-                String key = scriptName + "." + method.getName();
-
-                // For optimal performance we might use the Memoizer pattern
-                // JCiP#108 however performance isn't a big issue and we are
-                // prepared to cope with getMethodJS() being run more than once.
-                script = methodCache.get(key);
-                if (script == null)
-                {
-                    script = getMethodJS(scriptName, method);
-                    methodCache.put(key, script);
-                }
-            }
-
-            buffer.append(script);
-        }
-
-        return buffer.toString();
-    }
-
-    /**
-     * Output the class definitions for all the converted objects.
-     * An optimization for this class might be to only generate class
-     * definitions for classes used as parameters in the class that we are
-     * currently generating a proxy for.
-     * <p>Currently the <code>scriptName</code> parameter is not used, we just
-     * generate the class definitions for all types, however conceptually, it
-     * should be used.
-     * @param scriptName The script for which we are generating parameter classes
-     */
-    protected String createParameterDefinitions(String scriptName)
-    {
-        return createAllDtoClassDefinitions();
-    }
-
-    /**
-     * Output the class definitions for all mapped converted classes.
-     */
-    protected String createAllDtoClassDefinitions()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        // First output class definitions
-        for (String match : converterManager.getConverterMatchStrings())
-        {
-            Converter conv = converterManager.getConverterByMatchString(match);
-            // We will only generate JavaScript classes for compound objects/beans
-            if (conv instanceof NamedConverter)
-            {
-                NamedConverter namedConv = (NamedConverter) conv;
-                String jsClassName = namedConv.getJavascript();
-
-                // We need a configured JavaScript class name
-                if (LocalUtil.hasLength(jsClassName))
-                {
-                    buffer.append(createDtoClassDefinition(namedConv));
-                }
-            }
-        }
-
-        // Then output superclass definitions
-        for (String match : converterManager.getConverterMatchStrings())
-        {
-            Converter conv = converterManager.getConverterByMatchString(match);
-            // We will only generate JavaScript classes for compound objects/beans
-            if (conv instanceof NamedConverter)
-            {
-                NamedConverter namedConv = (NamedConverter) conv;
-                String jsClassName = namedConv.getJavascript();
-
-                // We need a configured JavaScript class name
-                if (LocalUtil.hasLength(jsClassName))
-                {
-                    buffer.append(createDtoSuperClassDefinition(namedConv));
-                }
-            }
-        }
-
-        return buffer.toString();
-    }
-
-    /**
-     * Create a JavaScript class definition for a mapped converted class.
-     * @param jsClassName The mapped class's JavaScript class name
-     * @param setupSuperClass Control whether to generate code for superclass referral
-     */
-    protected String createDtoClassDefinition(String jsClassName, boolean setupSuperClass)
-    {
-        StringBuilder buf = new StringBuilder();
-        for (String match : converterManager.getConverterMatchStrings())
-        {
-            Converter conv = converterManager.getConverterByMatchString(match);
-            // We will only generate JavaScript classes for compound objects/beans
-            if (conv instanceof NamedConverter)
-            {
-                NamedConverter namedConv = (NamedConverter) conv;
-                if (jsClassName.equals(namedConv.getJavascript()))
-                {
-                    buf.append(createDtoClassDefinition(namedConv));
-                    if (setupSuperClass)
-                    {
-                        buf.append(createDtoSuperClassDefinition(namedConv));
-                    }
-                    return buf.toString();
-                }
-            }
-        }
-
-        log.warn("Failed to create class definition for JS class " + jsClassName + " because it was not found.");
-        buf.append("// Missing mapped class definition for ");
-        buf.append(jsClassName);
-        buf.append(". See the server logs for details.\n");
-        return buf.toString();
-    }
-
-    /**
-     * Create a JavaScript class definition for a mapped converted class.
-     * @param namedConv The class's converter
-     */
-    protected String createDtoClassDefinition(NamedConverter namedConv)
-    {
-        // The desired output should follow this scheme:
-        // (1)  if (typeof pkg1 == 'undefined') pkg1 = {};
-        // (1)  if (typeof pkg1.pkg2 == 'undefined') pkg1.pkg2 = {};
-        // (2)  if (typeof pkg1.pkg2.MyClass != 'function') {
-        // (2)    pkg1.pkg2.MyClass = function() {
-        // (3)      this.myProp = <initial value>;
-        // (3)      ...
-        // (3)    }
-        // (4)    pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
-        // (5)    pkg1.pkg2.MyClass.$dwrClassMembers = {};
-        // (6)    pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {}; // object is placeholder for additional info in the future and also evals to true
-        // (6)    ...
-        // (7)    pkg1.pkg2.MyClass.createFromMap = function(map) {
-        // (7)      var obj = new this(); // this = MyClass = constructor function
-        // (8)      for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
-        // (8)      return obj;
-        // (8)    }
-        // (9)    dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = pkg1.pkg2.MyClass;
-        // (10)  }
-        String jsClassName = namedConv.getJavascript();
-        try
-        {
-            StringBuilder buf = new StringBuilder();
-            String[] parts = jsClassName.split("\\.");
-
-            // Generate (1): if (typeof pkg1.pkg2 == 'undefined') pkg1.pkg2 = {};
-            String path = "";
-            for (int i = 0; i < parts.length-1; i++)
-            {
-                if (i > 0)
-                {
-                    path += ".";
-                }
-                path += parts[i];
-                buf.append("if (typeof ");
-                buf.append(path);
-                buf.append(" == 'undefined') ");
-                buf.append(path);
-                buf.append(" = {};\n");
-            }
-
-            // Generate (2): if (typeof pkg1.pkg2.MyClass != 'function') { pkg1.pkg2.MyClass = function() {
-            buf.append("if (typeof ");
-            buf.append(jsClassName);
-            buf.append(" != 'function') {\n");
-            buf.append("  ");
-            buf.append(jsClassName);
-            buf.append(" = function() {\n");
-
-            // Generate (3): this.myProp = <initial value>;
-            Map<String, Property> properties = namedConv.getPropertyMapFromClass(namedConv.getInstanceType(), true, true);
-            for (Entry<String, Property> entry : properties.entrySet())
-            {
-                String name = entry.getKey();
-                Property property = entry.getValue();
-                Class<?> propType = property.getPropertyType();
-
-                // Property name
-                buf.append("    this.");
-                buf.append(name);
-                buf.append(" = ");
-
-                // Default property values
-                if (propType.isArray())
-                {
-                    buf.append("[]");
-                }
-                else if (propType == boolean.class)
-                {
-                    buf.append("false");
-                }
-                else if (propType.isPrimitive())
-                {
-                    buf.append("0");
-                }
-                else
-                {
-                    buf.append("null");
-                }
-
-                buf.append(";\n");
-            }
-
-            buf.append("  }\n");
-
-            // Generate (4): pkg1.pkg2.MyClass.$dwrClassName = 'pkg1.pkg2.MyClass';
-            buf.append("  ");
-            buf.append(jsClassName);
-            buf.append(".$dwrClassName = '");
-            buf.append(jsClassName);
-            buf.append("';\n");
-
-            // Generate (5): pkg1.pkg2.MyClass.$dwrClassMembers = {};
-            buf.append("  ");
-            buf.append(jsClassName);
-            buf.append(".$dwrClassMembers = {};\n");
-
-            // Generate (6): pkg1.pkg2.MyClass.$dwrClassMembers.myProp = {};
-            for (Entry<String, Property> entry : properties.entrySet())
-            {
-                String name = entry.getKey();
-                buf.append("  ");
-                buf.append(jsClassName);
-                buf.append(".$dwrClassMembers.");
-                buf.append(name);
-                buf.append(" = {};\n");
-            }
-
-            // Generate (7): pkg1.pkg2.MyClass.createFromMap = function(map) { var obj = new this();
-            buf.append("  ");
-            buf.append(jsClassName);
-            buf.append(".createFromMap = function(map) {\n");
-            buf.append("    var obj = new this();\n");
-
-            // Generate (8): if ('myProp' in map) obj.myProp = map.myProp;
-            buf.append("    for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];\n");
-            buf.append("    return obj;\n");
-            buf.append("  }\n");
-
-            // Generate (9): dwr.engine._mappedClasses['pkg1.pkg2.MyClass'] = pkg1.pkg2.MyClass;
-            buf.append("  dwr.engine._mappedClasses['");
-            buf.append(jsClassName);
-            buf.append("'] = ");
-            buf.append(jsClassName);
-            buf.append(";\n");
-
-            // Generate (10): end of definition
-            buf.append("}\n");
-            buf.append("\n");
-            return buf.toString();
-        }
-        catch (Exception ex)
-        {
-            log.warn("Failed to create class definition for JS class " + jsClassName, ex);
-            StringBuilder buf = new StringBuilder();
-            buf.append("// Missing mapped class definition for ");
-            buf.append(jsClassName);
-            buf.append(". See the server logs for details.\n");
-            return buf.toString();
-        }
-
-    }
-
-    /**
-     * Create the superclass definition for a mapped converted class.
-     * @param namedConv The class's converter
-     */
-    protected String createDtoSuperClassDefinition(NamedConverter namedConv)
-    {
-        // The desired output is something like this:
-        //   MySubClass.prototype = new MySuperClass();
-        //   MySubClass.prototype.constructor = MySubClass;
-        StringBuilder buf = new StringBuilder();
-        if (LocalUtil.hasLength(namedConv.getJavascriptSuperClass()))
-        {
-            String subclass = namedConv.getJavascript();
-            String superclass = namedConv.getJavascriptSuperClass();
-
-            buf.append(subclass);
-            buf.append(".prototype = new ");
-            buf.append(superclass);
-            buf.append("();\n");
-
-            buf.append(subclass);
-            buf.append(".prototype.constructor = ");
-            buf.append(subclass);
-            buf.append(";\n");
-
-            buf.append("\n");
-        }
-
-        return buf.toString();
-    }
-
-    /**
-     * Generates Javascript for a given Java method
-     * @param scriptName  Name of the Javascript file, without ".js" suffix
-     * @param method Target method
-     * @return Javascript implementing the DWR call for the target method
-     */
-    protected String getMethodJS(String scriptName, MethodDeclaration method)
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        String methodName = method.getName();
-        Class<?>[] paramTypes = method.getParameterTypes();
-
-        // Create the sdoc comment
-        buffer.append("/**\n");
-        for (int j = 0; j < paramTypes.length; j++)
-        {
-            if (!LocalUtil.isServletClass(paramTypes[j]))
-            {
-                buffer.append(" * @param {");
-                buffer.append(paramTypes[j]);
-                buffer.append("} p");
-                buffer.append(j);
-                buffer.append(" a param\n");
-            }
-        }
-        buffer.append(" * @param {function|Object} callback callback function or options object\n");
-        buffer.append(" */\n");
-
-        // Create the function definition
-        buffer.append(scriptName);
-        buffer.append('.');
-        buffer.append(methodName);
-        buffer.append(" = function(");
-        for (int j = 0; j < paramTypes.length; j++)
-        {
-            if (!LocalUtil.isServletClass(paramTypes[j]))
-            {
-                buffer.append("p");
-                buffer.append(j);
-                buffer.append(", ");
-            }
-        }
-        buffer.append("callback) {\n");
-
-        // The method body calls into engine.js
-        buffer.append("  return ");
-        buffer.append(EnginePrivate.getExecuteFunctionName());
-        buffer.append("(");
-        buffer.append(scriptName);
-        buffer.append("._path, '");
-        buffer.append(scriptName);
-        buffer.append("', '");
-        buffer.append(methodName);
-        buffer.append("\', arguments);\n");
-        buffer.append("};\n\n");
-
-        return buffer.toString();
     }
 
     /* (non-Javadoc)
@@ -827,11 +578,6 @@ public class DefaultRemoter implements Remoter
      * made in a batch
      */
     protected int maxCallCount = 20;
-
-    /**
-     * Generated Javascript cache
-     */
-    protected Map<String, String> methodCache = Collections.synchronizedMap(new HashMap<String, String>());
 
     /**
      * The log stream

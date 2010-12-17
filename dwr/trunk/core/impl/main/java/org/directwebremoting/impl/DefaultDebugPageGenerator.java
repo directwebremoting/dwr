@@ -104,6 +104,13 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         String proxyInterfaceURL = PATH_UP + interfaceHandlerUrl + scriptName + PathConstants.EXTENSION_JS;
         String proxyEngineURL = PATH_UP + engineHandlerUrl;
         String proxyUtilURL = PATH_UP + utilHandlerUrl;
+        int slashPos = -1;
+        while((slashPos = scriptName.indexOf('/', slashPos + 1)) != -1)
+        {
+            proxyInterfaceURL = PATH_UP + "/" + proxyInterfaceURL;
+            proxyEngineURL = PATH_UP + "/" + proxyEngineURL;
+            proxyUtilURL = PATH_UP + "/" + proxyUtilURL;
+        }
 
         Module module = moduleManager.getModule(scriptName, true);
         MethodDeclaration[] methods = module.getMethods();
@@ -113,9 +120,9 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("<head>\n");
         buffer.append("  <title>DWR Test</title>\n");
         buffer.append("  <!-- These paths use .. so that they still work behind a path mapping proxy. The fully qualified version is more cut and paste friendly. -->\n");
-        buffer.append("  <script type='text/javascript' src='" + proxyInterfaceURL + "'></script>\n");
         buffer.append("  <script type='text/javascript' src='" + proxyEngineURL + "'></script>\n");
         buffer.append("  <script type='text/javascript' src='" + proxyUtilURL + "'></script>\n");
+        buffer.append("  <script type='text/javascript' src='" + proxyInterfaceURL + "'></script>\n");
         buffer.append("  <script type='text/javascript'>\n");
         buffer.append("  function objectEval(text)\n");
         buffer.append("  {\n");
@@ -147,8 +154,8 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
         buffer.append("<h2>Methods For: " + scriptName + " (" + module.toString() + ")</h2>\n");
         buffer.append("<p>To use this class in your javascript you will need the following script includes:</p>\n");
         buffer.append("<pre>\n");
-        buffer.append("  &lt;script type='text/javascript' src='<a href='" + interfaceURL + "'>" + interfaceURL + "</a>'&gt;&lt;/script&gt;\n");
         buffer.append("  &lt;script type='text/javascript' src='<a href='" + engineURL + "'>" + engineURL + "</a>'&gt;&lt;/script&gt;\n");
+        buffer.append("  &lt;script type='text/javascript' src='<a href='" + interfaceURL + "'>" + interfaceURL + "</a>'&gt;&lt;/script&gt;\n");
         buffer.append("</pre>\n");
 
         buffer.append("<p>In addition there is an optional utility script:</p>\n");
@@ -220,7 +227,7 @@ public class DefaultDebugPageGenerator implements DebugPageGenerator
             }
             buffer.append("  );\n");
 
-            String onclick = scriptName + '.' + methodName + "(";
+            String onclick = (LocalUtil.isJavaIdentifierWithPackage(scriptName) ? scriptName : "dwr.engine._getObject(\"" + scriptName + "\")") + "." + methodName + "(";
             for (int j = 0; j < paramTypes.length; j++)
             {
                 if (!LocalUtil.isServletClass(paramTypes[j]))

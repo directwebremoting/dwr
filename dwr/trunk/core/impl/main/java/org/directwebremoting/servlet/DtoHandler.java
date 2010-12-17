@@ -53,13 +53,15 @@ public class DtoHandler extends GeneratedJavaScriptHandler
         jsClassName = jsClassName.substring(dtoHandlerUrl.length());
         jsClassName = jsClassName.substring(0, jsClassName.length() - PathConstants.EXTENSION_JS.length());
 
-        if (!LocalUtil.isJavaIdentifierWithPackage(jsClassName))
+        if (!LocalUtil.isValidMappedClassName(jsClassName))
         {
             log.debug("Throwing at request for class with name: '" + jsClassName + "'");
-            throw new SecurityException("Class names must comply with Java package and class identifiers");
+            throw new SecurityException("Illegal mapped class name.");
         }
 
-        return remoter.generateDtoScript(jsClassName);
+        // TODO: Implement this!
+
+        return "";
     }
 
     /**
@@ -79,7 +81,7 @@ public class DtoHandler extends GeneratedJavaScriptHandler
     {
         this.generateDtoClasses = generateDtoClasses;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

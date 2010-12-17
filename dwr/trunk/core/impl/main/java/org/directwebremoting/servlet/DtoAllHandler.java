@@ -37,8 +37,10 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return "";
         }
-        
-        return remoter.generateAllDtoScripts();
+
+        // TODO: Implement this!
+
+        return "";
     }
 
     /**
@@ -49,7 +51,7 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
     {
         this.generateDtoClasses = generateDtoClasses;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

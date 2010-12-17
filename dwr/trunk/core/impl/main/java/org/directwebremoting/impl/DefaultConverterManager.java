@@ -187,7 +187,7 @@ public class DefaultConverterManager implements ConverterManager
         // Set up stuff for mapped JavaScript class (if any)
         if (LocalUtil.hasLength(namedConverter.getJavascript()))
         {
-            namedConverter.setJavascript(inferClassName(clazz.getName(), namedConverter.getJavascript()));
+            namedConverter.setJavascript(LocalUtil.inferWildcardReplacements(clazz.getName(), namedConverter.getJavascript()));
             namedConverter.setInstanceType(clazz);
 
             // Set up stuff for mapped JavaScript superclass (if not already assigned)
@@ -234,39 +234,6 @@ public class DefaultConverterManager implements ConverterManager
 
             convertersByJavascript.put(namedConverter.getJavascript(), namedConverter);
         }
-    }
-
-    /**
-     * Expands the Javascript wildcard (if any).
-     * @param match the java class
-     * @param jsClassName the javascript attribute of a converter
-     * @return a string that does not contain * or null
-     */
-    protected String inferClassName(String match, String jsClassName)
-    {
-        String className = jsClassName;
-        if (jsClassName != null)
-        {
-            if ("*".equals(jsClassName))
-            {
-                className = match.substring(match.lastIndexOf('.') + 1);
-            }
-            else if ("**".equals(jsClassName))
-            {
-                className = match;
-            }
-            else if (jsClassName.indexOf("*") > 0)
-            {
-                className = jsClassName.replace("*", match.substring(match.lastIndexOf('.') + 1));
-            }
-
-            if (!className.equals(jsClassName) && log.isDebugEnabled())
-            {
-                Loggers.STARTUP.debug("- expanded javascript [" + jsClassName + "] to [" + className + "] for " + match);
-            }
-        }
-
-        return className;
     }
 
     /**
@@ -336,6 +303,14 @@ public class DefaultConverterManager implements ConverterManager
     public Converter getConverterByMatchString(String match)
     {
         return convertersByMatch.get(match);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ConverterManager#getNamedConverter(java.lang.String)
+     */
+    public NamedConverter getNamedConverter(String javascriptClassName)
+    {
+        return convertersByJavascript.get(javascriptClassName);
     }
 
     /* (non-Javadoc)
@@ -534,17 +509,6 @@ public class DefaultConverterManager implements ConverterManager
             }
         }
         return null;
-    }
-
-    /**
-     * Find a converter based on class-mapped JavaScript class name.
-     * @param javascriptClassName The type name as passed in from the client
-     * @return The Converter that matches this request (if any)
-     * @throws ConversionException If marshalling fails
-     */
-    protected NamedConverter getNamedConverter(String javascriptClassName) throws ConversionException
-    {
-        return convertersByJavascript.get(javascriptClassName);
     }
 
     /**
