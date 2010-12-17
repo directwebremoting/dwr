@@ -794,9 +794,8 @@ public class StartupUtil
     }
 
     /**
-     * If there is only once instance of DWR defined in a ServletContext then
-     * we can get at it using this method.
-     * @return The one-and-only ServerContext or null if there are more than 1.
+     * Returns a Collection of all ServerContexts in which DWR has been defined.
+     * @return Collection of ServerContexts.
      */
     public static Collection<ServerContext> getAllServerContexts()
     {
