@@ -666,6 +666,66 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   * Create a new object that delegates to obj
+   * @param obj 
+   */
+  dwr.engine._delegate = (function() { 
+    function F(){} 
+    return (function(obj){ 
+      F.prototype = obj; 
+      return new F(); 
+    }); 
+  })();
+  
+  /**
+   * A reference to the global context (window when in a browser)
+   */
+  dwr.engine._global = (function(){return this;}).call(null);
+  
+  /**
+   * Navigates properties from the global scope and down to fetch a property
+   * value.
+   * @param prop hierarchical property name
+   * @return property value, or undefined if doesn't exist
+   */
+  dwr.engine._getObject = function(prop) {
+    var parts = prop.split(".");
+    var value;
+    var scope = dwr.engine._global;
+    while(parts.length > 0) {
+      var currprop = parts.shift();
+      value = scope[currprop];
+      if (parts.length > 0 && value == null) return undefined;
+      scope = value;
+    }
+    return value;
+  };
+
+  /**
+   * Navigates properties from the global scope and down to set a value.
+   * @param prop hierarchical property name
+   * @param obj property value to set
+   */
+  dwr.engine._setObject = function(prop, obj) {
+    var parts = prop.split(".");
+    var level;
+    var scope = dwr.engine._global;
+    while(parts.length > 0) {
+      var currprop = parts.shift();
+      if (parts.length == 0) {
+        scope[currprop] = obj;
+      }
+      else {
+        level = scope[currprop];
+        if (level == null) {
+          scope[currprop] = level = {};
+        }
+        scope = level;
+      }
+    }
+  };
+  
+  /**
    * Used internally when some message needs to get to the programmer
    * @private
    * @param {String} message
@@ -1083,7 +1143,7 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     convertObject:function(batch, referto, data, name, depth) {
       // treat objects as an associative arrays
-      var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data) + ":{";
+      var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data).replace(/:/g, "?") + ":{";
       var elementset = (data.constructor && data.constructor.$dwrClassMembers ? data.constructor.$dwrClassMembers : data);
       var element;
       for (element in elementset) {

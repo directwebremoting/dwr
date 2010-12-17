@@ -80,6 +80,13 @@ public interface ConverterManager
     Converter getConverterByMatchString(String match);
 
     /**
+     * Find a converter based on class-mapped JavaScript class name.
+     * @param javascriptClassName The type name as passed in from the client
+     * @return The Converter that matches this request (if any)
+     */
+    NamedConverter getNamedConverter(String javascriptClassName);
+
+    /**
      * Check if we can coerce the given type
      * @param paramType The type to check
      * @return true iff <code>paramType</code> is convertible

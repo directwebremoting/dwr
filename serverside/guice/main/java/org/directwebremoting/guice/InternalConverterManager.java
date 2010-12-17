@@ -24,6 +24,7 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InboundVariable;
+import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.Property;
@@ -101,6 +102,14 @@ public class InternalConverterManager implements ConverterManager
     public Converter getConverterByMatchString(String match)
     {
         return converterManager.getConverterByMatchString(match);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#getNamedConverter(java.lang.String)
+     */
+    public NamedConverter getNamedConverter(String javascriptClassName)
+    {
+        return converterManager.getNamedConverter(javascriptClassName);
     }
 
     /* (non-Javadoc)

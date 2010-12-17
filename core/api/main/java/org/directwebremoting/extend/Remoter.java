@@ -25,27 +25,34 @@ public interface Remoter
     /**
      * Generate some Javascript that forms an interface definition
      * @param scriptName The script to generate for
-     * @param includeDto Specifies whether mapped DTO classes should be added
+     * @param indent Indent string prepended to all generated text lines
+     * @param assignVariable JavaScript identifier to generate an assignment of the interface to
      * @param contextServletPath request.contextPath + request.servletPath.
      * @return An interface javascript
      * @throws SecurityException
      */
-    String generateInterfaceScript(String scriptName, boolean includeDto, String contextServletPath) throws SecurityException;
+    String generateInterfaceScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException;
 
     /**
      * Generate JavaScript that forms a mapped DTO class
      * @param jsClassName The mapped JavaScript class name
+     * @param indent Indent string prepended to all generated text lines
+     * @param assignVariable JavaScript identifier to generate an assignment of the class to
      * @return JavaScript class definition
      * @throws SecurityException
      */
-    String generateDtoScript(String jsClassName) throws SecurityException;
+    String generateDtoScript(String jsClassName, String indent, String assignVariable) throws SecurityException;
 
     /**
-     * Generate JavaScript with all mapped DTO classes
-     * @return JavaScript class definitions
+     * Generate JavaScript that sets up a DTO class's inheritance from its superclass
+     * @param jsClassName The mapped JavaScript class name
+     * @param indent Indent string prepended to all generated text lines
+     * @param classLookupExpression JavaScript expression that evaluates to the subclass
+     * @param superclassLookupFunction Name of a function that will return the superclass when supplied its name
+     * @return JavaScript inheritance statement or null if no inheritance
      * @throws SecurityException
      */
-    String generateAllDtoScripts() throws SecurityException;
+    String generateDtoInheritanceScript(String jsClassName, String indent, String classLookupExpression, String superclassLookupFunction) throws SecurityException;
 
     /**
      * Execute a set of remote calls and generate set of reply data for later

@@ -259,24 +259,88 @@ public final class LocalUtil
     }
 
     /**
-     * Tests if a string contains only characters that will not open up security
-     * holes when included in an html tag.
+     * Determines whether the supplied string is a valid script name to use for
+     * remoted classes.
+     *
+     * @param test
+     * @return true if the string is a valid script name
+     */
+    public static boolean isValidScriptName(String test)
+    {
+        return isSafeHierachicalIdentifierInBrowser(test);
+    }
+
+    /**
+     * Determines whether the supplied string is a valid class name to use for
+     * class-mapped data classes.
+     *
+     * @param test
+     * @return true if the string is a valid mapped class name
+     */
+    public static boolean isValidMappedClassName(String test)
+    {
+        return isSafeHierachicalIdentifierInBrowser(test);
+    }
+
+    /**
+     * Tests if a string contains only characters that will allow safe use
+     * inside html element attributes and url:s, and is a valid hierarchical
+     * identifier wrt to dot ("package") segments.
      *
      * @param test
      * @return true if string is safe
      */
-    public static boolean isSafeIdentifierInHtml(String test)
+    public static boolean isSafeHierachicalIdentifierInBrowser(String test)
+    {
+        if (test.endsWith("/"))
+        {
+            return false;
+        }
+        String[] segments = test.split("\\.");
+        for (String segment : segments)
+        {
+            if (segment.equals(""))
+            {
+                return false;
+            }
+            for(int i=0; i<segment.length(); i++) {
+                if (!isSafeIdentifierInBrowser(test))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Tests if a string contains only characters that will allow safe use
+     * inside html element attributes and url:s.
+     *
+     * @param test
+     * @return true if string is safe
+     */
+    public static boolean isSafeIdentifierInBrowser(String test)
     {
         for(int i=0; i<test.length(); i++) {
             char ch = test.charAt(i);
 
-            // Exclude characters that may change parsing mode in HTML
+            // Disallow characters that may change parsing mode in HTML
             if ("<>&'\"".indexOf(ch) >= 0)
             {
                 return false;
             }
 
-            // Exclude characters outside the normal-characters ascii range that
+            // Disallow characters that may break URL handling
+            //   ;  delimits path parameters
+            //   ?  delimits query string
+            //   #  delimits anchor string
+            if (";?#%".indexOf(ch) >= 0)
+            {
+                return false;
+            }
+
+            // Disallow characters outside the normal-characters ascii range that
             // are not letters or digits
             if ((ch < 32 || 126 < ch) && !Character.isLetterOrDigit(ch))
             {
@@ -284,6 +348,39 @@ public final class LocalUtil
             }
         }
         return true;
+    }
+
+    /**
+     * Expands wildcards in an identifier string by using information in a base identifier name.
+     * @param base the base identifier
+     * @param wildcarded the wildcarded string to be replaced
+     * @return a string that does not contain * or null
+     */
+    public static String inferWildcardReplacements(String base, String wildcarded)
+    {
+        String result = wildcarded;
+        if (wildcarded != null)
+        {
+            if ("*".equals(wildcarded))
+            {
+                result = base.substring(base.lastIndexOf('.') + 1);
+            }
+            else if ("**".equals(wildcarded))
+            {
+                result = base;
+            }
+            else if (wildcarded.indexOf("*") > 0)
+            {
+                result = wildcarded.replace("*", base.substring(base.lastIndexOf('.') + 1));
+            }
+
+            if (!result.equals(wildcarded) && log.isDebugEnabled())
+            {
+                Loggers.STARTUP.debug("- expanded wildcarded string [" + wildcarded + "] to [" + result + "] for " + base);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -1076,11 +1173,11 @@ public final class LocalUtil
     }
 
     /**
-     * Converts a remapped DWR classname to the corresponding original name in 
+     * Converts a remapped DWR classname to the corresponding original name in
      * the org.directwebremoting package.
-     * 
+     *
      * @param className
-     * @return
+     * @return full class name relative original DWR package
      */
     public static String originalDwrClassName(String className)
     {
@@ -1090,13 +1187,13 @@ public final class LocalUtil
         }
         return className;
     }
-    
+
     /**
      * Converts a DWR classname in the original org.directwebremoting package
      * to the corresponding name in the remapped package, if applicable.
-     * 
+     *
      * @param className
-     * @return
+     * @return full class name relative remapped DWR package
      */
     public static String remappedDwrClassName(String className)
     {
@@ -1110,9 +1207,9 @@ public final class LocalUtil
     /**
      * Determines if a classname resides in the DWR original package
      * (org.directwebremoting).
-     * 
+     *
      * @param className
-     * @return
+     * @return true if class in original DWR package
      */
     public static boolean isClassNameInDwrOriginalPackage(String className)
     {
@@ -1120,21 +1217,21 @@ public final class LocalUtil
         {
             return false;
         }
-        
+
         if (className.indexOf(DwrConstants.PACKAGE_NAME, 1) >= 0)
         {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Determines if a classname resides in the remapped package, if
      * applicable.
-     * 
+     *
      * @param className
-     * @return
+     * @return true if class in remapped DWR package
      */
     public static boolean isClassNameInDwrRemappedPackage(String className)
     {
@@ -1147,10 +1244,10 @@ public final class LocalUtil
         {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Utility to essentially do Class forName with the assumption that the
      * environment expects failures for missing jar files and can carry on if

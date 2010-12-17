@@ -20,11 +20,16 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.Module;
+import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.servlet.InterfaceHandler;
 import org.directwebremoting.servlet.PathConstants;
 
 /**
- * A handler for interface generation requests
+ * This is a customization of {@link InterfaceHandler} which is needed because
+ * DWR+Jaxer has a different definition of scriptName than plain vanilla DWR
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class JaxerInterfaceHandler extends InterfaceHandler
@@ -35,18 +40,48 @@ public class JaxerInterfaceHandler extends InterfaceHandler
     @Override
     protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        String scriptName = request.getPathInfo();
+        String fullCreatorName = request.getPathInfo();
 
-        if (!scriptName.endsWith(PathConstants.EXTENSION_JS))
+        if (!fullCreatorName.endsWith(PathConstants.EXTENSION_JS))
         {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return "";
         }
 
-        scriptName = scriptName.replaceFirst("/", "");
-        scriptName = scriptName.replace(PathConstants.EXTENSION_JS, "");
+        fullCreatorName = fullCreatorName.replaceFirst("/", "");
+        fullCreatorName = fullCreatorName.replace(PathConstants.EXTENSION_JS, "");
+
+        // Lookup the module using long creatorName
+        Module module = moduleManager.getModule(fullCreatorName, false);
+        if (module == null)
+        {
+            log.warn("Failed to find creator using: " + fullCreatorName);
+            throw new SecurityException("Failed to find creator");
+        }
+
+        // Internally use short scriptName
+        String scriptName = module.getName();
 
         String contextServletPath = request.getContextPath() + request.getServletPath();
-        return remoter.generateInterfaceScript(scriptName, generateDtoClasses.matches(".*\\binterface\\b.*"), contextServletPath);
+        return generateInterface(scriptName, contextServletPath);
     }
+
+    /**
+     * Setter for the ModuleManager
+     * @param moduleManager The new ModuleManager
+     */
+    public void setModuleManager(ModuleManager moduleManager)
+    {
+        this.moduleManager = moduleManager;
+    }
+
+    /**
+     * Used for looking up modules for the requested interfaces.
+     */
+    protected ModuleManager moduleManager = null;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(JaxerInterfaceHandler.class);
 }

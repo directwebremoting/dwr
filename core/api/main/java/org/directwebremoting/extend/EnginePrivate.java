@@ -190,12 +190,9 @@ public class EnginePrivate
      * Get a string which will initialize a dwr.engine object
      * @return A dwr.engine init script
      */
-    public static String getEngineInitScript()
+    public static String getRequireEngineScript()
     {
-        return "// Provide a default path to dwr.engine\n" +
-               "if (typeof dwr == 'undefined') dwr = {};\n" +
-               "if (typeof dwr.engine == 'undefined') dwr.engine = {};\n" +
-               "if (typeof dwr.engine._mappedClasses == 'undefined') dwr.engine._mappedClasses = {};\n" +
+        return "if (typeof dwr == 'undefined' || dwr.engine == undefined) throw new Error('You must include DWR engine before including this file');\n" +
                '\n';
     }
 

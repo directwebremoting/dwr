@@ -39,10 +39,13 @@ public class TestHandler implements Handler
     {
         String scriptName = request.getPathInfo();
         scriptName = scriptName.replace(testHandlerUrl, "");
-        scriptName = scriptName.replace("/", "");
-        if (!LocalUtil.isJavaIdentifier(scriptName))
+        while(scriptName.endsWith("/"))
         {
-            throw new SecurityException("Script names may only contain Java Identifiers");
+            scriptName = scriptName.substring(0, scriptName.length() - 1);
+        }
+        if (!LocalUtil.isValidScriptName(scriptName))
+        {
+            throw new SecurityException("Illegal script name.");
         }
 
         String page = debugPageGenerator.generateTestPage(request.getContextPath() + request.getServletPath(), scriptName);

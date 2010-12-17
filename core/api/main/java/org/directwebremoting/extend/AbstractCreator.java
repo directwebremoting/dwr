@@ -40,6 +40,10 @@ public abstract class AbstractCreator implements Creator
      */
     public String getJavascript()
     {
+        if (!javascriptInferred)
+        {
+            this.javascript = LocalUtil.inferWildcardReplacements(getType().getName(), javascript);
+        }
         return javascript;
     }
 
@@ -48,13 +52,14 @@ public abstract class AbstractCreator implements Creator
      */
     public void setJavascript(String javascript)
     {
-        if (!LocalUtil.isJavaIdentifier(javascript))
+        if (!LocalUtil.isValidScriptName(javascript))
         {
             log.error("Illegal identifier: '" + javascript + "'");
             throw new IllegalArgumentException("Illegal identifier");
         }
 
         this.javascript = javascript;
+        this.javascriptInferred = false;
     }
 
     /**
@@ -145,6 +150,11 @@ public abstract class AbstractCreator implements Creator
      * The javascript name for the class
      */
     private String javascript = null;
+
+    /**
+     * Has wildcard replacement been done on the javascript name?
+     */
+    private boolean javascriptInferred = false;
 
     /**
      * The scope of the objects created by this creator

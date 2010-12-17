@@ -106,9 +106,9 @@ public class CallBatch extends Batch
             }
 
             String scriptName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_SCRIPTNAME, THROW);
-            if (!LocalUtil.isLetterOrDigitOrUnderline(scriptName))
+            if (!LocalUtil.isValidScriptName(scriptName))
             {
-                throw new SecurityException("Script names may only contain Java Identifiers");
+                throw new SecurityException("Illegal script name.");
             }
 
             String methodName = extractParameter(prefix + ProtocolConstants.INBOUND_KEY_METHODNAME, THROW);
@@ -135,7 +135,7 @@ public class CallBatch extends Batch
                         String[] split = ConvertUtil.splitInbound(formField.getString());
 
                         String value = split[ConvertUtil.INBOUND_INDEX_VALUE];
-                        String type = split[ConvertUtil.INBOUND_INDEX_TYPE];
+                        String type = split[ConvertUtil.INBOUND_INDEX_TYPE].replace('?', ':');
                         inboundContext.createInboundVariable(callNum, key, type, value);
                     }
                     it.remove();

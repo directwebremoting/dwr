@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.Creator;
+import org.directwebremoting.impl.test.TestCreatedObject;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,6 +56,7 @@ public class DefaultCreatorManagerTest
     public void addCreator()
     {
         NewCreator creator = new NewCreator();
+        creator.setClass(TestCreatedObject.class.getName());
         manager.addCreator(creator);
     }
 }
