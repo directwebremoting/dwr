@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.annotations.Filter;
+import org.directwebremoting.annotations.Filters;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.spring.BeanCreator;
 import org.directwebremoting.spring.ConverterConfig;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.ManagedList;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -111,7 +114,6 @@ public abstract class CreatorParserHelper extends ConverterParserHelper
                 }
             }
         }
-
         creatorConfig.addPropertyValue("auth", auth);
         creatorConfig.addPropertyValue("params", params);
         creatorConfig.addPropertyValue("includes", includes);
@@ -147,6 +149,25 @@ public abstract class CreatorParserHelper extends ConverterParserHelper
                         includes.add(method.getName());
                     }
                 }
+                // Handle the Filter/Filters annotations.
+                ManagedList filters = new ManagedList();
+                Filter filter = beanDefinitionClass.getAnnotation(Filter.class);
+                if (null != filter) {
+                    processFilter(beanDefinitionRegistry, filter, javascript, filters);
+                }
+                Filters filtersAnn = beanDefinitionClass.getAnnotation(Filters.class);
+                if (filtersAnn != null)
+                {
+                    Filter[] fs = filtersAnn.value();
+                    for (Filter filterFromFilters : fs)
+                    {
+                        processFilter(beanDefinitionRegistry, filterFromFilters, javascript, filters);
+                    }
+                }
+                if (filters.size() > 0) {
+                    creatorConfig.addPropertyValue("filters", filters);
+                }
+                // Processing of Filter/Filters complete, continue processing.
                 creatorConfig.addPropertyValue("includes", includes);
                 BeanDefinitionHolder aux = new BeanDefinitionHolder(creatorConfig.getBeanDefinition(), creatorConfigName);
                 BeanDefinitionReaderUtils.registerBeanDefinition(aux, beanDefinitionRegistry);
