@@ -17,6 +17,8 @@ package org.directwebremoting.spring.namespace;
 
 import java.util.List;
 
+import org.directwebremoting.annotations.Filter;
+import org.directwebremoting.annotations.Param;
 import org.directwebremoting.filter.ExtraLatencyAjaxFilter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -41,14 +43,19 @@ public abstract class FilterParserHelper extends NamespaceParserHelper
     {
         BeanDefinitionBuilder beanFilter = BeanDefinitionBuilder.rootBeanDefinition(ExtraLatencyAjaxFilter.class);
         beanFilter.addPropertyValue("delay", child.getAttribute("delay"));
-        BeanDefinitionHolder holder2 = new BeanDefinitionHolder(beanFilter.getBeanDefinition(), "__latencyFilter_" + name);
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder2, registry);
-
+        registerFilter(registry, beanFilter.getBeanDefinition(), "__latencyFilter_" + name);
         ManagedList filterList = new ManagedList();
         filterList.add(new RuntimeBeanReference("__latencyFilter_" + name));
         creatorConfig.addPropertyValue("filters", filterList);
     }
 
+    /**
+     * Processes filters configured via xml.
+     *
+     * @param registry
+     * @param element
+     * @param javascript
+     */
     @SuppressWarnings("unchecked")
     protected void processFilter(BeanDefinitionRegistry registry, Element element, String javascript)
     {
@@ -62,7 +69,30 @@ public abstract class FilterParserHelper extends NamespaceParserHelper
         registerFilter(registry, beanFilter.getBeanDefinition(), "__filter_" + filterClass + "_" + javascript);
     }
 
-    private void registerFilter(BeanDefinitionRegistry registry, BeanDefinition bean, String name)
+    /**
+     * Processes Filters configured via annotations.
+     *
+     * @param registry
+     * @param filter
+     * @param javascript
+     * @param filters
+     */
+    @SuppressWarnings("unchecked")
+    protected static void processFilter(BeanDefinitionRegistry registry, Filter filter, String javascript, ManagedList filters)
+    {
+        BeanDefinitionBuilder beanFilter = BeanDefinitionBuilder.rootBeanDefinition(filter.type());
+        Param[] filterParams = filter.params();
+        if (filterParams != null)
+        {
+            for (Param filterParam : filterParams) {
+                beanFilter.addPropertyValue(filterParam.name(), filterParam.value());
+            }
+        }
+        registerFilter(registry, beanFilter.getBeanDefinition(), "__filter_" + javascript);
+        filters.add(new RuntimeBeanReference("__filter_" + javascript));
+    }
+
+    private static void registerFilter(BeanDefinitionRegistry registry, BeanDefinition bean, String name)
     {
         BeanDefinitionHolder holder = new BeanDefinitionHolder(bean, name);
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
@@ -77,10 +107,14 @@ public abstract class FilterParserHelper extends NamespaceParserHelper
         filters.add(new RuntimeBeanReference("__filter_" + filterClass + "_" + javascript));
     }
 
-    @SuppressWarnings("unchecked")
     protected ManagedList createManagedFilterList(Element element, String javascript)
     {
-        String filterClass = element.getAttribute("class");
+        return createManagedFilterList(element.getAttribute("class"), javascript);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ManagedList createManagedFilterList(String filterClass, String javascript)
+    {
         ManagedList filterList = new ManagedList();
         filterList.add(new RuntimeBeanReference("__filter_" + filterClass + "_" + javascript));
         return filterList;
