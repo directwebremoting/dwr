@@ -1344,7 +1344,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
     setDwrSession:function(dwrsess) {
       dwr.engine._dwrSessionId = dwrsess;
-      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + dwr.engine._contextPath;
+      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + (dwr.engine._contextPath != "" ? dwr.engine._contextPath : "/");
       dwr.engine._scriptSessionId = dwrsess + "/" + dwr.engine._pageId;
     },
 
