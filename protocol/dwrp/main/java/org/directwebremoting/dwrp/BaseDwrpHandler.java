@@ -60,22 +60,31 @@ public abstract class BaseDwrpHandler implements Handler
         // corresponding session value in the batch must match
         if (request.getCookies() != null)
         {
+            int dwrCookieCount = 0;
+            int dwrCookieMatchCount = 0;
             for (Cookie cookie : request.getCookies())
             {
                 if (cookie.getName().equals("DWRSESSIONID"))
                 {
+                    dwrCookieCount++;
                     if (cookie.getValue().equals(batch.getDwrSessionId()))
                     {
-                        // All is well, we can exit from the cookie test loop
-                        break;
-                    }
-                    else
-                    {
-                        // Values don't match which is probably an attack
-                        log.error("A request has been denied as a potential CSRF attack. This security check is performed as DWR's crossDomainSessionSecurity setting is active. Read more in the DWR documentation.");
-                        throw new SecurityException("CSRF Security Error (see server log for details).");
+                        dwrCookieMatchCount++;
                     }
                 }
+            }
+
+            // Issue error if there was no match (probably an attack)
+            if (dwrCookieCount > 0 && dwrCookieMatchCount == 0)
+            {
+                log.error("A request has been denied as a potential CSRF attack. This security check is performed as DWR's crossDomainSessionSecurity setting is active. Read more in the DWR documentation.");
+                throw new SecurityException("CSRF Security Error (see server log for details).");
+            }
+
+            // Issue warning in log if there were multiple and different cookies
+            if (dwrCookieCount > 1 && dwrCookieMatchCount != dwrCookieCount)
+            {
+                log.warn("Multiple DWRSESSIONID cookies with different values in request.");
             }
         }
     }
