@@ -18,7 +18,6 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -153,7 +152,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // Use of comet depends on the type of browser and the number of current
         // connections from this browser (detected by cookies)
         boolean comet = BrowserDetect.supportsComet(request);
-        if (comet)
+        /*if (comet)
         {
             // Nasty 2 connection limit hack. How many times is this browser connected?
             String httpSessionId = webContext.getSession(true).getId();
@@ -180,7 +179,7 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             log.debug("Browser does not support comet, polling");
         }
-
+*/
         // Set the system up to resume anyway after maxConnectedTime
         ServerLoadMonitor slm = comet ? serverLoadMonitor : pollingServerLoadMonitor;
         long connectedTime = slm.getConnectedTime();
