@@ -38,7 +38,7 @@ public class Clock implements Runnable
     public Clock()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
@@ -48,7 +48,13 @@ public class Clock implements Runnable
     {
         if (active)
         {
-            setClockDisplay(new Date().toString());
+            String newTimeString = new Date().toString();
+            // We check this has not already been sent to avoid duplicate transmissions
+            if (!newTimeString.equals(timeString))
+            {
+                setClockDisplay(newTimeString);
+                timeString = newTimeString;
+            }
         }
     }
 
@@ -93,4 +99,9 @@ public class Clock implements Runnable
      * Are we updating the clocks on all the pages?
      */
     protected transient boolean active = false;
+
+    /**
+     * The last time string
+     */
+    protected String timeString = "";
 }
