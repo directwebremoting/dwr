@@ -18,7 +18,6 @@ package org.directwebremoting.faces;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.AbstractCreator;
-import org.directwebremoting.util.LocalUtil;
 
 /**
  * This is a DWR creator implementation, to allow dwr beans to be allocated into
@@ -47,7 +46,6 @@ public abstract class AbstractJsfCreator extends AbstractCreator
                 return Object.class;
             }
         }
-
         return instanceType;
     }
 
@@ -88,26 +86,6 @@ public abstract class AbstractJsfCreator extends AbstractCreator
     public void setManagedBeanName(String managedBeanName)
     {
         this.managedBeanName = managedBeanName;
-    }
-
-    /**
-     * What sort of class do we create?
-     * @param classname The name of the class
-     */
-    public void setClass(String classname)
-    {
-        try
-        {
-            this.instanceType = LocalUtil.classForName(classname);
-        }
-        catch (ExceptionInInitializerError ex)
-        {
-            throw new IllegalArgumentException("Error loading class: " + classname, ex);
-        }
-        catch (ClassNotFoundException ex)
-        {
-            throw new IllegalArgumentException("Class not found: " + classname, ex);
-        }
     }
 
     /**
