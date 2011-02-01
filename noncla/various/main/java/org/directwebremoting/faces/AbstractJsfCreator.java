@@ -102,7 +102,7 @@ public abstract class AbstractJsfCreator extends AbstractCreator
         }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException("Creator.ClassNotFound");
+            throw new IllegalArgumentException("AbstractJsfCreator - Class not found " + classname, ex);
         }
     }
 
