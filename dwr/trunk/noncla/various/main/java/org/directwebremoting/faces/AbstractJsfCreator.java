@@ -100,9 +100,13 @@ public abstract class AbstractJsfCreator extends AbstractCreator
         {
             this.instanceType = LocalUtil.classForName(classname);
         }
+        catch (ExceptionInInitializerError ex)
+        {
+            throw new IllegalArgumentException("Error loading class: " + classname, ex);
+        }
         catch (ClassNotFoundException ex)
         {
-            throw new IllegalArgumentException("AbstractJsfCreator - Class not found " + classname, ex);
+            throw new IllegalArgumentException("Class not found: " + classname, ex);
         }
     }
 
