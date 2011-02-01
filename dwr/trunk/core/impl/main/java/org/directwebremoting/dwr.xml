@@ -16,6 +16,7 @@
     <!--
     These are now in the noncla module
     <creator id="jsf" class="org.directwebremoting.faces.JsfCreator"/>
+    <creator id="jsf2" class="org.directwebremoting.faces.Jsf2Creator"/>
     <creator id="ejb3" class="org.directwebremoting.create.Ejb3Creator"/>
     -->
 
