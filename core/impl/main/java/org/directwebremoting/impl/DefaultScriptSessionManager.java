@@ -88,56 +88,49 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     public RealScriptSession getScriptSession(String sentScriptId, String page, String httpSessionId)
     {
         maybeCheckTimeouts();
-
         DefaultScriptSession scriptSession;
-
-        synchronized (this.sessionMap)
+        // We only use a "full" script session when we got an id from the
+        // client layer. When there is no script session id we just create
+        // a temporary script session for the duration of the call
+        if ("".equals(sentScriptId))
         {
-            // We only use a "full" script session when we got an id from the
-            // client layer. When there is no script session id we just create
-            // a temporary script session for the duration of the call
-            if ("".equals(sentScriptId))
+            scriptSession = new DefaultScriptSession("", this, page);
+            Loggers.SESSION.debug("Creating temporary script session on " + scriptSession.getPage());
+        }
+        else
+        {
+            scriptSession = sessionMap.get(sentScriptId);
+            if (scriptSession == null)
             {
-                scriptSession = new DefaultScriptSession("", this, page);
-                Loggers.SESSION.debug("Creating temporary script session on " + scriptSession.getPage());
+                scriptSession = new DefaultScriptSession(sentScriptId, this, page);
+                Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
+                sessionMap.putIfAbsent(sentScriptId, scriptSession);
+                // See notes on synchronization in invalidate()
+                fireScriptSessionCreatedEvent(scriptSession);
             }
             else
             {
-                scriptSession = sessionMap.get(sentScriptId);
-                if (scriptSession == null)
+                // This could be called from a poll or an rpc call, so this is a
+                // good place to update the session access time
+                scriptSession.updateLastAccessedTime();
+
+                String storedPage = scriptSession.getPage();
+                if (!storedPage.equals(page))
                 {
-                    scriptSession = new DefaultScriptSession(sentScriptId, this, page);
-                    Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
-
-                    sessionMap.put(sentScriptId, scriptSession);
-
-                    // See notes on synchronization in invalidate()
-                    fireScriptSessionCreatedEvent(scriptSession);
+                    Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
+                    throw new SecurityException("Invalid Page");
                 }
-                else
-                {
-                    // This could be called from a poll or an rpc call, so this is a
-                    // good place to update the session access time
-                    scriptSession.updateLastAccessedTime();
-
-                    String storedPage = scriptSession.getPage();
-                    if (!storedPage.equals(page))
-                    {
-                        Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
-                        throw new SecurityException("Invalid Page");
-                    }
-                }
-
-                associateScriptSessionAndPage(scriptSession, page);
-                associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
             }
 
-            // Maybe we should update the access time of the ScriptSession?
-            // scriptSession.updateLastAccessedTime();
-            // Since this call could come from outside of a call from the
-            // browser, it's not really an indication that this session is still
-            // alive, so we don't.
+            associateScriptSessionAndPage(scriptSession, page);
+            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
         }
+
+        // Maybe we should update the access time of the ScriptSession?
+        // scriptSession.updateLastAccessedTime();
+        // Since this call could come from outside of a call from the
+        // browser, it's not really an indication that this session is still
+        // alive, so we don't.
 
         return scriptSession;
     }
@@ -510,7 +503,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The key is the script session id, the value is the session data
      * <p>GuardedBy("sessionLock")
      */
-    protected final Map<String, DefaultScriptSession> sessionMap = new ConcurrentHashMap<String, DefaultScriptSession>();
+    protected final ConcurrentMap<String, DefaultScriptSession> sessionMap = new ConcurrentHashMap<String, DefaultScriptSession>();
 
     /**
      * The map of pages that have sessions.
