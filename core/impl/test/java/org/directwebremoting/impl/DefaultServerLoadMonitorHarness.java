@@ -18,8 +18,8 @@ package org.directwebremoting.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.WaitController;
 
 /**
@@ -35,9 +35,6 @@ public class DefaultServerLoadMonitorHarness
 
     public void exec()
     {
-        dslm.setMaxWaitingThreads(100);
-        dslm.setMaxHitsPerSecond(100);
-
         List<Client> clients = new ArrayList<Client>();
 
         //*
@@ -58,12 +55,8 @@ public class DefaultServerLoadMonitorHarness
                 client.start();
                 clients.add(client);
 
-                float hitsPerSecond = (float) dslm.hitMonitor.getHitsInLastPeriod() / DefaultServerLoadMonitor.SECONDS_MONITORED;
-
                 log.debug("------------------------------------");
                 log.debug("Num. of clients: " + clients.size());
-                log.debug("Hits per second: " + hitsPerSecond);
-                log.debug("Waiting threads: " + dslm.waitingThreads);
                 log.debug("Disconnect time: " + dslm.disconnectedTime);
                 log.debug("Connected time:  " + dslm.connectedTime);
             }
