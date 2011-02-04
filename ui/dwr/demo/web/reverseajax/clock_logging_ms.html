@@ -35,7 +35,7 @@
 				if (pos < 0)
 					return;
 				var ms = parseInt(value.substr(pos + 3, 3), 10);
-				if (oldms != -1 && (oldms + 250) % 250 != ms) {
+				if (oldms != -1 && (oldms + 250) % 1000 != ms) {					
 					log += "value jumping from " + oldms + " to "
 							+ ms + ", ";
 				}
