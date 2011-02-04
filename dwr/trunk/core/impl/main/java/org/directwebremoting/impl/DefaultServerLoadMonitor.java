@@ -50,5 +50,5 @@ public class DefaultServerLoadMonitor extends AbstractServerLoadMonitor
     /**
      * How long are we telling users to wait before they come back next
      */
-    protected int disconnectedTime = 1000;
+    protected int disconnectedTime = 0;
 }
