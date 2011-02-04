@@ -15,8 +15,7 @@
  */
 package com.example.dwr.reverseajax;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -33,9 +32,8 @@ import org.directwebremoting.ui.dwr.Util;
  */
 public class ClockMS implements Runnable
 {
-	private static SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss:SS");
-	
-	/**
+
+    /**
      * Create a schedule to update the clock every second.
      */
     public ClockMS()
@@ -51,7 +49,9 @@ public class ClockMS implements Runnable
     {
         if (active)
         {
-            String newTimeString = formatter.format(new Date());
+            Calendar cal = Calendar.getInstance();
+            int ms = cal.get(Calendar.MILLISECOND);
+            String newTimeString = cal.getTime().toString() + " MS:" + (ms - (ms % 250));
             // We check this has not already been sent to avoid duplicate transmissions
             if (!newTimeString.equals(timeString))
             {
