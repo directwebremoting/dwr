@@ -15,6 +15,7 @@
  */
 package com.example.dwr.reverseajax;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +31,17 @@ import org.directwebremoting.ui.dwr.Util;
  * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Clock implements Runnable
+public class ClockMS implements Runnable
 {
-    /**
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss:SS");
+	
+	/**
      * Create a schedule to update the clock every second.
      */
-    public Clock()
+    public ClockMS()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 200, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
@@ -48,7 +51,7 @@ public class Clock implements Runnable
     {
         if (active)
         {
-            String newTimeString = new Date().toString();
+            String newTimeString = formatter.format(new Date());
             // We check this has not already been sent to avoid duplicate transmissions
             if (!newTimeString.equals(timeString))
             {
