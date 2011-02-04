@@ -21,7 +21,7 @@
 <script>
 	window.onload = function() {
 		setTimeout(function() {
-			var oldseconds = -1;
+			var oldms = -1;
 			var oldtime = new Date();
 			var dwrSetValue = dwr.util.setValue;
 			dwr.util.setValue = function(elem, value, options) {
@@ -31,6 +31,14 @@
 				var log = "";
 				if (typeof value != "string")
 					return;
+				var pos = value.indexOf("MS:", pos + 1);
+				if (pos < 0)
+					return;
+				var ms = parseInt(value.substr(pos + 3, 3), 10);
+				if (oldms != -1 && (oldms + 250) % 250 != ms) {
+					log += "value jumping from " + oldms + " to "
+							+ ms + ", ";
+				}
 				var time = new Date();
 				var delay = time.getTime() - oldtime.getTime();
 				if (delay > 1700) {
@@ -40,7 +48,7 @@
 					document.getElementById("log").innerHTML += "<br>" + value
 							+ ": " + log;
 				}
-				oldseconds = seconds;
+				oldms = ms;
 				oldtime = time;
 			};
 		}, 5000);
