@@ -15,7 +15,6 @@
  */
 package com.example.dwr.reverseajax;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -31,17 +30,15 @@ import org.directwebremoting.ui.dwr.Util;
  * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ClockMS implements Runnable
+public class ClockLogging implements Runnable
 {
-	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss:SS");
-	
-	/**
+    /**
      * Create a schedule to update the clock every second.
      */
-    public ClockMS()
+    public ClockLogging()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 200, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
     }
 
     /* (non-Javadoc)
@@ -51,7 +48,7 @@ public class ClockMS implements Runnable
     {
         if (active)
         {
-            String newTimeString = formatter.format(new Date());
+            String newTimeString = new Date().toString();
             // We check this has not already been sent to avoid duplicate transmissions
             if (!newTimeString.equals(timeString))
             {
@@ -88,7 +85,7 @@ public class ClockMS implements Runnable
      */
     public void setClockDisplay(final String output)
     {
-        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock_logging_ms.html";
+        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock_logging.html";
         Browser.withPage(page, new Runnable()
         {
             public void run()
