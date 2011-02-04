@@ -38,7 +38,7 @@ public class Clock implements Runnable
     public Clock()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
