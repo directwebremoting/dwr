@@ -41,7 +41,7 @@ public class ClockMS implements Runnable
     public ClockMS()
     {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 5, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
