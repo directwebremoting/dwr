@@ -33,7 +33,7 @@ import org.directwebremoting.ui.dwr.Util;
  */
 public class ClockMS implements Runnable
 {
-	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss:SS");
+	private static SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss:SS");
 	
 	/**
      * Create a schedule to update the clock every second.
