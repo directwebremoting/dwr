@@ -31,17 +31,6 @@
 				var log = "";
 				if (typeof value != "string")
 					return;
-				var pos = value.indexOf(":");
-				if (pos < 0)
-					return;
-				var pos = value.indexOf(":", pos + 1);
-				if (pos < 0)
-					return;
-				var seconds = parseInt(value.substr(pos + 1, 2), 10);
-				if (oldseconds != -1 && (oldseconds + 1) % 60 != seconds) {
-					log += "value jumping from " + oldseconds + " to "
-							+ seconds + ", ";
-				}
 				var time = new Date();
 				var delay = time.getTime() - oldtime.getTime();
 				if (delay > 1700) {
