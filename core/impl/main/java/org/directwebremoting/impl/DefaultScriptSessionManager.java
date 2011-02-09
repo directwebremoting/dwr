@@ -94,7 +94,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         // a temporary script session for the duration of the call
         if ("".equals(sentScriptId))
         {
-            scriptSession = new DefaultScriptSession("", this, page);
+            scriptSession = createScriptSession("", page);
             Loggers.SESSION.debug("Creating temporary script session on " + scriptSession.getPage());
         }
         else
@@ -102,7 +102,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
             scriptSession = sessionMap.get(sentScriptId);
             if (scriptSession == null)
             {
-                scriptSession = new DefaultScriptSession(sentScriptId, this, page);
+                scriptSession = createScriptSession(sentScriptId, page);
                 Loggers.SESSION.debug("Creating " + scriptSession + " on " + scriptSession.getPage());
                 sessionMap.putIfAbsent(sentScriptId, scriptSession);
                 // See notes on synchronization in invalidate()
@@ -133,6 +133,27 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         // alive, so we don't.
 
         return scriptSession;
+    }
+
+    /**
+     * Extension point allowing for custom implementations of the DefaultScriptSession.
+     * <p/>
+     * In case you may decide to provide your own implementation, please be
+     * aware of synchronization requirements for e.g.
+     * {@link org.directwebremoting.impl.DefaultScriptSession#scripts}. Synchronization
+     * examples can be found in
+     * {@link DefaultScriptSession#hasWaitingScripts()} or
+     * {@link org.directwebremoting.impl.DefaultScriptSession#addScriptConduit(org.directwebremoting.extend.ScriptConduit)}.
+     *
+     * @param sentScriptId The script ID that was sent by the browser, and should
+     * likely be used to create the DefaultScripSession.
+     * @param page The page for which the scriptsession needs to be created.
+     * @return the DefaultScriptSession object for this <code>sentScriptId</code>
+     * and <code>page</code>
+     */
+    protected DefaultScriptSession createScriptSession(String sentScriptId, String page)
+    {
+        return new DefaultScriptSession(sentScriptId, this, page);
     }
 
     /**
