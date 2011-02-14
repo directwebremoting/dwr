@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
@@ -89,11 +91,19 @@ public class PlainScriptConduit extends BaseScriptConduit
 
         synchronized (out)
         {
-            out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            if (log.isDebugEnabled()) {
+            	log.debug("Writing to response: " + script);
+            }
+        	out.println(ProtocolConstants.SCRIPT_START_MARKER);
             out.println(script);
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
 
             return flush();
         }
     }
+    
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(PlainScriptConduit.class);
 }
