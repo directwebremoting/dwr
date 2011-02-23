@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
@@ -79,6 +80,8 @@ public final class LocalUtil
     {
         throw new InstantiationError("Cannot instantiate LocalUtil");
     }
+
+
 
     /**
      * Create a string by joining the array elements together with the separator
@@ -1543,6 +1546,22 @@ public final class LocalUtil
         {
             log.warn(ex.getMessage(), ex);
         }
+    }
+
+
+    /**
+     * Make the given constructor accessible, explicitly setting it accessible
+     * if necessary. The <code>setAccessible(true)</code> method is only called
+     * when actually necessary, to avoid unnecessary conflicts with a JVM
+     * SecurityManager (if active).
+     * @param ctor the constructor to make accessible
+     * @see java.lang.reflect.Constructor#setAccessible
+     */
+    public static void makeAccessible(Constructor<?> ctor) {
+            if ((!Modifier.isPublic(ctor.getModifiers()) || !Modifier.isPublic(ctor.getDeclaringClass().getModifiers()))
+                            && !ctor.isAccessible()) {
+                    ctor.setAccessible(true);
+            }
     }
 
     /**

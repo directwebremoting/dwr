@@ -15,7 +15,9 @@
  */
 package org.directwebremoting.convert;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ import org.directwebremoting.ConversionException;
 import org.directwebremoting.extend.FieldProperty;
 import org.directwebremoting.extend.InboundContext;
 import org.directwebremoting.extend.Property;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * Convert a Javascript associative array into a JavaBean
@@ -31,6 +34,29 @@ import org.directwebremoting.extend.Property;
  */
 public class ObjectConverter extends BasicObjectConverter
 {
+    @Override
+    protected Object createParameterInstance(Class<?> paramType) throws InstantiationException, IllegalAccessException
+    {
+        if (force)
+        {
+            try
+            {
+                Constructor<?> ctor = paramType.getDeclaredConstructor();
+                LocalUtil.makeAccessible(ctor);
+                return ctor.newInstance();
+            }
+            catch (NoSuchMethodException e)
+            {
+                throw new InstantiationException("No-arg constructor doesn't exist");
+            }
+            catch (InvocationTargetException e)
+            {
+                throw new InstantiationException("No-arg constructor could not be instantiated");
+            }
+        }
+        return super.createParameterInstance(paramType);
+    }
+
     /**
      * Do we force accessibility for private fields
      * @param force "true|false" to set the force accessibility flag
