@@ -45,6 +45,14 @@ public class ConverterDecorator extends ConverterParserHelper implements BeanDef
         ConverterConfig converterConfig = new ConverterConfig();
         converterConfig.setType(type);
         converterConfig.setJavascriptClassName(element.getAttribute("javascript"));
+
+        String forceAsString = element.getAttribute("force");
+        if (forceAsString != null)
+        {
+            boolean force = Boolean.parseBoolean(forceAsString);
+            converterConfig.setForce(force);
+        }
+
         parseConverterSettings(converterConfig, element);
         lookupConverters(registry).put(element.getAttribute("class"), converterConfig);
 

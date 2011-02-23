@@ -139,6 +139,14 @@
 			</xsd:simpleType>
 		</xsd:attribute>
 		<xsd:attribute name="javascript" type="xsd:string" use="optional" />
+                <xsd:attribute name="force" default="false" use="optional">
+                        <xsd:simpleType>
+                            <xsd:restriction  base="xsd:string">
+                                    <xsd:enumeration value="true" />
+                                    <xsd:enumeration value="false" />
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
 	</xsd:complexType>
 
   <xsd:complexType name="signatures" mixed="true">
