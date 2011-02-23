@@ -193,7 +193,7 @@ public abstract class BasicObjectConverter implements NamedConverter
         }
         else
         {
-            bean = paramType.newInstance();
+            bean = createParameterInstance(paramType);
         }
 
         // We should put the new object into the working map in case it
@@ -231,6 +231,19 @@ public abstract class BasicObjectConverter implements NamedConverter
             property.setValue(bean, output);
         }
         return bean;
+    }
+
+    /**
+     * Extension point for subclasses to instantiate parameter classes.
+     *
+     * @param paramType The type of parameter that needs to be instantiated
+     * @return An instance of <code>paramType</code>
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    protected Object createParameterInstance(Class<?> paramType) throws InstantiationException, IllegalAccessException
+    {
+        return paramType.newInstance();
     }
 
     /**
