@@ -173,10 +173,14 @@ public class SpringConfigurator implements Configurator
                         params.put("exclude", StringUtils.collectionToCommaDelimitedString(converterConfig.getExcludes()));
                     }
 
-                    // params.put("force", Boolean.valueOf(converterConfig.isForce()));
                     if (StringUtils.hasText(converterConfig.getJavascriptClassName()))
                     {
                         params.put("javascript", converterConfig.getJavascriptClassName());
+                    }
+
+                    if (converterConfig.isForce())
+                    {
+                        params.put("force", String.valueOf(converterConfig.isForce()));
                     }
 
                     String type = converterConfig.getType();
