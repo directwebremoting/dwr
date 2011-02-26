@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,8 +50,9 @@ public class DefaultTaskDispatcher implements TaskDispatcher
 
         if (use.size() > 0)
         {
-            log.debug("Executing task (" + task.getClass().getSimpleName() + ") against " + use.size() + " sessions.");
-
+            if (log.isDebugEnabled()) {
+        	    log.debug("Execution time: " + new Date().toString() + " - Executing task (" + task.getClass().getSimpleName() + ") against " + use.size() + " sessions.");
+            }
             target.set(use);
             task.run();
             target.remove();
