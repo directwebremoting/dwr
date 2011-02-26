@@ -16,6 +16,7 @@
 package org.directwebremoting.dwrp;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -92,7 +93,7 @@ public class PlainScriptConduit extends BaseScriptConduit
         synchronized (out)
         {
             if (log.isDebugEnabled()) {
-            	log.debug("Writing to response: " + script);
+            	log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
             }
         	out.println(ProtocolConstants.SCRIPT_START_MARKER);
             out.println(script);
