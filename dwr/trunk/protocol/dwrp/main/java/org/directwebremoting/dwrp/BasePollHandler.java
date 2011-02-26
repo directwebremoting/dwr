@@ -181,7 +181,7 @@ public class BasePollHandler extends BaseDwrpHandler
             log.debug("Browser does not support comet, polling");
         }
         // Set the system up to resume anyway after maxConnectedTime
-        ServerLoadMonitor slm = comet ? serverLoadMonitor : pollingServerLoadMonitor;
+        ServerLoadMonitor slm = serverLoadMonitor;
         long connectedTime = slm.getConnectedTime();
         final int disconnectedTime = slm.getDisconnectedTime();
 
