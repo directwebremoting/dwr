@@ -1323,9 +1323,10 @@ if (typeof dwr == 'undefined') dwr = {};
      * @param {Object} batch The batch that is aborting
      */
     abort:function(batch) {
+      var transport = batch.transport;
       dwr.engine.transport.remove(batch);
-      if (batch.transport.abort) {
-        batch.transport.abort(batch);
+      if (transport.abort) {
+        transport.abort(batch);
       }
       dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
     },
