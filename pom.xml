@@ -359,28 +359,7 @@
 						<useReleaseProfile>false</useReleaseProfile>
 						<remoteTagging />
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-shade-plugin</artifactId>
-					<version>1.4</version>
-					<executions>
-						<execution>
-							<phase>package</phase>
-							<goals>
-								<goal>shade</goal>
-							</goals>
-							<configuration>
-								<artifactSet>
-									<excludes>
-									</excludes>
-								</artifactSet>
-								<shadedArtifactAttached>true</shadedArtifactAttached>
-								<shadedClassifierName>uber</shadedClassifierName>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 		<defaultGoal>install</defaultGoal>
