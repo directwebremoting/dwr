@@ -135,8 +135,8 @@ if (typeof dwr == 'undefined') dwr = {};
     }
     else {
       // Can we cancel an existing request?
-      if (dwr.engine._activeReverseAjax && dwr.engine._pollReq) {
-        dwr.engine._pollReq.abort();
+      if (dwr.engine._activeReverseAjax && dwr.engine._pollBatch) {
+        dwr.engine.transport.abort(dwr.engine._pollBatch);
       }
       dwr.engine._activeReverseAjax = false;
     }
@@ -383,8 +383,8 @@ if (typeof dwr == 'undefined') dwr = {};
   /** Are we doing comet or polling? */
   dwr.engine._activeReverseAjax = false;
 
-  /** The xhr object that we are using to poll */
-  dwr.engine._pollReq = null;
+  /** The batch that we are using to poll */
+  dwr.engine._pollBatch = null;
 
   /** How many milliseconds between internal comet polls */
   dwr.engine._pollCometInterval = 200;
@@ -496,12 +496,6 @@ if (typeof dwr == 'undefined') dwr = {};
     }
   };
 
-  // Now register the unload handler
-  if (!dwr.engine.isJaxerServer) {
-    if (window.addEventListener) window.addEventListener('unload', dwr.engine._unloader, false);
-    else if (window.attachEvent) window.attachEvent('onunload', dwr.engine._unloader);
-  }
-
   /**
    * Send a request. Called by the JavaScript interface stub
    * @private
@@ -548,8 +542,8 @@ if (typeof dwr == 'undefined') dwr = {};
     if (!dwr.engine._activeReverseAjax) {
       return;
     }
-    var batch = dwr.engine.batch.createPoll();
-    dwr.engine.transport.send(batch);
+    dwr.engine._pollBatch = dwr.engine.batch.createPoll();
+    dwr.engine.transport.send(dwr.engine._pollBatch);
   }; 
 
   /** @private This is a hack to make the context be this window */
@@ -1316,30 +1310,37 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     /**
-     * A generic function to remove all remoting artifacts
-     * @param {Object} batch The batch that has completed
+     * Called to signal that the batch response has been delivered
      */
-    remove:function(batch) {
-      dwr.engine.transport.iframe.remove(batch);
-      dwr.engine.transport.xhr.remove(batch);
+    complete:function(batch) {
+        dwr.engine.batch.validate(batch);
+        dwr.engine.transport.remove(batch);
     },
-
+    
     /**
      * Called as a result of a request timeout
      * @private
      * @param {Object} batch The batch that is aborting
      */
     abort:function(batch) {
-      if (batch && !batch.completed) {
-        dwr.engine.batch.remove(batch);
-
-        if (batch.req) {
-          batch.req.abort();
-        }
-
-        dwr.engine.transport.remove(batch);
-        dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
+      dwr.engine.transport.remove(batch);
+      if (batch.transport.abort) {
+        batch.transport.abort(batch);
       }
+      dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
+    },
+
+    /**
+     * Remove all remoting artifacts
+     * @param {Object} batch The batch that has completed
+     */
+    remove:function(batch) {
+      if (batch.transport) {
+        dwr.engine._callPostHooks(batch);
+        batch.transport.remove(batch);
+        batch.transport = null;
+      }
+      dwr.engine.batch.remove(batch);
     },
 
     setDwrSession:function(dwrsess) {
@@ -1404,13 +1405,6 @@ if (typeof dwr == 'undefined') dwr = {};
               dwr.engine.transport.xhr.stateChange(batch);
             }
           };
-        }
-
-        // If we're polling, record this for monitoring
-        if (batch.isPoll) {
-          dwr.engine._pollReq = batch.req;
-          // In IE XHR is an ActiveX control so you can't augment it like this
-          if (!dwr.engine.isIE) batch.req.batch = batch;
         }
 
         httpMethod = dwr.engine.transport.xhr.httpMethod;
@@ -1560,15 +1554,12 @@ if (typeof dwr == 'undefined') dwr = {};
           dwr.engine._handleWarning(batch, ex);
         }
 
-        dwr.engine._callPostHooks(batch);
-
         // Outside of the try/catch so errors propagate normally:
         dwr.engine._receivedBatch = batch;
         if (toEval != null) toEval = toEval.replace(dwr.engine._scriptTagProtection, "");
         dwr.engine._eval(toEval);
         dwr.engine._receivedBatch = null;
-        dwr.engine.batch.validate(batch);
-        if (!batch.completed) dwr.engine.batch.remove(batch);
+        dwr.engine.transport.complete(batch);
       },
 
       /**
@@ -1576,15 +1567,15 @@ if (typeof dwr == 'undefined') dwr = {};
        * @private
        */       
       checkCometPoll:function() {
-        var req = dwr.engine._pollReq;
+        var req = dwr.engine._pollBatch && dwr.engine._pollBatch.req;
         if (req) {         
           var text = req.responseText;
           if (text != null) {
-            dwr.engine.transport.xhr.processCometResponse(text, req.batch);
+            dwr.engine.transport.xhr.processCometResponse(text, dwr.engine._pollBatch);
           }          
         }      
         // If the poll resources are still there, come back again
-        if (dwr.engine._pollReq) {
+        if (dwr.engine._pollBatch) {
           setTimeout(dwr.engine.transport.xhr.checkCometPoll, dwr.engine._pollCometInterval);
         }
       },
@@ -1644,14 +1635,21 @@ if (typeof dwr == 'undefined') dwr = {};
       },
 
       /**
+       * Aborts ongoing request (for timeouts etc)
+       */
+      abort:function(batch) {
+        if (batch.req) {
+          batch.req.abort();
+        }
+      },
+      
+      /**
        * Tidy-up when an XHR call is done
        * @param {Object} batch
        */
       remove:function(batch) {
         // XHR tidyup: avoid IE handles increase
         if (batch.req) {
-          // If this is a poll frame then stop comet polling
-          if (batch.req == dwr.engine._pollReq) dwr.engine._pollReq = null;
           delete batch.req;
         }
       }
@@ -1671,26 +1669,20 @@ if (typeof dwr == 'undefined') dwr = {};
        * @param {Object} batch The batch to alter for IFrame transmit
        */
       send:function(batch) {
+        if (document.body == null) {
+          setTimeout(function(){dwr.engine.transport.iframe.send(batch);}, 100);
+          return;
+        }
         batch.httpMethod = dwr.engine.transport.iframe.httpMethod;
         if (batch.fileUpload) {
           batch.httpMethod = "POST";
           batch.encType = "multipart/form-data";
         }
         var idname = dwr.engine.transport.iframe.getId(batch);
-        if (dwr.engine.isIE) {
-          batch.div = document.createElement("div");
-          document.body.appendChild(batch.div);
-          batch.div.innerHTML = "<iframe src='" + dwr.engine.SSL_SECURE_URL + "' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
-          batch.iframe = batch.div.firstChild;
-        } else {
-          batch.iframe = document.createElement("iframe");
-          batch.iframe.setAttribute("id", idname);
-          batch.iframe.setAttribute("name", idname);
-          batch.iframe.setAttribute("frameborder", "0");
-          batch.iframe.setAttribute("src", dwr.engine.SSL_SECURE_URL);
-          batch.iframe.setAttribute("style", "width:0px;height:0px;border:0;display:none;");
-          document.body.appendChild(batch.iframe);
-        }
+        batch.div1 = document.createElement("div");
+        document.body.appendChild(batch.div1);
+        batch.div1.innerHTML = "<iframe src='" + dwr.engine.SSL_SECURE_URL + "' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
+        batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
         dwr.engine.transport.iframe.beginLoader(batch, idname);
@@ -1710,9 +1702,15 @@ if (typeof dwr == 'undefined') dwr = {};
        * This is abstracted from send() because the same logic will do for htmlfile
        * @param {Object} batch
        */
-      beginLoader:function(batch, idname) {        
+      beginLoader:function(batch, idname) {
+        if (batch.iframe.contentWindow.document.body == null) {
+          setTimeout(function(){dwr.engine.transport.iframe.beginLoader(batch, idname);}, 100);
+          return;
+        }
+        if (batch.isPoll) {
+          batch.map.partialResponse = dwr.engine._partialResponseYes;
+        }
         batch.mode = batch.isPoll ? dwr.engine._ModeHtmlPoll : dwr.engine._ModeHtmlCall;
-        if (batch.isPoll) dwr.engine._outstandingIFrames.push(batch.iframe);
         var request = dwr.engine.batch.constructRequest(batch, batch.httpMethod);
         if (batch.httpMethod == "GET") {
           batch.iframe.setAttribute("src", request.url);
@@ -1721,16 +1719,14 @@ if (typeof dwr == 'undefined') dwr = {};
           // TODO: On firefox we can now get the values of file fields, maybe we should use this
           // See http://soakedandsoaped.com/articles/read/firefox-3-native-ajax-file-upload
           // setting enctype via the DOM does not work in IE, create the form using innerHTML instead
-          batch.form = batch.document.createElement("form");
-          batch.form.setAttribute("id", "dwr-form-" + idname);
+          batch.div2 = document.createElement("div");
+          document.body.appendChild(batch.div2);
+          batch.div2.innerHTML = "<form" + (batch.encType ? " encType='" + batch.encType + "' encoding='" + batch.encType + "'" : "") + "></form>";
+          batch.form = batch.div2.firstChild;
           batch.form.setAttribute("action", request.url);
           batch.form.setAttribute("target", idname);
           batch.form.setAttribute("style", "display:none");
           batch.form.setAttribute("method", batch.httpMethod);
-          if (batch.encType) {
-            batch.form.setAttribute("encType", batch.encType);
-            batch.form.setAttribute("encoding", batch.encType);
-          }
           for (var prop in batch.map) {
             var value = batch.map[prop];
             if (typeof value != "function") {
@@ -1753,19 +1749,8 @@ if (typeof dwr == 'undefined') dwr = {};
               }
             }
           }
-          batch.document.body.appendChild(batch.form);
           batch.form.submit();
         }
-      },
-
-      /**
-       * Called from iframe onload, check batch using batch-id
-       * @private
-       * @param {int} batchId The id of the batch that has loaded
-       */
-      loadingComplete:function(batchId) {
-        var batch = dwr.engine._batches[batchId];
-        if (batch) dwr.engine.batch.validate(batch);
       },
 
       /**
@@ -1780,7 +1765,6 @@ if (typeof dwr == 'undefined') dwr = {};
          */
         beginIFrameResponse:function(iframe, batchId) {
           if (iframe != null) dwr.engine._receivedBatch = iframe.batch;
-          dwr.engine._callPostHooks(dwr.engine._receivedBatch);
         },
 
         /**
@@ -1789,8 +1773,8 @@ if (typeof dwr == 'undefined') dwr = {};
          * @param {int} batchId
          */
         endIFrameResponse:function(batchId) {
-          dwr.engine.transport.iframe.loadingComplete(batchId);
-          dwr.engine.batch.remove(dwr.engine._receivedBatch);
+          dwr.engine._receivedBatch = dwr.engine._batches[batchId];
+          dwr.engine.transport.complete(dwr.engine._receivedBatch);
           dwr.engine._receivedBatch = null;
         }
       },
@@ -1803,10 +1787,18 @@ if (typeof dwr == 'undefined') dwr = {};
             batch.iframe.parentNode.removeChild(batch.iframe);
             batch.iframe = null;
           }
-          if (batch.div && batch.div.parentNode)
-            batch.div.parentNode.removeChild(batch.div);
-          if (batch.form && batch.form.parentNode)
+          if (batch.div1 && batch.div1.parentNode) {
+            batch.div1.parentNode.removeChild(batch.div1);
+            batch.div1 = null;
+          }
+          if (batch.form && batch.form.parentNode) {
             batch.form.parentNode.removeChild(batch.form);
+            batch.form = null;
+          }
+          if (batch.div2 && batch.div2.parentNode) {
+            batch.div2.parentNode.removeChild(batch.div2);
+            batch.div2 = null;
+          }
         }, 100);
       }
 
@@ -1872,20 +1864,45 @@ if (typeof dwr == 'undefined') dwr = {};
        * @param {Object} batch The batch to alter for script tag transmit
        */
       send:function(batch) {
+        if (batch.isPoll) {
+          batch.map.partialResponse = dwr.engine._partialResponseNo;
+        }
         batch.mode = batch.isPoll ? dwr.engine._ModePlainPoll : dwr.engine._ModePlainCall;
         var request = dwr.engine.batch.constructRequest(batch, "GET");
-        // The best option is DOM manipulation, but this only works after onload
-        // has completed
-        if (document.body) {
-          batch.script = document.createElement("script");
-          batch.script.id = "dwr-st-" + batch.map.batchId;
-          batch.script.src = request.url;
-          batch.script.type = "text/javascript";
-          document.body.appendChild(batch.script);
-        }
-        else {
-          document.writeln("<scr" + "ipt type='text/javascript' id='dwr-st-" + batch.map["c0-id"] + "' src='" + request.url + "'> </scr" + "ipt>");
-        }
+        // The best option is DOM manipulation
+        batch.script = document.createElement("script");
+        batch.script.id = "dwr-st-" + batch.map.batchId;
+        batch.script.src = request.url;
+        batch.script.type = "text/javascript";
+        dwr.engine.util.addEventListener(batch.script, "load", function(ev) {
+          if (typeof dwr != "undefined") dwr.engine.transport.scriptTag.complete(batch);
+        });
+        dwr.engine.util.addEventListener(batch.script, "error", function(ev) {
+          if (typeof dwr != "undefined") dwr.engine.transport.scriptTag.complete(batch);
+        });
+        dwr.engine.util.addEventListener(batch.script, "readystatechange", function(ev) {
+          if (typeof dwr != "undefined") if (ev.readyState == "complete") dwr.engine.transport.scriptTag.complete(batch);
+        });
+        document.getElementsByTagName("head")[0].appendChild(batch.script);
+      },
+
+      /**
+       * Notified when the script tag has been loaded and executed
+       */
+      complete:function(batch) {
+        dwr.engine.transport.complete(batch);
+      },
+      
+      /**
+       * Cleanup script tag
+       */
+      remove:function(batch) {
+        // Bail out if we were already called
+        if (!batch.script) return;
+        
+        // Cleanup script tag
+        batch.script.parentNode.removeChild(batch.script);
+        batch.script = null;
       }
     },
 
@@ -1959,7 +1976,8 @@ if (typeof dwr == 'undefined') dwr = {};
         async:true,
         charsProcessed:0,
         handlers:[{
-          callback:function(pause) {     
+          callback:function(pause) {  
+            dwr.engine._pollBatch = null;
             setTimeout(dwr.engine._poll, pause);
           }
         }],
@@ -2220,8 +2238,7 @@ if (typeof dwr == 'undefined') dwr = {};
         return;
       }
 
-      if (batch.completed == "true") {
-        dwr.engine._debug("Warning: Double complete", true);
+      if (batch.completed) {
         return;
       }
       batch.completed = true;
@@ -2285,6 +2302,13 @@ if (typeof dwr == 'undefined') dwr = {};
         remainder = Math.floor(remainder / 64); // Can't use shift operator due to 32-bit limit in JS
       }
       return tokenbuf.join("");
+    },
+    
+    addEventListener: function(elem, name, func) {
+      if (elem.addEventListener)
+        elem.addEventListener(name, func, false);
+      else
+        elem.attachEvent("on" + name, func);
     }
   };
 
@@ -2323,6 +2347,11 @@ if (typeof dwr == 'undefined') dwr = {};
 
   // Run page init code as desired by server
   eval("${initCode}");
+
+  // Register the unload handler
+  if (!dwr.engine.isJaxerServer) {
+    dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
+  }
 
   /**
    * Routines for the DWR pubsub hub
