@@ -1285,7 +1285,7 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.path = dwr.engine._pathToDwrServlet;
       }
       if (batch.path.indexOf("http://") == 0 || batch.path.indexOf("https://") == 0) {
-        var dwrShortPath = dwr.engine._pathToDwrServlet.split("/", 3).join("/");
+        var dwrShortPath = batch.path.split("/", 3).join("/"); 
         var hrefShortPath = window.location.href.split("/", 3).join("/");
         isCrossDomain = (dwrShortPath != hrefShortPath);
       }
