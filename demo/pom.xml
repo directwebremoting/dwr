@@ -11,7 +11,7 @@
   <version>3.0.0-rc2-SNAPSHOT</version>
   <name>DWR Demo Web Application</name>  
   <dependencies>
-    <!-- Internal dependencies -->
+    <!-- Internal dependencies -->        
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
@@ -22,6 +22,16 @@
       <artifactId>dwr-ui-dwr</artifactId>
       <version>3.0.0-rc2-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-protocol-dwrp</artifactId>
+      <version>3.0.0-rc2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-protocol-json</artifactId>
+      <version>3.0.0-rc2-SNAPSHOT</version>
+    </dependency>        
     <!-- External Dependencies -->
     <dependency>
       <groupId>javax.servlet</groupId>
