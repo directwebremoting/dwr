@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.directwebremoting</groupId>
@@ -11,7 +10,7 @@
   <name>DWR Core</name>
   <packaging>jar</packaging>
   <description>DWR Core</description>
-  <dependencies>
+  <dependencies>    
     <dependency>
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
@@ -28,29 +27,28 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-       <optional>true</optional>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
-       <optional>true</optional>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-       <optional>true</optional>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xom</groupId>
       <artifactId>xom</artifactId>
-       <optional>true</optional>
+      <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>xmlbeans</groupId>
+      <groupId>org.apache.xmlbeans</groupId>
       <artifactId>xmlbeans</artifactId>
-       <optional>true</optional>
+      <optional>true</optional>
     </dependency>
-    
     <!-- Servlet APIs -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -62,22 +60,16 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
     <dependency>
       <groupId>com.yahoo.platform.yui</groupId>
       <artifactId>yuicompressor</artifactId>
-      <!-- TODO This should be 2.3.5 but systemPath doesn't seem to work -->
-      <version>2.2.5</version>
     </dependency>
-    
     <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-continuation</artifactId>
       <scope>provided</scope>
-      <version>7.0.1.v20091125</version>
     </dependency>
-    
     <!-- Tomcat Needed for TomcatSleeper -->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -95,27 +87,34 @@
         <exclusion>
           <groupId>org.apache.tomcat</groupId>
           <artifactId>servlet-api</artifactId>
-        </exclusion>        
+        </exclusion>
       </exclusions>
     </dependency>
-    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-  
   <build>
-    <sourceDirectory>api/main/java</sourceDirectory>
     <outputDirectory>../target/maven2/classes</outputDirectory>
     <testOutputDirectory>../target/maven2/test-classes</testOutputDirectory>
     <resources>
       <resource>
-          <directory>impl/main/java</directory>
-          <includes>
-            <include>**/*.properties</include>
-            <include>org/directwebremoting/*.properties</include>
-            <include>org/directwebremoting/*.js</include>
-            <include>org/directwebremoting/*.xsd</include>
-            <include>org/directwebremoting/*.dtd</include>
-            <include>org/directwebremoting/dwr.xml</include>
-            <include>org/directwebremoting/help.html</include>
+        <directory>impl/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>org/directwebremoting/*.properties</include>
+          <include>org/directwebremoting/*.js</include>
+          <include>org/directwebremoting/*.xsd</include>
+          <include>org/directwebremoting/*.dtd</include>
+          <include>org/directwebremoting/dwr.xml</include>
+          <include>org/directwebremoting/help.html</include>
         </includes>
       </resource>
     </resources>
@@ -127,9 +126,10 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      <!-- We need to add the source and test-source directories as they are in a non-standard maven location -->   
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
+        <artifactId>build-helper-maven-plugin</artifactId>  		
         <executions>
           <execution>
             <id>add-source</id>
@@ -146,8 +146,30 @@
               </sources>
             </configuration>
           </execution>
+          <!--<execution>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>impl/test/java</source>        
+                <source>api/test/java</source>               
+              </sources>
+            </configuration>
+          </execution>-->         
         </executions>
       </plugin>
+      <!--<plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>    
+          <excludes>
+            <exclude>**/TestCreatedObject.java</exclude>
+            <exclude>**/TestUtil.java</exclude>
+          </excludes>
+        </configuration>        
+      </plugin>-->
     </plugins>
   </build>
 </project>
