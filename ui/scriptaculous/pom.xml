@@ -11,20 +11,14 @@
   <name>DWR Ui Scriptaculous</name>
   <packaging>jar</packaging>
   <description>Scriptaculous Support for DWR</description>
-
   <dependencies>
-
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
-
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
   </build>
-
 </project>
