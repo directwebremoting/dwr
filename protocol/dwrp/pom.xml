@@ -10,8 +10,7 @@
   <artifactId>dwr-protocol-dwrp</artifactId>
   <name>DWR Protocol dwrp</name>
   <packaging>jar</packaging>
-  <description>DWRP Protocol</description>
-  
+  <description>DWRP Protocol</description>  
   <dependencies>
     <dependency>
       <groupId>org.directwebremoting</groupId>
@@ -23,11 +22,9 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-  </dependencies>
-  
+  </dependencies>  
   <build>
     <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-  </build>
-  
+  </build>  
 </project>
