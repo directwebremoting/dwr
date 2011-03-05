@@ -10,34 +10,28 @@
   <artifactId>dwr-spring</artifactId>
   <name>DWR Spring Integration</name>
   <packaging>jar</packaging>
-  <description>DWR Spring Integration</description>
-  
+  <description>DWR Spring Integration</description>  
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-     
+    </dependency>     
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-    </dependency>
-    
+    </dependency>    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
     </dependency>
-  </dependencies>
-  
+  </dependencies>  
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
     <resources>
       <!--  Include spring.handler and spring.schemas files  -->
@@ -50,6 +44,5 @@
         </includes>
       </resource>
     </resources>
-  </build>
-  
+  </build>  
 </project>
