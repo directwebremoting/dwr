@@ -46,6 +46,6 @@
           <include>**/validJsonRpc.txt/**</include>
         </includes> 
       </testResource>
-    </testResources>
+    </testResources>-->
   </build>  
 </project>
