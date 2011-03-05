@@ -57,6 +57,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <inherited>true</inherited>
         <configuration> 
+          <reportsDirectory>${parent.project.basedir}/target/junitReports</reportsDirectory> 
           <excludes>            
             <!-- We don't have this working yet! Comment out for now -->
             <exclude>**/**/HibernateConverterTest.java</exclude>
