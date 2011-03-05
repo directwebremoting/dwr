@@ -39,13 +39,18 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
       <scope>test</scope>
-    </dependency>      
+    </dependency>    
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>  
   </dependencies>    
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-    <!-- The tests depend on DummyDataManager in core, going to skip for now 
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
-    -->
     <resources>
       <!--  Include spring.handler and spring.schemas files  -->
       <resource>
