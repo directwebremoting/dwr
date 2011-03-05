@@ -337,9 +337,22 @@ public class StartupUtil
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
         // Use DwrConstants to avoid rename if DWR repackaged (shaded)
-        resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.dwrp.FileUpload"));
-        resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.extend.Compressor"));
-
+    	try 
+    	{
+            resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.dwrp.FileUpload"));
+    	} 
+    	catch(Exception fue) 
+    	{
+    		Loggers.STARTUP.debug("A FileUpload implementation is not available. Details: " + fue, fue);
+    	}
+    	try 
+    	{
+            resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.extend.Compressor"));
+        } catch(Exception ce) 
+        {
+        	Loggers.STARTUP.debug("A Compressor implemenation is not available. Details: " + ce, ce);
+        }
+    	
         String abstractionImplNames = container.getParameter(LocalUtil.originalDwrClassName(ContainerAbstraction.class.getName()));
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 
