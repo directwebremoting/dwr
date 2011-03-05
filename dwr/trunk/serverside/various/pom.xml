@@ -35,6 +35,5 @@
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
-    <testOutputDirectory>${project.parent.basedir}/target/junitReports</testOutputDirectory>    
   </build>
 </project>

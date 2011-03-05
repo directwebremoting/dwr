@@ -51,7 +51,6 @@
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>    
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
-    <testOutputDirectory>${project.parent.basedir}/junitReports</testOutputDirectory>    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
