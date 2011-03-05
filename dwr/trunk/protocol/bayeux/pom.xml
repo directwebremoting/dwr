@@ -33,7 +33,6 @@
     </dependency>
   </dependencies>
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
   </build>
 </project>
