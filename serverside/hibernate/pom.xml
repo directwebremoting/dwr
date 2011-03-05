@@ -39,11 +39,17 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>      
   </dependencies>  
   <build>
-    <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-    <!-- We don't have this working yet!  
+    <sourceDirectory>${project.basedir}/main/java</sourceDirectory>    
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
     <plugins>
       <plugin>
@@ -52,11 +58,11 @@
         <inherited>true</inherited>
         <configuration> 
           <excludes>            
+            <!-- We don't have this working yet! Comment out for now -->
             <exclude>**/**/HibernateConverterTest.java</exclude>
           </excludes>
         </configuration>        
       </plugin>
     </plugins>
-    -->
   </build>
 </project>
