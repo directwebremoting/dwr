@@ -11,31 +11,23 @@
   <name>DWR JMS/Beehive</name>
   <packaging>jar</packaging>
   <description>JMS and Beehive Support for DWR</description>
-
   <dependencies>
-
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
-
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
   </build>
-
 </project>

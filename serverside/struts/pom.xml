@@ -10,20 +10,17 @@
   <artifactId>dwr-struts</artifactId>
   <name>DWR Struts Integration</name>
   <packaging>jar</packaging>
-  <description>DWR Struts Integration</description>
-  
+  <description>DWR Struts Integration</description>  
   <dependencies>
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    
+    </dependency>    
     <dependency>
       <groupId>struts</groupId>
       <artifactId>struts</artifactId>
-    </dependency>
-    
+    </dependency>    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -32,11 +29,8 @@
       <groupId>javax.servlet</groupId>
       <artifactId>jsp-api</artifactId>
     </dependency>
-  </dependencies>
-  
+  </dependencies>  
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-  </build>
-  
+  </build>  
 </project>

@@ -11,31 +11,23 @@
   <name>DWR Webwork</name>
   <packaging>jar</packaging>
   <description>Webwork Support for DWR</description>
-
   <dependencies>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>webwork</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
-
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
   </build>
-
 </project>
