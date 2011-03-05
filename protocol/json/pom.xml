@@ -10,25 +10,39 @@
   <artifactId>dwr-protocol-json</artifactId>
   <name>DWR Protocol JSON</name>
   <packaging>jar</packaging>
-  <description>JSON Support for DWR</description>
-  
+  <description>JSON Support for DWR</description>  
   <dependencies>
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-  </dependencies>
-  
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>  
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-  </build>
-  
+    <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/test/java/org/directwebremoting/jsonrpc</directory>
+        <targetPath>org/directwebremoting/jsonrpc</targetPath>
+        <includes>
+          <include>**/validJsonRpc.txt/**</include>
+        </includes> 
+      </testResource>
+    </testResources>    
+  </build>  
 </project>
