@@ -11,23 +11,19 @@
   <name>DWR Ui</name>
   <packaging>jar</packaging>
   <description>UI Support for DWR</description>
-
   <dependencies>
     <dependency>
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-core</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    
+    </dependency>    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <build>
-    <directory>${project.basedir}/target</directory>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
     <resources>
     	<resource>
@@ -38,5 +34,4 @@
     	</resource>
     </resources>
   </build>
-
 </project>
