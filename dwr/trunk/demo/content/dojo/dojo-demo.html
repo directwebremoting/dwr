@@ -8,11 +8,11 @@
   <link rel="stylesheet" type="text/css" href="../generic.css" />
   <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
   <script type="text/javascript" src="store/storeDemo.js"> </script>
-  <script type='text/javascript' src='../dwr/engine.js'> </script>
-  <script type='text/javascript' src='../dwr/util.js'> </script>
-  <script type='text/javascript' src='../dwr/data/Store.js'> </script>
-  <script type='text/javascript' src='../dwr/interface/People.js'> </script>  
   <script type="text/javascript">
+  dojo.require("dwr.engine");
+  dojo.require("dwr.util");
+  dojo.require("dwr.data.Store");
+  dojo.require("dwr.interface.People");
 
   var dwrStore, grid;
   dojo.addOnLoad(function() {
