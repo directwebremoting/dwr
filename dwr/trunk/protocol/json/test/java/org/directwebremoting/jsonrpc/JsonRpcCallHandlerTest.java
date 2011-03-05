@@ -25,7 +25,6 @@ import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.TestEnvironment;
 import org.directwebremoting.util.FakeHttpServletRequest;
 import org.directwebremoting.util.FakeHttpServletResponse;
-import org.directwebremoting.util.TestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
