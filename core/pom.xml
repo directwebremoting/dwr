@@ -10,7 +10,7 @@
   <name>DWR Core</name>
   <packaging>jar</packaging>
   <description>DWR Core</description>
-  <dependencies>    
+  <dependencies> 
     <dependency>
       <groupId>bsf</groupId>
       <artifactId>bsf</artifactId>
@@ -102,8 +102,6 @@
     </dependency>
   </dependencies>
   <build>
-    <outputDirectory>../target/maven2/classes</outputDirectory>
-    <testOutputDirectory>../target/maven2/test-classes</testOutputDirectory>
     <resources>
       <resource>
         <directory>impl/main/java</directory>
@@ -118,21 +116,14 @@
         </includes>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
+    <plugins>      
       <!-- We need to add the source and test-source directories as they are in a non-standard maven location -->   
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>  		
         <executions>
           <execution>
-            <id>add-source</id>
+            <id>add-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>add-source</goal>
@@ -146,8 +137,8 @@
               </sources>
             </configuration>
           </execution>
-          <!--<execution>
-            <id>add-test-source</id>
+          <execution>
+            <id>add-test-sources</id>
             <phase>generate-test-sources</phase>
             <goals>
               <goal>add-test-source</goal>
@@ -158,12 +149,48 @@
                 <source>api/test/java</source>               
               </sources>
             </configuration>
-          </execution>-->         
+          </execution>           
+          <execution>
+            <id>add-test-resources</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <!-- Place the dwr.xml in the appropriate test directory, needed for tests -->
+                <resource>
+                  <directory>impl/test/java/org/directwebremoting/impl</directory>
+                  <targetPath>org/directwebremoting/impl</targetPath>
+                  <includes>
+                    <include>**/dwr.xml/**</include>
+                  </includes>                  
+                </resource>
+                <!-- Place the json text files in the appropriate test directory, needed for tests -->
+                <resource>
+                  <directory>impl/test/java/org/directwebremoting/json</directory>
+                  <targetPath>org/directwebremoting/json</targetPath>
+                  <includes>
+                    <include>**/invalidJson.txt/**</include>
+                  </includes> 
+                </resource>
+                <resource>
+                  <directory>impl/test/java/org/directwebremoting/json</directory>
+                  <targetPath>org/directwebremoting/json</targetPath>
+                  <includes>
+                    <include>**/validJson.txt/**</include>
+                  </includes> 
+                </resource>
+              </resources>
+            </configuration>
+          </execution> 
         </executions>
       </plugin>
-      <!--<plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>    
+        <inherited>true</inherited>
+        <configuration> 
           <excludes>
             <!-- Not actually a test case -->
             <exclude>**/TestCreatedObject.java</exclude>
@@ -173,7 +200,7 @@
             <exclude>**/DwrServletTest.java</exclude>
           </excludes>
         </configuration>        
-      </plugin>-->
+      </plugin>
     </plugins>
   </build>
 </project>
