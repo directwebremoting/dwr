@@ -1,0 +1,8 @@
+
+@import "../dijit/themes/tundra/tundra.css";
+@import "../dojox/grid/resources/Grid.css";
+@import "../dojox/grid/resources/tundraGrid.css";
+
+.dojoxGrid-row-odd td {
+  background:#e8f2ff;
+}
