@@ -30,9 +30,22 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
     </dependency>
-  </dependencies>  
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <scope>test</scope>
+    </dependency>      
+  </dependencies>    
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
+    <!-- The tests depend on DummyDataManager in core, going to skip for now 
+    <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
+    -->
     <resources>
       <!--  Include spring.handler and spring.schemas files  -->
       <resource>
@@ -43,6 +56,6 @@
           <include>org/directwebremoting/spring/spring-dwr-3.0.xsd</include>
         </includes>
       </resource>
-    </resources>
+    </resources>    
   </build>  
 </project>
