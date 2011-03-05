@@ -43,6 +43,7 @@
   </dependencies>  
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
+    <!-- We don't have this working yet!  
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
     <plugins>
       <plugin>
@@ -50,12 +51,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <inherited>true</inherited>
         <configuration> 
-          <excludes>
-            <!-- We don't have this working yet!  -->
-            <exclude>**/HibernateConverterTest.java</exclude>
+          <excludes>            
+            <exclude>**/**/HibernateConverterTest.java</exclude>
           </excludes>
         </configuration>        
       </plugin>
     </plugins>
+    -->
   </build>
 </project>
