@@ -51,7 +51,7 @@
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
-    <testOutputDirectory>./target/junitReports</testOutputDirectory>    
+    <testOutputDirectory>${project.parent.basedir}/target/junitReports</testOutputDirectory>    
     <resources>
       <!--  Include spring.handler and spring.schemas files  -->
       <resource>
