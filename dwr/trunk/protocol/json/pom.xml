@@ -34,7 +34,7 @@
   </dependencies>  
   <build>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
-    <!-- Disable the tests now, because they depend on classes in the dwr.war
+    <!-- Disable the tests now, because they depend on classes (Demo) in the dwr.war
          that pom currently just builds a war so adding it as a dependency here
          won't work.
     <testSourceDirectory>${project.basedir}/test/java</testSourceDirectory>
@@ -46,6 +46,6 @@
           <include>**/validJsonRpc.txt/**</include>
         </includes> 
       </testResource>
-    </testResources>    -->
+    </testResources>
   </build>  
 </project>
