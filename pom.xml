@@ -45,7 +45,31 @@
   <description>
 	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
 	It gets rid of almost all the boiler plate code between the web browser and your Java code.
-    </description>
+  </description>
+  <ciManagement>
+    <system>Bamboo</system>
+    <url>http://ci.directwebremoting.org/bamboo/</url>
+  </ciManagement>  
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://directwebremoting.org/bugs/</url>
+  </issueManagement>   
+  <mailingLists>
+    <mailingList>
+      <name>Users Mailing List</name>
+      <subscribe>sympa@dwr.java.net?subject=subscribe users</subscribe>
+      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe users</unsubscribe>
+      <post>users@dwr.java.net</post>
+      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
+    </mailingList>
+    <mailingList>
+      <name>Users Mailing List</name>
+      <subscribe>sympa@dwr.java.net?subject=subscribe dev</subscribe>
+      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe dev</unsubscribe>
+      <post>dev@dwr.java.net</post>
+      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
+    </mailingList>
+  </mailingLists>  
   <modules>
     <module>core</module>
     <module>demo</module>
@@ -400,6 +424,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>2.2</version>
+          <configuration>
+            <outputDirectory>${project.parent.reporting.outputDirectory}</outputDirectory>
+          </configuration>
         </plugin>          
         <plugin>
 	      <groupId>net.sf.dtddoc</groupId>
@@ -445,4 +472,13 @@
       </build>      
     </profile>
   </profiles>  
+  <!--  mvn site:stage -->
+  <distributionManagement>
+    <downloadUrl>http://directwebremoting.org/dwr/mvn_site</downloadUrl>
+    <site>
+      <id>dwr.website</id>
+      <name>DWR Website</name>
+      <url>scp://slurm.dojotoolkit.org/srv/www/vhosts/www.directwebremoting.org/dwr/mvn_site</url>
+    </site>    
+  </distributionManagement>  
 </project>
