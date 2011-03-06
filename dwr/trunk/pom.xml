@@ -48,6 +48,8 @@
     </description>
   <modules>
     <module>core</module>
+    <module>demo</module>
+    <module>noncla</module>
     <module>protocol/bayeux</module>
     <module>protocol/dwrp</module>
     <module>protocol/json</module>
@@ -112,7 +114,12 @@
         <groupId>javax.jms</groupId>
         <artifactId>jms</artifactId>
         <version>1.1</version>
-      </dependency>
+      </dependency>      
+      <dependency>
+        <groupId>javax.el</groupId>
+        <artifactId>el-api</artifactId>
+        <version>2.2</version>
+      </dependency>       
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jsp-api</artifactId>
@@ -234,7 +241,7 @@
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
-        <version>1.1.2</version>
+        <version>2.0.2</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -302,11 +309,13 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.8</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymockclassextension</artifactId>
         <version>2.4</version>
+        <scope>test</scope>
       </dependency>
       <!-- Demo Dependencies -->
       <dependency>
@@ -320,44 +329,21 @@
         <version>1.2.12</version>
       </dependency>
     </dependencies>
-  </dependencyManagement>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
-        <configuration/>
-        <reportSets>
-          <reportSet>
-            <id>aggregate</id>
-            <configuration/>
-            <reports>
-              <report>aggregate</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
+  </dependencyManagement>  
   <build>
     <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-idea-plugin</artifactId>
-          <configuration>
-            <jdkName>1.5</jdkName>
-            <exclude>target,test-output,.clover</exclude>
-            <useShortDependencyNames>true</useShortDependencyNames>
-          </configuration>
-        </plugin>
+      <plugins>        
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
             <source>1.5</source>
             <target>1.5</target>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -373,9 +359,9 @@
           </configuration>
         </plugin>
         <plugin>
-          <inherited>true</inherited>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.7</version>          
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -386,27 +372,29 @@
           </executions>
         </plugin>
         <plugin>
-          <inherited>true</inherited>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
+          <version>2.1.2</version>
+          <configuration>
+            <outputDirectory>${project.build.directory}</outputDirectory>
+          </configuration>
           <executions>
             <execution>
               <id>attach-sources</id>
+              <phase>package</phase>
               <goals>
-                <goal>jar</goal>
+                <goal>jar-no-fork</goal>
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
+        </plugin>        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.7.2</version>           
+          <version>2.7.2</version>  
+          <configuration>
+            <reportsDirectory>${project.parent.build.directory}/junitReports</reportsDirectory>
+		  </configuration>       
         </plugin>  
       </plugins>
     </pluginManagement>
@@ -438,7 +426,7 @@
             </executions>
           </plugin>
         </plugins>
-      </build>
+      </build>      
     </profile>
-  </profiles>
+  </profiles>  
 </project>
