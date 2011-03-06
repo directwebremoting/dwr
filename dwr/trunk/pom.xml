@@ -386,15 +386,12 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.7</version>          
-          <executions>
-            <execution>
-              <id>attach-javadocs</id>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
@@ -472,6 +469,22 @@
       </build>      
     </profile>
   </profiles>  
+  <reporting>
+    <plugins>
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+      <plugin>  
+        <groupId>net.sf.dtddoc</groupId>
+	    <artifactId>dtddoc-maven-plugin</artifactId> 
+	  </plugin>   
+    </plugins>
+  </reporting>  
   <!--  mvn site:stage -->
   <distributionManagement>
     <downloadUrl>http://directwebremoting.org/dwr/mvn_site</downloadUrl>
