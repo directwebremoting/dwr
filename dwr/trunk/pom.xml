@@ -327,7 +327,7 @@
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>1.2.12</version>
-      </dependency>
+      </dependency>      
     </dependencies>
   </dependencyManagement>  
   <build>
@@ -395,11 +395,23 @@
           <configuration>
             <reportsDirectory>${project.parent.build.directory}/junitReports</reportsDirectory>
 		  </configuration>       
-        </plugin>  
+        </plugin>         
+        <plugin>
+	      <groupId>net.sf.dtddoc</groupId>
+	      <artifactId>dtddoc-maven-plugin</artifactId>
+	      <version>1.1</version>
+          <configuration>
+            <showHiddenTags>false</showHiddenTags>
+            <showFixmeTags>false</showFixmeTags>
+            <sourceDirectory>${project.build.directory}</sourceDirectory>
+            <outputDirectory>dtd</outputDirectory>
+            <include name="**/*.dtd" />
+            <excludes name="common/*.dtd" />
+          </configuration>
+        </plugin>         
       </plugins>
     </pluginManagement>
-    <defaultGoal>install</defaultGoal>
-  </build>
+  </build>    
   <profiles>
     <profile>
       <id>release-sign-artifacts</id>
@@ -414,7 +426,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.1</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
