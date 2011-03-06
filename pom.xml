@@ -1,4 +1,14 @@
 <?xml version="1.0"?>
+<!-- 
+    Build:
+    mvn clean install - generates the binary and source artifacts for all modules.    
+    
+    Site:
+    mvn site:stage - This will aggregate the site info from each module and 
+                     output the site to /target/site. Note using mvn site:site
+                     does not work as the links between module sites will not work.
+                     
+ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.directwebremoting</groupId>
@@ -475,17 +485,12 @@
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
-      </plugin>
       <plugin>  
         <groupId>net.sf.dtddoc</groupId>
 	    <artifactId>dtddoc-maven-plugin</artifactId> 
 	  </plugin>   
     </plugins>
   </reporting>  
-  <!--  mvn site:stage -->
   <distributionManagement>
     <downloadUrl>http://directwebremoting.org/dwr/mvn_site</downloadUrl>
     <site>
