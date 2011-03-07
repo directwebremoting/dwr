@@ -117,7 +117,7 @@
       </resource>
     </resources>
     <plugins>      
-      <!-- We need to add the source and test-source directories as they are in a non-standard maven location -->   
+      <!-- We need to add the source as it is in a non-standard maven location -->   
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>  		
@@ -136,20 +136,7 @@
                 <source>impl/generated/java</source>
               </sources>
             </configuration>
-          </execution>
-          <execution>
-            <id>add-test-sources</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>impl/test/java</source>        
-                <source>api/test/java</source>               
-              </sources>
-            </configuration>
-          </execution>           
+          </execution>          
           <execution>
             <id>add-test-resources</id>
             <phase>generate-test-resources</phase>
