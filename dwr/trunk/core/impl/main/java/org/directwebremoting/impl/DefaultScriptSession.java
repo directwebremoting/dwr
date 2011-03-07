@@ -123,6 +123,8 @@ public class DefaultScriptSession implements RealScriptSession
      */
     public void invalidate()
     {
+        invalidated = true;
+
         // attributes is a concurrent map and can be safely iterated.
         for (Map.Entry<String, Object> entry : attributes.entrySet())
         {
@@ -133,7 +135,6 @@ public class DefaultScriptSession implements RealScriptSession
                 listener.valueUnbound(new ScriptSessionBindingEvent(this, entry.getKey()));
             }
         }
-        invalidated = true;
         manager.invalidate(this);
     }
 
