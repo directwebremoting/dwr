@@ -97,6 +97,7 @@
     <module>protocol/json</module>
     <module>serverside/guice</module>
     <module>serverside/hibernate</module>
+    <module>serverside/hibernate2</module>
     <module>serverside/spring</module>
     <module>serverside/struts</module>
     <module>serverside/various</module>
