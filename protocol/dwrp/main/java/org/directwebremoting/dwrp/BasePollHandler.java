@@ -56,7 +56,8 @@ import org.directwebremoting.util.MimeConstants;
  */
 public class BasePollHandler extends BaseDwrpHandler
 {
-    /**
+
+	/**
      * @param plain Are we using plain javascript or html wrapped javascript
      */
     public BasePollHandler(boolean plain)
@@ -142,18 +143,18 @@ public class BasePollHandler extends BaseDwrpHandler
         // If the conduit has an error flushing data, it needs to give up
         alarms.add(conduit);
 
-        // Set the system up to resume on output (perhaps with delay)
-        if (batch.getPartialResponse() == PartialResponse.NO || maxWaitAfterWrite != -1)
-        {
-            // add an output listener to the script session that calls the
-            // "wake me" method on whatever is putting us to sleep
-            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite, executor));
-        }
-
         // Use of comet depends on the type of browser and the number of current
         // connections from this browser (detected by cookies)
-        boolean comet = BrowserDetect.supportsComet(request);
-        if (comet)
+        boolean clientSupportsStreaming = BrowserDetect.supportsComet(request);
+        // For early closing mode add an output listener to the script session that calls the
+        // "wake me" method on whatever is putting us to sleep - if the client
+        // does not support streaming or streaming has not been configured.
+        if (batch.getPartialResponse() == PartialResponse.NO || !clientSupportsStreaming || (maxWaitAfterWrite != -1 && !streamingEnabled)) {
+    		maxWaitAfterWrite = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
+            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite, executor));
+        } 
+       
+        if (clientSupportsStreaming)
         {
             // Nasty 2 connection limit hack. How many times is this browser connected?
             String httpSessionId = webContext.getSession(true).getId();
@@ -167,7 +168,7 @@ public class BasePollHandler extends BaseDwrpHandler
             int connectionLimit = BrowserDetect.getConnectionLimit(request);
             if (persistentConnections + 1 >= connectionLimit)
             {
-                comet = false;
+                clientSupportsStreaming = false;
 
                 if (log.isDebugEnabled())
                 {
@@ -198,7 +199,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // scripts cached in the script session (because there was no conduit
         // available when they were written) to be sent to the conduit.
         // We need any AlarmScriptConduits to be notified so they can make
-        // maxWaitWfterWrite work for all cases
+        // maxWaitAfterWrite work for all cases
         scriptSession.addScriptConduit(conduit);
 
         // We need to do something sensible when we wake up ...
@@ -232,7 +233,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // Weblogic continues, others wait().
         sleeper.goToSleep(onAwakening);
     }
-
+    
     /**
      * Create the correct type of ScriptConduit depending on the request.
      * @param batch The parsed request
@@ -334,22 +335,39 @@ public class BasePollHandler extends BaseDwrpHandler
 
     /**
      * Sometimes with proxies, you need to close the stream all the time to
-     * make the flush work. A value of -1 indicated that we do not do early
-     * closing after writes.
+     * make the flush work. A value of -1 indicates that we do not do early
+     * closing after writes IF the client supports streaming.  If the client
+     * does not support streaming DEFAULT_MAX_WAIT_AFTER_WRITE is used.
      * @param maxWaitAfterWrite the maxWaitAfterWrite to set
      */
     public void setMaxWaitAfterWrite(int maxWaitAfterWrite)
     {
         this.maxWaitAfterWrite = maxWaitAfterWrite;
     }
-
+        
     /**
      * Sometimes with proxies, you need to close the stream all the time to
-     * make the flush work. A value of -1 indicated that we do not do early
-     * closing after writes.
+     * make the flush work. A value of -1 indicates that we do not do early
+     * closing after writes IF the client supports streaming.  If the client
+     * does not support streaming DEFAULT_MAX_WAIT_AFTER_WRITE is used.
      */
-    protected int maxWaitAfterWrite = -1;
-
+    protected int maxWaitAfterWrite = ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE;
+    
+    /**
+     * Do we support streaming for clients that allow it?
+     * 
+     * @param streamingEnabled
+     */
+    public void setStreamingEnabled(boolean streamingEnabled) 
+    {
+    	this.streamingEnabled = streamingEnabled;
+    }
+    
+    /**
+     * Do we support streaming for clients that allow it?
+     */
+    private boolean streamingEnabled; 
+    
     /**
      * Accessor for the PageNormalizer.
      * @param pageNormalizer The new PageNormalizer

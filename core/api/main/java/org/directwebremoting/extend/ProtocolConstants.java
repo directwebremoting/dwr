@@ -189,4 +189,9 @@ public interface ProtocolConstants
      * The marker to indicate the end of a 'eval'able script block
      */
     public static final String SCRIPT_END_MARKER = "//#DWR-END#";
+    
+    /**
+     * For early closing mode, how long do we wait before closing the connection after a write. 
+     */
+    public static final int DEFAULT_MAX_WAIT_AFTER_WRITE = 500;
 }
