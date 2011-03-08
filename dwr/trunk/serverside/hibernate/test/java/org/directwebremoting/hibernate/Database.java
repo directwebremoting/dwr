@@ -20,8 +20,8 @@ public class Database
      */
     private static final String[] STARTUP =
     {
-        "CREATE TABLE parent (id INT PRIMARY KEY, name VARCHAR);",
-        "CREATE TABLE child (id INT PRIMARY KEY, name VARCHAR, owner INT);",
+        "CREATE TABLE parent (id INT PRIMARY KEY, name VARCHAR(50));",
+        "CREATE TABLE child (id INT PRIMARY KEY, name VARCHAR(50), owner INT);",
         "ALTER TABLE child ADD CONSTRAINT child_owner_fk FOREIGN KEY (owner) REFERENCES parent (id);",
         "INSERT INTO parent (id, name) VALUES (1, 'fred');",
         "INSERT INTO child (id, name, owner) VALUES (2, 'jim', 1);",
@@ -42,7 +42,7 @@ public class Database
 
         try
         {
-            LocalUtil.classForName("org.hsqldb.jdbcDriver");
+            LocalUtil.classForName("org.hsqldb.jdbc.JDBCDriver");
             con = DriverManager.getConnection("jdbc:hsqldb:mem:dwr-test", "sa", "");
             stmt = con.createStatement();
             for (String sql : STARTUP)

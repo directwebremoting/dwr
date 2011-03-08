@@ -17,9 +17,6 @@
       <param name="force" value="true"/>
     </convert>
 
-    <convert converter="hibernate2" match="org.directwebremoting.convert.mapped.Hibernate2Ex"/>
-    <convert converter="hibernate2" match="org.directwebremoting.convert.mapped.Hibernate2NestEx"/>
-
     <convert converter="hibernate3" match="org.directwebremoting.convert.mapped.Hibernate3Ex"/>
     <convert converter="hibernate3" match="org.directwebremoting.convert.mapped.Hibernate3NestEx"/>
 
