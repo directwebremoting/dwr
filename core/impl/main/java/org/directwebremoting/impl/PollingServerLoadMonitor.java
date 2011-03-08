@@ -78,7 +78,7 @@ public class PollingServerLoadMonitor extends AbstractServerLoadMonitor
     /**
      * How long are we telling users to wait before they come back next
      */
-    protected int disconnectedTime = 5000;
+    protected int disconnectedTime = 500;
 
     /**
      * The log stream
