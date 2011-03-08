@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.ltd.uk/dwr/dwr20.dtd" >
+
+<dwr>
+
+  <allow>
+
+    <filter class="org.directwebremoting.hibernate.H3SessionAjaxFilter"/>
+
+    <convert converter="bean" match="org.directwebremoting.convert.mapped.BeanEx"/>
+
+    <convert converter="object" match="org.directwebremoting.convert.mapped.ObjectEx"/>
+
+    <convert converter="object" match="org.directwebremoting.convert.mapped.ObjectForceEx">
+      <param name="force" value="true"/>
+    </convert>
+
+    <convert converter="hibernate2" match="org.directwebremoting.convert.mapped.Hibernate2Ex"/>
+    <convert converter="hibernate2" match="org.directwebremoting.convert.mapped.Hibernate2NestEx"/>
+
+  </allow>
+
+</dwr>

@@ -6,9 +6,10 @@
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
     <version>3.0.0-rc2-SNAPSHOT</version>
+	<relativePath>../../pom.xml</relativePath>
   </parent>
-  <artifactId>dwr-hibernate</artifactId>
-  <name>DWR Hibernate 3 Integration</name>
+  <artifactId>dwr-hibernate2</artifactId>
+  <name>DWR Hibernate 2 Integration</name>
   <packaging>jar</packaging>
   <description>DWR Hibernate Integration</description>  
   <dependencies>    
@@ -22,17 +23,11 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>     
-    <!-- Hibernate 3 -->
+    <!-- Hibernate 2 -->
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <optional>true</optional>
-    </dependency>    
-	<dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <optional>true</optional>
-	  <version>1.1</version>
     </dependency>    
     <dependency>
       <groupId>junit</groupId>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate2Ex" table="parent">
+    <id name="id" column="id" type="java.lang.Integer">
+      <generator class="assigned"/>
+    </id>
+    <property name="name" column="name"/>
+    <set name="children" lazy="true">
+      <key column="owner"/>
+      <one-to-many class="org.directwebremoting.convert.mapped.Hibernate2NestEx"/>
+    </set>
+  </class>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate2NestEx" table="child">
+    <id name="id" column="id" type="java.lang.Integer">
+      <generator class="assigned"/>
+    </id>
+    <property name="name" column="name"/>
+    <many-to-one name="owner" column="owner"/>
+  </class>
+
+</hibernate-mapping>
