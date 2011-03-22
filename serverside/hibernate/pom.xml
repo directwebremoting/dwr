@@ -6,6 +6,7 @@
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
     <version>3.0.0-rc2-SNAPSHOT</version>
+	<relativePath>../../pom.xml</relativePath> 
   </parent>
   <artifactId>dwr-hibernate</artifactId>
   <name>DWR Hibernate 3 Integration</name>
