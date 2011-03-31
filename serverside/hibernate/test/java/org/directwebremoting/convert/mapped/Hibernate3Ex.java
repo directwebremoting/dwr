@@ -1,139 +1,132 @@
 package org.directwebremoting.convert.mapped;
 
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 
 import org.directwebremoting.util.CompareUtil;
 
 /**
- * A hibernate bean to fit the declaration in {@link org.directwebremoting.hibernate.Database}
+ * A hibernate bean to fit the declaration in
+ * {@link org.directwebremoting.hibernate.Database}
+ * 
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Hacked by Matt Conroy 3/13/2011
  */
-public class Hibernate3Ex
-{
-    public Hibernate3Ex()
-    {
-    }
+public class Hibernate3Ex {
+	private Integer id;
+	private String name;
+	
+	// We have to use the expensive TreeSet for testing so that the outbound
+	// javascript object code maintains the correct order, otherwise testing
+	// would be inconsistent.
+	private Set<Hibernate3NestEx> children = new TreeSet<Hibernate3NestEx>();
 
-    public Hibernate3Ex(Integer id)
-    {
-        this.id = id;
-    }
+	public Hibernate3Ex() {
+	}
 
-    public Hibernate3Ex(Integer id, String name)
-    {
-        this.id = id;
-        this.name = name;
-    }
+	public Hibernate3Ex(Integer id) {
+		this.id = id;
+	}
 
-    public Hibernate3Ex(Integer id, String name, Set<Hibernate3NestEx> children)
-    {
-        this.id = id;
-        this.name = name;
-        this.children = children;
-    }
+	public Hibernate3Ex(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
-    public Integer getId()
-    {
-        return id;
-    }
+	public Hibernate3Ex(Integer id, String name, Set<Hibernate3NestEx> children) {
+		this.id = id;
+		this.name = name;
+		this.children = children;
+	}
 
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getName()
-    {
-        return name;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Set<Hibernate3NestEx> getChildren()
-    {
-        return children;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setChildren(Set<Hibernate3NestEx> child)
-    {
-        this.children = child;
-    }
+	public Set<Hibernate3NestEx> getChildren() {
+		return children;
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return "Hibernate3Ex[id=" + getId() + ",name=" + getName() + ",children=" + getChildren().size() + "]";
-    }
+	public void setChildren(Set<Hibernate3NestEx> child) {
+		this.children = child;
+	}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Hibernate3Ex[id=" + getId() + ",name=" + getName()
+				+ ",children=" + getChildren().size() + "]";
+	}
 
-        if (obj == this)
-        {
-            return true;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
 
-        Class<? extends Hibernate3Ex> thisClass = this.getClass();
-        Class<?> thatClass = obj.getClass();
-        if (!thisClass.isAssignableFrom(thatClass) && !thatClass.isAssignableFrom(thisClass))
-        {
-            return false;
-        }
+		if (obj == this) {
+			return true;
+		}
 
-        Hibernate3Ex that = (Hibernate3Ex) obj;
+		Class<? extends Hibernate3Ex> thisClass = this.getClass();
+		Class<?> thatClass = obj.getClass();
+		if (!thisClass.isAssignableFrom(thatClass)
+				&& !thatClass.isAssignableFrom(thisClass)) {
+			return false;
+		}
 
-        if (!CompareUtil.equals(this.getId(), that.getId()))
-        {
-            return false;
-        }
+		Hibernate3Ex that = (Hibernate3Ex) obj;
 
-        // Normally .equals should only have to test PK for equality with a DB
-        // but we want our tests to be tighter ...
+		if (!CompareUtil.equals(this.getId(), that.getId())) {
+			return false;
+		}
 
-        if (!CompareUtil.equals(this.getName(), that.getName()))
-        {
-            return false;
-        }
+		// Normally .equals should only have to test PK for equality with a DB
+		// but we want our tests to be tighter ...
 
-        if (!CompareUtil.equals(this.getChildren(), that.getChildren()))
-        {
-            return false;
-        }
+		if (!CompareUtil.equals(this.getName(), that.getName())) {
+			return false;
+		}
 
-        return true;
-    }
+		if (!CompareUtil.equals(this.getChildren(), that.getChildren())) {
+			return false;
+		}
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode()
-    {
-        int reply = 7423;
-        reply += (id == null) ? 382 : id.hashCode();
-        reply += (name == null) ? 423 : name.hashCode();
-        reply += (children == null) ? 423 : children.hashCode();
-        return reply;
-    }
+		return true;
+	}
 
-    private Integer id;
-
-    private String name;
-
-    private Set<Hibernate3NestEx> children = new HashSet<Hibernate3NestEx>();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		int reply = 7423;
+		reply += (id == null) ? 382 : id.hashCode();
+		reply += (name == null) ? 423 : name.hashCode();
+		reply += (children == null) ? 423 : children.hashCode();
+		return reply;
+	}
 }
