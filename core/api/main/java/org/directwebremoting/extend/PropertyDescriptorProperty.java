@@ -115,13 +115,8 @@ public class PropertyDescriptorProperty implements Property
         // }
         // return new NestedProperty(this, method, types[0], 0, newParameterNumber);
 
-        Type type = method.getGenericReturnType();
-        if (type == null)
-        {
-            return new NestedProperty(this, method, null, 0, newParameterNumber);
-        }
-
-        return new NestedProperty(this, method, type, 0, newParameterNumber);
+        return new NestedProperty(
+            this, method, method.getGenericReturnType(), 0, newParameterNumber);
     }
 
     /* (non-Javadoc)
