@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-//import static org.directwebremoting.convert.AllConverterTest.*;
+import static org.directwebremoting.convert.AllConverterTest.*;
 
 /**
  * The tests for the <code>PrimitiveConverter</code> class.
@@ -41,13 +41,13 @@ public class HibernateConverterTest
         config.configure("hibernate.cfg.xml");
         SessionFactory sessionFactory = config.buildSessionFactory();
 		Assert.assertNotNull(sessionFactory);
-		
+
 		Session session = sessionFactory.getCurrentSession();
         Transaction transaction = session.beginTransaction();
 
         // Filter-time code (H3SessionAjaxFilter)
 
-        // Run-time code. Probably won't use HibernateUtil2 
+        // Run-time code. Probably won't use HibernateUtil2
         Hibernate3Ex parent = (Hibernate3Ex) session.load(Hibernate3Ex.class, 1);
 
         // Some random checks
@@ -64,17 +64,50 @@ public class HibernateConverterTest
         // Shutdown code, when do we need to do this?
         sessionFactory.close();
     }
-/*
+
     @Test
-    @Ignore
     public void hibernateBasicsConvert() throws Exception
     {
         // Checks that do not need DB access
         assertInboundConversion("null", Hibernate3Ex.class, null);
         assertInboundConversion("{ }", Hibernate3Ex.class, new Hibernate3Ex());
         assertInboundConversion("{ id:int:1,name:string:fred }", Hibernate3Ex.class, new Hibernate3Ex(1, "fred"));
+        assertOutboundConversion(new Hibernate3Ex(), "{children:[],id:null,name:null}");
+    }
 
-        assertOutboundConversion(new Hibernate3Ex(), "var s0=[];{children:s0,id:null,name:null}");
+    @Test
+    public void hibernateNoProxyOutbound() throws Exception {
+    	Hibernate3Ex ex = new Hibernate3Ex();
+        Hibernate3NestEx exnest = new Hibernate3NestEx();
+        exnest.setId(1);
+        exnest.setName("Nest");
+        ex.getChildren().add(exnest);
+        assertOutboundConversion(ex, "{children:[{id:1,name:\"Nest\",owner:null}],id:null,name:null}");
+
+        Hibernate3NestEx exnest2 = new Hibernate3NestEx();
+        exnest2.setId(2);
+        exnest2.setName("Nest2");
+        ex.getChildren().add(exnest2);
+        assertOutboundConversion(ex, "{children:[{id:1,name:\"Nest\",owner:null},{id:2,name:\"Nest2\",owner:null}],id:null,name:null}");
+
+        Hibernate3NestEx exnest3 = new Hibernate3NestEx();
+        exnest3.setId(3);
+        exnest3.setName("Nest3");
+        ex.getChildren().add(exnest3);
+        assertOutboundConversion(ex, "{children:[{id:1,name:\"Nest\",owner:null},{id:2,name:\"Nest2\",owner:null},{id:3,name:\"Nest3\",owner:null}],id:null,name:null}");
+    }
+
+    @Test
+    public void hibernateInbound() throws Exception {
+    	Hibernate3Ex ex = new Hibernate3Ex();
+    	ex.setId(1);
+    	ex.setName("Matt");
+        Hibernate3NestEx exnest = new Hibernate3NestEx();
+        exnest.setId(1);
+        exnest.setName("Nest");
+        assertInboundConversion("{children:set:[],id:int:1,name:string:Matt}", Hibernate3Ex.class, ex);
+        ex.getChildren().add(exnest);
+        //assertInboundConversion("{children:set:[{id:int:1,name:string:Nest}],id:int:1,name:string:Matt}", Hibernate3Ex.class, ex);
     }
 
     @Test
@@ -85,7 +118,7 @@ public class HibernateConverterTest
 
         // Hibernate 3 setup, keep the session open and use the bean converter
         Configuration config = new Configuration();
-        config.configure("hibernate3.cfg.xml");
+        config.configure("hibernate.cfg.xml");
         SessionFactory sessionFactory = config.buildSessionFactory();
         Session session = sessionFactory.getCurrentSession();
 
