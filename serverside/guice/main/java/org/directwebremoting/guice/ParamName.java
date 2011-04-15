@@ -30,6 +30,7 @@ public enum ParamName
     MAX_CALL_COUNT                      ("maxCallCount"),
     ACTIVE_REVERSE_AJAX_ENABLED         ("activeReverseAjaxEnabled"),
     MAX_WAIT_AFTER_WRITE                ("maxWaitAfterWrite"),
+    STREAMING_ENABLED                   ("streamingEnabled"),
     DISCONNECTED_TIME                   ("disconnectedTime"),
     POLL_AND_COMET_ENABLED              ("pollAndCometEnabled"),
     MAX_WAITING_THREADS                 ("maxWaitingThreads"),
@@ -40,7 +41,6 @@ public enum ParamName
     WELCOME_FILES                       ("welcomeFiles"),
     NORMALIZE_INCLUDES_QUERY_STRING     ("normalizeIncludesQueryString"),
     OVERRIDE_PATH                       ("overridePath"),
-
     CLASSES                             ("classes");
 
     ParamName(String name)
