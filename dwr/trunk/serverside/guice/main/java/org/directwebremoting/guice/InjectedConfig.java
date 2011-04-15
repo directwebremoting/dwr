@@ -78,6 +78,7 @@ class InjectedConfig
         setParameter(MAX_CALL_COUNT,                  maxCallCount);
         setParameter(ACTIVE_REVERSE_AJAX_ENABLED,     activeReverseAjaxEnabled);
         setParameter(MAX_WAIT_AFTER_WRITE,            maxWaitAfterWrite);
+        setParameter(STREAMING_ENABLED,               streamingEnabled);
         setParameter(DISCONNECTED_TIME,               disconnectedTime);
         setParameter(POLL_AND_COMET_ENABLED,          pollAndCometEnabled);
         setParameter(MAX_WAITING_THREADS,             maxWaitingThreads);
@@ -107,6 +108,7 @@ class InjectedConfig
     @Inject(optional=true) @InitParam(MAX_CALL_COUNT)                  Integer maxCallCount = null;
     @Inject(optional=true) @InitParam(ACTIVE_REVERSE_AJAX_ENABLED)     Boolean activeReverseAjaxEnabled = null;
     @Inject(optional=true) @InitParam(MAX_WAIT_AFTER_WRITE)            Long    maxWaitAfterWrite = null;
+    @Inject(optional=true) @InitParam(STREAMING_ENABLED)               Boolean streamingEnabled = null;
     @Inject(optional=true) @InitParam(DISCONNECTED_TIME)               Long    disconnectedTime = null;
     @Inject(optional=true) @InitParam(POLL_AND_COMET_ENABLED)          Boolean pollAndCometEnabled = null;
     @Inject(optional=true) @InitParam(MAX_WAITING_THREADS)             Integer maxWaitingThreads = null;
