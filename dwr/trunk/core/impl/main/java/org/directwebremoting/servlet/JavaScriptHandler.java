@@ -88,7 +88,7 @@ public abstract class JavaScriptHandler extends TemplateHandler
     /**
      * In debug mode, we skip script compression
      */
-    private boolean debug = false;
+    protected boolean debug = false;
 
     /**
      * The log stream
