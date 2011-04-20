@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="ui/dojo/build/util/shrinksafe/js.jar"/>
 	<classpathentry exported="true" kind="lib" path="core/api/lib/commons-logging-1.1.1.jar" sourcepath="/librarydwr/source/commons-logging-1.1.1-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/commons-logging-1.1.1-javadoc.jar!/"/>
@@ -121,5 +122,6 @@
 	<classpathentry kind="lib" path="core/api/lib/jetty-servlet-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.5.jar"/>
+	<classpathentry kind="lib" path="ui/dojo/build/util/shrinksafe/shrinksafe.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>

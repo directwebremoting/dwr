@@ -246,7 +246,7 @@
 				<mkdir dir="${dojo.temp}" />
 				<java classname="org.mozilla.javascript.tools.shell.Main" dir="${dojo.home}/util/buildscripts/" fork="true">
 					<classpath>
-						<fileset file="${dojo.home}/util/shrinksafe/custom_rhino.jar" />
+						<fileset file="${dojo.home}/util/shrinksafe/shrinksafe.jar" />
 					</classpath>
 					<arg line="build.js" />
 					<arg line="profileFile=${basedir}/${source.root}/ui/dojo/demo/build.js" />
@@ -401,10 +401,11 @@
 		<if>
 			<available file="${source.root}/${module}/test/java" />
 			<then>
+
 				<junit printsummary="yes" fork="true" haltonfailure="yes">
 					<formatter type="xml"/>
 					<classpath>
-						<fileset dir="${target}/lib" includes="**/*.jar" />
+						<fileset dir="${target}/lib" includes="**/*.jar" excludes="**/yuicompressor-2.3.5.jar" />
 						<pathelement location="${target.root}/classes/demo" />
 						<pathelement location="${target.root}/classes/main" />
 						<pathelement location="${target.root}/classes/test" />
@@ -415,6 +416,7 @@
 						<fileset dir="${source.root}/${module}/test/java">
 							<include name="**/*Test.java" />
 							<include name="**/Test*.java" />
+							<exclude name="**/YahooJSCompressorTest.java" />
 							<!-- In order to test this we need the jetty instance running, too complicated for now -->
 							<exclude name="**/DwrServletTest.java" />
 							<!-- Not actually a test case, just a utility for helping with JSON tests -->
@@ -427,6 +429,33 @@
 					</batchtest>
 					<formatter type="plain" usefile="false" />
 				</junit>
+
+				<if>
+					<available file="${source.root}/${module}/test/java/org/directwebremoting/impl/YahooJSCompressorTest.java" />
+					<then>
+						<echo message="Running special test for yuicompressor" />
+						<junit printsummary="yes" fork="true" haltonfailure="yes">
+							<formatter type="xml"/>
+							<classpath>
+								<fileset dir="${target}/lib">
+									<exclude name="js.jar"/>
+									<exclude name="shrinksafe.jar"/>
+								</fileset>
+								<pathelement location="${target.root}/classes/demo" />
+								<pathelement location="${target.root}/classes/main" />
+								<pathelement location="${target.root}/classes/test" />
+								<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
+							</classpath>
+							<batchtest todir="${target}/junitReports">
+								<fileset dir="${source.root}/${module}/test/java">
+									<include name="**/YahooJSCompressorTest.java" />
+								</fileset>
+							</batchtest>
+							<formatter type="plain" usefile="false" />
+						</junit>
+					</then>
+				</if>
+
 			</then>
 			<else>
 				<echo message="Skipping, no tests exists for: ${module}" />

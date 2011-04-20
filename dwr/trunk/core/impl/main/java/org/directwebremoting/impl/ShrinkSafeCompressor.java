@@ -12,17 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Contributor(s):
+ *   Randy Jones
  */
 package org.directwebremoting.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.directwebremoting.extend.Compressor;
+import org.directwebremoting.util.Loggers;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextAction;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.tools.ToolErrorReporter;
 import org.mozilla.javascript.tools.shell.Global;
 import org.mozilla.javascript.tools.shell.Main;
@@ -30,6 +31,7 @@ import org.mozilla.javascript.tools.shell.Main;
 /**
  * JavaScript Compression Implementation using Dojo ShrinkSafe.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Randy Jones (Updater)
  */
 public class ShrinkSafeCompressor implements Compressor
 {
@@ -44,16 +46,20 @@ public class ShrinkSafeCompressor implements Compressor
             global = Main.getGlobal();
             ToolErrorReporter errorReporter = new ToolErrorReporter(false, global.getErr());
             Main.shellContextFactory.setErrorReporter(errorReporter);
-            global.init(Main.shellContextFactory);
-            compressReaderMethod = Context.class.getMethod("compressReader", Context.class, Scriptable.class, Script .class, String.class, String.class, Integer.TYPE, Object.class);
+
+            // Do a trial compression to check
+            compressJavaScript("");
         }
-        catch (Throwable t)
+        catch (NoClassDefFoundError ex)
         {
-            throw new InstantiationException("Context.compressReader() is not available, assuming Rhino is not here from custom_rhino.jar, aka ShrinkSafe");
+            throw new InstantiationException("Could not setup ShrinkSafeCompressor because a class is missing, assuming shirinksafe.jar and js.jar are not in the classpath.");
+        }
+        catch (Exception ex)
+        {
+            Loggers.STARTUP.error("ShrinkSafeCompressor startup", ex);
+            throw new InstantiationException("Could not setup ShrinkSafeCompressor, assuming shirinksafe.jar and js.jar are not in the classpath. Exception caught was " + ex);
         }
 
-        // Do a trial compression to check
-        compressJavaScript("");
     }
 
     /* (non-Javadoc)
@@ -66,27 +72,26 @@ public class ShrinkSafeCompressor implements Compressor
         {
             public Object run(Context cx)
             {
-                Script script = Main.loadScriptFromSource(cx, source, "compress", 1, null);
-
                 try
                 {
-                    //return cx.compressReader(global, script, source, "compress", 1, null);
-                    return compressReaderMethod.invoke(cx, global, script, source, "compress", 1, null);
-                }
-                catch (InvocationTargetException ex)
-                {
-                    final Throwable target = ex.getTargetException();
-                    if (target instanceof Exception)
-                    {
-                        thrown[0] = (Exception) target;
-                    }
-                    else
-                    {
-                        thrown[0] = ex;
-                    }
+                    // The shrinksafe Compressor only obfuscates the javascript. Line breaks are removed
+                    // by the dojo build. Adding the removal of line breaks to make the optimization that
+                    // would come from using the dojo build. See
+                    // http://svn.dojotoolkit.org/src/tags/release-1.5.0/util/buildscripts/jslib/buildUtil.js
+                    // in the buildUtil.optimizeJs function which has the following:
+                    // if(optimizeType.indexOf("shrinksafe") == 0 || optimizeType == "packer"){
+                    //     //Apply compression using custom compression call in Dojo-modified rhino.
+                    //     fileContents = new String(Packages.org.dojotoolkit.shrinksafe.Compressor.compressScript(fileContents, 0, 1, stripConsole));
+                    //     if(optimizeType.indexOf(".keepLines") == -1){
+                    //         fileContents = fileContents.replace(/[\r\n]/g, "");
+                    //     }
+                    // }
+                    String obfuscated = org.dojotoolkit.shrinksafe.Compressor.compressScript(source, 0, 1, false, null);
+                    return obfuscated.replaceAll("[\\r\\n]", "");
                 }
                 catch (Exception ex)
                 {
+                    ex.printStackTrace();
                     thrown[0] = ex;
                 }
                 return null;
