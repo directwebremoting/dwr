@@ -29,6 +29,6 @@ public class GiHandler extends FileJavaScriptHandler
      */
     public GiHandler()
     {
-        super(DwrConstants.PACKAGE_PATH + "/gi/gi.js");
+        super(DwrConstants.PACKAGE_PATH + "/gi/gi.js", DwrConstants.PACKAGE_PATH + "/copyright.txt");
     }
 }

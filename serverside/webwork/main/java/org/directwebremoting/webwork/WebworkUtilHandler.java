@@ -29,6 +29,6 @@ public class WebworkUtilHandler extends FileJavaScriptHandler
      */
     public WebworkUtilHandler()
     {
-        super(DwrConstants.PACKAGE_PATH + "/webwork/DWRActionUtil.js");
+        super(DwrConstants.PACKAGE_PATH + "/webwork/DWRActionUtil.js", DwrConstants.PACKAGE_PATH + "/copyright.txt");
     }
 }
