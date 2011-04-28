@@ -23,11 +23,6 @@
      <param-value>25000</param-value>
     </init-param>
 	
-	<init-param>
-     <param-name>jsonpEnabled</param-name>
-     <param-value>true</param-value>
-    </init-param>	
-	
     <!-- This should NEVER be present in live -->
     <init-param>
       <param-name>debug</param-name>
