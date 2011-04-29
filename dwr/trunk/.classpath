@@ -120,7 +120,6 @@
 	<classpathentry kind="lib" path="core/api/lib/jetty-io-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/jetty-servlet-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.4.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/js.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/shrinksafe.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
