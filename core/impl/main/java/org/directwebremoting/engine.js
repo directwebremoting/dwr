@@ -150,7 +150,8 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {boolean} notify true or false depending on if we want to turn unload on or off
    * @see getahead.org/dwr/browser/engine/options
    */
-  dwr.engine.setNotifyServerOnPageUnload = function(notify) {
+  dwr.engine.setNotifyServerOnPageUnload = function(notify, asyncUnload) {
+	dwr.engine._asyncUnload = (asyncUnload !== undefined) ? asyncUnload : false;
     dwr.engine._isNotifyServerOnPageUnload = notify;
   };
 
@@ -427,7 +428,10 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** Are we doing page unloading? */
   dwr.engine._isNotifyServerOnPageUnload = false;
-
+  
+  /** Should the unload call be asynchronous?  If true it may not be called by the browser. */
+  dwr.engine._asyncUnload = false;
+  
   /**
    * A map of all mapped classes whose class declarations have been loaded
    * (dwrClassName -> constructor function)
@@ -484,7 +488,7 @@ if (typeof dwr == 'undefined') dwr = {};
           'c0-methodName':'pageUnloaded',
           'c0-id':0
         },
-        paramCount:0, isPoll:false, async:true,
+        paramCount:0, isPoll:false, async:dwr.engine._asyncUnload,
         headers:{}, preHooks:[], postHooks:[],
         timeout:dwr.engine._timeout,
         errorHandler:null, warningHandler:null, textHtmlHandler:null,
