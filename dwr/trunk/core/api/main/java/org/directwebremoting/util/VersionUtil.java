@@ -38,8 +38,19 @@ import java.util.Properties;
  */
 public class VersionUtil
 {
-
+    
     /**
+     * Fish the version number out of the dwr.properties file.
+     * @return The current version number.
+     * @deprecated Use {@link #getLabel()}
+     */
+    @Deprecated
+    public static String getVersion()
+    {
+        return getLabel();
+    }
+	
+	/**
      * @return The major version number of this release
      */
     public static int getMajor()
