@@ -96,7 +96,10 @@ public class PollHandler implements Handler
         }
 
         String bodySessionId = batch.getHttpSessionId();
-        checkNotCsrfAttack(request, bodySessionId);
+        if (crossDomainSessionSecurity)
+        {
+            checkNotCsrfAttack(request, bodySessionId);
+        }
 
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)
@@ -308,6 +311,15 @@ public class PollHandler implements Handler
     }
 
     /**
+     * Do we perform cross-domain session security checks?
+     * @param crossDomainSessionSecurity the cross domain session security setting
+     */
+    public void setCrossDomainSessionSecurity(boolean crossDomainSessionSecurity)
+    {
+        this.crossDomainSessionSecurity = crossDomainSessionSecurity;
+    }
+
+    /**
      * Accessor for the DefaultCreatorManager that we configure
      * @param converterManager The new DefaultConverterManager
      */
@@ -416,6 +428,11 @@ public class PollHandler implements Handler
      * Are we using plain javascript or html wrapped javascript
      */
     protected boolean plain;
+
+    /**
+     * Do we perform cross-domain session security checks?
+     */
+    protected boolean crossDomainSessionSecurity = true;
 
     /**
      * How we turn pages into the canonical form.
