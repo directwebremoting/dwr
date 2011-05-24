@@ -104,7 +104,7 @@ public class Continuation
     {
         try
         {
-            if (!((Boolean)isSuspendedMethod.invoke(proxy)).booleanValue()) {
+            if (((Boolean)isSuspendedMethod.invoke(proxy)).booleanValue()) {
                 resumeMethod.invoke(proxy);
             }
         }
