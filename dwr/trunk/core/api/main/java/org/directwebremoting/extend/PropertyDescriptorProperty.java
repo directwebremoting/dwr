@@ -50,14 +50,12 @@ public class PropertyDescriptorProperty implements Property
      */
     public Class<?> getPropertyType()
     {
-        Method method = descriptor.getReadMethod();
-
-        Type[] types = method.getGenericParameterTypes();
-        if (types.length == 0)
+        Method readMethod = descriptor.getReadMethod();
+        Type[] types = (null != readMethod) ? readMethod.getGenericParameterTypes() : null;
+        if (null == types || types.length == 0)
         {
             return descriptor.getPropertyType();
         }
-
         Type parameterType = types[0];
         return LocalUtil.toClass(parameterType, toString());
     }
