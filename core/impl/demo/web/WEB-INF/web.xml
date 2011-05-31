@@ -11,7 +11,7 @@
   <listener>
     <listener-class>org.directwebremoting.servlet.DwrListener</listener-class>
   </listener>
-
+  
   <servlet>
     <servlet-name>dwr-invoker</servlet-name>
     <display-name>DWR Servlet</display-name>
