@@ -69,11 +69,11 @@ public class Clock implements Runnable
 
         if (active)
         {
-            setClockDisplayForAll("Started");
+            setClockDisplayForAll("Clock started");
         }
         else
         {
-            setClockDisplayForAll("Stopped");
+            setClockDisplayForAll("Clock stopped");
         }
     }
 
