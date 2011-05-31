@@ -20,7 +20,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Browser;
-import org.directwebremoting.ServerContextFactory;
+import org.directwebremoting.ScriptSession;
+import org.directwebremoting.ScriptSessionFilter;
+import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.dwr.Util;
 
@@ -75,6 +77,21 @@ public class Clock implements Runnable
         }
     }
 
+    private class UpdatesEnabledFilter implements ScriptSessionFilter {
+    	private String attrName;
+    	
+    	public UpdatesEnabledFilter(String attrName) {
+    		this.attrName = attrName;
+    	}
+    	
+		@Override
+		public boolean match(ScriptSession ss) {
+			Object check = ss.getAttribute(attrName);
+	        return (check != null && check.equals(Boolean.TRUE));
+		}
+    	
+    }
+    
     /**
      * Actually alter the clients.
      * In DWR 2.x you had to know the ServletContext in order to be able to get
@@ -85,8 +102,7 @@ public class Clock implements Runnable
      */
     public void setClockDisplay(final String output)
     {
-        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
-        Browser.withPage(page, new Runnable()
+        Browser.withAllSessionsFiltered(new UpdatesEnabledFilter(UPDATES_ENABLED_ATTR), new Runnable()
         {
             public void run()
             {
@@ -95,6 +111,17 @@ public class Clock implements Runnable
         });
     }
 
+    /**
+     * 
+     * @param enabled
+     */
+    public void setEnabledAttribute(Boolean enabled) {
+    	ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+    	scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
+    }
+    
+    private static String UPDATES_ENABLED_ATTR = "UPDATES_ENABLED";
+    
     /**
      * Are we updating the clocks on all the pages?
      */
