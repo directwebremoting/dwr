@@ -27,6 +27,13 @@
 	  function updatePollStatus(pollStatus) {
 	  	dwr.util.setValue("pollStatus", pollStatus ? "<font color='green'>Online</font>" : "<font color='red'>Offline</font>", {escapeHtml:false});
 	  }
+	  
+	  function enableUpdates(enabled) {
+	  	if (!enabled) {
+		  dwr.util.setValue("clockDisplay", "This tab/window does not have updates enabled.");
+		}  
+	  	Clock.setEnabledAttribute(enabled);
+	  }
   </script>
 </head>
 
@@ -50,126 +57,235 @@ a number of browsers.</p>
 
 <div id="tabContents">
 
-  <div id="demoDiv">
+  <div id="demoDiv">  	
     <input type="button" value="Start / Stop" onclick="Clock.toggle();"/>
 	Server status: <span id="pollStatus"></span>
 	<div id="error"></div>
     <p></p>
     <h2 id="clockDisplay"></h2>
   </div>
+  <div>
+    <h3>Filtering</h3>
+	<input type="button" value="Enable Updates" onclick="enableUpdates(true);">
+	<input type="button" value="Disable Updates" onclick="enableUpdates(false);">  	
+  </div>	
 
   <div id="explainDiv">
     <h2>Client side script</h2>
-    <p>We  turn
-    active Reverse Ajax on: <code>dwr.engine.setActiveReverseAjax(true);</code>.
+    <p>We  turn active Reverse Ajax on: <code>dwr.engine.setActiveReverseAjax(true);</code>.
     Reverse Ajax will work without comet, by using piggyback, however this gives
     you very long latency, not what we need for a clock, so we turn on comet or
     polling (whatever the server is configured to prefer).</p>
 	
 	<p>Next we specify our errorHandler and retry logic.  DWR has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read more about this feature on our site</a>.</p> 
-     
+    
+	<p>Clicking the "Start / Stop" button calls the toggle() method on our Clock class which starts or stops the clock.</p>
 	
+	<p>By default no updates are sent to the browser.  The ScriptSessions are filtered on the server and only ScriptSessions with the "UPDATES_ENABLED" attribute set to true will receive updates.  Selecting the "Enable Updates" button will make a call to Clock.setEnabledAttribute(true) which will set the UPDATES_ENABLED on the ScriptSession and allow this tab/window to receive updates.  You may disable updates by selecting the "Disable Updates" button. </p> 
+	 
+	<h2>Java Code</h2> 
+		
     <p>The server code uses a ScheduledThreadPoolExecutor to call update the
     screen once a second. The setClockDisplay looks like this:</p>
 
 <pre>
-String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
-Browser.withPage(page, new Runnable()
+public void setClockDisplay(final String output)
 {
-    public void run()
+    Browser.withAllSessionsFiltered(new UpdatesEnabledFilter(UPDATES_ENABLED_ATTR), new Runnable()
     {
-        Util.setValue("clockDisplay", output);
-    }
-});
+        public void run()
+        {
+            Util.setValue("clockDisplay", output);
+        }
+    });
+}
 </pre>
 
-    <p>ServerContextFactory is a lot like WebContextFactory, however it will
-    work outside a DWR thread. Since we're using the ScheduledThreadPoolExecutor
-    thread here, we need to use ServerContext and not WebContext.</p>
-    
-    <p>We need to work out the page to update. You may know the contextPath
-    without needing to ask, but in this case we're making the web-app
-    relocatable by asking for the contextPath.</p>
-
-    <p>We then create a scope where the target browsers includes everyone
-    looking at the given page, and we use the <code>Util.setValue()</code>
-    method to alter the target browsers.</p>
+    <p>The Browser API is being used to send updates to only certain ScriptSesssions.  We have implemented a custom ScriptSessionFilter to check for an attribute on the ScriptSessions and only send updates to this page if the attribute is present and true:
+	<pre>
+		private class UpdatesEnabledFilter implements ScriptSessionFilter 
+		{
+	    	private String attrName;
+	    	
+	    	public UpdatesEnabledFilter(String attrName) 
+			{
+	    		this.attrName = attrName;
+	    	}
+	    	
+			@Override
+			public boolean match(ScriptSession ss) 
+			{
+				Object check = ss.getAttribute(attrName);
+		        return (check != null && check.equals(Boolean.TRUE));
+			}    	
+   		}		
+	</pre>
+	In our HTML page we set this attribute when the "Enable Updates" or "Disable Updates" buttons are selected.  The action of selecting one of these buttons calls the following method on Clock which will set the UPDATES_ENABLED_ATTR to true or false:
+	
+	<pre>
+		public void setEnabledAttribute(Boolean enabled) 
+		{
+    	    ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+    	    scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
+        }		
+	</pre>
+	
+	</p>
   </div>
 
   <div id="sourceDiv">
 
 <h2>HTML source:</h2>
 <pre>
-&lt;input type="button" value="Start / Stop" onclick="Clock.toggle();"/&gt;
-&lt;h2 id="clockDisplay"&gt;&lt;/h2&gt;
+&lt;div id="demoDiv">  	
+    &lt;input type="button" value="Start / Stop" onclick="Clock.toggle();"/&gt;
+	Server status: &lt;span id="pollStatus">&lt;/span&gt;
+	&lt;div id="error">&lt;/div&gt;
+    &lt;p>&lt;/p&gt;
+    &lt;h2 id="clockDisplay">&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;h3>Filtering&lt;/h3&gt;
+	&lt;input type="button" value="Enable Updates" onclick="enableUpdates(true);"&gt;
+	&lt;input type="button" value="Disable Updates" onclick="enableUpdates(false);"&gt;  	
+  &lt;/div&gt;	
 </pre>
 
 <h2>Javascript source:</h2>
-<pre>
+<pre>	
 window.onload=function()
 {
-    dwr.engine.setActiveReverseAjax(true); // Initiate reverse ajax polling
-    dwr.engine.setErrorHandler(errorHandler); // Optional - Called when a call and all retry attempts fail
-    dwr.engine.setPollStatusHandler(updatePollStatus); // Optional - function to call when the reverse ajax status changes (e.g. online to offline)
-    updatePollStatus(true); // Optional - We are online right now!  Until DWR determines we are not!
-    Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display      
+    dwr.engine.setActiveReverseAjax(true);
+    dwr.engine.setErrorHandler(errorHandler);
+    dwr.engine.setPollStatusHandler(updatePollStatus);
+    updatePollStatus(true);
+    Tabs.init('tabList', 'tabContents');       
 }
 	  
-function errorHandler(message, ex) {
-    dwr.util.setValue(&quot;error&quot;, &quot;&lt;font color='red'&gt;Cannot connect to server. Initializing retry logic.&lt;/font&gt;&quot;, {escapeHtml:false});
-    setTimeout(function() { dwr.util.setValue(&quot;error&quot;, &quot;&quot;); }, 5000)
+function errorHandler(message, ex) 
+{
+    dwr.util.setValue("error", "<font color='red'>Cannot connect to server. Initializing retry logic.</font>", {escapeHtml:false});
+	setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
 }
 	  
-function updatePollStatus(pollStatus) {
-    dwr.util.setValue(&quot;pollStatus&quot;, pollStatus ? &quot;&lt;font color='green'&gt;Online&lt;/font&gt;&quot; : &quot;&lt;font color='red'&gt;Offline&lt;/font&gt;&quot;, {escapeHtml:false});
+function updatePollStatus(pollStatus) 
+{
+    dwr.util.setValue("pollStatus", pollStatus ? "<font color='green'>Online</font>" : "<font color='red'>Offline</font>", {escapeHtml:false});
+}
+	  
+function enableUpdates(enabled)
+ {
+    if (!enabled) 
+	{
+	    dwr.util.setValue("clockDisplay", "This tab/window does not have updates enabled.");
+	}  
+Clock.setEnabledAttribute(enabled);
 }</pre>
 
 <h2>Java source:</h2>
 <pre>
-public class Clock implements Runnable {
-    public Clock() {
+public class Clock implements Runnable
+{
+    /**
+     * Create a schedule to update the clock every second.
+     */
+    public Clock()
+    {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
-        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
-    public void run() {
-        if (active) {
-            setClockDisplay(new Date().toString());
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    public void run()
+    {
+        if (active)
+        {
+            String newTimeString = new Date().toString();
+            // We check this has not already been sent to avoid duplicate transmissions
+            if (!newTimeString.equals(timeString))
+            {
+                setClockDisplay(newTimeString);
+                timeString = newTimeString;
+            }
         }
     }
 
     /**
      * Called from the client to turn the clock on/off
      */
-    public synchronized void toggle() {
+    public synchronized void toggle()
+    {
         active = !active;
 
-        if (active) {
+        if (active)
+        {
             setClockDisplay("Started");
         }
-        else {
+        else
+        {
             setClockDisplay("Stopped");
         }
     }
 
+    private class UpdatesEnabledFilter implements ScriptSessionFilter {
+    	private String attrName;
+    	
+    	public UpdatesEnabledFilter(String attrName) {
+    		this.attrName = attrName;
+    	}
+    	
+		@Override
+		public boolean match(ScriptSession ss) {
+			Object check = ss.getAttribute(attrName);
+	        return (check != null && check.equals(Boolean.TRUE));
+		}    	
+    }
+    
     /**
      * Actually alter the clients.
+     * In DWR 2.x you had to know the ServletContext in order to be able to get
+     * a ServerContext. With DWR 3.0 this restriction has been removed.
+     * This method is public so you can call this from the dwr auto-generated
+     * pages to demo altering one page from another
      * @param output The string to display.
      */
-    public void setClockDisplay(final String output) {
-        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
-        Browser.withPage(page, new Runnable() {
-            public void run() {
+    public void setClockDisplay(final String output)
+    {
+        Browser.withAllSessionsFiltered(new UpdatesEnabledFilter(UPDATES_ENABLED_ATTR), new Runnable()
+        {
+            public void run()
+            {
                 Util.setValue("clockDisplay", output);
             }
         });
     }
 
+    /**
+     * 
+     * @param enabled
+     */
+    public void setEnabledAttribute(Boolean enabled) {
+    	ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+    	scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
+    }
+    
+    private static String UPDATES_ENABLED_ATTR = "UPDATES_ENABLED";
+    
+    /**
+     * Are we updating the clocks on all the pages?
+     */
     protected transient boolean active = false;
+
+    /**
+     * The last time string
+     */
+    protected String timeString = "";
 }
 </pre>
 
-  </div>
+</div>
 
 </div>
 

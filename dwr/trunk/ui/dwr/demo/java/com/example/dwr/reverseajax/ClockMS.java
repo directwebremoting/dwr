@@ -41,7 +41,11 @@ public class ClockMS implements Runnable
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
         executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
-
+    
+    public static void main (String args[]) {
+    	System.out.println(1200 - (1200 % 250));
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
@@ -49,7 +53,9 @@ public class ClockMS implements Runnable
     {
         if (active)
         {
-            Calendar cal = Calendar.getInstance();
+        	//jump from 750 to 250
+            
+        	Calendar cal = Calendar.getInstance();
             int ms = cal.get(Calendar.MILLISECOND);
             String newTimeString = cal.getTime().toString() + " MS:" + (ms - (ms % 250));
             // We check this has not already been sent to avoid duplicate transmissions
