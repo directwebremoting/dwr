@@ -69,11 +69,11 @@ public class Clock implements Runnable
 
         if (active)
         {
-            setClockDisplay("Started");
+            setClockDisplayForAll("Started");
         }
         else
         {
-            setClockDisplay("Stopped");
+            setClockDisplayForAll("Stopped");
         }
     }
 
@@ -89,6 +89,25 @@ public class Clock implements Runnable
 			Object check = ss.getAttribute(attrName);
 	        return (check != null && check.equals(Boolean.TRUE));
 		}    	
+    }
+    
+    /**
+     * Actually alter the clients.
+     * In DWR 2.x you had to know the ServletContext in order to be able to get
+     * a ServerContext. With DWR 3.0 this restriction has been removed.
+     * This method is public so you can call this from the dwr auto-generated
+     * pages to demo altering one page from another
+     * @param output The string to display.
+     */
+    public void setClockDisplayForAll(final String output)
+    {
+        Browser.withAllSessions(new Runnable()
+        {
+            public void run()
+            {
+                Util.setValue("clockDisplay", output);
+            }
+        });
     }
     
     /**
