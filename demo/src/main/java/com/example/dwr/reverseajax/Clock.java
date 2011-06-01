@@ -95,7 +95,7 @@ public class Clock implements Runnable
         {
             public void run()
             {
-                ScriptSessions.addFunctionCall("setClockStatus()", active);
+                ScriptSessions.addFunctionCall("setClockStatus", active);
             }
         });
     }
