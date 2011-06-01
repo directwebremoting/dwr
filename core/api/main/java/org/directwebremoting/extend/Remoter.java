@@ -31,7 +31,7 @@ public interface Remoter
      * @return An interface javascript
      * @throws SecurityException
      */
-    String generateInterfaceScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException;
+    String generateInterfaceJavaScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException;
 
     /**
      * Generate JavaScript that forms a mapped DTO class
@@ -41,18 +41,19 @@ public interface Remoter
      * @return JavaScript class definition
      * @throws SecurityException
      */
-    String generateDtoScript(String jsClassName, String indent, String assignVariable) throws SecurityException;
+    String generateDtoJavaScript(String jsClassName, String indent, String assignVariable) throws SecurityException;
 
     /**
      * Generate JavaScript that sets up a DTO class's inheritance from its superclass
-     * @param jsClassName The mapped JavaScript class name
      * @param indent Indent string prepended to all generated text lines
-     * @param classLookupExpression JavaScript expression that evaluates to the subclass
-     * @param superclassLookupFunction Name of a function that will return the superclass when supplied its name
-     * @return JavaScript inheritance statement or null if no inheritance
+     * @param classExpression The mapped JavaScript class name
+     * @param superClassExpression The mapped JavaScript superclass name
+     * @param delegateFunction Name of a callable JavaScript function that will create a prototype delegate
+     * (f ex dojo.delegate, in other frameworks sometimes called clone, beget, etc)
+     * @return JavaScript inheritance statement
      * @throws SecurityException
      */
-    String generateDtoInheritanceScript(String jsClassName, String indent, String classLookupExpression, String superclassLookupFunction) throws SecurityException;
+    String generateDtoInheritanceJavaScript(String indent, String classExpression, String superClassExpression, String delegateFunction);
 
     /**
      * Execute a set of remote calls and generate set of reply data for later

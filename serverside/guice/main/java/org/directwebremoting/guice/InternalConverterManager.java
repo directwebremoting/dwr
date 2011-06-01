@@ -105,6 +105,14 @@ public class InternalConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#getNamedConverterJavaScriptNames()
+     */
+    public Collection<String> getNamedConverterJavaScriptNames()
+    {
+        return converterManager.getNamedConverterJavaScriptNames();
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ConverterManager#getNamedConverter(java.lang.String)
      */
     public NamedConverter getNamedConverter(String javascriptClassName)

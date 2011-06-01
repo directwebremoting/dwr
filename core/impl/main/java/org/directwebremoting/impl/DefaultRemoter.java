@@ -52,8 +52,25 @@ public class DefaultRemoter implements Remoter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Remoter#generateInterfaceScript(java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateInterfaceScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException
+    public String generateInterfaceJavaScript(String scriptName, String indent, String assignVariable, String contextServletPath) throws SecurityException
     {
+        // The desired output should follow this scheme (not wrapped by any
+        // "if already defined clauses" as this is not used by all module
+        // systems):
+        // ( ) <indent><assignVariable> = {};
+        // ( ) <indent><assignVariable>._path = '<pathToDwrServlet>';
+        // ( )
+        // ( ) <indent>/**
+        // ( ) <indent> * @param {<type>} p1 a param
+        // ( ) <indent> * ...
+        // ( ) <indent> * @param {function|Object} callback callback function or options object
+        // ( ) <indent> */
+        // ( ) <indent><assignVariable>.<methodName> = function(p1, ..., callback) {
+        // ( ) <indent>  return dwr.engine._execute(<assignVariable>._path, <scriptName>, <methodName>, arguments);
+        // ( ) <indent>};
+        // ( )
+        // ( ) ...
+
         StringBuilder buffer = new StringBuilder();
 
         buffer
@@ -139,29 +156,28 @@ public class DefaultRemoter implements Remoter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Remoter#generateDtoScript(java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateDtoScript(String jsClassName, String indent, String assignVariable) throws SecurityException
+    public String generateDtoJavaScript(String jsClassName, String indent, String assignVariable) throws SecurityException
     {
         NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
         if (namedConv != null)
         {
-            // The desired output should follow this scheme:
-            // (1) <assignVariable> = function() {
-            // (2)   this.i = 0;
-            // (2) }
-            // (3) <assignVariable>.$dwrClassName = 'pkg.MyData';
-            // (4) <assignVariable>.$dwrClassMembers = {};
-            // (5) <assignVariable>.$dwrClassMembers.i = {};
-            // (6) <assignVariable>.createFromMap = function(map) {
-            // (6)   var obj = new this();
-            // (6)   for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
-            // (6)   return obj;
-            // (6) }
+            // The desired output should follow this scheme (not wrapped by any
+            // "if already defined clauses" as this is not used by all module
+            // systems):
+            // (1) <indent><assignVariable> = function() {
+            // (2) <indent>  this.myProp = <initial value>;
+            // (2) <indent>  ...
+            // (2) <indent>}
+            // (3) <indent><assignVariable>.$dwrClassName = 'pkg.MyData';
+            // (4) <indent><assignVariable>.$dwrClassMembers = {};
+            // (5) <indent><assignVariable>.$dwrClassMembers.myProp = {};
+            // (6) <indent><assignVariable>.createFromMap = dwr.engine._createFromMap;
             StringBuilder buf = new StringBuilder();
 
-            // Generate (1): <assignVariable> = function() {
+            // Generate (1): <indent><assignVariable> = function() {
             buf.append(indent + assignVariable + " = function() {\n");
 
-            // Generate (2): this.myProp = <initial value>;
+            // Generate (2): <indent>  this.myProp = <initial value>;
             Map<String, Property> properties = namedConv.getPropertyMapFromClass(namedConv.getInstanceType(), true, true);
             for (Entry<String, Property> entry : properties.entrySet())
             {
@@ -195,20 +211,21 @@ public class DefaultRemoter implements Remoter
                 buf.append(";\n");
             }
 
+            // Generate (2): <indent>}
             buf.append(indent + "}\n");
 
-            // Generate (3): <assignVariable>.$dwrClassName = 'pkg.MyData';
+            // Generate (3): <indent><assignVariable>.$dwrClassName = 'pkg.MyData';
             buf.append(indent);
             buf.append(assignVariable);
             buf.append(".$dwrClassName = '");
             buf.append(jsClassName);
             buf.append("';\n");
 
-            // Generate (4): <assignVariable>.$dwrClassMembers = {};
+            // Generate (4): <indent><assignVariable>.$dwrClassMembers = {};
             buf.append(indent + assignVariable);
             buf.append(".$dwrClassMembers = {};\n");
 
-            // Generate (5): <assignVariable>.$dwrClassMembers.i = {};
+            // Generate (5): <indent><assignVariable>.$dwrClassMembers.myProp = {};
             for (Entry<String, Property> entry : properties.entrySet())
             {
                 String name = entry.getKey();
@@ -219,14 +236,10 @@ public class DefaultRemoter implements Remoter
                 buf.append(" = {};\n");
             }
 
-            // Generate (6): <assignVariable>.createFromMap = function(map) {
+            // Generate (6): <indent><assignVariable>.createFromMap = dwr.engine._createFromMap;
             buf.append(indent);
             buf.append(assignVariable);
-            buf.append(".createFromMap = function(map) {\n");
-            buf.append(indent + "  var obj = new this();\n");
-            buf.append(indent + "  for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];\n");
-            buf.append(indent + "  return obj;\n");
-            buf.append(indent + "}\n");
+            buf.append(".createFromMap = dwr.engine._createFromMap;\n");
 
             return buf.toString();
         }
@@ -240,39 +253,23 @@ public class DefaultRemoter implements Remoter
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Remoter#generateDtoInheritanceScript(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public String generateDtoInheritanceScript(String jsClassName, String indent, String classLookupExpression, String superclassLookupFunction) throws SecurityException
+    public String generateDtoInheritanceJavaScript(String indent, String classExpression, String superClassExpression, String delegateFunction)
     {
-        NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
-        if (namedConv != null)
-        {
-            // The desired output is something like this:
-            //   <classLookupExpression>.prototype =
-            //     dwr.engine._delegate(<superclassLookupFunction>('pkg.MyParentData').prototype);
-            //   <classLookupExpression>.prototype.constructor = <classLookupExpression>;
-            String superclass = namedConv.getJavascriptSuperClass();
-            if (LocalUtil.hasLength(superclass))
-            {
-                StringBuilder buf = new StringBuilder();
-                buf.append(indent + classLookupExpression);
-                buf.append(".prototype = dwr.engine._delegate(");
-                buf.append(superclassLookupFunction);
-                buf.append("('" + superclass + "').prototype);\n");
-                buf.append(indent + classLookupExpression);
-                buf.append(".prototype.constructor = ");
-                buf.append(classLookupExpression);
-                buf.append(";\n");
-                return buf.toString();
-            }
-            else
-            {
-                return null;
-            }
-        }
-        else
-        {
-            log.warn("Failed to create inheritance definition for JS class " + jsClassName + " because it was not found.");
-            return null;
-        }
+        // The desired output is something like this (not wrapped by any
+        // "if already defined clauses" as this is not needed on all module
+        // systems):
+        //   <indent><classExpression>.prototype = <delegateFunction>(<superClassExpression>.prototype);
+        //   <indent><classExpression>.prototype.constructor = <classExpression>;
+        StringBuilder buf = new StringBuilder();
+        buf.append(indent + classExpression);
+        buf.append(".prototype = " + delegateFunction + "(");
+        buf.append(superClassExpression);
+        buf.append(".prototype);\n");
+        buf.append(indent + classExpression);
+        buf.append(".prototype.constructor = ");
+        buf.append(classExpression);
+        buf.append(";\n");
+        return buf.toString();
     }
 
     /* (non-Javadoc)

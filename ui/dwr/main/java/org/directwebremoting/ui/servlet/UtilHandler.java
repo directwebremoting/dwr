@@ -15,20 +15,11 @@
  */
 package org.directwebremoting.ui.servlet;
 
-import org.directwebremoting.extend.DwrConstants;
-import org.directwebremoting.servlet.FileJavaScriptHandler;
-
 /**
  * A Handler that supports requests for util.js
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class UtilHandler extends FileJavaScriptHandler
+public class UtilHandler extends BaseUtilHandler
 {
-    /**
-     * Setup the default values
-     */
-    public UtilHandler()
-    {
-        super(DwrConstants.PACKAGE_PATH + "/ui/servlet/util.js", DwrConstants.PACKAGE_PATH + "/copyright.txt");
-    }
+    // File is served without additions so all code is in superclass
 }

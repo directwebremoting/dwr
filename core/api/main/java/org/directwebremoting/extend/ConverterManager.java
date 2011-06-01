@@ -80,6 +80,13 @@ public interface ConverterManager
     Converter getConverterByMatchString(String match);
 
     /**
+     * Returns a collection with all the named converters' JavaScript class
+     * names.
+     * @return A Collection of name strings
+     */
+    Collection<String> getNamedConverterJavaScriptNames();
+
+    /**
      * Find a converter based on class-mapped JavaScript class name.
      * @param javascriptClassName The type name as passed in from the client
      * @return The Converter that matches this request (if any)

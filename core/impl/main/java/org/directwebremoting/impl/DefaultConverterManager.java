@@ -306,6 +306,14 @@ public class DefaultConverterManager implements ConverterManager
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ConverterManager#getNamedConverterJavaScriptNames()
+     */
+    public Collection<String> getNamedConverterJavaScriptNames()
+    {
+        return convertersByJavascript.keySet();
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.ConverterManager#getNamedConverter(java.lang.String)
      */
     public NamedConverter getNamedConverter(String javascriptClassName)

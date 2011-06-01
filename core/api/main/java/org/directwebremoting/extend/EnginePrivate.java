@@ -192,8 +192,7 @@ public class EnginePrivate
      */
     public static String getRequireEngineScript()
     {
-        return "if (typeof dwr == 'undefined' || dwr.engine == undefined) throw new Error('You must include DWR engine before including this file');\n" +
-               '\n';
+        return "if (typeof dwr == 'undefined' || dwr.engine == undefined) throw new Error('You must include DWR engine before including this file');\n";
     }
 
     /**
