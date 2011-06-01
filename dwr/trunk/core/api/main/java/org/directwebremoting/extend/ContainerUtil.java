@@ -18,6 +18,7 @@ package org.directwebremoting.extend;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
+import org.directwebremoting.servlet.PathConstants;
 
 /**
  * An abstraction of all the common servlet operations that are required to host
@@ -71,6 +72,21 @@ public class ContainerUtil
             log.warn("Failed to convert value '" + value + "' from setting '" + name + "' to an integer: " + ex.getMessage());
             return defaultValue;
         }
+    }
+
+    /**
+     * Look up the Handler associated with the URL in the named URL property.
+     * F ex supply the property name "engineHandlerUrl" to look up EngineHandler.
+     *
+     * @param container The container to look into
+     * @param property a URL property name known by the container (usually
+     * declared in defaults.properties)
+     * @return the Handler registered on the URL
+     */
+    public static Handler getHandlerForUrlProperty(Container container, String property)
+    {
+        String registeredHandlerUrl = (String) container.getBean(property);
+        return (Handler) container.getBean(PathConstants.PATH_PREFIX + registeredHandlerUrl);
     }
 
     /**

@@ -70,7 +70,7 @@ public abstract class CachingHandler implements Handler
                 }
 
                 resource = new CachedResource();
-                resource.contents = generateCachableContent(request, response);
+                resource.contents = generateCachableContent(request.getContextPath(), request.getServletPath(), request.getPathInfo());
                 resource.lastModifiedTime = lastModified;
                 scriptCache.put(url, resource);
             }
@@ -80,8 +80,15 @@ public abstract class CachingHandler implements Handler
         response.setDateHeader(HttpConstants.HEADER_LAST_MODIFIED, lastModified);
         response.setHeader(HttpConstants.HEADER_ETAG, "\"" + lastModified + '\"');
 
-        PrintWriter out = response.getWriter();
-        out.println(resource.contents);
+        if (resource.contents != null)
+        {
+            PrintWriter out = response.getWriter();
+            out.println(resource.contents);
+        }
+        else
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 
     /**
@@ -92,13 +99,15 @@ public abstract class CachingHandler implements Handler
     protected abstract long getLastModifiedTime();
 
     /**
-     * Create a String which can be cached and sent as a 302
-     * @param request The HTTP request data
-     * @param response Where we write the HTTP response data
+     * Create a String which can be cached and sent as a 302. Returning null
+     * signals that the resource doesn't exist and should result in a 404.
+     * @param contextPath
+     * @param servletPath
+     * @param pathInfo
      * @return The string to output for this resource
      * @throws IOException
      */
-    protected abstract String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    public abstract String generateCachableContent(String contextPath, String servletPath, String pathInfo) throws IOException;
 
     /**
      * Do we need to send the content for this file
@@ -189,17 +198,17 @@ public abstract class CachingHandler implements Handler
         log.debug("Sending content for " + cachedPath + ", If-Modified-Since=" + modifiedSince + ", Last Modified=" + lastModified + ", Old ETag=" + givenEtag + ", New ETag=" + etag);
         return false;
     }
-	
+
 	/**
-	 * Returns the caching key which is based on the servlet path (DWR-470) 
+	 * Returns the caching key which is based on the servlet path (DWR-470)
 	 * as well as the  cachedPath.
-     *   	 
-     * @param HttpServletRequest request.
+     *
+     * @param request
      */
 	private String getCachingKey(HttpServletRequest request) {
-	    return request.getServletPath() + "/" + request.getPathInfo();
+	    return request.getServletPath() + (request.getPathInfo() != null ? request.getPathInfo() : "");
 	}
-	
+
     /**
      * @param ignoreLastModified The ignoreLastModified to set.
      */

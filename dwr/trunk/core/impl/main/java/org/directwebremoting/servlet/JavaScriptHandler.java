@@ -17,8 +17,6 @@ package org.directwebremoting.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,9 +41,9 @@ public abstract class JavaScriptHandler extends TemplateHandler
      * @see org.directwebremoting.servlet.CachingHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException
+    public String generateCachableContent(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        String output = super.generateCachableContent(request, response);
+        String output = super.generateCachableContent(contextPath, servletPath, pathInfo);
 
         if (debug || compressor == null)
         {

@@ -15,53 +15,67 @@
  */
 package org.directwebremoting.servlet;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.util.LocalUtil;
 
 /**
  * A handler for DTO class generation requests
  * @author Mike Wilson [mikewse at hotmail dot com]
  */
-public class DtoHandler extends GeneratedJavaScriptHandler
+public class DtoHandler extends BaseDtoHandler
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.directwebremoting.servlet.BaseDtoHandler#getBaseDtoPath()
      */
     @Override
-    protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
+    protected String getBaseDtoPath()
     {
-        if (!generateDtoClasses.matches(".*\\bdto\\b.*"))
+        return dtoHandlerUrl;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.servlet.BaseDtoHandler#generateDtoScript(java.lang.String)
+     */
+    @Override
+    public String generateDtoScript(String contextPath, String servletPath, String jsClassName)
+    {
+        String script = null;
+
+        String dtojs = remoter.generateDtoJavaScript(jsClassName, "    ", "c");
+        if (dtojs != null)
         {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return "";
+            StringBuilder buffer = new StringBuilder();
+
+            buffer
+                .append("(function() {\n")
+                .append("  var c;\n")
+                .append("  if (!dwr.engine._mappedClasses['" + jsClassName + "']) {\n");
+
+            // Generate DTO
+            buffer
+                .append(dtojs)
+                .append("    dwr.engine._setObject('" + jsClassName + "', c);\n")
+                .append("    dwr.engine._mappedClasses['" + jsClassName + "'] = c;\n");
+
+            // Generate inheritance
+            NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
+            String jsSuperClassName = namedConv.getJavascriptSuperClass();
+            if (LocalUtil.hasLength(jsSuperClassName))
+            {
+                String classExpression = "dwr.engine._mappedClasses['" + jsClassName + "']";
+                String superClassExpression = "dwr.engine._mappedClasses['" + jsSuperClassName + "']";
+                buffer
+                    .append(remoter.generateDtoInheritanceJavaScript("    ", classExpression, superClassExpression, "dwr.engine._delegate"));
+            }
+
+            buffer
+                .append("  }\n")
+                .append("})();\n");
+
+            script = buffer.toString();
         }
 
-        String jsClassName = request.getPathInfo();
-
-        if (!jsClassName.startsWith(dtoHandlerUrl) || !jsClassName.endsWith(PathConstants.EXTENSION_JS))
-        {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return "";
-        }
-
-        jsClassName = jsClassName.substring(dtoHandlerUrl.length());
-        jsClassName = jsClassName.substring(0, jsClassName.length() - PathConstants.EXTENSION_JS.length());
-
-        if (!LocalUtil.isValidMappedClassName(jsClassName))
-        {
-            log.debug("Throwing at request for class with name: '" + jsClassName + "'");
-            throw new SecurityException("Illegal mapped class name.");
-        }
-
-        // TODO: Implement this!
-
-        return "";
+        return script;
     }
 
     /**
@@ -74,35 +88,7 @@ public class DtoHandler extends GeneratedJavaScriptHandler
     }
 
     /**
-     * Setter for the generator setting.
-     * @param generateDtoClasses list of enabled places to generate DTO classes in
-     */
-    public void setGenerateDtoClasses(String generateDtoClasses)
-    {
-        this.generateDtoClasses = generateDtoClasses;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return this.getClass().getSimpleName() + "(" + dtoHandlerUrl + ")";
-    }
-
-    /**
      * What URL is this handler available on?
      */
     protected String dtoHandlerUrl;
-
-    /**
-     * List of enabled places to generate DTO classes in
-     */
-    protected String generateDtoClasses;
-
-    /**
-     * The log stream
-     */
-    private static final Log log = LogFactory.getLog(DtoHandler.class);
 }

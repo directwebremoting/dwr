@@ -17,11 +17,10 @@
 /**
  * The DWR object is also defined by dwr.util etc.
  */
-if (typeof dojo != 'undefined') dojo.provide('dwr.engine');
 if (typeof dwr == 'undefined') dwr = {};
 
 (function() {
-  dwr.engine = {};
+  if (!dwr.engine) dwr.engine = {};
 
   /**
     * Set an alternative error handler from the default alert box.
@@ -674,6 +673,16 @@ if (typeof dwr == 'undefined') dwr = {};
       return new F(); 
     }); 
   })();
+  
+  /**
+   * Create a new object that delegates to obj
+   * @param obj 
+   */
+  dwr.engine._createFromMap = function(map) {
+    var obj = new this(); // this should be set to a constructor function!
+    for(prop in map) if (map.hasOwnProperty(prop)) obj[prop] = map[prop];
+    return obj;
+  };
   
   /**
    * A reference to the global context (window when in a browser)

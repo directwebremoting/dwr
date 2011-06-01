@@ -17,13 +17,9 @@ package org.directwebremoting.jaxer.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Module;
-import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.servlet.InterfaceHandler;
 import org.directwebremoting.servlet.PathConstants;
 
@@ -38,14 +34,13 @@ public class JaxerInterfaceHandler extends InterfaceHandler
      * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
+    protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        String fullCreatorName = request.getPathInfo();
+        String fullCreatorName = pathInfo;
 
         if (!fullCreatorName.endsWith(PathConstants.EXTENSION_JS))
         {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return "";
+            return null;
         }
 
         fullCreatorName = fullCreatorName.replaceFirst("/", "");
@@ -62,23 +57,8 @@ public class JaxerInterfaceHandler extends InterfaceHandler
         // Internally use short scriptName
         String scriptName = module.getName();
 
-        String contextServletPath = request.getContextPath() + request.getServletPath();
-        return generateInterface(scriptName, contextServletPath);
+        return generateInterfaceScript(contextPath, servletPath, scriptName);
     }
-
-    /**
-     * Setter for the ModuleManager
-     * @param moduleManager The new ModuleManager
-     */
-    public void setModuleManager(ModuleManager moduleManager)
-    {
-        this.moduleManager = moduleManager;
-    }
-
-    /**
-     * Used for looking up modules for the requested interfaces.
-     */
-    protected ModuleManager moduleManager = null;
 
     /**
      * The log stream

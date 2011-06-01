@@ -270,7 +270,7 @@ public final class LocalUtil
      */
     public static boolean isValidScriptName(String test)
     {
-        return isSafeHierachicalIdentifierInBrowser(test);
+        return isSafeHierarchicalIdentifierInBrowser(test);
     }
 
     /**
@@ -282,7 +282,7 @@ public final class LocalUtil
      */
     public static boolean isValidMappedClassName(String test)
     {
-        return isSafeHierachicalIdentifierInBrowser(test);
+        return isSafeHierarchicalIdentifierInBrowser(test);
     }
 
     /**
@@ -293,7 +293,7 @@ public final class LocalUtil
      * @param test
      * @return true if string is safe
      */
-    public static boolean isSafeHierachicalIdentifierInBrowser(String test)
+    public static boolean isSafeHierarchicalIdentifierInBrowser(String test)
     {
         if (test.endsWith("/"))
         {

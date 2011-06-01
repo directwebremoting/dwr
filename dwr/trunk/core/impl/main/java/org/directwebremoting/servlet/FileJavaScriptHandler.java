@@ -21,9 +21,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.directwebremoting.util.CopyUtils;
 import org.directwebremoting.util.LocalUtil;
 
@@ -59,9 +56,9 @@ public class FileJavaScriptHandler extends JavaScriptHandler
      * @see org.directwebremoting.servlet.CachingHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException
+    public String generateCachableContent(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        String output = super.generateCachableContent(request, response);
+        String output = super.generateCachableContent(contextPath, servletPath, pathInfo);
 
         if( !debug && copyright != null ) {
             output = getCopyright() + output;
@@ -74,7 +71,7 @@ public class FileJavaScriptHandler extends JavaScriptHandler
      * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException
+    protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
     {
         StringWriter sw = new StringWriter();
         InputStream raw = null;

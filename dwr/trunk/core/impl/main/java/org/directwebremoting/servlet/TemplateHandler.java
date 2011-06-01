@@ -18,8 +18,6 @@ package org.directwebremoting.servlet;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * A {@link org.directwebremoting.extend.Handler} that allows some very simple
@@ -34,11 +32,11 @@ public abstract class TemplateHandler extends CachingHandler
      * @see org.directwebremoting.servlet.CachingHandler#generate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected String generateCachableContent(HttpServletRequest request, HttpServletResponse response) throws IOException
+    public String generateCachableContent(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        String template = generateTemplate(request, response);
+        String template = generateTemplate(contextPath, servletPath, pathInfo);
 
-        Map<String, String> replace = getSearchReplacePairs();
+        Map<String, String> replace = getSearchReplacePairs(contextPath, servletPath, pathInfo);
         if (replace != null)
         {
             for (Map.Entry<String, String> entry : replace.entrySet())
@@ -56,20 +54,24 @@ public abstract class TemplateHandler extends CachingHandler
 
     /**
      * Generate a template to undergo search and replace processing according to
-     * the search and replace pairs from {@link #getSearchReplacePairs()}.
-     * @param request The HTTP request data
-     * @param response Where we write the HTTP response data
+     * the search and replace pairs from {@link #getSearchReplacePairs(String, String, String)}.
+     * @param contextPath
+     * @param servletPath
+     * @param pathInfo
      * @return A template string containing ${} sections to be replaced
      */
-    protected abstract String generateTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    protected abstract String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException;
 
     /**
      * Mostly when we send a file out, we don't change anything so the default
      * set of search and replaces is empty.
      * Engine.js can override this with strings to customize the output
+     * @param contextPath
+     * @param servletPath
+     * @param pathInfo
      * @return a map of search (key) and replace (value) strings
      */
-    public Map<String, String> getSearchReplacePairs()
+    protected Map<String, String> getSearchReplacePairs(String contextPath, String servletPath, String pathInfo)
     {
         return null;
     }

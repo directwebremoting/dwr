@@ -17,9 +17,8 @@
 /**
  * Declare an object to which we can add real functions.
  */
-if (typeof dojo != 'undefined') dojo.provide('dwr.util');
 if (typeof dwr == 'undefined') dwr = {};
-if (typeof dwr.util == 'undefined') dwr.util = {};
+if (!dwr.util) dwr.util = {};
 
 /** @private The flag we use to decide if we should escape html */
 dwr.util._escapeHtml = true;
