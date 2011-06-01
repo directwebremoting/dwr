@@ -20,6 +20,7 @@
                 dwr.engine.setPollStatusHandler(updatePollStatus);
                 updatePollStatus(true);
                 Tabs.init('tabList', 'tabContents');
+				Clock.setClockStatus();
             }
             
             function errorHandler(message, ex){
