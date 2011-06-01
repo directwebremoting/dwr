@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.directwebremoting.Browser;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ScriptSessionFilter;
+import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.dwr.Util;
@@ -66,15 +67,7 @@ public class Clock implements Runnable
     public synchronized void toggle()
     {
         active = !active;
-
-        if (active)
-        {
-            setClockDisplayForAll("Clock started");
-        }
-        else
-        {
-            setClockDisplayForAll("Clock stopped");
-        }
+        setClockStatus();
     }
 
     private class UpdatesEnabledFilter implements ScriptSessionFilter {
@@ -91,30 +84,26 @@ public class Clock implements Runnable
     }
     
     /**
-     * Actually alter the clients.
-     * In DWR 2.x you had to know the ServletContext in order to be able to get
-     * a ServerContext. With DWR 3.0 this restriction has been removed.
-     * This method is public so you can call this from the dwr auto-generated
-     * pages to demo altering one page from another
+     * Call a function on the client for each ScriptSession.
+     * passing the clock's status for display.
+     * 
      * @param output The string to display.
      */
-    public void setClockDisplayForAll(final String output)
+    public void setClockStatus()
     {
         Browser.withAllSessions(new Runnable()
         {
             public void run()
             {
-                Util.setValue("clockDisplay", output);
+                ScriptSessions.addFunctionCall("setClockStatus()", active);
             }
         });
     }
     
     /**
-     * Actually alter the clients.
-     * In DWR 2.x you had to know the ServletContext in order to be able to get
-     * a ServerContext. With DWR 3.0 this restriction has been removed.
-     * This method is public so you can call this from the dwr auto-generated
-     * pages to demo altering one page from another
+     * Send the time String to clients that have an UPDATES_ENABLED_ATTR attribute set to true 
+     * on their ScriptSession.
+     * 
      * @param output The string to display.
      */
     public void setClockDisplay(final String output)
