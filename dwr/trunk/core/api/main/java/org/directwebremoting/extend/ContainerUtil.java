@@ -18,7 +18,6 @@ package org.directwebremoting.extend;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
-import org.directwebremoting.servlet.PathConstants;
 
 /**
  * An abstraction of all the common servlet operations that are required to host
@@ -86,7 +85,7 @@ public class ContainerUtil
     public static Handler getHandlerForUrlProperty(Container container, String property)
     {
         String registeredHandlerUrl = (String) container.getBean(property);
-        return (Handler) container.getBean(PathConstants.PATH_PREFIX + registeredHandlerUrl);
+        return (Handler) container.getBean("url:" + registeredHandlerUrl);
     }
 
     /**
