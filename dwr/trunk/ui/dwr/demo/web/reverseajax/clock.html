@@ -195,6 +195,10 @@ function enableUpdates(enabled)
 	    dwr.util.setValue("clockDisplay", "This tab/window does not have updates enabled.");
 	}  
     Clock.setEnabledAttribute(enabled);
+}
+
+function setClockStatus(clockStatus) {
+    dwr.util.setValue("clockStatus", clockStatus ? "Clock started" : "Clock stopped");
 }</pre>
 
 <h2>Java source:</h2>
@@ -236,14 +240,17 @@ public class Clock implements Runnable
         setClockStatus();
     }
 
-    private class UpdatesEnabledFilter implements ScriptSessionFilter {
+    private class UpdatesEnabledFilter implements ScriptSessionFilter 
+	{
     	private String attrName;
     	
-    	public UpdatesEnabledFilter(String attrName) {
+    	public UpdatesEnabledFilter(String attrName)
+		{
     		this.attrName = attrName;
     	}
     	
-		public boolean match(ScriptSession ss) {
+		public boolean match(ScriptSession ss)
+		{
 			Object check = ss.getAttribute(attrName);
 	        return (check != null && check.equals(Boolean.TRUE));
 		}    	
