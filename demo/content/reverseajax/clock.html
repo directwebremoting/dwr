@@ -16,7 +16,8 @@
 		   dwr.engine.setErrorHandler(errorHandler);
 		   dwr.engine.setPollStatusHandler(updatePollStatus);
 		   updatePollStatus(true);
-           Tabs.init('tabList', 'tabContents');       
+           Tabs.init('tabList', 'tabContents');  
+           Clock.toggle();     
       }
 	  
 	  function errorHandler(message, ex) {
