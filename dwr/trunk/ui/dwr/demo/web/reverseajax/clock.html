@@ -105,36 +105,47 @@ public void setClockDisplay(final String output)
 }
 </pre>
 
-    <p>The Browser API is being used to send updates to only certain ScriptSesssions.  We have implemented a custom ScriptSessionFilter to check for an attribute on the ScriptSessions and only send updates to this page if the attribute is present and true:
+    <p>The Browser API is being used to send updates to certain ScriptSesssions.  We have implemented a ScriptSessionFilter to check for an attribute on the ScriptSessions and only send updates to pages if the attribute is true:
 	<pre>
-		private class UpdatesEnabledFilter implements ScriptSessionFilter 
-		{
-	    	private String attrName;
+private class UpdatesEnabledFilter implements ScriptSessionFilter 
+{
+    private String attrName;
 	    	
-	    	public UpdatesEnabledFilter(String attrName) 
-			{
-	    		this.attrName = attrName;
-	    	}
+	public UpdatesEnabledFilter(String attrName) 
+	{
+	    this.attrName = attrName;
+	}
 	    	
-			@Override
-			public boolean match(ScriptSession ss) 
-			{
-				Object check = ss.getAttribute(attrName);
-		        return (check != null && check.equals(Boolean.TRUE));
-			}    	
-   		}		
-	</pre>
+	public boolean match(ScriptSession ss) 
+	{
+		Object check = ss.getAttribute(attrName);
+	    return (check != null && check.equals(Boolean.TRUE));
+	}    	
+}</pre>
 	In our HTML page we set this attribute when the "Enable Updates" or "Disable Updates" buttons are selected.  The action of selecting one of these buttons calls the following method on Clock which will set the UPDATES_ENABLED_ATTR to true or false:
 	
 	<pre>
-		public void setEnabledAttribute(Boolean enabled) 
-		{
-    	    ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
-    	    scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
-        }		
+public void setEnabledAttribute(Boolean enabled) 
+{
+    ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+    scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
+}</pre>	
+	</p>
+	<p>We also use the Browser API to call a function on the HTML page when the clock has been toggled.  The active boolean is passed as an argument and used on the client to display the clock's status.</p>
+	<pre>
+public void setClockStatus()
+{
+    Browser.withAllSessions(new Runnable()
+    {
+        public void run()
+        {
+            ScriptSessions.addFunctionCall("setClockStatus()", active);
+        }
+    });
+}
+		
 	</pre>
 	
-	</p>
   </div>
 
   <div id="sourceDiv">
@@ -178,12 +189,12 @@ function updatePollStatus(pollStatus)
 }
 	  
 function enableUpdates(enabled)
- {
+{
     if (!enabled) 
 	{
 	    dwr.util.setValue("clockDisplay", "This tab/window does not have updates enabled.");
 	}  
-Clock.setEnabledAttribute(enabled);
+    Clock.setEnabledAttribute(enabled);
 }</pre>
 
 <h2>Java source:</h2>
