@@ -84,7 +84,6 @@ public class Clock implements Runnable
     		this.attrName = attrName;
     	}
     	
-		@Override
 		public boolean match(ScriptSession ss) {
 			Object check = ss.getAttribute(attrName);
 	        return (check != null && check.equals(Boolean.TRUE));
