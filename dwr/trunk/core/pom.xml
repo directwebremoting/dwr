@@ -214,13 +214,13 @@
             <exclude>**/TestUtil.java</exclude>
             <!-- In order to test this we need the jetty instance running, too complicated for now -->
             <exclude>**/DwrServletTest.java</exclude>
-			<!-- TODO - YUI compressor and Shrinksafe compressor rely on different versions (see parent pom) of Rhino (js.jar). 
-			     Because of this only 1 test can pass.  For now I am excluding the Shrinksafe Compressor test until we can figure out what to do here. -->
-			<!--<exclude>**/YahooJSCompressorTest.java</exclude>-->
+			<!-- TODO - YUI compressor and Shrinksafe compressor rely on different versions (see parent pom) of Rhino (js.jar).
+				 YUI also includes over-ridden Rhino (js.jar) classes.  Because of this it is very difficult to get the 
+			     ShrinkSafeCompressorTest to pass - exclude it until we can figure this out. -->
 			<exclude>**/ShrinkSafeCompressorTest.java</exclude>
           </excludes>
         </configuration>        
-      </plugin>
+      </plugin>	  
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
