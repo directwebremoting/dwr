@@ -214,16 +214,16 @@
           <execution>
             <id>YahooCompressorTest</id>
             <configuration>             
-	        <excludes>
-              <!-- Not actually a test case -->
-              <exclude>**/TestCreatedObject.java</exclude>
-              <!-- Not actually a test case, just a utility for helping with JSON tests -->
-              <exclude>**/TestUtil.java</exclude>
-              <!-- In order to test this we need the jetty instance running, too complicated for now -->
-              <exclude>**/DwrServletTest.java</exclude>			
-			  <exclude>**/ShrinkSafeCompressorTest.java</exclude>
-            </excludes>
-          </configuration>
+	          <excludes>
+                <!-- Not actually a test case -->
+                <exclude>**/TestCreatedObject.java</exclude>
+                <!-- Not actually a test case, just a utility for helping with JSON tests -->
+                <exclude>**/TestUtil.java</exclude>
+                <!-- In order to test this we need the jetty instance running, too complicated for now -->
+                <exclude>**/DwrServletTest.java</exclude>			
+			    <exclude>**/ShrinkSafeCompressorTest.java</exclude>
+              </excludes>
+            </configuration>
           </execution>    
           <!-- not working because only 1.6R7 version of Rhino is being used which is not 
                compatable with Shrinksafe     
