@@ -205,21 +205,38 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>        
-	      <excludes>
-            <!-- Not actually a test case -->
-            <exclude>**/TestCreatedObject.java</exclude>
-            <!-- Not actually a test case, just a utility for helping with JSON tests -->
-            <exclude>**/TestUtil.java</exclude>
-            <!-- In order to test this we need the jetty instance running, too complicated for now -->
-            <exclude>**/DwrServletTest.java</exclude>
-			<!-- TODO - YUI compressor and Shrinksafe compressor rely on different versions (see parent pom) of Rhino (js.jar).
-				 YUI also includes over-ridden Rhino (js.jar) classes.  Because of this it is very difficult to get the 
-			     ShrinkSafeCompressorTest to pass - exclude it until we can figure this out. -->
-			<exclude>**/ShrinkSafeCompressorTest.java</exclude>
-          </excludes>
-        </configuration>        
+        <inherited>true</inherited>        
+        <!-- YUI compressor and Shrinksafe compressor rely on different versions (see parent pom) of Rhino (js.jar).
+             YUI compressor will only work with 1.6R7 and overrides classes from Rhino (js.jar).
+             Shrinksafe will not work with 1.6R7 and it is recommended to use 1.7R1.
+			 TODO - Trying to figure out a way to get the above dependency problem worked out below via multiple executions. -->     
+        <executions>
+          <execution>
+            <id>YahooCompressorTest</id>
+            <configuration>             
+	        <excludes>
+              <!-- Not actually a test case -->
+              <exclude>**/TestCreatedObject.java</exclude>
+              <!-- Not actually a test case, just a utility for helping with JSON tests -->
+              <exclude>**/TestUtil.java</exclude>
+              <!-- In order to test this we need the jetty instance running, too complicated for now -->
+              <exclude>**/DwrServletTest.java</exclude>			
+			  <exclude>**/ShrinkSafeCompressorTest.java</exclude>
+            </excludes>
+          </configuration>
+          </execution>          
+          <execution>  
+            <id>ShrinkSafeCompressorTest</id>
+            <configuration>
+              <excludes>
+                <exclude>**/YahooCompressorTest.java</exclude>            
+              </excludes>
+	          <classpathDependencyExcludes>
+                <classpathDependencyExcludes>com.yahoo.platform.yui:yuicompressor</classpathDependencyExcludes>
+              </classpathDependencyExcludes>            
+            </configuration>
+          </execution>
+        </executions>      
       </plugin>	  
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
