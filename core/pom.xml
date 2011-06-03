@@ -210,8 +210,9 @@
              YUI compressor will only work with 1.6R7 and overrides classes from Rhino (js.jar).
              Shrinksafe will not work with 1.6R7 and it is recommended to use 1.7R1.
 			 TODO - Trying to figure out a way to get the above dependency problem worked out below via multiple executions.  
-             See http://maven.40175.n5.nabble.com/Maven-surefire-plugin-run-twice-with-different-argLine-setttings-td4288014.html 
-			 stephenconnolly's comment at Apr 07, 2011; 5:08am for why we have one configuration inside of the executions and one out. -->        
+             Need to have one configuration outside of the executions (default execution), otherwise the tests will run three times.
+             See stephenconnolly's comment at Apr 07, 2011; 5:08am 
+             http://maven.40175.n5.nabble.com/Maven-surefire-plugin-run-twice-with-different-argLine-setttings-td4288014.html -->        
         <configuration>             
 	      <excludes>
             <!-- Not actually a test case -->
