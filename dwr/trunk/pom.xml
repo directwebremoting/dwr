@@ -32,11 +32,11 @@
     <version>6</version>
   </parent>
   <!-- Required so that Maven knows where to get the jms.jar http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html -->
-  <repositories>
+  <repositories>  
     <repository>
       <id>repository.jboss.org-public</id>
       <name>JBoss repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public</url>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
     </repository>
   </repositories>
   <developers>
@@ -196,6 +196,17 @@
         <!-- TODO This should be 2.3.5 but systemPath doesn't seem to work -->
         <version>2.2.5</version>
       </dependency>
+	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 -->
+	  <dependency>
+	    <groupId>rhino</groupId>
+		<artifactId>js</artifactId>
+		<version>1.7R1</version>
+	  </dependency>	  
+      <dependency>
+        <groupId>com.devspan.mojo.javascript</groupId>
+        <artifactId>shrinksafe-compressor</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+      </dependency>     
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-continuation</artifactId>
