@@ -65,6 +65,10 @@
       <groupId>com.yahoo.platform.yui</groupId>
       <artifactId>yuicompressor</artifactId>
     </dependency>
+    <dependency>
+	  <groupId>org.dojotoolkit</groupId>
+	  <artifactId>shrinksafe</artifactId>
+    </dependency>    
     <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
