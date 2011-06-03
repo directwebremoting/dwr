@@ -190,22 +190,19 @@
         <artifactId>webwork</artifactId>
         <version>2.2.2</version>
       </dependency>
-	  <!-- 2.4.6 depends on rhino js.jar 1.6R7 and comes bundled with over-ridden Rhino classes, but Shrinksafe depends on 1.7R1 and does not work with 1.6R7.
-	       TODO - Because of the above we have a dependency problem which results in the Shrinksafe test failing (we have exclude this test from running in the core pom. -->
+	  <!-- 2.4.6 depends on rhino js.jar 1.6R7 and comes bundled with over-ridden Rhino classes and does not work with 1.7R1 -->
       <dependency>
         <groupId>com.yahoo.platform.yui</groupId>
         <artifactId>yuicompressor</artifactId>		
         <version>2.4.6</version>
       </dependency>
-	  <!-- Shrinksafe depends on rhino js.jar 1.7R1 and does not work on 1.6R7 -->
+	  <!-- Shrinksafe depends on rhino js.jar 1.7R1 and does not work with 1.6R7 -->
 	  <dependency>
 	    <groupId>org.dojotoolkit</groupId>
 		<artifactId>shrinksafe</artifactId>
 		<version>2.0</version>
 	  </dependency>	  
-	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 but not beyond that due to rhino api changes. 
-	       YUI Compressor depends on version 1.6R7 and doesn't work with 1.7R1, but for now we are only going to run the Shrinksafe Compressor test until 
-		   we figure out a better way to handle this. -->
+	  <!-- See comments above on the yuicompressor and shrinksafe dependencies -->
 	  <dependency>
 	    <groupId>rhino</groupId>
 		<artifactId>js</artifactId>
@@ -385,7 +382,7 @@
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
         <version>1.2.12</version>
-      </dependency>      
+      </dependency>  
     </dependencies>
   </dependencyManagement>  
   <build>
