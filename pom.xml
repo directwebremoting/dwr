@@ -194,6 +194,7 @@
         <groupId>com.yahoo.platform.yui</groupId>
         <artifactId>yuicompressor</artifactId>
         <!-- TODO This should be 2.3.5 but systemPath doesn't seem to work -->
+		<!-- Comment above is old.  2.4.6 is the latest version of yui compressor, let's give it a try when we have some time -->
         <version>2.2.5</version>
       </dependency>
 	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 -->
