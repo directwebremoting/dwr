@@ -190,12 +190,12 @@
         <artifactId>webwork</artifactId>
         <version>2.2.2</version>
       </dependency>
-	  <!-- 2.4.6 depends on (actually comes bundled with some rhino over-rides) rhino js.jar 1.6R7, but Shrinksafe depends on 1.7R1 and does not work with 1.6R7.
-	       TODO - Because of the above we have a dependency problem which results in the YUI Compressor test failing or the Shrinksafe test failing -->
+	  <!-- 2.4.6 depends on rhino js.jar 1.6R7 and comes bundled with over-ridden Rhino classes, but Shrinksafe depends on 1.7R1 and does not work with 1.6R7.
+	       TODO - Because of the above we have a dependency problem which results in the Shrinksafe test failing (we have exclude this test from running in the core pom. -->
       <dependency>
         <groupId>com.yahoo.platform.yui</groupId>
         <artifactId>yuicompressor</artifactId>		
-        <version>2.2.5</version>
+        <version>2.4.6</version>
       </dependency>
 	  <!-- Shrinksafe depends on rhino js.jar 1.7R1 and does not work on 1.6R7 -->
 	  <dependency>
@@ -204,7 +204,7 @@
 		<version>2.0</version>
 	  </dependency>	  
 	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 but not beyond that due to rhino api changes. 
-	       YUI Compressor depends on version 1.6R7 and doesn't work with 1.7R1, but for now we are only going to run the Yahoo Compressor test until 
+	       YUI Compressor depends on version 1.6R7 and doesn't work with 1.7R1, but for now we are only going to run the Shrinksafe Compressor test until 
 		   we figure out a better way to handle this. -->
 	  <dependency>
 	    <groupId>rhino</groupId>
