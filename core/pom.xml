@@ -224,7 +224,9 @@
 			  <exclude>**/ShrinkSafeCompressorTest.java</exclude>
             </excludes>
           </configuration>
-          </execution>          
+          </execution>    
+          <!-- not working because only 1.6R7 version of Rhino is being used which is not 
+               compatable with Shrinksafe     
           <execution>  
             <id>ShrinkSafeCompressorTest</id>
             <configuration>
@@ -235,7 +237,7 @@
                 <classpathDependencyExcludes>com.yahoo.platform.yui:yuicompressor</classpathDependencyExcludes>
               </classpathDependencyExcludes>            
             </configuration>
-          </execution>
+          </execution> --> 
         </executions>      
       </plugin>	  
       <plugin>
