@@ -190,25 +190,23 @@
         <artifactId>webwork</artifactId>
         <version>2.2.2</version>
       </dependency>
+	  <!-- 2.4.6 depends on rhino js.jar 1.6R7 -->
       <dependency>
         <groupId>com.yahoo.platform.yui</groupId>
-        <artifactId>yuicompressor</artifactId>
-        <!-- TODO This should be 2.3.5 but systemPath doesn't seem to work -->
-		<!-- Comment above is old.  2.4.6 is the latest version of yui compressor, let's give it a try when we have some time 
-		     2.4.6 depends on rhino js.jar 1.6R7, if shrinksafe also works with the build of rhino we should change the rhino dependency below -->
-        <version>2.2.5</version>
+        <artifactId>yuicompressor</artifactId>		
+        <version>2.4.6</version>
       </dependency>
-	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 -->
+	  <dependency>
+	    <groupId>org.dojotoolkit</groupId>
+		<artifactId>shrinksafe</artifactId>
+		<version>2.0</version>
+	  </dependency>	  
+	  <!-- For Shrinksafe, per the shrinksafe readme, shrinksafe is compatable with versions up to 1.7R1 but not beyond that due to rhino api changes. -->
 	  <dependency>
 	    <groupId>rhino</groupId>
 		<artifactId>js</artifactId>
 		<version>1.7R1</version>
-	  </dependency>	  
-      <dependency>
-        <groupId>com.devspan.mojo.javascript</groupId>
-        <artifactId>shrinksafe-compressor</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
-      </dependency>     
+	  </dependency>    
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-continuation</artifactId>
