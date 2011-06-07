@@ -15,38 +15,21 @@
  */
 package org.directwebremoting.servlet;
 
-import java.io.IOException;
-
-import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.util.LocalUtil;
 
 /**
- * A handler for DTO class generation requests
+ * A handler for dtoall generation requests
  * @author Mike Wilson [mikewse at hotmail dot com]
  */
-public class DtoAllHandler extends GeneratedJavaScriptHandler
+public class DtoAllHandler extends BaseDtoAllHandler
 {
-    /* (non-Javadoc)
-     * @see org.directwebremoting.servlet.TemplateHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
-    {
-        if (!generateDtoClasses.matches(".*\\bdtoall\\b.*"))
-        {
-            return null;
-        }
-
-        return generateDtoAllScript();
-    }
-
     /**
      * Generates the full dtoall script by decorating the DTO classes returned by the Remoter.
      * @return string containing dtoall script
      */
-    public String generateDtoAllScript()
+    @Override
+    public String generateDtoAllScript(String contextPath, String servletPath)
     {
         StringBuilder buffer = new StringBuilder();
 
@@ -56,55 +39,32 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
             .append("  var addedNow = [];\n");
 
         // DTO class definitions
-        for (String match : converterManager.getConverterMatchStrings())
+        for (String jsClassName : converterManager.getNamedConverterJavaScriptNames())
         {
-            Converter conv = converterManager.getConverterByMatchString(match);
-            if (conv instanceof NamedConverter)
-            {
-                String jsClassName = ((NamedConverter) conv).getJavascript();
-                if (LocalUtil.hasLength(jsClassName))
-                {
-                    buffer.append("\n");
-                    String script = remoter.generateDtoJavaScript(jsClassName, "    ", "c");
-                    if (script != null)
-                    {
-                        buffer
-                            .append("  if (!dwr.engine._mappedClasses['" + jsClassName + "']) {\n")
-                            .append(remoter.generateDtoJavaScript(jsClassName, "    ", "c"))
-                            .append("    dwr.engine._setObject('" + jsClassName + "', c);\n")
-                            .append("    dwr.engine._mappedClasses['" + jsClassName + "'] = c;\n")
-                            .append("    addedNow['" + jsClassName + "'] = true;\n")
-                            .append("  }\n");
-                    }
-                    else
-                    {
-                        buffer.append("  // Missing mapped class definition for ");
-                        buffer.append(jsClassName);
-                        buffer.append(". See the server logs for details.\n");
-                    }
-                }
-            }
+            buffer
+                .append("\n")
+                .append("  if (!dwr.engine._mappedClasses[\"" + jsClassName + "\"]) {\n")
+                .append(remoter.generateDtoJavaScript(jsClassName, "    ", "c"))
+                .append("    dwr.engine._setObject(\"" + jsClassName + "\", c);\n")
+                .append("    dwr.engine._mappedClasses[\"" + jsClassName + "\"] = c;\n")
+                .append("    addedNow[\"" + jsClassName + "\"] = true;\n")
+                .append("  }\n");
         }
 
         // DTO superclass definitions
-        for (String match : converterManager.getConverterMatchStrings())
+        for (String jsClassName : converterManager.getNamedConverterJavaScriptNames())
         {
-            Converter conv = converterManager.getConverterByMatchString(match);
-            if (conv instanceof NamedConverter)
+            NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
+            String jsSuperClassName = namedConv.getJavascriptSuperClass();
+            if (LocalUtil.hasLength(jsSuperClassName))
             {
-                NamedConverter namedConv = (NamedConverter) conv;
-                String jsClassName = namedConv.getJavascript();
-                String jsSuperClassName = namedConv.getJavascriptSuperClass();
-                if (LocalUtil.hasLength(jsClassName) && LocalUtil.hasLength(jsSuperClassName))
-                {
-                    String classExpression = "dwr.engine._mappedClasses['" + jsClassName + "']";
-                    String superClassExpression = "dwr.engine._mappedClasses['" + jsSuperClassName + "']";
-                    buffer
-                        .append("\n")
-                        .append("  if (addedNow['" + jsClassName + "']) {\n")
-                        .append(remoter.generateDtoInheritanceJavaScript("    ", classExpression, superClassExpression, "dwr.engine._delegate"))
-                        .append("  }\n");
-                }
+                String classExpression = "dwr.engine._mappedClasses[\"" + jsClassName + "\"]";
+                String superClassExpression = "dwr.engine._mappedClasses[\"" + jsSuperClassName + "\"]";
+                buffer
+                    .append("\n")
+                    .append("  if (addedNow[\"" + jsClassName + "\"]) {\n")
+                    .append(remoter.generateDtoInheritanceJavaScript("    ", classExpression, superClassExpression, "dwr.engine._delegate"))
+                    .append("  }\n");
             }
         }
 
@@ -112,40 +72,4 @@ public class DtoAllHandler extends GeneratedJavaScriptHandler
 
         return buffer.toString();
     }
-
-    /**
-     * Setter for the generator setting.
-     * @param generateDtoClasses list of enabled places to generate DTO classes in
-     */
-    public void setGenerateDtoClasses(String generateDtoClasses)
-    {
-        this.generateDtoClasses = generateDtoClasses;
-    }
-
-    /**
-     * @param converterManager the converterManager to set
-     */
-    public void setConverterManager(ConverterManager converterManager)
-    {
-        this.converterManager = converterManager;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return this.getClass().getSimpleName();
-    }
-
-    /**
-     * List of enabled places to generate DTO classes in
-     */
-    protected String generateDtoClasses;
-
-    /**
-     * ConverterManager to query for DTO classes
-     */
-    protected ConverterManager converterManager;
 }

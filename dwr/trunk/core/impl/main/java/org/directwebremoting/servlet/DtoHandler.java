@@ -49,21 +49,21 @@ public class DtoHandler extends BaseDtoHandler
             buffer
                 .append("(function() {\n")
                 .append("  var c;\n")
-                .append("  if (!dwr.engine._mappedClasses['" + jsClassName + "']) {\n");
+                .append("  if (!dwr.engine._mappedClasses[\"" + jsClassName + "\"]) {\n");
 
             // Generate DTO
             buffer
                 .append(dtojs)
-                .append("    dwr.engine._setObject('" + jsClassName + "', c);\n")
-                .append("    dwr.engine._mappedClasses['" + jsClassName + "'] = c;\n");
+                .append("    dwr.engine._setObject(\"" + jsClassName + "\", c);\n")
+                .append("    dwr.engine._mappedClasses[\"" + jsClassName + "\"] = c;\n");
 
             // Generate inheritance
             NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
             String jsSuperClassName = namedConv.getJavascriptSuperClass();
             if (LocalUtil.hasLength(jsSuperClassName))
             {
-                String classExpression = "dwr.engine._mappedClasses['" + jsClassName + "']";
-                String superClassExpression = "dwr.engine._mappedClasses['" + jsSuperClassName + "']";
+                String classExpression = "dwr.engine._mappedClasses[\"" + jsClassName + "\"]";
+                String superClassExpression = "dwr.engine._mappedClasses[\"" + jsSuperClassName + "\"]";
                 buffer
                     .append(remoter.generateDtoInheritanceJavaScript("    ", classExpression, superClassExpression, "dwr.engine._delegate"));
             }

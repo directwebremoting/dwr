@@ -49,21 +49,21 @@ public class InterfaceHandler extends BaseInterfaceHandler
         // An optimization here might be to only generate class
         // definitions for classes used as parameters in the class that we are
         // currently generating a proxy for.
-        if (generateDtoClasses.matches(".*\\binterface\\b.*"))
+        if (generateDtoClasses.matches(".*\\binterface\\b.*") && converterManager.getNamedConverterJavaScriptNames().size() > 0)
         {
             buffer
-                .append(dtoAllHandler.generateDtoAllScript())
+                .append(dtoAllHandler.generateDtoAllScript(contextPath, servletPath))
                 .append("\n");
         }
 
         buffer
             .append("(function() {\n")
-            .append("  if (dwr.engine._getObject('" + scriptName + "') == undefined) {\n")
+            .append("  if (dwr.engine._getObject(\"" + scriptName + "\") == undefined) {\n")
             .append("    var p;\n")
             .append("    \n")
             .append(remoter.generateInterfaceJavaScript(scriptName, "    ", "p", contextPath + servletPath))
             .append("    \n")
-            .append("    dwr.engine._setObject('" + scriptName + "', p);\n")
+            .append("    dwr.engine._setObject(\"" + scriptName + "\", p);\n")
             .append("  }\n")
             .append("})();\n");
 

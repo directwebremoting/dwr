@@ -18,10 +18,10 @@ package org.directwebremoting.servlet;
 import java.io.IOException;
 
 /**
- * A Handler that supports requests for engine.js compatible with the CommonJS AMD format.
+ * A Handler that supports requests for engine.js compatible with the Dojo format.
  * @author Mike Wilson
  */
-public class CommonJsAmdEngineHandler extends BaseEngineHandler
+public class DojoEngineHandler extends BaseEngineHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.FileJavaScriptHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -29,25 +29,40 @@ public class CommonJsAmdEngineHandler extends BaseEngineHandler
     @Override
     protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
+        DojoModule mod = new DojoModule(contextPath, servletPath, dojoDwrBaseModulePath, "engine");
 
-        // Local variable to capture the DWR namespace
-        mod.addContent("var dwr;\n");
+        // Capture the DWR namespace if not mapped to standard "dwr" path
+        boolean remap = !dojoDwrBaseModulePath.equals("dwr");
+        if (remap)
+        {
+            mod.addContent("(function(dwr) {\n");
+            mod.addContent("\n");
+        }
 
         // Add standard engine.js contents
-        mod.addContent("\n");
-        mod.addContent("// standard engine.js\n");
-        mod.addContent("\n");
         mod.addContent(super.generateTemplate(contextPath, servletPath, pathInfo));
-        mod.addContent("\n");
-        mod.addContent("// end standard engine.js\n");
-        mod.addContent("\n");
 
-        // Alias allowing dwr.* or dwr.engine.* to be used
-        mod.addContent("dwr.engine.engine = dwr.engine;\n");
-
-        mod.addContent("return dwr.engine;\n");
+        // Close the capturing closure
+        if (remap)
+        {
+            mod.addContent("\n");
+            mod.addContent("})(" + mod.expandModulePath(dojoDwrBaseModulePath) + ");\n");
+        }
 
         return mod.toString();
     }
+
+    /**
+     * Setter for the module path that dwr.engine is on
+     * @param modulePath the modulePath to set
+     */
+    public void setDojoDwrBaseModulePath(final String modulePath)
+    {
+        dojoDwrBaseModulePath = modulePath;
+    }
+
+    /**
+     * What module path is dwr.engine on?
+     */
+    protected String dojoDwrBaseModulePath;
 }
