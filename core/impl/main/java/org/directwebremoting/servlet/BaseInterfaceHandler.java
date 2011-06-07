@@ -20,11 +20,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.util.LocalUtil;
 
 /**
- * A handler for interface generation requests
+ * Handler base class for interface generation requests
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public abstract class BaseInterfaceHandler extends GeneratedJavaScriptHandler
@@ -106,6 +107,14 @@ public abstract class BaseInterfaceHandler extends GeneratedJavaScriptHandler
     }
 
     /**
+     * @param converterManager the converterManager to set
+     */
+    public void setConverterManager(ConverterManager converterManager)
+    {
+        this.converterManager = converterManager;
+    }
+
+    /**
      * Setter for the generator setting.
      * @param generateDtoClasses list of enabled places to generate DTO classes in
      */
@@ -127,6 +136,11 @@ public abstract class BaseInterfaceHandler extends GeneratedJavaScriptHandler
      * Where we look up available script names
      */
     protected ModuleManager moduleManager = null;
+
+    /**
+     * ConverterManager to query for DTO classes
+     */
+    protected ConverterManager converterManager;
 
     /**
      * List of enabled places to generate DTO classes in

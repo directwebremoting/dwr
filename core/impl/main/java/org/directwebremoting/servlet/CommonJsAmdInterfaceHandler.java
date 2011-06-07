@@ -39,17 +39,14 @@ public class CommonJsAmdInterfaceHandler extends BaseInterfaceHandler
         CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
         mod.addDependency(commonJsAmdDwrBaseModulePath, "engine", "dwr");
 
-        final StringBuilder buf = new StringBuilder();
-        buf.append("  var p;\n");
-        buf.append("\n");
+        mod.addContent("  var p;\n");
+        mod.addContent("\n");
 
         // Add standard interface contents
-        buf.append(remoter.generateInterfaceJavaScript(scriptName, "  ", "p", contextPath + servletPath));
+        mod.addContent(remoter.generateInterfaceJavaScript(scriptName, "  ", "p", contextPath + servletPath));
 
-        buf.append("\n");
-        buf.append("  return p;\n");
-
-        mod.addContent(buf.toString());
+        mod.addContent("\n");
+        mod.addContent("  return p;\n");
 
         return mod.toString();
     }

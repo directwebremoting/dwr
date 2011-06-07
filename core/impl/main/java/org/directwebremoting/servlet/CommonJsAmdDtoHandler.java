@@ -54,26 +54,22 @@ public class CommonJsAmdDtoHandler extends BaseDtoHandler
                 mod.addDependency(commonJsAmdDtoBaseModulePath, jsSuperClassName, "parent");
             }
 
-            final StringBuilder buf = new StringBuilder();
-            buf.append("  var c;\n");
-            buf.append("\n");
+            mod.addContent("  var c;\n");
+            mod.addContent("\n");
 
             // Generate DTO
-            buf
-                .append(dtojs)
-                .append("    dwr.engine._mappedClasses['" + jsClassName + "'] = c;\n");
+            mod.addContent(dtojs);
+            mod.addContent("    dwr.engine._mappedClasses[\"" + jsClassName + "\"] = c;\n");
 
             // Generate inheritance
             if (LocalUtil.hasLength(jsSuperClassName))
             {
-                String classExpression = "dwr.engine._mappedClasses['" + jsClassName + "']";
-                buf.append(remoter.generateDtoInheritanceJavaScript("    ", classExpression, "parent", "dwr.engine._delegate"));
+                String classExpression = "dwr.engine._mappedClasses[\"" + jsClassName + "\"]";
+                mod.addContent(remoter.generateDtoInheritanceJavaScript("    ", classExpression, "parent", "dwr.engine._delegate"));
             }
 
-            buf.append("\n");
-            buf.append("  return c;\n");
-
-            mod.addContent(buf.toString());
+            mod.addContent("\n");
+            mod.addContent("  return c;\n");
 
             script = mod.toString();
         }
