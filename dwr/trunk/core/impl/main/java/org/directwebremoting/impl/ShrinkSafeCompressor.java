@@ -52,12 +52,12 @@ public class ShrinkSafeCompressor implements Compressor
         }
         catch (NoClassDefFoundError ex)
         {
-            throw new InstantiationException("Could not setup ShrinkSafeCompressor because a class is missing, assuming shirinksafe.jar and js.jar are not in the classpath.");
+            throw new InstantiationException("Could not setup ShrinkSafeCompressor because a class is missing, assuming shrinksafe.jar and js.jar are not in the classpath.");
         }
         catch (Exception ex)
         {
             Loggers.STARTUP.error("ShrinkSafeCompressor startup", ex);
-            throw new InstantiationException("Could not setup ShrinkSafeCompressor, assuming shirinksafe.jar and js.jar are not in the classpath. Exception caught was " + ex);
+            throw new InstantiationException("Could not setup ShrinkSafeCompressor, assuming shrinksafe.jar and js.jar are not in the classpath. Exception caught was " + ex);
         }
 
     }
