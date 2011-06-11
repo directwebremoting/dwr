@@ -246,7 +246,7 @@
 				<mkdir dir="${dojo.temp}" />
 				<java classname="org.mozilla.javascript.tools.shell.Main" dir="${dojo.home}/util/buildscripts/" fork="true">
 					<classpath>
-						<fileset file="${dojo.home}/util/shrinksafe/shrinksafe.jar" />
+						<fileset file="${source.root}/core/impl/lib/shrinksafe.jar" />
 					</classpath>
 					<arg line="build.js" />
 					<arg line="profileFile=${basedir}/${source.root}/ui/dojo/demo/build.js" />
