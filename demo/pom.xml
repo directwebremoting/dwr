@@ -25,6 +25,11 @@
     </dependency>
     <dependency>
       <groupId>org.directwebremoting</groupId>
+      <artifactId>dwr-ui-dojo</artifactId>
+      <version>3.0.0-rc2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.directwebremoting</groupId>
       <artifactId>dwr-protocol-dwrp</artifactId>
       <version>3.0.0-rc2-SNAPSHOT</version>
     </dependency>
