@@ -1888,6 +1888,7 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.script.id = "dwr-st-" + batch.map.batchId;
         batch.script.src = request.url;
         batch.script.type = "text/javascript";
+        batch.script.async = true;
         dwr.engine.util.addEventListener(batch.script, "load", function(ev) {
           if (typeof dwr != "undefined") dwr.engine.transport.scriptTag.complete(batch);
         });
