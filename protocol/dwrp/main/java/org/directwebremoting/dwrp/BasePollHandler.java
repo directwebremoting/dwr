@@ -145,16 +145,19 @@ public class BasePollHandler extends BaseDwrpHandler
 
         // Use of comet depends on the type of browser and the number of current
         // connections from this browser (detected by cookies)
-        boolean clientSupportsStreaming = BrowserDetect.supportsComet(request);
+        boolean clientSupportsLongRequests = BrowserDetect.supportsComet(request);
+        boolean clientSupportsStreamingUpdates = (batch.getPartialResponse() != PartialResponse.NO);
+        boolean configurationSaysFullStreaming = streamingEnabled || (maxWaitAfterWrite == -1);
+        boolean canWeHaveFullStreaming = clientSupportsLongRequests && clientSupportsStreamingUpdates && configurationSaysFullStreaming;
         // For early closing mode add an output listener to the script session that calls the
         // "wake me" method on whatever is putting us to sleep - if the client
         // does not support streaming or streaming has not been configured.
-        if (batch.getPartialResponse() == PartialResponse.NO || !clientSupportsStreaming || (maxWaitAfterWrite != -1 && !streamingEnabled)) {
-    		maxWaitAfterWrite = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
-            alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite, executor));
+        if (!canWeHaveFullStreaming) {
+    		int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
+            alarms.add(new OutputAlarm(sleeper, scriptSession, earlyCloseTimeout, executor));
         }
 
-        if (clientSupportsStreaming)
+        if (clientSupportsLongRequests)
         {
             // Nasty 2 connection limit hack. How many times is this browser connected?
             String httpSessionId = webContext.getSession(true).getId();
@@ -168,7 +171,7 @@ public class BasePollHandler extends BaseDwrpHandler
             int connectionLimit = BrowserDetect.getConnectionLimit(request);
             if (persistentConnections + 1 >= connectionLimit)
             {
-                clientSupportsStreaming = false;
+                clientSupportsLongRequests = false;
 
                 if (log.isDebugEnabled())
                 {
