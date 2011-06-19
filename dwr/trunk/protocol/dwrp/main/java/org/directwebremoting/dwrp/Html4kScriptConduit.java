@@ -51,9 +51,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public Html4kScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public Html4kScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(sleeper, response, batchId, converterManager, jsonOutput);
+        super(sleeper, response, instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
@@ -76,7 +76,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
             out.println("<html><body><pre>");
 
             out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
             out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, false));
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
         }
     }
@@ -90,7 +92,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
         synchronized (out)
         {
             out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
             out.println(EnginePrivate.remoteEndIFrameResponse(batchId, false));
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
 
             out.println("</pre></body></html>");
@@ -108,7 +112,9 @@ public class Html4kScriptConduit extends BaseScriptConduit
         synchronized (out)
         {
             out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
             out.println(script);
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
 
             out.print(FOUR_K_FLUSH_DATA);

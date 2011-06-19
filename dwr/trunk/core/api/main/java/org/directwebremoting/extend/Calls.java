@@ -70,6 +70,22 @@ public class Calls implements Iterable<Call>
         return batchId;
     }
 
+    /**
+     * @param instanceId The batchId to set.
+     */
+    public void setInstanceId(String instanceId)
+    {
+        this.instanceId = instanceId;
+    }
+
+    /**
+     * @return Returns the instanceId.
+     */
+    public String getInstanceId()
+    {
+        return instanceId;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */
@@ -79,6 +95,8 @@ public class Calls implements Iterable<Call>
     }
 
     private String batchId = null;
+
+    private String instanceId = null;
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

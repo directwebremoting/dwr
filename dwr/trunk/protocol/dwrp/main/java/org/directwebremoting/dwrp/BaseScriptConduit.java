@@ -48,11 +48,12 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public BaseScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public BaseScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
         super(RANK_SLOW, true);
 
         this.response = response;
+        this.instanceId = instanceId;
         this.batchId = batchId;
         this.converterManager = converterManager;
         this.jsonOutput = jsonOutput;
@@ -234,6 +235,11 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
      * The PrintWriter to send output to, and that we should synchronize against
      */
     protected PrintWriter out;
+
+    /**
+     * What is the ID of the DWR instance that we are responding to?
+     */
+    protected final String instanceId;
 
     /**
      * What is the ID of the request that we are responding to?

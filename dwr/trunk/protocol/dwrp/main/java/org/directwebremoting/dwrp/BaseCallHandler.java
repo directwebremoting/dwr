@@ -314,7 +314,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
 
         // Send the script prefix (if any)
-        sendOutboundScriptPrefix(out, replies.getCalls().getBatchId());
+        sendOutboundScriptPrefix(out, replies.getCalls().getInstanceId(), replies.getCalls().getBatchId());
 
         out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
         scriptSession.writeScripts(conduit);
@@ -368,7 +368,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 log.error("--ConversionException: batchId=" + batchId + " message=" + ex.toString());
             }
         }
-        sendOutboundScriptSuffix(out, replies.getCalls().getBatchId());
+        sendOutboundScriptSuffix(out, replies.getCalls().getInstanceId(), replies.getCalls().getBatchId());
     }
 
     /* (non-Javadoc)
@@ -380,14 +380,12 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         PrintWriter out = response.getWriter();
         CallBatch batch = (CallBatch) request.getAttribute(ATTRIBUTE_BATCH);
 
-        String batchId;
+        String batchId = null;
+        String instanceId = "0";
         if (batch != null && batch.getCalls() != null)
         {
             batchId = batch.getCalls().getBatchId();
-        }
-        else
-        {
-            batchId = null;
+            instanceId = batch.getCalls().getInstanceId();
         }
 
         if (debug)
@@ -395,10 +393,10 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             log.warn("Exception while processing batch", ex);
         }
 
-        sendOutboundScriptPrefix(out, batchId);
+        sendOutboundScriptPrefix(out, instanceId, batchId);
         String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batchId, ex);
         out.print(script);
-        sendOutboundScriptSuffix(out, batchId);
+        sendOutboundScriptSuffix(out, instanceId, batchId);
     }
 
     /**
@@ -436,7 +434,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * @param batchId The batch identifier so we can prepare the environment
      * @throws IOException If the write fails
      */
-    protected abstract void sendOutboundScriptPrefix(PrintWriter out, String batchId) throws IOException;
+    protected abstract void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException;
 
     /**
      * iframe mode needs to get out of script mode
@@ -444,7 +442,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * @param batchId The batch identifier so we can prepare the environment
      * @throws IOException If the write fails
      */
-    protected abstract void sendOutboundScriptSuffix(PrintWriter out, String batchId) throws IOException;
+    protected abstract void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException;
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Marshaller#isConvertable(java.lang.Class)

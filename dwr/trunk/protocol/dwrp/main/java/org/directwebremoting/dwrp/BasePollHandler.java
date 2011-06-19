@@ -102,7 +102,7 @@ public class BasePollHandler extends BaseDwrpHandler
 
             // Send a batch exception to the server because the parse failed
             String script = EnginePrivate.getRemoteHandleBatchExceptionScript(null, ex);
-            sendErrorScript(response, script);
+            sendErrorScript(response, "0", script);
             return;
         }
 
@@ -120,7 +120,7 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             log.error("Polling and Comet are disabled. To enable them set the init-param activeReverseAjaxEnabled to true. See http://getahead.org/dwr/server/servlet for more.");
             String script = EnginePrivate.getRemotePollCometDisabledScript(batch.getBatchId());
-            sendErrorScript(response, script);
+            sendErrorScript(response, batch.getInstanceId(), script);
             return;
         }
 
@@ -152,8 +152,8 @@ public class BasePollHandler extends BaseDwrpHandler
         if (batch.getPartialResponse() == PartialResponse.NO || !clientSupportsStreaming || (maxWaitAfterWrite != -1 && !streamingEnabled)) {
     		maxWaitAfterWrite = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
             alarms.add(new OutputAlarm(sleeper, scriptSession, maxWaitAfterWrite, executor));
-        } 
-       
+        }
+
         if (clientSupportsStreaming)
         {
             // Nasty 2 connection limit hack. How many times is this browser connected?
@@ -233,7 +233,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // Weblogic continues, others wait().
         sleeper.goToSleep(onAwakening);
     }
-    
+
     /**
      * Create the correct type of ScriptConduit depending on the request.
      * @param batch The parsed request
@@ -247,17 +247,17 @@ public class BasePollHandler extends BaseDwrpHandler
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
         }
         else
         {
             if (batch.getPartialResponse() == PartialResponse.FLUSH)
             {
-                conduit = new Html4kScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new Html4kScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
             }
             else
             {
-                conduit = new HtmlScriptConduit(sleeper, response, batch.getBatchId(), converterManager, jsonOutput);
+                conduit = new HtmlScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
             }
         }
 
@@ -270,7 +270,7 @@ public class BasePollHandler extends BaseDwrpHandler
      * @param script The script to write
      * @throws IOException if writing fails.
      */
-    protected void sendErrorScript(HttpServletResponse response, String script) throws IOException
+    protected void sendErrorScript(HttpServletResponse response, String instanceId, String script) throws IOException
     {
         PrintWriter out = response.getWriter();
         if (plain)
@@ -283,7 +283,9 @@ public class BasePollHandler extends BaseDwrpHandler
         }
 
         out.println(ProtocolConstants.SCRIPT_START_MARKER);
+        out.print(EnginePrivate.remoteBeginWrapper(instanceId, !plain));
         out.println(script);
+        out.print(EnginePrivate.remoteEndWrapper(instanceId, !plain));
         out.println(ProtocolConstants.SCRIPT_END_MARKER);
     }
 
@@ -344,7 +346,7 @@ public class BasePollHandler extends BaseDwrpHandler
     {
         this.maxWaitAfterWrite = maxWaitAfterWrite;
     }
-        
+
     /**
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicates that we do not do early
@@ -352,22 +354,22 @@ public class BasePollHandler extends BaseDwrpHandler
      * does not support streaming DEFAULT_MAX_WAIT_AFTER_WRITE is used.
      */
     protected int maxWaitAfterWrite = ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE;
-    
+
     /**
      * Do we support streaming for clients that allow it?
-     * 
+     *
      * @param streamingEnabled
      */
-    public void setStreamingEnabled(boolean streamingEnabled) 
+    public void setStreamingEnabled(boolean streamingEnabled)
     {
     	this.streamingEnabled = streamingEnabled;
     }
-    
+
     /**
      * Do we support streaming for clients that allow it?
      */
-    private boolean streamingEnabled; 
-    
+    private boolean streamingEnabled;
+
     /**
      * Accessor for the PageNormalizer.
      * @param pageNormalizer The new PageNormalizer
