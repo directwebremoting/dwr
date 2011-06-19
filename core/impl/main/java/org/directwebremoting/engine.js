@@ -502,6 +502,21 @@ if (typeof dwr == 'undefined') dwr = {};
     }
   };
 
+  function ignoreIfUnloading(batch, f) {
+    if (dwr.engine._unloading) return;
+    if (batch && batch.async == false) {
+      // Sync calls are reported synchronously
+      f();
+    }
+    else {
+      // We delay error reporting for async calls to see if maybe unloading just started
+      setTimeout(100, function() {
+        if (dwr.engine._unloading) return;
+        f();
+      });
+    }
+  }
+
   /**
    * Send a request. Called by the JavaScript interface stub
    * @private
@@ -582,13 +597,15 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleError = function(batch, ex) {
-    dwr.engine._handlePollRetry(batch, ex);
-    if (dwr.engine._retries <= 1) {    
-      dwr.engine._prepareException(ex);
-      if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-      else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-      if (batch) dwr.engine.batch.remove(batch);
-    }
+    ignoreIfUnloading(batch, function() {
+      dwr.engine._handlePollRetry(batch, ex);
+      if (dwr.engine._retries <= 1) {    
+        dwr.engine._prepareException(ex);
+        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+        if (batch) dwr.engine.batch.remove(batch);
+      }
+    });
   };
 
   /**
@@ -621,7 +638,7 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine._debug("max retries reached, stop polling for server status.");
       }
     }
-  }
+  };
 
   /**
    * Handles polling status changes - online or offline.  
@@ -638,7 +655,7 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine._pollOnline = true;
       dwr.engine._retries = 0; 
     }   
-  }
+  };
 
   /**
    * Generic error handling routing to save having null checks everywhere.
@@ -647,11 +664,13 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleWarning = function(batch, ex) {
-    // If this is a poll, we should retry! 
-    dwr.engine._prepareException(ex); 
-    if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
-    else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
-    if (batch) dwr.engine.batch.remove(batch);
+    ignoreIfUnloading(batch, function() {
+      // If this is a poll, we should retry! 
+      dwr.engine._prepareException(ex); 
+      if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
+      else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
+      if (batch) dwr.engine.batch.remove(batch);
+    });
   };
 
   /**
@@ -2464,7 +2483,6 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     _subscriptions:{}
   };
-})();
 
 /**
  * High level data-sync API for use by Widget libraries like a Dojo-Data-Store.
@@ -2514,7 +2532,6 @@ dwr.data = {
   }
 };
 
-(function() {
   /**
    * Notes that there is a region of a page that wishes to subscribe to server
    * side data and registers a callback function to receive the data.
