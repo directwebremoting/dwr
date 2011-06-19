@@ -40,11 +40,12 @@ public class HtmlCallHandler extends BaseCallHandler
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String batchId) throws IOException
+    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException
     {
         synchronized (out)
         {
             out.println("<html><body><script type='text/javascript'>");
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
             out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
         }
     }
@@ -53,11 +54,12 @@ public class HtmlCallHandler extends BaseCallHandler
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptSuffix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptSuffix(PrintWriter out, String batchId) throws IOException
+    protected void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException
     {
         synchronized (out)
         {
             out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
             out.println("</script></body></html>");
         }
     }

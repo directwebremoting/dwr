@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.Sleeper;
@@ -52,9 +53,9 @@ public class PlainScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public PlainScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public PlainScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(sleeper, response, batchId, converterManager, jsonOutput);
+        super(sleeper, response, instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
@@ -96,13 +97,15 @@ public class PlainScriptConduit extends BaseScriptConduit
             	log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
             }
         	out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
             out.println(script);
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
             out.println(ProtocolConstants.SCRIPT_END_MARKER);
 
             return flush();
         }
     }
-    
+
     /**
      * The log stream
      */

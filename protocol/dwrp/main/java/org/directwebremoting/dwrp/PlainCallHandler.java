@@ -18,6 +18,7 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -39,7 +40,7 @@ public class PlainCallHandler extends BaseCallHandler
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String batchId) throws IOException
+    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException
     {
         if (!allowScriptTagRemoting)
         {
@@ -48,14 +49,16 @@ public class PlainCallHandler extends BaseCallHandler
                 out.println(scriptTagProtection);
             }
         }
+        out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptSuffix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptSuffix(PrintWriter out, String batchId) throws IOException
+    protected void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException
     {
+        out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
     }
 
     /* (non-Javadoc)

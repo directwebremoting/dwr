@@ -417,6 +417,9 @@ if (typeof dwr == 'undefined') dwr = {};
   /** Batch ids allow us to know which batch the server is answering */
   dwr.engine._nextBatchId = 0;
 
+  /** The instance id helps us distinguish multiple engine.js loaded in one page */
+  dwr.engine._instanceId = -1;
+
   /** A list of the properties that need merging from calls to a batch */
   dwr.engine._propnames = [ "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler" ];
 
@@ -2120,6 +2123,7 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine._batches[batch.map.batchId] = batch;
       dwr.engine._batchesLength++;
       batch.completed = false;
+      batch.map.instanceId = dwr.engine._instanceId;
 
       // security details are filled in late so previous batches have completed
       batch.map.page = encodeURIComponent(window.location.pathname + window.location.search);
@@ -2330,6 +2334,7 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Work out what type of browser we are working on
    */
+
   var userAgent = navigator.userAgent;
   var versionString = navigator.appVersion;
   var version = parseFloat(versionString);
@@ -2354,20 +2359,56 @@ if (typeof dwr == 'undefined') dwr = {};
   }
   catch(ex) { }
 
+  /*
+   * Other load-time initializations
+   */
+
   // Make random local page id
   dwr.engine._pageId = dwr.engine.util.tokenify(new Date().getTime()) + "-" + dwr.engine.util.tokenify(Math.random() * 1E16);
 
   // Reuse any existing dwr session
   dwr.engine.transport.updateDwrSessionFromCookie();
 
-  // Run page init code as desired by server
-  eval("${initCode}");
-
   // Register the unload handler
   if (!dwr.engine.isJaxerServer) {
     dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
   }
 
+  // Set up a receiver context for this engine instance
+  var g = dwr.engine._global;
+  if (!g.dwr) {
+    g.dwr = {};
+  }
+  if (!g.dwr._) {
+    g.dwr._ = [];
+  }
+  dwr.engine._instanceId = g.dwr._.length;
+  g.dwr._[dwr.engine._instanceId] = {
+    handleCallback: dwr.engine.remote.handleCallback,
+    handleException: dwr.engine.remote.handleException,
+    handleNewWindowName: dwr.engine.remote.handleNewWindowName,
+    handleBatchException: dwr.engine.remote.handleBatchException,
+    handleFunctionCall: dwr.engine.remote.handleFunctionCall,
+    handleObjectCall: dwr.engine.remote.handleObjectCall,
+    handleSetCall: dwr.engine.remote.handleSetCall,
+    handleFunctionClose: dwr.engine.remote.handleFunctionClose,
+    handleObjectCall: dwr.engine.remote.handleObjectCall,
+    handleForeign: dwr.engine.remote.handleForeign,
+    pollCometDisabled: dwr.engine.remote.pollCometDisabled,
+    newObject: dwr.engine.remote.newObject,
+    toDomElement: dwr.engine.serialize.toDomElement,
+    toDomDocument: dwr.engine.serialize.toDomDocument,
+    beginIFrameResponse: dwr.engine.transport.iframe.remote.beginIFrameResponse,
+    endIFrameResponse: dwr.engine.transport.iframe.remote.endIFrameResponse,
+    _eval: dwr.engine._eval
+  };
+
+  /*
+   * Run page init code as desired by server
+   */
+
+  eval("${initCode}");
+  
   /**
    * Routines for the DWR pubsub hub
    */

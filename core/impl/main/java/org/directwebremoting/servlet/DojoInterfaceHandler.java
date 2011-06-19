@@ -52,14 +52,18 @@ public class DojoInterfaceHandler extends BaseInterfaceHandler
             mod.addContent("\n");
         }
 
-        // Add standard interface contents
-        mod.addContent("(function() {\n");
+        // Capturing closure
+        mod.addContent("(function(dwr) {\n");
         mod.addContent("  var p;\n");
         mod.addContent("\n");
+
+        // Add standard interface contents
         mod.addContent(remoter.generateInterfaceJavaScript(scriptName, "  ", "p", contextPath + servletPath));
+
+        // Set interface module and close the capturing closure
         mod.addContent("  \n");
         mod.addContent("  dojo.setObject(\"" + moduleName + "\", p);\n");
-        mod.addContent("})();\n");
+        mod.addContent("})(" + mod.expandModulePath(dojoDwrBaseModulePath) + ");\n");
 
 
         return mod.toString();

@@ -47,9 +47,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public HtmlScriptConduit(Sleeper sleeper, HttpServletResponse response, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(sleeper, response, batchId, converterManager, jsonOutput);
+        super(sleeper, response, instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
@@ -71,7 +71,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
         {
             out.println("<html><body>");
             out.println("<script type=\"text/javascript\">");
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
             out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
             out.println("</script>");
         }
     }
@@ -85,7 +87,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
         synchronized (out)
         {
             out.println("<script type=\"text/javascript\">");
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
             out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
             out.println("</script>");
             out.println("</body></html>");
         }
@@ -101,11 +105,10 @@ public class HtmlScriptConduit extends BaseScriptConduit
 
         synchronized (out)
         {
-            // TODO: We don't think the comments are needed because the exec is automatic
             out.println("<script type=\"text/javascript\">");
-            // out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
             out.println(EnginePrivate.remoteEval(script));
-            // out.println(ProtocolConstants.SCRIPT_END_MARKER);
+            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
             out.println("</script>");
 
             return flush();

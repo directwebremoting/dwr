@@ -60,10 +60,11 @@ public class DojoDtoAllHandler extends BaseDtoAllHandler
             String jsSuperClassName = namedConv.getJavascriptSuperClass();
             if (LocalUtil.hasLength(jsSuperClassName))
             {
+                String classExpression = engineModule + "._mappedClasses[\"" + jsClassName + "\"]";
                 String superClassExpression = engineModule + "._mappedClasses[\"" + jsSuperClassName + "\"]";
                 mod.addContent("\n");
                 mod.addContent("  if (addedNow[\"" + jsClassName + "\"]) {\n");
-                mod.addContent(remoter.generateDtoInheritanceJavaScript("    ", "c", superClassExpression, engineModule + "._delegate"));
+                mod.addContent(remoter.generateDtoInheritanceJavaScript("    ", classExpression, superClassExpression, engineModule + "._delegate"));
                 mod.addContent("  }\n");
             }
         }

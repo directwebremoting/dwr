@@ -90,6 +90,14 @@ public class CallBatch extends Batch
             throw new SecurityException("CallBatch IDs may only contain Java Identifiers");
         }
 
+        // Extract the instance id
+        String instanceId = extractParameter(ProtocolConstants.INBOUND_KEY_INSTANCEID, THROW);
+        calls.setInstanceId(instanceId);
+        if (!LocalUtil.isLetterOrDigitOrUnderline(instanceId))
+        {
+            throw new SecurityException("CallBatch instance IDs may only contain Java Identifiers");
+        }
+
         // Extract the ids, script names and method names
         for (int callNum = 0; callNum < callCount; callNum++)
         {

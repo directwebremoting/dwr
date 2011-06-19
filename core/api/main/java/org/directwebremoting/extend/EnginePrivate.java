@@ -25,6 +25,45 @@ import org.directwebremoting.util.JavascriptUtil;
 public class EnginePrivate
 {
     /**
+     * Begin wrapper with variable alias to do remote calls on the correct DWR instance.
+     * @param instanceId DWR instance id from browser
+     * @param useWindowParent should this alias target the same window or the parent window?
+     * @return JavaScript snippet to be used by other remote calls
+     */
+    public static String remoteBeginWrapper(String instanceId, boolean useWindowParent)
+    {
+        StringBuilder buf = new StringBuilder();
+        buf.append("(function(){\n");
+        if (useWindowParent)
+        {
+            buf.append("try{\n");
+            buf.append("var r=window.parent.dwr._[" + instanceId + "];\n");
+        }
+        else
+        {
+            buf.append("var r=window.dwr._[" + instanceId + "];\n");
+        }
+        return buf.toString();
+    }
+
+    /**
+     * End wrapper with variable alias to do remote calls on the correct DWR instance.
+     * @param instanceId DWR instance id from browser
+     * @param useWindowParent should this alias target the same window or the parent window?
+     * @return JavaScript snippet to be used by other remote calls
+     */
+    public static String remoteEndWrapper(String instanceId, boolean useWindowParent)
+    {
+        StringBuilder buf = new StringBuilder();
+        if (useWindowParent)
+        {
+            buf.append("} catch(ex) {if (!(ex.number && ex.number == -2146823277)) { throw ex; }}\n");
+        }
+        buf.append("})();\n");
+        return buf.toString();
+    }
+
+    /**
      * Call the dwr.engine.remote.handleResponse() in the browser
      * @param batchId The identifier of the batch that we are handling a response for
      * @param callId The identifier of the call that we are handling a response for
@@ -34,7 +73,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleCallbackScript(String batchId, String callId, Object data)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleCallback", batchId, callId, data);
+        script.appendCall("r.handleCallback", batchId, callId, data);
         return script;
     }
 
@@ -48,7 +87,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleExceptionScript(String batchId, String callId, Throwable ex)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleException", batchId, callId, ex);
+        script.appendCall("r.handleException", batchId, callId, ex);
         return script;
     }
 
@@ -60,7 +99,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleNewWindowNameScript(String windowName)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleNewWindowName", windowName);
+        script.appendCall("r.handleNewWindowName", windowName);
         return script;
     }
 
@@ -82,8 +121,7 @@ public class EnginePrivate
         }
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
-        reply.append("if (window.dwr) dwr.engine.remote.handleBatchException(").append(params).append(");\r\n");
-        reply.append("else if (window.parent.dwr) window.parent.dwr.engine.remote.handleBatchException(").append(params).append(");\r\n");
+        reply.append("r.handleBatchException(").append(params).append(");\r\n");
 
         return reply.toString();
     }
@@ -97,7 +135,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteExecuteFunctionScript(String id, Object[] params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleFunctionCall", id, params);
+        script.appendCall("r.handleFunctionCall", id, params);
         return script;
     }
 
@@ -110,7 +148,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteExecuteObjectScript(String id, String methodName, Object[] params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleObjectCall", id, methodName, params);
+        script.appendCall("r.handleObjectCall", id, methodName, params);
         return script;
     }
 
@@ -124,7 +162,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteSetObjectScript(String id, String propertyName, Object data)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleSetCall", id, propertyName, data);
+        script.appendCall("r.handleSetCall", id, propertyName, data);
         return script;
     }
 
@@ -136,7 +174,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteCloseFunctionScript(String id)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleFunctionClose", id);
+        script.appendCall("r.handleFunctionClose", id);
         return script;
     }
 
@@ -156,10 +194,17 @@ public class EnginePrivate
         }
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
-        reply.append("if (window.dwr) dwr.engine.remote.pollCometDisabled(").append(params).append(");\r\n");
-        reply.append("else if (window.parent.dwr) window.parent.dwr.engine.remote.pollCometDisabled(").append(params).append(");\r\n");
+        reply.append("r.pollCometDisabled(").append(params).append(");\r\n");
 
         return reply.toString();
+    }
+
+    /**
+     * Returns the name of the newObject function.
+     */
+    public static String remoteNewObjectFunction()
+    {
+        return "r.newObject";
     }
 
     /**
@@ -171,7 +216,7 @@ public class EnginePrivate
     public static String xmlStringToJavascriptDomElement(String xml)
     {
         String xmlout = JavascriptUtil.escapeJavaScript(xml);
-        return "dwr.engine.serialize.toDomElement(\"" + xmlout + "\")";
+        return "r.toDomElement(\"" + xmlout + "\")";
     }
 
     /**
@@ -183,7 +228,7 @@ public class EnginePrivate
     public static String xmlStringToJavascriptDomDocument(String xml)
     {
         String xmlout = JavascriptUtil.escapeJavaScript(xml);
-        return "dwr.engine.serialize.toDomDocument(\"" + xmlout + "\")";
+        return "r.toDomDocument(\"" + xmlout + "\")";
     }
 
     /**
@@ -214,13 +259,7 @@ public class EnginePrivate
      */
     public static String remoteBeginIFrameResponse(String batchId, boolean useWindowParent)
     {
-        String script = "dwr.engine.transport.iframe.remote.beginIFrameResponse(this.frameElement"+(batchId == null?"":", '" + batchId+"'") + ");";
-        if (useWindowParent)
-        {
-            script = addWindowParent(script);
-        }
-
-        return script;
+        return "r.beginIFrameResponse(this.frameElement"+(batchId == null?"":", '" + batchId+"'") + ");";
     }
 
     /**
@@ -233,13 +272,7 @@ public class EnginePrivate
      */
     public static String remoteEndIFrameResponse(String batchId, boolean useWindowParent)
     {
-        String script = "dwr.engine.transport.iframe.remote.endIFrameResponse("+(batchId == null?"":"'" + batchId+"'")+");";
-        if (useWindowParent)
-        {
-            script = addWindowParent(script);
-        }
-
-        return script;
+        return "r.endIFrameResponse("+(batchId == null?"":"'" + batchId+"'")+");";
     }
 
     /**
@@ -249,8 +282,7 @@ public class EnginePrivate
      */
     public static String remoteEval(String script)
     {
-        String script2 = "dwr.engine._eval(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
-        return addWindowParent(script2);
+        return "r._eval(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
     }
 
     /**
@@ -265,19 +297,8 @@ public class EnginePrivate
         String proxy = JavascriptUtil.escapeJavaScript(original.toString());
 
         ScriptBuffer reply = new ScriptBuffer();
-        reply.appendCall("dwr.engine.remote.handleForeign", windowName, proxy);
+        reply.appendCall("r.handleForeign", windowName, proxy);
         reply.appendData(proxy);
         return reply;
-    }
-
-    /**
-     * A Utility to add a try/catch block to get rid of the infamous IE
-     * "Can't execute code from a freed script" errors
-     * @param script The script to wrap in a try/catch
-     * @return The wrapped script
-     */
-    private static String addWindowParent(String script)
-    {
-        return "try { window.parent." + script + " } catch(ex) { if (!(ex.number && ex.number == -2146823277)) { throw ex; }}";
     }
 }

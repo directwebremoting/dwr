@@ -68,6 +68,11 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_BATCHID = "batchId";
 
     /**
+     * The parameter that specifies the instance identifier
+     */
+    public static final String INBOUND_KEY_INSTANCEID = "instanceId";
+
+    /**
      * The parameter that specifies the script session identifier
      */
     public static final String INBOUND_KEY_SCRIPT_SESSIONID = "scriptSessionId";
@@ -189,9 +194,9 @@ public interface ProtocolConstants
      * The marker to indicate the end of a 'eval'able script block
      */
     public static final String SCRIPT_END_MARKER = "//#DWR-END#";
-    
+
     /**
-     * For early closing mode, how long do we wait before closing the connection after a write. 
+     * For early closing mode, how long do we wait before closing the connection after a write.
      */
     public static final int DEFAULT_MAX_WAIT_AFTER_WRITE = 500;
 }
