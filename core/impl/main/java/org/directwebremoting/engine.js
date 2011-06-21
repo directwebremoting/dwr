@@ -510,10 +510,10 @@ if (typeof dwr == 'undefined') dwr = {};
     }
     else {
       // We delay error reporting for async calls to see if maybe unloading just started
-      setTimeout(100, function() {
+      setTimeout(function() {
         if (dwr.engine._unloading) return;
         f();
-      });
+      }, 100);
     }
   }
 
@@ -1918,7 +1918,11 @@ if (typeof dwr == 'undefined') dwr = {};
           if (typeof dwr != "undefined") dwr.engine.transport.scriptTag.complete(batch);
         });
         dwr.engine.util.addEventListener(batch.script, "readystatechange", function(ev) {
-          if (typeof dwr != "undefined") if (ev.readyState == "complete") dwr.engine.transport.scriptTag.complete(batch);
+          if (typeof dwr != "undefined") {
+            if (batch.script.readyState == "complete" || batch.script.readyState == "loaded") {
+              dwr.engine.transport.scriptTag.complete(batch);
+            }
+          }
         });
         document.getElementsByTagName("head")[0].appendChild(batch.script);
       },
