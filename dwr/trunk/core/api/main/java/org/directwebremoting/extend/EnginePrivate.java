@@ -282,7 +282,9 @@ public class EnginePrivate
      */
     public static String remoteEval(String script)
     {
-        return "r._eval(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
+    	// We need to define the "r" redirector variable inside the eval as well
+    	// as it can't access the global "r" defined in the response closure.
+        return "r._eval(\"var r=dwr._[dwr.engine._instanceId]; " + JavascriptUtil.escapeJavaScript(script) + "\");";
     }
 
     /**
