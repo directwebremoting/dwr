@@ -6,7 +6,17 @@
   <link rel="stylesheet" type="text/css" href="dojo/custom/storeDemo.css" />
   <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../generic.css" />
-  <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js" djConfig="isDebug:false, parseOnLoad:true" type="text/javascript"> </script>
+  <script type="text/javascript">
+    djConfig={
+      parseOnLoad: true,
+      isDebug: false,
+      modulePaths:{dwr: '../../../dwr'}
+    };
+  </script>
+  <script type="text/javascript" src="dojo/dojo/dojo.js" djConfig="isDebug:false, parseOnLoad:true, modulePaths:{'dwr': '../../../dwr'}"> </script>
+  <!-- TODO - it would be nice to fix the demo with cdn delivery so we don't have to have a custom dojo build.  
+  <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojo/dojo.xd.js" type="text/javascript"> </script> 
+  -->
   <script type="text/javascript" src="dojo/custom/storeDemo.js"> </script>
   <script type="text/javascript" src="../dwr/engine.js"> </script>
   <script type="text/javascript" src="../dwr/util.js"> </script>
