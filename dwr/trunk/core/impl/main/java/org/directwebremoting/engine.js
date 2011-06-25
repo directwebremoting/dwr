@@ -437,11 +437,8 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * A map of all mapped classes whose class declarations have been loaded
    * (dwrClassName -> constructor function)
-   * This could have been pre-created by interface scripts, so we need to check.
    */
-  if (typeof dwr.engine._mappedClasses == 'undefined') {
-    dwr.engine._mappedClasses = {};
-  }
+  dwr.engine._mappedClasses = {};
 
   /** A function to call if something fails. */
   dwr.engine._errorHandler = dwr.engine.defaultErrorHandler;
@@ -457,6 +454,13 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._urlRewriteHandler = dwr.engine._defaultInterceptor;
   dwr.engine._contentRewriteHandler = dwr.engine._defaultInterceptor;
   dwr.engine._replyRewriteHandler = dwr.engine._defaultInterceptor;
+
+  /** Object attributes to ignore when serializing */
+  dwr.engine._excludeObjectAttributes = {
+    "$dwrClassName": true,
+    "$dwrByRef": true,
+    "$_dwrConversionRef": true
+  };
 
   /** Is this page in the process of unloading? */
   dwr.engine._unloading = false;
@@ -1057,11 +1061,12 @@ if (typeof dwr == 'undefined') dwr = {};
      * Marshall a data item
      * @private
      * @param batch A map of variables to how they have been marshalled
-     * @param referto An array of already marshalled variables to prevent recurrsion
+     * @param directrefmap A map of already marshalled variables to prevent recurrsion (these have direct links from their data object)
+     * @param otherrefmap A map of already marshalled variables to prevent recursion (these have no links from data objects)
      * @param data The data to be marshalled
      * @param name The name of the data being marshalled
      */
-    convert:function(batch, referto, data, name, depth) {
+    convert:function(batch, directrefmap, otherrefmap, data, name, depth) {
       if (data == null) {
         batch.map[name] = "null:null";
         return;
@@ -1078,15 +1083,15 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.map[name] = "string:" + encodeURIComponent(data);
         break;
       case "object":
-        var ref = dwr.engine.serialize.lookup(referto, data, name);
+        var ref = dwr.engine.serialize.lookup(directrefmap, otherrefmap, data, name);
         var objstr = Object.prototype.toString.call(data);
-        if (data.$dwrByRef) batch.map[name] = dwr.engine.serialize.convertByReference(batch, referto, data, name, depth + 1);
+        if (data.$dwrByRef) batch.map[name] = dwr.engine.serialize.convertByReference(batch, directrefmap, otherrefmap, data, name, depth + 1);
         else if (ref != null) batch.map[name] = ref;
         else if (objstr == "[object String]") batch.map[name] = "string:" + encodeURIComponent(data);
         else if (objstr == "[object Boolean]") batch.map[name] = "boolean:" + data;
         else if (objstr == "[object Number]") batch.map[name] = "number:" + data;
         else if (objstr == "[object Date]") batch.map[name] = "date:" + data.getTime();
-        else if (objstr == "[object Array]") batch.map[name] = dwr.engine.serialize.convertArray(batch, referto, data, name, depth + 1);
+        else if (objstr == "[object Array]") batch.map[name] = dwr.engine.serialize.convertArray(batch, directrefmap, otherrefmap, data, name, depth + 1);
         else if (data && data.tagName && data.tagName.toLowerCase() == "input" && data.type && data.type.toLowerCase() == "file") {
           batch.fileUpload = true;
           batch.map[name] = data;
@@ -1095,17 +1100,17 @@ if (typeof dwr == 'undefined') dwr = {};
           // This check for an HTML is not complete, but is there a better way?
           // Maybe we should add: data.hasChildNodes typeof "function" == true
           if (data.nodeName && data.nodeType) {
-            batch.map[name] = dwr.engine.serialize.convertXml(batch, referto, data, name, depth + 1);
+            batch.map[name] = dwr.engine.serialize.convertXml(batch, directrefmap, otherrefmap, data, name, depth + 1);
           }
           else {
-            batch.map[name] = dwr.engine.serialize.convertObject(batch, referto, data, name, depth + 1);
+            batch.map[name] = dwr.engine.serialize.convertObject(batch, directrefmap, otherrefmap, data, name, depth + 1);
           }
         }
         break;
       case "function":
         // Ignore functions unless they are directly passed in
         if (depth == 0) {
-          batch.map[name] = dwr.engine.serialize.convertByReference(batch, referto, data, name, depth + 1);
+          batch.map[name] = dwr.engine.serialize.convertByReference(batch, directrefmap, otherrefmap, data, name, depth + 1);
         }
         break;
       default:
@@ -1120,7 +1125,7 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertByReference:function(batch, referto, data, name, depth) {
+    convertByReference:function(batch, directrefmap, otherrefmap, data, name, depth) {
       var funcId = "f" + dwr.engine.serialize.funcId;
       dwr.engine.serialize.remoteFunctions[funcId] = data;
       dwr.engine.serialize.funcId++;
@@ -1132,7 +1137,7 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertArray:function(batch, referto, data, name, depth) {
+    convertArray:function(batch, directrefmap, otherrefmap, data, name, depth) {
       var childName, i;
       if (dwr.engine.isIE <= 7) {
         // Use array joining on IE1-7 (fastest)
@@ -1141,7 +1146,7 @@ if (typeof dwr == 'undefined') dwr = {};
           if (i != 0) buf.push(",");
           batch.paramCount++;
           childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
+          dwr.engine.serialize.convert(batch, directrefmap, otherrefmap, data[i], childName, depth + 1);
           buf.push("reference:");
           buf.push(childName);
         }
@@ -1155,7 +1160,7 @@ if (typeof dwr == 'undefined') dwr = {};
           if (i != 0) reply += ",";
           batch.paramCount++;
           childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[i], childName, depth + 1);
+          dwr.engine.serialize.convert(batch, directrefmap, otherrefmap, data[i], childName, depth + 1);
           reply += "reference:";
           reply += childName;
         }
@@ -1170,16 +1175,16 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertObject:function(batch, referto, data, name, depth) {
+    convertObject:function(batch, directrefmap, otherrefmap, data, name, depth) {
       // treat objects as an associative arrays
       var reply = "Object_" + dwr.engine.serialize.getObjectClassName(data).replace(/:/g, "?") + ":{";
       var elementset = (data.constructor && data.constructor.$dwrClassMembers ? data.constructor.$dwrClassMembers : data);
       var element;
       for (element in elementset) {
-        if (element.charAt(0) != "$" && typeof data[element] != "function") {
+        if (typeof data[element] != "function" && !dwr.engine._excludeObjectAttributes[element]) {
           batch.paramCount++;
           var childName = "c" + dwr.engine._batch.map.callCount + "-e" + batch.paramCount;
-          dwr.engine.serialize.convert(batch, referto, data[element], childName, depth + 1);
+          dwr.engine.serialize.convert(batch, directrefmap, otherrefmap, data[element], childName, depth + 1);
           reply += encodeURIComponent(element) + ":reference:" + childName + ", ";
         }
       }
@@ -1197,7 +1202,7 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertXml:function(batch, referto, data, name, depth) {
+    convertXml:function(batch, directrefmap, otherrefmap, data, name, depth) {
       var output;
       if (window.XMLSerializer) output = new XMLSerializer().serializeToString(data);
       else if (data.toXml) output = data.toXml;
@@ -1211,17 +1216,30 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    lookup:function(referto, data, name) {
-      try {
-        if ("$_dwrConversion" in data) {
-          var dwrConversion = data.$_dwrConversion;
-          if (dwrConversion && referto[dwrConversion] == data)
-            return "reference:" + dwrConversion;
-        }
-        data.$_dwrConversion = name;
-        referto[name] = data;
+    lookup:function(directrefmap, otherrefmap, data, name) {
+      // Look for reference to previous conversion
+      var ref;
+      if ("$_dwrConversionRef" in data) {
+        ref = data.$_dwrConversionRef;
+        if (ref && directrefmap[ref] != data) ref = null;
       }
-      catch(err) { /*squelch*/ }
+      if (ref == null) {
+        for(r in otherrefmap) {
+          if (otherrefmap[r] == data) {
+            ref = r;
+            break;
+          }
+        }
+      }
+      if (ref != null) return "reference:" + ref;
+      // This was a new conversion - save the reference!
+   	  try {
+        data.$_dwrConversionRef = name;
+        directrefmap[name] = data;
+      }
+      catch(err) {
+        otherrefmap[name] = data;
+      }
       return null;
     },
 
@@ -1229,14 +1247,14 @@ if (typeof dwr == 'undefined') dwr = {};
      * Clean up our conversion markers from user data
      * @private
      */
-    cleanup:function(referto) {
-      for(name in referto) {
-        var data = referto[name];
+    cleanup:function(directrefmap) {
+      for(name in directrefmap) {
+        var data = directrefmap[name];
         try {
-          delete data.$_dwrConversion;
+          delete data.$_dwrConversionRef;
         }
         catch(err) {
-          data.$_dwrConversion = undefined;
+          data.$_dwrConversionRef = undefined;
         }
       }
     },
@@ -2098,11 +2116,11 @@ if (typeof dwr == 'undefined') dwr = {};
       batch.map[prefix + "scriptName"] = scriptName;
       batch.map[prefix + "methodName"] = methodName;
       batch.map[prefix + "id"] = batch.map.callCount;
-      var converted = {};
+      var directrefmap = {}, otherrefmap = {};
       for (var i = 0; i < stopAt; i++) {
-        dwr.engine.serialize.convert(batch, converted, args[i], prefix + "param" + i, 0);
+        dwr.engine.serialize.convert(batch, directrefmap, otherrefmap, args[i], prefix + "param" + i, 0);
       }
-      dwr.engine.serialize.cleanup(converted);
+      dwr.engine.serialize.cleanup(directrefmap);
     },
 
     /**
