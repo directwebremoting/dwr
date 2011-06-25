@@ -150,7 +150,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setNotifyServerOnPageUnload = function(notify, asyncUnload) {
-	dwr.engine._asyncUnload = (asyncUnload !== undefined) ? asyncUnload : false;
+    dwr.engine._asyncUnload = (asyncUnload !== undefined) ? asyncUnload : false;
     dwr.engine._isNotifyServerOnPageUnload = notify;
   };
 
@@ -601,13 +601,31 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleError = function(batch, ex) {
+    // Perform error cleanup synchronously
+    var errorHandlers = [];
+    if (dwr.engine._retries <= 1) {    
+      if (batch) {
+        for (var i = 0; i < batch.map.callCount; i++) {
+          var handlers = batch.handlers[i];
+          if (!handlers.completed) {
+            if (typeof handlers.errorHandler == "function") errorHandlers.push(handlers.errorHandler);
+            handlers.completed = true;
+          }
+        }
+      }
+      if (batch) dwr.engine.batch.remove(batch);
+    }
+    // Perform error reporting asynchronously (possibly)
     ignoreIfUnloading(batch, function() {
-      dwr.engine._handlePollRetry(batch, ex);
       if (dwr.engine._retries <= 1) {    
         dwr.engine._prepareException(ex);
+        var errorHandler;
+        while(errorHandlers.length > 0) {
+          errorHandler = errorHandlers.shift();
+          errorHandler(ex.message, ex);
+        }
         if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
         else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-        if (batch) dwr.engine.batch.remove(batch);
       }
     });
   };
@@ -1233,7 +1251,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       if (ref != null) return "reference:" + ref;
       // This was a new conversion - save the reference!
-   	  try {
+      try {
         data.$_dwrConversionRef = name;
         directrefmap[name] = data;
       }
@@ -1568,11 +1586,11 @@ if (typeof dwr == 'undefined') dwr = {};
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
 
-          if (reply == null || reply == "") {
-            dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
-          }
-          else if (status != 200) {
+          if (status != 200) {
             dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:req.statusText });
+          }
+          else if (reply == null || reply == "") {
+            dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
           }
           else {                     
             var contentType = req.getResponseHeader("Content-Type");
