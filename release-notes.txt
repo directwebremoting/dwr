@@ -2,49 +2,119 @@
 RELEASE NOTES
 =============
 
-This file contains partially formed release notes for the next full release.
-Many changes will have been properly recorded in the bug tracking system,
-however we don't insist on a issue number for all changes. So this file mops
-up the remaining changes.
+This file contains partially formed release notes for the 3.0.RC2.
+Many changes will have been properly recorded in the bug tracking system.
 
 Potentially Breaking Changes
 ----------------------------
+1) engine.js must now be included before any DWR interface scripts.
+2) If you are using Jetty 6 with reverse AJAX you will need .  Due to changes 
 
-[Web|Server]Context.getScriptSessionById
-[Web|Server]Context.getAllScriptSessions
-[Web|Server]Context.getScriptSessionsByPage
+Release Notes - DWR - Version 3.0.RC2
 
+** Bug
+    * [DWR-117] - AnnotationsConfigurator: Error when I specify "scope" but don't specify "javascript"
+    * [DWR-197] - Unable to override context path for static engine.js
+    * [DWR-205] - jms dependency missing from pom.xml
+    * [DWR-208] - normal remote calls are delayed (waiting for reverse ajax polls) when using setOrdered(true)
+    * [DWR-281] - Tomcat does not shutdown because on non-daemon threads
+    * [DWR-283] - DWR considers a URL with ;jsessionid=... to be different than a URL without it
+    * [DWR-294] - test suite does not test security properly
+    * [DWR-307] - <dwr:auth> works different as <auth> in dwr.xml
+    * [DWR-319] - jsessionid isn't properly matched when a '#' exists in URL
+    * [DWR-329] - Browser.withSession runs against all sessions and not the specified one
+    * [DWR-330] - DefaultCreatorManager.addCreator(String, String, Map) ignores scriptName parameter
+    * [DWR-331] - File upload does not work in google chrome
+    * [DWR-337] - warningHandler used when server is down.
+    * [DWR-338] - setActiveReverseAjax creates a new ScriptSession but the previous one is not timed out
+    * [DWR-340] - ScriptSessions.addFunctionCall overzealous
+    * [DWR-343] - Conversion of generic method implementation fails
+    * [DWR-344] - File upload - Now fails with error "Failed to fnid parameter: windowName"
+    * [DWR-347] - listerns are null AbstractMapProvider.fireItemAdded()
+    * [DWR-349] - Pair class doesn't implement equals() correctly for class MapStoreProvider$Index
+    * [DWR-350] - org.directwebremoting.dwrp.Batch.parseBasicPost() corrupts non-ascii data
+    * [DWR-354] - Any ScriptSessions method causes a crash from a web method
+    * [DWR-364] - Reverse ajax polling starts before a script session id is determined
+    * [DWR-367] - util.js - cloneNode does not work with suffix of 0.
+    * [DWR-383] - Deadlock
+    * [DWR-388] - JSON - Array wrapped in reply
+    * [DWR-392] - Scripted creator fails
+    * [DWR-394] - Yahoo Compressor being used but the Yahoo Compression library is not on the classpath
+    * [DWR-395] - dijit.form.ComboBox doesn't render from dwr.data.Store
+    * [DWR-400] - JSON RPC test not working
+    * [DWR-405] - DownloadHandler does not set content-length
+    * [DWR-406] - UTF-8 is unrecognized in POST data
+    * [DWR-407] - Deadlock Between DefaultScriptSessionManager and DefaultScriptSession During Invalidate()
+    * [DWR-409] - Changing configuration flag debug to false breaks DWR
+    * [DWR-418] - IE insecure items message appears when trying to upload a file (via FileTransfer)
+    * [DWR-419] - Introspector fails to find setter even if present
+    * [DWR-420] - ScriptSessions.addFunctionCall overzealous again
+    * [DWR-422] - JsonArray does not initialize private proxy field
+    * [DWR-423] - Tomcat 6 Comet Support - TomcatContainerAbstraction not native
+    * [DWR-426] - DefaultWebContextBuilder disengageThread throws null pointer exception
+    * [DWR-427] - Concurrency Issue
+    * [DWR-430] - A dwr.xml converter pattern which works with jboss4.2.2.GA does not work with jboss5.1.0.GA
+    * [DWR-431] - class loading in DefaultConverterManager
+    * [DWR-437] - More Concurrency Issues
+    * [DWR-441] - NullPointer in DefaultRemoter when calling a static method
+    * [DWR-446] - A timeout with id 0 is not cleared
+    * [DWR-447] - pom.xml invalid for dwr-ui-dwr
+    * [DWR-458] - Jetty Continuation - calling resume on an expired Continuation
+    * [DWR-467] - WarningHandler triggered on page unload
+    * [DWR-468] - addRows uses numRows vs. numCols to generate the td elements
+    * [DWR-470] - Multiple Servlet Mappings and Caching
+    * [DWR-473] - Deadlock
+    * [DWR-476] - @Filter annotation ignored
+    * [DWR-484] - StackOverflowError when combining ScriptSessionBindingListener with getAttribute()
+    * [DWR-492] - MaxWaitAfterWrite -1 and IE
+    * [DWR-493] - Posthooks never called when remoting via script tags
+    * [DWR-497] - Relative URLs set isCrossDomain erroneously to true
+    * [DWR-502] - DefaultServerLoadMonitor is not thread safe
+    * [DWR-504] - Wrong order of XML elements in description
+    * [DWR-506] - We have recently upgraded our weblogic version from 9.2 to 9.2.4 on admin side get error pop as session error
+    * [DWR-507] - error handler is not called after timeout when using file upload
+    * [DWR-518] - variable not found in scope
 
-Var-args support and function overloading changes some things.
+** Improvement
+    * [DWR-17] - improve the CSRF handling with something to solve problems with servlet filters that force the HttpSession behind DWR's back
+    * [DWR-26] - Add support for HttpOnly cookies
+    * [DWR-86] - Allow users to set an alternative error handler for polling errors and to specify a retry policy
+    * [DWR-103] -  element in dwr.xml cannot have a javascript attribute such as "aaa.bbb.CCC"
+    * [DWR-171] - Add support for reverse proxies
+    * [DWR-324] - Tweak logging outputs
+    * [DWR-336] - Allow global filters in Spring using namespace and annotations
+    * [DWR-356] - Add param to convert element in spring schema
+    * [DWR-363] - Handling server down/errors with reverse ajax
+    * [DWR-377] - dwr.engine.setParameters is misleading
+    * [DWR-381] - Configurable max file upload size
+    * [DWR-391] - Creators should support dot syntax ("package names") in JavaScript names
+    * [DWR-433] - Offer the possibility to configure the session cookie name (other than JSESSIONID)
+    * [DWR-456] - MapConverter - handle null keys
+    * [DWR-463] - Decouple DWR from Java reflection
+    * [DWR-465] - Applications sending large objects suffer from linear search in the lookup function
+    * [DWR-469] - Make it easier to shade the dwr jar (remap packages with f ex jarjar)
+    * [DWR-474] - pathToDwrServlet firebug annoyance...
+    * [DWR-485] - Namespace handler lacks ObjectConverter.setForce() support
 
-Auto-fill Servlet Parameters
+** New Feature
+    * [DWR-261] - Improved Exception Handling
+    * [DWR-368] - Joda DateTime and LocalDateTime Converter
+    * [DWR-382] - Creator to invoke static factory methods
+    * [DWR-399] - Include cache support to dojo store
+    * [DWR-515] - Add support for loading DWR's scripts with Dojo and CommonJS AMD loaders
+    * [DWR-516] - Allow other framework access to DWR's script generation infrastructure
 
-Suppose you have:
-  public class Remote {
-    public void method(HttpServletResponse r, int i) { ...}
-  }
-You used to be able to call it with:
-  Remote.method(42);
-And DWR would magically fill in the HttpServletResponse from the XHR request.
-Working out where to put parameters in the presence of varargs and overloading
-could be too complex so now you need to call:
-  Remote.method(null, 42);
+** Task
+    * [DWR-339] - Some documentation pages need updating
+    * [DWR-357] - Integrate Reverse Ajax docs provided by Lance
+    * [DWR-358] - Add docs for Json/Jsonp
+    * [DWR-365] - Ensure all tests from testdwr.war are passing
+    * [DWR-393] - Add test for Overloaded methods to testdwr.war
+    * [DWR-404] - Add serialization test for multi-dimensional array to the test war.
+    * [DWR-412] - Update signature documentation
 
-Tighter definitions of final arguments
+** Sub-task
+    * [DWR-371] - Marshall - Generics Implementation fails
+    * [DWR-372] - Marshall - Test Object With List Param fails
+    * [DWR-373] - Marshall - Upload Interface fails
 
-The rules for what would be considered a callback function or callback options
-object used to take into account the number of parameters to the called function.
-With the addition of varargs/overloading support, the rules become simpler:
-If the last argument is a function, then is is considered to be the callback
-function and the remaining arguments are the real arguments.
-If the last argument is an object with a member called callback which is of type
-function, then the last argument is a callback options object and the rest are
-real arguments.
-Otherwise there is no callback function and all arguments are real arguments.
-
-What does this break?
-This used to be a call to Remote.method(42);
-  Remote.method(42, { exceptionHandler:function() { ... } });
-However after this change it is a call to a method with 2 parameters.
-The fix is to call:
-  Remote.method(42, { exceptionHandler:function() { ... }, callback:function() {} };
