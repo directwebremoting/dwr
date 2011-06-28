@@ -8,7 +8,9 @@ Many changes will have been properly recorded in the bug tracking system.
 Potentially Breaking Changes
 ----------------------------
 1) engine.js must now be included before any DWR interface scripts.
-2) If you are using Jetty 6 with reverse AJAX you will need .  Due to changes 
+2) If you are using Jetty 6 with reverse AJAX you will need to either upgrade to Jetty 7+ or follow the directions here:
+   http://www.butterdev.com/dwr/2010/01/dwr-3-x-and-jetty-continuations-on-jetty-6-x/.  Due to changes in the Jetty Continuation
+   API.
 
 Release Notes - DWR - Version 3.0.RC2
 
