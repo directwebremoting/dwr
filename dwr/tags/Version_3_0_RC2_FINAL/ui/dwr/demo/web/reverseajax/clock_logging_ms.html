@@ -1,0 +1,233 @@
+<!--  Copy of the clock demo that contains logging added by Mike so we can detect lags and missing updates. -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Server Side Reverse Ajax Clock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<script type='text/javascript' src='../dwr/engine.js'>
+	
+</script>
+<script type='text/javascript' src='../dwr/util.js'>
+	
+</script>
+<script type='text/javascript' src='../dwr/interface/ClockMS.js'>
+	
+</script>
+<script type='text/javascript' src='../tabs/tabs.js'>
+	
+</script>
+<link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+<link rel="stylesheet" type="text/css" href="../generic.css" />
+<script>
+	window.onload = function() {
+		setTimeout(function() {
+			var oldms = -1;
+			var oldtime = new Date();
+			var dwrSetValue = dwr.util.setValue;
+			dwr.util.setValue = function(elem, value, options) {
+				dwrSetValue(elem, value, options);
+				if (elem != "clockDisplay")
+					return;
+				var log = "";
+				if (typeof value != "string")
+					return;
+				var pos = value.indexOf("MS:", pos + 1);
+				if (pos < 0)
+					return;
+				var ms = parseInt(value.substr(pos + 3, 3), 10);
+				if (oldms != -1 && (oldms + 250) % 1000 != ms) {					
+					log += "value jumping from " + oldms + " to "
+							+ ms + ", ";
+				}
+				var time = new Date();
+				var delay = time.getTime() - oldtime.getTime();
+				if (delay > 1700) {
+					log += "delay = " + delay + ", ";
+				}
+				if (log != "") {
+					document.getElementById("log").innerHTML += "<br>" + value
+							+ ": " + log;
+				}
+				oldms = ms;
+				oldtime = time;
+			};
+		}, 5000);
+		dwr.engine.setActiveReverseAjax(true);
+		dwr.engine.setErrorHandler(errorHandler);
+		dwr.engine.setPollStatusHandler(updatePollStatus);
+		updatePollStatus(true);
+		Tabs.init('tabList', 'tabContents');
+	}
+
+	function errorHandler(message, ex) {
+		dwr.util
+				.setValue(
+						"error",
+						"<font color='red'>Cannot connect to server. Initializing retry logic.</font>",
+						{
+							escapeHtml : false
+						});
+		setTimeout(function() {
+			dwr.util.setValue("error", "");
+		}, 5000)
+	}
+
+	function updatePollStatus(pollStatus) {
+		dwr.util.setValue("pollStatus",
+				pollStatus ? "<font color='green'>Online</font>"
+						: "<font color='red'>Offline</font>", {
+					escapeHtml : false
+				});
+	}
+</script>
+</head>
+
+<body>
+<div id="page-title">[ <a href="http://getahead.org/dwr/">DWR
+Website</a> | <a href="..">Web Application Index</a> ]</div>
+
+<h1>Server Side Reverse Ajax Clock</h1>
+
+<p>Creating a clock in a web page is easy, but what about a clock
+controlled by the server? This demo shows how use use a separate server
+side thread to control a number of browsers.</p>
+
+<ul id="tabList">
+	<li><a href="#" tabId="demoDiv">Demo</a></li>
+	<li><a href="#" tabId="explainDiv">How it works</a></li>
+	<li><a href="#" tabId="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+<div id="demoDiv"><input type="button" value="Start / Stop"
+	onclick="ClockMS.toggle();" /> Server status: <span id="pollStatus"></span>
+<div id="error"></div>
+<p></p>
+<h2 id="clockDisplay"></h2>
+<div id="log"></div>
+</div>
+
+<div id="explainDiv">
+<h2>Client side script</h2>
+<p>We turn active Reverse Ajax on: <code>dwr.engine.setActiveReverseAjax(true);</code>.
+Reverse Ajax will work without comet, by using piggyback, however this
+gives you very long latency, not what we need for a clock, so we turn on
+comet or polling (whatever the server is configured to prefer).</p>
+
+<p>Next we specify our errorHandler and retry logic. DWR has a retry
+feature for reverse AJAX which automatically re-attempts failed calls.
+With the default configuration failed calls will be re-attempted twice
+with one second between each attempt. If both retry attempts fail the
+errorHandler will be called. After the errorHandler is called DWR will
+re-attempt the call at 10 second intervals until successfull. At this
+time the pollStatusHandler will be called. You can <a
+	href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read
+more about this feature on our site</a>.</p>
+
+
+<p>The server code uses a ScheduledThreadPoolExecutor to call update
+the screen once a second. The setClockDisplay looks like this:</p>
+
+<pre>
+String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
+Browser.withPage(page, new Runnable()
+{
+    public void run()
+    {
+        Util.setValue("clockDisplay", output);
+    }
+});
+</pre>
+
+<p>ServerContextFactory is a lot like WebContextFactory, however it
+will work outside a DWR thread. Since we're using the
+ScheduledThreadPoolExecutor thread here, we need to use ServerContext
+and not WebContext.</p>
+
+<p>We need to work out the page to update. You may know the
+contextPath without needing to ask, but in this case we're making the
+web-app relocatable by asking for the contextPath.</p>
+
+<p>We then create a scope where the target browsers includes
+everyone looking at the given page, and we use the <code>Util.setValue()</code>
+method to alter the target browsers.</p>
+</div>
+
+<div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;input type="button" value="Start / Stop" onclick="Clock.toggle();"/&gt;
+&lt;h2 id="clockDisplay"&gt;&lt;/h2&gt;
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+window.onload=function()
+{
+    dwr.engine.setActiveReverseAjax(true); // Initiate reverse ajax polling
+    dwr.engine.setErrorHandler(errorHandler); // Optional - Called when a call and all retry attempts fail
+    dwr.engine.setPollStatusHandler(updatePollStatus); // Optional - function to call when the reverse ajax status changes (e.g. online to offline)
+    updatePollStatus(true); // Optional - We are online right now!  Until DWR determines we are not!
+    Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display      
+}
+	  
+function errorHandler(message, ex) {
+    dwr.util.setValue(&quot;error&quot;, &quot;&lt;font color='red'&gt;Cannot connect to server. Initializing retry logic.&lt;/font&gt;&quot;, {escapeHtml:false});
+    setTimeout(function() { dwr.util.setValue(&quot;error&quot;, &quot;&quot;); }, 5000)
+}
+	  
+function updatePollStatus(pollStatus) {
+    dwr.util.setValue(&quot;pollStatus&quot;, pollStatus ? &quot;&lt;font color='green'&gt;Online&lt;/font&gt;&quot; : &quot;&lt;font color='red'&gt;Offline&lt;/font&gt;&quot;, {escapeHtml:false});
+}</pre>
+
+<h2>Java source:</h2>
+<pre>
+public class Clock implements Runnable {
+    public Clock() {
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor.scheduleAtFixedRate(this, 1, 1, TimeUnit.SECONDS);
+    }
+
+    public void run() {
+        if (active) {
+            setClockDisplay(new Date().toString());
+        }
+    }
+
+    /**
+     * Called from the client to turn the clock on/off
+     */
+    public synchronized void toggle() {
+        active = !active;
+
+        if (active) {
+            setClockDisplay("Started");
+        }
+        else {
+            setClockDisplay("Stopped");
+        }
+    }
+
+    /**
+     * Actually alter the clients.
+     * @param output The string to display.
+     */
+    public void setClockDisplay(final String output) {
+        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/clock.html";
+        Browser.withPage(page, new Runnable() {
+            public void run() {
+                Util.setValue("clockDisplay", output);
+            }
+        });
+    }
+
+    protected transient boolean active = false;
+}
+</pre></div>
+
+</div>
+
+</body>
+</html>

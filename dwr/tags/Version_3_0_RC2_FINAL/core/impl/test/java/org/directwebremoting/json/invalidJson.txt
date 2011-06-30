@@ -1,0 +1,81 @@
+# This file contains a number of invalid JSON documents.
+# Documents are separated by blank lines
+# Lines beginning with '#' are considered comments, and ignored.
+
+{
+
+}
+
+true
+
+false
+
+null
+
+"test":false
+
+"hello"
+
+1
+
+{ "boolean":tru }
+
+{"boolean"true}
+
+{test:true}
+
+{t:true}
+
+{
+"boolean"
+true
+}
+
+{ "boolean":fals }
+
+{ "nothing":nul }
+
+{ "number":001 }
+
+{ "number": }
+
+{ "array":[ 1, 2, 3, ] }
+
+{ "object":{ "boolean":true }
+
+{ "object": "boolean":true }, array:[ 1, 2, 3], "boolean":true, "nothing":null }
+
+{ { true } }
+
+[--1]
+
+[1.-1]
+
+[1.-1E1]
+
+[1E0.1]
+
+[00.001]
+
+[001.001]
+
+[001.001E001]
+
+[01.01]
+
+[ 1, ]
+
+[ 1, 2, ]
+
+[ 1, 2, 3, ]
+
+[ 1, 2, 3, 4, ]
+
+[ ,1 ]
+
+[ ,1, 2 ]
+
+[ ,1, 2, 3 ]
+
+[ ,1, 2, 3, 4 ]
+

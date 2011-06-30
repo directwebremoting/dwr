@@ -1,0 +1,100 @@
+Index: core/api/main/java/org/directwebremoting/extend/ConverterManager.java
+===================================================================
+--- core/api/main/java/org/directwebremoting/extend/ConverterManager.java	(revision 2577)
++++ core/api/main/java/org/directwebremoting/extend/ConverterManager.java	(working copy)
+@@ -142,4 +142,7 @@
+      * @param converters the map of match pattern and their converter instances
+      */
+     void setConverters(Map<String, Converter> converters);
++
++    final static int DEFAULT_MAX_DEPTH = 6;
++
+ }
+Index: core/api/main/java/org/directwebremoting/extend/OutboundContext.java
+===================================================================
+--- core/api/main/java/org/directwebremoting/extend/OutboundContext.java	(revision 2577)
++++ core/api/main/java/org/directwebremoting/extend/OutboundContext.java	(working copy)
+@@ -74,6 +74,21 @@
+         return jsonMode;
+     }
+ 
++    public int getLevel()
++    {
++        return level;
++    }
++
++    public void incrementNesting()
++    {
++        level++;
++    }
++
++    public void unnest()
++    {
++        level--;
++    }
++
+     /* (non-Javadoc)
+      * @see java.lang.Object#toString()
+      */
+@@ -102,4 +117,10 @@
+      * Are we in JSON mode where everything is inline?
+      */
+     private boolean jsonMode = true;
++
++    /**
++     * Keep track of the nesting.
++     */
++    private int level = -1;
++
+ }
+Index: core/impl/main/java/org/directwebremoting/impl/DefaultConverterManager.java
+===================================================================
+--- core/impl/main/java/org/directwebremoting/impl/DefaultConverterManager.java	(revision 2577)
++++ core/impl/main/java/org/directwebremoting/impl/DefaultConverterManager.java	(working copy)
+@@ -378,8 +378,11 @@
+      */
+     public OutboundVariable convertOutbound(Object data, OutboundContext converted) throws ConversionException
+     {
+-        if (data == null)
++        converted.incrementNesting();
++
++        if ((data == null) || (converted.getLevel() >= DEFAULT_MAX_DEPTH))
+         {
++            converted.unnest();
+             return new NonNestedOutboundVariable("null");
+         }
+ 
+@@ -387,6 +390,7 @@
+         OutboundVariable ov = converted.get(data);
+         if (ov != null)
+         {
++            converted.unnest();
+             // So the object as been converted already, we just need to refer to it.
+             return ov.getReferenceVariable();
+         }
+@@ -395,12 +399,15 @@
+         Converter converter = getConverter(data);
+         if (converter == null)
+         {
++            converted.unnest();
+             String message = "No converter found for '" + data.getClass().getName() + "'";
+             log.error(message);
+             return new ErrorOutboundVariable(message);
+         }
+ 
+-        return converter.convertOutbound(data, converted);
++        OutboundVariable result = converter.convertOutbound(data, converted);
++        converted.unnest();
++        return result;
+     }
+ 
+     /* (non-Javadoc)
+@@ -619,7 +626,7 @@
+         converter = getConverterAssignableFrom(paramType.getSuperclass());
+         if (converter != null)
+         {
+-            converters.put(lookup, converter);
++            //converters.put(lookup, converter);
+         }
+ 
+         return converter;
