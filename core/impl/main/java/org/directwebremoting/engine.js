@@ -603,6 +603,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleError = function(batch, ex) {
     // Perform error cleanup synchronously
     var errorHandlers = [];
+    dwr.engine._handlePollRetry(batch, ex);
     if (dwr.engine._retries <= 1) {    
       if (batch) {
         for (var i = 0; i < batch.map.callCount; i++) {
