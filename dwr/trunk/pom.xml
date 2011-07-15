@@ -58,7 +58,7 @@
   <scm>
     <connection>scm:svn:http://svn.directwebremoting.org/dwr/trunk/</connection>
     <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/trunk/</developerConnection>
-    <url>https://dwr.dev.java.net/source/browse/dwr/</url>
+    <url>http://svn.directwebremoting.org/dwr/trunk/</url>
   </scm>
   <description>
 	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
