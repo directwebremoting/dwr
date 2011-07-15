@@ -1267,8 +1267,8 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      */
     cleanup:function(directrefmap) {
-      for(name in directrefmap) {
-        var data = directrefmap[name];
+      for(var refName in directrefmap) {
+        var data = directrefmap[refName];
         try {
           delete data.$_dwrConversionRef;
         }
