@@ -67,7 +67,7 @@
     </dependency>
     <dependency>
 	  <groupId>org.dojotoolkit</groupId>
-	  <artifactId>shrinksafe</artifactId>
+	  <artifactId>dojo-shrinksafe</artifactId>
     </dependency>
     <!-- Jetty Needed for JettyLauncherBase -->
     <dependency>
