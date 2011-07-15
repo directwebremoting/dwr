@@ -199,7 +199,7 @@
 	  <!-- Shrinksafe depends on rhino js.jar 1.7R1 and does not work with 1.6R7 -->
 	  <dependency>
 	    <groupId>org.dojotoolkit</groupId>
-		<artifactId>shrinksafe</artifactId>
+		<artifactId>dojo-shrinksafe</artifactId>
 		<version>1.6.1</version>
 	  </dependency>	  
 	  <!-- See comments above on the yuicompressor and shrinksafe dependencies -->
