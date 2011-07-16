@@ -111,14 +111,7 @@
 		with the corresponding version numbers. 'sub-projects' should not ever need 
 		to specify a version only declare the dependency. -->
   <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.directwebremoting</groupId>
-        <artifactId>dwr-core</artifactId>
-        <version>${project.version}</version>
-        <type>test-jar</type>
-        <scope>test</scope>
-      </dependency>     
+    <dependencies>     
       <dependency>
         <groupId>aopalliance</groupId>
         <artifactId>aopalliance</artifactId>
