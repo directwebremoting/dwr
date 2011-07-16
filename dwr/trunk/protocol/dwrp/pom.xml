@@ -5,7 +5,7 @@
     <groupId>org.directwebremoting</groupId>
     <artifactId>dwr</artifactId>
     <version>3.0.0-rc2-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath> 
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>dwr-protocol-dwrp</artifactId>
   <name>DWR Protocol dwrp</name>
