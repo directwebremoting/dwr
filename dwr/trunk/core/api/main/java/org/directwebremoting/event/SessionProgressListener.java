@@ -17,8 +17,6 @@ package org.directwebremoting.event;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload.ProgressListener;
 
 /**
@@ -27,11 +25,6 @@ import org.apache.commons.fileupload.ProgressListener;
  */
 public class SessionProgressListener implements ProgressListener, Serializable
 {
-    public SessionProgressListener(HttpSession session)
-    {
-        this.session = session;
-    }
-
     /**
      * Accessor for the number of bytes read, as passed in by
      * {@link ProgressListener#update(long, long, int)}
@@ -65,7 +58,7 @@ public class SessionProgressListener implements ProgressListener, Serializable
      */
     public void update(long newBytesRead, long newContentLength, int items)
     {
-        if (session.getAttribute(CANCEL_UPLOAD) != null)
+        if (cancelled)
         {
             this.bytesRead = this.contentLength + 1;
             throw new RuntimeException("User cancelled the upload.");
@@ -76,9 +69,17 @@ public class SessionProgressListener implements ProgressListener, Serializable
     }
 
     /**
-     * The session where the results are stored.
+     * Cancels the associated file upload.
      */
-    private volatile HttpSession session;
+    public void cancel()
+    {
+        cancelled = true;
+    }
+
+    /**
+     * Have we been cancelled?
+     */
+    private volatile boolean cancelled = false;
 
     /**
      * @see SessionProgressListener#getBytesRead()
@@ -94,9 +95,4 @@ public class SessionProgressListener implements ProgressListener, Serializable
      * @see #getItem()
      */
     private volatile long item = 0L;
-
-    /**
-     * The attribute that indicates if the user wants to cancel the upload.
-     */
-    public static final String CANCEL_UPLOAD = "CANCEL_UPLOAD";
 }
