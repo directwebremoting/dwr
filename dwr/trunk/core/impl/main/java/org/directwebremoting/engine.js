@@ -201,7 +201,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine.defaultPollStatusHandler = function(newStatus, ex) {
-    dwr.engine._debug("pollStatusHandler - online: " + newStatus);    
+    if (newStatus == false && dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);   
   };
 
   /**
@@ -600,35 +600,35 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} batch
    * @param {Object} ex
    */
-  dwr.engine._handleError = function(batch, ex) {
-    // Perform error cleanup synchronously
+  dwr.engine._handleError = function(batch, ex) {    
     var errorHandlers = [];
-    dwr.engine._handlePollRetry(batch, ex);
-    if (dwr.engine._retries <= 1) {    
-      if (batch) {
-        for (var i = 0; i < batch.map.callCount; i++) {
+    if (batch) {      
+      if (batch.isPoll) { // No error reporting and only retry for polls 		    	
+    	dwr.engine._handlePollRetry(batch, ex);
+      } else { // Error reporting and no retry for non-polls
+    	// Perform error cleanup synchronously
+    	for (var i = 0; i < batch.map.callCount; i++) {
           var handlers = batch.handlers[i];
           if (!handlers.completed) {
             if (typeof handlers.errorHandler == "function") errorHandlers.push(handlers.errorHandler);
             handlers.completed = true;
           }
-        }
+        }  
+        dwr.engine.batch.remove(batch);
+        // Perform error reporting asynchronously (possibly)
+        ignoreIfUnloading(batch, function() { 
+          dwr.engine._prepareException(ex);
+          var errorHandler;
+          while(errorHandlers.length > 0) {
+            errorHandler = errorHandlers.shift();
+            errorHandler(ex.message, ex);
+          }
+          if (typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+          else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+        });
       }
-      if (batch) dwr.engine.batch.remove(batch);
-    }
-    // Perform error reporting asynchronously (possibly)
-    ignoreIfUnloading(batch, function() {
-      if (dwr.engine._retries <= 1) {    
-        dwr.engine._prepareException(ex);
-        var errorHandler;
-        while(errorHandlers.length > 0) {
-          errorHandler = errorHandlers.shift();
-          errorHandler(ex.message, ex);
-        }
-        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-      }
-    });
+      
+    }    
   };
 
   /**
@@ -673,7 +673,7 @@ if (typeof dwr == 'undefined') dwr = {};
     if (!newStatus) {
       dwr.engine._pollOnline = false;
     }   
-    if (typeof dwr.engine._pollStatusHandler) dwr.engine._pollStatusHandler(newStatus, ex);
+    if (typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
     if (newStatus) {
       dwr.engine._pollOnline = true;
       dwr.engine._retries = 0; 
