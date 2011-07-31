@@ -17,7 +17,7 @@
 /**
  * The DWR object is also defined by dwr.util etc.
  */
-if (typeof dwr == 'undefined') dwr = {}
+if (typeof dwr == 'undefined') dwr = {};
 
 (function() {
   if (!dwr.engine) dwr.engine = {};
