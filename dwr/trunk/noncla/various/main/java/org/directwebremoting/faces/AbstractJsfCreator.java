@@ -87,7 +87,23 @@ public abstract class AbstractJsfCreator extends AbstractCreator
     {
         this.managedBeanName = managedBeanName;
     }
-
+	
+    /**
+     * What sort of class do we create?
+     * @param classname The name of the class
+     */
+    public void setClass(String classname)
+    {
+        try
+        {
+            this.instanceType = LocalUtil.classForName(classname);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            throw new IllegalArgumentException("Creator.ClassNotFound");
+        }
+    }
+	
     /**
      * The name of the bean to get from the FacesContext
      */
