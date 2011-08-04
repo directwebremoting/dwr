@@ -631,6 +631,12 @@ if (typeof dwr == 'undefined') dwr = {};
     }    
   };
 
+  dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
+	  if (typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
+      else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
+      else {}
+  }
+  
   /**
    * Handle retries for polling as well as online/offline status.
    * @private
@@ -1600,8 +1606,8 @@ if (typeof dwr == 'undefined') dwr = {};
               contentType = "text/javascript";
             }
             if (!contentType.match(/^text\/plain/) && !contentType.match(/^text\/javascript/)) {
-              if (contentType.match(/^text\/html/) && typeof batch.textHtmlHandler == "function") {
-                batch.textHtmlHandler({ status:status, responseText:reply, contentType:contentType });
+              if (contentType.match(/^text\/html/)) {
+                dwr.engine._handleTextHtmlResponse(batch, { status:status, responseText:reply, contentType:contentType });            	
               }
               else {
                 dwr.engine._handleWarning(batch, { name:"dwr.engine.invalidMimeType", message:"Invalid content type: '" + contentType + "'" });
