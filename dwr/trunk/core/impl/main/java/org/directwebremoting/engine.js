@@ -634,7 +634,6 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
 	  if (typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
       else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-      else {}
   }
   
   /**
