@@ -144,6 +144,7 @@ public class DefaultConverterManager implements ConverterManager
             }
 
             convertersByMatch.put(match, converter);
+            converterCache.clear();
         }
     }
 
@@ -174,6 +175,7 @@ public class DefaultConverterManager implements ConverterManager
         }
 
         convertersByClass.put(clazz, converter);
+        converterCache.clear();
     }
 
     /**
@@ -233,6 +235,7 @@ public class DefaultConverterManager implements ConverterManager
             }
 
             convertersByJavascript.put(namedConverter.getJavascript(), namedConverter);
+            converterCache.clear();
         }
     }
 
@@ -478,6 +481,7 @@ public class DefaultConverterManager implements ConverterManager
         {
             this.convertersByMatch.clear();
             this.convertersByMatch.putAll(converters);
+            converterCache.clear();
         }
     }
 
