@@ -58,7 +58,7 @@ public class Batch
             extraParameters = parsePost(request);
         }
 
-        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
+        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
         {
             dwrSessionId = scriptSessionId.substring(0, scriptSessionId.indexOf('/'));
@@ -79,7 +79,7 @@ public class Batch
         this.extraParameters = allParameters;
         this.get = get;
 
-        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, null);
+        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
         {
             dwrSessionId = scriptSessionId.substring(0, scriptSessionId.indexOf('/'));
