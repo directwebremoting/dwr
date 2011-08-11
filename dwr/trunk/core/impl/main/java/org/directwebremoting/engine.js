@@ -128,7 +128,7 @@ if (typeof dwr == 'undefined') dwr = {};
       // Bail if we are already started
       if (dwr.engine._activeReverseAjax) return;
       // We always want a retry policy when reverse AJAX is enabled.
-      dwr.engine._retryIntervals = dwr.engine._defaultRetryIntervals; 
+      if (!dwr.engine._retryIntervals || dwr.engine._retryIntervals.length == 0) { dwr.engine._retryIntervals = dwr.engine._defaultRetryIntervals }; 
       dwr.engine._activeReverseAjax = true;
       dwr.engine._poll();
     }
@@ -656,7 +656,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // Call supplied pollStatusHandler and go offline.        
         if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
           dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
-          dwr.engine._handlePollStatusChange(false, ex);       
+          dwr.engine._handlePollStatusChange(false, ex, batch);       
         }
         dwr.engine._retries++;
         dwr.engine.batch.remove(batch);
@@ -674,15 +674,17 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {object} ex - The exception if one exists (offline).
    * @see getahead.org/dwr/browser/engine/errors
    */
-  dwr.engine._handlePollStatusChange = function(newStatus, ex) {
-    if (!newStatus) {
-      dwr.engine._pollOnline = false;
-    }   
-    if (typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
-    if (newStatus) {
-      dwr.engine._pollOnline = true;
-      dwr.engine._retries = 0; 
-    }   
+  dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {
+	if (batch.isPoll) { 
+	  if (!newStatus) {
+        dwr.engine._pollOnline = false;
+      }   
+      if (typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
+      if (newStatus) {
+        dwr.engine._pollOnline = true;
+        dwr.engine._retries = 0; 
+      }   
+	}
   };
 
   /**
@@ -1575,7 +1577,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // the retry handling would be ideal.  We would need something like a new internal callback that reports 
         // progress back to the caller, and the design should be compatible with getting it to work with iframes as well.   
         if (status == 200 && !dwr.engine._pollOnline) {
-          dwr.engine._handlePollStatusChange(true);    
+          dwr.engine._handlePollStatusChange(true, null, batch);    
         }  
 
         // The rest of this function only deals with request completion
