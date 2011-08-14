@@ -602,12 +602,12 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handleError = function(batch, ex) {    
     var errorHandlers = [];
-    if (batch) {      
-      if (batch.isPoll) { // No error reporting and only retry for polls 		    	
-    	dwr.engine._handlePollRetry(batch, ex);
-      } else { // Error reporting and no retry for non-polls
-    	// Perform error cleanup synchronously
-    	for (var i = 0; i < batch.map.callCount; i++) {
+    if (batch && batch.isPoll) { // No error reporting and only retry for polls 		    	
+      dwr.engine._handlePollRetry(batch, ex);
+    } else { // Error reporting and no retry for non-polls
+  	  // Perform error cleanup synchronously
+      if (batch) {
+        for (var i = 0; i < batch.map.callCount; i++) {
           var handlers = batch.handlers[i];
           if (!handlers.completed) {
             if (typeof handlers.errorHandler == "function") errorHandlers.push(handlers.errorHandler);
@@ -615,20 +615,19 @@ if (typeof dwr == 'undefined') dwr = {};
           }
         }  
         dwr.engine.batch.remove(batch);
-        // Perform error reporting asynchronously (possibly)
-        ignoreIfUnloading(batch, function() { 
-          dwr.engine._prepareException(ex);
-          var errorHandler;
-          while(errorHandlers.length > 0) {
-            errorHandler = errorHandlers.shift();
-            errorHandler(ex.message, ex);
-          }
-          if (typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-          else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-        });
       }
-      
-    }    
+      // Perform error reporting asynchronously (possibly)
+      ignoreIfUnloading(batch, function() { 
+        dwr.engine._prepareException(ex);
+        var errorHandler;
+        while(errorHandlers.length > 0) {
+          errorHandler = errorHandlers.shift();
+          errorHandler(ex.message, ex);
+        }
+        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+      });
+    }
   };
 
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
@@ -644,27 +643,25 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handlePollRetry = function(batch, ex) {
     var retryInterval;
-    if (batch && batch.isPoll) {
-      if (dwr.engine._retries < dwr.engine._retryIntervals.length) {
-        // We are still online, try the next interval.
-        retryInterval = dwr.engine._retryIntervals[dwr.engine._retries] * 1000;
-      } else {
-        // The last interval in retryIntervals is the number that will be used to poll when offline.
-        retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
-      }      
-      if (dwr.engine._maxRetries == -1 || dwr.engine._retries <= dwr.engine._maxRetries) {
-        // Call supplied pollStatusHandler and go offline.        
-        if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
-          dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
-          dwr.engine._handlePollStatusChange(false, ex, batch);       
-        }
-        dwr.engine._retries++;
-        dwr.engine.batch.remove(batch);
-        dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
-        setTimeout(dwr.engine._poll, retryInterval);
-      } else {
-        dwr.engine._debug("max retries reached, stop polling for server status.");
+    if (dwr.engine._retries < dwr.engine._retryIntervals.length) {
+      // We are still online, try the next interval.
+      retryInterval = dwr.engine._retryIntervals[dwr.engine._retries] * 1000;
+    } else {
+      // The last interval in retryIntervals is the number that will be used to poll when offline.
+      retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
+    }      
+    if (dwr.engine._maxRetries == -1 || dwr.engine._retries <= dwr.engine._maxRetries) {
+      // Call supplied pollStatusHandler and go offline.        
+      if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
+        dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
+        dwr.engine._handlePollStatusChange(false, ex, batch);       
       }
+      dwr.engine._retries++;
+      dwr.engine.batch.remove(batch);
+      dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
+      setTimeout(dwr.engine._poll, retryInterval);
+    } else {
+      dwr.engine._debug("max retries reached, stop polling for server status.");
     }
   };
 
@@ -676,12 +673,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {
 	if (batch.isPoll) { 
-	  if (!newStatus) {
-        dwr.engine._pollOnline = false;
-      }   
+      dwr.engine._pollOnline = newStatus;
       if (typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
       if (newStatus) {
-        dwr.engine._pollOnline = true;
         dwr.engine._retries = 0; 
       }   
 	}
@@ -1576,7 +1570,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // Future improvement per Mike W. - A solution where we only use the callbacks/handlers of the poll call to trigger 
         // the retry handling would be ideal.  We would need something like a new internal callback that reports 
         // progress back to the caller, and the design should be compatible with getting it to work with iframes as well.   
-        if (status == 200 && !dwr.engine._pollOnline) {
+        if (status == 200) {
           dwr.engine._handlePollStatusChange(true, null, batch);    
         }  
 
