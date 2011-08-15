@@ -673,8 +673,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {
 	if (batch.isPoll) { 
+      var changed = (dwr.engine._pollOnline != newStatus);
       dwr.engine._pollOnline = newStatus;
-      if (typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
+      if (changed && typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
       if (newStatus) {
         dwr.engine._retries = 0; 
       }   
