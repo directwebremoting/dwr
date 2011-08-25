@@ -1588,9 +1588,15 @@ if (typeof dwr == 'undefined') dwr = {};
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
-
+          
           if (status != 200) {
-            dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:req.statusText });
+        	var statusText = "statusText could not be read.";
+        	try {
+                statusText = req.statusText;	
+        	} catch (ex) {
+        		// Eat this, if the server just went down an exception can occurr reading statusText.
+        	}        	  
+            dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });
           }
           else if (reply == null || reply == "") {
             dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
