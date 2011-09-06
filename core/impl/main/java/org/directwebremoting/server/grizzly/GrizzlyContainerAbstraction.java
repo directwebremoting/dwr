@@ -35,7 +35,7 @@ public class GrizzlyContainerAbstraction implements ContainerAbstraction
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
         String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("Sun Java System Application Server ") || serverInfo.startsWith("GlassFish "))
+        if (serverInfo.startsWith("Sun Java System Application Server ") || serverInfo.startsWith("GlassFish ") || serverInfo.startsWith("Sun GlassFish "))
         {
             // TODO: some number versioning
             return true;
