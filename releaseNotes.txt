@@ -1,0 +1,15 @@
+Release Notes - DWR - Version 2.0.6
+
+** Bug
+    * [DWR-130] - DWR doesn't correctly serialize Date from other context/frame
+    * [DWR-248] - dwr.util.setValues() dies when the input data is recursive
+    * [DWR-276] - Date Fields not populated using dwr.uti.setValues({});
+    * [DWR-287] - deadlock between BasicAlarm and JettyContinuationSleeper
+    * [DWR-291] - deadlock between DefaultScriptSession and JettyContinuationSleeper
+    * [DWR-296] - addOptions should create new items in same document as parent for multi-frame scenarios
+    * [DWR-316] - Error in util.js dwr.util._importNode method with Safari
+    * [DWR-401] - All empties "Javascript Array" are converted to "Java List" having the same Instance.
+    * [DWR-417] - exception during conversion of exception is not handled properly
+    * [DWR-427] - Concurrency Issue
+    * [DWR-443] - DWR 2.x implementation of the $ function does not safely check if the name is already bound in Internet Explorer
+

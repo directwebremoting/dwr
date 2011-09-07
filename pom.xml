@@ -1,218 +1,102 @@
-<!-- 
-    Build:
-    mvn clean install - generates the binary and source artifacts for all modules.    
-    
-    Site:
-    mvn site:stage - This will aggregate the site info from each module and 
-                     output the site to /target/site. Note using mvn site:site
-                     does not work as the links between module sites will not work.
-    mvn site:stage-deploy - You will need to add a server with the id of stagingSite to 
-                            your settings.xml to deploy the site.  The server section 
-                            requires your username/password for the dojo server our 
-                            website is deployed to.
-                            <server>
-                              <id>stagingSite</id>
-                              <username>yourusername</username>
-                              <password>yourpassword</password>
-                            </server>                     
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
-  <packaging>pom</packaging>
-  <version>3.0.0-rc2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <version>2.0.6</version>
   <name>Direct Web Remoting</name>
-  <url>http://directwebremoting.org/dwr/index.html</url>
-  <!-- For the sonatype repo -->
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>6</version>
-  </parent>
-  <!-- Required so that Maven knows where to get the jms.jar http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html -->
-  <repositories>  
-    <repository>
-      <id>repository.jboss.org-public</id>
-      <name>JBoss repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
+  <url>http://getahead.org/dwr</url>
+
   <developers>
     <developer>
-      <name>David Marginian</name>
-      <id>david_marginian</id>
-    </developer>
-    <developer>
-      <name>Mike Wison</name>
-      <id>mike_wilson</id>
+      <name>Joe Walker</name>
+      <id>joe_walker</id>
     </developer>
   </developers>
+
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+
   <scm>
-    <connection>scm:svn:http://svn.directwebremoting.org/dwr/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/trunk/</developerConnection>
-    <url>http://svn.directwebremoting.org/dwr/trunk/</url>
+    <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dwr</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@cvs.dev.java.net:/cvs:dwr</developerConnection>
+    <url>https://dwr.dev.java.net/source/browse/dwr/</url>
   </scm>
+  
   <description>
-	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
-	It gets rid of almost all the boiler plate code between the web browser and your Java code.
+    DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript. 
+    It gets rid of almost all the boiler plate code between the web browser and your Java code.
   </description>
-  <ciManagement>
-    <system>Bamboo</system>
-    <url>http://ci.directwebremoting.org/bamboo/</url>
-  </ciManagement>  
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://directwebremoting.org/bugs/</url>
-  </issueManagement>   
-  <mailingLists>
-    <mailingList>
-      <name>Users Mailing List</name>
-      <subscribe>sympa@dwr.java.net?subject=subscribe users</subscribe>
-      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe users</unsubscribe>
-      <post>users@dwr.java.net</post>
-      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
-    </mailingList>
-    <mailingList>
-      <name>Users Mailing List</name>
-      <subscribe>sympa@dwr.java.net?subject=subscribe dev</subscribe>
-      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe dev</unsubscribe>
-      <post>dev@dwr.java.net</post>
-      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
-    </mailingList>
-  </mailingLists>  
-  <modules>
-    <module>core</module>
-    <module>demo</module>
-    <module>noncla</module>
-    <module>protocol/bayeux</module>
-    <module>protocol/dwrp</module>
-    <module>protocol/json</module>
-    <module>serverside/guice</module>
-    <module>serverside/hibernate</module>
-    <module>serverside/hibernate2</module>
-    <module>serverside/spring</module>
-    <module>serverside/struts</module>
-    <module>serverside/various</module>
-    <module>serverside/webwork</module>
-    <module>ui/dojo</module>
-    <module>ui/dwr</module>
-    <module>ui/gi</module>
-    <module>ui/jaxer</module>
-    <module>ui/scriptaculous</module>
-  </modules>
-  <!-- This section 'declares' all the libraries we're using in the project 
-		with the corresponding version numbers. 'sub-projects' should not ever need 
-		to specify a version only declare the dependency. -->
+  
+  <!-- Eventually would like to break into modules -->
   <dependencyManagement>
-    <dependencies>     
-      <dependency>
-        <groupId>aopalliance</groupId>
-        <artifactId>aopalliance</artifactId>
-        <version>1.0</version>
-      </dependency>
+
+    <dependencies>
+
       <dependency>
         <groupId>backport-util-concurrent</groupId>
         <artifactId>backport-util-concurrent</artifactId>
         <version>1.1_01</version>
       </dependency>
+
       <dependency>
         <groupId>bsf</groupId>
         <artifactId>bsf</artifactId>
         <version>2.3.0</version>
       </dependency>
+
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
+        <version>1.0.4</version>
       </dependency>
-      <dependency>
-        <groupId>commons-fileupload</groupId>
-        <artifactId>commons-fileupload</artifactId>
-        <version>1.2.1</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>1.4</version>
-      </dependency>
+
       <dependency>
         <groupId>dom4j</groupId>
         <artifactId>dom4j</artifactId>
         <version>1.6.1</version>
       </dependency>
+
       <dependency>
         <groupId>jdom</groupId>
         <artifactId>jdom</artifactId>
         <version>1.0</version>
       </dependency>
-      <dependency>
-        <groupId>javax.jms</groupId>
-        <artifactId>jms</artifactId>
-        <version>1.1</version>
-      </dependency>      
-      <dependency>
-        <groupId>javax.el</groupId>
-        <artifactId>el-api</artifactId>
-        <version>2.2</version>
-      </dependency>       
+
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jsp-api</artifactId>
         <version>2.0</version>
         <scope>provided</scope>
       </dependency>
+
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
+        <version>2.4</version>
         <scope>provided</scope>
       </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>1.6</version>
-      </dependency>
+
       <dependency>
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>2.0.8</version>
       </dependency>
+
       <dependency>
         <groupId>opensymphony</groupId>
         <artifactId>webwork</artifactId>
         <version>2.2.2</version>
       </dependency>
-	  <!-- 2.4.6 depends on rhino js.jar 1.6R7 and comes bundled with over-ridden Rhino classes and does not work with 1.7R1 -->
-      <dependency>
-        <groupId>com.yahoo.platform.yui</groupId>
-        <artifactId>yuicompressor</artifactId>		
-        <version>2.4.6</version>
-      </dependency>
-	  <!-- Shrinksafe depends on rhino js.jar 1.7R1 and does not work with 1.6R7 -->
-	  <dependency>
-	    <groupId>org.dojotoolkit</groupId>
-		<artifactId>dojo-shrinksafe</artifactId>
-		<version>1.6.1</version>
-	  </dependency>	  
-	  <!-- See comments above on the yuicompressor and shrinksafe dependencies -->
-	  <dependency>
-	    <groupId>rhino</groupId>
-		<artifactId>js</artifactId>
-		<version>1.6R7</version>
-	  </dependency>    
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-continuation</artifactId>
-        <scope>provided</scope>
-        <version>7.0.1.v20091125</version>
-      </dependency>
+
       <dependency>
         <groupId>xom</groupId>
         <artifactId>xom</artifactId>
@@ -263,13 +147,11 @@
             <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
+
       </dependency>
-      <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>catalina</artifactId>
-        <version>6.0.16</version>
-      </dependency>
-      <!-- Libraries we integrate with -->
+
+      <!--  Libraries we integrate with -->
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate</artifactId>
@@ -281,237 +163,265 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
-        <groupId>hibernate</groupId>
-        <artifactId>hibernate</artifactId>
-        <version>2.1.7c</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
+
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
         <artifactId>myfaces-api</artifactId>
-        <version>2.0.2</version>
+        <version>1.1.2</version>
       </dependency>
+
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-        <version>2.5.5</version>
+        <artifactId>spring</artifactId>
+        <version>2.0</version>
       </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-beans</artifactId>
-        <version>2.5.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>2.5.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-webmvc</artifactId>
-        <version>2.5.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-		<artifactId>spring-mock</artifactId>
-		<version>2.0.6</version>
-      </dependency>
+
       <dependency>
         <groupId>struts</groupId>
         <artifactId>struts</artifactId>
         <version>1.2.9</version>
       </dependency>
-      <dependency>
-        <groupId>com.google.code.guice</groupId>
-        <artifactId>guice</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <!-- Jetty -->
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>cometd-api</artifactId>
-        <version>0.9.20080221</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>cometd-bayeux</artifactId>
-        <version>7.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty</artifactId>
-        <version>7.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-util</artifactId>
-        <version>7.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xmlbeans</groupId>
-        <artifactId>xmlbeans</artifactId>
-        <version>2.2.0</version>
-      </dependency>
-      <!-- Testing dependencies -->
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.8</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymockclassextension</artifactId>
-        <version>2.4</version>
-        <scope>test</scope>
-      </dependency>
-      <!-- Demo Dependencies -->
-      <dependency>
-        <groupId>com.lowagie</groupId>
-        <artifactId>itext</artifactId>
-        <version>2.0.7</version>
-      </dependency>
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.12</version>
-      </dependency>  
+
     </dependencies>
-  </dependencyManagement>  
+
+  </dependencyManagement>
+
+  <!--  Eventually this section should be moved to the child of each module -->
+  <dependencies>
+
+    <dependency>
+      <groupId>backport-util-concurrent</groupId>
+      <artifactId>backport-util-concurrent</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>bsf</groupId>
+      <artifactId>bsf</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>xom</groupId>
+      <artifactId>xom</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Libraries we integrate with-->
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>2.1.7c</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>3.2.0.ga</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>webwork</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>struts</groupId>
+      <artifactId>struts</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+
+    <!-- Testing dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>2.0</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
   <build>
-    <pluginManagement>
-      <plugins>        
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
-          <configuration>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-            <preparationGoals>clean install</preparationGoals>
-            <arguments>-Dmaven.test.skip=true</arguments>
-            <goals>deploy</goals>
-            <useReleaseProfile>false</useReleaseProfile>
-            <remoteTagging/>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.5</version> 
-        </plugin> 	
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jxr-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
-          <configuration>
-            <outputDirectory>${project.build.directory}</outputDirectory>
-          </configuration>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <phase>package</phase>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.7.2</version>  
-          <configuration>
-            <reportsDirectory>${project.parent.build.directory}/junitReports</reportsDirectory>
-		  </configuration>       
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>       
-      </plugins>
-    </pluginManagement>
-  </build>    
-  <profiles>
-    <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>      
-    </profile>
-  </profiles>  
-  <reporting>
+
+    <directory>target/maven2</directory>
+    <outputDirectory>target/maven2/classes</outputDirectory>
+    <testOutputDirectory>target/maven2/test-classes</testOutputDirectory>
+
+    <sourceDirectory>java</sourceDirectory>
+
+    <resources>
+      <!--  Include spring.handler and spring.schemas files  -->
+      <resource>
+        <directory>etc/classpath</directory>
+        <includes>
+          <include>**/spring.*</include>
+        </includes>
+        <excludes>
+          <exclude>**/log4j.properties</exclude>
+        </excludes>
+      </resource>
+
+      <!--  Include javascript, xsd files etc  -->
+      <resource>
+        <directory>java</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+    </testResources>
+
     <plugins>
       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>         
-         <artifactId>maven-javadoc-plugin</artifactId>
-         <version>2.7</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
       </plugin>
-      <plugin>  
-        <groupId>net.sf.dtddoc</groupId>
-	    <artifactId>dtddoc-maven-plugin</artifactId> 
-	    <version>1.1</version>
-          <configuration>
-            <docTitle>DWR DTD Docs</docTitle>            
-            <showHiddenTags>false</showHiddenTags>
-            <showFixmeTags>false</showFixmeTags>
-            <sourceDirectory>${project.build.directory}</sourceDirectory>
-            <outputDirectory>dtd</outputDirectory>
-            <include name="**/*.dtd" />
-            <excludes name="common/*.dtd" />
-          </configuration>
-	  </plugin>   
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Tests.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+      <!-- Turn the bytecode into 1.4 compliant bytecode -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>retrotranslator-maven-plugin</artifactId>
+        <version>1.0-alpha-1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>translate</goal>
+            </goals>
+            <configuration>
+              <verify>false</verify>
+              <failonwarning>true</failonwarning>
+              <lazy>true</lazy>
+              <verbose>false</verbose>
+              <destjar>${pom.basedir}/target/maven2/${pom.artifactId}-${pom.version}-java14.jar</destjar>
+              <includes>
+                <include>
+                  <directory>${pom.basedir}/target/maven2</directory>
+                  <pattern>${pom.artifactId}-${pom.version}.jar</pattern>
+                </include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
-  </reporting>  
-  <distributionManagement>
-    <downloadUrl>http://directwebremoting.org/dwr/mvn_site</downloadUrl>
-    <site>
-      <id>dwr.website</id>
-      <name>DWR Website</name>
-      <url>scp://directwebremoting.org/srv/www/vhosts/www.directwebremoting.org/dwr/mvn_site</url>
-    </site>    
-  </distributionManagement>  
+
+  </build>
+
+  <reporting>
+
+    <outputDirectory>target/maven2/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+          <showSuccess>false</showSuccess>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>corbertura-maven-plugin</artifactId>
+      </plugin>
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <rulesets>
+            <ruleset>etc/pmd/custom.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>etc/checkstyle/custom.xml</configLocation>
+        </configuration>
+      </plugin>
+      -->
+    </plugins>
+
+  </reporting>
+
 </project>
