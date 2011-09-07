@@ -15,6 +15,9 @@
  */
 package org.directwebremoting.server.grizzly;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -145,7 +148,9 @@ public class GrizzlyContinuationSleeper implements Sleeper
                     // Flush bytes (if any) first before resuming as
                     // Grizzly Comet isn't allowing writes once the
                     // continuation is resumed.
-                    onAwakening.run();
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+                    Future<?> submit = executor.submit(onAwakening);
+                    submit.get();
                     continuation.resume();
                 }
                 catch (Exception ex)
