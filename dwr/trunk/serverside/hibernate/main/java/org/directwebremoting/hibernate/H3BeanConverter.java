@@ -216,7 +216,7 @@ public class H3BeanConverter extends BeanConverter
     /**
      * The cache of method lookups that we've already done
      */
-    protected final ConcurrentMap<String, Method> methods = new ConcurrentHashMap<String, Method>();
+    private final ConcurrentMap<String, Method> methods = new ConcurrentHashMap<String, Method>();
 
     /**
      * The log stream
