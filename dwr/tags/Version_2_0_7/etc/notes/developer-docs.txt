@@ -1,0 +1,17 @@
+
+DWR is comprised of a number of components that are designed to be as separate as possible. They are:
+- AccessControl. What methods are remote systems allowed to access?
+- ConverterManager. Provides DWRP <-> Java conversion. (It is likely that we will have a Marshaller interface which wraps this at some stage because ConverterManager is tied to DWRP)
+- CreatorManager. In charge of deciding what classes to remote
+- WebContextBuilder. DWR allows execution of arbitary methods. These methods may like some context about how they have been invoked.
+- AjaxFilterManager. Allows filters to key into the invocation process.
+
+- Processor. Actually process an inbout request.
+
+These components are registered in an IoC container (which is itself abstracted via a Container interface)
+
+The startup process.
+
+The first step is to initialize the IoC container. This must be the first step because it is expected that some usages of DWR (like Spring for example) will use an external IoC container, so IoC container setup may be outside the control of DWR.
+
+It is recognized that there are some limitations in simply leaving that to be the only part of the configuration process. In the Spring case it would require a very verbose config file since DWR needs to provide a default config that users then build upon. 
