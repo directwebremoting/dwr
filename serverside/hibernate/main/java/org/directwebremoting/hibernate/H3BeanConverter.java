@@ -22,6 +22,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -176,23 +178,25 @@ public class H3BeanConverter extends BeanConverter
     protected Method findGetter(Object data, String property) throws IntrospectionException
     {
         Class<?> clazz = getClass(data);
-        // String key = clazz.getName() + ":" + property;
-
-        Method method = null; // methods.get(key);
-        // if (method == null)
-        // {
-            PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+        String key = clazz.getName() + ":" + property;
+        Method method = methods.get(key);
+        if (method == null)
+        {
+            Method newMethod = null;
+        	PropertyDescriptor[] props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
             for (PropertyDescriptor prop : props)
             {
                 if (prop.getName().equalsIgnoreCase(property))
                 {
-                    method = prop.getReadMethod();
+                    newMethod = prop.getReadMethod();
                 }
+            }            
+            method = methods.putIfAbsent(key, newMethod);
+            if (method == null) {
+                // put succeeded, use new value
+                method = newMethod;
             }
-
-            // methods.put(key, method);
-        // }
-
+        }
         return method;
     }
 
@@ -212,7 +216,7 @@ public class H3BeanConverter extends BeanConverter
     /**
      * The cache of method lookups that we've already done
      */
-    //protected final Map<String, Method> methods = new HashMap<String, Method>();
+    protected final ConcurrentMap<String, Method> methods = new ConcurrentHashMap<String, Method>();
 
     /**
      * The log stream
