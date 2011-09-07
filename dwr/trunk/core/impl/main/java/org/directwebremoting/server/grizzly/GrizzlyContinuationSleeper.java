@@ -142,11 +142,9 @@ public class GrizzlyContinuationSleeper implements Sleeper
             {
                 try
                 {
-                    // Flush bytes if any first as before resuming the
-                    // as Grizzly Comet isn't allowing writes once the
+                    // Flush bytes (if any) first before resuming as
+                    // Grizzly Comet isn't allowing writes once the
                     // continuation is resumed.
-                    // This can be achieved using Grizzly CometHandler,
-                    // which isn't exposed with DWR.
                     onAwakening.run();
                     continuation.resume();
                 }
