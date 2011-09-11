@@ -1,12 +1,19 @@
 function update() {
-   var name = dojo.byId("demoName").value;
-   dojo.xhrGet({
-   // The following URL must match that used to test the server.
-      url: "../../../dwr/jsonp/Demo/sayHello/" + name,
-      handleAs: "json",
-      load: function(responseObject, ioArgs) {
-         // Now you can just use the object
-         dojo.byId("demoReply").innerHTML = responseObject.reply;
-      }
-  });
+	var services = new dojox.rpc.Service({
+	    target:"../../../dwr/jsonrpc",
+	    transport:"POST",
+	    envelope:"JSON-RPC-1.0",
+	    contentType:"application/json",
+	    services:{
+	        "Demo.sayHello":{
+	            returns:{"type":"string"},
+	            parameters:[{"type":"string"}]
+	        }
+	    }
+	});	
+	var name = dojo.byId("demoName").value;
+    var deferred = services.Demo.sayHello(name);
+    deferred.addCallback(function(result) {
+        dojo.byId("demoReply").innerHTML = result;
+    });
 }
