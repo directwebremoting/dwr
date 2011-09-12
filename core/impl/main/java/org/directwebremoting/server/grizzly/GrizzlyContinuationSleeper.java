@@ -150,14 +150,16 @@ public class GrizzlyContinuationSleeper implements Sleeper
                     // continuation is resumed.
                     ExecutorService executor = Executors.newFixedThreadPool(1);
                     Future<?> submit = executor.submit(onAwakening);
-                    // Wait for onAwakening to complete.
-                    submit.get();
-                    // It is now ok to resume.
-                    continuation.resume();
+                    if (!Thread.currentThread().isInterrupted()) {
+	                    // Wait for onAwakening to complete.
+	                    submit.get();
+	                    // It is now ok to resume.
+	                    continuation.resume();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    log.error("Broken reflection", ex);
+                    log.error("Exception resuming continuation: ", ex);
                 }
             }
             else
