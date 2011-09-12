@@ -157,6 +157,11 @@ public class GrizzlyContinuationSleeper implements Sleeper
 	                    continuation.resume();
                     }
                 }
+                catch (InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
                 catch (Exception ex)
                 {
                     log.error("Exception resuming continuation: ", ex);
