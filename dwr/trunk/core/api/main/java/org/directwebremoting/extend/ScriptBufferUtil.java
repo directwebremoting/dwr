@@ -102,7 +102,7 @@ public class ScriptBufferUtil
 
         // Real JSON must be wrapped in { }
         String output = buffer.toString();
-        if (jsonOutput && (!output.startsWith("{") || !output.startsWith("[")))
+        if (jsonOutput && !output.startsWith("{") && !output.startsWith("["))
         {
             if (outboundError)
             {
