@@ -39,7 +39,7 @@ dojo.declare("dwr.data.Store", null, {
         //         is fetched from the store. The options are:
         //         - subscribe: The DwrStore implements dojo.data.api.Notification but will
         //         only send updates if subscribe=true. The updates will be sent in a
-        //         timely manner iff dwr.engine.setActiveReverseAjax=true.
+        //         timely manner if dwr.engine.setActiveReverseAjax=true.
         if (storeId == null || typeof storeId != "string") {
             throw new Error("storeId is null or not a string");
         }
