@@ -43,10 +43,8 @@ public class People
     public People()
     {
         smallCrowd = createCrowd(10);
-
         MapStoreProvider<Person> provider = new MapStoreProvider<Person>(createCrowd(1000), Person.class);
         Directory.register("largeCrowd", provider);
-
         largeCrowd = provider.asMap();
     }
 
