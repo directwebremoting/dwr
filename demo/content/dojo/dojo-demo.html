@@ -44,7 +44,7 @@
 			<a href="..">Web Application Index</a>
 			]</div>
 		<h1>DWR + Dojo Demo</h1>
-		<div id="mainTabContainer" dojotype="dijit.layout.TabContainer" style="width:90%;height:500px">
+		<div id="mainTabContainer" dojotype="dijit.layout.TabContainer" style="width:90%;height:600px">
 			<div id="demoDiv" dojotype="dijit.layout.ContentPane" title="Demo">
 				<table id="grid" dojotype="dojox.grid.DataGrid" autowidth="true" style="width:650px;height:380px" summary="layout table">
 					<thead>
@@ -103,13 +103,13 @@
 				</pre>
 				<p>All that's needed to initialize this is the following:</p>
 				<pre>
-					var dwrStore, grid;
-					dojo.addOnLoad(function() {
-					dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
-					grid = dijit.byId("grid");
-					grid.setStore(dwrStore);
-					dwr.engine.setActiveReverseAjax(true);
-					});
+var dwrStore, grid;
+dojo.addOnLoad(function() {
+  dwrStore = new dwr.data.Store("largeCrowd", { subscribe:true });
+  grid = dijit.byId("grid");
+  grid.setStore(dwrStore);
+  dwr.engine.setActiveReverseAjax(true);
+});
 				</pre>
 				<p>Here we create a new Store passing it the name of our Provider (from 
 					People.java). The DwrStore implements dojo.data.api.Notification but will only send updates 
