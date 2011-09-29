@@ -24,6 +24,14 @@
     </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>main/java</directory>
+        <includes>
+          <include>org/directwebremoting/dojo/*.js</include>
+        </includes>
+      </resource>
+    </resources>
     <sourceDirectory>${project.basedir}/main/java</sourceDirectory>
     <plugins>
       <plugin>
