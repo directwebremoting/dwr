@@ -21,7 +21,7 @@
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.0-rc2-SNAPSHOT</version>
+  <version>3.0.0-rc3-SNAPSHOT</version>
   <name>Direct Web Remoting</name>
   <url>http://directwebremoting.org/dwr/index.html</url>
   <!-- For the sonatype repo -->
