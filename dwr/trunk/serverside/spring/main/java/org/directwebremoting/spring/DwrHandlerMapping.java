@@ -56,6 +56,7 @@ public class DwrHandlerMapping extends SimpleUrlHandlerMapping {
 		mappings.put("/download/**", handler);
 		mappings.put("/jsonp/**", handler);
 		mappings.put("/jsonrpc/**", handler);
+		mappings.put("/data/Store.js", handler);
 		if (log.isDebugEnabled())
 		{
 			log.info("[engine.js] mapped to dwrController");
