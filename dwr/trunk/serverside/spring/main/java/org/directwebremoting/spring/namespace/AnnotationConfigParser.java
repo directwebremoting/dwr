@@ -35,5 +35,10 @@ public class AnnotationConfigParser extends AbstractSimpleBeanDefinitionParser
     {
         return DwrAnnotationPostProcessor.class;
     }
+    
+    @Override
+    protected boolean shouldGenerateIdAsFallback() {
+        return true;
+    }
 
 }
