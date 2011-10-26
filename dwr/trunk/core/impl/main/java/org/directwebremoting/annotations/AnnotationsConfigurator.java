@@ -34,6 +34,7 @@ import org.directwebremoting.extend.Converter;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.util.ClasspathScanner;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
 
@@ -86,14 +87,30 @@ public class AnnotationsConfigurator implements Configurator
                         continue;
                     }
 
-                    try
-                    {
-                        Class<?> clazz = LocalUtil.classForName(element);
-                        classes.add(clazz);
-                    }
-                    catch (Exception ex)
-                    {
-                        Loggers.STARTUP.error("Failed to process class: " + element, ex);
+                    if (element.endsWith(".*")) {
+                        try {
+                            String packageName = element.substring(0, element.length() - 2);
+                            Set<String> classesInPackage = new ClasspathScanner(packageName, false).getClasses();
+                            for (String className : classesInPackage) {
+                                Class<?> clazz = LocalUtil.classForName(className);
+                                classes.add(clazz);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Loggers.STARTUP.error("Failed to process package: " + element, ex);
+                            continue;
+                        }
+                    } else {
+                        try
+                        {
+                            Class<?> clazz = LocalUtil.classForName(element);
+                            classes.add(clazz);
+                        }
+                        catch (Exception ex)
+                        {
+                            Loggers.STARTUP.error("Failed to process class: " + element, ex);
+                        }
                     }
                 }
             }
