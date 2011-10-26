@@ -87,10 +87,11 @@ public class AnnotationsConfigurator implements Configurator
                         continue;
                     }
 
-                    if (element.endsWith(".*")) {
+                    if (element.endsWith(".*") || element.endsWith(".**")) {
                         try {
-                            String packageName = element.substring(0, element.length() - 2);
-                            Set<String> classesInPackage = new ClasspathScanner(packageName, false).getClasses();
+                            boolean recursive = element.endsWith(".**");
+                            String packageName = element.substring(0, element.length() - 2 - (recursive ? 1 : 0));
+                            Set<String> classesInPackage = new ClasspathScanner(packageName, recursive).getClasses();
                             for (String className : classesInPackage) {
                                 Class<?> clazz = LocalUtil.classForName(className);
                                 classes.add(clazz);
