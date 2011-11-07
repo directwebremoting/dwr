@@ -19,10 +19,10 @@ import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.util.LocalUtil;
 
 /**
- * A handler for DTO class generation requests compatible with the CommonJS AMD module format.
+ * A handler for DTO class generation requests compatible with the AMD module format.
  * @author Mike Wilson [mikewse at hotmail dot com]
  */
-public class CommonJsAmdDtoHandler extends BaseDtoHandler
+public class AmdDtoHandler extends BaseDtoHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.BaseDtoHandler#getBaseDtoPath()
@@ -30,7 +30,7 @@ public class CommonJsAmdDtoHandler extends BaseDtoHandler
     @Override
     protected String getBaseDtoPath()
     {
-        return commonJsAmdDtoHandlerUrl;
+        return amdDtoHandlerUrl;
     }
 
     /* (non-Javadoc)
@@ -47,11 +47,11 @@ public class CommonJsAmdDtoHandler extends BaseDtoHandler
             NamedConverter namedConv = converterManager.getNamedConverter(jsClassName);
             String jsSuperClassName = namedConv.getJavascriptSuperClass();
 
-            CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
-            mod.addDependency(commonJsAmdDwrBaseModulePath, "engine", "dwr");
+            AmdModule mod = new AmdModule(contextPath, servletPath);
+            mod.addDependency(amdDwrBaseModulePath, "engine", "dwr");
             if (LocalUtil.hasLength(jsSuperClassName))
             {
-                mod.addDependency(commonJsAmdDtoBaseModulePath, jsSuperClassName, "parent");
+                mod.addDependency(amdDtoBaseModulePath, jsSuperClassName, "parent");
             }
 
             mod.addContent("  var c;\n");
@@ -79,43 +79,43 @@ public class CommonJsAmdDtoHandler extends BaseDtoHandler
 
     /**
      * Setter for the URL that this handler is available on
-     * @param commonJsAmdDtoHandlerUrl the dtoHandlerUrl to set
+     * @param amdDtoHandlerUrl the dtoHandlerUrl to set
      */
-    public void setCommonJsAmdDtoHandlerUrl(String commonJsAmdDtoHandlerUrl)
+    public void setAmdDtoHandlerUrl(String amdDtoHandlerUrl)
     {
-        this.commonJsAmdDtoHandlerUrl = commonJsAmdDtoHandlerUrl;
+        this.amdDtoHandlerUrl = amdDtoHandlerUrl;
     }
 
     /**
      * Setter for the module path that dwr.engine is on
      * @param modulePath the modulePath to set
      */
-    public void setCommonJsAmdDwrBaseModulePath(final String modulePath)
+    public void setAmdDwrBaseModulePath(final String modulePath)
     {
-        commonJsAmdDwrBaseModulePath = modulePath;
+        amdDwrBaseModulePath = modulePath;
     }
 
     /**
      * Setter for the module path that DTO is on
      * @param modulePath the modulePath to set
      */
-    public void setCommonJsAmdDtoBaseModulePath(final String modulePath)
+    public void setAmdDtoBaseModulePath(final String modulePath)
     {
-        commonJsAmdDtoBaseModulePath = modulePath;
+        amdDtoBaseModulePath = modulePath;
     }
 
     /**
      * What URL is this handler available on?
      */
-    protected String commonJsAmdDtoHandlerUrl;
+    protected String amdDtoHandlerUrl;
 
     /**
      * What module path is dwr.engine on?
      */
-    protected String commonJsAmdDwrBaseModulePath;
+    protected String amdDwrBaseModulePath;
 
     /**
      * What module path are DTOs on?
      */
-    protected String commonJsAmdDtoBaseModulePath;
+    protected String amdDtoBaseModulePath;
 }
