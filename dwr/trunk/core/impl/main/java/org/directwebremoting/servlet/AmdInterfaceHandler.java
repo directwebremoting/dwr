@@ -16,10 +16,10 @@
 package org.directwebremoting.servlet;
 
 /**
- * A handler for interface generation requests compatible with CommonJS AMD format.
+ * A handler for interface generation requests compatible with AMD format.
  * @author Mike Wilson
  */
-public class CommonJsAmdInterfaceHandler extends BaseInterfaceHandler
+public class AmdInterfaceHandler extends BaseInterfaceHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.BaseInterfaceHandler#getBaseInterfacePath()
@@ -27,7 +27,7 @@ public class CommonJsAmdInterfaceHandler extends BaseInterfaceHandler
     @Override
     protected String getBaseInterfacePath()
     {
-        return commonJsAmdInterfaceHandlerUrl;
+        return amdInterfaceHandlerUrl;
     }
 
     /* (non-Javadoc)
@@ -36,8 +36,8 @@ public class CommonJsAmdInterfaceHandler extends BaseInterfaceHandler
     @Override
     public String generateInterfaceScript(String contextPath, String servletPath, String scriptName)
     {
-        CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
-        mod.addDependency(commonJsAmdDwrBaseModulePath, "engine", "dwr");
+        AmdModule mod = new AmdModule(contextPath, servletPath);
+        mod.addDependency(amdDwrBaseModulePath, "engine", "dwr");
 
         mod.addContent("  var p;\n");
         mod.addContent("\n");
@@ -55,27 +55,27 @@ public class CommonJsAmdInterfaceHandler extends BaseInterfaceHandler
      * Setter for the URL that this handler is available on
      * @param url the url to set
      */
-    public void setCommonJsAmdInterfaceHandlerUrl(final String url)
+    public void setAmdInterfaceHandlerUrl(final String url)
     {
-        commonJsAmdInterfaceHandlerUrl = url;
+        amdInterfaceHandlerUrl = url;
     }
 
     /**
      * Setter for the module path that dwr.engine is on
      * @param modulePath the modulePath to set
      */
-    public void setCommonJsAmdDwrBaseModulePath(final String modulePath)
+    public void setAmdDwrBaseModulePath(final String modulePath)
     {
-        commonJsAmdDwrBaseModulePath = modulePath;
+        amdDwrBaseModulePath = modulePath;
     }
 
     /**
      * What URL is this handler available on?
      */
-    protected String commonJsAmdInterfaceHandlerUrl;
+    protected String amdInterfaceHandlerUrl;
 
     /**
      * What module path is dwr.engine on?
      */
-    protected String commonJsAmdDwrBaseModulePath;
+    protected String amdDwrBaseModulePath;
 }

@@ -18,10 +18,10 @@ package org.directwebremoting.servlet;
 import java.io.IOException;
 
 /**
- * A Handler that supports requests for engine.js compatible with the CommonJS AMD format.
+ * A Handler that supports requests for engine.js compatible with the AMD format.
  * @author Mike Wilson
  */
-public class CommonJsAmdEngineHandler extends BaseEngineHandler
+public class AmdEngineHandler extends BaseEngineHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.FileJavaScriptHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -29,7 +29,7 @@ public class CommonJsAmdEngineHandler extends BaseEngineHandler
     @Override
     protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
+        AmdModule mod = new AmdModule(contextPath, servletPath);
 
         // Local variable to capture the DWR namespace
         mod.addContent("var dwr;\n");

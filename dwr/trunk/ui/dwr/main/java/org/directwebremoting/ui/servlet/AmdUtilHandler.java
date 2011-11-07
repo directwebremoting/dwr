@@ -17,13 +17,13 @@ package org.directwebremoting.ui.servlet;
 
 import java.io.IOException;
 
-import org.directwebremoting.servlet.CommonJsAmdModule;
+import org.directwebremoting.servlet.AmdModule;
 
 /**
- * A Handler that supports requests for util.js compatible with the CommonJS AMD format.
+ * A Handler that supports requests for util.js compatible with the AMD format.
  * @author Mike Wilson
  */
-public class CommonJsAmdUtilHandler extends BaseUtilHandler
+public class AmdUtilHandler extends BaseUtilHandler
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.servlet.FileJavaScriptHandler#generateTemplate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -31,7 +31,7 @@ public class CommonJsAmdUtilHandler extends BaseUtilHandler
     @Override
     protected String generateTemplate(String contextPath, String servletPath, String pathInfo) throws IOException
     {
-        CommonJsAmdModule mod = new CommonJsAmdModule(contextPath, servletPath);
+        AmdModule mod = new AmdModule(contextPath, servletPath);
         final StringBuilder buf = new StringBuilder();
 
         // Local variable to capture the DWR namespace

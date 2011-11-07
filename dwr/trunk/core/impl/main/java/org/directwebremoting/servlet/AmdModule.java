@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class that abstracts the generation of CommonJS AMD script modules.
+ * A class that abstracts the generation of AMD script modules.
  * @author Mike Wilson [mikewse at hotmail dot com]
  */
-public class CommonJsAmdModule extends BaseModule
+public class AmdModule extends BaseModule
 {
     /**
      * Constructor. Path parameters are supplied for expanding path variables in
@@ -30,7 +30,7 @@ public class CommonJsAmdModule extends BaseModule
      * @param contextPath
      * @param servletPath
      */
-    public CommonJsAmdModule(String contextPath, String servletPath)
+    public AmdModule(String contextPath, String servletPath)
     {
         super(contextPath, servletPath, "/");
     }
