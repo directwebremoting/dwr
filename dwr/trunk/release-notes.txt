@@ -2,121 +2,209 @@
 RELEASE NOTES
 =============
 
-This file contains partially formed release notes for the 3.0.RC2.
+This file contains partially formed release notes for the 3.0 RC3 version.
 Many changes will have been properly recorded in the bug tracking system.
 
 Potentially Breaking Changes
 ----------------------------
-1) engine.js must now be included before any DWR interface scripts.
-2) If you are using Jetty 6 with reverse AJAX you will need to either upgrade to Jetty 7+ or follow the directions here:
-   http://www.butterdev.com/dwr/2010/01/dwr-3-x-and-jetty-continuations-on-jetty-6-x/.  Due to changes in the Jetty Continuation
-   API.
 
-Release Notes - DWR - Version 3.0.RC2
+3.0 RC3:
+  * The AMD module format introduced in 3.0 RC2 has changed path mapping from /commonjs/amd to /amd (all references to CommonJS 
+    AMD has been replaced with just AMD due to the AMD specification being split off from CommonJS).
 
-** Bug
-    * [DWR-117] - AnnotationsConfigurator: Error when I specify "scope" but don't specify "javascript"
-    * [DWR-197] - Unable to override context path for static engine.js
-    * [DWR-205] - jms dependency missing from pom.xml
-    * [DWR-208] - normal remote calls are delayed (waiting for reverse ajax polls) when using setOrdered(true)
-    * [DWR-281] - Tomcat does not shutdown because on non-daemon threads
-    * [DWR-283] - DWR considers a URL with ;jsessionid=... to be different than a URL without it
-    * [DWR-294] - test suite does not test security properly
-    * [DWR-307] - <dwr:auth> works different as <auth> in dwr.xml
-    * [DWR-319] - jsessionid isn't properly matched when a '#' exists in URL
-    * [DWR-329] - Browser.withSession runs against all sessions and not the specified one
-    * [DWR-330] - DefaultCreatorManager.addCreator(String, String, Map) ignores scriptName parameter
-    * [DWR-331] - File upload does not work in google chrome
-    * [DWR-337] - warningHandler used when server is down.
-    * [DWR-338] - setActiveReverseAjax creates a new ScriptSession but the previous one is not timed out
-    * [DWR-340] - ScriptSessions.addFunctionCall overzealous
-    * [DWR-343] - Conversion of generic method implementation fails
-    * [DWR-344] - File upload - Now fails with error "Failed to fnid parameter: windowName"
-    * [DWR-347] - listerns are null AbstractMapProvider.fireItemAdded()
-    * [DWR-349] - Pair class doesn't implement equals() correctly for class MapStoreProvider$Index
-    * [DWR-350] - org.directwebremoting.dwrp.Batch.parseBasicPost() corrupts non-ascii data
-    * [DWR-354] - Any ScriptSessions method causes a crash from a web method
-    * [DWR-364] - Reverse ajax polling starts before a script session id is determined
-    * [DWR-367] - util.js - cloneNode does not work with suffix of 0.
-    * [DWR-383] - Deadlock
-    * [DWR-388] - JSON - Array wrapped in reply
-    * [DWR-392] - Scripted creator fails
-    * [DWR-394] - Yahoo Compressor being used but the Yahoo Compression library is not on the classpath
-    * [DWR-395] - dijit.form.ComboBox doesn't render from dwr.data.Store
-    * [DWR-400] - JSON RPC test not working
-    * [DWR-405] - DownloadHandler does not set content-length
-    * [DWR-406] - UTF-8 is unrecognized in POST data
-    * [DWR-407] - Deadlock Between DefaultScriptSessionManager and DefaultScriptSession During Invalidate()
-    * [DWR-409] - Changing configuration flag debug to false breaks DWR
-    * [DWR-418] - IE insecure items message appears when trying to upload a file (via FileTransfer)
-    * [DWR-419] - Introspector fails to find setter even if present
-    * [DWR-420] - ScriptSessions.addFunctionCall overzealous again
-    * [DWR-422] - JsonArray does not initialize private proxy field
-    * [DWR-423] - Tomcat 6 Comet Support - TomcatContainerAbstraction not native
-    * [DWR-426] - DefaultWebContextBuilder disengageThread throws null pointer exception
-    * [DWR-427] - Concurrency Issue
-    * [DWR-430] - A dwr.xml converter pattern which works with jboss4.2.2.GA does not work with jboss5.1.0.GA
-    * [DWR-431] - class loading in DefaultConverterManager
-    * [DWR-437] - More Concurrency Issues
-    * [DWR-441] - NullPointer in DefaultRemoter when calling a static method
-    * [DWR-446] - A timeout with id 0 is not cleared
-    * [DWR-447] - pom.xml invalid for dwr-ui-dwr
-    * [DWR-458] - Jetty Continuation - calling resume on an expired Continuation
-    * [DWR-467] - WarningHandler triggered on page unload
-    * [DWR-468] - addRows uses numRows vs. numCols to generate the td elements
-    * [DWR-470] - Multiple Servlet Mappings and Caching
-    * [DWR-473] - Deadlock
-    * [DWR-476] - @Filter annotation ignored
-    * [DWR-484] - StackOverflowError when combining ScriptSessionBindingListener with getAttribute()
-    * [DWR-492] - MaxWaitAfterWrite -1 and IE
-    * [DWR-493] - Posthooks never called when remoting via script tags
-    * [DWR-497] - Relative URLs set isCrossDomain erroneously to true
-    * [DWR-502] - DefaultServerLoadMonitor is not thread safe
-    * [DWR-504] - Wrong order of XML elements in description
-    * [DWR-506] - We have recently upgraded our weblogic version from 9.2 to 9.2.4 on admin side get error pop as session error
-    * [DWR-507] - error handler is not called after timeout when using file upload
-    * [DWR-518] - variable not found in scope
+3.0 RC2:
+  * engine.js must now be included before any DWR interface scripts.
+  * New CSRF algorithm that uses DWRSESSIONID cookie instead of JSESSIONID.
+  * If you are using Jetty 6 with reverse AJAX you will need to either upgrade to Jetty 7+ or follow the directions here:
+    http://www.butterdev.com/dwr/2010/01/dwr-3-x-and-jetty-continuations-on-jetty-6-x/.  Due to changes in the Jetty Continuation
+    API.
 
-** Improvement
-    * [DWR-17] - improve the CSRF handling with something to solve problems with servlet filters that force the HttpSession behind DWR's back
-    * [DWR-26] - Add support for HttpOnly cookies
-    * [DWR-86] - Allow users to set an alternative error handler for polling errors and to specify a retry policy
-    * [DWR-103] -  element in dwr.xml cannot have a javascript attribute such as "aaa.bbb.CCC"
-    * [DWR-171] - Add support for reverse proxies
-    * [DWR-324] - Tweak logging outputs
-    * [DWR-336] - Allow global filters in Spring using namespace and annotations
-    * [DWR-356] - Add param to convert element in spring schema
-    * [DWR-363] - Handling server down/errors with reverse ajax
-    * [DWR-377] - dwr.engine.setParameters is misleading
-    * [DWR-381] - Configurable max file upload size
-    * [DWR-391] - Creators should support dot syntax ("package names") in JavaScript names
-    * [DWR-433] - Offer the possibility to configure the session cookie name (other than JSESSIONID)
-    * [DWR-456] - MapConverter - handle null keys
-    * [DWR-463] - Decouple DWR from Java reflection
-    * [DWR-465] - Applications sending large objects suffer from linear search in the lookup function
-    * [DWR-469] - Make it easier to shade the dwr jar (remap packages with f ex jarjar)
-    * [DWR-474] - pathToDwrServlet firebug annoyance...
-    * [DWR-485] - Namespace handler lacks ObjectConverter.setForce() support
+New Features and Improvements
+-----------------------------
 
-** New Feature
-    * [DWR-261] - Improved Exception Handling
-    * [DWR-368] - Joda DateTime and LocalDateTime Converter
-    * [DWR-382] - Creator to invoke static factory methods
-    * [DWR-399] - Include cache support to dojo store
-    * [DWR-515] - Add support for loading DWR's scripts with Dojo and CommonJS AMD loaders
-    * [DWR-516] - Allow other framework access to DWR's script generation infrastructure
+3.0 RC3:
+  * [DWR-452] - Add feature for scanning classpath for classes using DWR annotations
 
-** Task
-    * [DWR-339] - Some documentation pages need updating
-    * [DWR-357] - Integrate Reverse Ajax docs provided by Lance
-    * [DWR-358] - Add docs for Json/Jsonp
-    * [DWR-365] - Ensure all tests from testdwr.war are passing
-    * [DWR-393] - Add test for Overloaded methods to testdwr.war
-    * [DWR-404] - Add serialization test for multi-dimensional array to the test war.
-    * [DWR-412] - Update signature documentation
+3.0 RC2:
+  * [DWR-516] - Allow other framework access to DWR's script generation infrastructure
+  * [DWR-515] - Add support for loading DWR's scripts with Dojo and AMD loaders
+  * [DWR-485] - Namespace handler lacks ObjectConverter.setForce() support
+  * [DWR-474] - pathToDwrServlet firebug annoyance...
+  * [DWR-469] - Make it easier to shade the dwr jar (remap packages with f ex jarjar)
+  * [DWR-465] - Applications sending large objects suffer from linear search in the lookup function
+  * [DWR-463] - Decouple DWR from Java reflection
+  * [DWR-456] - MapConverter - handle null keys
+  * [DWR-433] - Offer the possibility to configure the session cookie name (other than JSESSIONID)
+  * [DWR-399] - Include cache support to dojo store
+  * [DWR-391] - Creators should support dot syntax ("package names") in JavaScript names
+  * [DWR-382] - Creator to invoke static factory methods
+  * [DWR-381] - Configurable max file upload size
+  * [DWR-377] - dwr.engine.setParameters is misleading
+  * [DWR-368] - Joda DateTime and LocalDateTime Converter
+  * [DWR-356] - Add param to convert element in spring schema
+  * [DWR-336] - Allow global filters in Spring using namespace and annotations
+  * [DWR-324] - Tweak logging outputs
+  * [DWR-171] - Add support for reverse proxies
+  * [DWR-26] - Add support for HttpOnly cookies
+  * [DWR-17] - improve the CSRF handling with something to solve problems with servlet filters that force the HttpSession behind DWR's back
 
-** Sub-task
-    * [DWR-371] - Marshall - Generics Implementation fails
-    * [DWR-372] - Marshall - Test Object With List Param fails
-    * [DWR-373] - Marshall - Upload Interface fails
+3.0 RC1:
+  * [DWR-295] - improve workaround for IE's buggy getElementById
+  * [DWR-271] - Avoid downloading multiple declarations of generated JavaScript classes
+  * [DWR-269] - Offer a "lighter" bi-directional class-mapping scheme & Allow alternative class-mapping schemes
+  * [DWR-267] - Avoid serializing JavaScript properties not part of Java class
+  * [DWR-264] - Annotate generated JavaScript classes with class names
+  * [DWR-263] - Generate class mapping code for superclass
+  * [DWR-260] - Add "role" attribute to <include/>
+  * [DWR-226] - Generated scripts should not polute global namespace
+  * [DWR-223] - DWR Namespace bean reference
+  * [DWR-221] - Put dwr version in engine.js & util.js
+  * [DWR-219] - __System shows up in list of exported classes. It shouldn't
+  * [DWR-200] - Improve the way DWR handles cross-domain requests
+  * [DWR-199] - Add <dwr:component-scan> functionality
+  * [DWR-187] - Pass HTTP status code to textHTMLHandler
+  * [DWR-183] - Add <dwr:annotation-config> schema handler
+  * [DWR-182] - Add <dwr:url-mapping> schema handler
+  * [DWR-179] - DWR should be log silent in normal use
+  * [DWR-174] - Open API for providing different application context than default web application context
+  * [DWR-165] - Support for converting abstract classes
+  * [DWR-140] - ScriptSessionListener
+  * [DWR-133] - Once global context beans are remoted, servlet context beans are not remoted unless a new/different dwr controller is used.
+  * [DWR-127] - dwr:remote tag should by default use parent bean id as javascript value
+  * [DWR-116] - allow more control over how a callback is called
+  * [DWR-108] - @Auth annotation only allows single value
+  * [DWR-105] - support conversion of java.net.URI as well as java.net.URL
+  * [DWR-97] - Make window close remove script sessions from the server
+  * [DWR-94] - Check that multi-dimensional arrays convert properly
+  * [DWR-92] - DWR should support plain JSON output
+  * [DWR-85] - Allow users of reverse ajax to find the contextPath so they don't need to hard code it
+  * [DWR-79] - Logging output is unhelpful
+  * [DWR-64] - Add an Apache XMLBeans Converter
+  * [DWR-46] - Create a javascript to Java reverse ajax proxy compiler
+  * [DWR-41] - Port DWR to Java5
+  * [DWR-40] - Support JMS
+  * [DWR-38] - Add clustering support through Terracotta
+  * [DWR-34] - Add support for Tomcat async servlets
+  * [DWR-33] - Enhance DWR's output when an error happens
+  * [DWR-32] - Add more agressive inline javascript compression
+  * [DWR-31] - Extend anti-script-tag protection to include reverse ajax scripts
+  * [DWR-25] - File upload: Marshalling javascript file objects
+  * [DWR-24] - Add a converter for images
+  * [DWR-18] - Make engine.js static
+  * [DWR-4] - Allow dwr.war to be unpacked into root webapp
 
+Bugfixes
+--------
+
+3.0 RC3:
+  * [DWR-530] - User set _retryIntervals being overridden by default retry intervals if set before reverse AJAX is activated
+  * [DWR-529] - Presence of Reverse AJAX and standard DWR calls may result in PollStatusHandler being called for non-polling batches
+  * [DWR-527] - Classmapping and converter ordering
+  * [DWR-526] - JSF Issue
+  * [DWR-523] - Variable "name" overridding window.name
+  * [DWR-521] - Pressing ESC in Firefox terminates Reverse Ajax connection
+  * [DWR-510] - Exception encountered when user browse away from current page
+  * [DWR-464] - org.springframework.beans.factory.parsing.BeanDefinitionParsingException: Configuration problem: Configuration problem: Id is required for element 'annotation-config' when used as a top-level tag
+  * [DWR-387] - FileUpload code saves reference to HttpSession
+
+3.0 RC2:
+  * [DWR-518] - variable not found in scope
+  * [DWR-507] - error handler is not called after timeout when using file upload
+  * [DWR-504] - Wrong order of XML elements in description
+  * [DWR-502] - DefaultServerLoadMonitor is not thread safe
+  * [DWR-497] - Relative URLs set isCrossDomain erroneously to true
+  * [DWR-493] - Posthooks never called when remoting via script tags
+  * [DWR-492] - MaxWaitAfterWrite -1 and IE
+  * [DWR-484] - StackOverflowError when combining ScriptSessionBindingListener with getAttribute()
+  * [DWR-476] - @Filter annotation ignored
+  * [DWR-473] - Deadlock
+  * [DWR-470] - Multiple Servlet Mappings and Caching
+  * [DWR-468] - addRows uses numRows vs. numCols to generate the td elements
+  * [DWR-467] - WarningHandler triggered on page unload
+  * [DWR-458] - Jetty Continuation - calling resume on an expired Continuation
+  * [DWR-447] - pom.xml invalid for dwr-ui-dwr
+  * [DWR-446] - A timeout with id 0 is not cleared
+  * [DWR-441] - NullPointer in DefaultRemoter when calling a static method
+  * [DWR-437] - More Concurrency Issues
+  * [DWR-431] - class loading in DefaultConverterManager
+  * [DWR-430] - A dwr.xml converter pattern which works with jboss4.2.2.GA does not work with jboss5.1.0.GA
+  * [DWR-427] - Concurrency Issue
+  * [DWR-426] - DefaultWebContextBuilder disengageThread throws null pointer exception
+  * [DWR-423] - Tomcat 6 Comet Support - TomcatContainerAbstraction not native
+  * [DWR-422] - JsonArray does not initialize private proxy field
+  * [DWR-419] - Introspector fails to find setter even if present
+  * [DWR-418] - IE insecure items message appears when trying to upload a file (via FileTransfer)
+  * [DWR-409] - Changing configuration flag debug to false breaks DWR
+  * [DWR-407] - Deadlock Between DefaultScriptSessionManager and DefaultScriptSession During Invalidate()
+  * [DWR-405] - DownloadHandler does not set content-length
+  * [DWR-395] - dijit.form.ComboBox doesn't render from dwr.data.Store
+  * [DWR-394] - Yahoo Compressor being used but the Yahoo Compression library is not on the classpath
+  * [DWR-392] - Scripted creator fails
+  * [DWR-383] - Deadlock
+  * [DWR-367] - util.js - cloneNode does not work with suffix of 0.
+  * [DWR-364] - Reverse ajax polling starts before a script session id is determined
+  * [DWR-354] - Any ScriptSessions method causes a crash from a web method
+  * [DWR-350] - org.directwebremoting.dwrp.Batch.parseBasicPost() corrupts non-ascii data
+  * [DWR-349] - Pair class doesn't implement equals() correctly for class MapStoreProvider$Index
+  * [DWR-347] - listerns are null AbstractMapProvider.fireItemAdded()
+  * [DWR-344] - File upload - Now fails with error "Failed to fnid parameter: windowName"
+  * [DWR-343] - Conversion of generic method implementation fails
+  * [DWR-340] - ScriptSessions.addFunctionCall overzealous
+  * [DWR-338] - setActiveReverseAjax creates a new ScriptSession but the previous one is not timed out
+  * [DWR-337] - warningHandler used when server is down.
+  * [DWR-331] - File upload does not work in google chrome
+  * [DWR-330] - DefaultCreatorManager.addCreator(String, String, Map) ignores scriptName parameter
+  * [DWR-329] - Browser.withSession runs against all sessions and not the specified one
+  * [DWR-319] - jsessionid isn't properly matched when a '#' exists in URL
+  * [DWR-307] - <dwr:auth> works different as <auth> in dwr.xml
+  * [DWR-283] - DWR considers a URL with ;jsessionid=... to be different than a URL without it
+  * [DWR-281] - Tomcat does not shutdown because on non-daemon threads
+  * [DWR-208] - normal remote calls are delayed (waiting for reverse ajax polls) when using setOrdered(true)
+  * [DWR-205] - jms dependency missing from pom.xml
+  * [DWR-197] - Unable to override context path for static engine.js
+  * [DWR-117] - AnnotationsConfigurator: Error when I specify "scope" but don't specify "javascript"
+
+3.0 RC1:
+  * [DWR-296] - addOptions should create new items in same document as parent for multi-frame scenarios
+  * [DWR-247] - The name parameter for FileTransfer objects seems to be ignored (filename is a random hex value)
+  * [DWR-245] - DWR Spring schema does not allow filter parameters
+  * [DWR-239] - Simultaneous handling of If-Modified-Since and If-None-Match is broken
+  * [DWR-229] - ScheduledThreadPoolExecutor does not shut down
+  * [DWR-222] - addRows appending data from previous indexed columns into current indexed columns
+  * [DWR-218] - AjaxFilters are called when methods on __System are called
+  * [DWR-217] - Poor performance in IE due to bad string concatenation
+  * [DWR-213] - dwr:annotation-config throws FatalBeanException
+  * [DWR-204] - Annotation configuration does not work with AOP proxies
+  * [DWR-203] - Reverse Ajax in Early Closing Mode: Connection isn't closed when scripts are buffered
+  * [DWR-202] - FileTransfer does not return the correct file name
+  * [DWR-198] - DWR should start without commons-file-upload in the classpath
+  * [DWR-195] - CachingFileHandler does not detect the age of a script properly, so gives 302 when it shouldn't
+  * [DWR-194] - engine.js in cvs is broken
+  * [DWR-192] - check conversion to dom4j elements (and other elements)
+  * [DWR-189] - Active reverse Ajax not working in 2.0.2
+  * [DWR-186] - Looped data in lists can kill collection marshaller in outbound mode
+  * [DWR-185] - Timeout problems with Firefox
+  * [DWR-181] - Reverse Ajax fails in IE when no output for over 60 seconds
+  * [DWR-176] - setActiveReverseAjax and IE problem at application starts up
+  * [DWR-169] - Incorrect handling of beans that have a parent with Spring 2.5
+  * [DWR-166] - the "dwr:include method" doesn't effect
+  * [DWR-164] - Exceptions fail when we're posting a file upload
+  * [DWR-163] - Number.MAX_VALUE not converted properly
+  * [DWR-161] - dwr doesn't support spring with AOP
+  * [DWR-160] - Reverse Ajax poll failed (pollRetries=1): dwr.engine.incompleteReply : Incomplete reply from server due to dwr.engine._remoteHandleCallback method not being published to browser.
+  * [DWR-149] - File upload: Subsequent dwr callback not being called in Firefox
+  * [DWR-146] - Reverse AJAX - Browser JavaScript Memory Leak
+  * [DWR-145] - Script delivery stalled
+  * [DWR-139] - DWREngine is undefined
+  * [DWR-136] - "Parameters" option not getting set in request object
+  * [DWR-132] - Spring namespace type for name attribute of dwr:controller conflict's with Spring XSD name attribute type
+  * [DWR-131] - Add flag to disable Annotations
+  * [DWR-130] - DWR doesn't correctly serialize Date from other context/frame
+  * [DWR-123] - Detecting server is down during reverse ajax polling
+  * [DWR-120] - allowScriptTagRemoting needs to be set to false to work.
+  * [DWR-119] - Request Not Aborted on Timeout
+  * [DWR-89] - Cannot configure spring creator using Namespace configuration
+  * [DWR-83] - Possible resource leak in org.directwebremoting.servlet.FileHandler.handle
+  * [DWR-80] - DWR can't find varargs methods
+  * [DWR-22] - forwardToString does not work with Weblogic 8.1
+  * [DWR-12] - H3BeanConverter uses Hibernate 3.2 only feature
