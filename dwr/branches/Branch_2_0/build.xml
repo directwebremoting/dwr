@@ -173,7 +173,7 @@
 	<!-- Maven Deploy, Stage, Release, run this from the Bamboo CI machine 
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
-	<target name="dist" depends="compile" description="generate the distribution">
+	<target name="dist" depends="init, compile" description="generate the distribution">
 
 		<!-- build the main artifact -->
 		<jar jarfile="${maven-jar}" basedir="${build}" />
