@@ -6,41 +6,47 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
-  <packaging>jar</packaging>
-  <version>2.0.6</version>
+  <packaging>pom</packaging>
+  <version>2.0.8-SNAPSHOT</version>
   <name>Direct Web Remoting</name>
-  <url>http://getahead.org/dwr</url>
+  <url>http://directwebremoting.org/dwr/index.html</url>
 
+   <!-- For the sonatype repo -->
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>6</version>
+  </parent> 
   <developers>
     <developer>
-      <name>Joe Walker</name>
-      <id>joe_walker</id>
+      <name>David Marginian</name>
+      <id>david_marginian</id>
+    </developer>
+    <developer>
+      <name>Mike Wison</name>
+      <id>mike_wilson</id>
     </developer>
   </developers>
-
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-
   <scm>
-    <connection>scm:cvs:pserver:guest@cvs.dev.java.net:/cvs:dwr</connection>
-    <developerConnection>scm:cvs:pserver:${maven.username}@cvs.dev.java.net:/cvs:dwr</developerConnection>
-    <url>https://dwr.dev.java.net/source/browse/dwr/</url>
+    <connection>scm:svn:http://svn.directwebremoting.org/dwr/branches/Branch_2_0/</connection>
+    <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/branches/Branch_2_0/</developerConnection>
+    <url>http://svn.directwebremoting.org/dwr/branches/Branch_2_0/</url>
   </scm>
-  
   <description>
-    DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript. 
-    It gets rid of almost all the boiler plate code between the web browser and your Java code.
+	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
+	It gets rid of almost all the boiler plate code between the web browser and your Java code.
   </description>
   
   <!-- Eventually would like to break into modules -->
   <dependencyManagement>
-
     <dependencies>
-
+    
       <dependency>
         <groupId>backport-util-concurrent</groupId>
         <artifactId>backport-util-concurrent</artifactId>
