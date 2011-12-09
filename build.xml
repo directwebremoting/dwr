@@ -17,7 +17,7 @@
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="org.directwebremoting" />
 	<property name="artifactId" value="dwr" />
-	<property name="version" value="2.0.8-SNAPSHOT" />
+	<property name="version" value="2.0.8" />
 
     <!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
