@@ -191,7 +191,7 @@
 	</target>
 
 	<target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
-		<artifact:mvn settingsFile="/srv/maven_ant_tasks_for_dwr/settings.xml">
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
@@ -203,7 +203,7 @@
 	<!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
 	<target name="stage" depends="dist" description="deploy release version to Maven staging repository">
 		<!-- sign and deploy the main artifact -->
-		<artifact:mvn>
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3">
 			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
@@ -213,7 +213,7 @@
 		</artifact:mvn>
 		
 		<!-- sign and deploy the sources artifact -->
-		<artifact:mvn>
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3">
 			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
@@ -224,7 +224,7 @@
 		</artifact:mvn>
 
 		<!-- sign and deploy the javadoc artifact -->
-		<artifact:mvn>
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3">
 			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
