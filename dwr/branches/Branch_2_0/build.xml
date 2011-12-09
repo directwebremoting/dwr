@@ -210,6 +210,7 @@
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
 		
@@ -221,6 +222,7 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${maven-sources-jar}" />
 			<arg value="-Dclassifier=sources" />
+			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
 
@@ -232,6 +234,7 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${maven-javadoc-jar}" />
 			<arg value="-Dclassifier=javadoc" />
+			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
 	</target>
