@@ -1,0 +1,51 @@
+<div>
+
+<h2>Fixing Issues</h2>
+
+<h3><a name="missingConverter">Warning: No Converter for XXX.</a></h3>
+<p>
+  dwr.xml does not have an allow entry that enables conversion of this type to
+  Javascript. The most common cause of this problem is that XXX is a java bean
+  and bean marshalling has not been enabled. Bean marshalling is disabled by
+  default for security reasons.
+</p>
+<p>
+  To enable marshalling for a given bean add the following line to the allow
+  section of your dwr.xml file:
+</p>
+<pre>
+&lt;convert converter="bean" match="XXX"/&gt;
+</pre>
+<p>
+  It is also possible to enable marshalling for an entire package or hierachy
+  of packages using the following:
+</p>
+<pre>
+&lt;convert converter="bean" match="package.name.*"/&gt;
+</pre>
+
+<h3><a name="overloadedMethod">Warning: overloaded methods are not recommended</a></h3>
+<p>
+  Javascript does not support overloaded methods, so the javascript file
+  generated from this class will contain two methods the second of which will
+  replace the first. This is probably not what you wanted.
+</p>
+<p>
+  It is best to avoid overloaded methods when using DWR.
+</p>
+
+<h3><a name="excludedMethod">Warning: methodName() is excluded:</a></h3>
+<p>
+  The methods may be excluded explicitly with an &lt;exclude&gt; element in
+  dwr.xml or excluded implicitly by not being mentioned in an &lt;include&gt;
+  element. Or the method may be defined in <code>java.lang.Object</code> -
+  methods defined here may not be exported.
+</p>
+<p>
+  If methods are excluded using &lt;include&gt; or &lt;exclude&gt; then no
+  JavaScript proxy will be generated. To allow testing of methods that should
+  not be accessible, add an init-param to WEB-INF/web.xml with the name/value
+  allowImpossibleTests=true.
+</p>
+
+</div>

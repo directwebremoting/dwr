@@ -1,0 +1,84 @@
+### Eclipse Workspace Patch 1.0
+#P dwr
+Index: java/org/directwebremoting/engine.js
+===================================================================
+RCS file: /cvs/dwr/java/org/directwebremoting/engine.js,v
+retrieving revision 1.88
+diff -u -r1.88 engine.js
+--- java/org/directwebremoting/engine.js	6 Mar 2007 16:58:54 -0000	1.88
++++ java/org/directwebremoting/engine.js	9 Mar 2007 09:16:01 -0000
+@@ -736,46 +736,62 @@
+ /** @private Work out what the URL should look like */
+ dwr.engine._constructRequest = function(batch) {
+   // A quick string to help people that use web log analysers
+-  var request = { url:batch.path + batch.mode, body:null };
++  var urlBuffer = [];
++  urlBuffer.push(batch.path);
++  urlBuffer.push(batch.mode);
+   if (batch.isPoll == true) {
+-    request.url += "ReverseAjax.dwr";
++    urlBuffer.push("ReverseAjax.dwr");
+   }
+   else if (batch.map.callCount == 1) {
+-    request.url += batch.map["c0-scriptName"] + "." + batch.map["c0-methodName"] + ".dwr";
++    urlBuffer.push(batch.map["c0-scriptName"]);
++    urlBuffer.push(".");
++    urlBuffer.push(batch.map["c0-methodName"]);
++    urlBuffer.push(".dwr");
+   }
+   else {
+-    request.url += "Multiple." + batch.map.callCount + ".dwr";
++    urlBuffer.push("Multiple.");
++    urlBuffer.push(batch.map.callCount);
++    urlBuffer.push(".dwr");
+   }
+   // Play nice with url re-writing
+   var sessionMatch = location.href.match(/jsessionid=([^?]+)/);
+   if (sessionMatch != null) {
+-    request.url += ";jsessionid=" + sessionMatch[1];
++    urlBuffer.push(";jsessionid=");
++    urlBuffer.push(sessionMatch[1]);
+   }
+ 
++  var request = {};
+   var prop;
+   if (batch.httpMethod == "GET") {
+     // Some browsers (Opera/Safari2) seem to fail to convert the callCount value
+     // to a string in the loop below so we do it manually here.
+     batch.map.callCount = "" + batch.map.callCount;
+-    request.url += "?";
++    urlBuffer.push("?");
+     for (prop in batch.map) {
+       if (typeof batch.map[prop] != "function") {
+-        request.url += encodeURIComponent(prop) + "=" + encodeURIComponent(batch.map[prop]) + "&";
++        urlBuffer.push(encodeURIComponent(prop));
++        urlBuffer.push("=");
++        urlBuffer.push(encodeURIComponent(batch.map[prop]));
++        urlBuffer.push("&");
+       }
+     }
+-    request.url = request.url.substring(0, request.url.length - 1);
++    urlBuffer.pop(); // remove the trailing &
++    request.body = null;
+   }
+   else {
+     // PERFORMANCE: for iframe mode this is thrown away.
+-    request.body = "";
++    var bodyBuffer = [];
+     for (prop in batch.map) {
+       if (typeof batch.map[prop] != "function") {
+-        request.body += prop + "=" + batch.map[prop] + dwr.engine._postSeperator;
++        bodyBuffer.push(prop);
++        bodyBuffer.push("=");
++        bodyBuffer.push(batch.map[prop]);
++        bodyBuffer.push(dwr.engine._postSeperator);
+       }
+     }
+-    request.body = dwr.engine._contentRewriteHandler(request.body);
++    request.body = dwr.engine._contentRewriteHandler(bodyBuffer.join(""));
+   }
+-  request.url = dwr.engine._urlRewriteHandler(request.url);
++  request.url = dwr.engine._urlRewriteHandler(urlBuffer.join(""));
+   return request;
+ };
+ 
