@@ -196,6 +196,7 @@
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />			
 			<arg value="-Dfile=${maven-jar}" />
 		</artifact:mvn>
 	</target>
