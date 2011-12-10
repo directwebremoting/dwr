@@ -29,7 +29,6 @@ import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.AccessLogLevel;
 import org.directwebremoting.util.DebuggingPrintWriter;
 
 /**
@@ -62,7 +61,7 @@ public abstract class BaseScriptConduit extends ScriptConduit implements Alarm
         response.setContentType(getOutboundMimeType());
         out = response.getWriter();
 
-        if (debugScriptOutput || AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
+        if (debugScriptOutput)
         {
             // This might be considered evil - altering the program flow
             // depending on the log status, however DebuggingPrintWriter is
