@@ -102,10 +102,13 @@ public class PropertyDescriptorProperty implements Property
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Property#createChild(int)
      */
-    public Property createChild(int newParameterNumber)
+    public Property createChild(int newParameterNumber) throws ConversionException
     {
         Method method = descriptor.getReadMethod();
-
+        if (method == null)
+        {
+            throw new ConversionException(descriptor.getPropertyType(), "Property \"" + descriptor.getDisplayName() + "\" of type " + descriptor.getPropertyType().getName() + " has no read method (getter).");
+        }
         // Type[] types = method.getGenericParameterTypes();
         // if (types.length == 0)
         // {

@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +51,6 @@ public class SignatureParser
     {
         this.converterManager = converterManager;
         this.creatorManager = creatorManager;
-
         packageImports.add("java.lang");
     }
 
