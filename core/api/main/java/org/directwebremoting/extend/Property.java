@@ -74,5 +74,5 @@ public interface Property
      * @param index Generally the parameter offset.
      * @return A Property to describe the nested bit of data
      */
-    Property createChild(int index);
+    Property createChild(int index) throws ConversionException;
 }
