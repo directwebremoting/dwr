@@ -113,7 +113,6 @@ public class JettyContinuationSleeper implements Sleeper
                     // request how to restart on continuation resume.
                     onAwakening = awakening;
                     saveSleeperOnRequest();
-
                     state.set(State.SLEEPING); // write volatile
                 }
             }
@@ -175,6 +174,7 @@ public class JettyContinuationSleeper implements Sleeper
                         try
                         {
                             continuation.resume();
+                            onAwakening.run();
                         }
                         catch (Exception ex)
                         {
