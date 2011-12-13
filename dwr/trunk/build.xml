@@ -16,12 +16,12 @@
 	<property name="groupId" value="org.directwebremoting" />
 	<property name="artifactId" value="dwr" />
 	<property name="version" value="3.0.0-rc3-SNAPSHOT" />
-
+	
 	<!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="dwr-jar" value="${target.root}/${artifactId}-${version}.jar" />
-	<property name="dwr-noncla-jar" value="${target.root}/${artifactId}-noncla-${version}.jar" />
-	<property name="dwr-javadoc-jar" value="${target.root}/${artifactId}-${version}-javadoc.jar" />
-	<property name="dwr-sources-jar" value="${target.root}/${artifactId}-${version}-sources.jar" />
+	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-noncla-${version}.jar" />
+	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
+	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 
 	<!-- defined maven snapshots and staging repository id and url -->
 	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
@@ -76,9 +76,11 @@
 	<target name="source" description="Create dwr-src.jar">
 		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,ui/dwr, ui/gi, ui/scriptaculous, ui/dojo" />
 		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
-		<jar destfile="${dwr-sources-jar}" compress="true">
+		<jar destfile="${target.root}/dwr-src.jar" compress="true">
 			<fileset dir="${target.root}/sourcetree" />
-		</jar>
+		</jar>	
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}"/>			
 	</target>
 
 	<!-- Updates dwr-version.properties with build values from Bamboo 
@@ -104,13 +106,17 @@
 		<build target="${target.root}" include="" modules="${modules}" />
 		<!-- Set Bamboo properties in dwr-version.properties -->
 		<antcall target="setBambooVersioning"/>
-		<jar destfile="${dwr-jar}" compress="true">
+		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main"/>
 		</jar>
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr.jar" tofile="${dwr-maven-jar}"/>			
 		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
-		<jar destfile="${dwr-noncla-jar}" compress="true">
+		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
 			<fileset dir="${target.root}/classes/noncla/classes/main" />
 		</jar>
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr-noncla.jar" tofile="${dwr-maven-noncla-jar}"/>
 	</target>
 
 	<!--=======================================================================-->
@@ -126,7 +132,7 @@
 			<fileset dir="${target.root}/classes/demo" />
 		</copy>
 		<copy todir="${target.root}/web/demo/WEB-INF/lib">
-			<fileset file="${dwr-jar}" />
+			<fileset file="${target.root}/dwr.jar" />
 		</copy>
 	</target>
 
@@ -143,7 +149,7 @@
 				<!-- retroweaver is borked because it doesn't inherit directories properly
         so if you call this ant build from another it gets the basedir wrong. so
         we need to prefix the paths with ${basedir} -->
-				<retroweaver inputjar="${basedir}/${dwr-jar}" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4" />
+				<retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4" />
 			</action>
 		</if-not-uptodate>
 		<!-- Rezip the demo war file if it's contents have changed -->
@@ -196,7 +202,8 @@
 			<package name="org.directwebremoting.*" />
 			<footer>Copyright &#168; 2008</footer>
 		</javadoc>
-		<jar jarfile="${dwr-javadoc-jar}">
+		<!-- Jar docs for Maven release -->
+		<jar jarfile="${dwr-maven-javadoc-jar}">
 			<fileset dir="${target.root}/javadoc" />
 		</jar>
 		<path id="dtddocpath">
@@ -217,7 +224,7 @@
 				<exclude name="**/*.iws" />
 			</fileset>
 			<fileset dir="${target.root}">
-				<include name="{dwr-jar}" />
+				<include name="dwr.jar" />
 				<include name="dwr.war" />
 			</fileset>
 			<!-- The DWR website extracts javadoc from here -->
@@ -576,7 +583,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${dwr-jar}" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 		
@@ -586,7 +593,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${dwr-noncla-jar}" />
+			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 	</target>
@@ -599,7 +606,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-jar}" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
@@ -610,7 +617,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${dwr-noncla-jar}" />
+			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 			
@@ -620,7 +627,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-sources-jar}" />
+			<arg value="-Dfile=${dwr-maven-sources-jar}" />
 			<arg value="-Dclassifier=sources" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Pgpg" />
@@ -632,7 +639,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-javadoc-jar}" />
+			<arg value="-Dfile=${dwr-maven-javadoc-jar}" />
 			<arg value="-Dclassifier=javadoc" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Pgpg" />
