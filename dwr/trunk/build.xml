@@ -577,7 +577,16 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
 			<arg value="-Dfile=${dwr-jar}" />
-			<arg value="-Dfiles=${dwr-noncla-jar}" />
+			<arg value="-Dpackaging=jar" />
+		</artifact:mvn>
+		
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />			
+			<arg value="-Dfile=${dwr-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 	</target>
@@ -591,9 +600,18 @@
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${dwr-jar}" />
-			<arg value="-Dfiles=${dwr-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
+		</artifact:mvn>
+		
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />			
+			<arg value="-Dfile=${dwr-noncla-jar}" />
+			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 			
 		<!-- sign and deploy the sources artifact -->
