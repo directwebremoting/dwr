@@ -10,8 +10,6 @@
 	<!-- Properties for Maven Deploy, Stage, Release 
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
-	<property name="src" location="${source.java}" />
-	<property name="build" location="${target.class}" />
 	<property name="dist" location="dist" />
 
 	<!-- define Maven coordinates -->
@@ -20,8 +18,8 @@
 	<property name="version" value="3.0.0-rc3-SNAPSHOT" />
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
-	<property name="maven-noncla-jar" value="${dist}/lib/${artifactId}-noncla-${version}.jar" />
+	<property name="maven-jar" value="${target.root}/${artifactId}-${version}.jar" />
+	<property name="maven-noncla-jar" value="${target.root}/${artifactId}-noncla-${version}.jar" />
 	<property name="maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 
@@ -587,7 +585,8 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${target.root}/${maven-jar}" />
+			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dfiles=/${maven-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 	</target>
