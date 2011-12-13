@@ -126,7 +126,7 @@
 			<fileset dir="${target.root}/classes/demo" />
 		</copy>
 		<copy todir="${target.root}/web/demo/WEB-INF/lib">
-			<fileset file="${target.root}${dwr-jar}" />
+			<fileset file="${dwr-jar}" />
 		</copy>
 	</target>
 
