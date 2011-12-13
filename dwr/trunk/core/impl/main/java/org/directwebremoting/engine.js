@@ -1594,7 +1594,7 @@ if (typeof dwr == 'undefined') dwr = {};
         	try {
                 statusText = req.statusText;	
         	} catch (ex) {
-        		// Eat this, if the server just went down an exception can occurr reading statusText.
+        		// Eat this, if the server just went down an exception can occur reading statusText.
         	}        	  
             dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });
           }
