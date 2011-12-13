@@ -21,6 +21,7 @@
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="maven-noncla-jar" value="${dist}/lib/${artifactId}-noncla-${version}.jar" />
 	<property name="maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 
@@ -105,11 +106,11 @@
 		<build target="${target.root}" include="" modules="${modules}" />
 		<!-- Set Bamboo properties in dwr-version.properties -->
 		<antcall target="setBambooVersioning"/>
-		<jar destfile="${target.root}/dwr.jar" compress="true">
+		<jar destfile="${target.root}/${maven-jar}" compress="true">
 			<fileset dir="${target.root}/classes/main"/>
 		</jar>
 		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
-		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
+		<jar destfile="${target.root}/${maven-noncla-jar}" compress="true">
 			<fileset dir="${target.root}/classes/noncla/classes/main" />
 		</jar>
 	</target>
@@ -568,35 +569,31 @@
 	-->
 	<target name="dist" depends="init, package" description="generate the distribution">
 
-		<!-- build the main artifact -->
-		<jar jarfile="${maven-jar}" basedir="${build}" />
-
 		<!-- build the javadoc artifact -->
-		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" />
 		<jar jarfile="${maven-javadoc-jar}">
-			<fileset dir="${dist}/javadoc" />
+			<fileset dir="${target.root}/javadoc" />
 		</jar>
 
 		<!-- build the sources artifact -->
 		<jar jarfile="${maven-sources-jar}">
-			<fileset dir="${src}" />
+			<fileset dir="${target.root}/classes" />
 		</jar>
 	</target>
 
-	<target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
+	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
 		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dfile=${target.root}/${maven-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 	</target>
 
 	<!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
-	<target name="stage" depends="dist" description="deploy release version to Maven staging repository">
+	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
 		<!-- sign and deploy the main artifact -->
 		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
 			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
