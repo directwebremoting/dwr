@@ -1,12 +1,41 @@
 <?xml version="1.0"?>
-<project name="dwr" default="package">
+<project name="dwr" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
 	<!-- For terminology, see the readme.txt file alongside this build file -->
 
 	<!--=======================================================================-->
 	<!-- File that contains local settings, you may need to edit this -->
 	<property file="build.properties" />
+	
+	<!-- Properties for Maven Deploy, Stage, Release 
+		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+	-->
+	<property name="src" location="${source.java}" />
+	<property name="build" location="${target.class}" />
+	<property name="dist" location="dist" />
 
+	<!-- define Maven coordinates -->
+	<property name="groupId" value="org.directwebremoting" />
+	<property name="artifactId" value="dwr" />
+	<property name="version" value="3.0.0-rc3-SNAPSHOT" />
+
+	<!-- define artifacts' name, which follows the convention of Maven -->
+	<property name="maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
+	<property name="maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
+
+	<!-- defined maven snapshots and staging repository id and url -->
+	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
+	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
+	<property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
+	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+	<!-- End Properties for Maven -->
+
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}/lib" />
+	</target>
+	
 	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
 	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
 	<condition property="label" value="${major}.${minor}.${revision}">
@@ -532,6 +561,76 @@
 				<include name="**/*.DS_Store" />
 			</fileset>
 		</delete>
+	</target>
+	
+	<!-- Maven Deploy, Stage, Release, run this from the Bamboo CI machine 
+		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+	-->
+	<target name="dist" depends="init, package" description="generate the distribution">
+
+		<!-- build the main artifact -->
+		<jar jarfile="${maven-jar}" basedir="${build}" />
+
+		<!-- build the javadoc artifact -->
+		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" />
+		<jar jarfile="${maven-javadoc-jar}">
+			<fileset dir="${dist}/javadoc" />
+		</jar>
+
+		<!-- build the sources artifact -->
+		<jar jarfile="${maven-sources-jar}">
+			<fileset dir="${src}" />
+		</jar>
+	</target>
+
+	<target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />			
+			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dpackaging=jar" />
+		</artifact:mvn>
+	</target>
+
+	<!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
+	<target name="stage" depends="dist" description="deploy release version to Maven staging repository">
+		<!-- sign and deploy the main artifact -->
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dpackaging=jar" />	
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+			
+		<!-- sign and deploy the sources artifact -->
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${maven-sources-jar}" />
+			<arg value="-Dclassifier=sources" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+
+		<!-- sign and deploy the javadoc artifact -->
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${maven-javadoc-jar}" />
+			<arg value="-Dclassifier=javadoc" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Pgpg" />
+		</artifact:mvn>
 	</target>
 
 </project>
