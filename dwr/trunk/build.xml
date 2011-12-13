@@ -18,10 +18,10 @@
 	<property name="version" value="3.0.0-rc3-SNAPSHOT" />
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="maven-jar" value="${target.root}/${artifactId}-${version}.jar" />
-	<property name="maven-noncla-jar" value="${target.root}/${artifactId}-noncla-${version}.jar" />
-	<property name="maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
-	<property name="maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
+	<property name="dwr-jar" value="${target.root}/${artifactId}-${version}.jar" />
+	<property name="dwr-noncla-jar" value="${target.root}/${artifactId}-noncla-${version}.jar" />
+	<property name="dwr-javadoc-jar" value="${target.root}/${artifactId}-${version}-javadoc.jar" />
+	<property name="dwr-sources-jar" value="${target.root}/${artifactId}-${version}-sources.jar" />
 
 	<!-- defined maven snapshots and staging repository id and url -->
 	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
@@ -76,7 +76,7 @@
 	<target name="source" description="Create dwr-src.jar">
 		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,ui/dwr, ui/gi, ui/scriptaculous, ui/dojo" />
 		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
-		<jar destfile="${target.root}/dwr-src.jar" compress="true">
+		<jar destfile="${dwr-sources-jar}" compress="true">
 			<fileset dir="${target.root}/sourcetree" />
 		</jar>
 	</target>
@@ -104,11 +104,11 @@
 		<build target="${target.root}" include="" modules="${modules}" />
 		<!-- Set Bamboo properties in dwr-version.properties -->
 		<antcall target="setBambooVersioning"/>
-		<jar destfile="${target.root}/${maven-jar}" compress="true">
+		<jar destfile="${dwr-jar}" compress="true">
 			<fileset dir="${target.root}/classes/main"/>
 		</jar>
 		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
-		<jar destfile="${target.root}/${maven-noncla-jar}" compress="true">
+		<jar destfile="${dwr-noncla-jar}" compress="true">
 			<fileset dir="${target.root}/classes/noncla/classes/main" />
 		</jar>
 	</target>
@@ -196,6 +196,9 @@
 			<package name="org.directwebremoting.*" />
 			<footer>Copyright &#168; 2008</footer>
 		</javadoc>
+		<jar jarfile="${dwr-javadoc-jar}">
+			<fileset dir="${target.root}/javadoc" />
+		</jar>
 		<path id="dtddocpath">
 			<fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar" />
 		</path>
@@ -565,18 +568,6 @@
 	<!-- Maven Deploy, Stage, Release, run this from the Bamboo CI machine 
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
-	<target name="dist" depends="init, package" description="generate the distribution">
-
-		<!-- build the javadoc artifact -->
-		<jar jarfile="${maven-javadoc-jar}">
-			<fileset dir="${target.root}/javadoc" />
-		</jar>
-
-		<!-- build the sources artifact -->
-		<jar jarfile="${maven-sources-jar}">
-			<fileset dir="${target.root}/classes" />
-		</jar>
-	</target>
 
 	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
 		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
@@ -585,8 +576,8 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${maven-jar}" />
-			<arg value="-Dfiles=/${maven-noncla-jar}" />
+			<arg value="-Dfile=${dwr-jar}" />
+			<arg value="-Dfiles=${dwr-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
 	</target>
@@ -599,7 +590,8 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dfile=${dwr-jar}" />
+			<arg value="-Dfiles=${dwr-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
@@ -610,7 +602,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-sources-jar}" />
+			<arg value="-Dfile=${dwr-sources-jar}" />
 			<arg value="-Dclassifier=sources" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Pgpg" />
@@ -622,7 +614,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-javadoc-jar}" />
+			<arg value="-Dfile=${dwr-javadoc-jar}" />
 			<arg value="-Dclassifier=javadoc" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Pgpg" />
