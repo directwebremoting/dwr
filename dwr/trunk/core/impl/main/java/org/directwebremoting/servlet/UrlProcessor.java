@@ -101,7 +101,6 @@ public class UrlProcessor implements Handler, InitializingBean
             {
                 contextPath = requestContextPath;
             }
-
             if (pathInfo == null || pathInfo.length() == 0 || "/".equals(pathInfo))
             {
                 response.sendRedirect(requestContextPath + request.getServletPath() + indexHandlerUrl);
@@ -112,7 +111,6 @@ public class UrlProcessor implements Handler, InitializingBean
                 for (Entry<String, Handler> entry : urlMapping.entrySet())
                 {
                     String url = entry.getKey();
-
                     // If this URL matches, call the handler
                     if (pathInfo.startsWith(url))
                     {
@@ -121,9 +119,13 @@ public class UrlProcessor implements Handler, InitializingBean
                         return;
                     }
                 }
-
                 notFoundHandler.handle(request, response);
             }
+        }
+        catch (SecurityException se) {
+            // We don't want to give the client any information about the security error, handle it with a 404.
+            log.error("Security Exception: ", se);
+            notFoundHandler.handle(request,response);
         }
         catch (Exception ex)
         {
