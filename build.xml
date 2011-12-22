@@ -20,6 +20,7 @@
 	<!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
 	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-noncla-${version}.jar" />
+	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 
@@ -152,6 +153,7 @@
 				<retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4" />
 			</action>
 		</if-not-uptodate>
+		<copy file="${basedir}/${target.root}/dwr-jdk14.jar" tofile="${dwr-maven-jdk14-jar}"/>	
 		<!-- Rezip the demo war file if it's contents have changed -->
 		<if-not-uptodate destfile="${target.root}/dwr.war" sourcedir="${target.root}/web/demo">
 			<action>
@@ -596,6 +598,17 @@
 			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
+		
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />			
+			<arg value="-Dfile=${dwr-maven-jdk14-jar}" />
+			<arg value="-Dpackaging=jar" />
+		</artifact:mvn>		
+		
 	</target>
 
 	<!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
@@ -617,6 +630,16 @@
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
+			<arg value="-Dpackaging=jar" />	
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+		
+		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${dwr-maven-jdk14-jar}" />
 			<arg value="-Dpackaging=jar" />	
 			<arg value="-Pgpg" />
 		</artifact:mvn>
