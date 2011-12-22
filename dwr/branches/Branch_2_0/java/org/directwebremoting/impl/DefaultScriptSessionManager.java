@@ -133,14 +133,16 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
         }
 
         int removeCount = 0;
-        for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
-        {
-            Set pageSessions = (Set) it.next();
-            boolean isRemoved = pageSessions.remove(scriptSession);
-
-            if (isRemoved)
+        synchronized (pageSessionMap) {
+            for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
             {
-                removeCount++;
+                Set pageSessions = (Set) it.next();
+                boolean isRemoved = pageSessions.remove(scriptSession);
+    
+                if (isRemoved)
+                {
+                    removeCount++;
+                }
             }
         }
 
@@ -173,20 +175,22 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     {
         long now = System.currentTimeMillis();
         List timeouts = new ArrayList();
-
-        for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
-        {
-            DefaultScriptSession session = (DefaultScriptSession) it.next();
-
-            if (session.isInvalidated())
+        
+        synchronized (sessionMap) {
+            for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
             {
-                continue;
-            }
-
-            long age = now - session.getLastAccessedTime();
-            if (age > scriptSessionTimeout)
-            {
-                timeouts.add(session);
+                DefaultScriptSession session = (DefaultScriptSession) it.next();
+    
+                if (session.isInvalidated())
+                {
+                    continue;
+                }
+    
+                long age = now - session.getLastAccessedTime();
+                if (age > scriptSessionTimeout)
+                {
+                    timeouts.add(session);
+                }
             }
         }
 
