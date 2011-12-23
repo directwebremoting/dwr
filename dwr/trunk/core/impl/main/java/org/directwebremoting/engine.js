@@ -49,6 +49,15 @@ if (typeof dwr == 'undefined') dwr = {};
     dwr.engine._textHtmlHandler = handler;
   };
 
+  /**
+   * Setter for the html response/redirect handler - what happens if a DWR request gets an HTML
+   * reply or a redirect status code rather than the expected Javascript. Often due to login timeout
+   * @param {Function} handler The function to call on an unexpected text/html content type
+   */  
+  dwr.engine.setTextOrRedirectHandler = function(handler) {
+	dwr.engine_textOrRedirectHandler = handler;	  
+  };
+  
   dwr.engine.setPollStatusHandler = function(handler) {
     dwr.engine._pollStatusHandler = handler;
   };
@@ -128,7 +137,7 @@ if (typeof dwr == 'undefined') dwr = {};
       // Bail if we are already started
       if (dwr.engine._activeReverseAjax) return;
       // We always want a retry policy when reverse AJAX is enabled.
-      if (!dwr.engine._retryIntervals || dwr.engine._retryIntervals.length == 0) { dwr.engine._retryIntervals = dwr.engine._defaultRetryIntervals }; 
+      if (!dwr.engine._retryIntervals || dwr.engine._retryIntervals.length == 0) { dwr.engine._retryIntervals = dwr.engine._defaultRetryIntervals; }; 
       dwr.engine._activeReverseAjax = true;
       dwr.engine._poll();
     }
@@ -405,9 +414,10 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._defaultRetryIntervals = [ 1, 1, 10 ];
 
-  /** Do we do a document.reload if we get a text/html reply? */
   dwr.engine._textHtmlHandler = null;
 
+  dwr.engine._textOrRedirectHandler = null; 
+  
   /** If you wish to send custom headers with every request */
   dwr.engine._headers = null;
 
@@ -421,7 +431,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._instanceId = -1;
 
   /** A list of the properties that need merging from calls to a batch */
-  dwr.engine._propnames = [ "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler" ];
+  dwr.engine._propnames = [ "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler", "textOrRedirectHandler" ];
 
   /** Do we stream, or can be hacked to do so? */
   dwr.engine._partialResponseNo = 0;
@@ -497,7 +507,7 @@ if (typeof dwr == 'undefined') dwr = {};
         paramCount:0, isPoll:false, async:dwr.engine._asyncUnload,
         headers:{}, preHooks:[], postHooks:[],
         timeout:dwr.engine._timeout,
-        errorHandler:null, warningHandler:null, textHtmlHandler:null,
+        errorHandler:null, warningHandler:null, textHtmlHandler:null, textOrRedirectHandler:null, 
         path:dwr.engine._pathToDwrServlet,
         handlers:[{ exceptionHandler:null, callback:null }]
       };
@@ -630,10 +640,19 @@ if (typeof dwr == 'undefined') dwr = {};
     }
   };
 
-  dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
-	  if (typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
-      else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-  }
+  dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj, fromRedirectHandler) {    
+    if (batch && typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
+    else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
+    else if (!fromRedirectHandler) dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
+    if (batch) dwr.engine.batch.remove(batch);    
+  };
+  
+  dwr.engine._handleTextOrRedirectResponse = function(batch, textHtmlObj) {    
+	if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);  
+    else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
+    else dwr.engine._handleTextHtmlResponse(batch, textHtmlObj, true);
+	if (batch) dwr.engine.batch.remove(batch);
+  };
   
   /**
    * Handle retries for polling as well as online/offline status.
@@ -1325,7 +1344,7 @@ if (typeof dwr == 'undefined') dwr = {};
             dwr.engine._internalOrdered = false;
           }],
           timeout:dwr.engine._timeout,
-          errorHandler:batch.errorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler,
+          errorHandler:batch.errorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler, textOrRedirectHandler:batch.textOrRedirectHandler,
           path:batch.path,
           handlers:[{
             exceptionHandler:null, 
@@ -1571,7 +1590,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // Future improvement per Mike W. - A solution where we only use the callbacks/handlers of the poll call to trigger 
         // the retry handling would be ideal.  We would need something like a new internal callback that reports 
         // progress back to the caller, and the design should be compatible with getting it to work with iframes as well.   
-        if (status == 200) {
+        if (status === 200) {
           dwr.engine._handlePollStatusChange(true, null, batch);    
         }  
 
@@ -1588,36 +1607,22 @@ if (typeof dwr == 'undefined') dwr = {};
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
-          
-          if (status != 200) {
-        	var statusText = "statusText could not be read.";
-        	try {
-                statusText = req.statusText;	
-        	} catch (ex) {
-        		// Eat this, if the server just went down an exception can occur reading statusText.
-        	}        	  
-            dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });
-          }
-          else if (reply == null || reply == "") {
-            dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
-          }
-          else {                     
-            var contentType = req.getResponseHeader("Content-Type");
-            if (dwr.engine.isJaxerServer) {
-              // HACK! Jaxer does something b0rken with Content-Type
-              contentType = "text/javascript";
-            }
+          var contentType = dwr.engine.util.getContentType(req, dwr.engine.isJaxerServer);          
+          if (status >= 200 && status < 300) {
+        	if (reply == null || reply == "") {
+              dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
+            }             	
             if (!contentType.match(/^text\/plain/) && !contentType.match(/^text\/javascript/)) {
               if (contentType.match(/^text\/html/)) {
-                dwr.engine._handleTextHtmlResponse(batch, { status:status, responseText:reply, contentType:contentType });            	
+                dwr.engine._handleTextHtmlResponse(batch, { status:status, responseText:reply, contentType:contentType }, false);            	
               }
               else {
                 dwr.engine._handleWarning(batch, { name:"dwr.engine.invalidMimeType", message:"Invalid content type: '" + contentType + "'" });
               }
             }
             else {
-             // Comet replies might have already partially executed
-             if (batch.isPoll && batch.map.partialResponse == dwr.engine._partialResponseYes) {
+              // Comet replies might have already partially executed
+              if (batch.isPoll && batch.map.partialResponse == dwr.engine._partialResponseYes) {
                 dwr.engine.transport.xhr.processCometResponse(reply, batch);
               }
               else {
@@ -1628,7 +1633,19 @@ if (typeof dwr == 'undefined') dwr = {};
                   toEval = reply;
                 }
               }
-            }
+            }        	  
+          } 
+          else if (status >= 300 && status < 400) {
+            dwr.engine._handleTextOrRedirectResponse(batch, { status:status, responseText:reply, contentType:contentType }); 
+          }          
+          else if (status >= 400) {
+            var statusText = "statusText could not be read.";
+            try {
+              statusText = req.statusText;	
+            } catch (ex) {
+         	  // Eat this, if the server just went down an exception can occur reading statusText.
+            }        	  
+            dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });        	 
           }
         }
         catch (ex) {
@@ -2038,7 +2055,8 @@ if (typeof dwr == 'undefined') dwr = {};
         timeout:dwr.engine._timeout,
         errorHandler:dwr.engine._errorHandler,
         warningHandler:dwr.engine._warningHandler,
-        textHtmlHandler:dwr.engine._textHtmlHandler
+        textHtmlHandler:dwr.engine._textHtmlHandler,
+        textOrRedirectHandler:dwr.engine._textOrRedirectHandler
       };
 
       if (dwr.engine._preHook) {
@@ -2135,7 +2153,7 @@ if (typeof dwr == 'undefined') dwr = {};
         exceptionScope:callData.exceptionScope || callData.scope || window,
         callback:callData.callbackHandler || callData.callback,
         callbackArg:callData.callbackArg || callData.arg || null,      
-        callbackScope:callData.callbackScope || callData.scope || window          
+        callbackScope:callData.callbackScope || callData.scope || window
       };
 
       // Copy to the map the things that need serializing
@@ -2376,6 +2394,15 @@ if (typeof dwr == 'undefined') dwr = {};
       return returnValue;
     },
 
+    getContentType:function(req, isJaxerServer) {
+      var contentType = req.getResponseHeader("Content-Type");
+      if (isJaxerServer) {
+        // HACK! Jaxer does something b0rken with Content-Type
+        contentType = "text/javascript";
+      }
+      return contentType;
+    },
+    
     /**
      * Transform a number into a token string suitable for ids
      */
