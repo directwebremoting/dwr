@@ -650,7 +650,6 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleTextOrRedirectResponse = function(batch, textHtmlObj) {    
 	if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);  
     else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
-    else dwr.engine._handleTextHtmlResponse(batch, textHtmlObj, true);
 	if (batch) dwr.engine.batch.remove(batch);
   };
   
