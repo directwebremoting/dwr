@@ -97,7 +97,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
                     }
                     catch (Exception ex)
                     {
-                        throw new IllegalArgumentException(ex.getMessage());
+                        throw new IllegalArgumentException(ex);
                     }
                 }
                 else
