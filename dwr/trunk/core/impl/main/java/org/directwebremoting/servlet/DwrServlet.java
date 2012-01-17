@@ -64,6 +64,10 @@ public class DwrServlet extends HttpServlet
             container = createContainer(servletConfig);
 
             webContextBuilder = container.getBean(WebContextBuilder.class);
+            if (webContextBuilder != null)
+            {
+                webContextBuilder.engageThread(container, null, null);
+            }
 
             configureContainer(container, servletConfig);
         }
