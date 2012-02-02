@@ -29,7 +29,7 @@ public abstract class AbstractContainer implements Container
 {
     
     /**
-     * Used after setup to call {@link InitializingBean#afterContainerSetup(Container)}
+     * Used after setup to call {@link InitializingBean#afterContainerSetup(Container)
      * on all the contained beans.
      */
     protected void callInitializingBeans()
