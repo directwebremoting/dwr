@@ -122,7 +122,7 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
      */
     public void afterPropertiesSet() throws Exception
     {
-        callInitializingBeans();
+        callInitializingBeans(super.getBeanNames());
     }
 
     /**

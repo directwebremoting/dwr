@@ -27,13 +27,23 @@ import org.directwebremoting.extend.InitializingBean;
  */
 public abstract class AbstractContainer implements Container
 {
+    
     /**
      * Used after setup to call {@link InitializingBean#afterContainerSetup(Container)}
      * on all the contained beans.
      */
     protected void callInitializingBeans()
     {
-        Collection beanNames = getBeanNames();
+        callInitializingBeans(getBeanNames());
+    }
+
+    /**
+     * Call {@link InitializingBean#afterContainerSetup(Container)} on the named
+     * beans
+     * @param beanNames The beans to setup.
+     */
+    protected void callInitializingBeans(Collection beanNames)
+    {
         for (Iterator it = beanNames.iterator(); it.hasNext();)
         {
             String name = (String) it.next();
@@ -46,4 +56,5 @@ public abstract class AbstractContainer implements Container
             }
         }
     }
+
 }
