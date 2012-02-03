@@ -117,12 +117,21 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         return Collections.unmodifiableCollection(names);
     }
 
+    /**
+     * Avoids initialization of lazy-init beans in Spring context.
+     */
+    protected void callInitializingBeans()
+    {
+        callInitializingBeans(super.getBeanNames());
+    }
+    
+    
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception
     {
-        callInitializingBeans(super.getBeanNames());
+        // Do nothing.
     }
 
     /**
