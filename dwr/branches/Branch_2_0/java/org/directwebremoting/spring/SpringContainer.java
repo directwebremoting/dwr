@@ -131,7 +131,8 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
      */
     public void afterPropertiesSet() throws Exception
     {
-        // Do nothing.
+        // This needs to be implemented, but the work that would normally be done here
+        // is done in callInitializingBeans.  DWR-561.
     }
 
     /**
