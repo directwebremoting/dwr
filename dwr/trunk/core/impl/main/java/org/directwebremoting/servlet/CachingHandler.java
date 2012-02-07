@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.extend.Remoter;
 
 /**
  * A handler that deals with ETags and other nonsense to do with keeping a
@@ -205,13 +206,8 @@ public abstract class CachingHandler implements Handler
      *
      * @param request
      */
-	private String getCachingKey(HttpServletRequest request) {
-	    return getCacheKeyPiece(request.getScheme()) + getCacheKeyPiece(request.getLocalName()) + request.getLocalPort() + getCacheKeyPiece(request.getServletPath()) + getCacheKeyPiece(request.getPathInfo());
-	}
-
-	private String getCacheKeyPiece(String piece) {
-	    return (null != piece) ? piece : "";
-
+	protected String getCachingKey(HttpServletRequest request) {
+	    return remoter.getPathToDwrServlet((request.getPathInfo() != null ? request.getPathInfo() : "") + request.getServletPath());
 	}
 
     /**
@@ -238,6 +234,19 @@ public abstract class CachingHandler implements Handler
     {
         return mimeType;
     }
+
+    /**
+     * @param remoter the remoter to set
+     */
+    public void setRemoter(Remoter remoter)
+    {
+        this.remoter = remoter;
+    }
+
+    /**
+     * So we can correctly calculate the path to the DWR servlet
+     */
+    private Remoter remoter;
 
     /**
      * The mime type to send the output under
