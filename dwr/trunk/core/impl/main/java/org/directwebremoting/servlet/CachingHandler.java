@@ -206,7 +206,12 @@ public abstract class CachingHandler implements Handler
      * @param request
      */
 	private String getCachingKey(HttpServletRequest request) {
-	    return request.getServletPath() + (request.getPathInfo() != null ? request.getPathInfo() : "");
+	    return getCacheKeyPiece(request.getScheme()) + getCacheKeyPiece(request.getLocalName()) + request.getLocalPort() + getCacheKeyPiece(request.getServletPath()) + getCacheKeyPiece(request.getPathInfo());
+	}
+
+	private String getCacheKeyPiece(String piece) {
+	    return (null != piece) ? piece : "";
+
 	}
 
     /**
