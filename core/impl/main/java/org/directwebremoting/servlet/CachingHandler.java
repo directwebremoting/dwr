@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
-import org.directwebremoting.extend.Remoter;
 
 /**
  * A handler that deals with ETags and other nonsense to do with keeping a
@@ -206,9 +205,28 @@ public abstract class CachingHandler implements Handler
      *
      * @param request
      */
-	protected String getCachingKey(HttpServletRequest request) {
-	    return remoter.getPathToDwrServlet((request.getPathInfo() != null ? request.getPathInfo() : "") + request.getServletPath());
-	}
+    protected String getCachingKey(HttpServletRequest request)
+    {
+        StringBuilder absolutePath = new StringBuilder();
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+
+        absolutePath.append(scheme);
+        absolutePath.append("://");
+        absolutePath.append(request.getServerName());
+
+        if (port > 0 && (("http".equalsIgnoreCase(scheme) && port != 80) || ("https".equalsIgnoreCase(scheme) && port != 443)))
+        {
+            absolutePath.append(':');
+            absolutePath.append(port);
+        }
+
+        absolutePath.append(request.getContextPath());
+        absolutePath.append(request.getServletPath());
+        absolutePath.append(request.getPathInfo());
+
+        return absolutePath.toString();
+    }
 
     /**
      * @param ignoreLastModified The ignoreLastModified to set.
@@ -234,19 +252,6 @@ public abstract class CachingHandler implements Handler
     {
         return mimeType;
     }
-
-    /**
-     * @param remoter the remoter to set
-     */
-    public void setRemoter(Remoter remoter)
-    {
-        this.remoter = remoter;
-    }
-
-    /**
-     * So we can correctly calculate the path to the DWR servlet
-     */
-    private Remoter remoter;
 
     /**
      * The mime type to send the output under
