@@ -286,7 +286,7 @@ public class DefaultRemoter implements Remoter
         if (useAbsolutePath)
         {
             HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
-            actualPath = LocalUtil.getAbsolutePathToDWRServlet(request);
+            actualPath = LocalUtil.getFullUrlToDwrServlet(request);
         }
 
         return actualPath;
