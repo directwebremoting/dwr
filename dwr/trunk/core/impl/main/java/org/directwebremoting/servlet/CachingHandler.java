@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A handler that deals with ETags and other nonsense to do with keeping a
@@ -207,25 +208,11 @@ public abstract class CachingHandler implements Handler
      */
     protected String getCachingKey(HttpServletRequest request)
     {
-        StringBuilder absolutePath = new StringBuilder();
-        String scheme = request.getScheme();
-        int port = request.getServerPort();
-
-        absolutePath.append(scheme);
-        absolutePath.append("://");
-        absolutePath.append(request.getServerName());
-
-        if (port > 0 && (("http".equalsIgnoreCase(scheme) && port != 80) || ("https".equalsIgnoreCase(scheme) && port != 443)))
-        {
-            absolutePath.append(':');
-            absolutePath.append(port);
+        String absolutePath = LocalUtil.getAbsolutePathToDWRServlet(request);
+        if (null != request.getPathInfo()) {
+            absolutePath += request.getPathInfo();
         }
-
-        absolutePath.append(request.getContextPath());
-        absolutePath.append(request.getServletPath());
-        absolutePath.append(request.getPathInfo());
-
-        return absolutePath.toString();
+        return absolutePath;
     }
 
     /**

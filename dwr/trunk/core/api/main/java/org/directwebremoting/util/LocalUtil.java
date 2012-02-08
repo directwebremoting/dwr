@@ -81,8 +81,6 @@ public final class LocalUtil
         throw new InstantiationError("Cannot instantiate LocalUtil");
     }
 
-
-
     /**
      * Create a string by joining the array elements together with the separator
      * in-between each element. A null (in the array or as a separator) is
@@ -555,6 +553,32 @@ public final class LocalUtil
                paramType == ServletConfig.class ||
                paramType == ServletContext.class ||
                paramType == HttpSession.class;
+    }
+
+    /**
+     *
+     * @param request
+     * @return String
+     */
+    public static String getAbsolutePathToDWRServlet(HttpServletRequest request) {
+        StringBuilder absolutePath = new StringBuilder();
+        String scheme = request.getScheme();
+        int port = request.getServerPort();
+
+        absolutePath.append(scheme);
+        absolutePath.append("://");
+        absolutePath.append(request.getServerName());
+
+        if (port > 0 && (("http".equalsIgnoreCase(scheme) && port != 80) || ("https".equalsIgnoreCase(scheme) && port != 443)))
+        {
+            absolutePath.append(':');
+            absolutePath.append(port);
+        }
+
+        absolutePath.append(request.getContextPath());
+        absolutePath.append(request.getServletPath());
+
+        return absolutePath.toString();
     }
 
     /**

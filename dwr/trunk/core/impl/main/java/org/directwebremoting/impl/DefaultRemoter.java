@@ -286,28 +286,7 @@ public class DefaultRemoter implements Remoter
         if (useAbsolutePath)
         {
             HttpServletRequest request = WebContextFactory.get().getHttpServletRequest();
-
-            StringBuffer absolutePath = new StringBuffer(48);
-
-            String scheme = request.getScheme();
-            int port = request.getServerPort();
-
-            absolutePath.append(scheme);
-            absolutePath.append("://");
-            absolutePath.append(request.getServerName());
-
-            if (port > 0 &&
-                (("http".equalsIgnoreCase(scheme) && port != 80) ||
-                 ("https".equalsIgnoreCase(scheme) && port != 443)))
-            {
-                absolutePath.append(':');
-                absolutePath.append(port);
-            }
-
-            absolutePath.append(request.getContextPath());
-            absolutePath.append(request.getServletPath());
-
-            actualPath = absolutePath.toString();
+            actualPath = LocalUtil.getAbsolutePathToDWRServlet(request);
         }
 
         return actualPath;
