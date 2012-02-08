@@ -560,7 +560,7 @@ public final class LocalUtil
      * @param request
      * @return String
      */
-    public static String getAbsolutePathToDWRServlet(HttpServletRequest request) {
+    public static String getFullUrlToDwrServlet(HttpServletRequest request) {
         StringBuilder absolutePath = new StringBuilder();
         String scheme = request.getScheme();
         int port = request.getServerPort();

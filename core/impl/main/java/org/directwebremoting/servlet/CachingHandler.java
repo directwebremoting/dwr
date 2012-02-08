@@ -208,7 +208,7 @@ public abstract class CachingHandler implements Handler
      */
     protected String getCachingKey(HttpServletRequest request)
     {
-        String absolutePath = LocalUtil.getAbsolutePathToDWRServlet(request);
+        String absolutePath = LocalUtil.getFullUrlToDwrServlet(request);
         if (null != request.getPathInfo()) {
             absolutePath += request.getPathInfo();
         }
