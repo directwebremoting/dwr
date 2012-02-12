@@ -140,7 +140,6 @@ public class DwrServlet extends HttpServlet
         try
         {
             webContextBuilder.engageThread(container, request, response);
-
             UrlProcessor processor = container.getBean(UrlProcessor.class);
             processor.handle(request, response);
         }
