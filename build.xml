@@ -598,6 +598,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />
+			<arg value="-Dclassifier=noncla" />
 			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
@@ -608,6 +609,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dpackaging=jar" />
+			<arg value="-Dclassifier=jdk14" />
 			<arg value="-Dfile=${dwr-maven-jdk14-jar}" />
 			<arg value="-Dpackaging=jar" />
 		</artifact:mvn>
