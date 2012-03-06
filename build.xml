@@ -30,7 +30,7 @@
 	<property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
 	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 	<!-- End Properties for Maven -->
-	<property name="skipTests" value="true"/>
+	<property name="skipTests" value="false"/>
 		
 	<target name="init">
 		<mkdir dir="${build}" />
