@@ -81,6 +81,13 @@ public class LocalUtilTest
     }
 
     @Test
+    public void testIsSafeHierarchicalIdentifierInBrowser() {
+        assertTrue(LocalUtil.isSafeHierarchicalIdentifierInBrowser("org.directwebremoting.test"));
+        assertFalse(LocalUtil.isSafeHierarchicalIdentifierInBrowser("org.?directwebremoting"));
+        assertFalse(LocalUtil.isSafeHierarchicalIdentifierInBrowser("org.<directwebremoting"));
+    }
+
+    @Test
     public void testSetProperty() throws Exception
     {
         Bean bean = new Bean("whatever");
