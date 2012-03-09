@@ -58,7 +58,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.DwrConstants;
@@ -282,13 +281,6 @@ public final class LocalUtil
     public static boolean isValidMappedClassName(String test)
     {
         return isSafeHierarchicalIdentifierInBrowser(test);
-    }
-
-    public static void main(String[] args) {
-        String s = StringUtils.rightPad("X", 65530, "X" );
-        System.out.println("start");
-        boolean t = LocalUtil.isSafeHierarchicalIdentifierInBrowser(s);
-        System.out.println("end");
     }
 
     /**
