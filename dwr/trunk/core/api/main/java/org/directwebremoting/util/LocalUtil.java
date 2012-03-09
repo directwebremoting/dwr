@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.DwrConstants;
@@ -283,6 +284,13 @@ public final class LocalUtil
         return isSafeHierarchicalIdentifierInBrowser(test);
     }
 
+    public static void main(String[] args) {
+        String s = StringUtils.rightPad("X", 65530, "X" );
+        System.out.println("start");
+        boolean t = LocalUtil.isSafeHierarchicalIdentifierInBrowser(s);
+        System.out.println("end");
+    }
+
     /**
      * Tests if a string contains only characters that will allow safe use
      * inside html element attributes and url:s, and is a valid hierarchical
@@ -304,11 +312,9 @@ public final class LocalUtil
             {
                 return false;
             }
-            for(int i=0; i<segment.length(); i++) {
-                if (!isSafeIdentifierInBrowser(test))
-                {
-                    return false;
-                }
+            if (!isSafeIdentifierInBrowser(segment))
+            {
+                return false;
             }
         }
         return true;
@@ -1197,6 +1203,23 @@ public final class LocalUtil
             }
         }
         return Thread.currentThread().getContextClassLoader().loadClass(remappedDwrClassName(className));
+    }
+
+    /**
+     * Is Atmosphere/Meteor present on the classpath?
+     *
+     * @return
+     */
+    public static boolean isMeteorAvailable() {
+        boolean useMeteor = false;
+        try {
+            classForName("org.atmosphere.cpr.MeteorServlet");
+            // If a ClassNotFoundException was not thrown, Atmosphere is in the classpath.
+            useMeteor = true;
+        } catch (ClassNotFoundException cnfe) {
+            // Meteor is not present.
+        }
+        return useMeteor;
     }
 
     /**
