@@ -58,7 +58,7 @@
     core/api, core/impl, core/legacy,
     protocol/dwrp, protocol/json, protocol/bayeux,
     serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
-    ui/dwr, ui/gi, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
+    ui/dwr, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
     " />
 
 	<!--=======================================================================-->
@@ -75,7 +75,7 @@
 	</target>
 
 	<target name="source" description="Create dwr-src.jar">
-		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,ui/dwr, ui/gi, ui/scriptaculous, ui/dojo" />
+		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,ui/dwr, ui/scriptaculous, ui/dojo" />
 		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
 		<jar destfile="${target.root}/dwr-src.jar" compress="true">
 			<fileset dir="${target.root}/sourcetree" />
@@ -197,7 +197,6 @@
 				<pathelement path="${source.root}/ui/scriptaculous/main/java"/>
 				<pathelement path="${source.root}/ui/yui/main/java"/>
 				<pathelement path="${source.root}/ui/jaxer/main/java"/>
-				<pathelement path="${source.root}/ui/gi/main/java"/>
 			</sourcepath>
 			<classpath>
 				<pathelement location="${target.root}/classes/main" />
