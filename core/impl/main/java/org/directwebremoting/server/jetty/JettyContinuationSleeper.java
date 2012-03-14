@@ -174,7 +174,6 @@ public class JettyContinuationSleeper implements Sleeper
                         try
                         {
                             continuation.resume();
-                            onAwakening.run();
                         }
                         catch (Exception ex)
                         {
