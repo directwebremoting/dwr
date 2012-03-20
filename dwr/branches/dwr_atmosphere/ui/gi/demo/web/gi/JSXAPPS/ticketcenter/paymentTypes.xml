@@ -1,0 +1,6 @@
+<data jsxid="jsxroot">
+  <record jsxid="visa" jsxtext="Visa / Delta"/>
+  <record jsxid="mc" jsxtext="Mastercard"/>
+  <record jsxid="amex" jsxtext="AmEx"/>
+  <record jsxid="switch" jsxtext="Switch / Solo"/>
+</data>

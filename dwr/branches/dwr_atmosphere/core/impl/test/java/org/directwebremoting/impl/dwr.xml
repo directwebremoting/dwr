@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://www.getahead.ltd.uk/dwr/dwr30.dtd">
+
+<dwr>
+
+  <init>
+    <converter id="testbean" class="org.example.testdwr.TestBean2Converter"/>
+  </init>
+
+  <allow>
+
+    <filter class="org.directwebremoting.filter.ExtraLatencyAjaxFilter">
+      <param name="delay" value="200"/>
+    </filter>
+
+    <create creator="new" javascript="Test">
+      <param name="class" value="org.directwebremoting.impl.test.TestCreatedObject"/>
+    </create>
+
+    <create creator="new" javascript="JDate">
+      <param name="class" value="java.util.Date"/>
+      <exclude method="getHours"/>
+      <auth method="getMinutes" role="admin"/>
+      <auth method="getMinutes" role="devel"/>
+      <filter class="org.example.testdwr.Logging1AjaxFilter"/>
+      <filter class="org.example.testdwr.Logging2AjaxFilter"/>
+    </create>
+
+    <!--
+    <convert converter="bean" match="org.example.testdwr.ObjB"/>
+    <convert converter="object" match="org.example.testdwr.ObjA">
+      <param name="force" value="true"/>
+    </convert>
+    -->
+
+  </allow>
+
+  <signatures>
+  <![CDATA[
+  import java.util.*;
+  import org.example.testdwr.*;
+
+  Test.testBeanSetParam(Set<Integer>);
+  ]]>
+  </signatures>
+
+</dwr>

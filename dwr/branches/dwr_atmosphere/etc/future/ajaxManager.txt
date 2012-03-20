@@ -1,0 +1,362 @@
+/**
+ * ajaxManager.js
+ * 
+ * @author Ian Radford, ICR Software Services Ltd
+ * 
+ * The purpose of the ajaxManager is to act as a central controller through which all ajax calls
+ * back to the server must pass. This allows it to control the number and frequency of connections,
+ * potentially batching multiple calls together. The manager itself should be instantiated once per
+ * page (probably by the decorator) and, by default, provides a handler for DWR calls, although
+ * other providers can be supported with the "addProvider" method.
+ * 
+ * Individual ajax calls should be registered with the manager prior to use using the "registerCall"
+ * method. This returns back a replacement function reference which be used in place of the
+ * original.  This would be done once. An example of this might be:
+ * 
+ * 	CalendarManager.getNotes = this.manager.registerCall(CalendarManager.getNotes,
+ *                           icrss.AJAXManager.MEDIUM, this.manager.getDWRProvider(), true, 20);
+ *
+ * The CalendarManager.getNotes() method can then be used as before but will become controlled by
+ * the ajaxManager. The only change is that if the ajaxManager was used to make the call "live" (ie.
+ * the above call is "live" with a poll of every 20s) then, if the call is going to be resubmitted
+ * (perhaps because parameters have changed), then the cancel() method must be used first in order
+ * to stop the polling of the initial call. An example of the usage in this way follows:
+ * 
+ *    if (this.notesQuery) {
+ *       this.notesQuery.cancel();
+ *    }
+ *     
+ *    this.notesQuery = CalendarManager.getNotes(this.from, this.until, {
+ * 		callback: function(notes) {
+ *			instance.displayNotes(notes);
+ *		}
+ * 
+ * If this wasn't to be a "live" call, then the the middle "if" class isn't required (but does
+ * no harm). The "live" switch is the penultimate (optional) parameter on register call. See documentation
+ * below for more details.
+ * 
+ * REQUIRES prototype.js from www.prototypejs.org
+ */
+
+if (icrss == null) var icrss = {};
+if (icrss.AJAXManager == null) icrss.AJAXManager = Class.create();
+
+// "Static constants"
+icrss.AJAXManager.LIVE = 0;
+icrss.AJAXManager.ONEOFF = 1;
+icrss.AJAXManager.LOWEST = 5; icrss.AJAXManager.LOW = 10; icrss.AJAXManager.MEDIUM = 20;
+icrss.AJAXManager.HIGH = 30; icrss.AJAXManager.CRITICAL = 50;
+
+icrss.AJAXManager.MIN_LATENCY = 50; // mS : this is how long a transaction must wait to see if any
+                                    //      subsequent transactions may follow.
+icrss.AJAXManager.prototype = {
+	
+ 	initialize: function(throttle) {
+		this.throttlePeriod = (throttle ? throttle : 1000); // Default, max one server req per second
+		this.lastReq = 0; // time of last request;
+		this.providers = [];
+		this.defaultProviderManager = 0;
+		this.DWR =  this.addProvider(DWRProvider, true); // Enable DWR
+	
+		debug("New instance of AJAX Manager");
+	},
+	
+	/**
+	 * Get the default provider (DWR) as we'll need this to pass in when registering the call.
+	 */
+	getDWRProvider: function() {
+		return this.DWR;
+	},
+	
+	/**
+	 * Register a new call. Returns a reference to a function which is a proxy to that call which
+	 * will be controlled via this manager.
+	 * @param {Object} functionName
+	 * @param {Object} priority - higher -> more
+	 * @param {Object} provider eg. icrss.AJAXManager.DWR: Thus determine how to batch/piggyback etc.
+	 * @param {Object} forcePoll true -> manager will poll this call. Some calls can already be "live" 
+	 *                 eg. DWR, but let's avoid those to keep control through here.
+	 * @param {Object} frequency (actually more "wavelenth:" time/poll in seconds). Only if forcePoll
+	 * @param {Object} throttle Minimum duration (in seconds) between calls of time function. If not
+	 *                 specified, then piggybacking may result in this being called more often than
+	 *                 frequency suggests. Prevent this if processing the response is slow.
+	 */
+	registerCall: function(functionDef, priority, provider, forcePoll, frequency, throttle) {
+      if (functionDef.wrapped) {
+         debug("WARNING! registerCall(): function to be registered is already wrapped. Aborting");
+         return functionDef;
+      }
+		var prov = provider ? provider : 0;
+		var myProvider = this.providers[prov];
+		return myProvider.registerCall(functionDef, priority, forcePoll, frequency, throttle);
+	},
+	
+	/**
+	 * Optional method to add new provider managers for providers other than DWR. This is currently
+	 * unused and essentially untested.
+	 * @param {Object} providerManager
+	 * @param {Object} defaultProvider
+	 */
+	addProvider: function(providerManager, defaultProvider) {
+		var manager = new providerManager(this);
+		var len = this.providers.push(manager);
+		if (defaultProvider == true) {
+			this.defaultProviderManager = len -1; // Index of this entry
+		}
+      return len -1;
+	}
+}
+
+var DWRProvider = Class.create();
+DWRProvider.prototype = {
+	initialize: function(_supervisor) {
+		var supervisor = _supervisor;
+		this.count = 0;   // number of outstanding requests thru this manager
+		this.throttlePeriod = supervisor.throttlePeriod;
+		this.lastCall = 0;
+      this.callQueue = [];
+      this.recurrentQueue = [];
+      this.waiting = false;
+      this.runningLive = undefined;
+		debug("Created DWR manager. Throttle at: " + supervisor.throttlePeriod);
+	},
+   
+	/**
+	 * Cancel an existing "live" call
+	 * @param {Object} ref
+	 */
+   cancel: function(ref) {
+      debug("Cancelling live call ref: " + (ref - 1));
+      this.recurrentQueue[ref - 1] = undefined;
+   },
+	
+	registerCall: function(functionDef, priority, forcePoll, frequency, throttle) {
+		var wrapper = new functionWrapper(functionDef, this, priority,
+                                          forcePoll, frequency, throttle);
+		/*
+		 * The following is more complicated than you would imagine because of JS's crap scope rules.
+		 * Basically, it creates a "closure," storing the scope at the time the function() is created
+		 * and appending the parameters passed at call time.
+		 */
+		var newFunction = function() {return wrapper.delegate.apply(wrapper, arguments)};
+      newFunction.wrapped = true;
+		debug("DWRProvider has registered call and is substituting: " + newFunction);
+		return newFunction;
+	},
+	
+	/**
+	 * Put the call onto the queue and then check the queue to see if waiting calls can be sent
+	 * @param {Object} caller
+	 * @param {Object} args
+	 */
+	callOut: function(caller, args) {
+      var ref = undefined;
+		debug("Call has been made into DWR manager: " + caller);
+      
+      this.callQueue.push({call: caller, arguments: args});   
+      if (caller.forcePoll) {
+         this.recurrentQueue.push({call: caller, arguments: args});
+         ref = this.recurrentQueue.length; // keep refs > 1 (need to subtract 1 for idx.
+                                           // we need to do this as 0 fails "if (ref)" test
+         debug("Added live call with ref: " + (ref - 1));
+      }  
+      this.checkQueue(false);
+      return ref; // Used as reference to this instance of the call.
+   },
+   
+	/**
+	 * Check the queue and evaluate whether or not calls are ready to go
+	 * @param {Object} timeout
+	 */
+   checkQueue: function(timeout) {
+      if ((this.waiting && !timeout) || this.callQueue.length == 0) {
+         /*
+          * there is already a timer running for the next period
+          */
+         debug("checkQueue() skipping out. waiting = " + this.waiting
+                        + ", and queue size = " + this.callQueue.length);
+         return;
+      } else {
+         var waitForFollowers = !timeout && !this.waiting
+         this.waiting = true;
+         var now = new Date().getTime();
+         if ((now >= this.lastCall + this.throttlePeriod) && (!waitForFollowers )) {
+            debug("checkQueue() ready to rumble");
+            /*
+             * No need to wait - just do it. Run all the outstanding tx in a batch
+             * Cancel any outstanding live timout - they will get piggybacked now and rescheduled
+             */
+            if (this.runningLive) {
+               clearTimeout(this.runningLive);
+            }
+		      dwr.engine.beginBatch();
+            for (var i = 0; i < this.callQueue.length; i++) {
+               var caller = this.callQueue[i].call;
+               var args = this.callQueue[i].arguments;
+               debug("checkQueue() making call: " + i + " forcePoll: " + caller.forcePoll);
+               caller.functionDef.apply(caller, args);
+         		this.count++;
+               debug("checkQueue() made async call: count = " + this.count);
+
+            }
+            /*
+             * TODO - how to process error handling
+             */
+      		dwr.engine.endBatch({
+        			errorHandler:function(errorString, exception) {alert("ICR: Error occurred: "
+                                                + errorString + " Exception: " + exception);}
+      		});
+            debug("checkQueue() completed batch");
+            this.lastCall = now;
+            this.callQueue = [];
+            var earliestRecurrent = null;
+            /*
+             * TODO !!! Easy win!
+             * The following loop can actually be replaced by performing this calculation each time
+             * the recurrentQueue is altered.
+             */
+            for (var i = 0; i < this.recurrentQueue.length; i++) {
+               
+               var live = this.recurrentQueue[i];
+               if (live) {
+                  var caller = live.call;
+                  this.callQueue.push(live)
+                  debug("Adding live call("+i+"):"+live+" to queue")
+                  if (earliestRecurrent == null) {
+                     earliestRecurrent = caller.frequency;
+                  } else {
+                     earliestRecurrent = Math.min(earliestRecurrent, caller.frequency);
+                  }
+               }
+            }
+            this.waiting = false;
+            if (this.callQueue.length > 0) {
+               var instance = this;
+               this.runningLive = setTimeout(
+                        function() {debug("live waking up!"); instance.checkQueue(true);},
+                        earliestRecurrent * 1000);
+               
+            }
+         } else if (waitForFollowers) {
+            debug("checkQueue() pausing for subsequent calls");
+            /*
+             * This is the first call for a while, wait for min latency period in case we have
+             * more calls to come. Otherwise the first call will go immediately and the subsequent
+             * ones will have to wil for the throttle period
+             */
+            this.waiting = true;
+            var instance = this;
+            setTimeout(function() {debug("min latencywaking up!"); instance.checkQueue(true);},
+                        icrss.AJAXManager.MIN_LATENCY);
+            
+         } else {
+            debug("checkQueue() going to sleep");
+            /*
+             * Have to wait for throttle period
+             */
+            this.waiting = true;
+            var instance = this;
+            setTimeout(function() {debug("waking up!"); instance.checkQueue(true);},
+                        (this.lastCall + this.throttlePeriod - now));
+         }
+      }
+	},
+	
+	/**
+	 * Count a call back in.
+	 */
+	callIn: function() {
+		this.count--;
+		debug("Call complete. Count = " + this.count);
+	}
+}
+
+/**
+ * This is the "proxy" object which wraps the original function call and its callback (required
+ * to process the response, even if this is just a matter of counting calls in and out).
+ */
+var functionWrapper = Class.create();
+functionWrapper.prototype = {
+	initialize: function(_functionDef, _manager, priority, forcePoll, frequency, throttle) {
+		this.functionDef = _functionDef;
+		this.manager = _manager;
+      this.throttlePeriod = throttle ? throttle : this.manager.throttlePeriod;
+      this.priority = priority;
+      this.forcePoll = forcePoll;
+      this.frequency = frequency;
+		debug("Created functionWrapper for: " + this.functionDef
+                           + ", throttle = " + this.throttlePeriod);
+	},
+	
+	delegate: function() {
+		debug("Proxying call to: " + this.functionDef + ", manager is: " + this.manager+ ", args: "
+               + arguments.length);
+		/*
+		 * arguments is an array of the arguments used to call this function. We need to use "apply"
+		 * to call the underlying function using this same array of parameters, otherwise it would
+		 * get one paramter which was an array.
+		 * 
+		 * We wrap the callback (last arg) as we need to intercept this to record the call as complete
+		 */
+		var numArgs = arguments.length;
+		var wrappedCB = new callbackWrapper(arguments[numArgs - 1].callback, this);
+		arguments[numArgs - 1].callback = function() {
+                                           return wrappedCB.delegate.apply(wrappedCB, arguments)
+                                        };
+		
+		/*
+		 * Add the call to the queue. It may or may not get executed now.
+		 */
+		return this.callOut.apply(this, arguments);
+	},
+	
+   /**
+    * Ask the provider to queue the call
+    */
+	callOut: function() {
+		var ref = this.manager.callOut(this, arguments);
+      debug("Creating call cancellation reference: " + (ref - 1));
+      var instance = this;
+      if (ref) {
+         return {
+            ref: ref,
+            cancel: function() {
+               debug("Wrapper attempting to cancel: " + (ref - 1));
+               instance.manager.cancel(ref);
+            }
+         }
+      } else {
+         return {
+            cancel: function() {
+               debug("ERROR: attempt to cancel tx with no reference");
+            }
+         }
+      }
+	},
+	
+   /**
+    * Tell the provider that the call's response has been received
+    */
+	callIn: function() {
+		return this.manager.callIn(this, arguments);
+	}
+}
+
+/**
+ * Wrap the callback so that when the (asynchronous) reply is received, we can let the manager know
+ */
+var callbackWrapper = Class.create();
+callbackWrapper.prototype = {
+	initialize: function(originalHandler, originalCall) {
+		this.originalHandler = originalHandler;
+		this.originalCall = originalCall;
+		debug("Created callbackWrapper for: " + originalHandler);
+	},
+	
+	delegate: function() {
+		this.originalCall.callIn(); // Register AJAX call complete
+		debug("Proxying callback to: " + this.originalHandler + ", call was: " + this.originalCall
+                + ", args: " + arguments.length);
+		return this.originalHandler.apply(this, arguments);
+	}
+}

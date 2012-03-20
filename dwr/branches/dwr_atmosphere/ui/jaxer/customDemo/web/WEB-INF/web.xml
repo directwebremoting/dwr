@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC
+    "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app id="demoRemoting">
+
+  <display-name>Jaxer With DWR Remoting</display-name>
+
+  <servlet>
+    <servlet-name>jaxer_dwr</servlet-name>
+    <servlet-class>org.directwebremoting.jaxer.servlet.DwrJaxerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jaxer_dwr</servlet-name>
+    <url-pattern>/dwr/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

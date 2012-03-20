@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright (c) 2001-2007, TIBCO Software Inc.
+  ~ Use, modification, and distribution subject to terms of license.
+  --><data jsxnamespace="propsbundle" locales="">
+
+  <locale>
+    <!-- jsx3.lang.ClassLoader -->
+    <record jsxid="boot.env_reset" jsxtext="Error redefining JSX environment parameter {0} from ''{1}'' to ''{2}''."/>
+    <record jsxid="boot.class_err" jsxtext="Could not load class {0}."/>
+    <record jsxid="boot.class_ex" jsxtext="Error loading class {0}: {1}"/>
+    <record jsxid="boot.class_undef" jsxtext="Loaded JavaScript file {0} but class {1} was not defined."/>
+    <record jsxid="boot.app_cfgerr" jsxtext="The application configuration file {0} is invalid: {1}"/>
+    <record jsxid="boot.app_insterr" jsxtext="Error loading application with path {0}."/>
+    <record jsxid="boot.add_cfgerr" jsxtext="The addin configuration file {0} is invalid: {1}"/>
+
+    <!-- jsx3.util.Job -->
+    <record jsxid="job.dup" jsxtext="Job ''{0}'' already exists."/>
+    <record jsxid="job.pre_bad" jsxtext="Cannot add prerequisite ''{1}'' to non-existent job ''{0}''."/>
+
+    <!-- jsx3.lang.Class -->
+    <record jsxid="class.bad_super" jsxtext="Invalid superclass: {0}."/>
+    <record jsxid="class.int_ext_class" jsxtext="Interface {0} may not extend class {1}."/>
+    <record jsxid="class.class_ext_int" jsxtext="Class {0} may not extend interface {1}."/>
+    <record jsxid="class.redefine" jsxtext="Attempt to redefine class: {0}, already: {1}."/>
+    <record jsxid="class.def_error" jsxtext="Error defining class {0}: {1}"/>
+    <record jsxid="class.no_init" jsxtext="Class {0} does not define an init() method."/>
+    <record jsxid="class.bad_int" jsxtext="Invalid interface argument while defining {0}: {1}."/>
+    <record jsxid="class.class_imp_class" jsxtext="Class {0} may not implement class {1}."/>
+    <record jsxid="class.int_imp_int" jsxtext="Interface {0} may not implement interface {1}."/>
+    <record jsxid="class.redef_method" jsxtext="Attempt to re-bless method {0} as {1}."/>
+    <record jsxid="class.new_inst" jsxtext="Method jsx3.lang.Class.newInstance() does not support more than 10 arguments."/>
+    <record jsxid="class.bless_int" jsxtext="May not call bless() on an interface: {0}."/>
+    <record jsxid="class.already_imp" jsxtext="Class {0} already implements interface {1}."/>
+    <record jsxid="class.nsm" jsxtext="No such method: {0}."/>
+    <record jsxid="class.mmix_bad" jsxtext="Error adding method mixin: class {0} does not define instance method {1}."/>
+
+    <!-- jsx3.lang.Method -->
+    <record jsxid="method.call" jsxtext="Too many arguments passed to Method.call(): {0}."/>
+
+    <!-- jsx3.lang.Object -->
+    <record jsxid="obj.no_inst" jsxtext="May not instantiate class/interface {0}."/>
+    <record jsxid="obj.super_funct" jsxtext="Illegal call to jsxsuper() from function {0}"/>
+    <record jsxid="obj.super_static" jsxtext="Illegal call to jsxsuper() from static method {0}."/>
+    <record jsxid="obj.super_none" jsxtext="No super method for method {0}."/>
+    <record jsxid="obj.supmx_funct" jsxtext="Illegal call to jsxsupermix() from function {0}"/>
+    <record jsxid="obj.supmx_static" jsxtext="Illegal call to jsxsupermix() from static method {0}."/>
+    <record jsxid="obj.supmx_none" jsxtext="No super mixin method for method {0}."/>
+    <record jsxid="obj.mix_funct" jsxtext="Illegal call to jsxmix() from function {0}"/>
+    <record jsxid="obj.mix_static" jsxtext="Illegal call to jsxmix() from static method {0}."/>
+
+    <!-- jsx3.lang.Package -->
+    <record jsxid="pkg.redefine" jsxtext="Package {0} redefined."/>
+    <record jsxid="pkg.def_error" jsxtext="Error defining class {0}: {1}"/>
+
+    <!-- jsx3.lang.Exception -->
+    <record jsxid="exc.ill_arg" jsxtext="Illegal value for argument {0}: {1}."/>
+
+    <!-- jsx3.lang.NativeError -->
+    <record jsxid="error.trap" jsxtext="Uncaught Exception: {0} (line: {1}, file: {2})"/>
+    <record jsxid="error.uncaught" jsxtext="Uncaught Exception"/>
+    <record jsxid="error.trap_err" jsxtext="Error in errorTrap(): {0} (original error: {1}, line {2}, file: {3})"/>
+
+    <!-- jsx3.html -->
+    <record jsxid="html.set_outer" jsxtext="An error occurred replacing the HTML element {0} with the HTML string ''{1}''."/>
+    <record jsxid="html.adj" jsxtext="insertAdjacentHTML command not implemented: {0}."/>
+
+    <!-- jsx3.app.Properties -->
+    <record jsxid="props.eval" jsxtext="Error evaluating dynamic property '{'id:''{0}'', value:''{1}'''}'."/>
+
+    <!-- jsx3.app.PropsBundle -->
+    <record jsxid="propbn.err" jsxtext="Error loading localized resource {0}."/>
+    <record jsxid="propbn.err_key" jsxtext="Error loading localized resource {0} for locale {1}."/>
+    <record jsxid="propbn.err_file" jsxtext="Error loading bundle file {0}: {1}"/>
+
+    <!-- jsx3.app.Settings -->
+    <record jsxid="sets.error" jsxtext="Error loading settings at path {0}: {1}"/>
+    <record jsxid="sets.no_url" jsxtext="Creating settings object with null URL."/>
+
+    <!-- jsx3.app.UserSettings -->
+    <record jsxid="usrset.large" jsxtext="Cookie is dangerously large: {0} bytes."/>
+    <record jsxid="usrset.deser" jsxtext="Cannot deserialize node name ''{0}''."/>
+    <record jsxid="usrset.persist" jsxtext="Cannot persist object of type {0}."/>
+
+    <!-- jsx3.app.Model -->
+    <record jsxid="model.set_frag" jsxtext="The object {0} cannot be bound as a child of the object {1} because the latter is a DOM fragment."/>
+    <record jsxid="model.clone_frag" jsxtext="The object {0} cannot be cloned because it is a DOM fragment."/>
+    <record jsxid="model.bad_comp" jsxtext="Error loading invalid component file {0}. Error: {1}."/>
+    <record jsxid="model.bad_compobj" jsxtext="Attempt to load invalid component document. Error: {1}."/>
+    <record jsxid="model.bad_vers" jsxtext="Cannot load the component file {0} because it has the out-of-date version {1}."/>
+    <record jsxid="model.future_vers" jsxtext="Cannot load the component file {0} because it was created with the future version {1}."/>
+    <record jsxid="model.onbefore" jsxtext="Exception raised in the onBeforeDeserialize script for component file {0}."/>
+    <record jsxid="model.onafter" jsxtext="Exception raised in the onAfterDeserialize script for component file {0}."/>
+    <record jsxid="model.load_cls" jsxtext="Error loading class {0}."/>
+    <record jsxid="model.bad_type" jsxtext="Component file {0} references invalid object type {1}."/>
+    <record jsxid="model.bad_child" jsxtext="Component file {0} references invalid object type {1}."/>
+    <record jsxid="model.async_convt" jsxtext="Converted an asynchronously referenced child of object {0} because it is not the last child of that object."/>
+    <record jsxid="model.child_notarr" jsxtext="The _jsxchildren property of {0} is corrupted. It should be an array but is {1}."/>
+
+    <!-- jsx3.app.Server -->
+    <record jsxid="serv.no_ns" jsxtext="The required configuration parameter ''namespace'' is not defined for the application at path {0}. There may have been an error loading the config.xml file."/>
+    <record jsxid="serv.err_paint" jsxtext="An error occurred while painting the server {0}."/>
+    <record jsxid="serv.err_onload" jsxtext="An error occurred while loading the initial component of the server {0}."/>
+    <record jsxid="serv.err_unload" jsxtext="An error occurred while unloading the server {0}."/>
+    <record jsxid="serv.err_jss" jsxtext="Error loading dynamic properties file {0}: {1}"/>
+    <record jsxid="serv.err_unload" jsxtext="Unloading the resource ''{0}'' of server {1} raised an error."/>
+    <record jsxid="serv.err_badid" jsxtext="Failed to load the resource ''{0}'' because no such resource was found in the configuration file."/>
+    <record jsxid="serv.win_err" jsxtext="Error loading jsx3.gui.Window component file {0}."/>
+    <record jsxid="serv.win_notwin" jsxtext="Error loading jsx3.gui.Window component file {0}. The loaded object is a {1}."/>
+    <record jsxid="serv.win_name" jsxtext="Error loading jsx3.gui.Window component file {0}. A window of name ''{1}'' already exists."/>
+
+    <!-- jsx3.xml.Cacheable -->
+    <record jsxid="xml.err_trans" jsxtext="Transformation failed on {0} with error {1}."/>
+    <record jsxid="xml.err_load" jsxtext="Error parsing or loading the XML file for {0}: {1}"/>
+    <record jsxid="xml.err_load_xsl" jsxtext="Error parsing or loading the XSL file for {0}: {1}"/>
+    <record jsxid="xml.trans_bad" jsxtext="Failed to load XML transformer {0} for {1}: {2}"/>
+    <record jsxid="xml.trans_err" jsxtext="Error transforming {1} with transformer {0}: {2}"/>
+
+    <!-- jsx3.xml.CDF -->
+    <record jsxid="cdf.prop_ins" jsxtext="Cannot insert record property on invalid record id ''{0}''."/>
+    <record jsxid="cdf.prop_del" jsxtext="Cannot delete record property on invalid record id ''{0}''."/>
+    <record jsxid="cdf.adopt_col" jsxtext="Object {0} cannot adopt record {1} because it already has a record with that id."/>
+    <record jsxid="cdf.adopt_dest" jsxtext="Object {0} cannot adopt record {1} as a child of record {2} because that record does not exist."/>
+    <record jsxid="cdf.adopt_src" jsxtext="Object {0} cannot adopt record {1} because that record does not exist in the source object {2}."/>
+    <record jsxid="cdf.before_col" jsxtext="Cannot insert record {0} on object {1} because the object already has a record with that id."/>
+    <record jsxid="cdf.before_rec" jsxtext="Cannot insert record on object {1} before record {0} because that record or its parent record does not exist."/>
+
+    <!-- jsx3.xml.Document -->
+    <record jsxid="xml.parser" jsxtext="Error instantiating the native XML parser: {0}"/>
+    <record jsxid="xml.doc_load" jsxtext="Loading XML document at URL {0}."/>
+    <record jsxid="xml.doc_status" jsxtext="Attempt to load URL {0} returned status {1}."/>
+    <record jsxid="xml.doc_bad" jsxtext="Invalid XML document has no document element."/>
+    <record jsxid="xml.doc_bad_ex" jsxtext="Loading XML document failed with error: {0}"/>
+    <record jsxid="xml.selns" jsxtext="Error setting selection namespaces to ''{0}'': {1}"/>
+    <record jsxid="xml.timeout" jsxtext="Document load timed out."/>
+    <record jsxid="xml.unknown" jsxtext="Unknown exception: {0}"/>
+    <record jsxid="xml.err_fmt" jsxtext="error code: {0}, line: {1}, character: {2}, reason: {3}, source: {4}, URL: {5}"/>
+
+    <!-- jsx3.xml.Entity -->
+    <record jsxid="xml.wrap_type" jsxtext="Entity wraps unsupported type {0}."/>
+    <record jsxid="xml.clone_tp" jsxtext="Entities of type {0} may not be cloned."/>
+    <record jsxid="xml.err_append" jsxtext="Could not append node {0} because either this node or that node is null or this node is not an element."/>
+    <record jsxid="xml.str_unk" jsxtext="{0} [type: {1}]"/>
+    <record jsxid="xml.str_err" jsxtext="{0} [error: {1}]"/>
+    <record jsxid="xml.str_empty" jsxtext="{0} [no data]"/>
+
+    <!-- jsx3.xml.Template -->
+    <record jsxid="temp.init_err" jsxtext="Cannot create a template with an XSL document with error {0}."/>
+    <record jsxid="temp.nat_err" jsxtext="Error instantiating native XSLT processor: {0}"/>
+    <record jsxid="temp.root_elm" jsxtext="Stylesheet must have root element ''stylesheet''."/>
+    <record jsxid="temp.empty" jsxtext="Transformation produced empty result."/>
+    <record jsxid="temp.temp_err" jsxtext="Cannot perform transformation with template with error {0}."/>
+    <record jsxid="temp.doc_err" jsxtext="Cannot perform transformation with document with error {0}."/>
+    <record jsxid="temp.err" jsxtext="Error performing transformation: {0}"/>
+
+    <!-- jsx3.util.DateFormat -->
+    <record jsxid="dtfmt.token" jsxtext="Illegal unquoted token at character {0} of date format ''{1}''."/>
+    <record jsxid="dtfmt.sq" jsxtext="Unclosed single quote at character {0} of date format ''{1}''."/>
+    <record jsxid="dtfmt.parse" jsxtext="Error parsing ''{0}'' with date format ''{1}''."/>
+
+    <!-- jsx3.util.MessageFormat -->
+    <record jsxid="msfmt.bracket" jsxtext="Unclosed bracket at character {0} of format ''{1}''."/>
+    <record jsxid="msfmt.sq" jsxtext="Unclosed single quote at character {0} of format ''{1}''."/>
+    <record jsxid="msfmt.bad_ind" jsxtext="The first token in bracket '{'{0}'}' of format ''{1}'' must be an integer."/>
+    <record jsxid="msfmt.bad_type" jsxtext="The second token in bracket '{'{0}'}' of format ''{1}'' is not recognized."/>
+
+    <!-- jsx3.util.NumberFormat -->
+    <record jsxid="nmfmt.numpt" jsxtext="No number part in number format ''{0}''."/>
+    <record jsxid="nmfmt.gpdec" jsxtext="Found grouping marker after decimal marker in number part ''{0}''."/>
+    <record jsxid="nmfmt.sq" jsxtext="Unclosed single quote at character {0} of number format ''{1}''."/>
+
+    <!-- jsx3.util.Logger -->
+    <record jsxid="logr.err_hand" jsxtext="Exception raised while handling logging record with handler ''{0}'': {1}"/>
+    <record jsxid="logr.err_conf" jsxtext="[Logging] Error loading manager configuration file {1}: {0}"/>
+    <record jsxid="logr.no_class" jsxtext="[Logging] Handler class {0} does not exist."/>
+    <record jsxid="logr.bn_eval" jsxtext="[Logging] Error evaluating value ''{1}'' for property ''{0}'' of bean {2}."/>
+    <record jsxid="logr.bn_setr" jsxtext="[Logging] No setter method for property ''{0}'' of class {1}."/>
+    <record jsxid="logr.no_hand" jsxtext="[Logging] Logger ''{0}'' references non-existent handler ''{1}''."/>
+    <record jsxid="logr.alrt_ctd" jsxtext="Continue with the alert handler ''{0}'' enabled?"/>
+    <record jsxid="logr.alrt_err" jsxtext="Error in alert handler while trying to alert message: {0}"/>
+
+    <!-- jsx3.net.Form -->
+    <record jsxid="htfrm.no_ifr" jsxtext="No document in IFRAME of form {0}."/>
+    <record jsxid="htfrm.bad_frag" jsxtext="The HTML fragment does not contain a valid &lt;form&gt; tag: ''{0}''"/>
+    <record jsxid="htfrm.dup" jsxtext="Form {0} already has field ''{1}''."/>
+    <record jsxid="htfrm.no_file" jsxtext="Form {0} does not have file upload field ''{1}''."/>
+    <record jsxid="htfrm.sec" jsxtext="Security error with form {0}: {1}"/>
+    <record jsxid="htfrm.bad_xml" jsxtext="Parsing the result of the form post as XML produced an error: {0}"/>
+    <record jsxid="htfrm.bad_dt" jsxtext="The result of the form post is an unsupported document type: {0}"/>
+    <record jsxid="htfrm.destr" jsxtext="Form {0} was probably already destroyed."/>
+    <record jsxid="htfrm.prompt" jsxtext="The class jsx3.net.Form may not support prompting for file upload on this platform."/>
+
+    <!-- jsx3.net.Request -->
+    <record jsxid="req.inst" jsxtext="An error occurred while instantiating the native request object."/>
+    <record jsxid="req.bad_xml" jsxtext="Parsing the result of the request to {0} as XML produced an error: {1}"/>
+    <record jsxid="req.no_doc" jsxtext="The result of the request to {0} is not an XML document."/>
+    <record jsxid="req.netsc" jsxtext="Error requesting Netscape privilege: {0}"/>
+    <record jsxid="req.err_open" jsxtext="Error opening request to {0}: {1}"/>
+    <record jsxid="req.err_send" jsxtext="Error sending request to {0}: {1}"/>
+    <record jsxid="req.open" jsxtext="Opening request to: {0}"/>
+    <record jsxid="req.err_state" jsxtext="Cannot send request that is already in an error state."/>
+
+    <!-- jsx3.gui.HotKey -->
+    <record jsxid="gui.hk.dest" jsxtext="Cannot invoke destroyed or disabled hot key {0}."/>
+
+    <!-- jsx3.gui.Interactive -->
+    <record jsxid="gui.int.br" jsxtext="No event bridge method ''{0}'' for event type ''{1}'' on DOM object {2}."/>
+    <record jsxid="gui.int.eb" jsxtext="No DOM object with id ''{0}'' ({1} up from {2})."/>
+
+    <!-- jsx3.gui.Window -->
+    <record jsxid="gui.win.op" jsxtext="Window {0} is already open."/>
+    <record jsxid="gui.win.cl" jsxtext="Window {0} is not open."/>
+
+    <!-- jsx3.gui.DatePicker -->
+    <record jsxid="gui.dp.fmt" jsxtext="Date format ''{0}'' of date picker {1} is invalid."/>
+
+    <!-- jsx3.gui.Heavyweight -->
+    <record jsxid="gui.hw.doc" jsxtext="Document of owner of {0} is null."/>
+    <record jsxid="gui.hw.own" jsxtext="Owner of {0} is null."/>
+
+  </locale>
+</data>

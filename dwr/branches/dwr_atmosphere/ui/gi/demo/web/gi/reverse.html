@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Ticket Center Demo Application</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/gi.js'> </script>
+  <script type="text/javascript" src="../dwr/interface/Reverse.js"> </script>
+  <script type="text/javascript" src='reverse.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <link rel="stylesheet" type="text/css" href="customize.css" />
+</head>
+<body onload="Tabs.init('tabList', 'tabContents');">
+<div id="page-title">[
+  <a href="http://getahead.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>GI + Reverse Ajax</h1>
+
+<p>This is a demonstration of manipulating a GI interface from the server using
+a Reverse Ajax API.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+</ul>
+
+<div id="tabContents">
+<div id="demoDiv">
+
+  <div style="width:800px; height:350px;" id="reverse" class="customize">
+    <script
+        type="text/javascript"
+        src="JSX/js/JSX30.js"
+        jsxapppath="JSXAPPS/reverse"
+        jsxlt="true"> </script>
+  </div>
+
+</div>
+<div id="explainDiv">
+</div>
+
+</body>
+</html>

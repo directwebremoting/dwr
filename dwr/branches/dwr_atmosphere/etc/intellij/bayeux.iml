@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../target/intellij/main" />
+    <output-test url="file://$MODULE_DIR$/../../target/intellij/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../protocol/bayeux">
+      <sourceFolder url="file://$MODULE_DIR$/../../protocol/bayeux/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="protocol-bayeux" level="project" />
+    <orderEntry type="module" module-name="api" />
+    <orderEntry type="module" module-name="dwrp" />
+    <orderEntry type="module" module-name="impl" />
+  </component>
+</module>
+
