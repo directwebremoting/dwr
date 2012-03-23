@@ -515,14 +515,12 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /**
      * Allows us to associate script sessions with http sessions.
      * The key is an http session id, the
-     * <p>GuardedBy("sessionLock")
      */
     protected final Map<String, Set<String>> sessionXRef = new ConcurrentHashMap<String, Set<String>>();
 
     /**
      * The map of all the known sessions.
      * The key is the script session id, the value is the session data
-     * <p>GuardedBy("sessionLock")
      */
     protected final ConcurrentMap<String, DefaultScriptSession> sessionMap = new ConcurrentHashMap<String, DefaultScriptSession>();
 
@@ -530,7 +528,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The map of pages that have sessions.
      * The key is a normalized page, the value the script sessions that are
      * known to be currently visiting the page
-     * <p>GuardedBy("sessionLock")
      */
     protected final ConcurrentMap<String, Set<DefaultScriptSession>> pageSessionMap = new ConcurrentHashMap<String, Set<DefaultScriptSession>>();
 }
