@@ -321,8 +321,7 @@ public abstract class BaseCallMarshaller implements Marshaller
                 {
                     Throwable ex = reply.getThrowable();
                     EnginePrivate.remoteHandleException(conduit, batchId, callId, ex);
-
-                    log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']');
+                    log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']', ex);
                 }
                 else
                 {
