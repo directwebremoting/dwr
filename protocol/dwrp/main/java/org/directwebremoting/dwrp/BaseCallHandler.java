@@ -185,7 +185,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     InboundVariable param;
                     if (method.isVarArgs() && j + 1 == destParamCount)
                     {
-                        param = inctx.createArrayWrapper(j, callNum, destParamCount);
+                        param = inctx.createArrayWrapper(callNum, destParamCount);
                     }
                     else
                     {
@@ -334,9 +334,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     Throwable ex = reply.getThrowable();
                     ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                     conduit.addScript(script);
-
                     // TODO: Are there any reasons why we should be logging here (and in the ConversionException handler)
-                    //log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']');
+                    //log.warn("--Erroring: batchId[" + batchId + "] message[" + ex.toString() + ']'), ex;
                 }
                 else
                 {
