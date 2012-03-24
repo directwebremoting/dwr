@@ -185,7 +185,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     InboundVariable param;
                     if (method.isVarArgs() && j + 1 == destParamCount)
                     {
-                        param = inctx.createArrayWrapper(callNum, destParamCount);
+                        param = inctx.createArrayWrapper(j, callNum, destParamCount);
                     }
                     else
                     {
@@ -410,7 +410,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
         catch (ConversionException ex)
         {
-            log.warn("Error marshalling exception. Is the exception converter configured?");
+            log.warn("Error marshalling exception. Is the exception converter configured?", ex);
         }
     }
 
