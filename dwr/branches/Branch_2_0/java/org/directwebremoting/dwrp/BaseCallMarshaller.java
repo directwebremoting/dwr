@@ -347,7 +347,7 @@ public abstract class BaseCallMarshaller implements Marshaller
                 // nervous about sending the exception to the client, but we
                 // want to avoid silently dying so we need to do something.
                 EnginePrivate.remoteHandleException(conduit, batchId, callId, ex);
-                log.error("--MarshallException: batchId=" + batchId + " message=" + ex.toString());
+                log.error("--MarshallException: batchId=" + batchId + " message=" + ex.toString(), ex);
             }
         }
 
