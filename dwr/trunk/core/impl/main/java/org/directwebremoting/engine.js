@@ -531,6 +531,94 @@ if (typeof dwr == 'undefined') dwr = {};
     }
   }
 
+  dwr.engine._initializer = {		  
+			
+	/**
+	 * Work out what type of browser we are working on
+	 */	  
+	setCurrentBrowser: function() {
+	  var userAgent = navigator.userAgent;
+	  var versionString = navigator.appVersion;
+	  var version = parseFloat(versionString);
+	  dwr.engine.isOpera = (userAgent.indexOf("Opera") >= 0) ? version : 0;
+	  dwr.engine.isKhtml = (versionString.indexOf("Konqueror") >= 0) || (versionString.indexOf("Safari") >= 0) ? version : 0;
+	  dwr.engine.isSafari = (versionString.indexOf("Safari") >= 0) ? version : 0;
+	  dwr.engine.isJaxerServer = (window.Jaxer && Jaxer.isOnServer);
+
+	  var geckoPos = userAgent.indexOf("Gecko");
+	  dwr.engine.isMozilla = ((geckoPos >= 0) && (!dwr.engine.isKhtml)) ? version : 0;
+	  dwr.engine.isFF = 0;
+	  dwr.engine.isIE = 0;
+		  
+	  try {
+	    if (dwr.engine.isMozilla) {
+	      dwr.engine.isFF = parseFloat(userAgent.split("Firefox/")[1].split(" ")[0]);
+	    }
+	    if ((document.all) && (!dwr.engine.isOpera)) {
+	      dwr.engine.isIE = parseFloat(versionString.split("MSIE ")[1].split(";")[0]);
+	    }
+	  }
+	  catch(ex) { }
+	},	   
+	  
+	/*
+	 * Load-time initializations
+	 */
+	preInit: function() {
+  	  // Make random local page id
+  	  dwr.engine._pageId = dwr.engine.util.tokenify(new Date().getTime()) + "-" + dwr.engine.util.tokenify(Math.random() * 1E16);
+
+  	  // Reuse any existing dwr session
+	  dwr.engine.transport.updateDwrSessionFromCookie();
+
+	  // Register the unload handler
+	  if (!dwr.engine.isJaxerServer) {
+	    dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
+	  }
+
+	  // Set up a receiver context for this engine instance
+	  var g = dwr.engine._global;
+	  if (!g.dwr) {
+	    g.dwr = {};
+	  }
+	  if (!g.dwr._) {
+	    g.dwr._ = [];
+	  }
+	  dwr.engine._instanceId = g.dwr._.length;
+	  g.dwr._[dwr.engine._instanceId] = {
+	    handleCallback: dwr.engine.remote.handleCallback,
+	    handleException: dwr.engine.remote.handleException,
+	    handleNewWindowName: dwr.engine.remote.handleNewWindowName,
+	    handleBatchException: dwr.engine.remote.handleBatchException,
+	    handleFunctionCall: dwr.engine.remote.handleFunctionCall,
+		handleObjectCall: dwr.engine.remote.handleObjectCall,
+		handleSetCall: dwr.engine.remote.handleSetCall,
+		handleFunctionClose: dwr.engine.remote.handleFunctionClose,
+		handleObjectCall: dwr.engine.remote.handleObjectCall,
+		handleForeign: dwr.engine.remote.handleForeign,
+		pollCometDisabled: dwr.engine.remote.pollCometDisabled,
+		newObject: dwr.engine.remote.newObject,
+		toDomElement: dwr.engine.serialize.toDomElement,
+		toDomDocument: dwr.engine.serialize.toDomDocument,
+		beginIFrameResponse: dwr.engine.transport.iframe.remote.beginIFrameResponse,
+		endIFrameResponse: dwr.engine.transport.iframe.remote.endIFrameResponse,
+		_eval: dwr.engine._eval
+	  };
+	},
+		  	
+	init: function() {
+	  dwr.engine._initializer.setCurrentBrowser();
+	  dwr.engine._initializer.preInit();
+	  // Run page init code as desired by server
+	  eval("${initCode}");  		
+	}, 
+	
+	initForPushState: function() {
+	  dwr.engine._dwrSessionId = null;
+	  dwr.engine._initializer.init();
+	}
+  };
+  
   /**
    * Send a request. Called by the JavaScript interface stub
    * @private
@@ -2424,84 +2512,9 @@ if (typeof dwr == 'undefined') dwr = {};
     }
   };
 
-  /**
-   * Work out what type of browser we are working on
-   */
-
-  var userAgent = navigator.userAgent;
-  var versionString = navigator.appVersion;
-  var version = parseFloat(versionString);
-
-  dwr.engine.isOpera = (userAgent.indexOf("Opera") >= 0) ? version : 0;
-  dwr.engine.isKhtml = (versionString.indexOf("Konqueror") >= 0) || (versionString.indexOf("Safari") >= 0) ? version : 0;
-  dwr.engine.isSafari = (versionString.indexOf("Safari") >= 0) ? version : 0;
-  dwr.engine.isJaxerServer = (window.Jaxer && Jaxer.isOnServer);
-
-  var geckoPos = userAgent.indexOf("Gecko");
-  dwr.engine.isMozilla = ((geckoPos >= 0) && (!dwr.engine.isKhtml)) ? version : 0;
-
-  dwr.engine.isFF = 0;
-  dwr.engine.isIE = 0;
-  try {
-    if (dwr.engine.isMozilla) {
-      dwr.engine.isFF = parseFloat(userAgent.split("Firefox/")[1].split(" ")[0]);
-    }
-    if ((document.all) && (!dwr.engine.isOpera)) {
-      dwr.engine.isIE = parseFloat(versionString.split("MSIE ")[1].split(";")[0]);
-    }
-  }
-  catch(ex) { }
-
-  /*
-   * Other load-time initializations
-   */
-
-  // Make random local page id
-  dwr.engine._pageId = dwr.engine.util.tokenify(new Date().getTime()) + "-" + dwr.engine.util.tokenify(Math.random() * 1E16);
-
-  // Reuse any existing dwr session
-  dwr.engine.transport.updateDwrSessionFromCookie();
-
-  // Register the unload handler
-  if (!dwr.engine.isJaxerServer) {
-    dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
-  }
-
-  // Set up a receiver context for this engine instance
-  var g = dwr.engine._global;
-  if (!g.dwr) {
-    g.dwr = {};
-  }
-  if (!g.dwr._) {
-    g.dwr._ = [];
-  }
-  dwr.engine._instanceId = g.dwr._.length;
-  g.dwr._[dwr.engine._instanceId] = {
-    handleCallback: dwr.engine.remote.handleCallback,
-    handleException: dwr.engine.remote.handleException,
-    handleNewWindowName: dwr.engine.remote.handleNewWindowName,
-    handleBatchException: dwr.engine.remote.handleBatchException,
-    handleFunctionCall: dwr.engine.remote.handleFunctionCall,
-    handleObjectCall: dwr.engine.remote.handleObjectCall,
-    handleSetCall: dwr.engine.remote.handleSetCall,
-    handleFunctionClose: dwr.engine.remote.handleFunctionClose,
-    handleObjectCall: dwr.engine.remote.handleObjectCall,
-    handleForeign: dwr.engine.remote.handleForeign,
-    pollCometDisabled: dwr.engine.remote.pollCometDisabled,
-    newObject: dwr.engine.remote.newObject,
-    toDomElement: dwr.engine.serialize.toDomElement,
-    toDomDocument: dwr.engine.serialize.toDomDocument,
-    beginIFrameResponse: dwr.engine.transport.iframe.remote.beginIFrameResponse,
-    endIFrameResponse: dwr.engine.transport.iframe.remote.endIFrameResponse,
-    _eval: dwr.engine._eval
-  };
-
-  /*
-   * Run page init code as desired by server
-   */
-
-  eval("${initCode}");
-  
+  // Initialize DWR.
+  dwr.engine._initializer.init();
+    
   /**
    * Routines for the DWR pubsub hub
    */
