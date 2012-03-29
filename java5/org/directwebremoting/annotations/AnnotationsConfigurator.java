@@ -233,37 +233,43 @@ public class AnnotationsConfigurator implements Configurator
         {
             StringBuilder properties = new StringBuilder();
             Set<Field> fields = new HashSet<Field>();
-            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            fields.addAll(Arrays.asList(clazz.getFields()));
-            for (Field field : fields)
+            Class<?> superClazz = clazz;
+            while (superClazz != Object.class)
             {
-                if (field.getAnnotation(RemoteProperty.class) != null)
+                fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
+                fields.addAll(Arrays.asList(superClazz.getFields()));
+                for (Field field : fields)
                 {
-                    properties.append(',').append(field.getName());
-                }
-            }
-
-            Method[] methods = clazz.getMethods();
-            for (int i = 0; i < methods.length; i++)
-            {
-                if (methods[i].getAnnotation(RemoteProperty.class) != null)
-                {
-                    String name = methods[i].getName();
-                    if (name.startsWith(METHOD_PREFIX_GET) || name.startsWith(METHOD_PREFIX_IS))
+                    if (field.getAnnotation(RemoteProperty.class) != null)
                     {
-                        if (name.startsWith(METHOD_PREFIX_GET))
-                        {
-                            name = name.substring(3);
-                        }
-                        else
-                        {
-                            name = name.substring(2);
-                        }
-                        name = Introspector.decapitalize(name);
-                        properties.append(',').append(name);
+                        properties.append(',').append(field.getName());
                     }
                 }
+    
+                Method[] methods = superClazz.getMethods();
+                for (int i = 0; i < methods.length; i++)
+                {
+                    if (methods[i].getAnnotation(RemoteProperty.class) != null)
+                    {
+                        String name = methods[i].getName();
+                        if (name.startsWith(METHOD_PREFIX_GET) || name.startsWith(METHOD_PREFIX_IS))
+                        {
+                            if (name.startsWith(METHOD_PREFIX_GET))
+                            {
+                                name = name.substring(3);
+                            }
+                            else
+                            {
+                                name = name.substring(2);
+                            }
+                            name = Introspector.decapitalize(name);
+                            properties.append(',').append(name);
+                        }
+                    }
+                }
+                superClazz = superClazz.getSuperclass();
             }
+            
             if (properties.length() > 0)
             {
                 properties.deleteCharAt(0);
