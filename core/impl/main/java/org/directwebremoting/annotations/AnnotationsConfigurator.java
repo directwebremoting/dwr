@@ -287,10 +287,11 @@ public class AnnotationsConfigurator implements Configurator
         {
             StringBuilder properties = new StringBuilder();
             Set<Field> fields = new HashSet<Field>();
-            while (clazz != Object.class)
+            Class<?> superClazz = clazz;
+            while (superClazz != Object.class)
             {
-                fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-                fields.addAll(Arrays.asList(clazz.getFields()));
+                fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
+                fields.addAll(Arrays.asList(superClazz.getFields()));
                 for (Field field : fields)
                 {
                     if (field.getAnnotation(RemoteProperty.class) != null)
@@ -299,7 +300,7 @@ public class AnnotationsConfigurator implements Configurator
                     }
                 }
 
-                for (Method method : clazz.getMethods())
+                for (Method method : superClazz.getMethods())
                 {
                     if (method.getAnnotation(RemoteProperty.class) != null)
                     {
@@ -319,7 +320,7 @@ public class AnnotationsConfigurator implements Configurator
                         }
                     }
                 }
-                clazz = clazz.getSuperclass();
+                superClazz = superClazz.getSuperclass();
             }
 
             if (properties.length() > 0)
