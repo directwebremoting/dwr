@@ -18,6 +18,7 @@ package org.directwebremoting.convert;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -595,6 +596,15 @@ public abstract class BasicObjectConverter implements NamedConverter
                 }
             }
         }
+    }
+
+    /**
+     * Returns an immutable List of the inclusions.
+     *
+     * @return
+     */
+    public List<String> getInclusions() {
+        return Collections.unmodifiableList(this.inclusions);
     }
 
     /**
