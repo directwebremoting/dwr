@@ -24,7 +24,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author David Marginian [david at butterdev dot com]
+ * This needs to be expanded on a lot, but it's a start.
  */
 public class AnnotationsConfiguratorTest
 {
