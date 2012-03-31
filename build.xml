@@ -19,7 +19,7 @@
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
-	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-noncla-${version}.jar" />
+	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-${version}-noncla.jar" />
 	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
