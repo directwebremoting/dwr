@@ -20,9 +20,9 @@
 	<property name="version" value="2.0.10" />
 
     <!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
-	<property name="maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
-	<property name="maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
+	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
+	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 
     <!-- defined maven snapshots and staging repository id and url -->
 	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
@@ -176,16 +176,16 @@
 	<target name="dist" depends="init, compile" description="generate the distribution">
 
 		<!-- build the main artifact -->
-		<jar jarfile="${maven-jar}" basedir="${build}" />
+		<jar jarfile="${dwr-maven-jar}" basedir="${build}" />
 
 		<!-- build the javadoc artifact -->
 		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" />
-		<jar jarfile="${maven-javadoc-jar}">
+		<jar jarfile="${dwr-maven-javadoc-jar}">
 			<fileset dir="${dist}/javadoc" />
 		</jar>
 
 		<!-- build the sources artifact -->
-		<jar jarfile="${maven-sources-jar}">
+		<jar jarfile="${dwr-maven-sources-jar}">
 			<fileset dir="${src}" />
 		</jar>
 	</target>
