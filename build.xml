@@ -176,7 +176,9 @@
 	<target name="dist" depends="init, compile" description="generate the distribution">
 
 		<!-- build the main artifact -->
-		<jar jarfile="${dwr-maven-jar}" basedir="${build}" />
+		<jar jarfile="${dwr-maven-jar}">
+		    <fileset dir="${build}" />
+		</jar>
 
 		<!-- build the javadoc artifact -->
 		<javadoc sourcepath="${src}" destdir="${dist}/javadoc" />
