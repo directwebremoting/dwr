@@ -577,9 +577,11 @@
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfiles=${dwr-maven-jar},${dwr-maven-sources-jar},${dwr-maven-javadoc-jar},${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
-			<arg value="-Dclassifiers=,sources,javadoc,noncla,jdk14" />
-			<arg value="-Dtypes=jar,jar,jar,jar,jar" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar},${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
+			<arg value="-Dclassifiers=sources,javadoc,noncla,jdk14" />
+			<arg value="-Dtypes=jar,jar,jar,jar" />
 		</artifact:mvn>
 	</target>
 
@@ -593,9 +595,11 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfiles=${dwr-maven-jar},${dwr-maven-sources-jar},${dwr-maven-javadoc-jar},${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
-			<arg value="-Dclassifiers=,sources,javadoc,noncla,jdk14" />
-			<arg value="-Dtypes=jar,jar,jar,jar,jar" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar},${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
+			<arg value="-Dclassifiers=sources,javadoc,noncla,jdk14" />
+			<arg value="-Dtypes=jar,jar,jar,jar" />
 		</artifact:mvn>
 	</target>
 
