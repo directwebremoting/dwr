@@ -286,12 +286,11 @@ public class AnnotationsConfigurator implements Configurator
         if (BeanConverter.class.isAssignableFrom(converter))
         {
             StringBuilder properties = new StringBuilder();
-            Set<Field> fields = new HashSet<Field>();
             Class<?> superClazz = clazz;
             while (superClazz != Object.class)
             {
+                Set<Field> fields = new HashSet<Field>();
                 fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
-                fields.addAll(Arrays.asList(superClazz.getFields()));
                 for (Field field : fields)
                 {
                     if (field.getAnnotation(RemoteProperty.class) != null)
