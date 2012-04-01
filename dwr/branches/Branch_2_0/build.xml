@@ -212,7 +212,7 @@
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />	
 			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar}" />
 			<arg value="-Dclassifiers=sources,javadoc" />
