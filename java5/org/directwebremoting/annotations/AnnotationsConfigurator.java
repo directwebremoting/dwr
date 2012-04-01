@@ -235,9 +235,7 @@ public class AnnotationsConfigurator implements Configurator
             Class<?> superClazz = clazz;
             while (superClazz != Object.class)
             {
-                Set<Field> fields = new HashSet<Field>();
-                fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
-                for (Field field : fields)
+                for (Field field : superClazz.getDeclaredFields())
                 {
                     if (field.getAnnotation(RemoteProperty.class) != null)
                     {
