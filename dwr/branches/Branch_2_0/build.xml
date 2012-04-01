@@ -196,9 +196,11 @@
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dpackaging=jar" />			
-			<arg value="-Dfile=${maven-jar}" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
+			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar}" />
+			<arg value="-Dclassifiers=sources,javadoc" />
+			<arg value="-Dtypes=jar,jar" />
 		</artifact:mvn>
 	</target>
 
@@ -212,30 +214,9 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${maven-jar}" />
 			<arg value="-Dpackaging=jar" />	
-			<arg value="-Pgpg" />
-		</artifact:mvn>
-		
-		<!-- sign and deploy the sources artifact -->
-		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-sources-jar}" />
-			<arg value="-Dclassifier=sources" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-Pgpg" />
-		</artifact:mvn>
-
-		<!-- sign and deploy the javadoc artifact -->
-		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${maven-javadoc-jar}" />
-			<arg value="-Dclassifier=javadoc" />
-			<arg value="-Dpackaging=jar" />
+			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar}" />
+			<arg value="-Dclassifiers=sources,javadoc" />
+			<arg value="-Dtypes=jar,jar" />
 			<arg value="-Pgpg" />
 		</artifact:mvn>
 	</target>
