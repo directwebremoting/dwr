@@ -195,7 +195,7 @@
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
+			<arg value="-DpomFile=pom.xl" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Dfiles=${dwr-maven-sources-jar},${dwr-maven-javadoc-jar}" />
