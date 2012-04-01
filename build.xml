@@ -567,7 +567,8 @@
 		</delete>
 	</target>
 
-	<!-- Maven Deploy run this from the Bamboo CI machine 
+	<!-- Maven Deploy run this from the Bamboo CI machine.
+	 	 Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
@@ -586,8 +587,9 @@
 	</target>
 
 	<!-- Maven Stage run this from the Bamboo CI machine 
+		 Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
-	     Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
+	-->
 	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
 		<!-- sign and deploy the main artifact -->
 		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
