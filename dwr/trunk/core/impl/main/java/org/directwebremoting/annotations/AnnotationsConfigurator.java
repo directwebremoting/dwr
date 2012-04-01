@@ -18,7 +18,6 @@ package org.directwebremoting.annotations;
 import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -289,9 +288,7 @@ public class AnnotationsConfigurator implements Configurator
             Class<?> superClazz = clazz;
             while (superClazz != Object.class)
             {
-                Set<Field> fields = new HashSet<Field>();
-                fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
-                for (Field field : fields)
+                for (Field field : superClazz.getDeclaredFields())
                 {
                     if (field.getAnnotation(RemoteProperty.class) != null)
                     {
