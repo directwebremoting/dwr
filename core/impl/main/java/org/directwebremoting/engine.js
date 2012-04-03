@@ -422,8 +422,13 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._headers = null;
 
   /** If you wish to send extra custom request attributes with each request */
-  dwr.engine._attributes = null;
-
+  if (typeof attributes != "undefined") {
+    dwr.engine._attributes = attributes;
+  }
+  else {
+	dwr.engine._attributes = null;
+  }
+  
   /** Batch ids allow us to know which batch the server is answering */
   dwr.engine._nextBatchId = 0;
 
