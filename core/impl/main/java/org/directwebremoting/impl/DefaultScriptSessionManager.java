@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +179,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
         if (scriptSessionIds == null)
         {
-            scriptSessionIds = new HashSet<String>();
+            scriptSessionIds = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
             sessionXRef.put(httpSessionId, scriptSessionIds);
         }
         scriptSessionIds.add(scriptSession.getId());
