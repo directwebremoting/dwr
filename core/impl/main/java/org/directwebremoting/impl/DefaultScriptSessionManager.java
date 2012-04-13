@@ -17,7 +17,6 @@ package org.directwebremoting.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -177,12 +176,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, httpSessionId);
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-        if (scriptSessionIds == null)
-        {
-            scriptSessionIds = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-            sessionXRef.put(httpSessionId, scriptSessionIds);
+        synchronized (scriptSessionIds) {
+            if (scriptSessionIds == null)
+            {
+                scriptSessionIds = new HashSet<String>();
+                sessionXRef.put(httpSessionId, scriptSessionIds);
+            }
+            scriptSessionIds.add(scriptSession.getId());
         }
-        scriptSessionIds.add(scriptSession.getId());
     }
 
     /**
@@ -199,15 +200,17 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         }
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-        if (scriptSessionIds == null)
-        {
-            Loggers.SESSION.debug("Warning: No script session ids for http session");
-            return;
-        }
-        scriptSessionIds.remove(scriptSession.getId());
-        if (scriptSessionIds.size() == 0)
-        {
-            sessionXRef.remove(httpSessionId);
+        synchronized (scriptSessionIds) {
+            if (scriptSessionIds == null)
+            {
+                Loggers.SESSION.debug("Warning: No script session ids for http session");
+                return;
+            }
+            scriptSessionIds.remove(scriptSession.getId());
+            if (scriptSessionIds.size() == 0)
+            {
+                sessionXRef.remove(httpSessionId);
+            }
         }
 
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, null);
