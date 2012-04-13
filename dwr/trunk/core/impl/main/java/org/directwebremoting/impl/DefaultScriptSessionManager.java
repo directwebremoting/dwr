@@ -176,12 +176,12 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, httpSessionId);
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
+        if (scriptSessionIds == null)
+        {
+            scriptSessionIds = new HashSet<String>();
+            sessionXRef.put(httpSessionId, scriptSessionIds);
+        }
         synchronized (scriptSessionIds) {
-            if (scriptSessionIds == null)
-            {
-                scriptSessionIds = new HashSet<String>();
-                sessionXRef.put(httpSessionId, scriptSessionIds);
-            }
             scriptSessionIds.add(scriptSession.getId());
         }
     }
@@ -200,17 +200,19 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         }
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
-        synchronized (scriptSessionIds) {
-            if (scriptSessionIds == null)
-            {
-                Loggers.SESSION.debug("Warning: No script session ids for http session");
-                return;
-            }
+
+        if (scriptSessionIds == null)
+        {
+            Loggers.SESSION.debug("Warning: No script session ids for http session");
+            return;
+        }
+        synchronized (scriptSessionIds)
+        {
             scriptSessionIds.remove(scriptSession.getId());
-            if (scriptSessionIds.size() == 0)
-            {
-                sessionXRef.remove(httpSessionId);
-            }
+        }
+        if (scriptSessionIds.size() == 0)
+        {
+            sessionXRef.remove(httpSessionId);
         }
 
         scriptSession.setAttribute(ATTRIBUTE_HTTPSESSIONID, null);
