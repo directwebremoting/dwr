@@ -258,7 +258,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     {
         for (Set<DefaultScriptSession> pageSessions : pageSessionMap.values())
         {
-            pageSessions.remove(scriptSession);
+            synchronized(pageSessions) {
+                pageSessions.remove(scriptSession);
+            }
         }
     }
 
