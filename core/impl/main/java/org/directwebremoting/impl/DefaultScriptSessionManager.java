@@ -244,8 +244,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                 pageSessions = prev;
             }
         }
-
-        pageSessions.add(scriptSession);
+        synchronized(pageSessions) {
+            pageSessions.add(scriptSession);
+        }
         scriptSession.setAttribute(ATTRIBUTE_PAGE, normalizedPage);
     }
 
