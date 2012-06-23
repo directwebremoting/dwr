@@ -3,6 +3,9 @@
     <head>
         <title>Server Side Reverse Ajax Clock</title>
         <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+        <script>
+       		var attributes = {"attr1" : "attr1value"};
+        </script>        
         <script type='text/javascript' src='../dwr/engine.js'>
         </script>
         <script type='text/javascript' src='../dwr/util.js'>
@@ -14,7 +17,7 @@
         <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
         <link rel="stylesheet" type="text/css" href="../generic.css" />
         <script>
-            window.onload = function(){
+            window.onload = function(){            	
                 dwr.engine.setActiveReverseAjax(true);
                 dwr.engine.setErrorHandler(errorHandler);
                 dwr.engine.setPollStatusHandler(updatePollStatus);
@@ -99,7 +102,7 @@
                     polling (whatever the server is configured to prefer).
                 </p>
                 <p>
-                    Next we specify our errorHandler and retry logic.  DWR has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr3/reverse-ajax/retry.html">read more about this feature on our site</a>.
+                    Next we specify our errorHandler and retry logic.  DWR has a retry feature for reverse AJAX which automatically re-attempts failed calls.  With the default configuration failed calls will be re-attempted twice with one second between each attempt.  If both retry attempts fail the errorHandler will be called.  After the errorHandler is called DWR will re-attempt the call at 10 second intervals until  successfull.   At this time the pollStatusHandler will be called. You can <a href="http://directwebremoting.org/dwr/documentation/reverse-ajax/retry.html">read more about this feature on our site</a>.
                 </p>
                 <p>
                     Clicking the "Start / Stop" button calls the toggle() method on our Clock class which starts or stops the clock.
