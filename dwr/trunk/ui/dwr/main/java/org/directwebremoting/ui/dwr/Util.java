@@ -160,7 +160,7 @@ public class Util
     @SuppressWarnings("unused")
     public static void addRows(String elementId, Collection<Collection<String>> data, String options)
     {
-        if (null == data || data.size() == 0 || data.iterator().hasNext()) {
+        if (null == data || data.size() == 0 || !data.iterator().hasNext()) {
             return;
         }
         int rowCount = data.size();
