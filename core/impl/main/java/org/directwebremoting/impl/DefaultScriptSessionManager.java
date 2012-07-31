@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -257,10 +258,13 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected void disassociateScriptSessionAndPage(DefaultScriptSession scriptSession)
     {
-        for (Set<DefaultScriptSession> pageSessions : pageSessionMap.values())
-        {
+        for(Entry<String, Set<DefaultScriptSession>> entry : pageSessionMap.entrySet()) {
+            Set<DefaultScriptSession> pageSessions = entry.getValue();
             synchronized(pageSessions) {
                 pageSessions.remove(scriptSession);
+            }
+            if (pageSessions.isEmpty()) {
+                pageSessionMap.remove(entry.getKey());
             }
         }
     }
