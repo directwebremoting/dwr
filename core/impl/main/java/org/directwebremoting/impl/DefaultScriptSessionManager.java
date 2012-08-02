@@ -258,13 +258,16 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected void disassociateScriptSessionAndPage(DefaultScriptSession scriptSession)
     {
-        for(Entry<String, Set<DefaultScriptSession>> entry : pageSessionMap.entrySet()) {
+        for(Entry<String, Set<DefaultScriptSession>> entry : pageSessionMap.entrySet())
+        {
             Set<DefaultScriptSession> pageSessions = entry.getValue();
-            synchronized(pageSessions) {
+            synchronized(pageSessions)
+            {
                 pageSessions.remove(scriptSession);
-            }
-            if (pageSessions.isEmpty()) {
-                pageSessionMap.remove(entry.getKey());
+                if (pageSessions.isEmpty())
+                {
+                    pageSessionMap.remove(entry.getKey());
+                }
             }
         }
     }
