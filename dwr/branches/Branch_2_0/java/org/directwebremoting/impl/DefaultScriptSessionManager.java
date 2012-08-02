@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.directwebremoting.extend.PageNormalizer;
@@ -134,11 +135,14 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
 
         int removeCount = 0;
         synchronized (pageSessionMap) {
-            for (Iterator it = pageSessionMap.values().iterator(); it.hasNext();)
-            {
-                Set pageSessions = (Set) it.next();
-                boolean isRemoved = pageSessions.remove(scriptSession);
-    
+            Iterator entries = pageSessionMap.entrySet().iterator();
+            while (entries.hasNext()) {            
+                Entry pageSessionEntry = (Entry) entries.next();
+                Set pageSessions = (Set) pageSessionEntry.getValue();
+                boolean isRemoved = pageSessions.remove(scriptSession);    
+                if (pageSessions.isEmpty()) {
+                    pageSessionMap.remove(pageSessionEntry.getKey());
+                }
                 if (isRemoved)
                 {
                     removeCount++;
