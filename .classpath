@@ -53,7 +53,6 @@
 	<classpathentry kind="lib" path="core/impl/lib/xbean-2.2.0.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/impl/generated/java"/>
-	<classpathentry kind="src" output="target/eclipse/demo/classes" path="core/impl/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/impl/test/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/legacy/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="protocol/dwrp/main/java"/>
