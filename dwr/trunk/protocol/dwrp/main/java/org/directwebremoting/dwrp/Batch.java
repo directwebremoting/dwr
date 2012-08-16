@@ -57,7 +57,7 @@ public class Batch
         {
             extraParameters = parsePost(request);
         }
-
+extractParameter("xyz", THROW);
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
         {
@@ -78,6 +78,10 @@ public class Batch
     {
         this.extraParameters = allParameters;
         this.get = get;
+        if (log.isDebugEnabled())
+        {
+            this.parametersDebug = allParameters.toString();
+        }
 
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
@@ -109,7 +113,15 @@ public class Batch
 
         if (defaultValue == THROW)
         {
-            throw new IllegalArgumentException("Failed to find parameter: " + paramName);
+            if (log.isDebugEnabled())
+            {
+                log.debug("Failed to find parameter: " + paramName + " in batch parameters:\n" + parametersDebug);
+            }
+            else
+            {
+                log.error("Failed to find parameter: " + paramName + ", enable debug logging to see more info.");
+            }
+            throw new IllegalArgumentException("Failed to find parameter: " + paramName + " (check server log for more info).");
         }
         else
         {
@@ -186,6 +198,7 @@ public class Batch
     {
         Map<String, FormField> paramMap;
         paramMap = new HashMap<String, FormField>();
+        StringBuilder debugBuf = new StringBuilder();
 
         BufferedReader in = null;
         try
@@ -222,6 +235,12 @@ public class Batch
                     break;
                 }
 
+                if (log.isDebugEnabled())
+                {
+                    debugBuf.append(line);
+                    debugBuf.append("\n");
+                }
+
                 if (line.indexOf('&') != -1)
                 {
                     // If there are any &'s then this must be iframe post and all the
@@ -249,6 +268,11 @@ public class Batch
         }
         finally
         {
+            if (log.isDebugEnabled())
+            {
+                parametersDebug = debugBuf.toString();
+            }
+
             if (in != null)
             {
                 try
@@ -338,6 +362,11 @@ public class Batch
     @SuppressWarnings("unchecked")
     private Map<String, FormField> parseGet(HttpServletRequest req) throws ServerException
     {
+        if (log.isDebugEnabled())
+        {
+            parametersDebug = req.getQueryString();
+        }
+
         Map<String, FormField> convertedMap = new HashMap<String, FormField>();
         Map<String, String[]> paramMap = req.getParameterMap();
 
@@ -352,7 +381,7 @@ public class Batch
             }
             else
             {
-                log.error("Multiple values for key: " + key);
+                log.error("Multiple values for key: " + key + "in parameters:\n" + req.getQueryString());
                 throw new ServerException("Multiple values for key. See console for more information");
             }
         }
@@ -440,6 +469,11 @@ public class Batch
     private final Map<String, FormField> extraParameters;
 
     /**
+     * Raw parameter source text used for for debug logging
+     */
+    private String parametersDebug = null;
+
+    /**
      * A special marker for the default value for extractParameter
      */
     protected static final String THROW = "throw";
@@ -450,7 +484,7 @@ public class Batch
     private static final FileUpload UPLOADER;
 
     /**
-     * Retrieve the File Upload implem
+     * Retrieve the File Upload implementation
      */
     static
     {
