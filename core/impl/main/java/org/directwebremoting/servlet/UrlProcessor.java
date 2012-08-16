@@ -30,7 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
 import org.directwebremoting.extend.Handler;
 import org.directwebremoting.extend.InitializingBean;
+import org.directwebremoting.impl.AccessLogLevel;
 import org.directwebremoting.util.LocalUtil;
+import org.directwebremoting.util.Loggers;
 
 /**
  * This is the main servlet that handles all the requests to DWR.
@@ -96,6 +98,12 @@ public class UrlProcessor implements Handler, InitializingBean
             String pathInfo = request.getPathInfo();
             String requestContextPath = request.getContextPath();
 
+            // Log the call details if the accessLogLevel is call.
+            if (AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
+            {
+                Loggers.ACCESS.info("Incoming request: " + request.getRequestURI());
+            }
+
             // Patching up for missing servlet 2.5 servletContext.getContextPath
             if (contextPath == null)
             {
@@ -153,6 +161,28 @@ public class UrlProcessor implements Handler, InitializingBean
     }
 
     /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    public void setAccessLogLevel(String accessLogLevel)
+    {
+        this.accessLogLevel = accessLogLevel;
+    }
+
+    /**
+     * Set the debug status
+     * @param debug The new debug setting
+     */
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
+
+    /**
      * The URL for the {@link IndexHandler}
      */
     protected String indexHandlerUrl;
@@ -176,6 +206,21 @@ public class UrlProcessor implements Handler, InitializingBean
      * The contextPath cached from the last HTTP servlet request
      */
     protected String contextPath = null;
+
+    /**
+     * Are we in debug-mode and therefore more helpful at the expense of security?
+     */
+    private boolean debug = false;
+
+    /**
+     * When and what should we log? Options are (specified in the DWR servlet's init-params):
+     * 1) call (start of call + successful return values).
+     * 2) exception (checked) - default for debug.
+     * 3) runtimeexception (unchecked).
+     * 4) error - default for production.
+     * 5) off.
+     */
+    protected String accessLogLevel = null;
 
     /**
      * The log stream
