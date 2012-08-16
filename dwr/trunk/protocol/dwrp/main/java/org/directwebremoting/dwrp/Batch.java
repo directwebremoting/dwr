@@ -57,7 +57,7 @@ public class Batch
         {
             extraParameters = parsePost(request);
         }
-extractParameter("xyz", THROW);
+
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
         {
