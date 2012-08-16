@@ -118,17 +118,7 @@ public abstract class AbstractStoreProvider<T> implements StoreProvider<T>
         boolean result = pattern.equals(value);
         if (!result && LocalUtil.hasText(value))
         {
-            String javaPattern = pattern;
-
-            if (pattern.indexOf('?') > 0)
-            {
-                javaPattern = javaPattern.replace("?", ".{1}");
-            }
-
-            if (pattern.indexOf('*') > 0)
-            {
-                javaPattern = javaPattern.replace("*", ".*");
-            }
+            String javaPattern = pattern.replace("?", ".").replace("*", ".*");
 
             if (LocalUtil.hasText(pattern))
             {
