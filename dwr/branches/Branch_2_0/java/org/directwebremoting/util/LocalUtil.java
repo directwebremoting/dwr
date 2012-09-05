@@ -466,7 +466,8 @@ public final class LocalUtil
 
         if (paramType == Character.class || paramType == Character.TYPE)
         {
-            if (value.length() == 1)
+            value = LocalUtil.decode(value);
+			if (value.length() == 1)
             {
                 return new Character(value.charAt(0));
             }
