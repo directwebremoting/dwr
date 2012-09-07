@@ -1786,7 +1786,6 @@ if (typeof dwr == 'undefined') dwr = {};
         var firstStartTag = response.indexOf("//#DWR-START#", batch.charsProcessed);
         if (firstStartTag == -1) {
           // dwr.engine._debug("No start tag (search from " + batch.charsProcessed + "). skipping '" + response.substring(batch.charsProcessed) + "'");
-          batch.charsProcessed = response.length;
           return;
         }
         // if (firstStartTag > 0) {
@@ -1801,7 +1800,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
         // Skip the end tag too for next time, remembering CR and LF
         if (response.charCodeAt(lastEndTag + 11) == 13 && response.charCodeAt(lastEndTag + 12) == 10) {
-         batch.charsProcessed = lastEndTag + 13;
+          batch.charsProcessed = lastEndTag + 13;
         }
         else {
           batch.charsProcessed = lastEndTag + 11;
