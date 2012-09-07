@@ -30,7 +30,7 @@ import org.directwebremoting.extend.ScriptBufferUtil;
 /**
  * JSP tag to convert an object into javascript using the dwr converter manager
  * Example usage:
- * &lt;%@ taglib uri="http://directwebremoting.org/dwr" prefix="dwr" %&gt;
+ * &lt;%@ taglib uri="http://directwebremoting.org/dwr/" prefix="dwr" %&gt;
  * &lt;script%&gt;
  *    var clientsideObject = &lt;dwr:convert value="${myServersideObject}" /%&gt;;
  * &lt;/script%&gt;
