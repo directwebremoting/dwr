@@ -243,12 +243,14 @@ public final class InboundContext
     public InboundVariable createArrayWrapper(int callNum, int destParamCount)
     {
         int inputParamCount = getParameterCount(callNum);
-        int memberCount = 1 + inputParamCount - destParamCount;
+        int varArgArraySize = 1 + inputParamCount - destParamCount;
 
-        InboundVariable[] members = new InboundVariable[memberCount];
-        for (int i = 0; i < memberCount; i++)
+        InboundVariable[] members = new InboundVariable[varArgArraySize];
+        int varArgsParamStartIndex = destParamCount - 1; // The varargs param has to be last
+        for (int i = 0; i < varArgArraySize; i++)
         {
-            members[i] = getParameter(callNum, i);
+            members[i] = getParameter(callNum, varArgsParamStartIndex);
+            varArgsParamStartIndex++;
         }
 
         return new InboundVariable(this, members);
