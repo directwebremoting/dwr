@@ -96,6 +96,7 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
 
                 params = (List<Object>) member;
                 inParams = false;
+                convertParams();
             }
             else
             {
@@ -158,6 +159,7 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
 
                     scriptName = parts[0];
                     methodName = parts[1];
+                    convertParams();
                 }
             }
         }
@@ -197,9 +199,6 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
     {
         if (parent == null)
         {
-            // This must be done at the end of the parse, if we don't have
-            // everything now, we never will
-            convertParams();
             return calls;
         }
 
@@ -219,13 +218,16 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
      */
     protected void convertParams()
     {
+        if (scriptName == null || params == null)
+        {
+            return;
+        }
         Module module = moduleManager.getModule(scriptName, false);
         if (module == null)
         {
             log.warn("No creator found: " + scriptName);
             throw new JsonRpcCallException(calls, "Object not valid", ERROR_CODE_INVALID, SC_BAD_REQUEST);
         }
-
         // Fill out the Calls structure
         try
         {
