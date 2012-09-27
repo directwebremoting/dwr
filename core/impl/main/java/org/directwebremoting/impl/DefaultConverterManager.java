@@ -393,7 +393,7 @@ public class DefaultConverterManager implements ConverterManager
             if (converter == null)
             {
                 log.error("Missing converter. Context of conversion: " + thc);
-                throw new ConversionException(paramType, "No converter found inbound for '" + paramType.getName() + "'");
+                throw new ConversionException(paramType, "No inbound converter found for property '" + thc.getName() + "' of type '" + paramType.getName() + "'");
             }
 
             context.pushContext(thc);
@@ -436,7 +436,7 @@ public class DefaultConverterManager implements ConverterManager
         Converter converter = getConverter(data);
         if (converter == null)
         {
-            String message = "No converter found for '" + data.getClass().getName() + "'";
+            String message = "No outbound converter found for '" + data.getClass().getName() + "'";
             log.error(message);
             return new ErrorOutboundVariable(message);
         }
