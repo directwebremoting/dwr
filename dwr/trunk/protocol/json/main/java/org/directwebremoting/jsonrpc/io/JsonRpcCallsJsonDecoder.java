@@ -159,7 +159,6 @@ public class JsonRpcCallsJsonDecoder extends StatefulJsonDecoder
 
                     scriptName = parts[0];
                     methodName = parts[1];
-                    convertParams();
                 }
             }
         }
