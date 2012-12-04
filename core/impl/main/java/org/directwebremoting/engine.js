@@ -155,12 +155,24 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /**
    * Turn server notification of page unload on and off
-   * @param {boolean} notify true or false depending on if we want to turn unload on or off
+   * @param {boolean} notify true or false depending on if we want to turn unload notification on or off
    * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setNotifyServerOnPageUnload = function(notify, asyncUnload) {
     dwr.engine._asyncUnload = (asyncUnload !== undefined) ? asyncUnload : false;
     dwr.engine._isNotifyServerOnPageUnload = notify;
+  };
+  
+  /**
+   * Turn server notification of page load on and off
+   * @param {boolean} notify true or false depending on if we want to turn load notification on or off
+   * @see getahead.org/dwr/browser/engine/options
+   */
+  dwr.engine.setNotifyServerOnPageLoad = function(notify) {
+    dwr.engine._isNotifyServerOnPageLoad = notify;
+    if (notify) {
+      eval("${initCode}");  		
+    }
   };
 
   /*
@@ -349,7 +361,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._ModePlainPoll = "${plainPollHandlerUrl}";
   dwr.engine._ModeHtmlCall = "${htmlCallHandlerUrl}";
   dwr.engine._ModeHtmlPoll = "${htmlPollHandlerUrl}";
-
+  
   /** Do we make the calls async? Default to 'true' */
   dwr.engine._async = Boolean("${defaultToAsync}");
 
@@ -443,8 +455,11 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._partialResponseYes = 1;
   dwr.engine._partialResponseFlush = 2;
 
-  /** Are we doing page unloading? */
+  /** Are we notifying the server on page unload? */
   dwr.engine._isNotifyServerOnPageUnload = false;
+  
+  /** Are we notifying the server on page load? Passive reverse Ajax users should enable! */
+  dwr.engine._isNotifyServerOnPageLoad = false;
   
   /** Should the unload call be asynchronous?  If true it may not be called by the browser. */
   dwr.engine._asyncUnload = false;
@@ -611,11 +626,13 @@ if (typeof dwr == 'undefined') dwr = {};
 	  };
 	},
 		  	
-	init: function() {
+	init: function() {	
 	  dwr.engine._initializer.setCurrentBrowser();
 	  dwr.engine._initializer.preInit();
-	  // Run page init code as desired by server
-	  eval("${initCode}");  		
+	  // Run page init code as desired by server, if we are notifying the server on page load.
+	  if (dwr.engine._isNotifyServerOnPageLoad) {
+	    eval("${initCode}");  		
+	  }
 	}, 
 	
 	initForPushState: function() {
@@ -785,10 +802,10 @@ if (typeof dwr == 'undefined') dwr = {};
 	if (batch.isPoll) { 
       var changed = (dwr.engine._pollOnline != newStatus);
       dwr.engine._pollOnline = newStatus;
-      if (changed && typeof dwr.engine._pollStatusHandler == "function") dwr.engine._pollStatusHandler(newStatus, ex);
+      if (changed && typeof dwr.engine._pollStatusHandler === "function") dwr.engine._pollStatusHandler(newStatus, ex);
       if (newStatus) {
         dwr.engine._retries = 0; 
-      }   
+      } 
 	}
   };
 
@@ -1613,7 +1630,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
         batch.mode = batch.isPoll ? dwr.engine._ModePlainPoll : dwr.engine._ModePlainCall;
         var request = dwr.engine.batch.constructRequest(batch, httpMethod);
-
+        
         try {
           batch.req.open(httpMethod, request.url, batch.async);
           try {
