@@ -414,8 +414,8 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine.SSL_SECURE_URL = "about:blank";
 
   /** How many times have we re-tried a call? */
-  dwr.engine._retries = 0;
-  dwr.engine._maxRetries = -1; // Unlimited retries
+  dwr.engine._retries = 1;
+  dwr.engine._maxRetries = -1;
 
   /** The intervals between successive retries in seconds */
   dwr.engine._retryIntervals = [];
@@ -424,7 +424,7 @@ if (typeof dwr == 'undefined') dwr = {};
    *  Retry immediately twice with one second intervals between, then go offline.
    *  Retry every 10 seconds when offline.
    */
-  dwr.engine._defaultRetryIntervals = [ 1, 1, 10 ];
+  dwr.engine._defaultRetryIntervals = [ 1, 3, 3 ];
 
   dwr.engine._textHtmlHandler = null;
 
@@ -715,16 +715,29 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   * Is this a batch that is checking for a heartbeat?  
+   * If so we want to ignore errors/warnings, etc.
+   * @private
+   * @param {Object} batch
+   */
+  dwr.engine._isHeartbeatBatch = function(batch) {
+    return (batch.map && batch.map['c0-methodName'] === 'checkHeartbeat' && batch.map['c0-scriptName'] === '__System');
+  };
+
+  /**
    * Generic error handling routing to save having null checks everywhere
    * @private
    * @param {Object} batch
    * @param {Object} ex
    */
   dwr.engine._handleError = function(batch, ex) {    
+    if (dwr.engine._isHeartbeatBatch(batch)) { // Ignore errors that happen while checking for a heartbeat.
+      return;
+    }    
     var errorHandlers = [];
     if (batch && batch.isPoll) { // No error reporting and only retry for polls 		    	
       dwr.engine._handlePollRetry(batch, ex);
-    } else { // Error reporting and no retry for non-polls
+    } else {   
   	  // Perform error cleanup synchronously
       if (batch) {
         for (var i = 0; i < batch.map.callCount; i++) {
@@ -769,27 +782,45 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handlePollRetry = function(batch, ex) {
+      var retryInterval = dwr.engine._getRetryInterval();    
+      // If number of retries is equal to the retryIntervals array length, call the supplied pollStatusHandler and go offline.        
+      if (dwr.engine._retries === dwr.engine._retryIntervals.length - 1) {
+        dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
+        dwr.engine._handlePollStatusChange(false, ex, batch);  
+        // We are offline, continue to check for a heartbeat until _retries is > _maxRetries.
+        var heartbeatInterval = setInterval(function() {
+          if (dwr.engine._maxRetries === -1 || dwr.engine._retries < dwr.engine._maxRetries) {            
+            dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'checkHeartbeat', [ function() { 
+              // We found a heartbeat, we are back online!
+              clearInterval(heartbeatInterval);              
+              dwr.engine._poll();
+            }]);   
+            dwr.engine._retries++;     
+            dwr.engine._debug("DWR Offline - poll retry - interval: " + retryInterval/1000 + " seconds");      
+          } else {   
+            // maxRetries has been reached, stop the heartbeat check.
+            clearInterval(heartbeatInterval);                       
+            dwr.engine._debug("max retries reached, stop polling for server status.");
+            dwr.engine._handlePollStatusChange(false, ex, batch);  
+          }            
+        }, retryInterval); 		
+      } else { // We are still online, poll again.
+        dwr.engine._retries++;
+        dwr.engine.batch.remove(batch);      
+        dwr.engine._debug("DWR Online - poll retry - interval: " + retryInterval/1000 + " seconds");      
+        setTimeout(dwr.engine._poll, retryInterval);
+      }           
+  };
+  
+  dwr.engine._getRetryInterval = function() {
     var retryInterval;
     if (dwr.engine._retries < dwr.engine._retryIntervals.length) {
-      // We are still online, try the next interval.
       retryInterval = dwr.engine._retryIntervals[dwr.engine._retries] * 1000;
-    } else {
+    } else { 
       // The last interval in retryIntervals is the number that will be used to poll when offline.
       retryInterval = dwr.engine._retryIntervals[dwr.engine._retryIntervals.length - 1] * 1000;
     }      
-    if (dwr.engine._maxRetries == -1 || dwr.engine._retries <= dwr.engine._maxRetries) {
-      // Call supplied pollStatusHandler and go offline.        
-      if (dwr.engine._retries == dwr.engine._retryIntervals.length - 1) {
-        dwr.engine._debug("poll retry - going offline: " + retryInterval/1000 + " seconds");
-        dwr.engine._handlePollStatusChange(false, ex, batch);       
-      }
-      dwr.engine._retries++;
-      dwr.engine.batch.remove(batch);
-      dwr.engine._debug("poll retry - interval: " + retryInterval/1000 + " seconds");
-      setTimeout(dwr.engine._poll, retryInterval);
-    } else {
-      dwr.engine._debug("max retries reached, stop polling for server status.");
-    }
+    return retryInterval;
   };
 
   /**
@@ -798,13 +829,14 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {object} ex - The exception if one exists (offline).
    * @see getahead.org/dwr/browser/engine/errors
    */
-  dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {
-	if (batch.isPoll) { 
-      var changed = (dwr.engine._pollOnline != newStatus);
-      dwr.engine._pollOnline = newStatus;
-      if (changed && typeof dwr.engine._pollStatusHandler === "function") dwr.engine._pollStatusHandler(newStatus, ex);
+  dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {  
+	if (batch.isPoll || dwr.engine._isHeartbeatBatch(batch)) { 
+      var changed = dwr.engine._pollOnline !== newStatus;
+      var maxRetriesReached = dwr.engine._maxRetries === dwr.engine._retries;
+      dwr.engine._pollOnline = newStatus;      
+      if ((changed || maxRetriesReached) && typeof dwr.engine._pollStatusHandler === "function") dwr.engine._pollStatusHandler(newStatus, ex, maxRetriesReached);
       if (newStatus) {
-        dwr.engine._retries = 0; 
+        dwr.engine._retries = 1; 
       } 
 	}
   };
@@ -816,6 +848,9 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleWarning = function(batch, ex) {
+    if (dwr.engine._isHeartbeatBatch(batch)) { // Ignore warnings that happen while checking for a heartbeat.
+      return;
+    }  
     ignoreIfUnloading(batch, function() {
       // If this is a poll, we should retry! 
       dwr.engine._prepareException(ex); 
