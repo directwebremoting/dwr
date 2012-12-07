@@ -62,6 +62,15 @@ public class System
     }
 
     /**
+     * A method designed to be called when the client is offline.
+     * When the server is back online this method will return immediately
+     * so reverse AJAX polling may resume.
+     */
+    public void checkHeartbeat()
+    {
+    }
+
+    /**
      * Call {@link ScriptSession#invalidate()} on the {@link ScriptSession}
      * that called this method.
      * Used by the page unloader.
