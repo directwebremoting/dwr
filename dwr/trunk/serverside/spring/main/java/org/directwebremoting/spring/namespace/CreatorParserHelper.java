@@ -138,7 +138,6 @@ public abstract class CreatorParserHelper extends ConverterParserHelper
                     name = name.substring(name.indexOf(".") + 1);
                 }
                 beanCreator.addPropertyValue("beanId", name);
-                beanCreator.addDependsOn(name);
                 beanCreator.addPropertyValue("javascript", javascript);
                 BeanDefinitionBuilder creatorConfig = BeanDefinitionBuilder.rootBeanDefinition(CreatorConfig.class);
                 creatorConfig.addPropertyValue("creator", beanCreator.getBeanDefinition());
