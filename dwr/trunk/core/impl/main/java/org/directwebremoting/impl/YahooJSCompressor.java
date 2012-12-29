@@ -21,8 +21,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Compressor;
-import org.directwebremoting.util.Logger;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 
@@ -149,7 +150,7 @@ public class YahooJSCompressor implements Compressor
         }
     }
 
-    protected static final Logger log = Logger.getLogger(YahooJSCompressor.class);
+    private static final Log log = LogFactory.getLog(YahooJSCompressor.class);
 
     private final Map<String, Object> compressorParameters = new HashMap<String, Object>();
 
