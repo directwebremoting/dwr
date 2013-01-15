@@ -766,7 +766,6 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
     if (batch && typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
     else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-    else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
     if (batch) dwr.engine.batch.remove(batch);    
   };
   
@@ -2277,9 +2276,7 @@ if (typeof dwr == 'undefined') dwr = {};
         callData = { callback:lastArg };
         stopAt = args.length - 1;
       }
-      else if (typeof lastArg == "object" && (typeof lastArg.callback == "function"
-        || typeof lastArg.exceptionHandler == "function" || typeof lastArg.callbackHandler == "function"
-        || typeof lastArg.errorHandler == "function" || typeof lastArg.warningHandler == "function" )) {
+      else if (dwr.engine.util.isCallOptionArgument(lastArg)) {
         callData = lastArg;
         stopAt = args.length - 1;
       }
@@ -2566,7 +2563,14 @@ if (typeof dwr == 'undefined') dwr = {};
         elem.addEventListener(name, func, false);
       else
         elem.attachEvent("on" + name, func);
+    },
+	
+	isCallOptionArgument: function(argument) {
+      return typeof (lastArg == "object" && (typeof lastArg.callback == "function"
+        || typeof lastArg.exceptionHandler == "function" || typeof lastArg.callbackHandler == "function"
+        || typeof lastArg.errorHandler == "function" || typeof lastArg.warningHandler == "function" || lastArg.hasOwnProperty("async")))
     }
+
   };
 
   // Initialize DWR.
