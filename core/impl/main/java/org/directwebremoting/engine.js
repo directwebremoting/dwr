@@ -2565,7 +2565,7 @@ if (typeof dwr == 'undefined') dwr = {};
         elem.attachEvent("on" + name, func);
     },
 	
-	isCallOptionArgument: function(argument) {
+	isCallOptionArgument: function(lastArg) {
       return typeof (lastArg == "object" && (typeof lastArg.callback == "function"
         || typeof lastArg.exceptionHandler == "function" || typeof lastArg.callbackHandler == "function"
         || typeof lastArg.errorHandler == "function" || typeof lastArg.warningHandler == "function" || lastArg.hasOwnProperty("async")))
