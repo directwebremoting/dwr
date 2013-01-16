@@ -766,6 +766,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {    
     if (batch && typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
     else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
+	else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
     if (batch) dwr.engine.batch.remove(batch);    
   };
   
@@ -1500,10 +1501,10 @@ if (typeof dwr == 'undefined') dwr = {};
             }
           }]
         };
-        dwr.engine.transport.send2(idbatch);
+        return dwr.engine.transport.send2(idbatch);
       }
       else {
-        dwr.engine.transport.send2(batch);
+        return dwr.engine.transport.send2(batch);
       }
     },
 
@@ -2566,9 +2567,9 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 	
 	isCallOptionArgument: function(lastArg) {
-      return typeof (lastArg == "object" && (typeof lastArg.callback == "function"
-        || typeof lastArg.exceptionHandler == "function" || typeof lastArg.callbackHandler == "function"
-        || typeof lastArg.errorHandler == "function" || typeof lastArg.warningHandler == "function" || lastArg.hasOwnProperty("async")))
+      return (typeof lastArg === "object" && (typeof lastArg.callback === "function"
+        || typeof lastArg.exceptionHandler === "function" || typeof lastArg.callbackHandler === "function"
+        || typeof lastArg.errorHandler === "function" || typeof lastArg.warningHandler === "function" || lastArg.hasOwnProperty("async")))
     }
 
   };
