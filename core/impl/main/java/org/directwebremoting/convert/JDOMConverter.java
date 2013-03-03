@@ -25,7 +25,6 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.util.LocalUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -48,7 +47,7 @@ public class JDOMConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.urlDecode(data.getValue());
+        String value = data.urlDecode();
 
         try
         {

@@ -157,7 +157,7 @@ public class JsonpCallHandler implements Handler
                     String key = ProtocolConstants.INBOUND_CALLNUM_PREFIX + 0 +
                                  ProtocolConstants.INBOUND_CALLNUM_SUFFIX +
                                  ProtocolConstants.INBOUND_KEY_PARAM + i;
-                    inboundContext.createInboundVariable(0, key, "string", values[0]);
+                    inboundContext.createInboundVariable(0, key, "string", values[0], true);
                     i++;
                 }
             }

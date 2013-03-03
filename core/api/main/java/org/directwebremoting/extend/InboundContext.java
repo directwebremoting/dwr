@@ -87,6 +87,23 @@ public final class InboundContext
     }
 
     /**
+     * Create an inbound variable.
+     * Usually called by a query parser to setup a list of known variables.
+     * This method also checks to see if the new variable is a parameter and if
+     * it is it updates the count of parameters
+     * @param callNum The call number to work on
+     * @param key The name of the variable
+     * @param type The javascript type of the variable
+     * @param value The value of the variable
+     * @param has value been URL decoded?
+     */
+    public void createInboundVariable(int callNum, String key, String type, String value, boolean urlDecoded)
+    {
+        InboundVariable cte = new InboundVariable(this, key, type, value, urlDecoded);
+        checkInboundVariable(callNum, key, cte);
+    }
+
+    /**
      * Create an inbound file variable.
      * Usually called by a query parser to setup a list of known variables.
      * This method also checks to see if the new variable is a parameter and if

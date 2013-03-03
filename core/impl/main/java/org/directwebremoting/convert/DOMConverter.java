@@ -33,7 +33,6 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.util.LocalUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,7 +54,7 @@ public class DOMConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.urlDecode(data.getValue());
+        String value = data.urlDecode();
 
         try
         {

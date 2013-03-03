@@ -16,6 +16,7 @@
 package org.directwebremoting.extend;
 
 import org.directwebremoting.ConversionException;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A simple struct to hold data about a single converted javascript variable.
@@ -43,15 +44,42 @@ public final class InboundVariable
      * @param context How we lookup references
      * @param key The name of the variable that this was transfered as
      * @param type The type information from javascript
+     * @param value The javascript variable converted to a string
+     * @param has the data already been URL decoded?
+     */
+    public InboundVariable(InboundContext context, String key, String type, String value, boolean urlDecoded)
+    {
+        this(context, key, type, new FormField(value), urlDecoded);
+    }
+
+    /**
+     * Parsing ctor
+     * @param context How we lookup references
+     * @param key The name of the variable that this was transfered as
+     * @param type The type information from javascript
      * @param fileField The javascript variable converted to a FormField
      */
     public InboundVariable(InboundContext context, String key, String type, FormField fileField)
+    {
+        this(context, key, type, fileField, false);
+    }
+
+    /**
+     * Parsing ctor
+     * @param context How we lookup references
+     * @param key The name of the variable that this was transfered as
+     * @param type The type information from javascript
+     * @param fileField The javascript variable converted to a FormField
+     * @param has the data already been URL decoded?
+     */
+    public InboundVariable(InboundContext context, String key, String type, FormField fileField, boolean urlDecoded)
     {
         this.context = context;
         this.key = key;
         this.type = type;
         this.members = null;
         this.formField = fileField;
+        this.urlDecoded = urlDecoded;
     }
 
     /**
@@ -123,6 +151,13 @@ public final class InboundVariable
         }
 
         dereferenced = true;
+    }
+
+    public String urlDecode() {
+        if (!urlDecoded) {
+            return LocalUtil.urlDecode(getValue());
+        }
+        return getValue();
     }
 
     /**
@@ -270,6 +305,11 @@ public final class InboundVariable
      * Nasty hack to get around varargs
      */
     private final InboundVariable[] members;
+
+    /**
+     * Has the data been URL decoded?
+     */
+    private boolean urlDecoded;
 
     /**
      * It's an error to store this in a Map unless we have already called
