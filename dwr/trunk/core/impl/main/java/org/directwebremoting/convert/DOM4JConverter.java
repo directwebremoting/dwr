@@ -25,7 +25,6 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.util.LocalUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -49,7 +48,7 @@ public class DOM4JConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.urlDecode(data.getValue());
+        String value = data.urlDecode();
 
         try
         {

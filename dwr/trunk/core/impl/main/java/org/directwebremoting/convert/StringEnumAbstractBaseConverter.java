@@ -24,7 +24,6 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.util.LocalUtil;
 
 /**
  * Used by {@link XmlBeanConverter}.
@@ -43,7 +42,7 @@ public class StringEnumAbstractBaseConverter extends AbstractConverter
             return null;
         }
 
-        String value = LocalUtil.urlDecode(data.getValue());
+        String value = data.urlDecode();
 
         try
         {

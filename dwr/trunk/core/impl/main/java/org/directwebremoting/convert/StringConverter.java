@@ -22,7 +22,6 @@ import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.util.JavascriptUtil;
-import org.directwebremoting.util.LocalUtil;
 
 /**
  * An implementation of Converter for Strings.
@@ -47,7 +46,7 @@ public class StringConverter extends AbstractConverter
         }
         else
         {
-            return LocalUtil.urlDecode(data.getValue());
+            return data.urlDecode();
         }
     }
 
