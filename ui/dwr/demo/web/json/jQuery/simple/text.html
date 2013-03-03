@@ -77,7 +77,7 @@ this case "data") will contain the data returned from the remote call. <p>The re
 <pre>&lt;p&gt;<br />  Name:<br />  &lt;input type="text" id="demoName"/&gt;<br />  &lt;input value="Send" type="button" onclick="update()"/&gt;<br />  &lt;br/&gt;<br />  Reply: &lt;span id="demoReply"&gt;&lt;/span&gt;<br />&lt;/p&gt;<br /></pre>
 
 <h2>Javascript source:</h2>
-<pre>  function update() {<br />      var name = encodeURIComponent(dwr.util.getValue("demoName"));<br />      $.post("../../../dwr/jsonp/Demo/sayHello/" + name, { },<br />          function(data) {<br />              dwr.util.setValue("demoReply", data.reply);<br />          }, "jsonp"); <br />      } <br />  }</pre>
+<pre>  function update() {<br />      var name = dwr.util.getValue("demoName");<br />      $.post("../../../dwr/jsonp/Demo/sayHello/" + name, { },<br />          function(data) {<br />              dwr.util.setValue("demoReply", data.reply);<br />          }, "jsonp"); <br />      } <br />  }</pre>
 
 <h2>Java source:</h2>
 <pre>package org.getahead.dwrdemo.simpletext;<br /><br />public class Demo {<br />    public String sayHello(String name) {<br />        return "Hello, " + name;<br />    }<br />}<br /></pre>
