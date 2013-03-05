@@ -55,7 +55,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Function} handler The function to call on an unexpected text/html content type
    */  
   dwr.engine.setTextOrRedirectHandler = function(handler) {
-	dwr.engine_textOrRedirectHandler = handler;	  
+	dwr.engine._textOrRedirectHandler = handler;	  
   };
   
   dwr.engine.setPollStatusHandler = function(handler) {
