@@ -55,7 +55,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Function} handler The function to call on an unexpected text/html content type
    */
   dwr.engine.setTextOrRedirectHandler = function(handler) {
-  dwr.engine._textOrRedirectHandler = handler;
+    dwr.engine._textOrRedirectHandler = handler;
   };
 
   dwr.engine.setPollStatusHandler = function(handler) {
@@ -438,7 +438,7 @@ if (typeof dwr == 'undefined') dwr = {};
     dwr.engine._attributes = attributes;
   }
   else {
-  dwr.engine._attributes = null;
+    dwr.engine._attributes = null;
   }
 
   /** Batch ids allow us to know which batch the server is answering */
@@ -540,14 +540,28 @@ if (typeof dwr == 'undefined') dwr = {};
     if (dwr.engine._unloading) return;
     if (batch && batch.async === false) {
       // Sync calls are reported synchronously
-      f();
+      return f();
     }
     else {
-      // We delay error reporting for async calls to see if maybe unloading just started
-      setTimeout(function() {
-        if (dwr.engine._unloading) return;
-        f();
-      }, 100);
+      // Async calls have these extra async checks before performing the call:
+      // 1. the page has successfully loaded = the load event has triggered
+      //    (we should skip doing the call if the page never loads, f ex when
+      //    the user navigates away to another page before page is loaded)
+      // 2. wait a little and check the unloading flag again
+      //    (so we catch cases where an error occurs due to page unload but
+      //    the unload flag has not been set just yet)
+      if (document.readyState == "complete") {
+        checkAgainAfterShortDelay();
+      }
+      else {
+        dwr.engine.util.addEventListener(window, 'load', checkAgainAfterShortDelay);
+      }
+      function checkAgainAfterShortDelay() {
+        setTimeout(function() {
+          if (dwr.engine._unloading) return;
+          f();
+        }, 100);
+      }
     }
   }
 
@@ -766,14 +780,14 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {
     if (batch && typeof batch.textHtmlHandler == "function") batch.textHtmlHandler(textHtmlObj);
     else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-  else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
+    else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
     if (batch) dwr.engine.batch.remove(batch);
   };
 
   dwr.engine._handleTextOrRedirectResponse = function(batch, textHtmlObj) {
-  if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);
+    if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);
     else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
-  if (batch) dwr.engine.batch.remove(batch);
+    if (batch) dwr.engine.batch.remove(batch);
   };
 
   /**
@@ -1753,7 +1767,7 @@ if (typeof dwr == 'undefined') dwr = {};
           reply = dwr.engine._replyRewriteHandler(reply);
           var contentType = dwr.engine.util.getContentType(req, dwr.engine.isJaxerServer);
           if (status >= 200 && status < 300) {
-          if (reply == null || reply === "") {
+            if (reply == null || reply === "") {
               dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
             }
             if (!contentType.match(/^text\/plain/) && !contentType.match(/^text\/javascript/)) {
@@ -2566,9 +2580,9 @@ if (typeof dwr == 'undefined') dwr = {};
         elem.attachEvent("on" + name, func);
     },
 
-  isCallOptionArgument: function(lastArg) {
+    isCallOptionArgument: function(lastArg) {
       return (typeof lastArg === "object" && (typeof lastArg.callback === "function" ||
-          typeof lastArg.exceptionHandler === "function" || typeof lastArg.callbackHandler === "function" ||
+        typeof lastArg.exceptionHandler === "function" || typeof lastArg.callbackHandler === "function" ||
         typeof lastArg.errorHandler === "function" || typeof lastArg.warningHandler === "function" || lastArg.hasOwnProperty("async")));
     }
 
