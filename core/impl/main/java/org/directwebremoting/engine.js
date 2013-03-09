@@ -2154,8 +2154,9 @@ if (typeof dwr == 'undefined') {
 				 * @param {int} batchId
 				 */
 	            beginIFrameResponse : function(iframe, batchId) {
-		            if (iframe != null)
+		            if (iframe != null) {
 			            dwr.engine._receivedBatch = iframe.batch;
+		            }
 	            },
 
 	            /**
