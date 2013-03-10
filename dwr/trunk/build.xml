@@ -8,7 +8,7 @@
 	<property file="build.properties" />
 
 	<!-- Properties for Maven Deploy, Stage, Release
-		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<property name="dist" location="dist" />
 
@@ -55,11 +55,11 @@
 
 	<!-- The modules that we are working with -->
 	<property name="modules" value="
-    core/api, core/impl, core/legacy,
-    protocol/dwrp, protocol/json, protocol/bayeux,
-    serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
-    ui/dwr, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
-    " />
+		core/api, core/impl, core/legacy,
+		protocol/dwrp, protocol/json, protocol/bayeux,
+		serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
+		ui/dwr, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
+		" />
 
 	<!--=======================================================================-->
 	<target name="prepare" description="Various bits of setup">
@@ -85,8 +85,8 @@
 	</target>
 
 	<!-- Updates dwr-version.properties with build values from Bamboo
-		 Will not be executed unless the bamboo.buildNumber property is set.
-		 This property is passed into this script by Bamboo -->
+		Will not be executed unless the bamboo.buildNumber property is set.
+		This property is passed into this script by Bamboo -->
 	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
 		<if>
 			<isset  property="bamboo.buildNumber"/>
@@ -150,8 +150,8 @@
 		<if-not-uptodate destfile="${basedir}/${target.root}/dwr-jdk14.jar" sourcedir="${target.root}/classes/main">
 			<action>
 				<!-- retroweaver is borked because it doesn't inherit directories properly
-        so if you call this ant build from another it gets the basedir wrong. so
-        we need to prefix the paths with ${basedir} -->
+				so if you call this ant build from another it gets the basedir wrong. so
+				we need to prefix the paths with ${basedir} -->
 				<retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4" />
 			</action>
 		</if-not-uptodate>
@@ -236,23 +236,23 @@
 	</target>
 
 	<!-- JSHint task.  Checks for common JavaScript problems, coding conventions and other JavaScript coding issues -->
-    <taskdef name="jshint" classname="com.philmander.ant.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-R0.1.jar" />
-    <target name="jshint_scan">
-        <echo message="Checking JavaScript source with JSHint"/>
-        <jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
-            <include name="**/engine.js"/>
-        	<include name="**/servlet/util.js"/>
-        	<include name="**/Store.js"/>
-        </jshint>
-    </target>
+		<taskdef name="jshint" classname="com.philmander.ant.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-R0.1.jar" />
+		<target name="jshint_scan">
+				<echo message="Checking JavaScript source with JSHint"/>
+				<jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
+					<include name="**/engine.js"/>
+					<include name="**/servlet/util.js"/>
+					<include name="**/ui/dojo/main/java/org/directwebremoting/dojo/Store.js"/>
+				</jshint>
+		</target>
 
 	<!--=======================================================================-->
 	<target name="jaxer" depends="prepare" description="Create Jaxer output files">
 		<!-- Build the core jaxer modules -->
 		<property name="modules" value="
-      core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
-      protocol/dwrp, protocol/json, ui/jaxer
-      " />
+			core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
+			protocol/dwrp, protocol/json, ui/jaxer
+			" />
 		<build target="${target.root}/jaxer" include="" modules="${modules}" />
 		<!-- The 3 core outputs are a readme, jaxer-dwr.jar and a template web.xml -->
 		<copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/" />
@@ -579,8 +579,8 @@
 	</target>
 
 	<!-- Maven Deploy run this from the Bamboo CI machine.
-	 	 Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
-		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+			Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
 		<!-- we deploy more than one file in one operation so they all get the same SNAPSHOT version at the repository -->
@@ -600,8 +600,8 @@
 	</target>
 
 	<!-- Maven Stage run this from the Bamboo CI machine
-		 Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
-		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+		Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
 		<!-- sign and deploy the main artifact -->
