@@ -7,7 +7,7 @@
 	<!-- File that contains local settings, you may need to edit this -->
 	<property file="build.properties" />
 
-	<!-- Properties for Maven Deploy, Stage, Release 
+	<!-- Properties for Maven Deploy, Stage, Release
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<property name="dist" location="dist" />
@@ -84,7 +84,7 @@
 		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}"/>
 	</target>
 
-	<!-- Updates dwr-version.properties with build values from Bamboo 
+	<!-- Updates dwr-version.properties with build values from Bamboo
 		 Will not be executed unless the bamboo.buildNumber property is set.
 		 This property is passed into this script by Bamboo -->
 	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
@@ -235,12 +235,13 @@
 		</zip>
 	</target>
 
-	<!-- JSHint task.  Checks for common JavaScript problems, coding conventions and other JavaScript coding issues -->   
+	<!-- JSHint task.  Checks for common JavaScript problems, coding conventions and other JavaScript coding issues -->
     <taskdef name="jshint" classname="com.philmander.ant.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-R0.1.jar" />
     <target name="jshint_scan">
         <echo message="Checking JavaScript source with JSHint"/>
-        <jshint dir="${source.root}/core/impl/main/java/org/directwebremoting" optionsFile="build/lib/jshint_options.properties">
-            <include name="engine.js"/>
+        <jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
+            <include name="**/engine.js"/>
+        	<include name="**/util.js"/>
         </jshint>
     </target>
 
@@ -363,7 +364,7 @@
 			</foreach>
 		</sequential>
 	</macrodef>
-		
+
 	<!--=======================================================================-->
 	<target name="process-module">
 		<echo message="Processing module: ${module}" />
@@ -588,7 +589,7 @@
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
-			<arg value="-DpomFile=pom.xml" />			
+			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Djavadoc=${dwr-maven-javadoc-jar}" />
 			<arg value="-Dsources=${dwr-maven-sources-jar}" />
 			<arg value="-Dfiles=${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
@@ -597,7 +598,7 @@
 		</artifact:mvn>
 	</target>
 
-	<!-- Maven Stage run this from the Bamboo CI machine 
+	<!-- Maven Stage run this from the Bamboo CI machine
 		 Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
 		 See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
@@ -609,7 +610,7 @@
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
-			<arg value="-DpomFile=pom.xml" />			
+			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Djavadoc=${dwr-maven-javadoc-jar}" />
 			<arg value="-Dsources=${dwr-maven-sources-jar}" />
 			<arg value="-Dfiles=${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
