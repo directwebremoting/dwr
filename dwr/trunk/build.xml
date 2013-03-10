@@ -241,7 +241,7 @@
         <echo message="Checking JavaScript source with JSHint"/>
         <jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
             <include name="**/engine.js"/>
-        	<include name="**/util.js"/>
+        	<include name="**/servlet/util.js"/>
         	<include name="**/Store.js"/>
         </jshint>
     </target>
