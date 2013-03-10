@@ -205,8 +205,8 @@ dojo.declare("dwr.data.Store", null, {
 		    var cached = this.isCached(request, results);
 		    if (cached != null) {
 			    var total = cached.found === undefined ? cached._totalMatchedItems : cached.found;
-			    var results = this.clientSideFetch(request, results);
-			    this._complete(request, total, this.clientSidePaging(request, results));
+			    var results2 = this.clientSideFetch(request, results);
+			    this._complete(request, total, this.clientSidePaging(request, results2));
 			    return request;
 		    }
 	    }

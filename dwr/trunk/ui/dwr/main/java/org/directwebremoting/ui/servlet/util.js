@@ -124,10 +124,10 @@ dwr.util.byId = function() {
 		var idOrElem = arguments[i];
 		var elem;
 		if (typeof idOrElem == 'string') {
-			var elem = document.getElementById(idOrElem);
+			var elem2 = document.getElementById(idOrElem);
 			// Workaround for IE and Opera that may return element based on name
-			if (document.all && elem && dwr.util._getId(elem) != idOrElem) {
-				elem = null;
+			if (document.all && elem2 && dwr.util._getId(elem2) != idOrElem) {
+				elem2 = null;
 				var maybeElems = document.all[idOrElem];
 				if (maybeElems.tagName)
 					maybeElems = [ maybeElems ];
@@ -279,10 +279,10 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
 					var strarr = [];
 					strarr.push("[");
 					var count = 0;
-					for ( var i = 0; i < data.length; i++) {
-						if (!(i in data) && data != "[object NodeList]")
+					for (var i2 = 0; i2 < data.length; i2++) {
+						if (!(i2 in data) && data != "[object NodeList]")
 							continue;
-						var itemvalue = data[i];
+						var itemvalue = data[i2];
 						if (count > 0)
 							strarr.push(", ");
 						if (showLevels == 1) { // One-line format
@@ -293,8 +293,8 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
 						} else { // Multi-line format
 							strarr.push(options.lineTerminator + indent(indentDepth + 1, options));
 						}
-						if (i != count) {
-							strarr.push(i);
+						if (i2 != count) {
+							strarr.push(i2);
 							strarr.push(":");
 						}
 						strarr.push(recursive(itemvalue, showLevels - 1, indentDepth + 1, options));
@@ -312,19 +312,19 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
 				if (showLevels === 0) { // Short format (don't show properties)
 					reply = dwr.util._detailedTypeOf(data);
 				} else { // Long format (show properties)
-					var strarr = [];
+					var strarr2 = [];
 					if (dwr.util._detailedTypeOf(data) != "Object") {
-						strarr.push(dwr.util._detailedTypeOf(data));
+						strarr2.push(dwr.util._detailedTypeOf(data));
 						if (typeof data.valueOf() != "object") {
-							strarr.push(":");
-							strarr.push(recursive(data.valueOf(), 1, indentDepth, options));
+							strarr2.push(":");
+							strarr2.push(recursive(data.valueOf(), 1, indentDepth, options));
 						}
-						strarr.push(" ");
+						strarr2.push(" ");
 					}
-					strarr.push("{");
+					strarr2.push("{");
 					var isDomObject = dwr.util._isHTMLElement(data);
-					var count = 0;
-					for ( var prop in data) {
+					var count2 = 0;
+					for (var prop in data) {
 						var propvalue = data[prop];
 						if (isDomObject) {
 							if (propvalue == null)
@@ -336,25 +336,25 @@ dwr.util.toDescriptiveString = function(data, showLevels, options) {
 							if (prop.toUpperCase() == prop)
 								continue;
 						}
-						if (count > 0)
-							strarr.push(", ");
+						if (count2 > 0)
+							strarr2.push(", ");
 						if (showLevels == 1) { // One-line format
-							if (count == options.oneLineMaxItems) {
-								strarr.push("...");
+							if (count2 == options.oneLineMaxItems) {
+								strarr2.push("...");
 								break;
 							}
 						} else { // Multi-line format
-							strarr.push(options.lineTerminator + indent(indentDepth + 1, options));
+							strarr2.push(options.lineTerminator + indent(indentDepth + 1, options));
 						}
-						strarr.push(prop.length > options.propertyNameMaxLength ? prop.substring(0, options.propertyNameMaxLength - 3) + "..." : prop);
-						strarr.push(":");
-						strarr.push(recursive(propvalue, showLevels - 1, indentDepth + 1, options));
-						count++;
+						strarr2.push(prop.length > options.propertyNameMaxLength ? prop.substring(0, options.propertyNameMaxLength - 3) + "..." : prop);
+						strarr2.push(":");
+						strarr2.push(recursive(propvalue, showLevels - 1, indentDepth + 1, options));
+						count2++;
 					}
-					if (showLevels > 1 && count > 0)
-						strarr.push(options.lineTerminator + indent(indentDepth, options));
-					strarr.push("}");
-					reply = strarr.join("");
+					if (showLevels > 1 && count2 > 0)
+						strarr2.push(options.lineTerminator + indent(indentDepth, options));
+					strarr2.push("}");
+					reply = strarr2.join("");
 				}
 			}
 
@@ -703,12 +703,12 @@ dwr.util.getValue = function(ele, options) {
 		} else {
 			var sel = ele.selectedIndex;
 			if (sel != -1) {
-				var item = ele.options[sel];
-				var valueAttr = item.getAttributeNode("value");
-				if (valueAttr && valueAttr.specified) {
-					return item.value;
+				var item2 = ele.options[sel];
+				var valueAttr2 = item2.getAttributeNode("value");
+				if (valueAttr2 && valueAttr2.specified) {
+					return item2.value;
 				}
-				return item.text;
+				return item2.text;
 			} else {
 				return "";
 			}
@@ -718,8 +718,8 @@ dwr.util.getValue = function(ele, options) {
 	if (dwr.util._isHTMLElement(ele, "input")) {
 		if (ele.type == "radio") {
 			if (nodes && nodes.length >= 1) {
-				for ( var i = 0; i < nodes.length; i++) {
-					var node = nodes.item(i);
+				for (var i2 = 0; i2 < nodes.length; i2++) {
+					var node = nodes.item(i2);
 					if (node.type == ele.type) {
 						if (node.checked)
 							return node.value;
@@ -728,17 +728,17 @@ dwr.util.getValue = function(ele, options) {
 			}
 			return ele.checked;
 		}
-		if (ele.type == "checkbox") {
+		if (ele.type === "checkbox") {
 			if (nodes && nodes.length >= 1) {
-				var reply = [];
-				for ( var i = 0; i < nodes.length; i++) {
-					var node = nodes.item(i);
-					if (node.type == ele.type) {
-						if (node.checked)
-							reply.push(node.value);
+				var reply2 = [];
+				for (var i3 = 0; i3 < nodes.length; i3++) {
+					var node2 = nodes.item(i3);
+					if (node2.type == ele.type) {
+						if (node2.checked)
+							reply2.push(node2.value);
 					}
 				}
-				return reply;
+				return reply2;
 			}
 			return ele.checked;
 		}
@@ -987,7 +987,7 @@ dwr.util.addOptions = function(ele, data/* , options */) {
 	var text, value, li;
 	if (dwr.util._isArray(data)) {
 		// Loop through the data that we do have
-		for ( var i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			options.data = data[i];
 			options.text = null;
 			options.value = null;
@@ -1024,16 +1024,16 @@ dwr.util.addOptions = function(ele, data/* , options */) {
 			alert("dwr.util.addOptions can only create select lists from objects.");
 			return;
 		}
-		for ( var prop in data) {
+		for (var prop in data) {
 			options.data = data[prop];
 			options.value = dwr.util._getValueFrom(data[prop], arg3);
 			options.text = dwr.util._getValueFrom(data[prop], arg4);
 
 			if (options.text != null || options.value) {
-				var opt = options.optionCreator(options);
-				opt.text = options.text;
-				opt.value = options.value;
-				ele.options[ele.options.length] = opt;
+				var opt2 = options.optionCreator(options);
+				opt2.text = options.text;
+				opt2.value = options.value;
+				ele.options[ele.options.length] = opt2;
 			}
 		}
 	} else {
@@ -1041,22 +1041,22 @@ dwr.util.addOptions = function(ele, data/* , options */) {
 			dwr.util._debug("dwr.util.addOptions can only create select lists from objects.");
 			return;
 		}
-		for ( var prop in data) {
-			if (typeof data[prop] == "function")
+		for (var prop2 in data) {
+			if (typeof data[prop2] === "function")
 				continue;
-			options.data = data[prop];
+			options.data = data[prop2];
 			if (arg3 == null) {
-				options.value = prop;
-				options.text = data[prop];
+				options.value = prop2;
+				options.text = data[prop2];
 			} else {
-				options.value = data[prop];
-				options.text = prop;
+				options.value = data[prop2];
+				options.text = prop2;
 			}
 			if (options.text != null || options.value) {
-				var opt = options.optionCreator(options);
-				opt.text = options.text;
-				opt.value = options.value;
-				ele.options[ele.options.length] = opt;
+				var opt3 = options.optionCreator(options);
+				opt3.text = options.text;
+				opt3.value = options.value;
+				ele.options[ele.options.length] = opt3;
 			}
 		}
 	}
@@ -1374,7 +1374,7 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
 	// for each of them
 	if (dwr.util._isArray(data)) {
 		var clones = [];
-		for ( var i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			var item = data[i];
 			var clone = dwr.util._cloneNodeForValuesRecursive(templateEle, item, idpath + "[" + i + "]", options);
 			clones.push(clone);
@@ -1385,16 +1385,16 @@ dwr.util._cloneNodeForValuesRecursive = function(templateEle, data, idpath, opti
 	// clone to DOM, and then recurse into any array properties if they contain
 	// objects and there is a suitable template
 	if (dwr.util._isObject(data) && !dwr.util._isArray(data)) {
-		var clone = templateEle.cloneNode(true);
-		if (options.updateCloneStyle && clone.style) {
+		var clone2 = templateEle.cloneNode(true);
+		if (options.updateCloneStyle && clone2.style) {
 			for ( var propname in options.updateCloneStyle) {
-				clone.style[propname] = options.updateCloneStyle[propname];
+				clone2.style[propname] = options.updateCloneStyle[propname];
 			}
 		}
-		dwr.util._replaceIds(clone, dwr.util._getId(templateEle), idpath);
-		templateEle.parentNode.insertBefore(clone, templateEle);
+		dwr.util._replaceIds(clone2, dwr.util._getId(templateEle), idpath);
+		templateEle.parentNode.insertBefore(clone2, templateEle);
 		dwr.util._cloneSubArrays(data, idpath, options);
-		return clone;
+		return clone2;
 	}
 
 	// It is an error to end up here so we return nothing
