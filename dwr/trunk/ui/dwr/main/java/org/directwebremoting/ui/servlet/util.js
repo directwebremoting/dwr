@@ -1437,6 +1437,7 @@ dwr.util._replaceIds = function(ele, oldidpath, newidpath) {
  * @private Finds arrays in supplied data and uses any corresponding template node to make a clone for each item in the array.
  */
 dwr.util._cloneSubArrays = function(data, idpath, options) {
+	var prop;
 	for (prop in data) {
 		var value = data[prop];
 		// Look for potential recursive cloning in all array properties
@@ -1564,8 +1565,8 @@ dwr.util._importNode = function(doc, importedNode, deep) {
 
 	if (importedNode.nodeType == 1 /* Node.ELEMENT_NODE */) {
 		newNode = doc.createElement(importedNode.nodeName);
-
-		for ( var i = 0; i < importedNode.attributes.length; i++) {
+		var i;
+		for (i = 0; i < importedNode.attributes.length; i++) {
 			var attr = importedNode.attributes[i];
 			if (attr.nodeValue != null && attr.nodeValue !== '') {
 				newNode.setAttribute(attr.name, attr.nodeValue);
@@ -1580,8 +1581,9 @@ dwr.util._importNode = function(doc, importedNode, deep) {
 	}
 
 	if (deep && importedNode.hasChildNodes()) {
-		for (i = 0; i < importedNode.childNodes.length; i++) {
-			newNode.appendChild(dwr.util._importNode(doc, importedNode.childNodes[i], true));
+		var i2;
+		for (i2 = 0; i2 < importedNode.childNodes.length; i2++) {
+			newNode.appendChild(dwr.util._importNode(doc, importedNode.childNodes[i2], true));
 		}
 	}
 
