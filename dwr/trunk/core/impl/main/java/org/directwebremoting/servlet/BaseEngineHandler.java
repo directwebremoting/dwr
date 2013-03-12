@@ -100,6 +100,8 @@ public class BaseEngineHandler extends FileJavaScriptHandler
 
         replace.put("${initCode}", scriptSessionManager.getInitCode());
 
+        replace.put("${debug}", String.valueOf(debug));
+
         return replace;
     }
 
