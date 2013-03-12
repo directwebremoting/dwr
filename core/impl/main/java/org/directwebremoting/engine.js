@@ -199,10 +199,10 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine.defaultErrorHandler = function(message, ex) {
     dwr.engine._debug("Error: " + ex.name + ", " + ex.message, true);
-    if (message === null || message === "") alert("A server error has occurred.");
     // Ignore NS_ERROR_NOT_AVAILABLE if Mozilla is being narky
-    else if (message.indexOf("0x80040111") != -1) dwr.engine._debug(message);
-    else alert(message);
+    if (message.indexOf("0x80040111") != -1) return;
+    if (message === null || message === "") message = "A server error has occurred.";
+    if ("${debug}" == "true") alert(message);
   };
 
   /**
@@ -492,6 +492,26 @@ if (typeof dwr == 'undefined') dwr = {};
     "$_dwrConversionRef": true
   };
 
+  /** Is this page doing beforeunload processing? */
+  dwr.engine._beforeUnloading = false;
+
+  /** @private Keep beforeunload flag set during beforeunload processing (including potential
+   *  "Are you sure?" popups). */
+  dwr.engine._beforeUnloader = function() {
+    dwr.engine._beforeUnloading = true;
+    // We want to reset the flag if unloading is aborted by "Are you sure?" popup. We detect
+    // return to interactive mode with a timeout that normally will execute directly after
+    // unload is aborted through popup.
+    setTimeout(function() {
+      // Some browsers (f ex Firefox) will execute the timeout even if unload is not aborted.
+      // To keep a continuous unloading state we therefore prolong the beforeunload state for
+      // a second so the unload flag gets time to trigger.
+      setTimeout(function() {
+        dwr.engine._beforeUnloading = false;
+      }, 1000);
+    }, 1); 
+  }
+  
   /** Is this page in the process of unloading? */
   dwr.engine._unloading = false;
 
@@ -537,31 +557,17 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   function ignoreIfUnloading(batch, f) {
+    // Do nothing if we are unloading
     if (dwr.engine._unloading) return;
-    if (batch && batch.async === false) {
-      // Sync calls are reported synchronously
-      return f();
+    // Retry later if beforeunload is in progress and this is not a sync call
+    if (dwr.engine._beforeUnloading && (batch == null || batch.async)) {
+      setTimeout(function() {
+        ignoreIfUnloading(batch, f);
+      }, 100);
     }
+    // Otherwise trigger the target func
     else {
-      // Async calls have these extra async checks before performing the call:
-      // 1. the page has successfully loaded = the load event has triggered
-      //    (we should skip doing the call if the page never loads, f ex when
-      //    the user navigates away to another page before page is loaded)
-      // 2. wait a little and check the unloading flag again
-      //    (so we catch cases where an error occurs due to page unload but
-      //    the unload flag has not been set just yet)
-      if (document.readyState == "complete") {
-        checkAgainAfterShortDelay();
-      }
-      else {
-        dwr.engine.util.addEventListener(window, 'load', checkAgainAfterShortDelay);
-      }
-      function checkAgainAfterShortDelay() {
-        setTimeout(function() {
-          if (dwr.engine._unloading) return;
-          f();
-        }, 100);
-      }
+      return f();
     }
   }
 
@@ -605,8 +611,9 @@ if (typeof dwr == 'undefined') dwr = {};
       // Reuse any existing dwr session
     dwr.engine.transport.updateDwrSessionFromCookie();
 
-    // Register the unload handler
+    // Register unload handlers
     if (!dwr.engine.isJaxerServer) {
+      dwr.engine.util.addEventListener(window, 'beforeunload', dwr.engine._beforeUnloader);
       dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
     }
 
