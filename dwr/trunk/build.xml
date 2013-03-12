@@ -236,7 +236,7 @@
 	</target>
 
 	<!-- JSHint task.  Checks for common JavaScript problems, coding conventions and other JavaScript coding issues -->
-	<taskdef name="jshint" classname="com.philmander.ant.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-R0.1.jar" />
+	<taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-0.3.4-deps.jar" />
 	<target name="jshint_scan">
 		<echo message="Checking JavaScript source with JSHint" />
 		<jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
