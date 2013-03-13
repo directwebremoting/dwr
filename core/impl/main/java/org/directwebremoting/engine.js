@@ -511,7 +511,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }, 1000);
     }, 1); 
   }
-  
+
   /** Is this page in the process of unloading? */
   dwr.engine._unloading = false;
 
@@ -1947,6 +1947,18 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
+        dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
+          if (typeof dwr != "undefined") {
+            dwr.engine.transport.complete(batch.iframe.batch);
+          }
+        });
+        dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
+          if (typeof dwr != "undefined") {
+            if (batch.iframe.readyState == "complete" || batch.iframe.readyState == "loaded") {
+              dwr.engine.transport.complete(batch.iframe.batch);
+            }
+          }
+        });
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
 
