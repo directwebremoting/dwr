@@ -508,7 +508,7 @@ if (typeof dwr == 'undefined') dwr = {};
       // a second so the unload flag gets time to trigger.
       setTimeout(function() {
         dwr.engine._beforeUnloading = false;
-      }, 1000);
+      }, 1000); 
     }, 1); 
   }
 
@@ -768,7 +768,6 @@ if (typeof dwr == 'undefined') dwr = {};
             handlers.completed = true;
           }
         }
-        dwr.engine.batch.remove(batch);
       }
       // Perform error reporting asynchronously (possibly)
       ignoreIfUnloading(batch, function() {
@@ -776,10 +775,11 @@ if (typeof dwr == 'undefined') dwr = {};
         var errorHandler;
         while(errorHandlers.length > 0) {
           errorHandler = errorHandlers.shift();
-          errorHandler(ex.message, ex);
+          errorHandler(ex.message, ex, batch);
         }
-        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex, batch);
+        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex, batch);
+        if (batch) { dwr.engine.batch.remove(batch); };
       });
     }
   };
@@ -1105,7 +1105,7 @@ if (typeof dwr == 'undefined') dwr = {};
         handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
       }
       else if (typeof batch.errorHandler == "function") {
-        batch.errorHandler(ex.message, ex);
+        batch.errorHandler(ex.message, ex, batch);
       }
     },
 
