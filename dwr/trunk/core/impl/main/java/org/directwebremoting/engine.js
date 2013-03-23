@@ -791,8 +791,8 @@ if (typeof dwr == 'undefined') dwr = {};
           errorHandler = errorHandlers.shift();
           errorHandler(ex.message, ex);
         }
-        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex, batch);
-        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex, batch);
+        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
       });
     }
   };
