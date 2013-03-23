@@ -216,6 +216,16 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   * The default textHtmlHandler.
+   * @param {Object} textHtmlObj An object containing the following details if available - status, responseText, contentType.
+   */
+  dwr.engine.defaultTextOrRedirectHandler = function(textHtmlObj) {
+    var message = "text/html response received.  Please add a custom textHtmlHandler or textRedirectHandler to handle this response.";
+    dwr.engine._debug(message, true);
+    if ("${debug}" === "true") alert(message);
+  };
+
+  /**
    * The default poll status handler.
    * @param {boolean} newStatus - true = online, false = offline
    * @param {object} ex - The exception if one exists (offline).
@@ -476,6 +486,9 @@ if (typeof dwr == 'undefined') dwr = {};
   /** For debugging when something unexplained happens. */
   dwr.engine._warningHandler = dwr.engine.defaultWarningHandler;
 
+  /** A function to call if we receieve a response that is text/html. */
+  dwr.engine._textOrRedirectHandler = dwr.engine.defaultTextOrRedirectHandler;
+
   dwr.engine._pollStatusHandler = dwr.engine.defaultPollStatusHandler;
 
   /** Undocumented interceptors - do not use */
@@ -510,7 +523,7 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine._beforeUnloading = false;
       }, 1000);
     }, 1);
-  }
+  };
 
   /** Is this page in the process of unloading? */
   dwr.engine._unloading = false;
@@ -768,6 +781,7 @@ if (typeof dwr == 'undefined') dwr = {};
             handlers.completed = true;
           }
         }
+        dwr.engine.batch.remove(batch);
       }
       // Perform error reporting asynchronously (possibly)
       ignoreIfUnloading(batch, function() {
@@ -775,11 +789,10 @@ if (typeof dwr == 'undefined') dwr = {};
         var errorHandler;
         while(errorHandlers.length > 0) {
           errorHandler = errorHandlers.shift();
-          errorHandler(ex.message, ex, batch);
+          errorHandler(ex.message, ex);
         }
         if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex, batch);
         else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex, batch);
-        if (batch) { dwr.engine.batch.remove(batch); };
       });
     }
   };
@@ -1105,7 +1118,7 @@ if (typeof dwr == 'undefined') dwr = {};
         handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
       }
       else if (typeof batch.errorHandler == "function") {
-        batch.errorHandler(ex.message, ex, batch);
+        batch.errorHandler(ex.message, ex);
       }
     },
 
@@ -1949,7 +1962,12 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.iframe.batch = batch;
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
           if (typeof dwr != "undefined") {
-            dwr.engine.transport.complete(batch.iframe.batch);
+              // Versions of IE prior to 8 should use contentWindow;
+              var contentDocument = batch.iframe.contentDocument || batch.iframe.contentWindow;
+              var htmlResponse = contentDocument.firstChild ? contentDocument.firstChild.innerHTML : "";
+              if (htmlResponse.search("//#DWR") === -1) {
+                  dwr.engine._handleTextHtmlResponse(batch, { status:0, responseText:htmlResponse, contentType: contentDocument.contentType || "text/html" }, false);
+              }
           }
         });
         dwr.engine.transport.iframe.beginLoader(batch, idname);
