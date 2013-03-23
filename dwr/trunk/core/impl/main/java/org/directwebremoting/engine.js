@@ -508,8 +508,8 @@ if (typeof dwr == 'undefined') dwr = {};
       // a second so the unload flag gets time to trigger.
       setTimeout(function() {
         dwr.engine._beforeUnloading = false;
-      }, 1000); 
-    }, 1); 
+      }, 1000);
+    }, 1);
   }
 
   /** Is this page in the process of unloading? */
@@ -1950,13 +1950,6 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
           if (typeof dwr != "undefined") {
             dwr.engine.transport.complete(batch.iframe.batch);
-          }
-        });
-        dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
-          if (typeof dwr != "undefined") {
-            if (batch.iframe.readyState == "complete" || batch.iframe.readyState == "loaded") {
-              dwr.engine.transport.complete(batch.iframe.batch);
-            }
           }
         });
         dwr.engine.transport.iframe.beginLoader(batch, idname);
