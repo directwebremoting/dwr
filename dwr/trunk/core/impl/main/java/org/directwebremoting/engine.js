@@ -41,6 +41,9 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+    * @deprecated - In favor of the errorHandler being called with an exception name:"dwr.engine.emptyReply"
+    * containing an htmlResponseText property if available.
+    *
     * Setter for the text/html handler - what happens if a DWR request gets an HTML
     * reply rather than the expected Javascript. Often due to login timeout
     * @param {Function} handler The function to call on an unexpected text/html content type
@@ -50,6 +53,9 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   *  @deprecated - In favor of the errorHandler being called with an exception name:"dwr.engine.emptyReply"
+   * containing an htmlResponseText property if available.
+   *
    * Setter for the html response/redirect handler - what happens if a DWR request gets an HTML
    * reply or a redirect status code rather than the expected Javascript. Often due to login timeout
    * @param {Function} handler The function to call on an unexpected text/html content type
