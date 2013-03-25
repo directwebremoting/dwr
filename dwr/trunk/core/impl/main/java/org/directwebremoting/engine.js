@@ -2517,7 +2517,7 @@ if (typeof dwr == 'undefined') dwr = {};
           responseText = contentDocument.firstChild ? contentDocument.firstChild.innerHTML : "";
           contentType = contentDocument.contentType || "text/html";
         }
-        return { name:"dwr.engine.emptyReply", message:"Empty reply from the server", status:status, responseText:responseText, contentType:contentType };
+        return { name:"dwr.engine.emptyReply", message:"Empty reply from the server", status:status, htmlResponseText:responseText, contentType:contentType };
     },
 
     /**
