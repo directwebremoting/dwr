@@ -299,9 +299,18 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         }
     }
 
-    private File getScriptFile() {
+    private File getScriptFile()
+    {
         ServletContext sc = WebContextFactory.get().getServletContext();
-        String realPath = sc.getRealPath(scriptPath);
+        String realPath = null;
+        try
+        {
+            realPath = sc.getRealPath(scriptPath);
+        }
+        catch (Error e)
+        {
+            log.info("Could not retrieve script file " + scriptPath + " from ServletContext.getRealPath trying as absolute path.");
+        }
         return (realPath != null) ? new File(realPath) : new File(scriptPath);
     }
 
