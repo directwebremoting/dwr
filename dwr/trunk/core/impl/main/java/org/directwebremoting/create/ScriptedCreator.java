@@ -149,8 +149,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
             return false;
         }
 
-        ServletContext sc = WebContextFactory.get().getServletContext();
-        File scriptFile = new File(sc.getRealPath(scriptPath));
+        File scriptFile = getScriptFile();
         if (scriptModified < scriptFile.lastModified())
         {
             log.debug("Script has been updated.");
@@ -188,8 +187,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
 
         try
         {
-            ServletContext sc = WebContextFactory.get().getServletContext();
-            File scriptFile = new File(sc.getRealPath(scriptPath));
+            File scriptFile = getScriptFile();
 
             // This uses the platform default encoding. If there are complaints
             // from people wanting to read script files that are not in the
@@ -299,6 +297,12 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         {
             throw new IllegalArgumentException("Failed to getInstance", ex);
         }
+    }
+
+    private File getScriptFile() {
+        ServletContext sc = WebContextFactory.get().getServletContext();
+        String realPath = sc.getRealPath(scriptPath);
+        return (realPath != null) ? new File(realPath) : new File(scriptPath);
     }
 
     /**
