@@ -17,6 +17,7 @@ package org.directwebremoting.create;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 
@@ -50,25 +51,25 @@ public class ScriptedCreator extends AbstractCreator implements Creator
     }
 
     /**
+     * @deprecated
+     *
      * The language that we are scripting in. Passed to BSF.
      * @return Returns the language.
      */
+    @Deprecated
     public String getLanguage()
     {
         return language;
     }
 
     /**
+     * @deprecated - This is not required and has been deprecated, if not set BSFManager.getLangFromFilename(fileName) will be used.
+     *
      * @param language The language to set.
      */
+    @Deprecated
     public void setLanguage(String language)
     {
-        // It would be good to be able to check this, but this seems to fail
-        // almost all the time
-        // if (BSFManager.isLanguageRegistered(language))
-        // {
-        //     throw new IllegalArgumentException(Messages.getString("ScriptedCreator.IllegalLanguage", language));
-        // }
         this.language = language;
     }
 
@@ -135,8 +136,18 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         {
             throw new IllegalArgumentException("Please specify either the script or scriptPath property but not both.");
         }
-
-        this.scriptPath = scriptPath;
+        // Look for the file on the classpath.
+        URL url = LocalUtil.getResource(scriptPath);
+        if (url != null)
+        {
+            this.scriptPath = url.getFile();
+        }
+        // Look for the file on the servlet context.
+        if (this.scriptPath == null)
+        {
+            ServletContext sc = WebContextFactory.get().getServletContext();
+            this.scriptPath = sc.getRealPath(scriptPath);
+        }
     }
 
     /**
@@ -188,7 +199,6 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         try
         {
             File scriptFile = getScriptFile();
-
             // This uses the platform default encoding. If there are complaints
             // from people wanting to read script files that are not in the
             // default platform encoding then we will need a new param that is
@@ -198,7 +208,6 @@ public class ScriptedCreator extends AbstractCreator implements Creator
             byte[] bytes = new byte[(int) in.length()];
             in.readFully(bytes);
             cachedScript = new String(bytes);
-
             return cachedScript;
         }
         catch (Exception ex)
@@ -290,8 +299,8 @@ public class ScriptedCreator extends AbstractCreator implements Creator
             {
                 log.warn("Failed to register WebContext with scripting engine: " + ex.getMessage());
             }
-
-            return bsfman.eval(language, (null == scriptPath ? "dwr.xml" : scriptPath), 0, 0, getScript());
+            String languageToUse = language != null ? language : BSFManager.getLangFromFilename(scriptPath);
+            return bsfman.eval(languageToUse, (null == scriptPath ? "dwr.xml" : scriptPath), 0, 0, getScript());
         }
         catch (Exception ex)
         {
@@ -301,17 +310,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
 
     private File getScriptFile()
     {
-        ServletContext sc = WebContextFactory.get().getServletContext();
-        String realPath = null;
-        try
-        {
-            realPath = sc.getRealPath(scriptPath);
-        }
-        catch (Error e)
-        {
-            log.info("Could not retrieve script file " + scriptPath + " from ServletContext.getRealPath trying as absolute path.");
-        }
-        return (realPath != null) ? new File(realPath) : new File(scriptPath);
+        return new File(scriptPath);
     }
 
     /**
@@ -327,6 +326,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
     /**
      * The language that we are scripting in. Passed to BSF.
      */
+    @Deprecated
     private String language = null;
 
     /**

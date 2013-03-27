@@ -34,6 +34,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -1200,7 +1201,7 @@ public final class LocalUtil
     /**
      * Is Atmosphere/Meteor present on the classpath?
      *
-     * @return
+     * @return boolean
      */
     public static boolean isMeteorAvailable() {
         boolean useMeteor = false;
@@ -1541,6 +1542,17 @@ public final class LocalUtil
     public static InputStream getInternalResourceAsStream(String path)
     {
         return LocalUtil.class.getResourceAsStream(remappedResourcePath(path));
+    }
+
+    /**
+     * Open a stream to a file resource located on the classpath.
+     *
+     * @param path
+     * @return an open stream
+     */
+    public static URL getResource(String path)
+    {
+        return LocalUtil.class.getResource(path);
     }
 
     /**
