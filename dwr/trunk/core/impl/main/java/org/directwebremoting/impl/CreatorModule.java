@@ -73,13 +73,14 @@ public class CreatorModule implements Module
      */
     public MethodDeclaration[] getMethods()
     {
-        Method[] methods = creator.getType().getMethods();
+        Class<?> creatorType = creator.getType();
+        Method[] methods = creatorType.getMethods();
         ArrayList<MethodDeclaration> methodDecls = new ArrayList<MethodDeclaration>();
         for (Method method : methods)
         {
             try
             {
-                accessControl.assertMethodDisplayable(creator.getType(), method);
+                accessControl.assertMethodDisplayable(creatorType, method);
             }
             catch (SecurityException ex)
             {
