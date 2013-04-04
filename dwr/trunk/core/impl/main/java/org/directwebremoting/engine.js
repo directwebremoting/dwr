@@ -1951,7 +1951,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // In IE the load on the iframe happens before the iframe is completely loaded, therefore we need to listen for readystatechange.
         if ('readyState' in batch.iframe) {
 	      dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
-	        if (typeof dwr != "undefined") {
+	        if (typeof dwr != "undefined" && batch && batch.iframe) {
 	        	if (batch.iframe.readyState === "complete" || batch.iframe.readyState === "loaded") {
 	              dwr.engine.transport.complete(batch.iframe.batch);
 	            }
@@ -1959,7 +1959,7 @@ if (typeof dwr == 'undefined') dwr = {};
 	      });
         } else {
           dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
-        	if (typeof dwr != "undefined") {
+        	if (typeof dwr != "undefined" && batch && batch.iframe) {
               dwr.engine.transport.complete(batch.iframe.batch);
             }
           });
