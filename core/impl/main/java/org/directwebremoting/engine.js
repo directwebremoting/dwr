@@ -1950,23 +1950,38 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.iframe.batch = batch;
         // In IE the load on the iframe happens before the iframe is completely loaded, therefore we need to listen for readystatechange.
         if ('readyState' in batch.iframe) {
-	      dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
-	        if (typeof dwr != "undefined" && batch && batch.iframe) {
-	        	if (batch.iframe.readyState === "complete" || batch.iframe.readyState === "loaded") {
-	              dwr.engine.transport.complete(batch.iframe.batch);
-	            }
-	        }
-	      });
+          var emptyResponseCount = 1;
+          dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
+            // For some reason onreadystatechange will be fired twice with a "complete" status.
+            // Keep track of the number of attempts (emptyResponseCount) so we can guarantee a response.
+            if (batch.iframe.readyState === "complete") {
+              dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch, emptyResponseCount);
+              emptyResponseCount = emptyResponseCount + 1;
+            }
+          });
         } else {
           dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
-        	if (typeof dwr != "undefined" && batch && batch.iframe) {
-              dwr.engine.transport.complete(batch.iframe.batch);
-            }
+        	  dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
           });
         }
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
 
+      checkForAndCompleteNonDWRResponse:function(batch, emptyResponseCount) {
+        if (typeof dwr != "undefined" && batch && batch.iframe) {
+          if (emptyResponseCount && emptyResponseCount > 3) {
+        	  dwr.engine.transport.complete(batch.iframe.batch);
+          }
+          // Versions of IE prior to 8 should use contentWindow;
+          var contentDocument = batch.iframe.contentDocument || batch.iframe.contentWindow;
+          var htmlResponse = contentDocument.firstChild ? contentDocument.firstChild.innerHTML : null;
+          // Only complete the batch if this isn't a DWR response, otherwise it will be completed in endIFrameResponse.
+          if (htmlResponse && htmlResponse.search("//#DWR") === -1) {
+            dwr.engine.transport.complete(batch.iframe.batch);
+          }                    
+        }
+      },
+      
       /**
        * Create a unique ID so multiple iframes can fire at the same time
        * @param {Object} batch A source of a unique number for the batch
