@@ -647,6 +647,8 @@ if (typeof dwr == 'undefined') dwr = {};
     newObject: dwr.engine.remote.newObject,
     toDomElement: dwr.engine.serialize.toDomElement,
     toDomDocument: dwr.engine.serialize.toDomDocument,
+    beginIFrameResponse: dwr.engine.transport.iframe.remote.beginIFrameResponse,
+    endIFrameResponse: dwr.engine.transport.iframe.remote.endIFrameResponse,
     _eval: dwr.engine._eval
     };
   },
@@ -1946,13 +1948,22 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
-        dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
-          if (typeof dwr != "undefined") {
-            dwr.engine._receivedBatch = batch.iframe.batch;
-            dwr.engine.transport.complete(dwr.engine._receivedBatch);
-            dwr.engine._receivedBatch = null;
-          }
-        });
+        // In IE the load on the iframe happens before the iframe is completely loaded, therefore we need to listen for readystatechange.
+        if ('readyState' in batch.iframe) {
+	      dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
+	        if (typeof dwr != "undefined") {
+	        	if (batch.iframe.readyState === "complete" || batch.iframe.readyState === "loaded") {
+	              dwr.engine.transport.complete(batch.iframe.batch);
+	            }
+	        }
+	      });
+        } else {
+          dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
+        	if (typeof dwr != "undefined") {
+              dwr.engine.transport.complete(batch.iframe.batch);
+            }
+          });
+        }
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
 
@@ -2018,6 +2029,32 @@ if (typeof dwr == 'undefined') dwr = {};
             }
           }
           batch.form.submit();
+        }
+      },
+
+      /**
+       * Functions designed to be called by the server
+       */
+      remote:{
+        /**
+         * Called by the server: An IFrame reply is about to start
+         * @private
+         * @param {Object} iframe
+         * @param {int} batchId
+         */
+        beginIFrameResponse:function(iframe, batchId) {
+          if (iframe != null) dwr.engine._receivedBatch = iframe.batch;
+        },
+
+        /**
+         * Called by the server: An IFrame reply is just completing
+         * @private
+         * @param {int} batchId
+         */
+        endIFrameResponse:function(batchId) {
+          dwr.engine._receivedBatch = dwr.engine._batches[batchId];
+          dwr.engine.transport.complete(dwr.engine._receivedBatch);
+          dwr.engine._receivedBatch = null;
         }
       },
 

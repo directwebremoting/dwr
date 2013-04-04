@@ -46,6 +46,7 @@ public class HtmlCallHandler extends BaseCallHandler
         {
             out.println("<html><body><script type='text/javascript'>");
             out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
+            out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
         }
     }
 
@@ -57,6 +58,7 @@ public class HtmlCallHandler extends BaseCallHandler
     {
         synchronized (out)
         {
+            out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
             out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
             out.println("</script></body></html>");
         }
