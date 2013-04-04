@@ -61,7 +61,7 @@ public class DownloadHandler implements Handler
             String filename = transfer.getFilename();
             if (filename != null)
             {
-                response.setHeader("Content-disposition", "'attachment; filename=\"" + filename + "\"'");
+                response.setHeader("Content-disposition", "attachment; filename=\"" + filename + "\"");
             }
 
             response.setContentType(transfer.getMimeType());
