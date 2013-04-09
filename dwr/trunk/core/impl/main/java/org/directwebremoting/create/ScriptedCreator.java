@@ -17,6 +17,7 @@ package org.directwebremoting.create;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.ServletContext;
@@ -149,7 +150,18 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         if (this.scriptPath == null)
         {
             ServletContext sc = WebContextFactory.get().getServletContext();
-            this.scriptPath = sc.getRealPath(scriptPath);
+            try
+            {
+                url = sc.getResource(scriptPath);
+            }
+            catch (MalformedURLException ex)
+            {
+                // TODO Auto-generated catch block
+                log.error("The script could not be retrieved: " + ex.getMessage(), ex);
+            }
+            if (url != null) {
+                this.scriptPath  = url.getFile();
+            }
         }
     }
 
