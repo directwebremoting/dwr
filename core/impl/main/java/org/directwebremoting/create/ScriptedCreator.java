@@ -159,7 +159,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         }
         catch (MalformedURLException ex)
         {
-            log.debug(ex.getMessage(), ex);
+            // Eat this.
         }
         // Attempt to locate the file as is, treat the inbound scriptPath as an absolute path.
         File scriptFile = new File(scriptPath);
@@ -168,7 +168,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
             this.scriptPath  = scriptFile.getAbsolutePath();
             return;
         }
-        log.error("Script file " + scriptPath + " was not found.  DWR will be unable to access this script.");
+        log.error("Script file " + scriptPath + " was not found.  DWR attempts to locate your script file on the classpath (example: /org/yourorg/YourScript.groovy), the servlet context (example: /WEB-INF/groovyScripts/YourScript.groovy), or as a path on the file system (C:/groovyScripts/YourScript.groovy). DWR will be unable to access this script.");
     }
 
     /**
@@ -176,7 +176,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
      */
     private boolean scriptUpdated()
     {
-        if (null == scriptPath)
+        if (scriptPath == null)
         {
             return false;
         }
@@ -205,7 +205,7 @@ public class ScriptedCreator extends AbstractCreator implements Creator
 
         if (scriptPath == null)
         {
-            throw new InstantiationException("Missing or empty script.");
+            throw new InstantiationException("scriptPath was not specified or a script could not be located at scriptPath.");
         }
 
         if (cachedScript != null && (!reloadable || !scriptUpdated()))
@@ -302,6 +302,10 @@ public class ScriptedCreator extends AbstractCreator implements Creator
      */
     public Object getInstance() throws InstantiationException
     {
+        if (scriptSrc == null && scriptPath == null)
+        {
+            throw new InstantiationException("Either an inline script was not specified, or a scriptPath was not specified, or the scriptPath could not be properly located.");
+        }
         try
         {
             if (useDynamicClasses && clazz != null)
