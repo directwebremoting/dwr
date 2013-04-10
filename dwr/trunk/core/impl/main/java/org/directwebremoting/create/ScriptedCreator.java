@@ -140,29 +140,35 @@ public class ScriptedCreator extends AbstractCreator implements Creator
         {
             throw new IllegalArgumentException("Please specify either the script or scriptPath property but not both.");
         }
-        // Look for the file on the classpath.
+        // Attempt to locate the script file on the classpath.
         URL url = LocalUtil.getResource(scriptPath);
         if (url != null)
         {
             this.scriptPath = url.getFile();
+            return;
         }
-        // Look for the file on the servlet context.
-        if (this.scriptPath == null)
+        // Attempt to locate the script file from the servlet context.
+        ServletContext sc = WebContextFactory.get().getServletContext();
+        try
         {
-            ServletContext sc = WebContextFactory.get().getServletContext();
-            try
-            {
-                url = sc.getResource(scriptPath);
-            }
-            catch (MalformedURLException ex)
-            {
-                // TODO Auto-generated catch block
-                log.error("The script could not be retrieved: " + ex.getMessage(), ex);
-            }
+            url = sc.getResource(scriptPath);
             if (url != null) {
                 this.scriptPath  = url.getFile();
+                return;
             }
         }
+        catch (MalformedURLException ex)
+        {
+            log.debug(ex.getMessage(), ex);
+        }
+        // Attempt to locate the file as is, treat the inbound scriptPath as an absolute path.
+        File scriptFile = new File(scriptPath);
+        if(scriptFile.exists())
+        {
+            this.scriptPath  = scriptFile.getAbsolutePath();
+            return;
+        }
+        log.error("Script file " + scriptPath + " was not found.  DWR will be unable to access this script.");
     }
 
     /**
