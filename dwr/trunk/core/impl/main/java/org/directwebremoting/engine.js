@@ -1994,8 +1994,8 @@ if (typeof dwr == 'undefined') dwr = {};
        * @param {Object} batch
        */
       beginLoader:function(batch, idname) {
-        var contentDocument = batch.iframe.contentDocument || batch.iframe.contentWindow;
-        if (contentDocument.document.body === null) {
+        var contentDocument = batch.iframe.contentDocument || batch.iframe.contentWindow.document;
+        if (contentDocument.body === null) {
           setTimeout(function(){dwr.engine.transport.iframe.beginLoader(batch, idname);}, 100);
           return;
         }
