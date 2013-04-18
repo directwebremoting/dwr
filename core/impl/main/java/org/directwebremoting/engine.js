@@ -1971,7 +1971,7 @@ if (typeof dwr == 'undefined') dwr = {};
         if (typeof dwr != "undefined" && batch && batch.iframe) {
           // Versions of IE prior to 8 should use contentWindow;
           var contentDocument = dwr.engine.util.getContentDocument(batch);
-          var htmlResponse = contentDocument.firstChild ? contentDocument.firstChild.innerHTML : null;
+          var htmlResponse = contentDocument.documentElement ? contentDocument.documentElement.innerHTML : null;
           // Only complete the batch if this isn't a DWR response, otherwise it will be completed in endIFrameResponse.
           if (htmlResponse && htmlResponse.search("//#DWR") === -1) {
             dwr.engine.transport.complete(batch.iframe.batch);
@@ -2620,7 +2620,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       return contentType;
     },
-    
+
     getContentDocument:function(batch) {
     	return batch.iframe.contentDocument || batch.iframe.contentWindow.document;
     },
