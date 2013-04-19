@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate4sEx" table="parent">
+    <id name="id" column="id" type="java.lang.Integer"/>
+    <property name="name" column="name"/>
+    <set name="children" lazy="true">
+      <key column="owner"/>
+      <one-to-many class="org.directwebremoting.convert.mapped.Hibernate4NestEx"/>
+    </set>
+  </class>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate4sNestEx" table="child">
+    <id name="id" column="id" type="java.lang.Integer"/>
+    <property name="name" column="name"/>
+    <many-to-one name="owner" column="owner"/>
+  </class>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate4Ex" table="parent">
+    <id name="id" column="id" type="java.lang.Integer"/>
+    <property name="name" column="name"/>
+    <set name="children" lazy="true">
+      <key column="owner"/>
+      <one-to-many class="org.directwebremoting.convert.mapped.Hibernate4NestEx"/>
+    </set>
+  </class>
+
+  <class name="org.directwebremoting.convert.mapped.Hibernate4NestEx" table="child">
+    <id name="id" column="id" type="java.lang.Integer"/>
+    <property name="name" column="name"/>
+    <many-to-one name="owner" column="owner"/>
+  </class>
+
+</hibernate-mapping>
