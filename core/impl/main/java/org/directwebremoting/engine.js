@@ -2544,7 +2544,7 @@ if (typeof dwr == 'undefined') dwr = {};
         if (batch.iframe) { // iframe remoting
           // Versions of IE prior to 8 should use contentWindow;
           var contentDocument = dwr.engine.util.getContentDocument(batch);
-          responseText = contentDocument.firstChild ? contentDocument.firstChild.innerHTML : "";
+          responseText = contentDocument.documentElement ? contentDocument.documentElement.innerHTML : "";
           contentType = contentDocument.contentType || "text/html";
         }
         return { name:"dwr.engine.emptyReply", message:"Empty reply from the server", status:status, htmlResponseText:responseText, contentType:contentType };
