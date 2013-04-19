@@ -1952,10 +1952,10 @@ if (typeof dwr == 'undefined') dwr = {};
         if ('readyState' in batch.iframe) {
           var readyStateCompleteCount = 0;
           dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
-            // onreadystatechange will be fired twice with a "complete" status.
+        	// onreadystatechange will be fired twice with a "complete" status.
             // The first time will be when the iframe is created not when the actual response is retrieved.
             if (batch.iframe.readyState === "complete" && readyStateCompleteCount > 0) {
-              dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch, emptyResponseCount);
+              dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
               readyStateCompleteCount = readyStateCompleteCount + 1;
             }
           });
@@ -1971,7 +1971,7 @@ if (typeof dwr == 'undefined') dwr = {};
         if (typeof dwr != "undefined" && batch && batch.iframe) {
           // Versions of IE prior to 8 should use contentWindow;
           var contentDocument = dwr.engine.util.getContentDocument(batch);
-          var htmlResponse = contentDocument.documentElement ? contentDocument.documentElement.innerHTML : null;
+          var htmlResponse = contentDocument.documentElement ? contentDocument.documentElement.outerHTML : null;
           // Only complete the batch if this isn't a DWR response, otherwise it will be completed in endIFrameResponse.
           if (htmlResponse && htmlResponse.search("//#DWR") === -1) {
             dwr.engine.transport.complete(batch.iframe.batch);
@@ -2544,7 +2544,7 @@ if (typeof dwr == 'undefined') dwr = {};
         if (batch.iframe) { // iframe remoting
           // Versions of IE prior to 8 should use contentWindow;
           var contentDocument = dwr.engine.util.getContentDocument(batch);
-          responseText = contentDocument.documentElement ? contentDocument.documentElement.innerHTML : "";
+          responseText = contentDocument.documentElement ? contentDocument.documentElement.outerHTML : "";
           contentType = contentDocument.contentType || "text/html";
         }
         return { name:"dwr.engine.emptyReply", message:"Empty reply from the server", status:status, htmlResponseText:responseText, contentType:contentType };
