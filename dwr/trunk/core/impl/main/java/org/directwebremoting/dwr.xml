@@ -39,6 +39,7 @@
     <converter id="object" class="org.directwebremoting.convert.ObjectConverter"/>
     <converter id="hibernate2" class="org.directwebremoting.hibernate.H2BeanConverter"/>
     <converter id="hibernate3" class="org.directwebremoting.hibernate.H3BeanConverter"/>
+    <converter id="hibernate4" class="org.directwebremoting.hibernate.H4BeanConverter"/>
     <converter id="url" class="org.directwebremoting.convert.URLConverter"/>
     <converter id="exception" class="org.directwebremoting.convert.ExceptionConverter"/>
     <converter id="miniException" class="org.directwebremoting.convert.MinimalistExceptionConverter"/>
