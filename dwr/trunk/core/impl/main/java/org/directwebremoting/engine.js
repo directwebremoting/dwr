@@ -1956,9 +1956,9 @@ if (typeof dwr == 'undefined') dwr = {};
             // The first time will be when the iframe is created not when the actual response is retrieved.
             if (batch.iframe.readyState === "complete") {
               readyStateCompleteCount = readyStateCompleteCount + 1;
-              if (readyStateCompleteCount > 1) { 	
+              if (readyStateCompleteCount > 1) {
                   dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
-              }              
+              }
             }
           });
         } else {
