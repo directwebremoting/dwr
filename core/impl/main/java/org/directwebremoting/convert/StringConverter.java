@@ -55,7 +55,7 @@ public class StringConverter extends AbstractConverter
      */
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx) throws ConversionException
     {
-        String escaped = JavascriptUtil.escapeJavaScript(data.toString());
+        String escaped = JavascriptUtil.escapeJavaScript(data.toString(), false, false);
         return new NonNestedOutboundVariable('\"' + escaped + '\"');
     }
 }

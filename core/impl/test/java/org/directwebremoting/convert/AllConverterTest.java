@@ -236,7 +236,6 @@ public class AllConverterTest
         assertOutboundConversion("-", "\"-\"");
         assertOutboundConversion("0", "\"0\"");
         assertOutboundConversion("\"", "\"\\\"\"");
-        assertOutboundConversion("\'", "\"\\'\"");
         assertOutboundConversion("\u0394", "\"\\u0394\"");
         assertOutboundConversion("", "\"\"");
         assertOutboundConversion("null", "\"null\"");
