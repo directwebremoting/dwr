@@ -42,17 +42,24 @@ public interface ScriptSessionManager
      * @param httpSessionId The browser id to lookup
      * @return A list of script sessions for each open window
      */
-    Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId);
+    Collection<ScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId);
 
     /**
-     * For a given script session id, return the related ScriptSession object
-     * or null if the id is not known.
+     * Lookup the ScriptSession corresponding to a ScriptSession id.
+     * @param scriptSessionId The id to lookup
+     * @return The corresponding ScriptSession object, or null.
+     */
+    ScriptSession getScriptSessionById(String scriptSessionId);
+
+    /**
+     * For a given script session id, return the existing ScriptSession object
+     * or create a new if needed.
      * @param id The id to get a ScriptSession object for
      * @param url The URL including 'http://', up to (but not including) '?' or '#' (or null if not known)
-     * @param httpSessionId The session ID (or null if not known)
-     * @return A ScriptSession to match the ID, or null if a match is not found.
+     * @param httpSessionId The session ID to associate the ScriptSession with
+     * @return A ScriptSession to match the ID.
      */
-    RealScriptSession getScriptSession(String id, String url, String httpSessionId);
+    RealScriptSession getOrCreateScriptSession(String id, String url, String httpSessionId);
 
     /**
      * Accessor for the time (in milliseconds) when unused ScriptSessions will expire

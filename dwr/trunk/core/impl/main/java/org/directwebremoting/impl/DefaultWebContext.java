@@ -84,7 +84,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         // Check validity to the script session id. It could be invalid due to
         // to a server re-start, a timeout, a back-button, just because the user
         // is new to this page, or because someone is hacking
-        this.scriptSession = scriptSessionManager.getScriptSession(sentScriptId, sentPage, httpSessionId);
+        this.scriptSession = scriptSessionManager.getOrCreateScriptSession(sentScriptId, sentPage, httpSessionId);
 
         // The passed script session id passed the test, use it
         this.page = sentPage;

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ContainerAbstraction;
@@ -161,11 +162,11 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             // Nasty 2 connection limit hack. How many times is this browser connected?
             String httpSessionId = webContext.getSession(true).getId();
-            Collection<RealScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
+            Collection<ScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
             int persistentConnections = 0;
-            for (RealScriptSession session : sessions)
+            for (ScriptSession session : sessions)
             {
-                persistentConnections += session.countPersistentConnections();
+                persistentConnections += ((RealScriptSession) session).countPersistentConnections();
             }
 
             int connectionLimit = BrowserDetect.getConnectionLimit(request);
