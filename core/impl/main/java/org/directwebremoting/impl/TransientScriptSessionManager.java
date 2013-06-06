@@ -39,17 +39,25 @@ public class TransientScriptSessionManager implements ScriptSessionManager
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSession(java.lang.String)
      */
-    public RealScriptSession getScriptSession(String id, String page, String httpSessionId)
+    public RealScriptSession getOrCreateScriptSession(String id, String page, String httpSessionId)
     {
         return new TransientScriptSession(id, this, page);
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionById(java.lang.String)
+     */
+    public ScriptSession getScriptSessionById(String scriptSessionId)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionsByHttpSessionId(java.lang.String)
      */
-    public Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
+    public Collection<ScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
     {
-        return new ArrayList<RealScriptSession>();
+        return new ArrayList<ScriptSession>();
     }
 
     /* (non-Javadoc)

@@ -86,7 +86,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSession(java.lang.String)
      */
-    public RealScriptSession getScriptSession(String sentScriptId, String page, String httpSessionId)
+    public RealScriptSession getOrCreateScriptSession(String sentScriptId, String page, String httpSessionId)
     {
         maybeCheckTimeouts();
         DefaultScriptSession scriptSession;
@@ -273,11 +273,19 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionById(java.lang.String)
+     */
+    public ScriptSession getScriptSessionById(String scriptSessionId)
+    {
+        return sessionMap.get(scriptSessionId);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionsByHttpSessionId(java.lang.String)
      */
-    public Collection<RealScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
+    public Collection<ScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
     {
-        Collection<RealScriptSession> reply = new ArrayList<RealScriptSession>();
+        Collection<ScriptSession> reply = new ArrayList<ScriptSession>();
 
         Set<String> scriptSessionIds = sessionXRef.get(httpSessionId);
         if (scriptSessionIds != null)
