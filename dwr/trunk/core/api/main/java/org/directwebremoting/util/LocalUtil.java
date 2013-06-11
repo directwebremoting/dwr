@@ -1148,8 +1148,8 @@ public final class LocalUtil
     /**
      * Utility to essentially do Class forName and allow configurable
      * Classloaders.
-     * <p>The initial implementation makes use of the context classloader for
-     * the current thread.
+     * <p>This implementation makes use of the context classloader for
+     * the current thread, with fallback to the local classloader if needed.
      * @param className The class to create
      * @return The class if it is safe or null otherwise.
      * @throws ClassNotFoundException If <code>className</code> is not valid
@@ -1195,7 +1195,15 @@ public final class LocalUtil
                 return Void.TYPE;
             }
         }
-        return Thread.currentThread().getContextClassLoader().loadClass(remappedDwrClassName(className));
+
+        String remappedClassName = remappedDwrClassName(className);
+        Class<?> clazz = null;
+        try {
+            clazz = Thread.currentThread().getContextClassLoader().loadClass(remappedClassName);
+        } catch(ClassNotFoundException ex) {
+            clazz = LocalUtil.class.getClassLoader().loadClass(remappedClassName);
+        }
+        return clazz;
     }
 
     /**
