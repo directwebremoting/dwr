@@ -69,6 +69,6 @@ public class EnumConverter extends AbstractConverter
      */
     public OutboundVariable convertOutbound(Object data, OutboundContext outctx)
     {
-        return new NonNestedOutboundVariable('\'' + ((Enum<?>) data).name() + '\'');
+        return new NonNestedOutboundVariable('"' + ((Enum<?>) data).name() + '"');
     }
 }
