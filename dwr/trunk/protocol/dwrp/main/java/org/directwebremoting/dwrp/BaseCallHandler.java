@@ -53,6 +53,7 @@ import org.directwebremoting.impl.ExportUtil;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.util.DebuggingPrintWriter;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * A Marshaller that output plain Javascript.
@@ -180,30 +181,37 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // Convert all the parameters to the correct types
                 int destParamCount = method.getParameterTypes().length;
                 Object[] arguments = new Object[destParamCount];
-                for (int j = 0; j < destParamCount; j++)
+                int inboundArgIndex = 0;
+                for (int outboundArgIndex = 0; outboundArgIndex < destParamCount; outboundArgIndex++)
                 {
                     InboundVariable param;
-                    if (method.isVarArgs() && j + 1 == destParamCount)
+                    if (method.isVarArgs() && outboundArgIndex + 1 == destParamCount)
                     {
                         param = inctx.createArrayWrapper(callNum, destParamCount);
                     }
                     else
                     {
-                        param = inctx.getParameter(callNum, j);
+                        param = inctx.getParameter(callNum, inboundArgIndex);
                     }
 
-                    Property property = new ParameterProperty(method, j);
+                    Property property = new ParameterProperty(method, outboundArgIndex);
 
                     // TODO: Having just got a property, shouldn't we call property.getPropertyType() in place of this?
-                    Class<?> paramType = method.getParameterTypes()[j];
+                    Class<?> paramType = method.getParameterTypes()[outboundArgIndex];
                     try
                     {
-                        arguments[j] = converterManager.convertInbound(paramType, param, property);
+                        arguments[outboundArgIndex] = converterManager.convertInbound(paramType, param, property);
                     }
                     catch (Exception ex)
                     {
                         log.debug("Problem converting param=" + param + ", property=" + property + ", into paramType=" + paramType.getName() + ": " + ex);
                         throw ex;
+                    }
+                    // Only increment the inboundArgIndex if the parameterType of the destination method is not
+                    // a Servlet class.  // In this case the arguments value is auto-populated by DWR and a place-holder
+                    // argument is not passed from the client.
+                    if (!LocalUtil.isServletClass(paramType)) {
+                        inboundArgIndex++;
                     }
                 }
 
