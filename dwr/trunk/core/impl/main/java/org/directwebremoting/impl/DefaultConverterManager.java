@@ -425,11 +425,14 @@ public class DefaultConverterManager implements ConverterManager
         }
 
         // Check to see if we have done this one already
-        OutboundVariable ov = converted.get(data);
-        if (ov != null)
+        if (!converted.isJsonMode())
         {
-            // So the object as been converted already, we just need to refer to it.
-            return ov.getReferenceVariable();
+            OutboundVariable ov = converted.get(data);
+            if (ov != null)
+            {
+                // So the object as been converted already, we just need to refer to it.
+                return ov.getReferenceVariable();
+            }
         }
 
         // So we will have to do the conversion
