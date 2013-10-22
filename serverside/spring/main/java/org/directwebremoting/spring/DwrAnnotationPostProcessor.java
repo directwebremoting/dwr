@@ -93,7 +93,7 @@ public class DwrAnnotationPostProcessor extends CreatorParserHelper implements B
         try
         {
             String beanClassName = resolveBeanClassname(beanDefinitionHolder.getBeanDefinition(), beanDefinitionRegistry);
-            return ClassUtils.forName(beanClassName);
+            return ClassUtils.forName(beanClassName, getClass().getClassLoader());
         }
         catch (Exception cne)
         {

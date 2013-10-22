@@ -72,7 +72,7 @@ public class DwrClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionSc
     {
         try
         {
-            Class<?> beanDefinitionClass = ClassUtils.forName(definitionHolder.getBeanDefinition().getBeanClassName());
+            Class<?> beanDefinitionClass = ClassUtils.forName(definitionHolder.getBeanDefinition().getBeanClassName(), getClass().getClassLoader());
             RemoteProxy proxy = beanDefinitionClass.getAnnotation(RemoteProxy.class);
             DataTransferObject converter = beanDefinitionClass.getAnnotation(DataTransferObject.class);
             GlobalFilter globalFilter = beanDefinitionClass.getAnnotation(GlobalFilter.class);
