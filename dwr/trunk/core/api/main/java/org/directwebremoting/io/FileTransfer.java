@@ -37,37 +37,19 @@ import org.directwebremoting.util.CopyUtils;
  */
 public class FileTransfer
 {
-    /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param filename The remote source filename
-     * @param mimeType The mime type passed in by the browser
-     * @param outputStreamLoader A means by which the data can be read
-     */
-    public FileTransfer(String filename, String mimeType, OutputStreamLoader outputStreamLoader)
-    {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.outputStreamLoader = outputStreamLoader;
-        this.size = -1;
-        this.inputStreamFactory = null;
-    }
 
-    /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
-     */
     public FileTransfer(BufferedImage image, String type)
     {
         this(image, "image", type);
     }
 
-    /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
-     */
     public FileTransfer(final BufferedImage image, String filename, final String type)
     {
-        this.filename = filename;
-        this.mimeType = "image/" + type;
-        this.outputStreamLoader = new OutputStreamLoader()
+        this(filename, "image/" + type, getImageTypeOSL(image, type));
+    }
+
+    private static OutputStreamLoader getImageTypeOSL(final BufferedImage image, final String type) {
+        return new OutputStreamLoader()
         {
             public void load(OutputStream out) throws IOException
             {
@@ -78,22 +60,20 @@ public class FileTransfer
             {
             }
         };
-        this.size = -1;
-        this.inputStreamFactory = null;
     }
 
     /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
      * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
      * @param bytes the raw data
      */
     public FileTransfer(String filename, String mimeType, final byte[] bytes)
     {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.size = bytes.length;
-        this.outputStreamLoader = new OutputStreamLoader()
+        this(filename, mimeType, getBytesOSL(bytes));
+    }
+
+    private static OutputStreamLoader getBytesOSL(final byte[] bytes) {
+        return new OutputStreamLoader()
         {
             public void load(OutputStream out) throws IOException
             {
@@ -104,23 +84,26 @@ public class FileTransfer
             {
             }
         };
-        this.inputStreamFactory = null;
     }
 
     /**
-     * A ctor for InputStreamFactory + all other details
      * @param filename The remote source filename
      * @param mimeType The mime type passed in by the browser
-     * @param size The size of the file
+     * @param in A means by which the data can be read.
+     */
+    public FileTransfer(String filename, String mimeType, final InputStream in)
+    {
+        this(filename, mimeType, new SimpleInputStreamFactory(in, true));
+    }
+
+    /**
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
      * @param inputStreamFactory A means by which the data can be read
      */
-    public FileTransfer(String filename, String mimeType, long size, final InputStreamFactory inputStreamFactory)
+    public FileTransfer(String filename, String mimeType, final InputStreamFactory inputStreamFactory)
     {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.size = size;
-        this.outputStreamLoader = null;
-        this.inputStreamFactory = inputStreamFactory;
+        this(filename, mimeType, -1, inputStreamFactory);
     }
 
     /**
@@ -132,41 +115,46 @@ public class FileTransfer
      */
     public FileTransfer(String filename, String mimeType, long size, final InputStream in)
     {
+        this(filename, mimeType, size, new SimpleInputStreamFactory(in, true));
+    }
+
+    /**
+     * A ctor for InputStreamFactory + all other details
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param size The size of the file
+     * @param inputStreamFactory A means by which the data can be read
+     */
+    public FileTransfer(String filename, String mimeType, long size, final InputStreamFactory inputStreamFactory)
+    {
+        this(filename, mimeType, size, inputStreamFactory, null);
+    }
+
+    /**
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param outputStreamLoader A means by which the data can be read
+     */
+    public FileTransfer(String filename, String mimeType, OutputStreamLoader outputStreamLoader)
+    {
+        this(filename, mimeType, -1, null, outputStreamLoader);
+    }
+
+    /**
+     * A ctor for InputStreamFactory + all other details
+     * @param filename The remote source filename
+     * @param mimeType The mime type passed in by the browser
+     * @param size The size of the file
+     * @param inputStreamFactory A means by which the data can be read
+     * @param outputStreamLoader A means by which the data can be read
+     */
+    public FileTransfer(String filename, String mimeType, long size, final InputStreamFactory inputStreamFactory, OutputStreamLoader outputStreamLoader)
+    {
         this.filename = filename;
         this.mimeType = mimeType;
         this.size = size;
         this.outputStreamLoader = null;
-        this.inputStreamFactory = new SimpleInputStreamFactory(in, true);
-    }
-
-    /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param filename The remote source filename
-     * @param mimeType The mime type passed in by the browser
-     * @param inputStreamFactory A means by which the data can be read
-     */
-    public FileTransfer(String filename, String mimeType, final InputStreamFactory inputStreamFactory)
-    {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.size = -1;
-        this.outputStreamLoader = null;
         this.inputStreamFactory = inputStreamFactory;
-    }
-
-    /**
-     * A ctor for the 3 things browsers tell us about the uploaded file
-     * @param filename The remote source filename
-     * @param mimeType The mime type passed in by the browser
-     * @param in A means by which the data can be read.
-     */
-    public FileTransfer(String filename, String mimeType, final InputStream in)
-    {
-        this.filename = filename;
-        this.mimeType = mimeType;
-        this.size = -1;
-        this.outputStreamLoader = null;
-        this.inputStreamFactory = new SimpleInputStreamFactory(in, true);
     }
 
     /**
