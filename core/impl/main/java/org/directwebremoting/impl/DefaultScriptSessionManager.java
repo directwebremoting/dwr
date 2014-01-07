@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -119,7 +118,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                 }
             }
 
-            associateScriptSessionAndPage(scriptSession, page);
             associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
         }
 
@@ -178,59 +176,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         sessionXRef.disassociate(scriptSession);
     }
 
-    /**
-     * Link a script session to a web page.
-     * <p>This allows people to call {@link org.directwebremoting.Browser#withPage}
-     * <p>This method is an ideal point to override and do something better.
-     * @param scriptSession The script session to be linked to a page
-     * @param page The page (un-normalized) to be linked to
-     */
-    protected void associateScriptSessionAndPage(DefaultScriptSession scriptSession, String page)
-    {
-        if (page == null)
-        {
-            return;
-        }
-
-        String normalizedPage = pageNormalizer.normalizePage(page);
-
-        Set<DefaultScriptSession> pageSessions = pageSessionMap.get(normalizedPage);
-        if (pageSessions == null)
-        {
-            pageSessions = new HashSet<DefaultScriptSession>();
-            Set<DefaultScriptSession> prev = pageSessionMap.putIfAbsent(normalizedPage, pageSessions);
-            if (prev != null)
-            {
-                pageSessions = prev;
-            }
-        }
-        synchronized(pageSessions) {
-            pageSessions.add(scriptSession);
-        }
-        scriptSession.setAttribute(ATTRIBUTE_PAGE, normalizedPage);
-    }
-
-    /**
-     * Unlink any pages from this script session
-     * @see #associateScriptSessionAndPage(DefaultScriptSession, String)
-     * @param scriptSession The script session to be unlinked
-     */
-    protected void disassociateScriptSessionAndPage(DefaultScriptSession scriptSession)
-    {
-        for(Entry<String, Set<DefaultScriptSession>> entry : pageSessionMap.entrySet())
-        {
-            Set<DefaultScriptSession> pageSessions = entry.getValue();
-            synchronized(pageSessions)
-            {
-                pageSessions.remove(scriptSession);
-                if (pageSessions.isEmpty())
-                {
-                    pageSessionMap.remove(entry.getKey());
-                }
-            }
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptSessionManager#getScriptSessionById(java.lang.String)
      */
@@ -274,7 +219,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         // here of just allowing multiple invalidations.
         sessionMap.remove(scriptSession.getId());
 
-        disassociateScriptSessionAndPage(scriptSession);
         disassociateScriptSessionAndHttpSession(scriptSession);
 
         // Are there any risks from doing this outside the locks?
@@ -591,12 +535,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     public static final String ATTRIBUTE_HTTPSESSIONID = "org.directwebremoting.ScriptSession.HttpSessionId";
 
     /**
-     * Use of this attribute is currently discouraged, we may make this public
-     * in a later release. Until then, it may change or be removed without warning.
-     */
-    public static final String ATTRIBUTE_PAGE = "org.directwebremoting.ScriptSession.Page";
-
-    /**
      * By default we check for sessions that need expiring every 30 seconds
      */
     protected static final long DEFAULT_SESSION_CHECK_TIME = 30000;
@@ -628,12 +566,5 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The key is an http session id, the value is a set of script session ids
      */
     protected final ScriptSessionMultiMap sessionXRef = new ScriptSessionMultiMap(ATTRIBUTE_HTTPSESSIONID);
-
-    /**
-     * The map of pages that have sessions.
-     * The key is a normalized page, the value the script sessions that are
-     * known to be currently visiting the page
-     */
-    protected final ConcurrentMap<String, Set<DefaultScriptSession>> pageSessionMap = new ConcurrentHashMap<String, Set<DefaultScriptSession>>();
 
 }
