@@ -284,7 +284,7 @@ public class CreatorModule implements Module
                     Object target = creator.getInstance(); // Should be a singleton
                     Method targetClassMethod = target.getClass().getMethod("getTargetClass");
                     Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                    realMethod = targetClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                    realMethod = targetClass.getMethod(method.getName(), method.getParameterTypes());
                 }
                 catch (Exception ex)
                 {
