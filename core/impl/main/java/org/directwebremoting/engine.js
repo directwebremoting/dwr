@@ -777,7 +777,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       // Perform error reporting asynchronously (possibly)
       ignoreIfUnloading(batch, function() {
-        if (ex.name === "dwr.engine.emptyReply" && ex.hasOwnProperty("responseText") && dwr.engine._textHtmlOrRedirectHandlerExists(batch)) {
+        if (ex.name === "dwr.engine.emptyReply" && ex.hasOwnProperty("htmlResponseText") && dwr.engine._textHtmlOrRedirectHandlerExists(batch)) {
             dwr.engine._handleTextHtmlResponse(batch, ex);
             return;
         }
