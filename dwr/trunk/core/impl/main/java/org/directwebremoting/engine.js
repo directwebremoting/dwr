@@ -1943,29 +1943,16 @@ if (typeof dwr == 'undefined') dwr = {};
         }
         var idname = dwr.engine.transport.iframe.getId(batch);
         batch.div1 = document.createElement("div");
-        document.body.appendChild(batch.div1);
         batch.div1.innerHTML = "<iframe src='" + dwr.engine.SSL_SECURE_URL + "' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
         batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
-        // In IE the load on the iframe happens before the iframe is completely loaded, therefore we need to listen for readystatechange.
-        if ('readyState' in batch.iframe) {
-          var readyStateCompleteCount = 0;
-          dwr.engine.util.addEventListener(batch.iframe, "readystatechange", function(ev) {
-        	// onreadystatechange will be fired twice with a "complete" status.
-            // The first will be when the iframe is created not when the response is retrieved.
-            if (batch.iframe.readyState === "complete") {
-              readyStateCompleteCount = readyStateCompleteCount + 1;
-              if (readyStateCompleteCount > 1) {
-                  dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
-              }
-            }
-          });
-        } else {
-          dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
-        	  dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
-          });
-        }
+        dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
+          dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
+        });
+        // This needs to be after the event listener is added, for IE.
+        // http://stackoverflow.com/questions/18414964/load-event-for-iframe-does-not-fire-in-ie
+        document.body.appendChild(batch.div1);
         dwr.engine.transport.iframe.beginLoader(batch, idname);
       },
 
