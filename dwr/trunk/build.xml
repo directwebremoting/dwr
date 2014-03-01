@@ -584,7 +584,7 @@
 	-->
 	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
 		<!-- we deploy more than one file in one operation so they all get the same SNAPSHOT version at the repository -->
-		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
@@ -605,7 +605,7 @@
 	-->
 	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
 		<!-- sign and deploy the main artifact -->
-		<artifact:mvn mavenHome="/usr/local/maven/apache-maven-3.0.3" fork="true">
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
 			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.4:sign-and-deploy-file" />
 			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-staging-repository-id}" />
