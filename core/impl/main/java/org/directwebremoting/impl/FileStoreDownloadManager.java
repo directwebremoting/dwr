@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +33,7 @@ import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.io.InputStreamFactory;
 import org.directwebremoting.io.OutputStreamLoader;
+import org.directwebremoting.util.Base64;
 import org.directwebremoting.util.LocalUtil;
 
 /**
@@ -88,11 +90,11 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
     {
         String filename = FILE_PREFIX
                         + PART_SEPARATOR
-                        + id
+                        + encodeFileNameSegment(id)
                         + PART_SEPARATOR
-                        + transfer.getMimeType().replace("/", ".")
+                        + encodeFileNameSegment(transfer.getMimeType())
                         + PART_SEPARATOR
-                        + transfer.getFilename();
+                        + encodeFileNameSegment(transfer.getFilename());
 
         OutputStream out = null;
         OutputStreamLoader loader = null;
@@ -118,7 +120,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
      */
     public FileTransfer getFileTransfer(String id) throws FileNotFoundException
     {
-        final String prefix = FILE_PREFIX + PART_SEPARATOR + id + PART_SEPARATOR;
+        final String prefix = FILE_PREFIX + PART_SEPARATOR + encodeFileNameSegment(id) + PART_SEPARATOR;
 
         final File[] match = downloadFileCache.listFiles(new FileFilter()
         {
@@ -142,11 +144,11 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
         }
 
         final File matched = match[0];
-        String[] parts = matched.getName().split(PART_SEPARATOR, 4);
+        String[] parts = matched.getName().split(Pattern.quote(PART_SEPARATOR), 4);
 
         // Parts 0 and 1 are the prefix and id. We know they're right
-        String mimeType = parts[2].replace(".", "/");
-        String filename = parts[3];
+        String mimeType = decodeFileNameSegment(parts[2]);
+        String filename = decodeFileNameSegment(parts[3]);
         final InputStream in = new FileInputStream(matched);
 
         return new FileTransfer(filename, mimeType, matched.length(), new InputStreamFactory()
@@ -163,7 +165,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
                 // Some download managers cause multiple downloads. Since
                 // space is less likely to be a problem on a disk, we wait
                 // until the purge process to run rather than deleting now.
-                //matched.delete();
+                // matched.delete();
             }
         });
     }
@@ -196,6 +198,30 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
     }
 
     /**
+     * Encode a string to become suitable to use in file name separated with "."
+     * @param segment
+     *            the original string
+     * @return the encoded string
+     */
+    protected String encodeFileNameSegment(final String segment)
+    {
+        String standardBase64 = new String(Base64.encodeBase64(segment.getBytes()));
+        return standardBase64.replaceAll("+", "-").replaceAll("/", "_");
+    }
+
+    /**
+     * Decode a string that was previously encoded for use in file name
+     * @param segment
+     *            the encoded string
+     * @return the original string
+     */
+    protected String decodeFileNameSegment(final String segment)
+    {
+        String standardBase64 = segment.replaceAll("-", "+").replaceAll("_", "/");
+        return new String(Base64.decodeBase64(standardBase64.getBytes()));
+    }
+
+    /**
      * Set the directory to which we write the downloaded file cache
      * @param downloadFileCacheDir the downloadFileCache to set
      */
@@ -220,10 +246,10 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
     private static final String FILE_PREFIX = "dwr";
 
     /**
-     * The separator to distinguish the prefix, from the id, the mime-type and
-     * the filename
+     * The separator to distinguish the prefix, from the id, the mime-type and the filename (needs to be outside the
+     * charset used by URL-safe Base64)
      */
-    private static final String PART_SEPARATOR = "-";
+    private static final String PART_SEPARATOR = ".";
 
     /**
      * The lock which you must hold to read or write from the list of
