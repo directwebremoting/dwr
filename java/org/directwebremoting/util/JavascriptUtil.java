@@ -548,6 +548,12 @@ public class JavascriptUtil
                     writer.append('\\');
                     writer.append('\\');
                     break;
+                case '/' :
+                    // We should always escape forward slash to protect from </script> XSS hacks
+                    // (see DWR-619)
+                    writer.append('\\');
+                    writer.append('/');
+                    break;
                 default:
                     writer.append(ch);
                     break;
