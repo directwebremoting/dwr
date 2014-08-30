@@ -51,7 +51,7 @@ public class JsonObject extends JsonValue implements Map<String, JsonValue>
             }
 
             output.append('\'');
-            output.append(JavascriptUtil.escapeJavaScript(entry.getKey(), false, false));
+            output.append(JavascriptUtil.escapeJavaScript(entry.getKey(), false));
             output.append("':");
             output.append(entry.getValue().toExternalRepresentation());
         }

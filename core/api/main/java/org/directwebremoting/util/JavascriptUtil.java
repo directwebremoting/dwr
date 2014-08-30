@@ -40,7 +40,7 @@ public class JavascriptUtil
 {
     public static String escapeJavaScript(String str)
     {
-        return escapeJavaScript(str, true, false);
+        return escapeJavaScript(str, true);
     }
 
     /**
@@ -64,11 +64,15 @@ public class JavascriptUtil
      * @param str  String to escape values in, may be null
      * @return String with escaped values, <code>null</code> if null string input
      */
-    public static String escapeJavaScript(String str, boolean escapeSingleQuote, boolean escapeForwardSlash)
+    public static String escapeJavaScript(String str, boolean escapeSingleQuote)
     {
         if (str == null) {
             return null;
         }
+
+        // We should always escape forward slash to protect from </script> XSS hacks
+        // (see DWR-619)
+        boolean escapeForwardSlash = true;
 
         StringWriter stringWriter = new StringWriter(str.length() * 2);
         int sz;
