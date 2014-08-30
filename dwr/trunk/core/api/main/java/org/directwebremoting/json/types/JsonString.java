@@ -48,7 +48,7 @@ public class JsonString extends JsonValue
     @Override
     public String toExternalRepresentation()
     {
-        return "'" + JavascriptUtil.escapeJavaScript(value, false, false) + "'";
+        return "'" + JavascriptUtil.escapeJavaScript(value, false) + "'";
     }
 
     /* (non-Javadoc)
