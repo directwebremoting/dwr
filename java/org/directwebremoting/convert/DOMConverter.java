@@ -15,8 +15,13 @@
  */
 package org.directwebremoting.convert;
 
-import java.io.StringReader;
-import java.io.StringWriter;
+import org.directwebremoting.dwrp.SimpleOutboundVariable;
+import org.directwebremoting.extend.*;
+import org.directwebremoting.util.LocalUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,20 +30,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.directwebremoting.dwrp.SimpleOutboundVariable;
-import org.directwebremoting.extend.Converter;
-import org.directwebremoting.extend.InboundContext;
-import org.directwebremoting.extend.InboundVariable;
-import org.directwebremoting.extend.MarshallException;
-import org.directwebremoting.extend.OutboundContext;
-import org.directwebremoting.extend.OutboundVariable;
-import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.util.LocalUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * An implementation of Converter for DOM objects.
@@ -60,6 +53,18 @@ public class DOMConverter extends BaseV20Converter implements Converter
             {
                 buildFactory = DocumentBuilderFactory.newInstance();
             }
+
+            // See - https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            String FEATURE = "http://xml.org/sax/features/external-general-entities";
+            buildFactory.setFeature(FEATURE, false);
+
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+            FEATURE = "http://xml.org/sax/features/external-parameter-entities";
+            buildFactory.setFeature(FEATURE, false);
+
+            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+            FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            buildFactory.setFeature(FEATURE, true);
 
             DocumentBuilder builder = buildFactory.newDocumentBuilder();
 
