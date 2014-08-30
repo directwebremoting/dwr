@@ -34,8 +34,13 @@ import org.directwebremoting.util.Logger;
 /**
  * A default implmentation of ScriptSessionManager.
  * <p>There are synchronization constraints on this class that could be broken
- * by subclasses. Specifically anyone accessing either <code>sessionMap</code>
- * or <code>pageSessionMap</code> must be holding the <code>sessionLock</code>.
+ * by subclasses. Specifically anyone accessing either <code>sessionMap</code>,
+ * <code>sessionPageMap</code> or <code>pageSessionMap</code> must do this while 
+ * synchronizing on the respective Map. Locking several Maps at the same time
+ * should be avoided and if doing this care must be taken to avoid deadlocks.
+ * When accessing pageSessionMap value Sets the respective Set must be 
+ * synchronized on. If desired to lock both a value Set and pageSessionMap then
+ * the Map must be locked first to avoid deadlocks.
  * <p>In addition you should note that {@link DefaultScriptSession} and
  * {@link DefaultScriptSessionManager} make calls to each other and you should
  * take care not to break any constraints in inheriting from these classes.
@@ -49,21 +54,21 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public RealScriptSession getScriptSession(String id)
     {
         maybeCheckTimeouts();
-        DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
-        if (scriptSession == null)
+        synchronized (this.sessionMap)
         {
-            scriptSession = new DefaultScriptSession(id, this);
-            synchronized (this.sessionMap)
+            DefaultScriptSession scriptSession = (DefaultScriptSession) sessionMap.get(id);
+            if (scriptSession == null)
             {
+                scriptSession = new DefaultScriptSession(id, this);
                 sessionMap.put(id, scriptSession);
             }
+            else
+            {
+                scriptSession.updateLastAccessedTime();
+            }
+    
+            return scriptSession;
         }
-        else
-        {
-            scriptSession.updateLastAccessedTime();
-        }
-
-        return scriptSession;
     }
 
     /* (non-Javadoc)
@@ -72,6 +77,8 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     public void setPageForScriptSession(RealScriptSession scriptSession, String page)
     {
         String normalizedPage = pageNormalizer.normalizePage(page);
+        
+        // pageSessionMap
         synchronized (this.pageSessionMap)
         {
             Set pageSessions = (Set) pageSessionMap.get(normalizedPage);
@@ -81,7 +88,16 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
                 pageSessionMap.put(normalizedPage, pageSessions);
             }
 
-            pageSessions.add(scriptSession);
+            synchronized (pageSessions)
+            {
+                pageSessions.add(scriptSession);
+            }
+        }
+        
+        // sessionPageMap
+        synchronized (sessionPageMap)
+        {
+            sessionPageMap.put(scriptSession.getId(), normalizedPage);
         }
     }
 
@@ -100,7 +116,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
             }
 
             Set reply = new HashSet();
-            reply.addAll(pageSessions);
+            synchronized (pageSessions)
+            {
+                reply.addAll(pageSessions);
+            }
             return reply;
         }
     }
@@ -125,41 +144,41 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
      */
     protected void invalidate(RealScriptSession scriptSession)
     {
-        // Can we think of a reason why we need to sync both together?
-        // It feels like a deadlock risk to do so
-        RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
-        if (!scriptSession.equals(removed))
+        // Remove from sessionMap
+        synchronized (sessionMap)
         {
-            log.debug("ScriptSession already removed from manager. scriptSession=" + scriptSession + " removed=" + removed);
-        }
-
-        int removeCount = 0;
-        synchronized (pageSessionMap) {
-            Iterator entries = pageSessionMap.entrySet().iterator();
-            while (entries.hasNext()) {            
-                Entry pageSessionEntry = (Entry) entries.next();
-                Set pageSessions = (Set) pageSessionEntry.getValue();
-                boolean isRemoved = pageSessions.remove(scriptSession);    
-                if (pageSessions.isEmpty()) {
-                    pageSessionMap.remove(pageSessionEntry.getKey());
-                }
-                if (isRemoved)
-                {
-                    removeCount++;
-                }
+            RealScriptSession removed = (RealScriptSession) sessionMap.remove(scriptSession.getId());
+            if (!scriptSession.equals(removed))
+            {
+                log.debug("ScriptSession already removed from manager. scriptSession=" + scriptSession + " removed=" + removed);
             }
         }
 
-        if (removeCount != 1)
+        // Remove from sessionPageMap
+        String page = null;
+        synchronized (sessionPageMap)
         {
-            log.debug("DefaultScriptSessionManager.invalidate(): removeCount=" + removeCount + " when invalidating: " + scriptSession);
+            page = (String) sessionPageMap.remove(scriptSession.getId());
+        }
+        
+        // Remove from pageSessionMap
+        synchronized (pageSessionMap) {
+            Set pageSessions = (Set) pageSessionMap.get(page);
+            if (pageSessions != null) {
+                synchronized (pageSessions) {
+                    pageSessions.remove(scriptSession);
+                    if (pageSessions.isEmpty()) {
+                        pageSessionMap.remove(page);
+                    }
+                }
+            }
         }
     }
 
     /**
      * If we call {@link #checkTimeouts()} too often is could bog things down so
      * we only check every one in a while (default 30 secs); this checks to see
-     * of we need to check, and checks if we do.
+     * if we need to check, and checks if we do.
      */
     protected void maybeCheckTimeouts()
     {
@@ -178,30 +197,26 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
     protected void checkTimeouts()
     {
         long now = System.currentTimeMillis();
-        List timeouts = new ArrayList();
         
+        Set scriptSessions;
         synchronized (sessionMap) {
-            for (Iterator it = sessionMap.values().iterator(); it.hasNext();)
-            {
-                DefaultScriptSession session = (DefaultScriptSession) it.next();
-    
-                if (session.isInvalidated())
-                {
-                    continue;
-                }
-    
-                long age = now - session.getLastAccessedTime();
-                if (age > scriptSessionTimeout)
-                {
-                    timeouts.add(session);
-                }
-            }
+            scriptSessions = new HashSet(sessionMap.values());
         }
-
-        for (Iterator it = timeouts.iterator(); it.hasNext();)
+            
+        for (Iterator it = scriptSessions.iterator(); it.hasNext();)
         {
             DefaultScriptSession session = (DefaultScriptSession) it.next();
-            session.invalidate();
+
+            if (session.isInvalidated())
+            {
+                continue;
+            }
+
+            long age = now - session.getLastAccessedTime();
+            if (age > scriptSessionTimeout)
+            {
+                session.invalidate();
+            }
         }
     }
 
@@ -266,15 +281,21 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
 
     /**
      * The map of all the known sessions
-     * <p>GuardedBy("sessionLock")
+     * Map<String scriptSessionId, RealScriptSession>
      */
-    protected Map sessionMap = Collections.synchronizedMap(new HashMap());
+    protected Map sessionMap = new HashMap();
+
+    /**
+     * The map of sessions and their associated page
+     * Map<String scriptSessionId, String page>
+     */
+    protected Map sessionPageMap = new HashMap();
 
     /**
      * The map of pages that have sessions
-     * <p>GuardedBy("sessionLock")
+     * Map<String page, Set<RealScriptSession>>
      */
-    protected Map pageSessionMap = Collections.synchronizedMap(new HashMap());
+    protected Map pageSessionMap = new HashMap();
 
     /**
      * The log stream
