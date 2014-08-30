@@ -15,15 +15,11 @@
  */
 package org.directwebremoting.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.directwebremoting.extend.PageNormalizer;
@@ -90,14 +86,19 @@ public class DefaultScriptSessionManager implements ScriptSessionManager
 
             synchronized (pageSessions)
             {
-                pageSessions.add(scriptSession);
+                if (!pageSessions.contains(scriptSession)) {
+                    pageSessions.add(scriptSession);
+                }
             }
         }
         
         // sessionPageMap
         synchronized (sessionPageMap)
         {
-            sessionPageMap.put(scriptSession.getId(), normalizedPage);
+            String currentPage = (String) sessionPageMap.get(scriptSession.getId());
+            if (currentPage == null || !currentPage.equals(normalizedPage)) {
+                sessionPageMap.put(scriptSession.getId(), normalizedPage);
+            }
         }
     }
 
