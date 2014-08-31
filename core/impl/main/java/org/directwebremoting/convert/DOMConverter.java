@@ -97,6 +97,7 @@ public class DOMConverter extends AbstractConverter
         }
         catch (Exception ex)
         {
+            log.error(ex.getMessage, ex);
             throw new ConversionException(paramType, ex);
         }
     }
@@ -154,6 +155,11 @@ public class DOMConverter extends AbstractConverter
             throw new ConversionException(data.getClass(), ex);
         }
     }
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(ArrayConverter.class);
 
     /**
      * How we create new transformers
