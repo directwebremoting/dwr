@@ -159,7 +159,7 @@ public class DOMConverter extends AbstractConverter
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(ArrayConverter.class);
+    private static final Log log = LogFactory.getLog(DOMConverter.class);
 
     /**
      * How we create new transformers
