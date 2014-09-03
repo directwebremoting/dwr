@@ -54,6 +54,18 @@ public class DOMConverter extends BaseV20Converter implements Converter
                 buildFactory = DocumentBuilderFactory.newInstance();
             }
 
+            // See - https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            String FEATURE = "http://xml.org/sax/features/external-general-entities";
+            buildFactory.setFeature(FEATURE, false);
+
+            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+            FEATURE = "http://xml.org/sax/features/external-parameter-entities";
+            buildFactory.setFeature(FEATURE, false);
+
+            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+            FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            buildFactory.setFeature(FEATURE, true);
+
             DocumentBuilder builder = buildFactory.newDocumentBuilder();
 
             InputSource is = new InputSource(new StringReader(value));

@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.3"/>
 	<classpathentry kind="lib" path="jar/commons-logging-1.0.4.jar" sourcepath="/library/jarlib/logging-1.0.4/commons-logging-1.0.4.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://jakarta.apache.org/commons/logging/api"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jar/servlet-api-2.4.jar" sourcepath="/library/jarlib/servlet-2.4/servlet-api-2.4-sources.jar"/>
-	<classpathentry kind="lib" path="jar/xml-apis.jar" sourcepath="/library/jarlib/xerces-2.6.2/Xerces-J-src.2.6.2.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://xml.apache.org/xerces2-j/javadocs/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="jar/jdom-1.0.jar" sourcepath="/library/jarlib/jdom-1.0/jdom-1.0.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs"/>
@@ -64,6 +59,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="jar/jetty-6.1.1.jar"/>
 	<classpathentry kind="lib" path="jar/jetty-util-6.1.1.jar"/>
+	<classpathentry kind="lib" path="jar/jaxp-1.3-api.jar"/>
+	<classpathentry kind="lib" path="jar/jaxp-1.3-dom.jar"/>
+	<classpathentry kind="lib" path="jar/jaxp-1.3-sax.jar"/>
 	<classpathentry kind="src" path="etc/classpath"/>
 	<classpathentry kind="src" path="java"/>
 	<classpathentry kind="src" path="demo"/>
