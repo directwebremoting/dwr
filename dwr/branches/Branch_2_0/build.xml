@@ -150,18 +150,6 @@
 	</target>
 
 	<!--=======================================================================-->
-	<path id="hostedqa.classpath">
-		<fileset dir="${source.jar}">
-			<include name="hostedqa.jar" />
-		</fileset>
-	</path>
-	<target name="hostedqa" depends="files" description="Sends the WAR to HostedQA and runs all tests">
-		<taskdef resource="hostedqatasks" classpathref="hostedqa.classpath" />
-		<upload file="${target.files}/dwr.war" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}" resourceId="20" />
-		<playsuite suiteId="18" clientConfigs="21,22,34" appConfigs="15" account="dwr" email="${hostedqa.email}" password="${hostedqa.password}" />
-	</target>
-
-	<!--=======================================================================-->
 	<target name="clean">
 		<delete dir="${target.class}" />
 		<delete dir="${target.root}" />
