@@ -1510,6 +1510,7 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine.transport.updateDwrSessionFromCookie();
       if (!dwr.engine._dwrSessionId) {
         dwr.engine._internalOrdered = true;
+        var retval;
         var idbatch = {
           map:{
             callCount:1,
@@ -1532,11 +1533,12 @@ if (typeof dwr == 'undefined') dwr = {};
               if (!dwr.engine._dwrSessionId) {
                 dwr.engine.transport.setDwrSession(id);
               }
-              dwr.engine.transport.send2(batch);
+              retval = dwr.engine.transport.send2(batch);
             }
           }]
         };
-        return dwr.engine.transport.send2(idbatch);
+        dwr.engine.transport.send2(idbatch);
+        return retval;
       }
       else {
         return dwr.engine.transport.send2(batch);
