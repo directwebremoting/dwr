@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.convert;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import nu.xom.Builder;
@@ -29,6 +30,11 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * An implementation of Converter for DOM objects.
@@ -50,7 +56,17 @@ public class XOMConverter extends AbstractConverter
 
         try
         {
-            Builder builder = new Builder();
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            // Disable lookup of XML external entities to avoid hacking, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            reader.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // resolve as empty
+                }
+            });
+            Builder builder = new Builder(reader);
             Document doc = builder.build(new StringReader(value));
 
             if (paramType == Document.class)
