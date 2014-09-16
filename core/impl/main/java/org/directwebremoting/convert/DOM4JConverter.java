@@ -53,6 +53,17 @@ public class DOM4JConverter extends AbstractConverter
         try
         {
             SAXReader xmlReader = new SAXReader();
+
+            // Protect us from hackers, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            xmlReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            xmlReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            try {
+                xmlReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
+
             Document doc = xmlReader.read(new StringReader(value));
 
             if (paramType == Document.class)

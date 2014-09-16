@@ -53,11 +53,16 @@ public class XOMConverter extends AbstractConverter
         try
         {
             XMLReader reader = XMLReaderFactory.createXMLReader();
+
             // Protect us from hackers, see:
             // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
             reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
             reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            try {
+                reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
 
             Builder builder = new Builder(reader);
             Document doc = builder.build(new StringReader(value));

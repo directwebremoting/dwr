@@ -52,6 +52,17 @@ public class JDOMConverter extends AbstractConverter
         try
         {
             SAXBuilder builder = new SAXBuilder();
+
+            // Protect us from hackers, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            try {
+                builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
+
             Document doc = builder.build(new StringReader(value));
 
             if (paramType == Document.class)

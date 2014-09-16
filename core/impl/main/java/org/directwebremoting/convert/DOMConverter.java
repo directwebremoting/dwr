@@ -63,17 +63,15 @@ public class DOMConverter extends AbstractConverter
                 buildFactory = DocumentBuilderFactory.newInstance();
             }
 
-            // See - https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
-            String FEATURE = "http://xml.org/sax/features/external-general-entities";
-            buildFactory.setFeature(FEATURE, false);
-
-            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
-            FEATURE = "http://xml.org/sax/features/external-parameter-entities";
-            buildFactory.setFeature(FEATURE, false);
-
-            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
-            FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
-            buildFactory.setFeature(FEATURE, true);
+            // Protect us from hackers, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            buildFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            buildFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            try {
+                buildFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
 
             DocumentBuilder builder = buildFactory.newDocumentBuilder();
 
