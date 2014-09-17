@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.convert;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import nu.xom.Builder;
@@ -29,6 +30,9 @@ import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.NonNestedOutboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -63,6 +67,15 @@ public class XOMConverter extends AbstractConverter
             } catch(Exception ex) {
                 // XML parser doesn't have this setting, never mind
             }
+
+            // Extra protection from external entity hacking (XOM may reset the setFeature flags)
+            reader.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // no lookup, just return empty
+                }
+            });
 
             Builder builder = new Builder(reader);
             Document doc = builder.build(new StringReader(value));

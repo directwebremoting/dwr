@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.convert;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -36,7 +37,9 @@ import org.directwebremoting.extend.OutboundVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * An implementation of Converter for DOM objects.
@@ -74,6 +77,15 @@ public class DOMConverter extends AbstractConverter
             }
 
             DocumentBuilder builder = buildFactory.newDocumentBuilder();
+
+            // Extra protection from external entity hacking
+            builder.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // no lookup, just return empty
+                }
+            });
 
             InputSource is = new InputSource(new StringReader(value));
             Document doc = builder.parse(is);
