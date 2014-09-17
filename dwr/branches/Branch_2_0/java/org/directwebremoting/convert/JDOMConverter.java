@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.convert;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -32,6 +33,9 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * An implementation of Converter for DOM objects.
@@ -50,6 +54,26 @@ public class JDOMConverter extends BaseV20Converter implements Converter
         try
         {
             SAXBuilder builder = new SAXBuilder();
+
+            // Protect us from hackers, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            try {
+                builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
+
+            // Extra protection from external entity hacking
+            builder.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // no lookup, just return empty
+                }
+            });
+
             Document doc = builder.build(new StringReader(value));
 
             if (paramType == Document.class)

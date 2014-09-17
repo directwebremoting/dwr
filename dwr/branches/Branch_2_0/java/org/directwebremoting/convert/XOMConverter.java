@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.convert;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import nu.xom.Builder;
@@ -31,6 +32,11 @@ import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.util.LocalUtil;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * An implementation of Converter for DOM objects.
@@ -48,7 +54,28 @@ public class XOMConverter extends BaseV20Converter implements Converter
 
         try
         {
-            Builder builder = new Builder();
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+
+            // Protect us from hackers, see:
+            // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+            reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            try {
+                reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            } catch(Exception ex) {
+                // XML parser doesn't have this setting, never mind
+            }
+
+            // Extra protection from external entity hacking (XOM may reset the setFeature flags)
+            reader.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // no lookup, just return empty
+                }
+            });
+
+            Builder builder = new Builder(reader);
             Document doc = builder.build(new StringReader(value));
 
             if (paramType == Document.class)
