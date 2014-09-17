@@ -21,7 +21,9 @@ import org.directwebremoting.util.LocalUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,6 +32,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -52,21 +56,28 @@ public class DOMConverter extends BaseV20Converter implements Converter
             if (buildFactory == null)
             {
                 buildFactory = DocumentBuilderFactory.newInstance();
+
+                // Protect us from hackers, see:
+                // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
+                buildFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                buildFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                try {
+                    buildFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                } catch(Exception ex) {
+                    // XML parser doesn't have this setting, never mind
+                }
             }
 
-            // See - https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
-            String FEATURE = "http://xml.org/sax/features/external-general-entities";
-            buildFactory.setFeature(FEATURE, false);
-
-            // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
-            FEATURE = "http://xml.org/sax/features/external-parameter-entities";
-            buildFactory.setFeature(FEATURE, false);
-
-            // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
-            FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
-            buildFactory.setFeature(FEATURE, true);
-
             DocumentBuilder builder = buildFactory.newDocumentBuilder();
+
+            // Extra protection from external entity hacking
+            builder.setEntityResolver(new EntityResolver()
+            {
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return new InputSource(); // no lookup, just return empty
+                }
+            });
 
             InputSource is = new InputSource(new StringReader(value));
             Document doc = builder.parse(is);
