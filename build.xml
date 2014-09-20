@@ -23,11 +23,10 @@
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
 	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
-
+	
     <!-- defined maven snapshots and staging repository id and url -->
-	<property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
+	<property name="maven-repository-id" value="ossrh" />
 	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
-	<property name="maven-staging-repository-id" value="sonatype-nexus-staging" />
 	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 	<!-- End Properties for Maven -->
 	
@@ -179,12 +178,12 @@
 			<fileset dir="${src}" />
 		</jar>
 	</target>
-
+		
 	<target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">		
 		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
-			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-DpomFile=pom.xml" />			
@@ -199,7 +198,7 @@
 		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
-			<arg value="-DrepositoryId=${maven-snapshots-repository-id}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-DpomFile=pom.xml" />			
