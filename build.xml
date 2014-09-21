@@ -17,7 +17,7 @@
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="org.directwebremoting" />
 	<property name="artifactId" value="dwr" />
-	<property name="version" value="2.0.11-SNAPSHOT" />
+	<property name="version" value="2.0.11-RELEASE" />
 
     <!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
@@ -93,7 +93,7 @@
 			<package name="org.directwebremoting.*" />
 			<package name="uk.ltd.getahead.dwr.*" />
 			<footer>Copyright &#168; 2005</footer>
-		</javadoc>
+		</javadoc><property name="maven-snapshots-repository-id" value="sonatype-nexus-snapshots" />
 	</target>
 
 	<!--=======================================================================-->
