@@ -367,11 +367,11 @@
               <failonwarning>true</failonwarning>
               <lazy>true</lazy>
               <verbose>false</verbose>
-              <destjar>${pom.basedir}/target/maven2/${pom.artifactId}-${pom.version}-java14.jar</destjar>
+              <destjar>${pom.basedir}/target/maven2/${project.artifactId}-${project.version}-java14.jar</destjar>
               <includes>
                 <include>
                   <directory>${pom.basedir}/target/maven2</directory>
-                  <pattern>${pom.artifactId}-${pom.version}.jar</pattern>
+                  <pattern>${project.artifactId}-${project.version}.jar</pattern>
                 </include>
               </includes>
             </configuration>
