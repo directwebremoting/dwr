@@ -197,7 +197,7 @@
 		<!-- sign and deploy the main artifact -->
 		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
-			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
 			<arg value="-DrepositoryId=${maven-repository-id}" />
 			<arg value="-Dfile=${dwr-maven-jar}" />
 			<arg value="-Dpackaging=jar" />
