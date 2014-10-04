@@ -231,9 +231,11 @@ public class DefaultAccessControl implements AccessControl
      */
     protected static void assertIsNotOnBaseObject(Method method)
     {
-        if (method.getDeclaringClass() == Object.class)
-        {
-            throw new SecurityException("Methods defined in java.lang.Object are not accessible");
+        try {
+            Method objectMethod = Object.class.getMethod(method.getName(), method.getParameterTypes());
+            throw new SecurityException("Methods defined in java.lang.Object are not accessible (" + objectMethod.getName() + ").");
+        } catch(NoSuchMethodException ex) {
+            // All is well, method not found in Object
         }
     }
 
