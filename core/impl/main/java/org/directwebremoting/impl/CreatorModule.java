@@ -17,7 +17,6 @@ package org.directwebremoting.impl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -78,9 +77,10 @@ public class CreatorModule implements Module
         ArrayList<MethodDeclaration> methodDecls = new ArrayList<MethodDeclaration>();
         for (Method method : methods)
         {
+            Method unwrappedMethod = unwrapProxiedMethod(method);
             try
             {
-                accessControl.assertMethodDisplayable(creatorType, method);
+                accessControl.assertMethodDisplayable(creatorType, unwrappedMethod);
             }
             catch (SecurityException ex)
             {
@@ -89,7 +89,7 @@ public class CreatorModule implements Module
                     continue;
                 }
             }
-            methodDecls.add(new MethodDeclaration(checkProxiedMethod(method)));
+            methodDecls.add(new MethodDeclaration(unwrappedMethod));
         }
         return methodDecls.toArray(new MethodDeclaration[0]);
     }
@@ -99,7 +99,7 @@ public class CreatorModule implements Module
      */
     public MethodDeclaration getMethod(String methodName, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException
     {
-        Method method = checkProxiedMethod(creator.getType().getMethod(methodName, parameterTypes));
+        Method method = unwrapProxiedMethod(creator.getType().getMethod(methodName, parameterTypes));
         return new MethodDeclaration(method);
     }
 
@@ -272,27 +272,54 @@ public class CreatorModule implements Module
      * not solve the second. Probably a better solution should be implemented
      * (for example, something that works under the AOP alliance umbrella).
      */
-    private Method checkProxiedMethod(Method method)
+    private Method unwrapProxiedMethod(Method method)
     {
-        Method realMethod = method;
-        if ((method != null) && (advisedClass != null) && advisedClass.isAssignableFrom(method.getDeclaringClass()))
+        try
         {
-            if (Proxy.isProxyClass(creator.getType()))
-            {
-                try
-                {
-                    Object target = creator.getInstance(); // Should be a singleton
-                    Method targetClassMethod = target.getClass().getMethod("getTargetClass");
-                    Class<?> targetClass = (Class<?>) targetClassMethod.invoke(target);
-                    realMethod = targetClass.getMethod(method.getName(), method.getParameterTypes());
-                }
-                catch (Exception ex)
-                {
-                    // Probably not in Spring context so no Advised proxies at all
-                }
+            if (unwrappedTarget == null) {
+                Object proxy = creator.getInstance(); // We need an instance to dig deeper
+                unwrappedTarget = unwrapProxy(proxy);
+            }
+            return unwrappedTarget.getClass().getMethod(method.getName(), method.getParameterTypes());
+        }
+        catch (Exception ex)
+        {
+            // Ignore
+        }
+        return method;
+    }
+
+    private Object unwrapProxy(Object instance)
+    {
+        Object unwrappedInstance = instance;
+
+        // Unwrap Spring Advised proxies
+        if (advisedClass.isAssignableFrom(instance.getClass())) {
+            try {
+                // Find the instance pointed to by the proxy and recursively traverse any additional proxy layers
+                Method targetSourceMethod = instance.getClass().getMethod("getTargetSource");
+                unwrappedInstance = targetSourceMethod.invoke(instance);
+            } catch(Exception ex) {
+                // Ignore
             }
         }
-        return realMethod;
+        // Unwrap Spring TargetSource proxies
+        else if (targetSourceClass.isAssignableFrom(instance.getClass())) {
+            try {
+                // Find the instance pointed to by the proxy and recursively traverse any additional proxy layers
+                Method targetMethod = instance.getClass().getMethod("getTarget");
+                unwrappedInstance = targetMethod.invoke(instance);
+            } catch(Exception ex) {
+                // Ignore
+            }
+        }
+
+        // If changes were made then take another spin to dig deeper
+        if (unwrappedInstance != instance) {
+            unwrappedInstance = unwrapProxy(unwrappedInstance);
+        }
+
+        return unwrappedInstance;
     }
 
     /**
@@ -332,9 +359,21 @@ public class CreatorModule implements Module
 
     /**
      * Spring/AOP hack
-     * @see #checkProxiedMethod(Method)
+     * @see #unwrapProxy(Object)
+     */
+    private Object unwrappedTarget;
+
+    /**
+     * Spring/AOP hack
+     * @see #unwrapProxy(Object)
      */
     private static Class<?> advisedClass;
+
+    /**
+     * Spring/AOP hack
+     * @see #unwrapProxy(Object)
+     */
+    private static Class<?> targetSourceClass;
 
     /**
      * The log stream
@@ -355,6 +394,15 @@ public class CreatorModule implements Module
         catch (ClassNotFoundException ex)
         {
             log.debug("ClassNotFoundException on org.springframework.aop.framework.Advised skipping AOP checks");
+        }
+        try
+        {
+            targetSourceClass = Class.forName("org.springframework.aop.TargetSource");
+            log.debug("Found org.springframework.aop.TargetSource enabling AOP checks");
+        }
+        catch (ClassNotFoundException ex)
+        {
+            log.debug("ClassNotFoundException on org.springframework.aop.TargetSource skipping AOP checks");
         }
     }
 }
