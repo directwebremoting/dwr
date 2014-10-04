@@ -228,7 +228,9 @@ if (typeof dwr == 'undefined') dwr = {};
    * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine.defaultPollStatusHandler = function(newStatus, ex) {
-    if (newStatus === false && dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+    dwr.engine.util.logHandlerEx(function() {
+      if (newStatus === false && dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
+    });
   };
 
   /**
@@ -553,7 +555,7 @@ if (typeof dwr == 'undefined') dwr = {};
         paramCount:0, isPoll:false, async:dwr.engine._asyncUnload,
         headers:{}, preHooks:[], postHooks:[],
         timeout:dwr.engine._timeout,
-        errorHandler:null, warningHandler:null, textHtmlHandler:null, textOrRedirectHandler:null,
+        errorHandler:null, globalErrorHandler:dwr.engine._errorHandler, warningHandler:null, textHtmlHandler:null, textOrRedirectHandler:null,
         path:dwr.engine._pathToDwrServlet,
         handlers:[{ exceptionHandler:null, callback:null }]
       };
@@ -679,10 +681,10 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param args The parameters to passed to the above method
    */
   dwr.engine._execute = function(path, scriptName, methodName, args) {
-    var singleShot = false;
+    dwr.engine._singleShot = false;
     if (dwr.engine._batch == null) {
       dwr.engine.beginBatch();
-      singleShot = true;
+      dwr.engine._singleShot = true;
     }
 
     var batch = dwr.engine._batch;
@@ -701,7 +703,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
     // Now we have finished remembering the call, we increment the call count
     batch.map.callCount++;
-    if (singleShot) {
+    if (dwr.engine._singleShot) {
       return dwr.engine.endBatch();
     }
   };
@@ -762,6 +764,7 @@ if (typeof dwr == 'undefined') dwr = {};
       return;
     }
     var errorHandlers = [];
+    var anyCallWithoutErrorHandler = false;
     if (batch && batch.isPoll) { // No error reporting and only retry for polls
       dwr.engine._handlePollRetry(batch, ex);
     } else {
@@ -770,7 +773,10 @@ if (typeof dwr == 'undefined') dwr = {};
         for (var i = 0; i < batch.map.callCount; i++) {
           var handlers = batch.handlers[i];
           if (!handlers.completed) {
-            if (typeof handlers.errorHandler == "function") errorHandlers.push(handlers.errorHandler);
+            if (typeof handlers.errorHandler == "function")
+              errorHandlers.push(handlers.errorHandler);
+            else
+              anyCallWithoutErrorHandler = true;
             handlers.completed = true;
           }
         }
@@ -785,11 +791,19 @@ if (typeof dwr == 'undefined') dwr = {};
         var errorHandler;
         while(errorHandlers.length > 0) {
           errorHandler = errorHandlers.shift();
-          errorHandler(ex.message, ex);
+          dwr.engine.util.logHandlerEx(function() {
+            errorHandler(ex.message, ex);
+          });
         }
-        if (batch && typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
-        else if (dwr.engine._errorHandler) dwr.engine._errorHandler(ex.message, ex);
-        if (batch) { dwr.engine.batch.remove(batch); };
+        if (batch) {
+          dwr.engine.util.logHandlerEx(function() {
+            if (typeof batch.errorHandler == "function") batch.errorHandler(ex.message, ex);
+            else if (anyCallWithoutErrorHandler) {
+              if (typeof batch.globalErrorHandler == "function") batch.globalErrorHandler(ex.message, ex);
+            }
+          });
+          dwr.engine.batch.remove(batch);
+        }
       });
     }
   };
@@ -799,15 +813,19 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {
-    if (batch && typeof batch.textHtmlHandler === "function") batch.textHtmlHandler(textHtmlObj);
-    else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-    else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
+    dwr.engine.util.logHandlerEx(function() {
+      if (batch && typeof batch.textHtmlHandler === "function") batch.textHtmlHandler(textHtmlObj);
+      else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
+      else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
+    });
     if (batch) dwr.engine.batch.remove(batch);
   };
 
   dwr.engine._handleTextOrRedirectResponse = function(batch, textHtmlObj) {
-    if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);
-    else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
+    dwr.engine.util.logHandlerEx(function() {
+      if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);
+      else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
+    });
     if (batch) dwr.engine.batch.remove(batch);
   };
 
@@ -870,7 +888,10 @@ if (typeof dwr == 'undefined') dwr = {};
       var changed = dwr.engine._pollOnline !== newStatus;
       var maxRetriesReached = dwr.engine._maxRetries === dwr.engine._retries;
       dwr.engine._pollOnline = newStatus;
-      if ((changed || maxRetriesReached) && typeof dwr.engine._pollStatusHandler === "function") dwr.engine._pollStatusHandler(newStatus, ex, maxRetriesReached);
+      if ((changed || maxRetriesReached) && typeof dwr.engine._pollStatusHandler === "function") 
+        dwr.engine.util.logHandlerEx(function() {
+          dwr.engine._pollStatusHandler(newStatus, ex, maxRetriesReached);
+        });
       if (newStatus) {
         dwr.engine._retries = 1;
       }
@@ -890,8 +911,10 @@ if (typeof dwr == 'undefined') dwr = {};
     ignoreIfUnloading(batch, function() {
       // If this is a poll, we should retry!
       dwr.engine._prepareException(ex);
-      if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
-      else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
+      dwr.engine.util.logHandlerEx(function() {
+        if (batch && typeof batch.warningHandler == "function") batch.warningHandler(ex.message, ex);
+        else if (dwr.engine._warningHandler) dwr.engine._warningHandler(ex.message, ex);
+      });
       if (batch) dwr.engine.batch.remove(batch);
     });
   };
@@ -1043,7 +1066,9 @@ if (typeof dwr == 'undefined') dwr = {};
         else {
           batch.handlers[callId].completed = true;
           if (typeof handlers.callback == "function") {
-            handlers.callback.apply(handlers.callbackScope, [ reply, handlers.callbackArg ]);
+            dwr.engine.util.logHandlerEx(function() {
+              handlers.callback.apply(handlers.callbackScope, [ reply, handlers.callbackArg ]);
+            });
           }
         }
       }
@@ -1115,12 +1140,20 @@ if (typeof dwr == 'undefined') dwr = {};
         ex.message = "";
       }
 
-      if (typeof handlers.exceptionHandler == "function") {
-        handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
-      }
-      else if (typeof batch.errorHandler == "function") {
-        batch.errorHandler(ex.message, ex);
-      }
+      dwr.engine.util.logHandlerEx(function() {
+        if (typeof handlers.exceptionHandler == "function") {
+          handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
+        }
+        else if (typeof handlers.errorHandler == "function") {
+          handlers.errorHandler(ex.message, ex);
+        }
+        else if (typeof batch.errorHandler == "function") {
+          batch.errorHandler(ex.message, ex);
+        }
+        else if (typeof batch.globalErrorHandler == "function") {
+          batch.globalErrorHandler(ex.message, ex);
+        }
+      });
     },
 
     /**
@@ -1524,7 +1557,7 @@ if (typeof dwr == 'undefined') dwr = {};
             dwr.engine._internalOrdered = false;
           }],
           timeout:dwr.engine._timeout,
-          errorHandler:batch.errorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler, textOrRedirectHandler:batch.textOrRedirectHandler,
+          errorHandler:batch.errorHandler, globalErrorHandler:batch.globalErrorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler, textOrRedirectHandler:batch.textOrRedirectHandler,
           path:batch.path,
           handlers:[{
             exceptionHandler:null,
@@ -2238,7 +2271,8 @@ if (typeof dwr == 'undefined') dwr = {};
         preHooks:[],
         postHooks:[],
         timeout:dwr.engine._timeout,
-        errorHandler:dwr.engine._errorHandler,
+        errorHandler:null,
+        globalErrorHandler:dwr.engine._errorHandler,
         warningHandler:dwr.engine._warningHandler,
         textHtmlHandler:dwr.engine._textHtmlHandler,
         textOrRedirectHandler:dwr.engine._textOrRedirectHandler
@@ -2329,14 +2363,15 @@ if (typeof dwr == 'undefined') dwr = {};
       }
 
       // Merge from the callData into the batch
-      dwr.engine.batch.merge(batch, callData);
+      if (dwr.engine._singleShot) dwr.engine.batch.merge(batch, callData);
       batch.handlers[batch.map.callCount] = {
+        callback:callData.callbackHandler || callData.callback,
+        callbackArg:callData.callbackArg || callData.arg || null,
+        callbackScope:callData.callbackScope || callData.scope || window,
         exceptionHandler:callData.exceptionHandler,
         exceptionArg:callData.exceptionArg || callData.arg || null,
         exceptionScope:callData.exceptionScope || callData.scope || window,
-        callback:callData.callbackHandler || callData.callback,
-        callbackArg:callData.callbackArg || callData.arg || null,
-        callbackScope:callData.callbackScope || callData.scope || window
+        errorHandler:callData.errorHandler
       };
 
       // Copy to the map the things that need serializing
@@ -2361,6 +2396,7 @@ if (typeof dwr == 'undefined') dwr = {};
       var propname, data;
       for (var i = 0; i < dwr.engine._propnames.length; i++) {
         propname = dwr.engine._propnames[i];
+        if (dwr.engine._singleShot && propname == "errorHandler") continue;
         if (overrides[propname] != null) batch[propname] = overrides[propname];
       }
       if (overrides.preHook != null) batch.preHooks.unshift(overrides.preHook);
@@ -2642,8 +2678,16 @@ if (typeof dwr == 'undefined') dwr = {};
       return (typeof lastArg === "object" && (typeof lastArg.callback === "function" ||
         typeof lastArg.exceptionHandler === "function" || typeof lastArg.callbackHandler === "function" ||
         typeof lastArg.errorHandler === "function" || typeof lastArg.warningHandler === "function" || lastArg.hasOwnProperty("async")));
-    }
+    },
 
+    logHandlerEx: function(func) {
+      try {
+        func();
+      } catch(ex) {
+        dwr.engine._debug("Exception occured in user-specified handler:");
+        dwr.engine._debug(ex);
+      }
+    }
   };
 
   // Initialize DWR.
