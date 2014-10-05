@@ -57,7 +57,7 @@
 		core/api, core/impl, core/legacy,
 		protocol/dwrp, protocol/json, protocol/bayeux,
 		serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
-		ui/dwr, ui/scriptaculous, ui/dojo, ui/yui, ui/ext,
+		ui/dwr
 		" />
 
 	<!--=======================================================================-->
@@ -74,7 +74,7 @@
 	</target>
 
 	<target name="source" description="Create dwr-src.jar">
-		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,ui/dwr, ui/scriptaculous, ui/dojo" />
+		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various, ui/dwr" />
 		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
 		<jar destfile="${target.root}/dwr-src.jar" compress="true">
 			<fileset dir="${target.root}/sourcetree" />
@@ -127,7 +127,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="war" depends="jar, dojo" description="Create an exploded dwr.war">
+	<target name="war" depends="jar" description="Create an exploded dwr.war">
 		<copy todir="${target.root}/web/demo/WEB-INF/classes">
 			<fileset dir="${target.root}/classes/demo" />
 			<!-- For people that download the war and want to see the source -->
@@ -188,13 +188,10 @@
 				<pathelement path="${source.root}/serverside/guice/main/java" />
 				<pathelement path="${source.root}/serverside/hibernate/main/java" />
 				<pathelement path="${source.root}/serverside/spring/main/java" />
-				<pathelement path="${source.root}/serverside/strutsy/main/java" />
+				<pathelement path="${source.root}/serverside/struts/main/java" />
 				<pathelement path="${source.root}/serverside/various/main/java" />
 				<pathelement path="${source.root}/serverside/webwork/main/java" />
-				<pathelement path="${source.root}/ui/dojo/main/java" />
 				<pathelement path="${source.root}/ui/dwr/main/java" />
-				<pathelement path="${source.root}/ui/scriptaculous/main/java" />
-				<pathelement path="${source.root}/ui/yui/main/java" />
 				<pathelement path="${source.root}/ui/jaxer/main/java" />
 			</sourcepath>
 			<classpath>
@@ -241,7 +238,6 @@
 		<jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
 			<include name="**/main/java/org/directwebremoting/engine.js" />
 			<include name="**/main/java/org/directwebremoting/ui/servlet/util.js" />
-			<include name="**/ui/dojo/main/java/org/directwebremoting/dojo/Store.js" />
 		</jshint>
 	</target>
 
@@ -275,47 +271,6 @@
 		</zip>
 		<!-- Demo: Build a zip of a file to stick into jaxer/public -->
 		<zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/customDemo/demoRemoting" />
-	</target>
-
-	<!--=======================================================================-->
-	<target name="dojo" depends="prepare" description="Create Dojo custom build">
-		<property name="dojo.home" value="${source.root}/ui/dojo/build" />
-		<property name="dojo.temp" value="${target.root}/dojoBuild" />
-		<outofdate verbose="false">
-			<sourcefiles>
-				<fileset dir="${dojo.home}" includes="**" />
-				<pathelement path="${source.root}/ui/dojo/demo/build.js" />
-			</sourcefiles>
-			<targetfiles path="${dojo.temp}" />
-			<sequential>
-				<mkdir dir="${dojo.temp}" />
-				<java classname="org.mozilla.javascript.tools.shell.Main" dir="${dojo.home}/util/buildscripts/" fork="true">
-					<classpath>
-						<fileset file="${dojo.home}/util/shrinksafe/custom_rhino.jar" />
-					</classpath>
-					<arg line="build.js" />
-					<arg line="profileFile=${basedir}/${source.root}/ui/dojo/demo/build.js" />
-					<arg line="releaseDir=${basedir}/${dojo.temp}/" />
-					<arg line="copyTests=false" />
-					<arg line="action=release" />
-					<arg line="optimize=shrinksafe" />
-					<arg line="cssOptimize=comments.keepLines" />
-					<arg line="version=${label}" />
-					<arg line="log=2" />
-					<!--arg line="scopeDjConfig=modulePaths:{dwr:\\'http://localhost:8080/dwr/dwr\\'}"/-->
-				</java>
-				<copy todir="${target.root}/web/demo/widgets">
-					<fileset dir="${dojo.temp}">
-						<include name="dojo/dojox/**" />
-						<include name="dojo/custom/**" />
-						<include name="dojo/dojo/dojo.js" />
-						<include name="dojo/dojo/data/**" />
-						<include name="dojo/dojo/resources/**" />
-						<include name="dojo/dijit/themes/**" />
-					</fileset>
-				</copy>
-			</sequential>
-		</outofdate>
 	</target>
 
 	<!--=======================================================================-->
@@ -454,7 +409,7 @@
 						<pathelement location="${target.root}/classes/main" />
 						<pathelement location="${target.root}/classes/test" />
 						<!-- needed for log4j -->
-						<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
+						<fileset dir="${source.root}/ui/dwr/demo/web/WEB-INF/lib" includes="**/*" />
 					</classpath>
 					<batchtest todir="${target}/junitReports">
 						<fileset dir="${source.root}/${module}/test/java">
@@ -488,7 +443,7 @@
 								<pathelement location="${target.root}/classes/demo" />
 								<pathelement location="${target.root}/classes/main" />
 								<pathelement location="${target.root}/classes/test" />
-								<fileset dir="${source.root}/core/impl/demo/web/WEB-INF/lib" includes="**/*" />
+								<fileset dir="${source.root}/ui/dwr/demo/web/WEB-INF/lib" includes="**/*" />
 							</classpath>
 							<batchtest todir="${target}/junitReports">
 								<fileset dir="${source.root}/${module}/test/java">

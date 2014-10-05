@@ -1,3 +1,9 @@
+
+dojo.provide("custom.jsonrpcDemo");
+
+dojo.require("dojox.rpc.Service");
+dojo.require("dojox.rpc.JsonRPC");
+
 function update() {
 	var services = new dojox.rpc.Service({
 	    target:"../../../dwr/jsonrpc",
