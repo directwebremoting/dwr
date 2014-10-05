@@ -9,7 +9,6 @@ var peopleCache = [ ];
 var lastFilter = "";
 
 function fillTable(people) {
-  people = people.reply;
   var filter = dwr.util.getValue("filter");
   var pattern = new RegExp("(" + filter + ")", "i");
   var filtered = [];
