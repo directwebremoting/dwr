@@ -37,12 +37,8 @@ public class EnginePrivate
         if (useWindowParent)
         {
             buf.append("try{\n");
-            buf.append("var r=window.parent.dwr._[" + instanceId + "];\n");
         }
-        else
-        {
-            buf.append("var r=window.dwr._[" + instanceId + "];\n");
-        }
+        buf.append(rVariableAlias(instanceId, useWindowParent) + ";\n");
         return buf.toString();
     }
 
@@ -282,9 +278,8 @@ public class EnginePrivate
      */
     public static String remoteEval(String script)
     {
-    	// We need to define the "r" redirector variable inside the eval as well
-    	// as it can't access the global "r" defined in the response closure.
-        return "r._eval(\"var r= dwr._ ? dwr._[dwr.engine._instanceId] : window.dwr._[dwr.engine._instanceId];" + JavascriptUtil.escapeJavaScript(script) + "\");";
+        // All the work done by the redirection to the "r" variable
+        return script;
     }
 
     /**
@@ -302,5 +297,17 @@ public class EnginePrivate
         reply.appendCall("r.handleForeign", windowName, proxy);
         reply.appendData(proxy);
         return reply;
+    }
+
+    private static String rVariableAlias(String instanceId, boolean useWindowParent)
+    {
+        if (useWindowParent)
+        {
+            return "var r=window.parent.dwr._[" + instanceId + "]";
+        }
+        else
+        {
+            return "var r=window.dwr._[" + instanceId + "]";
+        }
     }
 }
