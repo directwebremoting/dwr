@@ -41,8 +41,8 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
-    * @deprecated - In favor of the errorHandler being called with an exception name:"dwr.engine.emptyReply"
-    * containing an htmlResponseText property if available.
+    * @deprecated - In favor of the errorHandler being called with an exception name:"dwr.engine.textHtmlReply"
+    * containing a responseText property if available.
     *
     * Setter for the text/html handler - what happens if a DWR request gets an HTML
     * reply rather than the expected Javascript. Often due to login timeout
@@ -50,18 +50,6 @@ if (typeof dwr == 'undefined') dwr = {};
     */
   dwr.engine.setTextHtmlHandler = function(handler) {
     dwr.engine._textHtmlHandler = handler;
-  };
-
-  /**
-   *  @deprecated - In favor of the errorHandler being called with an exception name:"dwr.engine.emptyReply"
-   * containing an htmlResponseText property if available.
-   *
-   * Setter for the html response/redirect handler - what happens if a DWR request gets an HTML
-   * reply or a redirect status code rather than the expected Javascript. Often due to login timeout
-   * @param {Function} handler The function to call on an unexpected text/html content type
-   */
-  dwr.engine.setTextOrRedirectHandler = function(handler) {
-    dwr.engine._textOrRedirectHandler = handler;
   };
 
   dwr.engine.setPollStatusHandler = function(handler) {
@@ -436,8 +424,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
   dwr.engine._textHtmlHandler = null;
 
-  dwr.engine._textOrRedirectHandler = null;
-
   /** If you wish to send custom headers with every request */
   dwr.engine._headers = null;
 
@@ -456,7 +442,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._instanceId = -1;
 
   /** A list of the properties that need merging from calls to a batch */
-  dwr.engine._propnames = [ "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler", "textOrRedirectHandler" ];
+  dwr.engine._propnames = [ "async", "timeout", "errorHandler", "warningHandler", "textHtmlHandler" ];
 
   /** Do we stream, or can be hacked to do so? */
   dwr.engine._partialResponseNo = 0;
@@ -555,7 +541,7 @@ if (typeof dwr == 'undefined') dwr = {};
         paramCount:0, isPoll:false, async:dwr.engine._asyncUnload,
         headers:{}, preHooks:[], postHooks:[],
         timeout:dwr.engine._timeout,
-        errorHandler:null, globalErrorHandler:dwr.engine._errorHandler, warningHandler:null, textHtmlHandler:null, textOrRedirectHandler:null,
+        errorHandler:null, globalErrorHandler:dwr.engine._errorHandler, warningHandler:null, textHtmlHandler:null, globalTextHtmlHandler:null,
         path:dwr.engine._pathToDwrServlet,
         handlers:[{ exceptionHandler:null, callback:null }]
       };
@@ -783,9 +769,12 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       // Perform error reporting asynchronously (possibly)
       ignoreIfUnloading(batch, function() {
-        if (ex.name === "dwr.engine.emptyReply" && ex.hasOwnProperty("htmlResponseText") && dwr.engine._textHtmlOrRedirectHandlerExists(batch)) {
-            dwr.engine._handleTextHtmlResponse(batch, ex);
+        if (batch) {
+          var textHtmlHandler = batch.textHtmlHandler || batch.globalTextHtmlHandler;
+          if (ex.name === "dwr.engine.textHtmlReply" && textHtmlHandler) {
+            textHtmlHandler(ex);
             return;
+          }
         }
         dwr.engine._prepareException(ex);
         var errorHandler;
@@ -806,27 +795,6 @@ if (typeof dwr == 'undefined') dwr = {};
         }
       });
     }
-  };
-
-  dwr.engine._textHtmlOrRedirectHandlerExists = function(batch) {
-      return (batch && batch.textHtmlHandler) || (batch && batch.textOrRedirectHandler) || dwr.engine._textHtmlHandler || dwr.engine._textOrRedirectHandler;
-  };
-
-  dwr.engine._handleTextHtmlResponse = function(batch, textHtmlObj) {
-    dwr.engine.util.logHandlerEx(function() {
-      if (batch && typeof batch.textHtmlHandler === "function") batch.textHtmlHandler(textHtmlObj);
-      else if (dwr.engine._textHtmlHandler) dwr.engine._textHtmlHandler(textHtmlObj);
-      else dwr.engine._handleTextOrRedirectResponse(batch, textHtmlObj);
-    });
-    if (batch) dwr.engine.batch.remove(batch);
-  };
-
-  dwr.engine._handleTextOrRedirectResponse = function(batch, textHtmlObj) {
-    dwr.engine.util.logHandlerEx(function() {
-      if (batch && typeof batch.textOrRedirectHandler == "function") batch.textOrRedirectHandler(textHtmlObj);
-      else if (dwr.engine._textOrRedirectHandler) dwr.engine._textOrRedirectHandler(textHtmlObj);
-    });
-    if (batch) dwr.engine.batch.remove(batch);
   };
 
   /**
@@ -1011,7 +979,7 @@ if (typeof dwr == 'undefined') dwr = {};
     try {
       if (window.console) {
         if (stacktrace && window.console.trace) window.console.trace();
-        window.console.log(message);
+        if (window.console.log) window.console.log(message);
         written = true;
       }
       else if (window.opera && window.opera.postError) {
@@ -1557,7 +1525,7 @@ if (typeof dwr == 'undefined') dwr = {};
             dwr.engine._internalOrdered = false;
           }],
           timeout:dwr.engine._timeout,
-          errorHandler:batch.errorHandler, globalErrorHandler:batch.globalErrorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler, textOrRedirectHandler:batch.textOrRedirectHandler,
+          errorHandler:batch.errorHandler, globalErrorHandler:batch.globalErrorHandler, warningHandler:batch.warningHandler, textHtmlHandler:batch.textHtmlHandler, globalTextHtmlHandler:batch.globalTextHtmlHandler,
           path:batch.path,
           handlers:[{
             exceptionHandler:null,
@@ -1780,7 +1748,7 @@ if (typeof dwr == 'undefined') dwr = {};
         var toEval;
 
         if (batch.completed) {
-          dwr.engine._debug("Error: _stateChange() with batch.completed");
+          if (batch.transport) dwr.engine._debug("Error: _stateChange() with batch.completed");
           return;
         }
 
@@ -1822,19 +1790,21 @@ if (typeof dwr == 'undefined') dwr = {};
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
           var contentType = dwr.engine.util.getContentType(req, dwr.engine.isJaxerServer);
-          if (status === 200) {
-            if (reply == null || reply === "") {
+          if (status >= 200 && status < 300) {
+            if (contentType.indexOf("text/plain") < 0 && contentType.indexOf("text/javascript") < 0) {
+              if (contentType.indexOf("text/html") == 0) {
+                dwr.engine._handleError(batch, { name:"dwr.engine.textHtmlReply", message:"HTML reply from the server.", responseText:reply||"" });
+              } else {
+                dwr.engine._handleError(batch, { name:"dwr.engine.invalidMimeType", message:"Invalid content type: '" + contentType + "'" });
+              }
+            } else if (reply == null || reply === "") {
               dwr.engine._handleError(batch, { name:"dwr.engine.missingData", message:"No data received from server" });
-            }
-            if (!contentType.match(/^text\/plain/) && !contentType.match(/^text\/javascript/) && !contentType.match(/^text\/html/)) {
-              dwr.engine._handleWarning(batch, { name:"dwr.engine.invalidMimeType", message:"Invalid content type: '" + contentType + "'" });
-            } else if (contentType.match(/^text\/plain/) || contentType.match(/^text\/javascript/)) {
-              // Comet replies might have already partially executed
+            } else {
               if (batch.isPoll && batch.map.partialResponse == dwr.engine._partialResponseYes) {
                 dwr.engine.transport.xhr.processCometResponse(reply, batch);
               } else {
                 if (reply.search("//#DWR") === -1) {
-                  dwr.engine._handleWarning(batch, { name:"dwr.engine.invalidReply", message:"Invalid reply from server" });
+                  dwr.engine._handleError(batch, { name:"dwr.engine.invalidReply", message:"Invalid reply from server" });
                 } else {
                   toEval = reply;
                 }
@@ -1850,7 +1820,7 @@ if (typeof dwr == 'undefined') dwr = {};
             dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });
           }
         } catch (ex2) {
-          dwr.engine._handleWarning(batch, ex2);
+          dwr.engine._handleError(batch, ex2);
         }
 
         // Outside of the try/catch so errors propagate normally:
@@ -1983,24 +1953,21 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.document = document;
         batch.iframe.batch = batch;
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
-          dwr.engine.transport.iframe.checkForAndCompleteNonDWRResponse(batch);
+          // Bail out if the frame hasn't navigated yet
+          var contentDoc = dwr.engine.util.getContentDocument(batch);
+          if (contentDoc.URL == dwr.engine.SSL_SECURE_URL) return;
+          // Bail out if the batch was completed the normal way 
+          if (batch.completed) return;
+          // The batch hasn't been completed the normal way, trigger an textHtmlReply error
+          if (typeof dwr != "undefined") {
+            var htmlResponse = contentDoc.documentElement ? contentDoc.documentElement.outerHTML : null;
+            dwr.engine._handleError(batch, {name:"dwr.engine.textHtmlReply", message:"HTML reply from the server.", responseText:htmlResponse});
+          }
         });
         // This needs to be after the event listener is added, for IE.
         // http://stackoverflow.com/questions/18414964/load-event-for-iframe-does-not-fire-in-ie
         document.body.appendChild(batch.div1);
         dwr.engine.transport.iframe.beginLoader(batch, idname);
-      },
-
-      checkForAndCompleteNonDWRResponse:function(batch) {
-        if (typeof dwr != "undefined" && batch && batch.iframe) {
-          // Versions of IE prior to 8 should use contentWindow;
-          var contentDocument = dwr.engine.util.getContentDocument(batch);
-          var htmlResponse = contentDocument.documentElement ? contentDocument.documentElement.outerHTML : null;
-          // Only complete the batch if this isn't a DWR response, otherwise it will be completed in endIFrameResponse.
-          if (htmlResponse && htmlResponse.search("//#DWR") === -1) {
-            dwr.engine.transport.complete(batch.iframe.batch);
-          }
-        }
       },
 
       /**
@@ -2009,7 +1976,7 @@ if (typeof dwr == 'undefined') dwr = {};
        * @return {String} a name prefix for created elements
        */
       getId:function(batch) {
-        return batch.isPoll ? "dwr-if-poll-" + batch.map.batchId : "dwr-if-" + batch.map.batchId;
+        return batch.isPoll ? "dwr-if-poll-" + dwr.engine._instanceId + "-" + batch.map.batchId : "dwr-if-" + dwr.engine._instanceId + "-" + batch.map.batchId;
       },
 
       /**
@@ -2274,8 +2241,8 @@ if (typeof dwr == 'undefined') dwr = {};
         errorHandler:null,
         globalErrorHandler:dwr.engine._errorHandler,
         warningHandler:dwr.engine._warningHandler,
-        textHtmlHandler:dwr.engine._textHtmlHandler,
-        textOrRedirectHandler:dwr.engine._textOrRedirectHandler
+        textHtmlHandler:null,
+        globalTextHtmlHandler:dwr.engine._textHtmlHandler
       };
 
       if (dwr.engine._preHook) {
@@ -2547,34 +2514,10 @@ if (typeof dwr == 'undefined') dwr = {};
               repliesReceived++;
             }
         }
-        if (repliesReceived === 0) { // If no replies were received, report an emptyReply error.
-            dwr.engine._handleError(batch, dwr.engine.batch.buildEmptyReplyException(batch));
-        } else if (repliesReceived < batch.map.callCount) {
+        if (repliesReceived < batch.map.callCount) {
             dwr.engine._handleError(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
         }
       }
-    },
-
-    buildEmptyReplyException:function(batch) {
-        var req, responseText, contentType, status = 0;
-        if (batch.req) { // XHR remoting
-          req = batch.req;
-          try {
-            if (req.readyState >= 2) {
-              status = req.status; // causes Mozilla to except on page moves
-            }
-          }
-          catch(ignore) {}
-          responseText = req.responseText;
-          contentType = dwr.engine.util.getContentType(req, dwr.engine.isJaxerServer);
-        }
-        if (batch.iframe) { // iframe remoting
-          // Versions of IE prior to 8 should use contentWindow;
-          var contentDocument = dwr.engine.util.getContentDocument(batch);
-          responseText = contentDocument.documentElement ? contentDocument.documentElement.outerHTML : "";
-          contentType = contentDocument.contentType || "text/html";
-        }
-        return { name:"dwr.engine.emptyReply", message:"Empty reply from the server", status:status, htmlResponseText:responseText, contentType:contentType };
     },
 
     /**
@@ -2649,6 +2592,7 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     getContentDocument:function(batch) {
+        // Versions of IE prior to 8 should use contentWindow;
     	return batch.iframe.contentDocument || batch.iframe.contentWindow.document;
     },
 
