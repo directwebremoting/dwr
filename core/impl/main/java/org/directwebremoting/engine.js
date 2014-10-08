@@ -1956,12 +1956,12 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.document = document;
         batch.iframe.batch = batch;
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
+          // Bail out if the batch was completed the normal way 
+          if (batch.completed) return;
           // Bail out if the frame hasn't navigated yet
           var contentDoc = dwr.engine.util.getContentDocument(batch);
           if (contentDoc.URL == dwr.engine.SSL_SECURE_URL) return;
-          // Bail out if the batch was completed the normal way 
-          if (batch.completed) return;
-          // The batch hasn't been completed the normal way, trigger an textHtmlReply error
+          // The batch hasn't been completed the normal way, trigger a textHtmlReply error
           if (typeof dwr != "undefined") {
             var htmlResponse = contentDoc.documentElement ? contentDoc.documentElement.outerHTML : null;
             dwr.engine._handleError(batch, {name:"dwr.engine.textHtmlReply", message:"HTML reply from the server.", responseText:htmlResponse});
