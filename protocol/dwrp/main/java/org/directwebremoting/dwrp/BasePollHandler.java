@@ -101,9 +101,10 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             log.debug("Failed to parse request", ex);
 
-            // Send a batch exception to the server because the parse failed
-            String script = EnginePrivate.getRemoteHandleBatchExceptionScript(null, ex);
-            sendErrorScript(response, "0", script);
+            // Send a HTTP 400 to signal Bad Request
+            // (we have no possibility to reply with a DWR handle* script call as we don't know
+            // the instanceId, and this is required for script tag remoting
+            response.sendError(400, "Failed to parse request");
             return;
         }
 
