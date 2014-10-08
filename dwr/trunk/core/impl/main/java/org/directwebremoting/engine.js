@@ -1320,7 +1320,7 @@ if (typeof dwr == 'undefined') dwr = {};
           // This check for an HTML is not complete, but is there a better way?
           // Maybe we should add: data.hasChildNodes typeof "function" == true
           if (data.nodeName && data.nodeType) {
-            batch.map[name] = dwr.engine.serialize.convertXml(batch, directrefmap, otherrefmap, data, name, depth + 1);
+            batch.map[name] = dwr.engine.serialize.convertDom(data);
           }
           else {
             batch.map[name] = dwr.engine.serialize.convertObject(batch, directrefmap, otherrefmap, data, name, depth + 1);
@@ -1422,13 +1422,16 @@ if (typeof dwr == 'undefined') dwr = {};
      * @private
      * @see dwr.engine.serialize.convert() for parameter details
      */
-    convertXml:function(batch, directrefmap, otherrefmap, data, name, depth) {
+    convertDom:function(data) {
+      return "xml:" + encodeURIComponent(dwr.engine.serialize.serializeDom(data));
+    },
+    serializeDom:function(data) {
       var output;
       if (window.XMLSerializer) output = new XMLSerializer().serializeToString(data);
+      else if (data.xml) output = data.xml;
       else if (data.toXml) output = data.toXml;
-      else output = data.innerHTML;
-
-      return "xml:" + encodeURIComponent(output);
+      else throw new Error("The browser doesn't support XML serialization of: " + data);
+      return output;
     },
 
     /**
