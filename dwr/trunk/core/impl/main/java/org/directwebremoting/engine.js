@@ -1131,16 +1131,9 @@ if (typeof dwr == 'undefined') dwr = {};
      * @param {int} batchId The ID of the batch that we are replying to
      */
     handleBatchException:function(ex, batchId) {
-      var searchBatch = (dwr.engine._receivedBatch == null && batchId != null);
-      if (searchBatch) {
-        dwr.engine._receivedBatch = dwr.engine._batches[batchId];
-      }
+      var batch = dwr.engine._batches[batchId];
       if (ex.message === undefined) ex.message = "";
-      dwr.engine._handleError(dwr.engine._receivedBatch, ex);
-      if (searchBatch) {
-        dwr.engine._receivedBatch = null;
-        dwr.engine.batch.remove(dwr.engine._batches[batchId]);
-      }
+      dwr.engine._handleError(batch, ex);
     },
 
     /**
@@ -1182,18 +1175,11 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     pollCometDisabled:function(ex, batchId){
       dwr.engine.setActiveReverseAjax(false);
-      var searchBatch = (dwr.engine._receivedBatch == null && batchId != null);
-      if (searchBatch) {
-        dwr.engine._receivedBatch = dwr.engine._batches[batchId];
-      }
+      var batch = dwr.engine._batches[batchId];
       if (ex.message === undefined) {
         ex.message = "";
       }
-      dwr.engine._handleError(dwr.engine._receivedBatch, ex);
-      if (searchBatch) {
-        dwr.engine._receivedBatch = null;
-        dwr.engine.batch.remove(dwr.engine._batches[batchId]);
-      }
+      dwr.engine._handleError(batch, ex);
     },
 
     /**
@@ -1827,10 +1813,8 @@ if (typeof dwr == 'undefined') dwr = {};
         }
 
         // Outside of the try/catch so errors propagate normally:
-        dwr.engine._receivedBatch = batch;
         if (toEval != null) toEval = toEval.replace(dwr.engine._scriptTagProtection, "");
         dwr.engine._eval(toEval);
-        dwr.engine._receivedBatch = null;
         dwr.engine.transport.complete(batch);
       },
 
@@ -1892,9 +1876,7 @@ if (typeof dwr == 'undefined') dwr = {};
         var exec = response.substring(firstStartTag + 13, lastEndTag);
 
         try {
-          dwr.engine._receivedBatch = batch;
           dwr.engine._eval(exec);
-          dwr.engine._receivedBatch = null;
         }
         catch (ex) {
           // This is one of these annoying points where we might be executing
@@ -2050,7 +2032,6 @@ if (typeof dwr == 'undefined') dwr = {};
          * @param {int} batchId
          */
         beginIFrameResponse:function(iframe, batchId) {
-          if (iframe != null) dwr.engine._receivedBatch = iframe.batch;
         },
 
         /**
@@ -2059,9 +2040,8 @@ if (typeof dwr == 'undefined') dwr = {};
          * @param {int} batchId
          */
         endIFrameResponse:function(batchId) {
-          dwr.engine._receivedBatch = dwr.engine._batches[batchId];
-          dwr.engine.transport.complete(dwr.engine._receivedBatch);
-          dwr.engine._receivedBatch = null;
+          var batch = dwr.engine._batches[batchId];
+          if (batch) dwr.engine.transport.complete(batch);
         }
       },
 

@@ -111,10 +111,7 @@ public class EnginePrivate
 
         String output = JavascriptUtil.escapeJavaScript(ex.getMessage());
         String params = "{ name:'" + ex.getClass().getName() + "', message:'" + output + "' }";
-        if (batchId != null)
-        {
-            params += ", '" + batchId + "'";
-        }
+        params += ", '" + batchId + "'";
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
         reply.append("r.handleBatchException(").append(params).append(");\r\n");
