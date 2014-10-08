@@ -127,7 +127,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="war" depends="jar" description="Create an exploded dwr.war">
+	<target name="war" depends="jar" description="Create an exploded dwrdemo.war">
 		<copy todir="${target.root}/web/demo/WEB-INF/classes">
 			<fileset dir="${target.root}/classes/demo" />
 			<!-- For people that download the war and want to see the source -->
@@ -139,7 +139,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="package" depends="war" description="Create packaged outputs: dwr.war, dwr-jdk14.jar, and the source .zip">
+	<target name="package" depends="war" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
 		<!-- Run retroweaver if dwr.jar has changed since we last ran it -->
 		<taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
 			<classpath>
@@ -156,9 +156,9 @@
 		</if-not-uptodate>
 		<copy file="${basedir}/${target.root}/dwr-jdk14.jar" tofile="${dwr-maven-jdk14-jar}" />
 		<!-- Rezip the demo war file if it's contents have changed -->
-		<if-not-uptodate destfile="${target.root}/dwr.war" sourcedir="${target.root}/web/demo">
+		<if-not-uptodate destfile="${target.root}/dwrdemo.war" sourcedir="${target.root}/web/demo">
 			<action>
-				<zip destfile="${target.root}/dwr.war" basedir="${target.root}/web/demo" />
+				<zip destfile="${target.root}/dwrdemo.war" basedir="${target.root}/web/demo" />
 			</action>
 		</if-not-uptodate>
 		<!-- Copy over testdwr.war -->
@@ -224,7 +224,7 @@
 			</fileset>
 			<fileset dir="${target.root}">
 				<include name="dwr.jar" />
-				<include name="dwr.war" />
+				<include name="dwrdemo.war" />
 			</fileset>
 			<!-- The DWR website extracts javadoc from here -->
 			<zipfileset dir="${target.root}/javadoc" prefix="javadoc" />
