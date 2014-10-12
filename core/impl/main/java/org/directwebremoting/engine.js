@@ -1415,7 +1415,6 @@ if (typeof dwr == 'undefined') dwr = {};
       var output;
       if (window.XMLSerializer) output = new XMLSerializer().serializeToString(data);
       else if (data.xml) output = data.xml;
-      else if (data.toXml) output = data.toXml;
       else throw new Error("The browser doesn't support XML serialization of: " + data);
       return output;
     },
