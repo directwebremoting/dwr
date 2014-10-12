@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A wrapper around Jetty and Grizzly Ajax Continuations
+ * A wrapper around Jetty Ajax Continuations
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class Continuation
@@ -45,13 +45,6 @@ public class Continuation
                 Class<?> jContinuation = LocalUtil.classForName("org.eclipse.jetty.continuation.ContinuationSupport");
                 Method jMethod = jContinuation.getMethod("getContinuation", ServletRequest.class);
                 tempContinuation = jMethod.invoke(null, request);
-            }
-            else if (isGrizzly())
-            {
-                // Get Continuation through Grizzly API
-                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
-                Method gMethod = gContinuation.getMethod("getContinuation");
-                tempContinuation = gMethod.invoke(null, (Object[]) null);
             }
         }
         catch (Throwable ignored)
@@ -82,10 +75,6 @@ public class Continuation
             if (isJetty())
             {
                 suspendMethod.invoke(proxy);
-            }
-            else if (isGrizzly())
-            {
-                suspendMethod.invoke(proxy, 60000); // Suspend for 1 minute?
             }
         }
         catch (InvocationTargetException ex)
@@ -192,46 +181,26 @@ public class Continuation
     protected static boolean isJetty = false;
 
     /**
-     * Are we using Grizzly at all?
-     */
-    protected static boolean isGrizzly = false;
-
-    /**
-     * Can we use Jetty/Grizzly?
+     * Can we use Jetty?
      */
     static
     {
         Class<?> tempContinuationClass = null;
         try
         {
-            try
-            {
-                tempContinuationClass = LocalUtil.classForName("org.eclipse.jetty.continuation.Continuation");
-                isJetty = true;
-            }
-            catch (Exception ex)
-            {
-                Class<?> gContinuation = LocalUtil.classForName("com.sun.grizzly.Continuation");
-                Method gMethod = gContinuation.getMethod("getContinuation");
-                tempContinuationClass = gMethod.invoke(gMethod).getClass();
-                isGrizzly = true;
-            }
+            tempContinuationClass = LocalUtil.classForName("org.eclipse.jetty.continuation.Continuation");
+            isJetty = true;
         }
         catch (Exception ex)
         {
             isJetty = false;
-            log.debug("No Jetty or Grizzly Continuation class, using standard Servlet API");
+            log.debug("No Jetty Continuation class, using standard Servlet API");
         }
         continuationClass = tempContinuationClass;
         if (isJetty())
         {
             suspendMethod = LocalUtil.getMethod(continuationClass, "suspend");
             isSuspendedMethod = LocalUtil.getMethod(continuationClass, "isSuspended");
-        }
-        else if (isGrizzly)
-        {
-            suspendMethod = LocalUtil.getMethod(continuationClass, "suspend", long.class);
-            isSuspendedMethod = null;
         }
         else
         {
@@ -247,13 +216,5 @@ public class Continuation
     public static boolean isJetty()
     {
         return isJetty;
-    }
-
-    /**
-     * @return True if we have detected Grizzly classes
-     */
-    public static boolean isGrizzly()
-    {
-        return isGrizzly;
     }
 }

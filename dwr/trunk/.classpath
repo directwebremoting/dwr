@@ -22,9 +22,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/librarydwr/javadoc/easymock2.3.zip!/easymock2.3/javadoc"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="core/api/lib/catalina.jar" sourcepath="/librarydwr/source/apache-tomcat-6.0.16-src.zip"/>
-	<classpathentry kind="lib" path="core/api/lib/tomcat-coyote.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/tomcat-juli.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/annotations-api.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="core/api/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="core/api/test/java"/>
