@@ -59,7 +59,7 @@ import org.directwebremoting.json.serialize.JsonSerializerFactory;
 import org.directwebremoting.servlet.PathConstants;
 import org.directwebremoting.servlet.UrlProcessor;
 import org.directwebremoting.util.FakeServletConfig;
-import org.directwebremoting.util.FakeServletContext;
+import org.directwebremoting.util.FakeServletContextFactory;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
 import org.directwebremoting.util.VersionUtil;
@@ -110,7 +110,7 @@ public class StartupUtil
     {
         try
         {
-            ServletConfig servletConfig = new FakeServletConfig("test", new FakeServletContext());
+            ServletConfig servletConfig = new FakeServletConfig("test", FakeServletContextFactory.create());
             logStartup("DWR:OutOfContainer", servletConfig);
             Container container = createAndSetupDefaultContainer(servletConfig);
             configureContainerFully(container, servletConfig);
@@ -337,22 +337,22 @@ public class StartupUtil
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
         // Use DwrConstants to avoid rename if DWR repackaged (shaded)
-    	try 
+    	try
     	{
             resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.dwrp.FileUpload"));
-    	} 
-    	catch(Exception fue) 
+    	}
+    	catch(Exception fue)
     	{
     		Loggers.STARTUP.debug("A FileUpload implementation is not available. Details: " + fue, fue);
     	}
-    	try 
+    	try
     	{
             resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.extend.Compressor"));
-        } catch(Exception ce) 
+        } catch(Exception ce)
         {
         	Loggers.STARTUP.debug("A Compressor implemenation is not available. Details: " + ce, ce);
         }
-    	
+
         String abstractionImplNames = container.getParameter(LocalUtil.originalDwrClassName(ContainerAbstraction.class.getName()));
         Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
 

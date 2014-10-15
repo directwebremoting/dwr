@@ -24,6 +24,7 @@ import org.directwebremoting.create.NewCreator;
 import org.directwebremoting.extend.CreatorManager;
 import org.directwebremoting.impl.TestEnvironment;
 import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletRequestFactory;
 import org.directwebremoting.util.FakeHttpServletResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class JsonRpcCallHandlerTest
         List<String> validTests = TestUtil.parseTestInput(getClass(), "validJsonRpc.txt");
         for (String test : validTests)
         {
-            FakeHttpServletRequest request = new FakeHttpServletRequest();
+            FakeHttpServletRequest request = FakeHttpServletRequestFactory.create();
             request.setContent(test);
             FakeHttpServletResponse response = new FakeHttpServletResponse();
 

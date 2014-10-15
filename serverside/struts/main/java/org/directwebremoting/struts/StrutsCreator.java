@@ -27,7 +27,7 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AbstractCreator;
 import org.directwebremoting.extend.Creator;
-import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletRequestFactory;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
 
@@ -106,7 +106,7 @@ public class StrutsCreator extends AbstractCreator implements Creator
                     if (request == null)
                     {
                         Loggers.STARTUP.warn("Using a FakeHttpServletRequest as part of setup");
-                        request = new FakeHttpServletRequest();
+                        request = FakeHttpServletRequestFactory.create();
                     }
 
                     moduleConfig = RequestUtils.getModuleConfig(request, wc.getServletContext());

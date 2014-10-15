@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,24 +31,23 @@ import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Fake implementation of the ServletContext interface.
+ * Backing class for Servlet 2.4 fake ServletContext.
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class FakeServletContext implements ServletContext
+class FakeServletContextObject24 // Note: does not implement interface as we are mapping versions in runtime
 {
     /**
      * Create a new FakeServletContext, using no base path and a
      * DefaultResourceLoader (i.e. the classpath root as WAR root).
      */
-    public FakeServletContext()
+    public FakeServletContextObject24()
     {
         this("");
     }
@@ -58,7 +56,7 @@ public class FakeServletContext implements ServletContext
      * Create a new FakeServletContext, using a DefaultResourceLoader.
      * @param resourceBasePath the WAR root directory (should not end with a slash)
      */
-    public FakeServletContext(String resourceBasePath)
+    public FakeServletContextObject24(String resourceBasePath)
     {
         this.resourceBasePath = (resourceBasePath != null ? resourceBasePath : "");
 
@@ -181,7 +179,7 @@ public class FakeServletContext implements ServletContext
      * @see javax.servlet.ServletContext#getServlets()
      */
     @Deprecated
-    public Enumeration<HttpServlet> getServlets()
+    public Enumeration<Servlet> getServlets()
     {
         throw new UnsupportedOperationException("getServlets");
     }
@@ -331,7 +329,7 @@ public class FakeServletContext implements ServletContext
     /**
      * The log stream
      */
-    private static final Log log = LogFactory.getLog(FakeServletContext.class);
+    private static final Log log = LogFactory.getLog(FakeServletContextObject24.class);
 
     /**
      * The resource path to allow us to fetch resources from the disk
@@ -352,41 +350,4 @@ public class FakeServletContext implements ServletContext
      * The servlet context name
      */
     private String servletContextName = "FakeServletContext";
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#addFilter(java.lang.String, java.lang.String, java.lang.String, java.util.Map)
-     */
-    @SuppressWarnings("unused")
-    public void addFilter(String arg0, String arg1, String arg2, Map<String, String> arg3)
-    {
-        // From Servlet 3.0 from Greg
-        // TODO: we might want to delete all the servlet 3.0 preview methods
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#addFilterMapping(java.lang.String, java.lang.String[], java.lang.String[], java.util.EnumSet, boolean)
-     */
-    @SuppressWarnings("unused")
-    public void addFilterMapping( String arg0, String[] arg1, String[] arg2, EnumSet<?/*javax.servlet.DispatcherType*/> arg3, boolean arg4)
-    {
-        // From Servlet 3.0 from Greg
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#addServlet(java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
-     */
-    @SuppressWarnings("unused")
-    public void addServlet(String arg0, String arg1, String arg2, Map<String, String> arg3, int arg4)
-    {
-        // From Servlet 3.0 from Greg
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletContext#addServletMapping(java.lang.String, java.lang.String[])
-     */
-    @SuppressWarnings("unused")
-    public void addServletMapping(String arg0, String[] arg1)
-    {
-        // From Servlet 3.0 from Greg
-    }
 }

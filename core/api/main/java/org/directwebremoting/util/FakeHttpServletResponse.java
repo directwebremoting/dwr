@@ -22,13 +22,16 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -427,7 +430,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void addDateHeader(String name, long value)
     {
-        doAddHeader(name, value);
+        doAddHeader(name, Long.toString(value));
     }
 
     /* (non-Javadoc)
@@ -435,7 +438,10 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void setDateHeader(String name, long value)
     {
-        doSetHeader(name, value);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        doSetHeader(name, dateFormat.format(calendar.getTime()));
     }
 
     /* (non-Javadoc)
@@ -443,7 +449,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void addIntHeader(String name, int value)
     {
-        doAddHeader(name, value);
+        doAddHeader(name, Integer.toString(value));
     }
 
     /* (non-Javadoc)
@@ -451,7 +457,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
      */
     public void setIntHeader(String name, int value)
     {
-        doSetHeader(name, value);
+        doSetHeader(name, Integer.toString(value));
     }
 
     /**
@@ -459,9 +465,9 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @param name The header name
      * @param value The replacement value
      */
-    private void doSetHeader(String name, Object value)
+    private void doSetHeader(String name, String value)
     {
-        List<Object> values = new ArrayList<Object>();
+        List<String> values = new ArrayList<String>();
         values.add(value);
         headers.put(name, values);
     }
@@ -471,12 +477,12 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @param name The header name
      * @param value The extra value
      */
-    private void doAddHeader(String name, Object value)
+    private void doAddHeader(String name, String value)
     {
-        List<Object> values = headers.get(name);
+        List<String> values = headers.get(name);
         if (values == null)
         {
-            values = new ArrayList<Object>();
+            values = new ArrayList<String>();
             headers.put(name, values);
         }
         values.add(value);
@@ -504,9 +510,14 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @param name The header name to lookup
      * @return The data behind this header
      */
-    public Object getHeader(String name)
+    public String getHeader(String name)
     {
-        return headers.get(name);
+        String value = null;
+        if (headers.get(name) != null)
+        {
+            value = headers.get(name).get(0);
+        }
+        return value;
     }
 
     /**
@@ -515,16 +526,12 @@ public class FakeHttpServletResponse implements HttpServletResponse
      * @return The data behind this header
      */
     @SuppressWarnings("unchecked")
-    public List<Object> getHeaders(String name)
+    public List<String> getHeaders(String name)
     {
-        Object value = headers.get(name);
-        if (value instanceof List)
+        List<String> value = headers.get(name);
+        if (value != null)
         {
-            return (List<Object>) value;
-        }
-        else if (value != null)
-        {
-            return Collections.singletonList(value);
+            return value;
         }
         else
         {
@@ -594,7 +601,7 @@ public class FakeHttpServletResponse implements HttpServletResponse
 
     private final List<Cookie> cookies = new ArrayList<Cookie>();
 
-    private final Map<String, List<Object>> headers = new HashMap<String, List<Object>>();
+    private final Map<String, List<String>> headers = new HashMap<String, List<String>>();
 
     private int status = SC_OK;
 
@@ -605,30 +612,4 @@ public class FakeHttpServletResponse implements HttpServletResponse
     private String forwardedUrl = null;
 
     private String includedUrl = null;
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletResponse#disable()
-     */
-    public void disable()
-    {
-        // From Servlet 3.0 from Greg
-        // TODO: we might want to delete all the servlet 3.0 preview methods
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletResponse#enable()
-     */
-    public void enable()
-    {
-        // From Servlet 3.0 from Greg
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.ServletResponse#isDisabled()
-     */
-    public boolean isDisabled()
-    {
-        // From Servlet 3.0 from Greg
-        return false;
-    }
 }
