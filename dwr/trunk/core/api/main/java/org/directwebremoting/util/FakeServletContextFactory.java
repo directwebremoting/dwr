@@ -15,15 +15,22 @@
  */
 package org.directwebremoting.util;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 
 /**
  * @author Mike Wilson
  */
-public interface FakeHttpServletRequest extends HttpServletRequest
+public class FakeServletContextFactory
 {
-    void addUserRole(String role);
-    void setContent(byte[] content);
-    void setContent(String content);
+    public static ServletContext create(Object... args)
+    {
+        return MethodMatchingProxyFactory.createProxy(ServletContext.class, fakeServletContextClass, args);
+    }
+
+    private static Class<?> fakeServletContextClass = null;
+
+    static {
+        fakeServletContextClass = FakeServletContextObject24.class;
+    }
 }
 

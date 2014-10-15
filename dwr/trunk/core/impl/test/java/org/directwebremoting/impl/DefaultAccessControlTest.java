@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.MethodDeclaration;
 import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletRequestFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class DefaultAccessControlTest
     @Before
     public void setUp()
     {
-        request = new FakeHttpServletRequest();
+        request = FakeHttpServletRequestFactory.create();
     }
 
     @Test(expected = SecurityException.class)

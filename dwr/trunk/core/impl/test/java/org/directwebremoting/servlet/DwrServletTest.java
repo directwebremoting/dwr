@@ -15,13 +15,14 @@
  */
 package org.directwebremoting.servlet;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.directwebremoting.util.FakeHttpServletRequest;
+import org.directwebremoting.util.FakeHttpServletRequestFactory;
 import org.directwebremoting.util.FakeHttpServletResponse;
 import org.directwebremoting.util.FakeServletConfig;
-import org.directwebremoting.util.FakeServletContext;
+import org.directwebremoting.util.FakeServletContextFactory;
 import org.junit.Test;
 
 /**
@@ -34,11 +35,11 @@ public class DwrServletTest
     {
         DwrServlet servlet = new DwrServlet();
 
-        FakeServletContext servletContext = new FakeServletContext("test/web");
+        ServletContext servletContext = FakeServletContextFactory.create("test/web");
         FakeServletConfig config = new FakeServletConfig("dwr-invoker", servletContext);
         servlet.init(config);
 
-        HttpServletRequest request = new FakeHttpServletRequest();
+        HttpServletRequest request = FakeHttpServletRequestFactory.create();
         HttpServletResponse response = new FakeHttpServletResponse();
         servlet.doPost(request, response);
     }

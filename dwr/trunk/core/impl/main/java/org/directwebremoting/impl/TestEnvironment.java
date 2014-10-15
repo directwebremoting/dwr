@@ -27,7 +27,7 @@ import org.directwebremoting.annotations.AnnotationsConfigurator;
 import org.directwebremoting.extend.Configurator;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.util.FakeServletConfig;
-import org.directwebremoting.util.FakeServletContext;
+import org.directwebremoting.util.FakeServletContextFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -105,7 +105,7 @@ public class TestEnvironment
 
     private static WebContextBuilder webContextBuilder;
 
-    private final static ServletContext servletContext = new FakeServletContext();
+    private final static ServletContext servletContext = FakeServletContextFactory.create();
 
     private final static ServletConfig servletConfig = new FakeServletConfig("dwr-test", servletContext);
 
