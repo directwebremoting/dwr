@@ -33,8 +33,13 @@ public class MethodMatchingProxyFactory
             for(int i=0; i<backingArgs.length; i++) {
                 backingArgsClasses[i] = backingArgs[i].getClass();
             }
-            Constructor<?> ctor = backingClass.getConstructor(backingArgsClasses);
-            Object backingObject = ctor.newInstance(backingArgs);
+            Object backingObject;
+            if (backingClass.getConstructors().length == 0) {
+                backingObject = backingClass.newInstance();
+            } else {
+                Constructor<?> ctor = backingClass.getConstructor(backingArgsClasses);
+                backingObject = ctor.newInstance(backingArgs);
+            }
             Object proxy = Proxy.newProxyInstance(FakeHttpServletRequestFactory.class.getClassLoader(), new Class[]{interfaceClass}, new MethodMatchingInvocationHandler(backingObject));
             return interfaceClass.cast(proxy);
         }
