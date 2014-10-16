@@ -23,17 +23,18 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ScriptSessionFilter;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.dwr.Util;
 
 import com.example.dwr.people.Person;
 
-public class PeopleTable implements Runnable
+public class PeopleTable implements Runnable, UninitializingBean
 {
 
     public PeopleTable()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(this, 1, 10, TimeUnit.SECONDS);
     }
 
@@ -43,6 +44,24 @@ public class PeopleTable implements Runnable
     public void run()
     {
         updateTableDisplay();
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     */
+    public void contextDestroyed()
+    {
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {}
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
     }
 
     public void updateTableDisplay()
@@ -92,4 +111,6 @@ public class PeopleTable implements Runnable
     }
 
     private final static String SCRIPT_SESSION_ATTR = "SCRIPT_SESSION_ATTR";
+
+    private final ScheduledThreadPoolExecutor executor;
 }

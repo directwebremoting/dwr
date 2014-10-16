@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.impl.DaemonThreadFactory;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.ui.dwr.Util;
 
 /**
@@ -30,7 +30,7 @@ import org.directwebremoting.ui.dwr.Util;
  * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ClockMS implements Runnable
+public class ClockMS implements Runnable, UninitializingBean
 {
 
     /**
@@ -38,14 +38,14 @@ public class ClockMS implements Runnable
      */
     public ClockMS()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
-    
+
     public static void main (String args[]) {
     	System.out.println(1200 - (1200 % 250));
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
@@ -54,7 +54,7 @@ public class ClockMS implements Runnable
         if (active)
         {
         	//jump from 750 to 250
-            
+
         	Calendar cal = Calendar.getInstance();
             int ms = cal.get(Calendar.MILLISECOND);
             String newTimeString = cal.getTime().toString() + " MS:" + (ms - (ms % 250));
@@ -65,6 +65,24 @@ public class ClockMS implements Runnable
                 timeString = newTimeString;
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     */
+    public void contextDestroyed()
+    {
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {}
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
     }
 
     /**
@@ -103,6 +121,11 @@ public class ClockMS implements Runnable
             }
         });
     }
+
+    /**
+     * Drives the clock
+     */
+    private final ScheduledThreadPoolExecutor executor;
 
     /**
      * Are we updating the clocks on all the pages?

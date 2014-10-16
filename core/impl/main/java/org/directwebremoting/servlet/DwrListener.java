@@ -23,6 +23,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.Container;
+import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.impl.StartupUtil;
 
 /**
@@ -59,7 +60,16 @@ public class DwrListener implements ServletContextListener
 
         for (Container container : containers)
         {
+            WebContextBuilder webContextBuilder = container.getBean(WebContextBuilder.class);
+            if (webContextBuilder != null)
+            {
+                webContextBuilder.engageThread(container, null, null);
+            }
             container.contextDestroyed();
+            if (webContextBuilder != null)
+            {
+                webContextBuilder.disengageThread();
+            }
         }
     }
 
