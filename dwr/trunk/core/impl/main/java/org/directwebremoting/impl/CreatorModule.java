@@ -32,7 +32,6 @@ import org.directwebremoting.extend.AjaxFilterManager;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.MethodDeclaration;
 import org.directwebremoting.extend.Module;
-import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.Loggers;
 
 /**
@@ -72,26 +71,30 @@ public class CreatorModule implements Module
      */
     public MethodDeclaration[] getMethods()
     {
-        Class<?> creatorType = creator.getType();
-        Method[] methods = creatorType.getMethods();
-        ArrayList<MethodDeclaration> methodDecls = new ArrayList<MethodDeclaration>();
-        for (Method method : methods)
-        {
-            Method unwrappedMethod = unwrapProxiedMethod(method);
-            try
+        if (methodDecls == null) {
+            Class<?> creatorType = creator.getType();
+            Method[] methods = creatorType.getMethods();
+            ArrayList<MethodDeclaration> methodDeclsArray = new ArrayList<MethodDeclaration>();
+            for (Method method : methods)
             {
-                accessControl.assertMethodDisplayable(creatorType, unwrappedMethod);
-            }
-            catch (SecurityException ex)
-            {
-                if (!allowImpossibleTests)
+                Method unwrappedMethod = unwrapProxiedMethod(method);
+                try
                 {
-                    continue;
+                    accessControl.assertMethodDisplayable(creatorType, unwrappedMethod);
                 }
+                catch (SecurityException ex)
+                {
+                    if (!allowImpossibleTests)
+                    {
+                        continue;
+                    }
+                }
+                methodDeclsArray.add(new MethodDeclaration(unwrappedMethod));
             }
-            methodDecls.add(new MethodDeclaration(unwrappedMethod));
+            methodDecls = methodDeclsArray.toArray(new MethodDeclaration[0]);
         }
-        return methodDecls.toArray(new MethodDeclaration[0]);
+
+        return methodDecls;
     }
 
     /* (non-Javadoc)
@@ -120,68 +123,7 @@ public class CreatorModule implements Module
         boolean create = false;
         if (!Modifier.isStatic(method.getModifiers()))
         {
-            WebContext webcx = WebContextFactory.get();
-
-            // Check the various scopes to see if it is there
-            if (scope.equals(Creator.APPLICATION))
-            {
-                object = webcx.getServletContext().getAttribute(getName());
-            }
-            else if (scope.equals(Creator.SESSION))
-            {
-                object = webcx.getSession().getAttribute(getName());
-            }
-            else if (scope.equals(Creator.SCRIPT))
-            {
-                object = webcx.getScriptSession().getAttribute(getName());
-            }
-            else if (scope.equals(Creator.REQUEST))
-            {
-                object = webcx.getHttpServletRequest().getAttribute(getName());
-            }
-            // Creator.PAGE scope means we create one every time anyway
-
-            // If we don't have an object then call the creator
-            try
-            {
-                if (object == null)
-                {
-                    create = true;
-                    object = creator.getInstance();
-                }
-            }
-            catch (InstantiationException ex)
-            {
-                // Allow Jetty RequestRetry exception to propagate to container
-                Continuation.rethrowIfContinuation(ex);
-                // We should log this regardless of the accessLogLevel.
-                log.info("Error creating an instance of the following DWR Creator: " + ((null != creator.getClass()) ? creator.getClass().getName() : "None Specified") + ".", ex);
-                throw ex;
-            }
-
-            // Remember it for next time
-            if (create)
-            {
-                if (scope.equals(Creator.APPLICATION))
-                {
-                    // This might also be done at application startup by
-                    // DefaultCreatorManager.addCreator(String, Creator)
-                    webcx.getServletContext().setAttribute(getName(), object);
-                }
-                else if (scope.equals(Creator.SESSION))
-                {
-                    webcx.getSession().setAttribute(getName(), object);
-                }
-                else if (scope.equals(Creator.SCRIPT))
-                {
-                    webcx.getScriptSession().setAttribute(getName(), object);
-                }
-                else if (scope.equals(Creator.REQUEST))
-                {
-                    webcx.getHttpServletRequest().setAttribute(getName(), object);
-                }
-                // Creator.PAGE scope means we create one every time anyway
-            }
+            object = getScopedInstance();
         }
 
         // Log the call details if the accessLogLevel is call.
@@ -243,6 +185,77 @@ public class CreatorModule implements Module
         return reply;
     }
 
+    public Object getScopedInstance() throws InstantiationException
+    {
+        WebContext webcx = WebContextFactory.get();
+        String name = creator.getJavascript();
+        String scope = creator.getScope();
+
+        Object object = null;
+        boolean create = false;
+
+        // Check the various scopes to see if it is there
+        if (scope.equals(Creator.APPLICATION))
+        {
+            object = webcx.getServletContext().getAttribute(name);
+        }
+        else if (scope.equals(Creator.SESSION))
+        {
+            object = webcx.getSession().getAttribute(name);
+        }
+        else if (scope.equals(Creator.SCRIPT))
+        {
+            object = webcx.getScriptSession().getAttribute(name);
+        }
+        else if (scope.equals(Creator.REQUEST))
+        {
+            object = webcx.getHttpServletRequest().getAttribute(name);
+        }
+        // Creator.PAGE scope means we create one every time anyway
+
+        // If we don't have an object then call the creator
+        try
+        {
+            if (object == null)
+            {
+                create = true;
+                object = creator.getInstance();
+            }
+        }
+        catch (InstantiationException ex)
+        {
+            // We should log this regardless of the accessLogLevel.
+            log.info("Error creating an instance of the following DWR Creator: " + ((null != creator.getClass()) ? creator.getClass().getName() : "None Specified") + ".", ex);
+            throw ex;
+        }
+
+        // Remember it for next time
+        if (create)
+        {
+            if (scope.equals(Creator.APPLICATION))
+            {
+                // This might also be done at application startup by
+                // DefaultCreatorManager.addCreator(String, Creator)
+                webcx.getServletContext().setAttribute(name, object);
+            }
+            else if (scope.equals(Creator.SESSION))
+            {
+                webcx.getSession().setAttribute(name, object);
+            }
+            else if (scope.equals(Creator.SCRIPT))
+            {
+                webcx.getScriptSession().setAttribute(name, object);
+            }
+            else if (scope.equals(Creator.REQUEST))
+            {
+                webcx.getHttpServletRequest().setAttribute(name, object);
+            }
+            // Creator.PAGE scope means we create one every time anyway
+        }
+
+        return object;
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Module#toString()
      */
@@ -277,8 +290,8 @@ public class CreatorModule implements Module
         try
         {
             if (unwrappedTarget == null) {
-                Object proxy = creator.getInstance(); // We need an instance to dig deeper
-                unwrappedTarget = unwrapProxy(proxy);
+                Object possiblyProxy = getScopedInstance(); // We need an instance to dig deeper
+                unwrappedTarget = unwrapProxy(possiblyProxy);
             }
             return unwrappedTarget.getClass().getMethod(method.getName(), method.getParameterTypes());
         }
@@ -294,7 +307,7 @@ public class CreatorModule implements Module
         Object unwrappedInstance = instance;
 
         // Unwrap Spring Advised proxies
-        if (advisedClass.isAssignableFrom(instance.getClass())) {
+        if (advisedClass != null && advisedClass.isAssignableFrom(instance.getClass())) {
             try {
                 // Find the instance pointed to by the proxy and recursively traverse any additional proxy layers
                 Method targetSourceMethod = instance.getClass().getMethod("getTargetSource");
@@ -304,7 +317,7 @@ public class CreatorModule implements Module
             }
         }
         // Unwrap Spring TargetSource proxies
-        else if (targetSourceClass.isAssignableFrom(instance.getClass())) {
+        else if (targetSourceClass != null && targetSourceClass.isAssignableFrom(instance.getClass())) {
             try {
                 // Find the instance pointed to by the proxy and recursively traverse any additional proxy layers
                 Method targetMethod = instance.getClass().getMethod("getTarget");
@@ -362,6 +375,11 @@ public class CreatorModule implements Module
      * @see #unwrapProxy(Object)
      */
     private Object unwrappedTarget;
+
+    /**
+     * Cached methods
+     */
+    private MethodDeclaration[] methodDecls;
 
     /**
      * Spring/AOP hack
