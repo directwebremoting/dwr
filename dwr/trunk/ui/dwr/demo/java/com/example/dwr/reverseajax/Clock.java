@@ -24,7 +24,7 @@ import org.directwebremoting.ScriptSession;
 import org.directwebremoting.ScriptSessionFilter;
 import org.directwebremoting.ScriptSessions;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.impl.DaemonThreadFactory;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.ui.dwr.Util;
 
 /**
@@ -33,14 +33,14 @@ import org.directwebremoting.ui.dwr.Util;
  * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class Clock implements Runnable
+public class Clock implements Runnable, UninitializingBean
 {
     /**
      * Create a schedule to update the clock every second.
      */
     public Clock()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
@@ -61,6 +61,24 @@ public class Clock implements Runnable
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     */
+    public void contextDestroyed()
+    {
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {}
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
+    }
+
     /**
      * Called from the client to turn the clock on/off
      */
@@ -71,23 +89,21 @@ public class Clock implements Runnable
     }
 
     private class UpdatesEnabledFilter implements ScriptSessionFilter {
-    	private String attrName;
-    	
+    	private final String attrName;
+
     	public UpdatesEnabledFilter(String attrName) {
     		this.attrName = attrName;
     	}
-    	
+
 		public boolean match(ScriptSession ss) {
 			Object check = ss.getAttribute(attrName);
 	        return (check != null && check.equals(Boolean.TRUE));
-		}    	
+		}
     }
-    
+
     /**
      * Call a function on the client for each ScriptSession.
      * passing the clock's status for display.
-     * 
-     * @param output The string to display.
      */
     public void setClockStatus()
     {
@@ -99,11 +115,11 @@ public class Clock implements Runnable
             }
         });
     }
-    
+
     /**
-     * Send the time String to clients that have an UPDATES_ENABLED_ATTR attribute set to true 
+     * Send the time String to clients that have an UPDATES_ENABLED_ATTR attribute set to true
      * on their ScriptSession.
-     * 
+     *
      * @param output The string to display.
      */
     public void setClockDisplay(final String output)
@@ -118,16 +134,21 @@ public class Clock implements Runnable
     }
 
     /**
-     * 
+     *
      * @param enabled
      */
     public void setEnabledAttribute(Boolean enabled) {
     	ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
     	scriptSession.setAttribute(UPDATES_ENABLED_ATTR, enabled);
     }
-    
+
     private static String UPDATES_ENABLED_ATTR = "UPDATES_ENABLED";
-    
+
+    /**
+     * Drives the clock
+     */
+    private final ScheduledThreadPoolExecutor executor;
+
     /**
      * Are we updating the clocks on all the pages?
      */

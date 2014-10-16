@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.directwebremoting.Browser;
 import org.directwebremoting.ServerContextFactory;
-import org.directwebremoting.impl.DaemonThreadFactory;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.ui.dwr.Util;
 
 /**
@@ -30,14 +30,14 @@ import org.directwebremoting.ui.dwr.Util;
  * This is an example of how to control clients using server side threads
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class ClockLogging implements Runnable
+public class ClockLogging implements Runnable, UninitializingBean
 {
     /**
      * Create a schedule to update the clock every second.
      */
     public ClockLogging()
     {
-        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor = new ScheduledThreadPoolExecutor(1);
         executor.scheduleAtFixedRate(this, 1, 50, TimeUnit.MILLISECONDS);
     }
 
@@ -56,6 +56,24 @@ public class ClockLogging implements Runnable
                 timeString = newTimeString;
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     */
+    public void contextDestroyed()
+    {
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {}
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
     }
 
     /**
@@ -94,6 +112,11 @@ public class ClockLogging implements Runnable
             }
         });
     }
+
+    /**
+     * Drives the clock
+     */
+    private final ScheduledThreadPoolExecutor executor;
 
     /**
      * Are we updating the clocks on all the pages?

@@ -155,7 +155,16 @@ public class DwrServlet extends HttpServlet
     @Override
     public void destroy()
     {
+        webContextBuilder = container.getBean(WebContextBuilder.class);
+        if (webContextBuilder != null)
+        {
+            webContextBuilder.engageThread(container, null, null);
+        }
         container.servletDestroyed();
+        if (webContextBuilder != null)
+        {
+            webContextBuilder.disengageThread();
+        }
         super.destroy();
     }
 

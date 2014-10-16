@@ -27,8 +27,11 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Creator;
 import org.directwebremoting.extend.CreatorManager;
+import org.directwebremoting.extend.UninitializingBean;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
 
@@ -36,7 +39,7 @@ import org.directwebremoting.util.Loggers;
  * A class to manage the types of creators and the instantiated creators.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class DefaultCreatorManager implements CreatorManager
+public class DefaultCreatorManager implements CreatorManager, UninitializingBean
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.CreatorManager#addCreatorType(java.lang.String, java.lang.String)
@@ -192,6 +195,38 @@ public class DefaultCreatorManager implements CreatorManager
         }
 
         return creator;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     */
+    public void contextDestroyed()
+    {
+        WebContext webcx = WebContextFactory.get();
+        for(Creator c : creators.values()) {
+            if (c.getScope().equals(Creator.APPLICATION)) {
+                Object creatorInstance = webcx.getServletContext().getAttribute(c.getJavascript());
+                if (creatorInstance instanceof UninitializingBean) {
+                    ((UninitializingBean) creatorInstance).contextDestroyed();
+                }
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     */
+    public void servletDestroyed()
+    {
+        WebContext webcx = WebContextFactory.get();
+        for(Creator c : creators.values()) {
+            if (c.getScope().equals(Creator.APPLICATION)) {
+                Object creatorInstance = webcx.getServletContext().getAttribute(c.getJavascript());
+                if (creatorInstance instanceof UninitializingBean) {
+                    ((UninitializingBean) creatorInstance).servletDestroyed();
+                }
+            }
+        }
     }
 
     /**
