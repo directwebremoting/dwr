@@ -21,25 +21,32 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
+ * A proxy generator that allows mapping a backing class to an interface it doesn't implement as long as method signatures match.
+ *
  * @author Mike Wilson
  */
 public class MethodMatchingProxyFactory
 {
-    public static <T> T createProxy(Class<T> interfaceClass, Class<?> backingClass, Object... backingArgs)
+    public static <T> T createProxy(Class<T> interfaceClass, Class<?> backingClass, Object... constructorArgs)
     {
         try
         {
-            Class<?>[] backingArgsClasses = new Class<?>[backingArgs.length];
-            for(int i=0; i<backingArgs.length; i++) {
-                backingArgsClasses[i] = backingArgs[i].getClass();
-            }
+            // Instantiate backing class object
             Object backingObject;
-            if (backingClass.getConstructors().length == 0) {
+            if (constructorArgs.length == 0 && backingClass.getConstructors().length == 0) {
+                // Default constructor
                 backingObject = backingClass.newInstance();
             } else {
+                // Look up explicit constructor
+                Class<?>[] backingArgsClasses = new Class<?>[constructorArgs.length];
+                for(int i=0; i<constructorArgs.length; i++) {
+                    backingArgsClasses[i] = constructorArgs[i].getClass();
+                }
                 Constructor<?> ctor = backingClass.getConstructor(backingArgsClasses);
-                backingObject = ctor.newInstance(backingArgs);
+                backingObject = ctor.newInstance(constructorArgs);
             }
+
+            // Wrap with a proxy conforming to the fronting interface
             Object proxy = Proxy.newProxyInstance(FakeHttpServletRequestFactory.class.getClassLoader(), new Class[]{interfaceClass}, new MethodMatchingInvocationHandler(backingObject));
             return interfaceClass.cast(proxy);
         }
