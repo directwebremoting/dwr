@@ -47,7 +47,7 @@ public class MethodMatchingProxyFactory
             }
 
             // Wrap with a proxy conforming to the fronting interface
-            Object proxy = Proxy.newProxyInstance(FakeHttpServletRequestFactory.class.getClassLoader(), new Class[]{interfaceClass}, new MethodMatchingInvocationHandler(backingObject));
+            Object proxy = Proxy.newProxyInstance(MethodMatchingProxyFactory.class.getClassLoader(), new Class[]{interfaceClass}, new MethodMatchingInvocationHandler(backingObject));
             return interfaceClass.cast(proxy);
         }
         catch (Exception ex)
