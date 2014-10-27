@@ -312,7 +312,7 @@ public class StartupUtil
             }
             else if ("activeReverseAjax".equals(level))
             {
-                container.addParameter("activeReverseAjax", "true");
+                container.addParameter("activeReverseAjaxEnabled", "true");
             }
             else
             {
