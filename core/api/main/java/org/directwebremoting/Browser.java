@@ -56,8 +56,7 @@ public class Browser
      */
     public static void withAllSessions(Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
-        taskDispatcher.dispatchTask(new AllScriptSessionFilter(), task);
+        withAllSessions(getServerContext(), task);
     }
 
     /**
@@ -69,8 +68,13 @@ public class Browser
      */
     public static void withAllSessions(ServerContext serverContext, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(new AllScriptSessionFilter(), task);
+        currentServerContext.set(serverContext);
+        try {
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+            taskDispatcher.dispatchTask(new AllScriptSessionFilter(), task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -84,8 +88,7 @@ public class Browser
      */
     public static void withAllSessionsFiltered(ScriptSessionFilter filter, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
-        taskDispatcher.dispatchTask(filter, task);
+        withAllSessionsFiltered(getServerContext(), filter, task);
     }
 
     /**
@@ -97,8 +100,13 @@ public class Browser
      */
     public static void withAllSessionsFiltered(ServerContext serverContext, ScriptSessionFilter filter, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(filter, task);
+        currentServerContext.set(serverContext);
+        try {
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+            taskDispatcher.dispatchTask(filter, task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -112,9 +120,14 @@ public class Browser
     public static void withCurrentPage(Runnable task)
     {
         WebContext webContext = WebContextFactory.get();
-        String page = webContext.getCurrentPage();
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(webContext);
-        taskDispatcher.dispatchTask(new PageScriptSessionFilter(webContext, page), task);
+        currentServerContext.set(webContext);
+        try {
+            String page = webContext.getCurrentPage();
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(webContext);
+            taskDispatcher.dispatchTask(new PageScriptSessionFilter(webContext, page), task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -136,9 +149,7 @@ public class Browser
      */
     public static void withPage(String page, Runnable task)
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(new PageScriptSessionFilter(serverContext, page), task);
+        withPage(getServerContext(), page, task);
     }
 
     /**
@@ -150,8 +161,13 @@ public class Browser
      */
     public static void withPage(ServerContext serverContext, String page, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(new PageScriptSessionFilter(serverContext, page), task);
+        currentServerContext.set(serverContext);
+        try {
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+            taskDispatcher.dispatchTask(new PageScriptSessionFilter(serverContext, page), task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -185,11 +201,7 @@ public class Browser
      */
     public static void withPageFiltered(String page, ScriptSessionFilter filter, Runnable task)
     {
-        ServerContext serverContext = ServerContextFactory.get();
-        ScriptSessionFilter pageFilter = new PageScriptSessionFilter(serverContext, page);
-        ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(realFilter, task);
+        withPageFiltered(getServerContext(), page, filter, task);
     }
 
     /**
@@ -201,10 +213,15 @@ public class Browser
      */
     public static void withPageFiltered(ServerContext serverContext, String page, ScriptSessionFilter filter, Runnable task)
     {
-        ScriptSessionFilter pageFilter = new PageScriptSessionFilter(serverContext, page);
-        ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(realFilter, task);
+        currentServerContext.set(serverContext);
+        try {
+            ScriptSessionFilter pageFilter = new PageScriptSessionFilter(serverContext, page);
+            ScriptSessionFilter realFilter = new AndScriptSessionFilter(pageFilter, filter);
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+            taskDispatcher.dispatchTask(realFilter, task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -219,8 +236,7 @@ public class Browser
      */
     public static void withSession(String sessionId, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(ServerContextFactory.get());
-        taskDispatcher.dispatchTask(new IdScriptSessionFilter(sessionId), task);
+        withSession(getServerContext(), sessionId, task);
     }
 
     /**
@@ -232,8 +248,13 @@ public class Browser
      */
     public static void withSession(ServerContext serverContext, String sessionId, Runnable task)
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
-        taskDispatcher.dispatchTask(new IdScriptSessionFilter(sessionId), task);
+        currentServerContext.set(serverContext);
+        try {
+            TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(serverContext);
+            taskDispatcher.dispatchTask(new IdScriptSessionFilter(sessionId), task);
+        } finally {
+            currentServerContext.remove();
+        }
     }
 
     /**
@@ -264,7 +285,7 @@ public class Browser
      */
     public static Collection<ScriptSession> getTargetSessions()
     {
-        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get();
+        TaskDispatcher taskDispatcher = TaskDispatcherFactory.get(getServerContext());
         Collection<ScriptSession> sessions = taskDispatcher.getTargetSessions();
         if (sessions != null)
         {
@@ -281,4 +302,23 @@ public class Browser
 
         throw new IllegalStateException("No current UI to manipulate. See org.directwebremoting.Browser to set one.");
     }
+
+    private static ServerContext getServerContext()
+    {
+        ServerContext servCtx = currentServerContext.get();
+        if (servCtx != null)
+        {
+            return servCtx;
+        }
+        else
+        {
+            return ServerContextFactory.get();
+        }
+    }
+
+    /**
+     * ThreadLocal in which the current ServerContext is stored.
+     */
+    private static final ThreadLocal<ServerContext> currentServerContext = new ThreadLocal<ServerContext>();
+
 }
