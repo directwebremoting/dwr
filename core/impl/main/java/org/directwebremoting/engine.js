@@ -516,15 +516,12 @@ if (typeof dwr == 'undefined') dwr = {};
     // Empty queue of waiting ordered requests
     dwr.engine._batchQueue.length = 0;
 
-    // Abort any ongoing XHRs and clear their batches
+    // Abort any ongoing requests and clear their batches
     var batch;
     for (var batchId in dwr.engine._batches) {
       batch = dwr.engine._batches[batchId];
-      // Only process objects that look like batches (avoid prototype additions!)
-      if (batch && batch.map) {
-        if (batch.req) {
-          batch.req.abort();
-        }
+      if (batch.transport && batch.transport.abort) {
+        batch.transport.abort();
       }
     }
 
@@ -1587,11 +1584,10 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     abort:function(batch) {
       var transport = batch.transport;
-      dwr.engine.transport.remove(batch);
       if (transport.abort) {
         transport.abort(batch);
       }
-      dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
+      dwr.engine.transport.remove(batch);
     },
 
     /**
@@ -2390,7 +2386,10 @@ if (typeof dwr == 'undefined') dwr = {};
       batch.preHooks = null;
       // Set a timeout
       if (batch.timeout && batch.timeout !== 0) {
-        batch.timeoutId = setTimeout(function() { dwr.engine.transport.abort(batch); }, batch.timeout);
+        batch.timeoutId = setTimeout(function() { 
+          dwr.engine.transport.abort(batch); 
+          dwr.engine._handleError(batch, { name:"dwr.engine.timeout", message:"Timeout" });
+        }, batch.timeout);
       }
     },
 
@@ -2528,10 +2527,12 @@ if (typeof dwr == 'undefined') dwr = {};
       }
 
       // TODO: co-locate all the functions that work on a set of batches
-      if (batch.map && (batch.map.batchId || batch.map.batchId === 0)) {
+      if (batch.map && (batch.map.batchId != null)) {
         delete dwr.engine._batches[batch.map.batchId];
         dwr.engine._batchesLength--;
       }
+      if (batch == dwr.engine._batch) dwr.engine._batch = null;
+      if (batch == dwr.engine._pollBatch) dwr.engine._pollBatch = null;
 
       // If there is anything on the queue waiting to go out, then send it.
       // We don't need to check for ordered mode, here because when ordered mode
