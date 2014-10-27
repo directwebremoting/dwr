@@ -70,6 +70,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
+        boolean scriptPrefixSent = false;
+
         try
         {
             CallBatch batch = new CallBatch(request);
@@ -103,11 +105,12 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             Calls calls = marshallInbound(batch);
 
             Replies replies = remoter.execute(calls);
+            scriptPrefixSent = true; // we can set this here as marshallOutbound will send prefix before throwing any exception
             marshallOutbound(replies, response);
         }
         catch (Exception ex)
         {
-            marshallException(request, response, ex);
+            marshallException(request, response, ex, !scriptPrefixSent);
         }
     }
 
@@ -381,7 +384,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Marshaller#marshallException(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Exception)
      */
-    public void marshallException(HttpServletRequest request, HttpServletResponse response, Exception ex) throws IOException
+    public void marshallException(HttpServletRequest request, HttpServletResponse response, Exception ex, boolean sendPrefix) throws IOException
     {
         response.setContentType(getOutboundMimeType());
         PrintWriter out = response.getWriter();
@@ -400,7 +403,10 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             log.warn("Exception while processing batch", ex);
         }
 
-        sendOutboundScriptPrefix(out, instanceId, batchId);
+        if (sendPrefix)
+        {
+            sendOutboundScriptPrefix(out, instanceId, batchId);
+        }
         String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batchId, ex);
         out.print(script);
         sendOutboundScriptSuffix(out, instanceId, batchId);
