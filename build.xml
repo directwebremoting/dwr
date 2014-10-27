@@ -416,8 +416,6 @@
 							<include name="**/*Test.java" />
 							<include name="**/Test*.java" />
 							<exclude name="**/YahooJSCompressorTest.java" />
-							<!-- In order to test this we need the jetty instance running, too complicated for now -->
-							<exclude name="**/DwrServletTest.java" />
 							<!-- Not actually a test case, just a utility for helping with JSON tests -->
 							<exclude name="**/TestUtil.java" />
 							<!-- Not actually a test case -->
