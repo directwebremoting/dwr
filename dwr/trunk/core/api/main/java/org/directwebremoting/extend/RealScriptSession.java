@@ -15,9 +15,8 @@
  */
 package org.directwebremoting.extend;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 
 /**
@@ -25,52 +24,34 @@ import org.directwebremoting.ScriptSession;
  * of ScriptSession. It includes methods required by the guts of DWR, that are
  * not needed by normal users.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Mike Wilson
  */
 public interface RealScriptSession extends ScriptSession
 {
     /**
-     * If this ScriptSession currently has a connected {@link ScriptConduit}
-     * and this conduit accepts and claims to be able to publish the script
-     * then publish and return true, otherwise return false.
-     * Add a script to the list waiting for remote execution.
-     * The version automatically wraps the string in a ClientScript object.
-     * @param script The script to execute
-     */
-    boolean addScriptImmediately(ScriptBuffer script);
-
-    /**
      * While a Marshaller is processing a request it can register a
-     * ScriptConduit with the ScriptSession to say - "pass scripts to me"
-     * <p>
-     * Several Marshallers may be active on the same page as a time and it
-     * doesn't really matter which gets the script. So ScriptSession should
-     * record all of the active ScriptConduits, but just pick one
-     * @param conduit The new ScriptConduit
-     * @throws IOException If the write to the output fails
-     * @see RealScriptSession#removeScriptConduit(ScriptConduit)
+     * Sleeper with the ScriptSession to say - "tell me when there is new data"
      */
-    void addScriptConduit(ScriptConduit conduit) throws IOException;
+    void setSleeper(Sleeper sleeper);
 
     /**
-     * Remove a ScriptConduit.
-     * @param conduit The ScriptConduit to remove
-     * @see RealScriptSession#addScriptConduit(ScriptConduit)
+     * Remove Sleeper.
      */
-    void removeScriptConduit(ScriptConduit conduit);
+    void clearSleeper(Sleeper sleeper);
 
     /**
-     * We might need to send a script directly to a conduit without adding the
-     * conduit to the "open" list and then removing it directly.
-     * @param conduit The conduit to write to
-     * @throws IOException If writing fails
+     * Get queued scripts starting from the supplied index.
+     * @param fromScriptIndex start index
+     * @return a Script instance containing the scripts
      */
-    void writeScripts(ScriptConduit conduit) throws IOException;
+    Scripts getScripts(long fromScriptIndex);
 
     /**
-     * Allows for checking to see if there is data waiting to be returned
-     * @return true if there are no waiting scripts
+     * Confirms that the client has received all scripts up to and including
+     * the supplied index so that script data may be purged.
+     * @param scriptIndex last index that can be purged
      */
-    boolean hasWaitingScripts();
+    void confirmScripts(long scriptIndex);
 
     /**
      * Called whenever a browser accesses this ScriptSession to ensure that the
@@ -91,9 +72,12 @@ public interface RealScriptSession extends ScriptSession
     String getWindowName();
 
     /**
-     * Are there any persistent {@link ScriptConduit}s currently connected to
-     * this session?
-     * @return The number of current persistent connections.
+     * Data class combining script list with offset.
+     * @author Mike Wilson
      */
-    int countPersistentConnections();
+    public static interface Scripts
+    {
+        long getScriptIndexOffset();
+        List<String> getScripts();
+    }
 }

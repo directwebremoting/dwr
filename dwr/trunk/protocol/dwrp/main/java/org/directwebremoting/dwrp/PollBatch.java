@@ -34,38 +34,14 @@ public class PollBatch extends Batch
     {
         super(request);
 
+        if (getNextReverseAjaxIndex() == null)
+        {
+            throw new IllegalArgumentException("A reverse ajax poll must specify nextReverseAjaxIndex.");
+        }
         debug = request.getHeader("User-Agent");
-        batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID, THROW);
-        instanceId = extractParameter(ProtocolConstants.INBOUND_KEY_INSTANCEID, THROW);
         String prString = extractParameter(ProtocolConstants.INBOUND_KEY_PARTIAL_RESPONSE, THROW);
         partialResponse = PartialResponse.fromOrdinal(prString);
     }
-
-    /**
-     * @return the batchId
-     */
-    public String getBatchId()
-    {
-        return batchId;
-    }
-
-    /**
-     * The ID of this batch from the browser
-     */
-    private final String batchId;
-
-    /**
-     * @return the instanceId
-     */
-    public String getInstanceId()
-    {
-        return instanceId;
-    }
-
-    /**
-     * The ID of the DWR instance in the browser
-     */
-    private final String instanceId;
 
     /**
      * @return the partialResponse

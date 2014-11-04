@@ -33,16 +33,15 @@ public class EnginePrivate
     public static String remoteBeginWrapper(String instanceId, boolean useWindowParent)
     {
         StringBuilder buf = new StringBuilder();
-        buf.append("(function(){\n");
-        buf.append("var _i=" + instanceId + ";\n");
+        buf.append("(function(){\r\n");
         if (useWindowParent)
         {
-            buf.append("var _r=window.parent.dwr._[" + instanceId + "];\n");
-            buf.append("try{\n");
+            buf.append("var dwr=window.parent.dwr._[" + instanceId + "];\r\n");
+            buf.append("try{");
         }
         else
         {
-            buf.append("var _r=window.dwr._[" + instanceId + "];\n");
+            buf.append("var dwr=window.dwr._[" + instanceId + "];");
         }
         return buf.toString();
     }
@@ -58,9 +57,9 @@ public class EnginePrivate
         StringBuilder buf = new StringBuilder();
         if (useWindowParent)
         {
-            buf.append("} catch(ex) {if (!(ex.number && ex.number == -2146823277)) { throw ex; }}\n");
+            buf.append("} catch(ex) {if (!(ex.number && ex.number == -2146823277)) { throw ex; }}\r\n");
         }
-        buf.append("})();\n");
+        buf.append("})();");
         return buf.toString();
     }
 
@@ -74,7 +73,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleCallbackScript(String batchId, String callId, Object data)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleCallback", batchId, callId, data);
+        script.appendCall("dwr.engine.remote.handleCallback", batchId, callId, data);
         return script;
     }
 
@@ -88,8 +87,22 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleExceptionScript(String batchId, String callId, Throwable ex)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleException", batchId, callId, ex);
+        script.appendCall("dwr.engine.remote.handleException", batchId, callId, ex);
         return script;
+    }
+
+    /**
+     * Call dwr.engine.remote.handleReverseAjax() in the browser
+     * @param scriptIndex
+     * @param script
+     */
+    public static String getRemoteHandleReverseAjaxScript(long scriptIndex, String script)
+    {
+        StringBuffer strbuf = new StringBuffer();
+        strbuf.append("dwr.engine.remote.handleReverseAjax(").append(scriptIndex).append(",function(){\r\n");
+        strbuf.append(script).append("\r\n");
+        strbuf.append("});");
+        return strbuf.toString();
     }
 
     /**
@@ -100,7 +113,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteHandleNewWindowNameScript(String windowName)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleNewWindowName", windowName);
+        script.appendCall("dwr.engine.remote.handleNewWindowName", windowName);
         return script;
     }
 
@@ -119,7 +132,7 @@ public class EnginePrivate
         params += ", '" + batchId + "'";
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
-        reply.append("_r.handleBatchException(").append(params).append(");\r\n");
+        reply.append("dwr.engine.remote.handleBatchException(").append(params).append(");");
 
         return reply.toString();
     }
@@ -133,7 +146,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteExecuteFunctionScript(String id, Object[] params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleFunctionCall", id, params);
+        script.appendCall("dwr.engine.remote.handleFunctionCall", id, params);
         return script;
     }
 
@@ -146,7 +159,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteExecuteObjectScript(String id, String methodName, Object[] params)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleObjectCall", id, methodName, params);
+        script.appendCall("dwr.engine.remote.handleObjectCall", id, methodName, params);
         return script;
     }
 
@@ -160,7 +173,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteSetObjectScript(String id, String propertyName, Object data)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleSetCall", id, propertyName, data);
+        script.appendCall("dwr.engine.remote.handleSetCall", id, propertyName, data);
         return script;
     }
 
@@ -172,7 +185,7 @@ public class EnginePrivate
     public static ScriptBuffer getRemoteCloseFunctionScript(String id)
     {
         ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("_r.handleFunctionClose", id);
+        script.appendCall("dwr.engine.remote.handleFunctionClose", id);
         return script;
     }
 
@@ -192,7 +205,7 @@ public class EnginePrivate
         }
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
-        reply.append("_r.pollCometDisabled(").append(params).append(");\r\n");
+        reply.append("dwr.engine.remote.pollCometDisabled(").append(params).append(");\r\n");
 
         return reply.toString();
     }
@@ -202,7 +215,7 @@ public class EnginePrivate
      */
     public static String remoteNewObjectFunction()
     {
-        return "_r.newObject";
+        return "dwr.engine.remote.newObject";
     }
 
     /**
@@ -214,7 +227,7 @@ public class EnginePrivate
     public static String xmlStringToJavascriptDomElement(String xml)
     {
         String xmlout = JavascriptUtil.escapeJavaScript(xml);
-        return "_r.toDomElement(\"" + xmlout + "\")";
+        return "dwr.engine.serialize.toDomElement(\"" + xmlout + "\")";
     }
 
     /**
@@ -226,7 +239,7 @@ public class EnginePrivate
     public static String xmlStringToJavascriptDomDocument(String xml)
     {
         String xmlout = JavascriptUtil.escapeJavaScript(xml);
-        return "_r.toDomDocument(\"" + xmlout + "\")";
+        return "dwr.engine.serialize.toDomDocument(\"" + xmlout + "\")";
     }
 
     /**
@@ -257,7 +270,7 @@ public class EnginePrivate
      */
     public static String remoteBeginIFrameResponse(String batchId, boolean useWindowParent)
     {
-        return "_r.beginIFrameResponse(this.frameElement"+(batchId == null?"":", '" + batchId+"'") + ");";
+        return "dwr.engine.transport.iframe.remote.beginIFrameResponse(this.frameElement"+(batchId == null?"":", '" + batchId+"'") + ");";
     }
 
     /**
@@ -270,7 +283,7 @@ public class EnginePrivate
      */
     public static String remoteEndIFrameResponse(String batchId, boolean useWindowParent)
     {
-        return "_r.endIFrameResponse("+(batchId == null?"":"'" + batchId+"'")+");";
+        return "dwr.engine.transport.iframe.remote.endIFrameResponse("+(batchId == null?"":"'" + batchId+"'")+");";
     }
 
     /**
@@ -281,25 +294,6 @@ public class EnginePrivate
      */
     public static String remoteEval(String script)
     {
-        // We need to define the "_r" redirector variable inside the eval as well
-        // as it can't access the global "_r" defined in the response closure.
-        return "_r._eval(\"var _r= dwr._ ? dwr._[\"+_i+\"] : window.dwr._[\"+_i+\"];" + JavascriptUtil.escapeJavaScript(script) + "\");";
-    }
-
-    /**
-     * Evade the 2 connection limit by sending scripts to the wrong window and
-     * having that use window.name to push it to the right window
-     * @param original The script that we wish to be proxied
-     * @param windowName The window to which we wish the window to be proxied
-     * @return A script to send to a different window to cause proxying
-     */
-    public static ScriptBuffer createForeignWindowProxy(String windowName, ScriptBuffer original)
-    {
-        String proxy = JavascriptUtil.escapeJavaScript(original.toString());
-
-        ScriptBuffer reply = new ScriptBuffer();
-        reply.appendCall("_r.handleForeign", windowName, proxy);
-        reply.appendData(proxy);
-        return reply;
+        return "dwr.engine._eval(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
     }
 }

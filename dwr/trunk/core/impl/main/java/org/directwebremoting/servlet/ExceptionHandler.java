@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.Handler;
-import org.directwebremoting.util.Continuation;
 
 /**
  * Handles an exception occurring during the request dispatching.
@@ -36,9 +35,6 @@ public class ExceptionHandler implements Handler
      */
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        // Allow Jetty RequestRetry exception to propagate to container
-        Continuation.rethrowIfContinuation(cause);
-
         log.warn("Error: " + cause);
         log.debug("Debug for stack trace:", cause);
 
@@ -58,7 +54,7 @@ public class ExceptionHandler implements Handler
             // Technically an IOException should work here, but Jetty appears to
             // throw an ArrayIndexOutOfBoundsException sometimes, if the browser
             // has gone away.
-            log.debug("Error in error handler, the browswer probably went away: " + ex);
+            log.debug("Error in error handler, the browser probably went away: " + ex);
         }
     }
 

@@ -15,42 +15,37 @@
  */
 package org.directwebremoting.extend;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
  * A Sleeper allows the request to halt and cease execution for some time,
  * while still allowing output.
- * <p>There are 3 envisaged implementations</p>
- * <ul>
- * <li>Old servlet stacks where the only option is to call
- * {@link Object#wait(long)} and {@link Object#notify()} to resume.</li>
- * <li>Jetty, where an Ajax Continuation causes an exception</li>
- * <li>Newer async servlets where the implementation will probably continue
- * with the servlet engine able to detect that it should not complete the
- * request.</li>
- * </ul>
  * <p>All implementations of Sleeper must be {@link Serializable} so we can
  * store Sleepers in the session and therefore have other connections wake them
  * up.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Mike Wilson
  */
 public interface Sleeper extends Serializable
 {
     /**
      * 'halt' the current execution in some way.
-     * This method should be the last meaningful thing that is done on a
-     * request, and work that needs to be done before completion should be
-     * done in a {@link Runnable} so the system can schedule it at an
-     * appropriate time.
-     * @param onAwakening The action to take when {@link #wakeUp()} is called
+     * This method should be the last meaningful thing that is done in a
+     * poll request to activate the Sleeper's background wait mechanism.
+     * @param onClose The action to take when {@link #wakeUpToClose()} is called
+     * @param disconnectedTime The waiting time to instruct the browser before the next poll
      */
-    void goToSleep(Runnable onAwakening);
+    void enterSleep(Runnable onClose, int disconnectedTime) throws IOException;
 
     /**
-     * This method should attempt to resume the execution.
-     * It is possible that this method will be called more than once at the
-     * same time so Sleepers should be prepared take steps to be woken only
-     * once.
+     * Wake up to handle new data that arrived in the associated ScriptSession.
      */
-    void wakeUp();
+    void wakeUpForData();
+
+    /**
+     * Wake up to close down the Sleeper and free any resources held by it.
+     * The previously supplied onClose callback will be executed.
+     */
+    void wakeUpToClose();
 }

@@ -55,7 +55,7 @@
 	<!-- The modules that we are working with -->
 	<property name="modules" value="
 		core/api, core/impl, core/legacy,
-		protocol/dwrp, protocol/json, protocol/bayeux,
+		protocol/dwrp, protocol/json,
 		serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
 		ui/dwr
 		" />
@@ -74,7 +74,7 @@
 	</target>
 
 	<target name="source" description="Create dwr-src.jar">
-		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json, protocol/bayeux,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various, ui/dwr" />
+		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various, ui/dwr" />
 		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
 		<jar destfile="${target.root}/dwr-src.jar" compress="true">
 			<fileset dir="${target.root}/sourcetree" />
@@ -182,7 +182,6 @@
 				<pathelement path="${source.root}/core/impl/main/java" />
 				<pathelement path="${source.root}/core/legacy/main/java" />
 				<pathelement path="${source.root}/noncla/various/main/java" />
-				<pathelement path="${source.root}/protocol/bayeux/main/java" />
 				<pathelement path="${source.root}/protocol/dwrp/main/java" />
 				<pathelement path="${source.root}/protocol/json/main/java" />
 				<pathelement path="${source.root}/serverside/guice/main/java" />

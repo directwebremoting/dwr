@@ -399,7 +399,13 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** Are we doing comet or polling? */
   dwr.engine._activeReverseAjax = false;
-
+  
+  /** All reverse ajax scripts before this index have been received and executed */
+  dwr.engine._nextReverseAjaxIndex = 0;
+  
+  /** Queue of reverse ajax scripts (functions) that have been received but not yet executed due to receiving in wrong order */
+  dwr.engine._reverseAjaxQueue = [];
+  
   /** The batch that we are using to poll */
   dwr.engine._pollBatch = null;
 
@@ -447,7 +453,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /** Do we stream, or can be hacked to do so? */
   dwr.engine._partialResponseNo = 0;
   dwr.engine._partialResponseYes = 1;
-  dwr.engine._partialResponseFlush = 2;
 
   /** Are we notifying the server on page unload? */
   dwr.engine._isNotifyServerOnPageUnload = false;
@@ -563,94 +568,66 @@ if (typeof dwr == 'undefined') dwr = {};
   }
 
   dwr.engine._initializer = {
+    /**
+     * Work out what type of browser we are working on
+     */
+    setCurrentBrowser: function() {
+      var userAgent = navigator.userAgent;
+      var versionString = navigator.appVersion;
+      var version = parseFloat(versionString);
+      dwr.engine.isOpera = (userAgent.indexOf("Opera") >= 0) ? version : 0;
+      dwr.engine.isKhtml = (versionString.indexOf("Konqueror") >= 0) || (versionString.indexOf("Safari") >= 0) ? version : 0;
+      dwr.engine.isSafari = (versionString.indexOf("Safari") >= 0) ? version : 0;
+      dwr.engine.isJaxerServer = (window.Jaxer && Jaxer.isOnServer);
 
-  /**
-   * Work out what type of browser we are working on
-   */
-  setCurrentBrowser: function() {
-    var userAgent = navigator.userAgent;
-    var versionString = navigator.appVersion;
-    var version = parseFloat(versionString);
-    dwr.engine.isOpera = (userAgent.indexOf("Opera") >= 0) ? version : 0;
-    dwr.engine.isKhtml = (versionString.indexOf("Konqueror") >= 0) || (versionString.indexOf("Safari") >= 0) ? version : 0;
-    dwr.engine.isSafari = (versionString.indexOf("Safari") >= 0) ? version : 0;
-    dwr.engine.isJaxerServer = (window.Jaxer && Jaxer.isOnServer);
+      var geckoPos = userAgent.indexOf("Gecko");
+      dwr.engine.isMozilla = ((geckoPos >= 0) && (!dwr.engine.isKhtml)) ? version : 0;
+      dwr.engine.isFF = 0;
+      dwr.engine.isIE = 0;
 
-    var geckoPos = userAgent.indexOf("Gecko");
-    dwr.engine.isMozilla = ((geckoPos >= 0) && (!dwr.engine.isKhtml)) ? version : 0;
-    dwr.engine.isFF = 0;
-    dwr.engine.isIE = 0;
-
-    try {
-      if (dwr.engine.isMozilla) {
-        dwr.engine.isFF = parseFloat(userAgent.split("Firefox/")[1].split(" ")[0]);
+      try {
+        if (dwr.engine.isMozilla) {
+          dwr.engine.isFF = parseFloat(userAgent.split("Firefox/")[1].split(" ")[0]);
+        }
+        if ((document.all) && (!dwr.engine.isOpera)) {
+          dwr.engine.isIE = parseFloat(versionString.split("MSIE ")[1].split(";")[0]);
+        }
       }
-      if ((document.all) && (!dwr.engine.isOpera)) {
-        dwr.engine.isIE = parseFloat(versionString.split("MSIE ")[1].split(";")[0]);
-      }
-    }
-    catch(ex) { }
-  },
+      catch(ex) { }
+    },
 
-  /*
-   * Load-time initializations
-   */
-  preInit: function() {
+    /*
+     * Load-time initializations
+     */
+    preInit: function() {
       // Make random local page id
       dwr.engine._pageId = dwr.engine.util.tokenify(new Date().getTime()) + "-" + dwr.engine.util.tokenify(Math.random() * 1E16);
 
       // Reuse any existing dwr session
-    dwr.engine.transport.updateDwrSessionFromCookie();
+      dwr.engine.transport.updateDwrSessionFromCookie();
 
-    // Register unload handlers
-    if (!dwr.engine.isJaxerServer) {
-      dwr.engine.util.addEventListener(window, 'beforeunload', dwr.engine._beforeUnloader);
-      dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
-    }
+      // Register unload handlers
+      if (!dwr.engine.isJaxerServer) {
+        dwr.engine.util.addEventListener(window, 'beforeunload', dwr.engine._beforeUnloader);
+        dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
+      }
 
-    // Set up a receiver context for this engine instance
-    var g = dwr.engine._global;
-    if (!g.dwr) {
-      g.dwr = {};
-    }
-    if (!g.dwr._) {
-      g.dwr._ = [];
-    }
-    dwr.engine._instanceId = g.dwr._.length;
-    g.dwr._[dwr.engine._instanceId] = {
-      handleCallback: dwr.engine.remote.handleCallback,
-      handleException: dwr.engine.remote.handleException,
-      handleNewWindowName: dwr.engine.remote.handleNewWindowName,
-      handleBatchException: dwr.engine.remote.handleBatchException,
-      handleFunctionCall: dwr.engine.remote.handleFunctionCall,
-      handleObjectCall: dwr.engine.remote.handleObjectCall,
-      handleSetCall: dwr.engine.remote.handleSetCall,
-      handleFunctionClose: dwr.engine.remote.handleFunctionClose,
-      handleObjectCall: dwr.engine.remote.handleObjectCall,
-      handleForeign: dwr.engine.remote.handleForeign,
-      pollCometDisabled: dwr.engine.remote.pollCometDisabled,
-      newObject: dwr.engine.remote.newObject,
-      toDomElement: dwr.engine.serialize.toDomElement,
-      toDomDocument: dwr.engine.serialize.toDomDocument,
-      beginIFrameResponse: dwr.engine.transport.iframe.remote.beginIFrameResponse,
-      endIFrameResponse: dwr.engine.transport.iframe.remote.endIFrameResponse,
-      _eval: dwr.engine._eval
-    };
-  },
+      // Register this engine instance globally
+      var g = dwr.engine._global;
+      if (!g.dwr) g.dwr = {};
+      if (!g.dwr._) g.dwr._ = [];
+      dwr.engine._instanceId = g.dwr._.length;
+      g.dwr._[dwr.engine._instanceId] = dwr;
+    },
 
-  init: function() {
-    dwr.engine._initializer.setCurrentBrowser();
-    dwr.engine._initializer.preInit();
-    // Run page init code as desired by server, if we are notifying the server on page load.
-    if (dwr.engine._isNotifyServerOnPageLoad) {
-      eval("${initCode}");
+    init: function() {
+      dwr.engine._initializer.setCurrentBrowser();
+      dwr.engine._initializer.preInit();
+      // Run page init code as desired by server, if we are notifying the server on page load.
+      if (dwr.engine._isNotifyServerOnPageLoad) {
+        eval("${initCode}");
+      }
     }
-  },
-
-  initForPushState: function() {
-    dwr.engine._dwrSessionId = null;
-    dwr.engine._initializer.init();
-  }
   };
 
   /**
@@ -703,17 +680,16 @@ if (typeof dwr == 'undefined') dwr = {};
     dwr.engine.transport.send(dwr.engine._pollBatch);
   };
 
-  /** @private This is a hack to make the context be this window */
-  dwr.engine._eval = function(script) {
-    if (script == null) {
+  /** @private Performing eval in separate function to avoid pulling local vars into eval's closure */
+  dwr.engine._eval = function($dwr$script) {
+    if ($dwr$script == null) {
       return null;
     }
-    if (script === "") {
+    if ($dwr$script === "") {
       dwr.engine._debug("Warning: blank script", true);
       return null;
     }
-    // dwr.engine._debug("Exec: [" + script + "]", true);
-    return eval(script);
+    return eval($dwr$script);
   };
 
   /** @private call all the post hooks for a batch */
@@ -1122,6 +1098,23 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     /**
+     * Called by the server when a new Reverse Ajax script arrives
+     */
+    handleReverseAjax:function(reverseAjaxIndex, reverseAjaxFunc) {
+      if (reverseAjaxIndex < dwr.engine._nextReverseAjaxIndex) return;
+      dwr.engine._reverseAjaxQueue[reverseAjaxIndex] = reverseAjaxFunc;
+      while(true) {
+        var nextFunc = dwr.engine._reverseAjaxQueue[dwr.engine._nextReverseAjaxIndex];
+        if (!nextFunc) return;
+        dwr.engine.util.logHandlerEx(function() {
+          nextFunc();
+        });
+        delete dwr.engine._reverseAjaxQueue[dwr.engine._nextReverseAjaxIndex];
+        dwr.engine._nextReverseAjaxIndex++;
+      }
+    },
+    
+    /**
      * Called by the server: The whole batch is broken
      * @private
      * @param {Object} ex The data about what broke
@@ -1142,26 +1135,6 @@ if (typeof dwr == 'undefined') dwr = {};
         dwr.engine._debug("- Warning: This will override existing name of: " + window.name);
       }
       window.name = windowName;
-    },
-
-    /**
-     * Execute some script in a different window
-     * @param {Object} windowName The name of the window in which to eval the script
-     * @param {Object} script The script to eval elsewhere
-     */
-    handleForeign:function(windowName, script) {
-      var foreign = window.open(null, windowName);
-      if (foreign != null) {
-        if (foreign.dwr != null) {
-          foreign.dwr.engine._eval(script);
-        }
-        else {
-          dwr.engine._debug("Found window, but DWR did not exist in it");
-        }
-      }
-      else {
-        dwr.engine._debug("Could not find window");
-      }
     },
 
     /**
@@ -2222,7 +2195,8 @@ if (typeof dwr == 'undefined') dwr = {};
         textHtmlHandler:null,
         globalTextHtmlHandler:dwr.engine._textHtmlHandler
       };
-
+      if (!dwr.engine._activeReverseAjax) batch.map.nextReverseAjaxIndex = dwr.engine._nextReverseAjaxIndex;
+      
       if (dwr.engine._preHook) {
         batch.preHooks.push(dwr.engine._preHook);
       }
@@ -2250,7 +2224,7 @@ if (typeof dwr == 'undefined') dwr = {};
           }
         }],
         isPoll:true,
-        map:{ windowName:window.name, callCount:1 },
+        map:{ windowName:window.name, callCount:1, nextReverseAjaxIndex:dwr.engine._nextReverseAjaxIndex},
         paramCount:0,
         path:dwr.engine._pathToDwrServlet,
         preHooks:[],

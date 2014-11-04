@@ -336,7 +336,6 @@ public class StartupUtil
     @SuppressWarnings("unchecked")
     public static void resolveMultipleImplementations(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
-        // Use DwrConstants to avoid rename if DWR repackaged (shaded)
     	try
     	{
             resolveMultipleImplementation(container, LocalUtil.originalDwrClassName("org.directwebremoting.dwrp.FileUpload"));
@@ -370,6 +369,7 @@ public class StartupUtil
                 ContainerAbstraction abstraction = abstractionImpl.newInstance();
                 if (abstraction.isNativeEnvironment(servletConfig))
                 {
+                    Loggers.STARTUP.info("Starting: Using container abstraction " + abstractionImplName);
                     container.addImplementation(ContainerAbstraction.class, abstractionImpl);
 
                     String loadMonitorImplName = container.getParameter(LocalUtil.originalDwrClassName(ServerLoadMonitor.class.getName()));
@@ -572,7 +572,6 @@ public class StartupUtil
      * @param servletConfig The servlet configuration (null to ignore)
      * @throws ContainerConfigurationException If we can't use a bean
      */
-    @SuppressWarnings("unchecked")
     public static void setupFromServletConfig(DefaultContainer container, ServletConfig servletConfig) throws ContainerConfigurationException
     {
         Enumeration<String> en = servletConfig.getInitParameterNames();
@@ -622,7 +621,6 @@ public class StartupUtil
      * @throws ParserConfigurationException If the config file parse fails
      * @throws IOException If the config file read fails
      */
-    @SuppressWarnings("unchecked")
     public static boolean configureFromInitParams(Container container, ServletConfig servletConfig) throws IOException, ParserConfigurationException, SAXException
     {
         Enumeration<String> en = servletConfig.getInitParameterNames();

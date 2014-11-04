@@ -35,7 +35,7 @@ public class TimedAlarm implements Alarm
     {
         if (waitTime == 0)
         {
-            sleeper.wakeUp();
+            sleeper.wakeUpToClose();
         }
         else
         {
@@ -43,7 +43,7 @@ public class TimedAlarm implements Alarm
             {
                 public void run()
                 {
-                    sleeper.wakeUp();
+                    sleeper.wakeUpToClose();
                 }
             };
 

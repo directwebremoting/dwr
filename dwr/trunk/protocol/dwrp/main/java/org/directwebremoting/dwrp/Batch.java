@@ -57,18 +57,7 @@ public class Batch
         {
             extraParameters = parsePost(request);
         }
-
-        scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
-        if (scriptSessionId.contains("/"))
-        {
-            dwrSessionId = scriptSessionId.substring(0, scriptSessionId.indexOf('/'));
-        }
-        else
-        {
-            dwrSessionId = "";
-        }
-        page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
-        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
+        parseParameters();
     }
 
     /**
@@ -82,7 +71,26 @@ public class Batch
         {
             this.parametersDebug = allParameters.toString();
         }
+        parseParameters();
+    }
 
+    private void parseParameters()
+    {
+        // Extract the batch id
+        batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID, THROW);
+        if (!LocalUtil.isLetterOrDigitOrUnderline(batchId))
+        {
+            throw new SecurityException("Batch IDs must be a number");
+        }
+
+        // Extract the instance id
+        instanceId = extractParameter(ProtocolConstants.INBOUND_KEY_INSTANCEID, THROW);
+        if (!LocalUtil.isLetterOrDigitOrUnderline(instanceId))
+        {
+            throw new SecurityException("Batch instance IDs must be a number");
+        }
+
+        // Extract scriptSessionId
         scriptSessionId = extractParameter(ProtocolConstants.INBOUND_KEY_SCRIPT_SESSIONID, THROW);
         if (scriptSessionId.contains("/"))
         {
@@ -92,7 +100,15 @@ public class Batch
         {
             dwrSessionId = "";
         }
-        page = extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW);
+
+        // Extract reverse ajax index (if present)
+        String nextReverseAjaxIndexStr = extractParameter(ProtocolConstants.INBOUND_KEY_NEXT_REVERSE_AJAX_INDEX, null);
+        if (nextReverseAjaxIndexStr != null)
+        {
+            nextReverseAjaxIndex = Long.parseLong(nextReverseAjaxIndexStr);
+        }
+
+        page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
         windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
 
@@ -193,7 +209,6 @@ public class Batch
      * @return a map of parsed parameters
      * @throws ServerException
      */
-    @SuppressWarnings("unchecked")
     private Map<String, FormField> parseBasicPost(HttpServletRequest req) throws ServerException
     {
         Map<String, FormField> paramMap;
@@ -359,7 +374,6 @@ public class Batch
      * @return Simply HttpRequest.getParameterMap() for now
      * @throws ServerException If the parsing fails
      */
-    @SuppressWarnings("unchecked")
     private Map<String, FormField> parseGet(HttpServletRequest req) throws ServerException
     {
         if (log.isDebugEnabled())
@@ -390,6 +404,45 @@ public class Batch
     }
 
     /**
+     * @return the batchId
+     */
+    public String getBatchId()
+    {
+        return batchId;
+    }
+
+    /**
+     * The ID of this batch from the browser
+     */
+    private String batchId;
+
+    /**
+     * @return the instanceId
+     */
+    public String getInstanceId()
+    {
+        return instanceId;
+    }
+
+    /**
+     * The ID of the DWR instance in the browser
+     */
+    private String instanceId;
+
+    /**
+     * @return the nextReverseAjaxIndex
+     */
+    public Long getNextReverseAjaxIndex()
+    {
+        return nextReverseAjaxIndex;
+    }
+
+    /**
+     * The next expected reverse ajax index in the browser
+     */
+    private Long nextReverseAjaxIndex;
+
+    /**
      * Is this request from a GET?
      * @return true if the request is a GET request
      */
@@ -414,7 +467,7 @@ public class Batch
     /**
      * The unique ID sent to the current page
      */
-    private final String scriptSessionId;
+    private String scriptSessionId;
 
     /**
      * @return the httpSessionId
@@ -427,7 +480,7 @@ public class Batch
     /**
      * The unique ID sent to the browser in the session cookie
      */
-    private final String dwrSessionId;
+    private String dwrSessionId;
 
     /**
      * @return the page
@@ -440,7 +493,7 @@ public class Batch
     /**
      * The page that the request was sent from
      */
-    private final String page;
+    private String page;
 
     /**
      * @return the window name
@@ -453,7 +506,7 @@ public class Batch
     /**
      * Window name is used by reverse ajax to get around the 2 connection limit
      */
-    private final String windowName;
+    private String windowName;
 
     /**
      * @return the spareParameters

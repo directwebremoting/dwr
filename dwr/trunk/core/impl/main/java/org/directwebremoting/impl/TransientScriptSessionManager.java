@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionListener;
+import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptSessionManager;
@@ -41,7 +42,7 @@ public class TransientScriptSessionManager implements ScriptSessionManager
      */
     public RealScriptSession getOrCreateScriptSession(String id, String page, String httpSessionId)
     {
-        return new TransientScriptSession(id, this, page);
+        return new DefaultScriptSession(id, this, page, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
@@ -124,6 +125,33 @@ public class TransientScriptSessionManager implements ScriptSessionManager
      * @see #setPageNormalizer(PageNormalizer)
      */
     protected PageNormalizer pageNormalizer;
+
+    /*
+     * Accessor for the ConverterManager that we configure
+     * @param converterManager
+     */
+    public void setConverterManager(ConverterManager converterManager)
+    {
+        this.converterManager = converterManager;
+    }
+
+    /**
+     * How we convert parameters
+     */
+    protected ConverterManager converterManager = null;
+
+    /**
+     * @param jsonOutput Are we outputting in JSON mode?
+     */
+    public void setJsonOutput(boolean jsonOutput)
+    {
+        this.jsonOutput = jsonOutput;
+    }
+
+    /**
+     * Are we outputting in JSON mode?
+     */
+    protected boolean jsonOutput = false;
 
     /**
      * Use of this attribute is currently discouraged, we may make this public

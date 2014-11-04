@@ -37,7 +37,6 @@ import org.directwebremoting.extend.Property;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
-import org.directwebremoting.util.Continuation;
 import org.directwebremoting.util.JavascriptUtil;
 import org.directwebremoting.util.LocalUtil;
 import org.directwebremoting.util.Loggers;
@@ -374,15 +373,11 @@ public class DefaultRemoter implements Remoter
         }
         catch (InvocationTargetException ex)
         {
-            // Allow Jetty RequestRetry exception to propagate to container
-            Continuation.rethrowIfContinuation(ex);
             writeExceptionToAccessLog(ex.getTargetException());
             return new Reply(call.getCallId(), null, ex.getTargetException());
         }
         catch (Exception ex)
         {
-            // Allow Jetty RequestRetry exception to propagate to container
-            Continuation.rethrowIfContinuation(ex);
             writeExceptionToAccessLog(ex);
             return new Reply(call.getCallId(), null, ex);
         }

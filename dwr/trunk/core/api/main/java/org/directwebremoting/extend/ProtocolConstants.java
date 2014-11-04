@@ -78,6 +78,11 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_SCRIPT_SESSIONID = "scriptSessionId";
 
     /**
+     * The parameter that specifies the next reverse ajax index
+     */
+    public static final String INBOUND_KEY_NEXT_REVERSE_AJAX_INDEX = "nextReverseAjaxIndex";
+
+    /**
      * The parameter that specifies the current page
      */
     public static final String INBOUND_KEY_PAGE = "page";

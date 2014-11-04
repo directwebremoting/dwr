@@ -16,19 +16,15 @@
 package org.directwebremoting.dwrp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ProtocolConstants;
-import org.directwebremoting.extend.ScriptBufferUtil;
-import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -39,30 +35,27 @@ import org.directwebremoting.util.MimeConstants;
  * and then poll, looking for new data into the iframe. The html tags should be
  * removed and script between script-start and script-end tags eval()ed.
  * <p>This conduit is useful for Firefox. It will not work as it stands with IE
- * 6/6 because they don't allow the browser to see data entering an iframe until
- * it overflows a 4k buffer. See the {@link Html4kScriptConduit} for a version
- * that works around this problem.
+ * 6/7 because they don't allow the browser to see data entering an iframe until
+ * it overflows a 4k buffer.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
 public class PlainScriptConduit extends BaseScriptConduit
 {
     /**
      * Simple ctor
-     * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public PlainScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public PlainScriptConduit(String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(sleeper, response, instanceId, batchId, converterManager, jsonOutput);
+        super(instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#preStreamSetup()
      */
-    @Override
-    protected String getOutboundMimeType()
+    public String getOutboundMimeType()
     {
         return MimeConstants.MIME_JS;
     }
@@ -70,40 +63,45 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
      */
-    @Override
-    public void beginStream()
+    public void sendBeginStream(PrintWriter out)
     {
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseScriptConduit#endStream()
+     * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
      */
-    @Override
-    public void endStream()
+    public void sendBeginChunk(PrintWriter out)
     {
+        out.println(ProtocolConstants.SCRIPT_START_MARKER);
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false));
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
-    @Override
-    public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, ConversionException
+    public void sendScript(PrintWriter out, String script) throws IOException, ConversionException
     {
-        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
-
-        synchronized (out)
-        {
-            if (log.isDebugEnabled()) {
-            	log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
-            }
-        	out.println(ProtocolConstants.SCRIPT_START_MARKER);
-            out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
-            out.println(script);
-            out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
-            out.println(ProtocolConstants.SCRIPT_END_MARKER);
-
-            return flush();
+        if (log.isDebugEnabled()) {
+            log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
         }
+        out.println(script);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptConduit#endChunk(java.io.PrintWriter)
+     */
+    public void sendEndChunk(PrintWriter out)
+    {
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
+        out.println(ProtocolConstants.SCRIPT_END_MARKER);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
+     */
+    public void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException
+    {
+        sendPollReply(out, timetoNextPoll);
     }
 
     /**

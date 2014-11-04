@@ -49,7 +49,7 @@ public class PlainCallHandler extends BaseCallHandler
                 out.println(scriptTagProtection);
             }
         }
-        out.print(EnginePrivate.remoteBeginWrapper(instanceId, false));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false));
     }
 
     /* (non-Javadoc)
@@ -58,7 +58,7 @@ public class PlainCallHandler extends BaseCallHandler
     @Override
     protected void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException
     {
-        out.print(EnginePrivate.remoteEndWrapper(instanceId, false));
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
     }
 
     /* (non-Javadoc)

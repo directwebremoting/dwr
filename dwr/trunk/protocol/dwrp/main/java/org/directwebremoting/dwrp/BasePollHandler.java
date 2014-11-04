@@ -18,16 +18,15 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ContainerAbstraction;
@@ -40,7 +39,6 @@ import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.OutputAlarm;
 import org.directwebremoting.impl.PollingServerLoadMonitor;
 import org.directwebremoting.impl.ShutdownAlarm;
 import org.directwebremoting.impl.TimedAlarm;
@@ -75,16 +73,15 @@ public class BasePollHandler extends BaseDwrpHandler
         // If you're new to understanding this file, you may wish to skip this
         // step and come back to it later ;-)
         // So Jetty does something a bit weird with Ajax Continuations. You
-        // suspend a request (which works via an exception) while keeping hold
+        // suspend a request while keeping hold
         // of a continuation object. There are methods on this continuation
-        // object to restart the request. Also you can write to the output at
+        // object to resume the request. Also you can write to the output at
         // any time the request is suspended. When the continuation is
-        // restarted, rather than restart the thread from where is was
-        // suspended, it starts it from the beginning again. Since we are able
-        // to write to the response outside of the servlet thread, there is no
-        // need for us to do anything if we have been restarted. So we ignore
-        // all Jetty continuation restarts.
-        if (containerAbstraction.isResponseCompleted(request))
+        // resumed, rather than resume the thread from where is was
+        // suspended, it starts it from the beginning again and will arrive
+        // here. Below we detect this and bail out after doing the work
+        // associated with the resumed request.
+        if (containerAbstraction.handleResumedRequest(request))
         {
             return;
         }
@@ -132,18 +129,16 @@ public class BasePollHandler extends BaseDwrpHandler
         // All scripts destined for a page go to a ScriptSession and then out
         // via a ScriptConduit.
         final RealScriptSession scriptSession = (RealScriptSession) webContext.getScriptSession();
-
-        // So we're going to go to sleep. How do we wake up?
-        Sleeper sleeper = containerAbstraction.createSleeper(request);
+        scriptSession.confirmScripts(batch.getNextReverseAjaxIndex() - 1);
 
         // Create a conduit depending on the type of request (from the URL)
-        final BaseScriptConduit conduit = createScriptConduit(sleeper, batch, response);
+        final BaseScriptConduit conduit = createScriptConduit(batch);
+
+        // So we're going to go to sleep. How do we wake up?
+        final Sleeper sleeper = containerAbstraction.createSleeper(request, response, scriptSession, conduit);
 
         // There are various reasons why we want to wake up and carry on ...
         final List<Alarm> alarms = new ArrayList<Alarm>();
-
-        // If the conduit has an error flushing data, it needs to give up
-        alarms.add(conduit);
 
         // Use of comet depends on the type of browser and the number of current
         // connections from this browser (detected by cookies)
@@ -154,61 +149,50 @@ public class BasePollHandler extends BaseDwrpHandler
         // For early closing mode add an output listener to the script session that calls the
         // "wake me" method on whatever is putting us to sleep - if the client
         // does not support streaming or streaming has not been configured.
+        final Sleeper proxiedSleeper;
         if (!canWeHaveFullStreaming) {
-    		int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
-            alarms.add(new OutputAlarm(sleeper, scriptSession, earlyCloseTimeout, executor));
-        }
-
-        if (clientSupportsLongRequests)
-        {
-            // Nasty 2 connection limit hack. How many times is this browser connected?
-            String httpSessionId = webContext.getSession(true).getId();
-            Collection<ScriptSession> sessions = scriptSessionManager.getScriptSessionsByHttpSessionId(httpSessionId);
-            int persistentConnections = 0;
-            for (ScriptSession session : sessions)
+    		final int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
+    		proxiedSleeper = new Sleeper()
             {
-                persistentConnections += ((RealScriptSession) session).countPersistentConnections();
-            }
-
-            int connectionLimit = BrowserDetect.getConnectionLimit(request);
-            if (persistentConnections + 1 >= connectionLimit)
-            {
-                clientSupportsLongRequests = false;
-
-                if (log.isDebugEnabled())
+                public void enterSleep(Runnable onClose, int disconnectedTime) throws IOException
                 {
-                    String uaStr = BrowserDetect.getUserAgentDebugString(request);
-                    log.debug("Persistent connections=" + persistentConnections + ". (limit=" + connectionLimit + " in " + uaStr + "). Polling");
+                    sleeper.enterSleep(onClose, disconnectedTime);
                 }
-            }
+                public void wakeUpForData()
+                {
+                    executor.schedule(new Runnable()
+                    {
+                        public void run()
+                        {
+                            sleeper.wakeUpToClose();
+                        }
+                    }, earlyCloseTimeout, TimeUnit.MILLISECONDS);
+                    sleeper.wakeUpForData();
+                }
+                public void wakeUpToClose()
+                {
+                    sleeper.wakeUpToClose();
+                }
+            };
+        } else {
+            proxiedSleeper = sleeper;
         }
-        else
-        {
-            log.debug("Browser does not support comet, polling");
-        }
-        // Set the system up to resume anyway after maxConnectedTime
-        ServerLoadMonitor slm = serverLoadMonitor;
-        long connectedTime = slm.getConnectedTime();
-        final int disconnectedTime = slm.getDisconnectedTime();
 
-        alarms.add(new TimedAlarm(sleeper, connectedTime, executor));
+        // Set the system up to resume anyway after maxConnectedTime
+        alarms.add(new TimedAlarm(proxiedSleeper, serverLoadMonitor.getConnectedTime(), executor));
 
         // We also need to wake-up if the server is being shut down
         // WARNING: This code has a non-obvious side effect - The server load
         // monitor (which hands out shutdown messages) also monitors usage by
         // looking at the number of connected alarms.
-        alarms.add(new ShutdownAlarm(sleeper, serverLoadMonitor));
+        alarms.add(new ShutdownAlarm(proxiedSleeper, serverLoadMonitor));
 
-        // Register the conduit with a script session so messages can get out.
-        // This must happen late on in this method because this will cause any
-        // scripts cached in the script session (because there was no conduit
-        // available when they were written) to be sent to the conduit.
-        // We need any AlarmScriptConduits to be notified so they can make
-        // maxWaitAfterWrite work for all cases
-        scriptSession.addScriptConduit(conduit);
+        // Register the sleeper with a script session so messages can get out.
+        scriptSession.setSleeper(proxiedSleeper);
 
-        // We need to do something sensible when we wake up ...
-        Runnable onAwakening = new Runnable()
+        // We need to do some stuff when time has come to close sleeper...
+        final int disconnectedTime = serverLoadMonitor.getDisconnectedTime();
+        Runnable onClose = new Runnable()
         {
             public void run()
             {
@@ -218,52 +202,33 @@ public class BasePollHandler extends BaseDwrpHandler
                     alarm.cancel();
                 }
 
-                // We can't be used as a conduit to the browser any more
-                scriptSession.removeScriptConduit(conduit);
-
-                // Tell the browser to come back at the right time
-                try
-                {
-                    conduit.close(disconnectedTime);
-                }
-                catch (IOException ex)
-                {
-                    log.warn("Failed to write reconnect info to browser");
-                }
+                // We can't be used as a sleeper for this session any longer
+                scriptSession.clearSleeper(proxiedSleeper);
             }
         };
 
         // Actually go to sleep. This *must* be the last thing in this method to
-        // cope with all the methods of affecting Threads. Jetty throws,
-        // Weblogic continues, others wait().
-        sleeper.goToSleep(onAwakening);
+        // cope with all the methods of affecting Threads.
+        sleeper.enterSleep(onClose, disconnectedTime);
     }
 
     /**
      * Create the correct type of ScriptConduit depending on the request.
      * @param batch The parsed request
-     * @param response Conduits need a response to write to
      * @return A correctly configured conduit
      * @throws IOException If the response can't be interrogated
      */
-    private BaseScriptConduit createScriptConduit(Sleeper sleeper, PollBatch batch, HttpServletResponse response) throws IOException
+    private BaseScriptConduit createScriptConduit(PollBatch batch) throws IOException
     {
         BaseScriptConduit conduit;
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
         }
         else
         {
-            if (batch.getPartialResponse() == PartialResponse.FLUSH)
-            {
-                conduit = new Html4kScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
-            }
-            else
-            {
-                conduit = new HtmlScriptConduit(sleeper, response, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
-            }
+            conduit = new HtmlScriptConduit(batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
         }
 
         return conduit;
@@ -288,9 +253,9 @@ public class BasePollHandler extends BaseDwrpHandler
         }
 
         out.println(ProtocolConstants.SCRIPT_START_MARKER);
-        out.print(EnginePrivate.remoteBeginWrapper(instanceId, !plain));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, !plain));
         out.println(script);
-        out.print(EnginePrivate.remoteEndWrapper(instanceId, !plain));
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, !plain));
         out.println(ProtocolConstants.SCRIPT_END_MARKER);
     }
 
