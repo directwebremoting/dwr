@@ -13,45 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.directwebremoting.server.jetty;
+package org.directwebremoting.server.servlet3;
+
+import java.io.IOException;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.directwebremoting.extend.ContainerAbstraction;
+import org.directwebremoting.extend.RealScriptSession;
+import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.ThreadDroppingServerLoadMonitor;
+import org.directwebremoting.impl.DefaultServerLoadMonitor;
+import org.directwebremoting.impl.ThreadWaitSleeper;
 
 /**
- * An abstraction of the servlet container that is specific to Jetty
+ * An abstraction of the servlet container that just follows the standards
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public class JettyContainerAbstraction implements ContainerAbstraction
+public class Servlet30ContainerAbstraction implements ContainerAbstraction
 {
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.ContainerAbstraction#isNativeEnvironment(javax.servlet.ServletConfig)
      */
     public boolean isNativeEnvironment(ServletConfig servletConfig)
     {
-        String serverInfo = servletConfig.getServletContext().getServerInfo();
-        if (serverInfo.startsWith("jetty"))
-        {
-            try
-            {
-                int version = Integer.parseInt(serverInfo.substring(6, 7));
-                if (version >= 6)
-                {
-                    return true;
-                }
-            }
-            catch (NumberFormatException ex)
-            {
-                // ignore
-            }
-        }
-
-        return false;
+        ServletContext ctx = servletConfig.getServletContext();
+        return ctx.getMajorVersion() >= 3 && ctx.getEffectiveMajorVersion() >= 3;
     }
 
     /* (non-Javadoc)
@@ -59,27 +50,26 @@ public class JettyContainerAbstraction implements ContainerAbstraction
      */
     public Class<? extends ServerLoadMonitor> getServerLoadMonitorImplementation()
     {
-        return ThreadDroppingServerLoadMonitor.class;
+        return DefaultServerLoadMonitor.class;
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ContainerAbstraction#isResponseCompleted(javax.servlet.http.HttpServletRequest)
      */
-    public boolean isResponseCompleted(HttpServletRequest request)
+    public boolean handleResumedRequest(HttpServletRequest request)
     {
-        if (JettyContinuationSleeper.isRestart(request))
-        {
-            JettyContinuationSleeper.restart(request);
-            return true;
-        }
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest)
+     * @see org.directwebremoting.extend.ContainerAbstraction#createSleeper(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.directwebremoting.extend.RealScriptSession, org.directwebremoting.extend.ScriptConduit)
      */
-    public Sleeper createSleeper(HttpServletRequest request)
+    public Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response, RealScriptSession scriptSession, ScriptConduit conduit) throws IOException
     {
-        return new JettyContinuationSleeper(request);
+        if (request.isAsyncSupported()) {
+            return new Servlet30Sleeper(request, response, scriptSession, conduit);
+        } else {
+            return new ThreadWaitSleeper(response, scriptSession, conduit);
+        }
     }
 }

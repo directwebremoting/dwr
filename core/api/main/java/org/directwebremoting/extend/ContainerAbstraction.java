@@ -15,8 +15,11 @@
  */
 package org.directwebremoting.extend;
 
+import java.io.IOException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * We need to keep container specific logic out of BasePollHandler, and other
@@ -49,12 +52,14 @@ public interface ContainerAbstraction
      * @param request The request that we might be finished with
      * @return true if the request is completed
      */
-    boolean isResponseCompleted(HttpServletRequest request);
+    boolean handleResumedRequest(HttpServletRequest request);
 
     /**
      * Create a sleeper that is appropriate for the given servlet container
      * @param request The Sleeper will probably need to know about the request
+     * @param scriptSession The Sleeper will probably need to know about the scriptSession
+     * @param conduit The Sleeper will probably need to know about the conduit
      * @return A method of sending threads to sleep.
      */
-    Sleeper createSleeper(HttpServletRequest request);
+    Sleeper createSleeper(HttpServletRequest request, HttpServletResponse response, RealScriptSession scriptSession, ScriptConduit conduit) throws IOException;
 }

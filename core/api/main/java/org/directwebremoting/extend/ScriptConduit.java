@@ -16,11 +16,9 @@
 package org.directwebremoting.extend;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletOutputStream;
-
-import org.directwebremoting.ConversionException;
-import org.directwebremoting.ScriptBuffer;
 
 /**
  * While a Marshaller is processing a request it can register a ScriptConduit
@@ -29,53 +27,26 @@ import org.directwebremoting.ScriptBuffer;
  * This interface allows this to happen.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public abstract class ScriptConduit implements Comparable<ScriptConduit>
+public interface ScriptConduit
 {
     /**
-     * All ScriptConduit need a rank
-     * @param rank How does this ScriptConduit sort
-     * @param holdingConnectionToBrowser Is this conduit a fake one for tracking
-     * things, or does it represent a real long term open connection?
+     * What mime type should we send to the browser for this data?
+     * @return A mime-type
      */
-    public ScriptConduit(int rank, boolean holdingConnectionToBrowser)
-    {
-        this.rank = rank;
-        this.holdingConnectionToBrowser = holdingConnectionToBrowser;
-    }
+    String getOutboundMimeType();
 
     /**
-     * ScriptConduits have a rank that indicates the priority order in which we
-     * should send scripts to them.
-     * The rank is a number from 1 to 10, and should only be one of the defined
-     * values: ScriptConduit.RANK_*.
-     * @see ScriptConduit#RANK_PROCEDURAL
-     * @see ScriptConduit#RANK_FAST
-     * @see ScriptConduit#RANK_SLOW
-     * @return The rank of this ScriptConduit
+     * Called when we are initially setting up the stream. This does not send
+     * any data to the client, just sets it up for data.
+     * <p>This method is always called exactly once in the lifetime of a
+     * conduit.
      */
-    public int getRank()
-    {
-        return rank;
-    }
+    void sendBeginStream(PrintWriter out);
 
     /**
-     * Indicates that this ScriptConduit is used for control-flow and will
-     * probably not actually convey the script, but does need to tell someone
-     * else about it
+     * Called before a each set of scripts that are to be sent.
      */
-    public static final int RANK_PROCEDURAL = 10;
-
-    /**
-     * Indicates that this ScriptConduit is a very good way of getting scripts
-     * to the client and should be used as a preferred method
-     */
-    public static final int RANK_FAST = 5;
-
-    /**
-     * Indicates that this ScriptConduit is a poor way of getting scripts to the
-     * client and should only be used as a last resort.
-     */
-    public static final int RANK_SLOW = 1;
+    void sendBeginChunk(PrintWriter out);
 
     /**
      * Add a script to the list bound for remote execution.
@@ -87,107 +58,19 @@ public abstract class ScriptConduit implements Comparable<ScriptConduit>
      * something like calling {@link ServletOutputStream#print(String)} and
      * passing in the results of calling ScriptBufferUtil.createOutput().
      * @param script The script to execute
-     * @return true if this ScriptConduit handled the script.
      * @throws IOException If this conduit is broken and should not be used
-     * @throws ConversionException If objects in the script can not be marshalled
      */
-    public abstract boolean addScript(ScriptBuffer script) throws IOException, ConversionException;
+    void sendScript(PrintWriter out, String script) throws IOException;
 
     /**
-     * Is this conduit a fake one for tracking things, or does it represent a
-     * real long term open connection?
+     * Called after each set of scripts when they have been sent.
      */
-    public boolean isHoldingConnectionToBrowser()
-    {
-        return holdingConnectionToBrowser;
-    }
+    void sendEndChunk(PrintWriter out);
 
     /**
-     * @see #isHoldingConnectionToBrowser()
+     * Called when we are shutting the stream down.
+     * The poll has finished, get the client to call us back
+     * @param timetoNextPoll How long before we tell the browser to come back?
      */
-    private boolean holdingConnectionToBrowser;
-
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @SuppressWarnings({"SubtractionInCompareTo", "NumericCastThatLosesPrecision"})
-    public int compareTo(ScriptConduit that)
-    {
-        int rankdiff = that.getRank() - this.getRank();
-        if (rankdiff != 0)
-        {
-            return rankdiff;
-        }
-
-        return (int) (this.id - that.id);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
-            return false;
-        }
-
-        if (obj == this)
-        {
-            return true;
-        }
-
-        if (!this.getClass().equals(obj.getClass()))
-        {
-            return false;
-        }
-
-        ScriptConduit that = (ScriptConduit) obj;
-        return this.id == that.id;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    @Override
-    public int hashCode()
-    {
-        return 17 + (int) id;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return getClass().getSimpleName() + "[id=" + id + "]";
-    }
-
-    /**
-     * The rank of this ScriptConduit
-     */
-    private int rank;
-
-    /**
-     * Our ID, to get around serialization issues
-     */
-    private final long id = getNextId();
-
-    /**
-     * Get the next unique ID in a thread safe way
-     * @return a unique id
-     */
-    private static synchronized long getNextId()
-    {
-        nextId++;
-        return nextId;
-    }
-
-    /**
-     * The next ID, to get around serialization issues
-     */
-    private static long nextId = 0L;
+    void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException;
 }

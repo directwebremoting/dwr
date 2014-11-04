@@ -32,13 +32,7 @@ public enum PartialResponse
     /**
      * The client can handle partial responses
      */
-    YES("1"),
-
-    /**
-     * The client can only handle partial responses with a 4k data post
-     * (can be whitespace) - we're talking IE here.
-     */
-    FLUSH("2");
+    YES("1");
 
     /**
      * @param id The string that the browser passes for this value
@@ -71,8 +65,7 @@ public enum PartialResponse
 
     /**
      * Convert a string from the web into a PartialResponse. The values are
-     * PARTIAL_RESPONSE_NO = "0", PARTIAL_RESPONSE_YES = "1" and
-     * PARTIAL_RESPONSE_FLUSH = "2"
+     * PARTIAL_RESPONSE_NO = "0", PARTIAL_RESPONSE_YES = "1"
      * @param lookupid The PartialResponse to look-up
      * @return a matching PartialResponse or null if one was not found
      */

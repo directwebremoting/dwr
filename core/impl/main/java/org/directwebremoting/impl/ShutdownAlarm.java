@@ -60,7 +60,7 @@ public class ShutdownAlarm implements Alarm
          */
         public void shutdown()
         {
-            sleeper.wakeUp();
+            sleeper.wakeUpToClose();
             shutdown = true;
         }
 

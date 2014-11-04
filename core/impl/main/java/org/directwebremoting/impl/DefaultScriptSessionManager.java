@@ -31,6 +31,7 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionEvent;
 import org.directwebremoting.event.ScriptSessionListener;
+import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.InitializingBean;
 import org.directwebremoting.extend.PageNormalizer;
 import org.directwebremoting.extend.RealScriptSession;
@@ -132,14 +133,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
     /**
      * Extension point allowing for custom implementations of the DefaultScriptSession.
-     * <p/>
-     * In case you may decide to provide your own implementation, please be
-     * aware of synchronization requirements for e.g.
-     * {@link org.directwebremoting.impl.DefaultScriptSession#scripts}. Synchronization
-     * examples can be found in
-     * {@link DefaultScriptSession#hasWaitingScripts()} or
-     * {@link org.directwebremoting.impl.DefaultScriptSession#addScriptConduit(org.directwebremoting.extend.ScriptConduit)}.
-     *
      * @param sentScriptId The script ID that was sent by the browser, and should
      * likely be used to create the DefaultScripSession.
      * @param page The page for which the scriptsession needs to be created.
@@ -148,7 +141,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected DefaultScriptSession createScriptSession(String sentScriptId, String page)
     {
-        return new DefaultScriptSession(sentScriptId, this, page);
+        return new DefaultScriptSession(sentScriptId, this, page, converterManager, jsonOutput);
     }
 
     /**
@@ -522,6 +515,33 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
             return reply;
         }
     }
+
+   /*
+    * Accessor for the ConverterManager that we configure
+    * @param converterManager
+    */
+   public void setConverterManager(ConverterManager converterManager)
+   {
+       this.converterManager = converterManager;
+   }
+
+   /**
+    * How we convert parameters
+    */
+   protected ConverterManager converterManager = null;
+
+   /**
+    * @param jsonOutput Are we outputting in JSON mode?
+    */
+   public void setJsonOutput(boolean jsonOutput)
+   {
+       this.jsonOutput = jsonOutput;
+   }
+
+   /**
+    * Are we outputting in JSON mode?
+    */
+   protected boolean jsonOutput = false;
 
     /**
      * @see #setScheduledThreadPoolExecutor(ScheduledThreadPoolExecutor)

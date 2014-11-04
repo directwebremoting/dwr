@@ -16,15 +16,10 @@
 package org.directwebremoting.dwrp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.directwebremoting.ConversionException;
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.extend.ScriptBufferUtil;
-import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.MimeConstants;
 
 /**
@@ -33,8 +28,7 @@ import org.directwebremoting.util.MimeConstants;
  * to include an 'execute-in-parent-context' wrapper.
  * <p>If this conduit is used, the output should be directed to an iframe. No
  * polling should be required.
- * <p>This conduit works with IE 6/7 since the 4k buffer drawback (see
- * {@link PlainScriptConduit} and {@link Html4kScriptConduit} does not prevent
+ * <p>This conduit works with IE 6/7 since the 4k buffer drawback does not prevent
  * the execution of script elements.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
@@ -42,76 +36,73 @@ public class HtmlScriptConduit extends BaseScriptConduit
 {
     /**
      * Simple ctor
-     * @param response Used to flush output
      * @param batchId The id of the batch that we are responding to
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public HtmlScriptConduit(Sleeper sleeper, HttpServletResponse response, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(sleeper, response, instanceId, batchId, converterManager, jsonOutput);
+        super(instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
      */
-    @Override
-    protected String getOutboundMimeType()
+    public String getOutboundMimeType()
     {
         return MimeConstants.MIME_HTML;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
+     * @see org.directwebremoting.extend.ScriptConduit#beginStream(java.io.PrintWriter)
      */
-    @Override
-    public void beginStream()
+    public void sendBeginStream(PrintWriter out)
     {
-        synchronized (out)
-        {
-            out.println("<html><body>");
-            out.println("<script type=\"text/javascript\">");
-            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
-            out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
-            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
-            out.println("</script>");
-        }
+        out.println("<html><body>");
+        out.println("<script type=\"text/javascript\">");
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+        out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
+        out.println("</script>");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseScriptConduit#endStream()
+     * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
      */
-    @Override
-    public void endStream()
+    public void sendBeginChunk(PrintWriter out)
     {
-        synchronized (out)
-        {
-            out.println("<script type=\"text/javascript\">");
-            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
-            out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
-            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
-            out.println("</script>");
-            out.println("</body></html>");
-        }
+        out.println("<script type=\"text/javascript\">");
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
+     * @see org.directwebremoting.extend.ScriptConduit#sendScript(java.io.PrintWriter, java.lang.String)
      */
-    @Override
-    public boolean addScript(ScriptBuffer scriptBuffer) throws IOException, ConversionException
+    public void sendScript(PrintWriter out, String script) throws IOException
     {
-        String script = ScriptBufferUtil.createOutput(scriptBuffer, converterManager, jsonOutput);
+        out.println(EnginePrivate.remoteEval(script));
+    }
 
-        synchronized (out)
-        {
-            out.println("<script type=\"text/javascript\">");
-            out.print(EnginePrivate.remoteBeginWrapper(instanceId, true));
-            out.println(EnginePrivate.remoteEval(script));
-            out.print(EnginePrivate.remoteEndWrapper(instanceId, true));
-            out.println("</script>");
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptConduit#endChunk(java.io.PrintWriter)
+     */
+    public void sendEndChunk(PrintWriter out)
+    {
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
+        out.println("</script>");
+    }
 
-            return flush();
-        }
+    /* (non-Javadoc)
+     * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
+     */
+    public void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException
+    {
+        sendPollReply(out, timetoNextPoll);
+        out.println("<script type=\"text/javascript\">");
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+        out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
+        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
+        out.println("</script>");
+        out.println("</body></html>");
     }
 }

@@ -6,7 +6,7 @@ import org.directwebremoting.event.ScriptSessionBindingEvent;
 import org.directwebremoting.event.ScriptSessionBindingListener;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class DefaultScriptSessionTest
 {
@@ -34,7 +34,7 @@ public class DefaultScriptSessionTest
     {
         MycoScriptSessionManager customManager = new MycoScriptSessionManager();
         ScriptSessionBindingListener listener = new MycoSuite(customManager);
-        scriptSession = new DefaultScriptSession("1234", customManager, "/myco");
+        scriptSession = new DefaultScriptSession("1234", customManager, "/myco", null, false);
 
         /**
          * Avoid any side effects. Directly add to map, as to simulate a longer
@@ -77,9 +77,9 @@ public class DefaultScriptSessionTest
 
         public boolean hasScriptSessions(ScriptSessionFilter filter)
         {
-            for (ScriptSession scriptSession : getAllScriptSessions())
+            for (ScriptSession scriptSess : getAllScriptSessions())
             {
-                if (filter.match(scriptSession))
+                if (filter.match(scriptSess))
                 {
                     return true;
                 }
@@ -97,7 +97,7 @@ public class DefaultScriptSessionTest
         /**
          * Fake ID
          */
-        private int id = 1;
+        private final int id = 1;
 
         public MycoSuite(MycoScriptSessionManager scriptSessionManager)
         {
@@ -130,7 +130,7 @@ public class DefaultScriptSessionTest
             });
         }
 
-        private MycoScriptSessionManager scriptSessionManager;
+        private final MycoScriptSessionManager scriptSessionManager;
     }
 
 }

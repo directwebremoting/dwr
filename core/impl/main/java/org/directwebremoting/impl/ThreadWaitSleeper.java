@@ -15,51 +15,76 @@
  */
 package org.directwebremoting.impl;
 
-import java.util.concurrent.CountDownLatch;
+import java.io.IOException;
 
-import org.directwebremoting.extend.Sleeper;
+import javax.servlet.http.HttpServletResponse;
+
+import org.directwebremoting.extend.RealScriptSession;
+import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * The simplest type of Sleeper that just uses {@link #wait()} and
- * {@link #notify()} to halt a Thread and restart it.
+ * {@link #notify()} to block a thread.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Mike Wilson
  */
-public class ThreadWaitSleeper implements Sleeper
+public class ThreadWaitSleeper extends BaseSleeper
 {
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Sleeper#goToSleep(java.lang.Runnable)
-     */
-    public void goToSleep(Runnable onAwakening)
+    public ThreadWaitSleeper(final HttpServletResponse response, final RealScriptSession scriptSession, final ScriptConduit conduit) throws IOException
     {
-        try
-        {
-            latch.await();
-        }
-        catch (InterruptedException ex)
-        {
-            // We could pass the exception up the tree, but different sleepers
-            // do very different things, when going to sleep (including
-            // returning immediately and throwing a continuation exception)
-            // So propagating the exception just confuses and already confusing
-            // situation, without achieving anything.
-            Thread.currentThread().interrupt();
-        }
-        finally
-        {
-            onAwakening.run();
+        super(response, scriptSession, conduit);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.impl.BaseSleeper#enterSleep()
+     */
+    @Override
+    protected void enterSleep()
+    {
+        while(true) {
+            synchronized (lock) {
+                while(!awaken && !closed) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException ex) {
+                        closed = true;
+                    }
+                }
+                if (closed) {
+                    break;
+                }
+                awaken = false;
+            }
+            doWork();
         }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.Sleeper#wakeUp()
+     * @see org.directwebremoting.impl.BaseSleeper#wakeUp()
      */
-    public void wakeUp()
+    @Override
+    protected void wakeUp()
     {
-        latch.countDown();
+        synchronized (lock) {
+            awaken = true;
+            lock.notify();
+        }
     }
 
-    /**
-     * Ensure that once woken up we don't sleep
+    /* (non-Javadoc)
+     * @see org.directwebremoting.impl.BaseSleeper#close()
      */
-    private final CountDownLatch latch = new CountDownLatch(1);
+    @Override
+    protected void close()
+    {
+        synchronized (lock) {
+            closed = true;
+            lock.notify();
+        }
+    }
+
+    // Internal state
+    private final Object lock = new Object();
+    private boolean awaken = false;
+    private boolean closed = false;
 }

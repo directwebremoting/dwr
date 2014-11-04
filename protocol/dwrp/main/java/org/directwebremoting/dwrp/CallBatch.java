@@ -48,18 +48,6 @@ public class CallBatch extends Batch
     }
 
     /**
-     * Ctor for the Bayeux client which doesn't have requests and responses
-     * @param allParameters A set of name value pairs
-     * @param get This this request come from a get request
-     * @throws SecurityException If the parameters can't be decoded
-     */
-    public CallBatch(Map<String, FormField> allParameters, boolean get)
-    {
-        super(allParameters, get);
-        parseParameters();
-    }
-
-    /**
      * Fish out the important parameters
      * @throws SecurityException If the parsing of input parameter fails
      */
@@ -82,21 +70,8 @@ public class CallBatch extends Batch
             throw new SecurityException("Too many calls in a batch");
         }
 
-        // Extract the batch id
-        String batchId = extractParameter(ProtocolConstants.INBOUND_KEY_BATCHID, THROW);
-        calls.setBatchId(batchId);
-        if (!LocalUtil.isLetterOrDigitOrUnderline(batchId))
-        {
-            throw new SecurityException("CallBatch IDs may only contain Java Identifiers");
-        }
-
-        // Extract the instance id
-        String instanceId = extractParameter(ProtocolConstants.INBOUND_KEY_INSTANCEID, THROW);
-        calls.setInstanceId(instanceId);
-        if (!LocalUtil.isLetterOrDigitOrUnderline(instanceId))
-        {
-            throw new SecurityException("CallBatch instance IDs may only contain Java Identifiers");
-        }
+        calls.setBatchId(getBatchId());
+        calls.setInstanceId(getInstanceId());
 
         // Extract the ids, script names and method names
         for (int callNum = 0; callNum < callCount; callNum++)
