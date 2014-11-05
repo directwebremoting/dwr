@@ -1997,6 +1997,7 @@ if (typeof dwr == 'undefined') dwr = {};
           }
         }, 100);
       }
+    },
 
     /**
      * Functions for remoting through Script Tags
