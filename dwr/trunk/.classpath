@@ -96,8 +96,6 @@
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="ui/gi/test/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="ui/gi/demo/java"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/gi/generated/java"/>
-	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/jaxer/main/java"/>
-	<classpathentry kind="src" output="target/eclipse/other/classes" path="ui/jaxer/customDemo/java"/>
 	<classpathentry kind="lib" path="core/impl/lib/joda-time-1.6.jar"/>
 	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api-2.0.2.jar"/>
 	<classpathentry kind="lib" path="noncla/various/lib/el-api.jar"/>
