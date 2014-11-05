@@ -73,7 +73,7 @@ public class PlainScriptConduit extends BaseScriptConduit
     public void sendBeginChunk(PrintWriter out)
     {
         out.println(ProtocolConstants.SCRIPT_START_MARKER);
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
     }
 
     /* (non-Javadoc)

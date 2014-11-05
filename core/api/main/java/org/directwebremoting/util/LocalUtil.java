@@ -593,7 +593,6 @@ public final class LocalUtil
         // The headers
         log.debug("Reconstituted HttpServletRequest:");
         log.debug(" " + requestLine);
-        @SuppressWarnings("unchecked")
         Enumeration<String> headerNames = request.getHeaderNames();
         for (String headerName : iterableizer(headerNames))
         {
@@ -645,7 +644,6 @@ public final class LocalUtil
 
         // The attributes
         log.debug("Attributes attached to the Request:");
-        @SuppressWarnings("unchecked")
         Enumeration<String> attributeNames = request.getAttributeNames();
         for (String attributeName : iterableizer(attributeNames))
         {
@@ -2042,6 +2040,18 @@ public final class LocalUtil
         else
         {
             resourcePathPrefix = "";
+        }
+    }
+
+    /**
+     * Find the leaf cause of an exception chain.
+     */
+    public static Throwable getRootCause(Throwable ex)
+    {
+        if (ex.getCause() == null) {
+            return ex;
+        } else {
+            return getRootCause(ex.getCause());
         }
     }
 

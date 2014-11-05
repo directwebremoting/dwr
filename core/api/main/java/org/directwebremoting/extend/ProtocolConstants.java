@@ -83,6 +83,11 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_NEXT_REVERSE_AJAX_INDEX = "nextReverseAjaxIndex";
 
     /**
+     * The parameter that specifies the client's document.domain setting if modified
+     */
+    public static final String INBOUND_KEY_DOCUMENT_DOMAIN = "documentDomain";
+
+    /**
      * The parameter that specifies the current page
      */
     public static final String INBOUND_KEY_PAGE = "page";

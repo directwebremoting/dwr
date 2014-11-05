@@ -119,7 +119,7 @@ public class BasePollHandler extends BaseDwrpHandler
         {
             log.error("Polling and Comet are disabled. To enable them set the init-param activeReverseAjaxEnabled to true. See http://getahead.org/dwr/server/servlet for more.");
             String script = EnginePrivate.getRemotePollCometDisabledScript(batch.getBatchId());
-            sendErrorScript(response, batch.getInstanceId(), script);
+            sendErrorScript(response, batch, script);
             return;
         }
 
@@ -228,7 +228,7 @@ public class BasePollHandler extends BaseDwrpHandler
         }
         else
         {
-            conduit = new HtmlScriptConduit(batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new HtmlScriptConduit(batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain(), converterManager, jsonOutput);
         }
 
         return conduit;
@@ -240,7 +240,7 @@ public class BasePollHandler extends BaseDwrpHandler
      * @param script The script to write
      * @throws IOException if writing fails.
      */
-    protected void sendErrorScript(HttpServletResponse response, String instanceId, String script) throws IOException
+    protected void sendErrorScript(HttpServletResponse response, Batch batch, String script) throws IOException
     {
         PrintWriter out = response.getWriter();
         if (plain)
@@ -253,9 +253,9 @@ public class BasePollHandler extends BaseDwrpHandler
         }
 
         out.println(ProtocolConstants.SCRIPT_START_MARKER);
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, !plain));
+        out.println(EnginePrivate.remoteBeginWrapper(batch.getInstanceId(), !plain, null));
         out.println(script);
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, !plain));
+        out.println(EnginePrivate.remoteEndWrapper(batch.getInstanceId(), !plain));
         out.println(ProtocolConstants.SCRIPT_END_MARKER);
     }
 
