@@ -191,7 +191,6 @@
 				<pathelement path="${source.root}/serverside/various/main/java" />
 				<pathelement path="${source.root}/serverside/webwork/main/java" />
 				<pathelement path="${source.root}/ui/dwr/main/java" />
-				<pathelement path="${source.root}/ui/jaxer/main/java" />
 			</sourcepath>
 			<classpath>
 				<pathelement location="${target.root}/classes/main" />
@@ -238,38 +237,6 @@
 			<include name="**/main/java/org/directwebremoting/engine.js" />
 			<include name="**/main/java/org/directwebremoting/ui/servlet/util.js" />
 		</jshint>
-	</target>
-
-	<!--=======================================================================-->
-	<target name="jaxer" depends="prepare" description="Create Jaxer output files">
-		<!-- Build the core jaxer modules -->
-		<property name="modules" value="
-			core/api, core/spi, core/convert, core/impl, core/legacy, core/util,
-			protocol/dwrp, protocol/json, ui/jaxer
-			" />
-		<build target="${target.root}/jaxer" include="" modules="${modules}" />
-		<!-- The 3 core outputs are a readme, jaxer-dwr.jar and a template web.xml -->
-		<copy file="${source.root}/ui/jaxer/readme.txt" todir="${target.root}/jaxer/" />
-		<jar destfile="${target.root}/jaxer/jaxer-dwr.jar" compress="true">
-			<fileset dir="${target.root}/jaxer/classes/main" />
-		</jar>
-		<copy file="${source.root}/ui/jaxer/customDemo/web/WEB-INF/web.xml" todir="${target.root}/jaxer/" />
-		<!-- Demo: Build an exploded jaxer demo war file, and zip it up -->
-		<property name="jaxer.demo.war" value="${target.root}/jaxer/web/ui/jaxer" />
-		<copy todir="${jaxer.demo.war}">
-			<fileset dir="${source.root}/ui/jaxer/customDemo/web" />
-		</copy>
-		<copy todir="${jaxer.demo.war}/WEB-INF/classes">
-			<fileset dir="${target.root}/jaxer/classes/demo" />
-		</copy>
-		<copy todir="${jaxer.demo.war}/WEB-INF/lib">
-			<fileset file="${target.root}/jaxer/jaxer-dwr.jar" />
-		</copy>
-		<zip destfile="${target.root}/jaxer/demoServer.war">
-			<fileset dir="${jaxer.demo.war}" />
-		</zip>
-		<!-- Demo: Build a zip of a file to stick into jaxer/public -->
-		<zip destfile="${target.root}/jaxer/demoRemoting.zip" basedir="${source.root}/ui/jaxer/customDemo/demoRemoting" />
 	</target>
 
 	<!--=======================================================================-->
