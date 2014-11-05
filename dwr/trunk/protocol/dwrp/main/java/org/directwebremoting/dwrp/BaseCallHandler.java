@@ -109,6 +109,16 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
         catch (Exception ex)
         {
+            if (debug)
+            {
+                if (LocalUtil.getRootCause(ex) instanceof IOException) {
+                    // TODO: log.debug("I/O error while processing batch", ex);
+                    log.warn("I/O error while processing batch (" + ex.getMessage() + ").");
+                } else {
+                    log.warn("Exception while processing batch", ex);
+                }
+            }
+
             marshallException(request, response, ex, !scriptPrefixSent);
         }
     }
@@ -321,7 +331,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
         }
 
         // Send the script prefix (if any)
-        sendOutboundScriptPrefix(out, replies.getCalls().getInstanceId(), replies.getCalls().getBatchId());
+        sendOutboundScriptPrefix(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain());
 
         if (batch.getNextReverseAjaxIndex() != null)
         {
@@ -396,24 +406,21 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     {
         response.setContentType(getOutboundMimeType());
         PrintWriter out = response.getWriter();
-        CallBatch batch = (CallBatch) request.getAttribute(ATTRIBUTE_BATCH);
+        Batch batch = (Batch) request.getAttribute(ATTRIBUTE_BATCH);
 
         String batchId = null;
         String instanceId = "0";
-        if (batch != null && batch.getCalls() != null)
+        String documentDomain = null;
+        if (batch != null)
         {
-            batchId = batch.getCalls().getBatchId();
-            instanceId = batch.getCalls().getInstanceId();
-        }
-
-        if (debug)
-        {
-            log.warn("Exception while processing batch", ex);
+            batchId = batch.getBatchId();
+            instanceId = batch.getInstanceId();
+            documentDomain = batch.getDocumentDomain();
         }
 
         if (sendPrefix)
         {
-            sendOutboundScriptPrefix(out, instanceId, batchId);
+            sendOutboundScriptPrefix(out, instanceId, batchId, documentDomain);
         }
         String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batchId, ex);
         out.println(script);
@@ -455,7 +462,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * @param batchId The batch identifier so we can prepare the environment
      * @throws IOException If the write fails
      */
-    protected abstract void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException;
+    protected abstract void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException;
 
     /**
      * iframe mode needs to get out of script mode

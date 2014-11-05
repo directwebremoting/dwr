@@ -30,17 +30,24 @@ public class EnginePrivate
      * @param useWindowParent should this alias target the same window or the parent window?
      * @return JavaScript snippet to be used by other remote calls
      */
-    public static String remoteBeginWrapper(String instanceId, boolean useWindowParent)
+    public static String remoteBeginWrapper(String instanceId, boolean useWindowParent, String documentDomain)
     {
         StringBuilder buf = new StringBuilder();
+        if (documentDomain != null && !documentDomain.equals("")) {
+            buf.append("document.domain='").append(documentDomain).append("';\r\n");
+        }
         buf.append("(function(){\r\n");
         if (useWindowParent)
         {
-            buf.append("var dwr=window.parent.dwr._[" + instanceId + "];\r\n");
-            buf.append("try{");
+        	// We need to protect from access exceptions f ex when a discarded
+        	// iframe receives data and IE6/7 complains about "freed script"
+            buf.append("try{\r\n");
+            buf.append("if(!window.parent.dwr)return;\r\n");
+            buf.append("var dwr=window.parent.dwr._[" + instanceId + "];");
         }
         else
         {
+            buf.append("if(!window.dwr)return;\r\n");
             buf.append("var dwr=window.dwr._[" + instanceId + "];");
         }
         return buf.toString();
@@ -57,7 +64,7 @@ public class EnginePrivate
         StringBuilder buf = new StringBuilder();
         if (useWindowParent)
         {
-            buf.append("} catch(ex) {if (!(ex.number && ex.number == -2146823277)) { throw ex; }}\r\n");
+            buf.append("}catch(e){}\r\n");
         }
         buf.append("})();");
         return buf.toString();
@@ -198,14 +205,14 @@ public class EnginePrivate
     {
         StringBuffer reply = new StringBuffer();
 
-        String params = "{ name:'dwr.engine.pollAndCometDisabled', message:'Polling and Comet are disabled. See the server logs.' }";
+        String params = "{name:'dwr.engine.pollAndCometDisabled',message:'Polling and Comet are disabled. See the server logs.'}";
         if (batchId != null)
         {
-            params += ", '" + batchId + "'";
+            params += ",'" + batchId + "'";
         }
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
-        reply.append("dwr.engine.remote.pollCometDisabled(").append(params).append(");\r\n");
+        reply.append("dwr.engine.remote.pollCometDisabled(").append(params).append(");");
 
         return reply.toString();
     }
@@ -270,7 +277,7 @@ public class EnginePrivate
      */
     public static String remoteBeginIFrameResponse(String batchId, boolean useWindowParent)
     {
-        return "dwr.engine.transport.iframe.remote.beginIFrameResponse(this.frameElement"+(batchId == null?"":", '" + batchId+"'") + ");";
+        return "dwr.engine.transport.iframe.remote.beginIFrameResponse(this.frameElement"+(batchId == null?"":",'" + batchId+"'") + ");";
     }
 
     /**

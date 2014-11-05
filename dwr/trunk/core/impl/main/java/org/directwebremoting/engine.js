@@ -348,7 +348,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._contextPath = "${contextPath}";
 
   /** Do we use XHR for reverse ajax because we are not streaming? */
-  dwr.engine._pollWithXhr = "${pollWithXhr}";
+  dwr.engine._useStreamingPoll = "${useStreamingPoll}";
 
   dwr.engine._pollOnline = true;
 
@@ -411,9 +411,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /** How many milliseconds between internal comet polls */
   dwr.engine._pollCometInterval = 200;
-
-  /** Default SSL secure URL used for iframe src */
-  dwr.engine.SSL_SECURE_URL = "about:blank";
 
   /** How many times have we re-tried a call? */
   dwr.engine._retries = 1;
@@ -491,6 +488,8 @@ if (typeof dwr == 'undefined') dwr = {};
     "$_dwrConversionRef": true
   };
 
+  dwr.engine._ieConditions = {};
+  
   /** Is this page doing beforeunload processing? */
   dwr.engine._beforeUnloading = false;
 
@@ -526,7 +525,7 @@ if (typeof dwr == 'undefined') dwr = {};
     for (var batchId in dwr.engine._batches) {
       batch = dwr.engine._batches[batchId];
       if (batch.transport && batch.transport.abort) {
-        batch.transport.abort();
+        batch.transport.abort(batch);
       }
     }
 
@@ -568,34 +567,6 @@ if (typeof dwr == 'undefined') dwr = {};
   }
 
   dwr.engine._initializer = {
-    /**
-     * Work out what type of browser we are working on
-     */
-    setCurrentBrowser: function() {
-      var userAgent = navigator.userAgent;
-      var versionString = navigator.appVersion;
-      var version = parseFloat(versionString);
-      dwr.engine.isOpera = (userAgent.indexOf("Opera") >= 0) ? version : 0;
-      dwr.engine.isKhtml = (versionString.indexOf("Konqueror") >= 0) || (versionString.indexOf("Safari") >= 0) ? version : 0;
-      dwr.engine.isSafari = (versionString.indexOf("Safari") >= 0) ? version : 0;
-      dwr.engine.isJaxerServer = (window.Jaxer && Jaxer.isOnServer);
-
-      var geckoPos = userAgent.indexOf("Gecko");
-      dwr.engine.isMozilla = ((geckoPos >= 0) && (!dwr.engine.isKhtml)) ? version : 0;
-      dwr.engine.isFF = 0;
-      dwr.engine.isIE = 0;
-
-      try {
-        if (dwr.engine.isMozilla) {
-          dwr.engine.isFF = parseFloat(userAgent.split("Firefox/")[1].split(" ")[0]);
-        }
-        if ((document.all) && (!dwr.engine.isOpera)) {
-          dwr.engine.isIE = parseFloat(versionString.split("MSIE ")[1].split(";")[0]);
-        }
-      }
-      catch(ex) { }
-    },
-
     /*
      * Load-time initializations
      */
@@ -607,10 +578,8 @@ if (typeof dwr == 'undefined') dwr = {};
       dwr.engine.transport.updateDwrSessionFromCookie();
 
       // Register unload handlers
-      if (!dwr.engine.isJaxerServer) {
-        dwr.engine.util.addEventListener(window, 'beforeunload', dwr.engine._beforeUnloader);
-        dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
-      }
+      dwr.engine.util.addEventListener(window, 'beforeunload', dwr.engine._beforeUnloader);
+      dwr.engine.util.addEventListener(window, 'unload', dwr.engine._unloader);
 
       // Register this engine instance globally
       var g = dwr.engine._global;
@@ -621,7 +590,6 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     init: function() {
-      dwr.engine._initializer.setCurrentBrowser();
       dwr.engine._initializer.preInit();
       // Run page init code as desired by server, if we are notifying the server on page load.
       if (dwr.engine._isNotifyServerOnPageLoad) {
@@ -959,10 +927,6 @@ if (typeof dwr == 'undefined') dwr = {};
         window.opera.postError(message);
         written = true;
       }
-      else if (window.Jaxer && Jaxer.isOnServer) {
-        Jaxer.Log.info(message);
-        written = true;
-      }
     }
     catch (ex) { /* ignore */ }
 
@@ -989,12 +953,9 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     handleCallback:function(batchId, callId, reply) {
       var batch = dwr.engine._batches[batchId];
-      if (batch == null) {
-        dwr.engine._debug("Warning: batch == null in remoteHandleCallback for batchId=" + batchId, true);
-        return;
-      }
+      if (!batch) return;
 
-      // We store the reply in the batch so that in sync mode we can return the data
+      // We store the reply in the batch so we can return the data when in sync mode
       batch.reply = reply;
 
       // Error handlers inside here indicate an error that is nothing to do
@@ -1065,10 +1026,7 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     handleException:function(batchId, callId, ex) {
       var batch = dwr.engine._batches[batchId];
-      if (batch == null) {
-        dwr.engine._debug("Warning: null batch in remoteHandleException", true);
-        return;
-      }
+      if (!batch) return;
 
       var handlers = batch.handlers[callId];
       batch.handlers[callId].completed = true;
@@ -1315,7 +1273,7 @@ if (typeof dwr == 'undefined') dwr = {};
      */
     convertArray:function(batch, directrefmap, otherrefmap, data, name, depth) {
       var childName, i;
-      if (dwr.engine.isIE <= 7) {
+      if (dwr.engine.util.ieCondition("if lte IE 7")) {
         // Use array joining on IE1-7 (fastest)
         var buf = ["array:["];
         for (i = 0; i < data.length; i++) {
@@ -1529,12 +1487,12 @@ if (typeof dwr == 'undefined') dwr = {};
         }
         batch.transport = dwr.engine.transport.iframe;
       }
-      else if (isCrossDomain && !dwr.engine.isJaxerServer) {
+      else if (isCrossDomain) {
         batch.transport = dwr.engine.transport.scriptTag;
       }
-      // else if (batch.isPoll && dwr.engine.isIE) {
-      //   batch.transport = dwr.engine.transport.htmlfile;
-      // }
+      else if (batch.isPoll && dwr.engine._useStreamingPoll == "true" && dwr.engine.util.ieCondition("if (IE 8)|(IE 9)")) {
+        batch.transport = dwr.engine.transport.iframe;
+      }
       else {
         batch.transport = dwr.engine.transport.xhr;
       }
@@ -1616,11 +1574,11 @@ if (typeof dwr == 'undefined') dwr = {};
           batch.map.partialResponse = dwr.engine._partialResponseYes;
         }
 
-        // Do proxies or IE force us to use early closing mode?
-        if (batch.isPoll && dwr.engine._pollWithXhr == "true") {
+        // Are we told to use early closing mode?
+        if (batch.isPoll && dwr.engine._useStreamingPoll == "false") {
           batch.map.partialResponse = dwr.engine._partialResponseNo;
         }
-        if (batch.isPoll && dwr.engine.isIE) {
+        if (batch.isPoll && dwr.engine.util.ieCondition("if lte IE 9")) {
           batch.map.partialResponse = dwr.engine._partialResponseNo;
         }
 
@@ -1704,6 +1662,7 @@ if (typeof dwr == 'undefined') dwr = {};
       stateChange:function(batch) {
         var toEval;
 
+        if (batch.aborted) return;
         if (batch.completed) {
           if (batch.transport) dwr.engine._debug("Error: _stateChange() with batch.completed");
           return;
@@ -1738,7 +1697,7 @@ if (typeof dwr == 'undefined') dwr = {};
           return;
         }
 
-        if (dwr.engine._unloading && !dwr.engine.isJaxerServer) {
+        if (dwr.engine._unloading) {
           dwr.engine._debug("Ignoring reply from server as page is unloading.");
           return;
         }
@@ -1746,7 +1705,7 @@ if (typeof dwr == 'undefined') dwr = {};
         try {
           var reply = req.responseText;
           reply = dwr.engine._replyRewriteHandler(reply);
-          var contentType = dwr.engine.util.getContentType(req, dwr.engine.isJaxerServer);
+          var contentType = req.getResponseHeader("Content-Type");
           if (status >= 200 && status < 300) {
             if (contentType.indexOf("text/plain") < 0 && contentType.indexOf("text/javascript") < 0) {
               if (contentType.indexOf("text/html") == 0) {
@@ -1860,6 +1819,7 @@ if (typeof dwr == 'undefined') dwr = {};
        */
       abort:function(batch) {
         if (batch.req) {
+          batch.aborted = true;
           batch.req.abort();
         }
       },
@@ -1899,21 +1859,27 @@ if (typeof dwr == 'undefined') dwr = {};
           batch.httpMethod = "POST";
           batch.encType = "multipart/form-data";
         }
+        batch.loadingStarted = false;
+        if (window.location.hostname != document.domain) batch.map.documentDomain = document.domain;
         var idname = dwr.engine.transport.iframe.getId(batch);
         batch.div1 = document.createElement("div");
-        batch.div1.innerHTML = "<iframe src='" + dwr.engine.SSL_SECURE_URL + "' frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
+        batch.div1.innerHTML = "<iframe frameborder='0' style='width:0px;height:0px;border:0;display:none;' id='" + idname + "' name='" + idname + "'></iframe>";
         batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
+          // Bail out if this is a premature load event (IE) 
+          if (!batch.loadingStarted) return;
           // Bail out if the batch was completed the normal way 
           if (batch.completed) return;
-          // Bail out if the frame hasn't navigated yet
-          var contentDoc = dwr.engine.util.getContentDocument(batch);
-          if (contentDoc.URL == dwr.engine.SSL_SECURE_URL) return;
           // The batch hasn't been completed the normal way, trigger a textHtmlReply error
+          try {
+            var contentDoc = batch.iframe.contentDocument || batch.iframe.contentWindow.document;
+          } catch(ex) {
+            var contentEx = ex; // may be caused by a HTML error page reply when document.domain is used
+          }
           if (typeof dwr != "undefined") {
-            var htmlResponse = contentDoc.documentElement ? contentDoc.documentElement.outerHTML : null;
+            var htmlResponse = contentDoc && contentDoc.documentElement ? contentDoc.documentElement.outerHTML : "(Could not extract HTML response: " + contentEx.message + ")";
             dwr.engine._handleError(batch, {name:"dwr.engine.textHtmlReply", message:"HTML reply from the server.", responseText:htmlResponse});
           }
         });
@@ -1938,11 +1904,6 @@ if (typeof dwr == 'undefined') dwr = {};
        * @param {Object} batch
        */
       beginLoader:function(batch, idname) {
-        var contentDocument = dwr.engine.util.getContentDocument(batch);
-        if (contentDocument.body === null) {
-          setTimeout(function(){dwr.engine.transport.iframe.beginLoader(batch, idname);}, 100);
-          return;
-        }
         if (batch.isPoll) {
           batch.map.partialResponse = dwr.engine._partialResponseYes;
         }
@@ -1985,6 +1946,7 @@ if (typeof dwr == 'undefined') dwr = {};
               }
             }
           }
+          batch.loadingStarted = true;
           batch.form.submit();
         }
       },
@@ -2036,59 +1998,6 @@ if (typeof dwr == 'undefined') dwr = {};
         }, 100);
       }
 
-      /*
-      // If we have an iframe comet solution where we need to read data streamed
-      // into an iframe then we need code like this to slurp the data out.
-      // Compare this with xhr.checkCometPoll()
-      outstandingIFrames:[],
-
-      checkCometPoll:function() {
-        for (var i = 0; i < dwr.engine.transport.iframe.outstandingIFrames.length; i++) {
-          var text = "";
-          var iframe = dwr.engine.transport.iframe.outstandingIFrames[i];
-          try {
-            text = dwr.engine.transport.iframe.getTextFromCometIFrame(iframe);
-          }
-          catch (ex) {
-            dwr.engine._handleWarning(iframe.batch, ex);
-          }
-          if (text != "") dwr.engine.transport.xhr.processCometResponse(text, iframe.batch);
-        }
-
-        if (dwr.engine.transport.iframe.outstandingIFrames.length > 0) {
-          setTimeout(dwr.engine.transport.iframe.checkCometPoll, dwr.engine._pollCometInterval);
-        }
-      }
-
-      // We probably also need to update dwr.engine.remote.beginIFrameResponse()
-      // to call checkCometPoll.
-
-      // Extract the whole (executed and all) text from the current iframe
-      getTextFromCometIFrame:function(frameEle) {
-        var body = frameEle.contentWindow.document.body;
-        if (body == null) return "";
-        var text = body.innerHTML;
-        // We need to prevent IE from stripping line feeds
-        if (text.indexOf("<PRE>") == 0 || text.indexOf("<pre>") == 0) {
-          text = text.substring(5, text.length - 7);
-        }
-        return text;
-      };
-
-      // And an addition to iframe.remove():
-      {
-        if (batch.iframe) {
-          // If this is a poll frame then stop comet polling
-          for (var i = 0; i < dwr.engine.transport.iframe.outstandingIFrames.length; i++) {
-            if (dwr.engine.transport.iframe.outstandingIFrames[i] == batch.iframe) {
-              dwr.engine.transport.iframe.outstandingIFrames.splice(i, 1);
-            }
-          }
-        }
-      }
-      */
-    },
-
     /**
      * Functions for remoting through Script Tags
      */
@@ -2117,6 +2026,7 @@ if (typeof dwr == 'undefined') dwr = {};
         });
         dwr.engine.util.addEventListener(batch.script, "readystatechange", function(ev) {
           if (typeof dwr != "undefined") {
+            if (batch.completed) return;
             if (batch.script.readyState == "complete" || batch.script.readyState == "loaded") {
               dwr.engine.transport.scriptTag.complete(batch);
             }
@@ -2431,7 +2341,7 @@ if (typeof dwr == 'undefined') dwr = {};
       else {
         // PERFORMANCE: for iframe mode this is thrown away.
         request.body = "";
-        if (dwr.engine.isIE <= 7) {
+        if (dwr.engine.util.ieCondition("if lte IE 7")) {
           // Use array joining on IE1-7 (fastest)
           var buf = [];
           for (prop in batch.map) {
@@ -2539,20 +2449,15 @@ if (typeof dwr == 'undefined') dwr = {};
       return returnValue;
     },
 
-    getContentType:function(req, isJaxerServer) {
-      var contentType = req.getResponseHeader("Content-Type");
-      if (isJaxerServer) {
-        // HACK! Jaxer does something b0rken with Content-Type
-        contentType = "text/javascript";
+    ieCondition:function(cond) {
+      if (!(cond in dwr.engine._ieConditions)) {
+        var div = document.createElement("div");
+        div.innerHTML = "<!--[" + cond + "]><p><![endif]-->";
+        dwr.engine._ieConditions[cond] = !!(div.getElementsByTagName("p").length);
       }
-      return contentType;
+      return dwr.engine._ieConditions[cond];
     },
-
-    getContentDocument:function(batch) {
-        // Versions of IE prior to 8 should use contentWindow;
-    	return batch.iframe.contentDocument || batch.iframe.contentWindow.document;
-    },
-
+    
     /**
      * Transform a number into a token string suitable for ids
      */

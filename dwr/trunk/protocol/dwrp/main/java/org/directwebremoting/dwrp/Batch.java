@@ -108,6 +108,9 @@ public class Batch
             nextReverseAjaxIndex = Long.parseLong(nextReverseAjaxIndexStr);
         }
 
+        // Extract document domain (if present)
+        documentDomain = extractParameter(ProtocolConstants.INBOUND_KEY_DOCUMENT_DOMAIN, null);
+
         page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
         windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
@@ -507,6 +510,19 @@ public class Batch
      * Window name is used by reverse ajax to get around the 2 connection limit
      */
     private String windowName;
+
+    /**
+     * @return the document domain
+     */
+    public String getDocumentDomain()
+    {
+        return documentDomain;
+    }
+
+    /**
+     * The document domain in effect on the page. Should be set in iframe remoting replies.
+     */
+    private String documentDomain;
 
     /**
      * @return the spareParameters

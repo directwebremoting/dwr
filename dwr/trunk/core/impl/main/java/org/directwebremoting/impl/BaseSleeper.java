@@ -26,6 +26,7 @@ import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
+import org.directwebremoting.util.LocalUtil;
 
 /**
  * Common functionality for stock Sleepers.
@@ -79,7 +80,7 @@ public abstract class BaseSleeper implements Sleeper
     }
 
     /**
-     * Should cause the doWork() method to be called on a background or 
+     * Should cause the doWork() method to be called on a background or
      * container thread.
      * (abstract method to be implemented by concrete Sleepers)
      */
@@ -88,8 +89,8 @@ public abstract class BaseSleeper implements Sleeper
     /**
      * This method should be called upon by the concrete Sleepers when they
      * are awakened by the wakeUp() call. They should guarantee that the call
-     * is made on a container or background thread (thus not blocking the 
-     * wakeUp() call) and that it is invoked by no more than a single thread 
+     * is made on a container or background thread (thus not blocking the
+     * wakeUp() call) and that it is invoked by no more than a single thread
      * at a time.
      */
     protected final void doWork()
@@ -115,7 +116,12 @@ public abstract class BaseSleeper implements Sleeper
             }
             sendNewScripts();
         } catch(Exception ex) {
-            log.warn("Poll ended unexpectedly (" + ex.getMessage() + ").");
+            if (LocalUtil.getRootCause(ex) instanceof IOException) {
+                // TODO: log.debug("Poll I/O error", ex);
+                log.warn("Poll I/O error (" + ex.getMessage() + ").");
+            } else {
+                log.error("Error during poll.", ex);
+            }
             closed = true;
             try {
                 sendEndStream();

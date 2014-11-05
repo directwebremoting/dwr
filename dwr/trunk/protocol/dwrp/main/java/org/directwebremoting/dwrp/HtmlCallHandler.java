@@ -40,12 +40,12 @@ public class HtmlCallHandler extends BaseCallHandler
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException
+    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException
     {
         synchronized (out)
         {
             out.println("<html><body><script type='text/javascript'>");
-            out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+            out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, documentDomain));
             out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
         }
     }

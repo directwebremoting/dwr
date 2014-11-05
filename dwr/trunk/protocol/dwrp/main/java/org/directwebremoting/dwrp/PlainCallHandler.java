@@ -40,7 +40,7 @@ public class PlainCallHandler extends BaseCallHandler
      * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
      */
     @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId) throws IOException
+    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException
     {
         if (!allowScriptTagRemoting)
         {
@@ -49,7 +49,7 @@ public class PlainCallHandler extends BaseCallHandler
                 out.println(scriptTagProtection);
             }
         }
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
     }
 
     /* (non-Javadoc)

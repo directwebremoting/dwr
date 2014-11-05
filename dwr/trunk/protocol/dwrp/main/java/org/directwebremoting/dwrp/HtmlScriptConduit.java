@@ -40,9 +40,10 @@ public class HtmlScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public HtmlScriptConduit(String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(String instanceId, String batchId, String documentDomain, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
         super(instanceId, batchId, converterManager, jsonOutput);
+        this.documentDomain = documentDomain;
     }
 
     /* (non-Javadoc)
@@ -60,7 +61,7 @@ public class HtmlScriptConduit extends BaseScriptConduit
     {
         out.println("<html><body>");
         out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, documentDomain));
         out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
         out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
         out.println("</script>");
@@ -72,7 +73,7 @@ public class HtmlScriptConduit extends BaseScriptConduit
     public void sendBeginChunk(PrintWriter out)
     {
         out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
     }
 
     /* (non-Javadoc)
@@ -99,10 +100,12 @@ public class HtmlScriptConduit extends BaseScriptConduit
     {
         sendPollReply(out, timetoNextPoll);
         out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true));
+        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
         out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
         out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
         out.println("</script>");
         out.println("</body></html>");
     }
+
+    private final String documentDomain;
 }

@@ -65,8 +65,8 @@ public class BaseEngineHandler extends FileJavaScriptHandler
 
         // Poll using XHR (to avoid IE clicking) if we close
         // the connection than 1sec after output happens.
-        String pollWithXhr = streaming ? "false" : "true";
-        replace.put("${pollWithXhr}", pollWithXhr);
+        String useStreamingPoll = streaming ? "true" : "false";
+        replace.put("${useStreamingPoll}", useStreamingPoll);
 
         // Setup paths
         replace.put("${contextPath}", contextPath);
