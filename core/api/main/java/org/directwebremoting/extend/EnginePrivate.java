@@ -64,6 +64,7 @@ public class EnginePrivate
         StringBuilder buf = new StringBuilder();
         if (useWindowParent)
         {
+            buf.append("dwr.engine.transport.iframe.remote.endChunk(window);\r\n");
             buf.append("}catch(e){}\r\n");
         }
         buf.append("})();");
