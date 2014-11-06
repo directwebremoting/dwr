@@ -404,7 +404,7 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._nextReverseAjaxIndex = 0;
   
   /** Queue of reverse ajax scripts (functions) that have been received but not yet executed due to receiving in wrong order */
-  dwr.engine._reverseAjaxQueue = [];
+  dwr.engine._reverseAjaxQueue = {};
   
   /** The batch that we are using to poll */
   dwr.engine._pollBatch = null;
@@ -1900,7 +1900,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
       /**
        * Setup a form or construct a src attribute to use the iframe.
-       * This is abstracted from send() because the same logic will do for htmlfile
        * @param {Object} batch
        */
       beginLoader:function(batch, idname) {
@@ -1962,6 +1961,22 @@ if (typeof dwr == 'undefined') dwr = {};
          * @param {int} batchId
          */
         beginIFrameResponse:function(iframe, batchId) {
+        },
+        
+        /**
+         * Called by the server: An IFrame script tag has completed
+         * @private
+         * @param {Object} iframe
+         */
+        endChunk:function(iframeWindow) {
+          setTimeout(function() {
+            // Delete the first script tag in the iframe
+            var scriptTags = iframeWindow.document.body.getElementsByTagName("script");
+            if (scriptTags.length > 0) {
+              var s = scriptTags[0];
+              s.parentNode.removeChild(s);
+            }
+          }, 0);
         },
 
         /**
@@ -2053,29 +2068,6 @@ if (typeof dwr == 'undefined') dwr = {};
         // Cleanup script tag
         batch.script.parentNode.removeChild(batch.script);
         batch.script = null;
-      }
-    },
-
-    /**
-     * Remoting through IE's htmlfile ActiveX control
-     */
-    htmlfile:{
-      /**
-       * Setup a batch for transfer through htmlfile
-       * @param {Object} batch The batch to alter for htmlfile transmit
-       */
-      send:function(batch) {
-        var idname = dwr.engine.transport.iframe.getId(batch);
-        batch.htmlfile = new window.ActiveXObject("htmlfile");
-        batch.htmlfile.open();
-        batch.htmlfile.write("<" + "html>");
-        batch.htmlfile.write("<div><iframe className='wibble' src='javascript:void(0)' id='" + idname + "' name='" + idname + "' onload='dwr.engine.transport.iframe.loadingComplete(" + batch.map.batchId + ");'></iframe></div>");
-        batch.htmlfile.write("</" + "html>");
-        batch.htmlfile.close();
-        batch.htmlfile.parentWindow.dwr = dwr;
-        batch.document = batch.htmlfile;
-
-        dwr.engine.transport.iframe.beginLoader(batch, idname);
       }
     }
   };
