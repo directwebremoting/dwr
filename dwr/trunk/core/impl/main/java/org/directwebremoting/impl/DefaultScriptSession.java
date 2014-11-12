@@ -303,6 +303,14 @@ public class DefaultScriptSession implements RealScriptSession
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSession#setPage(String)
+     */
+    public void setPage(String page)
+    {
+        this.page = page;
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSession#getPage()
      */
     public String getPage()
@@ -501,7 +509,7 @@ public class DefaultScriptSession implements RealScriptSession
     /**
      * The page being viewed.
      */
-    protected final String page;
+    protected String page;
 
     /**
      * We track window names to link script sessions together and to help
