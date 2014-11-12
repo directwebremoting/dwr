@@ -112,8 +112,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             if (debug)
             {
                 if (LocalUtil.getRootCause(ex) instanceof IOException) {
-                    // TODO: log.debug("I/O error while processing batch", ex);
-                    log.warn("I/O error while processing batch (" + ex.getMessage() + ").");
+                    log.debug("I/O error while processing batch", ex);
                 } else {
                     log.warn("Exception while processing batch", ex);
                 }
