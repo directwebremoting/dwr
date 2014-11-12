@@ -14,6 +14,7 @@
 package org.directwebremoting.impl;
 
 import org.directwebremoting.extend.WaitController;
+import org.directwebremoting.util.HitMonitor;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -22,55 +23,47 @@ import org.junit.Test;
 /**
  * @author matt conroy
  */
-public class ThrottlingServerLoadMonitorTest implements WaitController
+public class ThrottlingServerLoadMonitorTest extends ThrottlingServerLoadMonitor implements WaitController
 {
     private static ThrottlingServerLoadMonitor t;
 
     @BeforeClass
     public static void start() {
-        t = new ThrottlingServerLoadMonitor();
+        t = new ThrottlingServerLoadMonitorTest();
     }
 
     @Test
-    public void loadTest() throws InterruptedException {
-        checkMode(t.USAGE_LOW);
+    public void loadTest() {
+        checkMode(ThrottlingServerLoadMonitor.USAGE_LOW);
 
         // Simulate load.
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 10000; i++)
         {
             t.threadWaitStarting(this);
-        }
-        checkMode(t.USAGE_DIGG);
 
-        // TODO: This is about as much testing as we can do since the
-        // state changes are completely based on the number of hits per second.
-        // The only way that I can think of at the moment to test this better
-        // would be to open up additional methods of the Monitor which is
-        // probably not a good idea.
+            // For the sake of testing we need to run the load balancer every
+            // time through the loop.
+            t.lastLoadAdjust.set(System.currentTimeMillis() - t.secondsMonitored * 1000);
+        }
+
+        checkMode(ThrottlingServerLoadMonitor.USAGE_DIGG);
+
+        for (int i = 0; i < 10000; i++)
+        {
+            t.threadWaitEnding(this);
+        }
+
+        // Simulate no hits
+        hitMonitor = new HitMonitor(t.secondsMonitored);
+        t.lastLoadAdjust.set(System.currentTimeMillis() - t.secondsMonitored);
+        t.threadWaitStarting(this);
+        checkMode(ThrottlingServerLoadMonitor.USAGE_LOW);
+
+        // TODO More testing can be done with additional timing calculations.
     }
 
-    // TODO: I don't like having to check multiple times for the
-    // thread to run, but it is simple and does the job.
-    private void checkMode(int mode) throws InterruptedException {
-        // Give the thread some time to run.
-        // Gotta love multi processor boxes.
-        for (int i = 0; i < 3; i++)
-        {
-            synchronized(t.SERVER_SLEEP_LOCK) {
-                t.SERVER_SLEEP_LOCK.notify();
-            }
-            synchronized(t.SERVER_MONITOR_LOCK) {
-                t.SERVER_MONITOR_LOCK.notify();
-            }
-
-            if (t.getMode() == mode)
-            {
-                break;
-            }
-
-            Thread.sleep(100);
-        }
-        Assert.assertEquals(mode, t.getMode());
+    private void checkMode(int m) {
+        Assert.assertEquals(m, t.getMode());
     }
 
     @AfterClass
@@ -83,8 +76,6 @@ public class ThrottlingServerLoadMonitorTest implements WaitController
      */
     public void shutdown()
     {
-        // TODO Auto-generated method stub
-
     }
 
     /* (non-Javadoc)
@@ -92,7 +83,6 @@ public class ThrottlingServerLoadMonitorTest implements WaitController
      */
     public boolean isShutdown()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 }
