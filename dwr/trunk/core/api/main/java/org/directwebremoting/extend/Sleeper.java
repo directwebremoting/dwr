@@ -46,6 +46,7 @@ public interface Sleeper extends Serializable
     /**
      * Wake up to close down the Sleeper and free any resources held by it.
      * The previously supplied onClose callback will be executed.
+     * @return the disconnectedTime that will be sent to the client
      */
-    void wakeUpToClose();
+    int wakeUpToClose();
 }

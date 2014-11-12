@@ -332,6 +332,7 @@ public class DefaultScriptSession implements RealScriptSession
     public void updateLastAccessedTime()
     {
         lastAccessedTime = System.currentTimeMillis();
+        connectionValidationTime = 0; // reset connection validation
     }
 
     /**
@@ -348,8 +349,31 @@ public class DefaultScriptSession implements RealScriptSession
         long age = now - lastAccessedTime;
         if (age > manager.getScriptSessionTimeout())
         {
+            synchronized (sleeperLock) {
+                if (connectionValidationTime > 0 && now < connectionValidationTime) {
+                    // We are waiting for an already started connection validation so do nothing
+                    return;
+                } else if (connectionValidationTime == 0 && sleeper != null) {
+                    // Start a connection validation by closing the current poll
+                    int disconnectedTime = sleeper.wakeUpToClose();
+                    connectionValidationTime = now + disconnectedTime + connectionValidationTimeout;
+                    return;
+                }
+            }
+
+            // No ongoing connection validation and no connection (sleeper) so this is
+            // the end of the road
             invalidate();
         }
+    }
+
+    /**
+     * Set the time to wait for client to poll when asking for connection validation.
+     * @param connectionValidationTimeout
+     */
+    public void setConnectionValidationTimeout(int connectionValidationTimeout)
+    {
+        this.connectionValidationTimeout = connectionValidationTimeout;
     }
 
     /* (non-Javadoc)
@@ -425,6 +449,16 @@ public class DefaultScriptSession implements RealScriptSession
      * When the the web page that we represent last contact us using DWR?
      */
     private volatile long lastAccessedTime = 0L;
+
+    /**
+     * When > 0 we are waiting for the client until the set time to validate the connection by polling again
+     */
+    private volatile long connectionValidationTime = 0;
+
+    /**
+     * How long to wait for a client to poll when asking for connection validation
+     */
+    private int connectionValidationTimeout = 10000;
 
     /**
      * Have we been made invalid?

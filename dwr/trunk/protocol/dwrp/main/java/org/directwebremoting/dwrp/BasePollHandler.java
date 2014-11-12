@@ -169,9 +169,9 @@ public class BasePollHandler extends BaseDwrpHandler
                     }, earlyCloseTimeout, TimeUnit.MILLISECONDS);
                     sleeper.wakeUpForData();
                 }
-                public void wakeUpToClose()
+                public int wakeUpToClose()
                 {
-                    sleeper.wakeUpToClose();
+                    return sleeper.wakeUpToClose();
                 }
             };
         } else {

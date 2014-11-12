@@ -71,12 +71,13 @@ public abstract class BaseSleeper implements Sleeper
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Sleeper#wakeUpToClose()
      */
-    public final void wakeUpToClose()
+    public final int wakeUpToClose()
     {
         synchronized (lock) {
             closePending = true;
         }
         wakeUp();
+        return disconnectedTime;
     }
 
     /**
@@ -157,6 +158,7 @@ public abstract class BaseSleeper implements Sleeper
                         scripts.getScripts().get(i)));
             }
             conduit.sendEndChunk(out);
+
             // Flush and check errors
             out.flush();
             if (out.checkError())
@@ -164,8 +166,12 @@ public abstract class BaseSleeper implements Sleeper
                 throw new IOException("Stream write error");
             }
             response.flushBuffer();
+
             // Advance counter so we don't try to send the same scripts again
             nextScriptIndex = scripts.getScriptIndexOffset() + scripts.getScripts().size();
+
+            // If we got here without exceptions then writing was ok so we can update alive timestamp
+            scriptSession.updateLastAccessedTime();
         }
     }
 
