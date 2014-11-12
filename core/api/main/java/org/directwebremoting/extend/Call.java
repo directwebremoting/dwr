@@ -195,13 +195,25 @@ public class Call
                     it.remove();
                     continue allMethodsLoop;
                 }
+            }
+        }
 
-                /** Added to increase our ability to call overloaded methods accurately!
-                 * Is the inbound JavaScript type assignable to methodParamType?
-                 * We are limited to what JavaScript gives us (number, date, boolean, etc.)
-                 * We only want to performn this if there are multiple methods with the same name (hack for now).
-                 */
-                if (allMethods.size() > 1) {
+        // Added to increase our ability to call overloaded methods accurately!
+        // Is the inbound JavaScript type assignable to methodParamType?
+        // We are limited to what JavaScript gives us (number, date, boolean, etc.)
+        // We only want to performn this if there are multiple methods with the same name (hack for now).
+        if (allMethods.size() > 1) {
+            allMethodsLoop2:
+            for (Iterator<MethodDeclaration> it = allMethods.iterator(); it.hasNext();)
+            {
+                MethodDeclaration m = it.next();
+                Class<?>[] methodParamTypes = m.getParameterTypes();
+
+                // Remove methods where we can't convert the input
+                for (int i = 0; i < methodParamTypes.length; i++)
+                {
+                    Class<?> methodParamType = methodParamTypes[i];
+                    InboundVariable param = inctx.getParameter(callNum, i);
                     String javaScriptType = param.getType();
                     // If this method takes a vararg, the JavaScript type being passed is not
                     // an array, and this is the var argument we need to use the component type of the argument.
@@ -214,9 +226,8 @@ public class Call
                     if (!LocalUtil.isJavaScriptTypeAssignableTo(javaScriptType, methodParamType))
                     {
                         it.remove();
-                        continue allMethodsLoop;
+                        continue allMethodsLoop2;
                     }
-                    /** end overloaded section */
                 }
             }
         }
