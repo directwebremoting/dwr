@@ -72,6 +72,11 @@ public interface RealScriptSession extends ScriptSession
     String getWindowName();
 
     /**
+     * Set a new page for the ScriptSession (in case of HTML pushState)
+     */
+    void setPage(String page);
+
+    /**
      * Data class combining script list with offset.
      * @author Mike Wilson
      */

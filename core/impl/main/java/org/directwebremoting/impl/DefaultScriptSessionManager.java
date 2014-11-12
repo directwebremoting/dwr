@@ -114,8 +114,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                 String storedPage = scriptSession.getPage();
                 if (!storedPage.equals(page))
                 {
-                    Loggers.SESSION.error("Invalid Page: Passed page=" + page + ", but page in script session=" + storedPage);
-                    throw new SecurityException("Invalid Page");
+                    scriptSession.setPage(page);
                 }
             }
 
