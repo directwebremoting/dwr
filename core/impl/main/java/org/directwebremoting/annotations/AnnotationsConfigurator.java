@@ -286,7 +286,7 @@ public class AnnotationsConfigurator implements Configurator
         {
             StringBuilder properties = new StringBuilder();
             Class<?> superClazz = clazz;
-            while (superClazz != Object.class)
+            while (superClazz != null && superClazz != Object.class)
             {
                 for (Field field : superClazz.getDeclaredFields())
                 {
