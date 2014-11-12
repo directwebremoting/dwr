@@ -118,8 +118,7 @@ public abstract class BaseSleeper implements Sleeper
             sendNewScripts();
         } catch(Exception ex) {
             if (LocalUtil.getRootCause(ex) instanceof IOException) {
-                // TODO: log.debug("Poll I/O error", ex);
-                log.warn("Poll I/O error (" + ex.getMessage() + ").");
+                log.debug("Poll I/O error", ex);
             } else {
                 log.error("Error during poll.", ex);
             }
