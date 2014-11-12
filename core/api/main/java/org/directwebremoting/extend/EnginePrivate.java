@@ -36,17 +36,17 @@ public class EnginePrivate
         if (documentDomain != null && !documentDomain.equals("")) {
             buf.append("document.domain='").append(documentDomain).append("';\r\n");
         }
-        buf.append("(function(){\r\n");
         if (useWindowParent)
         {
         	// We need to protect from access exceptions f ex when a discarded
         	// iframe receives data and IE6/7 complains about "freed script"
             buf.append("try{\r\n");
-            buf.append("if(!window.parent.dwr)return;\r\n");
+            buf.append("if(window.parent.dwr){\r\n");
             buf.append("var dwr=window.parent.dwr._[" + instanceId + "];");
         }
         else
         {
+            buf.append("(function(){\r\n");
             buf.append("if(!window.dwr)return;\r\n");
             buf.append("var dwr=window.dwr._[" + instanceId + "];");
         }
@@ -65,9 +65,11 @@ public class EnginePrivate
         if (useWindowParent)
         {
             buf.append("dwr.engine.transport.iframe.remote.endChunk(window);\r\n");
+            buf.append("}\r\n");
             buf.append("}catch(e){}\r\n");
+        } else {
+            buf.append("})();");
         }
-        buf.append("})();");
         return buf.toString();
     }
 
@@ -300,8 +302,8 @@ public class EnginePrivate
      * @param script The script to modify
      * @return The modified script
      */
-    public static String remoteEval(String script)
+    public static String remoteExecute(String script)
     {
-        return "dwr.engine._eval(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
+        return "dwr.engine._executeScript(\"" + JavascriptUtil.escapeJavaScript(script) + "\");";
     }
 }

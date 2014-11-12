@@ -648,16 +648,17 @@ if (typeof dwr == 'undefined') dwr = {};
     dwr.engine.transport.send(dwr.engine._pollBatch);
   };
 
-  /** @private Performing eval in separate function to avoid pulling local vars into eval's closure */
-  dwr.engine._eval = function($dwr$script) {
-    if ($dwr$script == null) {
+  /** @private Utility to execute incoming scripts */
+  dwr.engine._executeScript = function(script) {
+    if (script == null) {
       return null;
     }
-    if ($dwr$script === "") {
+    if (script === "") {
       dwr.engine._debug("Warning: blank script", true);
       return null;
     }
-    return eval($dwr$script);
+    // Using Function instead of eval as the latter has memory problems on IE9
+    (new Function("dwr", script))(dwr);
   };
 
   /** @private call all the post hooks for a batch */
@@ -1741,7 +1742,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
         // Outside of the try/catch so errors propagate normally:
         if (toEval != null) toEval = toEval.replace(dwr.engine._scriptTagProtection, "");
-        dwr.engine._eval(toEval);
+        dwr.engine._executeScript(toEval);
         dwr.engine.transport.complete(batch);
       },
 
@@ -1803,7 +1804,7 @@ if (typeof dwr == 'undefined') dwr = {};
         var exec = response.substring(firstStartTag + 13, lastEndTag);
 
         try {
-          dwr.engine._eval(exec);
+          dwr.engine._executeScript(exec);
         }
         catch (ex) {
           // This is one of these annoying points where we might be executing

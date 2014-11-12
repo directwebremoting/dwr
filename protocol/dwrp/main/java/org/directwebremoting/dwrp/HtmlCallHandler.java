@@ -72,7 +72,7 @@ public class HtmlCallHandler extends BaseCallHandler
     {
         synchronized (out)
         {
-            out.println(EnginePrivate.remoteEval(script));
+            out.println(EnginePrivate.remoteExecute(script));
         }
     }
 }
