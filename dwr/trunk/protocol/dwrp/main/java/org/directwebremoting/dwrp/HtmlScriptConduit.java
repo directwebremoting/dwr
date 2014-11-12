@@ -81,7 +81,7 @@ public class HtmlScriptConduit extends BaseScriptConduit
      */
     public void sendScript(PrintWriter out, String script) throws IOException
     {
-        out.println(EnginePrivate.remoteEval(script));
+        out.println(EnginePrivate.remoteExecute(script));
     }
 
     /* (non-Javadoc)
