@@ -68,11 +68,6 @@
       <param-value>false</param-value>
     </init-param>
 
-    <!--
-    For more information on these parameters, see:
-    - http://getahead.org/dwr/server/servlet
-    - http://getahead.org/dwr/reverse-ajax/configuration
-    -->
     <load-on-startup>1</load-on-startup>
   </servlet>
    
