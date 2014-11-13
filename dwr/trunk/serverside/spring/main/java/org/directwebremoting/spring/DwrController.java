@@ -254,7 +254,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
     /**
      * Additional parameters such as pollAndCometEnabled. For a full list see:
-     * <a href="http://getahead.org/dwr/server/servlet">http://getahead.org/dwr/server/servlet</a>
      * @param configParams the configParams to set
      */
     public void setConfigParams(Map<String, String> configParams)
@@ -311,7 +310,6 @@ public class DwrController extends AbstractController implements BeanNameAware, 
 
     /**
      * Additional parameters such as pollAndCometEnabled. For a full list see:
-     * <a href="http://getahead.org/dwr/server/servlet">http://getahead.org/dwr/server/servlet</a>
      */
     private Map<String, String> configParams = new HashMap<String, String>();
 

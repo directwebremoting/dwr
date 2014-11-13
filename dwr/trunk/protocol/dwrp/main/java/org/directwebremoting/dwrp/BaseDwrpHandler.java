@@ -35,7 +35,7 @@ public abstract class BaseDwrpHandler implements Handler
     {
         if (!allowGetForSafariButMakeForgeryEasier && batch.isGet())
         {
-            log.error("GET is disallowed because it makes request forgery easier. See http://getahead.org/dwr/security/allowGetForSafariButMakeForgeryEasier for more details.");
+            log.error("GET is disallowed because it makes request forgery easier. See allowGetForSafariButMakeForgeryEasier setting for more details.");
             throw new SecurityException("GET Disallowed");
         }
     }

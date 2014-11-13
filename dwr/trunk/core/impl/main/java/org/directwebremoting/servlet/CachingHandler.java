@@ -140,7 +140,7 @@ public abstract class CachingHandler implements Handler
             // Servlet spec says container can throw IllegalArgumentException
             // if header value can not be parsed as http-date.
             // We might want to check for "; length=" and then do our own parsing
-            // See: http://getahead.org/bugs/browse/DWR-20
+            // See: bug DWR-20
             // And: http://www-1.ibm.com/support/docview.wss?uid=swg1PK20062
         }
 

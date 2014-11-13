@@ -117,7 +117,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)
         {
-            log.error("Polling and Comet are disabled. To enable them set the init-param activeReverseAjaxEnabled to true. See http://getahead.org/dwr/server/servlet for more.");
+            log.error("Polling and Comet are disabled. To enable them set the init-param activeReverseAjaxEnabled to true.");
             String script = EnginePrivate.getRemotePollCometDisabledScript(batch.getBatchId());
             sendErrorScript(response, batch, script);
             return;

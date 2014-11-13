@@ -77,7 +77,6 @@ public class Engine extends ScriptProxy
     /**
      * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
      * @param timeout The time to wait in milliseconds
-     * @see <a href="http://getahead.org/dwr/browser/engine/errors">Error handling documentation</a>
      */
     public void setTimeout(int timeout)
     {
@@ -91,7 +90,6 @@ public class Engine extends ScriptProxy
     /**
      * Set the preferred remoting type.
      * @param newType One of dwr.engine.XMLHttpRequest or dwr.engine.IFrame or dwr.engine.ScriptTag
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setRpcType(int newType)
     {
@@ -105,7 +103,6 @@ public class Engine extends ScriptProxy
     /**
      * Which HTTP method do we use to send results? Must be one of "GET" or "POST".
      * @param httpMethod One of {@link #XMLHttpRequest}, {@link #IFrame} or {@link #ScriptTag}
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setHttpMethod(String httpMethod)
     {
@@ -119,7 +116,6 @@ public class Engine extends ScriptProxy
     /**
      * Ensure that remote calls happen in the order in which they were sent? (Default: false)
      * @param ordered True to set call ordering.
-     * @see <a href="http://getahead.org/dwr/browser/engine/ordering">Ordering documentation</a>
      */
     public void setOrdered(boolean ordered)
     {
@@ -133,7 +129,6 @@ public class Engine extends ScriptProxy
     /**
      * Do we ask the XHR object to be asynchronous? (Default: true)
      * @param async False to become synchronous (not recommended)
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setAsync(boolean async)
     {
@@ -147,7 +142,6 @@ public class Engine extends ScriptProxy
     /**
      * Does DWR poll the server for updates? (Default: false)
      * @param activeReverseAjax True/False to turn RA on/off
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setActiveReverseAjax(boolean activeReverseAjax)
     {
@@ -161,7 +155,6 @@ public class Engine extends ScriptProxy
     /**
      * Does DWR us comet polling? (Default: true)
      * @param pollComet True/False to use Comet where supported
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setPollUsingComet(boolean pollComet)
     {
@@ -175,7 +168,6 @@ public class Engine extends ScriptProxy
     /**
      * Set the preferred polling type.
      * @param newPollType One of {@link #XMLHttpRequest}, {@link #IFrame} or {@link #ScriptTag}
-     * @see <a href="http://getahead.org/dwr/browser/engine/options">Options documentation</a>
      */
     public void setPollType(int newPollType)
     {

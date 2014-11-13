@@ -25,7 +25,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
     * Set an alternative error handler from the default alert box.
     * @param {Function} handler The function to call when an error happens
-    * @see http://getahead.org/dwr/browser/engine/errors
     */
   dwr.engine.setErrorHandler = function(handler) {
     dwr.engine._errorHandler = handler;
@@ -34,7 +33,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
     * Set an alternative warning handler from the default alert box.
     * @param {Function} handler The function to call when a warning happens
-    * @see http://getahead.org/dwr/browser/engine/errors
     */
   dwr.engine.setWarningHandler = function(handler) {
     dwr.engine._warningHandler = handler;
@@ -59,7 +57,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
     * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
     * @param {Function} handler The function to call when we get bored of waiting for a call
-    * @see getahead.org/dwr/browser/engine/errors
     */
   dwr.engine.setTimeout = function(timeout) {
     dwr.engine._timeout = timeout;
@@ -68,7 +65,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
     * The Pre-Hook is called before any DWR remoting is done.
     * @param {Function} handler The function to call before any remote calls
-    * @see getahead.org/dwr/browser/engine/hooks
     */
   dwr.engine.setPreHook = function(handler) {
     dwr.engine._preHook = handler;
@@ -77,7 +73,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * The Post-Hook is called after any DWR remoting is done.
    * @param {Function} handler The function to call after any remote calls
-   * @see getahead.org/dwr/browser/engine/hooks
    */
   dwr.engine.setPostHook = function(handler) {
     dwr.engine._postHook = handler;
@@ -86,7 +81,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Custom headers for all DWR calls
    * @param {Object} headers Object containing name/value pairs for extra headers
-   * @see getahead.org/dwr/????
    */
   dwr.engine.setHeaders = function(headers) {
     dwr.engine._headers = headers;
@@ -95,7 +89,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Custom attributes transferred to server for all DWR calls
    * @param {Object} attributes Object containing name/value pairs for attributes
-   * @see getahead.org/dwr/????
    */
   dwr.engine.setAttributes = function(attributes) {
     dwr.engine._attributes = attributes;
@@ -104,7 +97,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Ensure that remote calls happen in the order in which they were sent? (Default: false)
    * @param {boolean} ordered true to enable ordered processing
-   * @see getahead.org/dwr/browser/engine/ordering
    */
   dwr.engine.setOrdered = function(ordered) {
     dwr.engine._ordered = ordered;
@@ -115,7 +107,6 @@ if (typeof dwr == 'undefined') dwr = {};
    * Warning: it is <strong>highly</strong> advised to use the default of async
    * processing, especially when dealing with Internet based requests.
    * @param {boolean} async false to enable sync processing for XHR queries
-   * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setAsync = function(async) {
     dwr.engine._async = async;
@@ -124,7 +115,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Does the client actively check the server for updates? (Default: false)
    * @param {boolean} async true to enable low latency reverse ajax
-   * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setActiveReverseAjax = function(activeReverseAjax) {
     if (activeReverseAjax) {
@@ -150,7 +140,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Turn server notification of page unload on and off
    * @param {boolean} notify true or false depending on if we want to turn unload notification on or off
-   * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setNotifyServerOnPageUnload = function(notify, asyncUnload) {
     dwr.engine._asyncUnload = (asyncUnload !== undefined) ? asyncUnload : false;
@@ -160,7 +149,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Turn server notification of page load on and off
    * @param {boolean} notify true or false depending on if we want to turn load notification on or off
-   * @see getahead.org/dwr/browser/engine/options
    */
   dwr.engine.setNotifyServerOnPageLoad = function(notify) {
     dwr.engine._isNotifyServerOnPageLoad = notify;
@@ -189,7 +177,6 @@ if (typeof dwr == 'undefined') dwr = {};
    * The default message handler.
    * @param {String} message The text of the error message
    * @param {Object} ex An error object containing at least a name and message
-   * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine.defaultErrorHandler = function(message, ex) {
     dwr.engine._debug("Error: " + ex.name + ", " + ex.message, true);
@@ -203,7 +190,6 @@ if (typeof dwr == 'undefined') dwr = {};
    * The default warning handler.
    * @param {String} message The text of the error message
    * @param {Object} ex An error object containing at least a name and message
-   * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine.defaultWarningHandler = function(message, ex) {
     dwr.engine._debug(message);
@@ -213,7 +199,6 @@ if (typeof dwr == 'undefined') dwr = {};
    * The default poll status handler.
    * @param {boolean} newStatus - true = online, false = offline
    * @param {object} ex - The exception if one exists (offline).
-   * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine.defaultPollStatusHandler = function(newStatus, ex) {
     dwr.engine.util.logHandlerEx(function() {
@@ -223,7 +208,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /**
    * For reduced latency you can group several remote calls together using a batch.
-   * @see getahead.org/dwr/browser/engine/batch
    */
   dwr.engine.beginBatch = function() {
     if (dwr.engine._batch) {
@@ -236,7 +220,6 @@ if (typeof dwr == 'undefined') dwr = {};
   /**
    * Finished grouping a set of remote calls together. Go and execute them all.
    * @param {Object} options A options object to customize processing
-   * @see getahead.org/dwr/browser/engine/batch
    */
   dwr.engine.endBatch = function(options) {
     var batch = dwr.engine._batch;
@@ -791,7 +774,6 @@ if (typeof dwr == 'undefined') dwr = {};
    * Handles polling status changes - online or offline.
    * @param {boolean} newStatus - true = online, false = offline
    * @param {object} ex - The exception if one exists (offline).
-   * @see getahead.org/dwr/browser/engine/errors
    */
   dwr.engine._handlePollStatusChange = function(newStatus, ex, batch) {
   if (batch.isPoll || dwr.engine._isHeartbeatBatch(batch)) {
@@ -1612,7 +1594,7 @@ if (typeof dwr == 'undefined') dwr = {};
             else {
               dwr.engine._handleWarning(batch, {
                 name: "dwr.engine.oldSafari",
-                message: "Safari GET support disabled. See getahead.org/dwr/server/servlet and allowGetForSafariButMakeForgeryEasier."
+                message: "Safari GET support disabled. See allowGetForSafariButMakeForgeryEasier setting."
               });
             }
           }
