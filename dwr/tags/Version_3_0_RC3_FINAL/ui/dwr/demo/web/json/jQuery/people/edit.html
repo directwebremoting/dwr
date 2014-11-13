@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html><head>
+  <title>Editable Table Demo</title>
+
+  
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  
+  <script type="text/javascript" src="../jquery-1.3.2.min.js"> </script>
+  
+  <script type="text/javascript" src="../jquery.json-1.3.min.js"> </script>
+  
+  <script type="text/javascript" src="../../../dwr/util.js"> </script>
+  
+  <script type="text/javascript" src="../../../tabs/tabs.js"> </script>
+  
+  <script type="text/javascript" src="edit.js"> </script>
+  
+  <link rel="stylesheet" type="text/css" href="../../../tabs/tabs.css" />
+
+  
+  <link rel="stylesheet" type="text/css" href="../../../generic.css" />
+
+</head><body onload="init();">
+<div id="page-title">[ <a href="http://directwebremoting.org/dwr/">DWR Website</a>
+| <a href="../../../">Web Application Index</a>
+]</div>
+
+<h1>Dynamically Editing a Table</h1>
+
+<p>This demo allows you to edit a table of data</p>
+
+<ul id="tabList">
+
+  <li><a href="#" tabid="demoDiv">Demo</a></li>
+  <li><a href="#" tabid="explainDiv">How it works</a></li>
+  <li><a href="#" tabid="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+<div id="demoDiv">
+<h3>All People</h3>
+<table class="rowed grey" border="1">
+  <thead> <tr>
+    <th>Person</th>
+    <th>Age</th>
+    <th>Superhero?</th>
+    <th>Actions</th>
+  </tr>
+  </thead> <tbody id="peoplebody">
+    <tr id="pattern" style="display: none;">
+      <td> <span id="tableName">Name</span><br />
+      <small>&nbsp;&nbsp;<span id="tableAddress">Address</span></small>
+      <br />
+      <br />
+</td>
+      <td><span id="tableAge">Age</span><br />
+      <br />
+</td>
+      <td><span id="tableSuperhero">Superhero</span><br />
+      <br />
+</td>
+      <td> <input id="edit" value="Edit" onclick="editClicked(this.id)" type="button" /> <input id="delete" value="Delete" onclick="deleteClicked(this.id)" type="button" /> <br />
+      <br />
+</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Edit Person</h3>
+<table class="plain">
+  <tbody>
+    <tr>
+      <td>Name:</td>
+      <td><input id="name" size="30" type="text" /></td>
+    </tr>
+    <tr>
+      <td>Address:</td>
+      <td><input id="address" size="40" type="text" /></td>
+    </tr>
+    <tr>
+      <td>Age:</td>
+      <td><input id="age" size="20" type="text" /></td>
+    </tr>
+    <tr>
+      <td>Superhero?:</td>
+      <td><input id="superhero" size="20" type="checkbox" /></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="right"> <small>(ID=<span id="id">-1</span>)</small>
+      <input value="Save" onclick="writePerson()" type="button" /> <input value="Clear" onclick="clearPerson()" type="button" /> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div id="explainDiv">
+<h2>Creating the table</h2>
+<p>When the page first loads, the onload event calls the init function
+which calls the server-side <code>People.getSmallCrowd()</code>
+function to return an array of people objects.</p>
+<p> </p>
+<pre>function fillTable() {<br />        $.post("../../../dwr/jsonp/People/getSmallCrowd", { },<br />	  callBackFunction, "json"); <br />	}<br />	</pre>
+<p>People.getSmallCrowd() is called using the <a href="http://docs.jquery.com/Ajax/jQuery.post#urldatacallbacktype" target="new">jQuery post function</a> to make an asynchronous call to
+the server utilizing DWR's JSON capabilities. The first parameter is
+the URL for DWR's JSON service. The URL can be broken down as follows:</p>
+<ul>
+  <li>../../../dwr/ - The path to the DWR servlet.</li>
+  <li>jsonp - Tells DWR to use JSON.</li>
+  <li>People - The name of the class you have exposed to DWR.</li>
+  <li>getSmallCrowd - The name of the method you would like to call on
+the exposed class</li>
+</ul>
+The third parameter is the callback function and will be invoked when
+the remote call returns. The callback function will always be passed
+one parameter - the data returned from the remote call.
+<p>A Person is just a POJO containing an id, name and address fields
+along an age as an integer an boolean superhero status. Full details of
+the Java source are shown on the "Source" tab.</p>
+<p>The Javascript uses the <code>cloneNode()</code> feature to create
+a row in a table for each returned person. So for each person we do
+this:</p>
+<pre>dwr.util.cloneNode("pattern", { idSuffix:person.id });<br /></pre>
+<p>This creates a copy of the node with the id "pattern", and alters
+the ids of any sub-nodes to have a suffix of the current persons id, so
+if pattern looks like this:</p>
+<pre>&lt;div id="pattern"&gt;&lt;input id="edit"/&gt;&lt;/div&gt;</pre>
+<p>Then after cloning using an idSuffix:42, you will have this:</p>
+<pre>&lt;div id="pattern"&gt;&lt;input id="edit"/&gt;&lt;/div&gt;<br />&lt;div id="pattern42"&gt;&lt;input id="edit42"/&gt;&lt;/div&gt;</pre>
+<p>After cloning we then fill in the blanks in the newly cloned row.
+This uses the <code>setValue</code> that we looked at in the Dynamic
+Text demo:</p>
+<pre>dwr.util.setValue("tableName" + id, person.name);<br />dwr.util.setValue("tableSalary" + id, person.salary);<br />dwr.util.setValue("tableAddress" + id, person.address);<br /></pre>
+<p>We also need to ensure that the pattern row is not visible, but the
+clones are. We do this by setting a style of display:none on the
+pattern row in the HTML, and then setting the cloned row to have
+display:table-row in the Javascript:</p>
+<pre>$("pattern" + id).style.display = "table-row";<br /></pre>
+<p>We need to account for the fact that this could be a re-draw rather
+than a draw on page-load, so we might need to remove old rows. <code>dwr.util.removeAllRows()</code>
+as been around since 1.0, but new in 2.0 is the options object which
+can contain a filter to be selective about the rows we remove. In this
+case we want to remove everything but the "pattern" row.</p>
+<pre>    // Delete all the rows except for the "pattern" row<br />    dwr.util.removeAllRows("peoplebody", { filter:function(tr) {<br />      return (tr.id != "pattern");<br />    }});<br /></pre>
+<p>For the full Javascript or the HTML, see the source tab. The full
+Javascript does 2 extra things - it caches the people, and sorts them.</p>
+<h2>Populating the form</h2>
+<p>When an 'edit' button is clicked, the <code>editClicked()</code>
+function is called with the id of the button. We can work out the
+person id from this easily because the button was created by the clone
+process, so the person id is just the button id without the 'edit'
+prefix.</p>
+<p>This makes the <code>editClicked()</code> function really simple:</p>
+<pre>function editClicked(eleid) {<br />  // we were an id of the form "edit{id}", eg "edit42". We lookup the "42"<br />  var person = peopleCache[eleid.substring(4)];<br />  dwr.util.setValues(person);<br />}<br /></pre>
+<p>The <code>dwr.util.setValues()</code> function finds form fields
+with the same names as the properties of the object passed in.</p>
+<h2>Updating the server</h2>
+<p>There is a good use of <code>dwr.util.getValues()</code> in the
+code to post changes back to the server:</p>
+<pre>function writePerson() {<br />  var person = { id:viewed, name:null, address:null, age:null, superhero:null };<br />  dwr.util.getValues(person);<br />  $.post("../../../dwr/jsonp/People/setPerson?param0=" + encodeURIComponent($.toJSON(person)), { },<br />    fillTable, "json"); <br />}<br /></pre>
+<p>First we create an object which is filled out by <code>dwr.util.getValues()</code>.
+We then post the change to the server, once again using the<a href="http://docs.jquery.com/Ajax/jQuery.post#urldatacallbacktype" target="new"> jQuery post function</a>. This time we are calling the
+setPerson function.&nbsp; The setPerson function takes one parameter
+(of type Person), and thus we are specifying param0 (if multiple
+parameters exist name them accordingly param0, param1, param2,
+etc.).&nbsp; The Person object must be converted to a JSON string and
+encoded before we send it to the server.&nbsp; We are using the
+<a href="http://code.google.com/p/jquery-json/" target="new">jquery-json</a> plugin's $.toJSON function to serialize the person object
+into a JSON string and we are using the JavaScript encodeURIComponent
+function to properly encode the JSON string.<br />
+</p>
+<p>See the source tab for full source.</p>
+</div>
+<div id="sourceDiv">
+<h2>HTML source:</h2>
+<pre>&lt;h3&gt;All People&lt;/h3&gt;<br />&lt;table border="1" class="rowed grey"&gt;<br />  &lt;thead&gt;<br />    &lt;tr&gt;<br />      &lt;th&gt;Person&lt;/th&gt;<br />      &lt;th&gt;Age&lt;/th&gt;<br />      &lt;th&gt;Superhero?&lt;/th&gt;<br />      &lt;th&gt;Actions&lt;/th&gt;<br />    &lt;/tr&gt;<br />  &lt;/thead&gt;<br />  &lt;tbody id="peoplebody"&gt;<br />    &lt;tr id="pattern" style="display:none;"&gt;<br />      &lt;td&gt;<br />        &lt;span id="tableName"&gt;Name&lt;/span&gt;&lt;br/&gt;<br />        &lt;small&gt;&nbsp;&nbsp;&lt;span id="tableAddress"&gt;Address&lt;/span&gt;&lt;/small&gt;<br />      &lt;/td&gt;<br />      &lt;td&gt;&lt;span id="tableAge"&gt;Age&lt;/span&gt;&lt;/td&gt;<br />      &lt;td&gt;&lt;span id="tableSuperhero"&gt;Superhero&lt;/span&gt;&lt;/td&gt;<br />      &lt;td&gt;<br />        &lt;input id="edit" type="button" value="Edit" onclick="editClicked(this.id)"/&gt;<br />        &lt;input id="delete" type="button" value="Delete" onclick="deleteClicked(this.id)"/&gt;<br />      &lt;/td&gt;<br />    &lt;/tr&gt;<br />  &lt;/tbody&gt;<br />&lt;/table&gt;<br />&lt;h3&gt;Edit Person&lt;/h3&gt;<br />&lt;table class="plain"&gt;<br />  &lt;tr&gt;<br />    &lt;td&gt;Name:&lt;/td&gt;<br />    &lt;td&gt;&lt;input id="name" type="text" size="30"/&gt;&lt;/td&gt;<br />  &lt;/tr&gt;<br />  &lt;tr&gt;<br />    &lt;td&gt;Address:&lt;/td&gt;<br />    &lt;td&gt;&lt;input id="address" type="text" size="40"/&gt;&lt;/td&gt;<br />  &lt;/tr&gt;<br />  &lt;tr&gt;<br />    &lt;td&gt;Age:&lt;/td&gt;<br />    &lt;td&gt;&lt;input id="age" type="text" size="20"/&gt;&lt;/td&gt;<br />  &lt;/tr&gt;<br />  &lt;tr&gt;<br />    &lt;td&gt;Superhero?:&lt;/td&gt;<br />    &lt;td&gt;&lt;input id="superhero" type="checkbox" size="20"/&gt;&lt;/td&gt;<br />  &lt;/tr&gt;<br />  &lt;tr&gt;<br />    &lt;td colspan="2" align="right"&gt;<br />      &lt;small&gt;(ID=&lt;span id="id"&gt;-1&lt;/span&gt;)&lt;/small&gt;<br />      &lt;input type="button" value="Save" onclick="writePerson()"/&gt;<br />      &lt;input type="button" value="Clear" onclick="clearPerson()"/&gt;<br />   &lt;/td&gt;<br />  &lt;/tr&gt;<br />&lt;/table&gt;<br /></pre>
+<h2>Javascript source:</h2>
+<span style="font-family: monospace;">function init() { <br />
+&nbsp; Tabs.init('tabList', 'tabContents');<br />
+&nbsp; fillTable();<br />
+}<br />
+<br />
+var peopleCache = { };<br />
+var viewed = -1;<br />
+<br />
+function fillTable() {<br />
+&nbsp;&nbsp; &nbsp;$.post("../../../dwr/jsonp/People/getSmallCrowd", {
+},<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; callBackFunction, "json");<br />
+}<br />
+<br />
+function callBackFunction(people) {<br />
+&nbsp;&nbsp; &nbsp;people = people.reply;<br />
+&nbsp;&nbsp; &nbsp;// Delete all the rows except for the "pattern" row<br />
+&nbsp;&nbsp; &nbsp;dwr.util.removeAllRows("peoplebody", {
+filter:function(tr) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return (tr.id != "pattern");<br />
+&nbsp;&nbsp; &nbsp;}});<br />
+&nbsp;&nbsp; &nbsp;// Create a new set cloned from the pattern row<br />
+&nbsp;&nbsp; &nbsp;var person, id;<br />
+&nbsp;&nbsp; &nbsp;people.sort(function(p1, p2) { return
+p1.name.localeCompare(p2.name); });<br />
+&nbsp;&nbsp; &nbsp;for (var i = 0; i &lt; people.length; i++) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; person = people[i];<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; id = person.id;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dwr.util.cloneNode("pattern", {
+idSuffix:id });<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dwr.util.setValue("tableName" +
+id, person.name);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dwr.util.setValue("tableAge" +
+id, person.age);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dwr.util.setValue("tableAddress"
++ id, person.address);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+dwr.util.setValue("tableSuperhero" + id, person.superhero ? "Yes" :
+"No");<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dwr.util.byId("pattern" +
+id).style.display = ""; // officially we should use table-row, but IE
+prefers "" for some reason<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; peopleCache[id] = person;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+<br />
+function editClicked(eleid) {<br />
+&nbsp; // we were an id of the form "edit{id}", eg "edit42". We lookup
+the "42"<br />
+&nbsp; var person = peopleCache[eleid.substring(4)];<br />
+&nbsp; dwr.util.setValues(person);<br />
+}<br />
+<br />
+function deleteClicked(eleid) {<br />
+&nbsp; // we were an id of the form "delete{id}", eg "delete42". We
+lookup the "42"<br />
+&nbsp; var person = peopleCache[eleid.substring(6)];<br />
+&nbsp; if (confirm("Are you sure you want to delete " + person.name +
+"?")) {<br />
+&nbsp;&nbsp;&nbsp; $.post("../../../dwr/jsonp/People/deletePerson/" +
+person.id, { },<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; fillTable, "json");<br />
+&nbsp; }<br />
+}<br />
+<br />
+function writePerson() {<br />
+&nbsp; var person = { id:viewed, name:null, address:null, age:null,
+superhero:null };<br />
+&nbsp; dwr.util.getValues(person);<br />
+&nbsp; $.post("../../../dwr/jsonp/People/setPerson?param0=" +
+encodeURIComponent($.toJSON(person)), { },<br />
+&nbsp;&nbsp; &nbsp;fillTable, "json");<br />
+}<br />
+<br />
+function clearPerson() {<br />
+&nbsp; viewed = -1;<br />
+&nbsp; dwr.util.setValues({ id:-1, name:null, address:null, salary:null
+});<br />
+}</span>
+<h2>web.xml</h2>
+<p>Note: In order to enable JSON/JSONP you must
+add the following init-param to your DWR servlet definition in your
+web.xml (This is a snippet and is not a complete web.xml).</p>
+<pre><code><br />   ...<br />  &lt;servlet&gt;<br />    &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;<br />    &lt;display-name&gt;DWR Servlet&lt;/display-name&gt;<br />    &lt;description&gt;Direct Web Remoter Servlet&lt;/description&gt;<br />    &lt;servlet-class&gt;org.directwebremoting.servlet.DwrServlet&lt;/servlet-class&gt;<br />    &lt;init-param&gt;<br />     &lt;param-name&gt;jsonpEnabled&lt;/param-name&gt;<br />     &lt;param-value&gt;true&lt;/param-value&gt;<br />    &lt;/init-param&gt;<br />    ...	<br />    </code></pre>
+<h2>dwr.xml</h2>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;!DOCTYPE dwr PUBLIC<br />    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"<br />    "http://getahead.org/dwr/dwr20.dtd"&gt;<br /><br />&lt;dwr&gt;<br />  &lt;allow&gt;<br />    &lt;create creator="new" javascript="People" scope="script"&gt;<br />      &lt;param name="class" value="org.getahead.dwrdemo.people.People"/&gt;<br />    &lt;/create&gt;<br />    &lt;convert match="org.getahead.dwrdemo.people.Person" converter="bean"/&gt;<br />  &lt;/allow&gt;<br />&lt;/dwr&gt;<br /></pre>
+</div>
+</div>
+
+</body></html>

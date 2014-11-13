@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="dwrController" class="org.directwebremoting.spring.DwrController">
+        <property name="configurators">
+            <list>
+                <bean class="org.directwebremoting.spring.SpringConfigurator">
+                    <property name="creators">
+                        <map>
+                            <entry key="MyFacade">
+                                <bean class="org.directwebremoting.spring.CreatorConfig">
+                                    <property name="creator" value="bean"/>
+                                </bean>
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <property name="includeDefaultConfig" value="false"/>
+    </bean>
+
+    <bean id="org.directwebremoting.servlet.UrlProcessor" class="org.directwebremoting.servlet.UrlProcessor">
+    </bean>
+
+    <bean id="org.directwebremoting.WebContextBuilder" class="org.directwebremoting.impl.DefaultWebContextBuilder">
+
+    </bean>
+
+    <bean id="org.directwebremoting.extend.AccessControl" class="org.directwebremoting.impl.DefaultAccessControl"/>
+    <bean id="org.directwebremoting.extend.AjaxFilterManager" class="org.directwebremoting.impl.DefaultAjaxFilterManager"/>
+    <bean id="org.directwebremoting.extend.ConverterManager" class="org.directwebremoting.dwrp.DefaultConverterManager"/>
+    <bean id="org.directwebremoting.extend.CreatorManager" class="org.directwebremoting.impl.DefaultCreatorManager"/>
+
+    <bean id="myFacade" class="java.lang.Object"/>
+</beans>

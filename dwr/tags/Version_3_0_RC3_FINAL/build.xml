@@ -1,0 +1,557 @@
+<?xml version="1.0"?>
+<project name="dwr" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+	<!-- For terminology, see the readme.txt file alongside this build file -->
+
+	<!--=======================================================================-->
+	<!-- File that contains local settings, you may need to edit this -->
+	<property file="build.properties" />
+
+	<!-- Properties for Maven Deploy, Stage, Release
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+	-->
+	<property name="dist" location="dist" />
+
+	<!-- define Maven coordinates -->
+	<property name="groupId" value="org.directwebremoting" />
+	<property name="artifactId" value="dwr" />
+	<property name="version" value="3.0.0-rc3-SNAPSHOT" />
+
+	<!-- define artifacts' name, which follows the convention of Maven -->
+	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
+	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
+	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-${version}-noncla.jar" />
+	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
+
+	<!-- defined maven snapshots and staging repository id and url -->
+	<property name="maven-repository-id" value="ossrh" />
+	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />	
+	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+	<!-- End Properties for Maven -->
+
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}/lib" />
+	</target>
+
+	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
+	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
+	<condition property="label" value="${major}.${minor}.${revision}">
+		<equals arg1="${title}" arg2="" />
+	</condition>
+	<condition property="label" value="${major}.${minor}.${revision}.${title}">
+		<not>
+			<equals arg1="${title}" arg2="" />
+		</not>
+	</condition>
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<fileset dir="${source.root}/etc/ant" includes="**/*" />
+		</classpath>
+	</taskdef>
+
+	<!-- The modules that we are working with -->
+	<property name="modules" value="
+		core/api, core/impl, core/legacy,
+		protocol/dwrp, protocol/json,
+		serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various,
+		ui/dwr
+		" />
+
+	<!--=======================================================================-->
+	<target name="prepare" description="Various bits of setup">
+		<tstamp />
+	</target>
+
+	<!--=======================================================================-->
+	<target name="copy-sources">
+		<echo>Copying ${module} sources</echo>
+		<copy todir="${target.root}/sourcetree" overwrite="true">
+			<fileset dir="${module}/main/java" />
+		</copy>
+	</target>
+
+	<target name="source" description="Create dwr-src.jar">
+		<property name="java-sources" value="core/api, core/impl, core/legacy, protocol/dwrp, protocol/json,serverside/spring, serverside/guice, serverside/struts, serverside/hibernate, serverside/webwork, serverside/various, ui/dwr" />
+		<foreach list="${java-sources}" param="module" trim="true" target="copy-sources" />
+		<jar destfile="${target.root}/dwr-src.jar" compress="true">
+			<fileset dir="${target.root}/sourcetree" />
+		</jar>
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}" />
+	</target>
+
+	<!-- Updates dwr-version.properties with build values from Bamboo
+		Will not be executed unless the bamboo.buildNumber property is set.
+		This property is passed into this script by Bamboo -->
+	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
+		<if>
+			<isset property="bamboo.buildNumber" />
+			<then>
+				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
+					<entry key="major" value="${major}" />
+					<entry key="minor" value="${minor}" />
+					<entry key="revision" value="${revision}" />
+					<entry key="title" value="${title}" />
+					<entry key="bamboo.build.number" value="${bamboo.buildNumber}" />
+				</propertyfile>
+			</then>
+		</if>
+	</target>
+
+	<!--=======================================================================-->
+	<target name="jar" depends="prepare, source" description="Create dwr.jar">
+		<build target="${target.root}" include="" modules="${modules}" />
+		<!-- Set Bamboo properties in dwr-version.properties -->
+		<antcall target="setBambooVersioning" />
+		<jar destfile="${target.root}/dwr.jar" compress="true">
+			<fileset dir="${target.root}/classes/main" />
+		</jar>
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr.jar" tofile="${dwr-maven-jar}" />
+		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
+		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
+			<fileset dir="${target.root}/classes/noncla/classes/main" />
+		</jar>
+		<!-- Copy jar for Maven deploy/release -->
+		<copy file="${target.root}/dwr-noncla.jar" tofile="${dwr-maven-noncla-jar}" />
+	</target>
+
+	<!--=======================================================================-->
+	<target name="test" depends="jar" description="Create output for import into the testing project">
+		<jar destfile="${target.root}/junitdwr.jar" compress="true">
+			<fileset dir="${target.root}/classes/test" />
+		</jar>
+	</target>
+
+	<!--=======================================================================-->
+	<target name="war" depends="jar" description="Create an exploded dwrdemo.war">
+		<copy todir="${target.root}/web/demo/WEB-INF/classes">
+			<fileset dir="${target.root}/classes/demo" />
+			<!-- For people that download the war and want to see the source -->
+			<fileset dir="${source.root}/ui/dwr/demo/java" />
+		</copy>
+		<copy todir="${target.root}/web/demo/WEB-INF/lib">
+			<fileset file="${target.root}/dwr.jar" />
+		</copy>
+	</target>
+
+	<!--=======================================================================-->
+	<target name="package" depends="war" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
+		<!-- Run retroweaver if dwr.jar has changed since we last ran it -->
+		<taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
+			<classpath>
+				<fileset dir="${source.root}/etc/retroweaver" includes="**/*" />
+			</classpath>
+		</taskdef>
+		<if-not-uptodate destfile="${basedir}/${target.root}/dwr-jdk14.jar" sourcedir="${target.root}/classes/main">
+			<action>
+				<!-- retroweaver is borked because it doesn't inherit directories properly
+				so if you call this ant build from another it gets the basedir wrong. so
+				we need to prefix the paths with ${basedir} -->
+				<retroweaver inputjar="${basedir}/${target.root}/dwr.jar" outputjar="${basedir}/${target.root}/dwr-jdk14.jar" target="1.4" />
+			</action>
+		</if-not-uptodate>
+		<copy file="${basedir}/${target.root}/dwr-jdk14.jar" tofile="${dwr-maven-jdk14-jar}" />
+		<!-- Rezip the demo war file if it's contents have changed -->
+		<if-not-uptodate destfile="${target.root}/dwrdemo.war" sourcedir="${target.root}/web/demo">
+			<action>
+				<zip destfile="${target.root}/dwrdemo.war" basedir="${target.root}/web/demo" />
+			</action>
+		</if-not-uptodate>
+		<!-- Copy over testdwr.war -->
+		<if>
+			<available file="${testdwr.home}/build.xml" />
+			<then>
+				<ant dir="${testdwr.home}" target="package" inheritall="false" inheritrefs="false" />
+			</then>
+		</if>
+		<if>
+			<available file="${testdwr.home}/target/ant/testdwr.war" />
+			<then>
+				<copy file="${testdwr.home}/target/ant/testdwr.war" todir="${target.root}" />
+			</then>
+		</if>
+		<!-- Documentation: Javadoc and DTDDoc -->
+		<mkdir dir="${target.root}/javadoc" />
+		<javadoc access="public" author="true" destdir="${target.root}/javadoc" doctitle="DWR Version ${label}" use="true" splitindex="true" version="true">
+			<sourcepath>
+				<pathelement path="${source.root}/core/api/main/java" />
+				<pathelement path="${source.root}/core/impl/main/java" />
+				<pathelement path="${source.root}/core/legacy/main/java" />
+				<pathelement path="${source.root}/noncla/various/main/java" />
+				<pathelement path="${source.root}/protocol/dwrp/main/java" />
+				<pathelement path="${source.root}/protocol/json/main/java" />
+				<pathelement path="${source.root}/serverside/guice/main/java" />
+				<pathelement path="${source.root}/serverside/hibernate/main/java" />
+				<pathelement path="${source.root}/serverside/spring/main/java" />
+				<pathelement path="${source.root}/serverside/struts/main/java" />
+				<pathelement path="${source.root}/serverside/various/main/java" />
+				<pathelement path="${source.root}/serverside/webwork/main/java" />
+				<pathelement path="${source.root}/ui/dwr/main/java" />
+			</sourcepath>
+			<classpath>
+				<pathelement location="${target.root}/classes/main" />
+				<fileset dir="${target.root}/lib" includes="**/*.jar" />
+			</classpath>
+			<package name="org.directwebremoting.*" />
+			<footer>Copyright &#168; 2008</footer>
+		</javadoc>
+		<!-- Jar docs for Maven release -->
+		<jar jarfile="${dwr-maven-javadoc-jar}">
+			<fileset dir="${target.root}/javadoc" />
+		</jar>
+		<path id="dtddocpath">
+			<fileset dir="${source.root}/etc/dtddoc" includes="**/*.jar" />
+		</path>
+		<taskdef name="DTDDoc" classname="DTDDoc.DTDDocTask" classpathref="dtddocpath" />
+		<mkdir dir="${target.root}/dtddoc" />
+		<DTDDoc showHiddenTags="false" showFixmeTags="false" sourceDir="${source.root}/core/impl/main/java" destDir="${target.root}/dtddoc" docTitle="DTDDoc's example">
+			<include name="**/*.dtd" />
+			<exclude name="common/*.dtd" />
+		</DTDDoc>
+		<!-- Source package -->
+		<zip destfile="${target.root}/dwr-${label}-src.zip">
+			<fileset dir="${source.root}">
+				<exclude name="target/**" />
+				<exclude name="**/*.iml" />
+				<exclude name="**/*.ipr" />
+				<exclude name="**/*.iws" />
+			</fileset>
+			<fileset dir="${target.root}">
+				<include name="dwr.jar" />
+				<include name="dwrdemo.war" />
+			</fileset>
+			<!-- The DWR website extracts javadoc from here -->
+			<zipfileset dir="${target.root}/javadoc" prefix="javadoc" />
+		</zip>
+	</target>
+
+	<!-- JSHint task.  Checks for common JavaScript problems, coding conventions and other JavaScript coding issues -->
+	<taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" classpath="build/lib/ant-jshint-0.3.4-deps.jar" />
+	<target name="jshint_scan">
+		<echo message="Checking JavaScript source with JSHint" />
+		<jshint dir="${source.root}" optionsFile="build/lib/jshint_options.properties">
+			<include name="**/main/java/org/directwebremoting/engine.js" />
+			<include name="**/main/java/org/directwebremoting/ui/servlet/util.js" />
+		</jshint>
+	</target>
+
+	<!--=======================================================================-->
+	<macrodef name="if-not-uptodate">
+		<!-- If you change this, remember the copy in testdwr/build.xml -->
+		<attribute name="destfile" />
+		<attribute name="sourcedir" />
+		<element name="action" />
+		<sequential>
+			<if>
+				<or>
+					<not>
+						<available file="@{destfile}" />
+					</not>
+					<not>
+						<uptodate targetfile="@{destfile}">
+							<srcfiles dir="@{sourcedir}" includes="**/*" />
+						</uptodate>
+					</not>
+				</or>
+				<then>
+					<action />
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<!--=======================================================================-->
+	<macrodef name="build" description="Create some distribution files from a set of modules">
+		<attribute name="modules" description="The set module to compile" />
+		<attribute name="target" description="The directory into which to build" />
+		<attribute name="include" description="The results of another build that we can depend on" />
+		<sequential>
+			<mkdir dir="@{target}/lib" />
+			<mkdir dir="@{target}/classes/main" />
+			<mkdir dir="@{target}/classes/test" />
+			<mkdir dir="@{target}/classes/demo" />
+			<mkdir dir="@{target}/web/demo/WEB-INF/classes" />
+			<mkdir dir="@{target}/web/demo/WEB-INF/lib" />
+			<foreach list="@{modules}" param="module" trim="true" target="process-module">
+				<param name="target" value="@{target}" />
+				<param name="include" value="@{include}" />
+			</foreach>
+			<foreach list="@{modules}" param="module" trim="true" target="run-tests-for-module">
+				<param name="target" value="@{target}" />
+			</foreach>
+		</sequential>
+	</macrodef>
+
+	<!--=======================================================================-->
+	<target name="process-module">
+		<echo message="Processing module: ${module}" />
+		<!-- copy jar files to the jar pool, to help suss the classpath -->
+		<if>
+			<available file="${source.root}/${module}/lib" />
+			<then>
+				<copy todir="${target}/lib" verbose="true">
+					<fileset dir="${module}/lib">
+						<include name="**/*.jar" />
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- The main tree -->
+		<if>
+			<available file="${source.root}/${module}/main/java" />
+			<then>
+				<if>
+					<available file="${source.root}/${module}/generated/java" />
+					<then>
+						<compile-tree module="${module}" tree="main">
+							<sources>
+								<src path="${source.root}/${module}/main/java" />
+								<src path="${source.root}/${module}/generated/java" />
+							</sources>
+						</compile-tree>
+						<compile-copy module="${module}" tree="main" />
+					</then>
+					<else>
+						<compile-tree module="${module}" tree="main">
+							<sources>
+								<src path="${source.root}/${module}/main/java" />
+							</sources>
+						</compile-tree>
+						<compile-copy module="${module}" tree="main" />
+					</else>
+				</if>
+			</then>
+		</if>
+		<!-- The test tree -->
+		<if>
+			<available file="${source.root}/${module}/test/java" />
+			<then>
+				<compile-tree module="${module}" tree="test">
+					<sources>
+						<src path="${source.root}/${module}/test/java" />
+					</sources>
+				</compile-tree>
+				<compile-copy module="${module}" tree="test" />
+			</then>
+		</if>
+		<!-- The demo tree -->
+		<if>
+			<available file="${source.root}/${module}/demo/java" />
+			<then>
+				<compile-tree module="${module}" tree="demo">
+					<sources>
+						<src path="${source.root}/${module}/demo/java" />
+					</sources>
+				</compile-tree>
+				<compile-copy module="${module}" tree="demo" />
+			</then>
+		</if>
+		<!-- The demo web tree -->
+		<if>
+			<available file="${source.root}/${module}/demo/web" />
+			<then>
+				<copy todir="${target}/web/demo">
+					<fileset dir="${source.root}/${module}/demo/web" />
+				</copy>
+			</then>
+		</if>
+	</target>
+
+	<target name="run-tests-for-module" description="Run the JUnit tests for a module">
+		<echo message="Running tests for module: ${module}" />
+		<mkdir dir="${target}/junitReports" />
+		<if>
+			<available file="${source.root}/${module}/test/java" />
+			<then>
+				<junit printsummary="yes" fork="true" haltonfailure="yes">
+					<formatter type="xml" />
+					<classpath>
+						<fileset dir="${target}/lib" includes="**/*.jar" excludes="**/yuicompressor-2.3.5.jar" />
+						<pathelement location="${target.root}/classes/demo" />
+						<pathelement location="${target.root}/classes/main" />
+						<pathelement location="${target.root}/classes/test" />
+						<!-- needed for log4j -->
+						<fileset dir="${source.root}/ui/dwr/demo/web/WEB-INF/lib" includes="**/*" />
+					</classpath>
+					<batchtest todir="${target}/junitReports">
+						<fileset dir="${source.root}/${module}/test/java">
+							<include name="**/*Test.java" />
+							<include name="**/Test*.java" />
+							<exclude name="**/YahooJSCompressorTest.java" />
+							<!-- Not actually a test case, just a utility for helping with JSON tests -->
+							<exclude name="**/TestUtil.java" />
+							<!-- Not actually a test case -->
+							<exclude name="**/TestCreatedObject.java" />
+							<!-- In order to test this we need an db instance, too complicated for now -->
+							<exclude name="**/HibernateConverterTest.java" />
+						</fileset>
+					</batchtest>
+					<formatter type="plain" usefile="false" />
+				</junit>
+
+				<if>
+					<available file="${source.root}/${module}/test/java/org/directwebremoting/impl/YahooJSCompressorTest.java" />
+					<then>
+						<echo message="Running special test for yuicompressor" />
+						<junit printsummary="yes" fork="true" haltonfailure="yes">
+							<formatter type="xml" />
+							<classpath>
+								<fileset dir="${target}/lib">
+									<exclude name="js.jar" />
+									<exclude name="shrinksafe.jar" />
+								</fileset>
+								<pathelement location="${target.root}/classes/demo" />
+								<pathelement location="${target.root}/classes/main" />
+								<pathelement location="${target.root}/classes/test" />
+								<fileset dir="${source.root}/ui/dwr/demo/web/WEB-INF/lib" includes="**/*" />
+							</classpath>
+							<batchtest todir="${target}/junitReports">
+								<fileset dir="${source.root}/${module}/test/java">
+									<include name="**/YahooJSCompressorTest.java" />
+								</fileset>
+							</batchtest>
+							<formatter type="plain" usefile="false" />
+						</junit>
+					</then>
+				</if>
+			</then>
+			<else>
+				<echo message="Skipping, no tests exists for: ${module}" />
+			</else>
+		</if>
+	</target>
+
+	<!--=======================================================================-->
+	<macrodef name="compile-tree" description="Compile the sources from a set of trees">
+		<attribute name="module" description="The module to compile" />
+		<attribute name="tree" description="Must be one of [main|test|demo]" />
+		<element name="sources" />
+		<sequential>
+			<!-- compile the sources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
+			<if>
+				<equals arg1="${include}" arg2="" />
+				<then>
+					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+						<exclude name="**/package.html" />
+						<exclude name="**/package-info.java" />
+						<sources />
+						<classpath>
+							<fileset dir="${target}/lib" includes="**/*.jar" />
+							<pathelement location="${target}/classes/main" />
+						</classpath>
+					</javac>
+				</then>
+				<else>
+					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+						<exclude name="**/package.html" />
+						<exclude name="**/package-info.java" />
+						<sources />
+						<classpath>
+							<fileset dir="${target}/lib" includes="**/*.jar" />
+							<fileset dir="${include}/lib" includes="**/*.jar" />
+							<pathelement location="${target}/classes/main" />
+							<pathelement location="${include}/classes/main" />
+						</classpath>
+					</javac>
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<!--=======================================================================-->
+	<macrodef name="compile-copy" description="Compile the sources from a set of trees">
+		<attribute name="module" description="The module to compile" />
+		<attribute name="tree" description="Must be one of [main|test|demo]" />
+		<sequential>
+			<!-- copy the resources in @{module}/@{tree}/java into ${target}/classes/@{tree} -->
+			<copy todir="${target}/classes/@{tree}">
+				<fileset dir="${source.root}/@{module}/@{tree}/java">
+					<exclude name="**/*.java" />
+					<exclude name="**/package.html" />
+					<exclude name="**/package-info.java" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!--=======================================================================-->
+	<target name="generate-json-parser" description="Re-runs javacc on the JsonParser">
+		<mkdir dir="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc" />
+		<javacc target="${source.root}/core/impl/main/javacc/JavaccJsonParser.jj" javacchome="${source.root}/core/impl/main/javacc" outputdirectory="${source.root}/core/impl/generated/java/org/directwebremoting/json/parse/javacc" />
+	</target>
+
+	<!--=======================================================================-->
+	<target name="clean" description="Remove all build targets and .DS_Store files left around by the Mac finder">
+		<echo message="Deleting everything from: ${target.root}" />
+		<delete verbose="true" dir="${target.root}" />
+		<echo message="Deleting **/*.DS_Store from: ${source.root}" />
+		<delete verbose="true">
+			<fileset defaultexcludes="false" dir="${source.root}">
+				<include name="**/*.DS_Store" />
+			</fileset>
+		</delete>
+	</target>
+
+	<!-- Maven Deploy run this from the Bamboo CI machine.
+			Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+	-->
+	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
+		<!-- we deploy more than one file in one operation so they all get the same SNAPSHOT version at the repository -->
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
+			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
+			<arg value="-Durl=${maven-snapshots-repository-url}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Djavadoc=${dwr-maven-javadoc-jar}" />
+			<arg value="-Dsources=${dwr-maven-sources-jar}" />
+			<arg value="-Dfiles=${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
+			<arg value="-Dclassifiers=noncla,jdk14" />
+			<arg value="-Dtypes=jar,jar" />
+		</artifact:mvn>
+	</target>
+
+	<!-- Maven Stage run this from the Bamboo CI machine
+		Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
+		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
+	-->
+	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${dwr-maven-jar}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${dwr-maven-sources-jar}" />
+			<arg value="-Dclassifier=sources" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
+			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+			<arg value="-Durl=${maven-staging-repository-url}" />
+			<arg value="-DrepositoryId=${maven-repository-id}" />
+			<arg value="-DpomFile=pom.xml" />
+			<arg value="-Dfile=${dwr-maven-javadoc-jar}" />
+			<arg value="-Dclassifier=javadoc" />
+			<arg value="-Dpackaging=jar" />
+			<arg value="-Pgpg" />
+		</artifact:mvn>
+	</target>
+
+</project>

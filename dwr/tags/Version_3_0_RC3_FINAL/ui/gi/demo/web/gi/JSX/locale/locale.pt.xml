@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data jsxnamespace="propsbundle">
+  <locale key="pt">
+    <record jsxid="format.date.long" jsxtext="d' de 'MMMM' de 'yyyy"/>
+    <record jsxid="format.date.full" jsxtext="EEEE, d' de 'MMMM' de 'yyyy"/>
+    <record jsxid="format.date.short" jsxtext="dd-MM-yyyy"/>
+    <record jsxid="number.grouping" jsxtext="."/>
+    <record jsxid="format.date.medium" jsxtext="d/MMM/yyyy"/>
+    <record jsxid="number.decimal" jsxtext=","/>
+    <record jsxid="format.time.full" jsxtext="HH'H'mm'm'ss's' z"/>
+    <record eval="1" jsxid="date.month.abbrev" jsxtext="['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']"/>
+    <record eval="1" jsxid="date.month" jsxtext="['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']"/>
+    <record eval="1" jsxid="date.month.narrow" jsxtext="['J','F','M','A','M','J','J','A','S','O','N','D']"/>
+    <record eval="1" jsxid="date.day.abbrev" jsxtext="['dom','seg','ter','qua','qui','sex','sáb']"/>
+    <record eval="1" jsxid="date.day" jsxtext="['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado']"/>
+    <record eval="1" jsxid="date.day.narrow" jsxtext="['D','S','T','Q','Q','S','S']"/>
+    <record eval="1" jsxid="date.era" jsxtext="['a.C.','d.C.']"/>
+    <record jsxid="string.lang.ar" jsxtext="árabe"/>
+    <record jsxid="string.lang.da" jsxtext="dinamarquês"/>
+    <record jsxid="string.lang.de" jsxtext="alemão"/>
+    <record jsxid="string.lang.el" jsxtext="grego"/>
+    <record jsxid="string.lang.en" jsxtext="inglês"/>
+    <record jsxid="string.lang.es" jsxtext="espanhol"/>
+    <record jsxid="string.lang.fr" jsxtext="francês"/>
+    <record jsxid="string.lang.it" jsxtext="italiano"/>
+    <record jsxid="string.lang.ja" jsxtext="japonês"/>
+    <record jsxid="string.lang.ko" jsxtext="coreano"/>
+    <record jsxid="string.lang.pt" jsxtext="português"/>
+    <record jsxid="string.lang.ru" jsxtext="russo"/>
+    <record jsxid="string.lang.sv" jsxtext="sueco"/>
+    <record jsxid="string.lang.zh" jsxtext="chinês"/>
+    <record jsxid="string.terr.AU" jsxtext="Austrália"/>
+    <record jsxid="string.terr.BR" jsxtext="Brasil"/>
+    <record jsxid="string.terr.CA" jsxtext="Canadá"/>
+    <record jsxid="string.terr.CN" jsxtext="China"/>
+    <record jsxid="string.terr.DE" jsxtext="Alemanha"/>
+    <record jsxid="string.terr.DK" jsxtext="Dinamarca"/>
+    <record jsxid="string.terr.ES" jsxtext="Espanha"/>
+    <record jsxid="string.terr.FR" jsxtext="França"/>
+    <record jsxid="string.terr.GB" jsxtext="Reino Unido"/>
+    <record jsxid="string.terr.GR" jsxtext="Grécia"/>
+    <record jsxid="string.terr.HK" jsxtext="Hong Kong, Região Admin. Especial da China"/>
+    <record jsxid="string.terr.IT" jsxtext="Itália"/>
+    <record jsxid="string.terr.JP" jsxtext="Japão"/>
+    <record jsxid="string.terr.KR" jsxtext="Coréia, Sul"/>
+    <record jsxid="string.terr.MX" jsxtext="México"/>
+    <record jsxid="string.terr.NZ" jsxtext="Nova Zelândia"/>
+    <record jsxid="string.terr.PT" jsxtext="Portugal"/>
+    <record jsxid="string.terr.RU" jsxtext="Rússia"/>
+    <record jsxid="string.terr.SE" jsxtext="Suécia"/>
+    <record jsxid="string.terr.TW" jsxtext="Taiwan"/>
+    <record jsxid="string.terr.US" jsxtext="Estados Unidos"/>
+  </locale>
+<locale key="pt_BR">
+    <record jsxid="currency.code" jsxtext="BRL"/>
+    <record jsxid="format.date.short" jsxtext="dd/MM/yy"/>
+    <record jsxid="format.date.medium" jsxtext="dd/MM/yyyy"/>
+    <record jsxid="format.time.long" jsxtext="H'h'm'min's's' z"/>
+    <record jsxid="format.time.full" jsxtext="HH'h'mm'min'ss's' z"/>
+    <record jsxid="string.terr.KR" jsxtext="Coréia do Sul"/>
+    <record jsxid="time.sep.hour-min" jsxtext="h"/>
+    <record jsxid="time.sep.min-sec" jsxtext="min"/>
+  </locale>
+<locale key="pt_PT">
+    <record jsxid="currency.code" jsxtext="EUR"/>
+    <record jsxid="format.number.currency" jsxtext="#,##0.00 ¤"/>
+    <record jsxid="format.date.short" jsxtext="yy/MM/dd"/>
+    <record jsxid="number.currency.decimal" jsxtext="$"/>
+    <record jsxid="number.currency.grouping" jsxtext=","/>
+    <record jsxid="format.date.medium" jsxtext="yyyy/MM/dd"/>
+    <record jsxid="string.terr.HK" jsxtext="Hong Kong - Região Administrativa Especial da China"/>
+    <record jsxid="string.terr.KR" jsxtext="Coreia do Sul"/>
+  </locale>
+</data>
