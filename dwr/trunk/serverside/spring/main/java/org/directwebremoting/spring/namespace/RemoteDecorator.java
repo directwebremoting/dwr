@@ -52,7 +52,7 @@ public class RemoteDecorator extends CreatorParserHelper implements BeanDefiniti
             {
                 throw new FatalBeanException("Unabled to find type for beanName '" + name + "'. " + "Check your bean has a correctly configured parent or provide a class for " + " the bean definition");
             }
-            beanCreator.addPropertyValue("beanClass", ClassUtils.forName(beanClassName, getClass().getClassLoader()));
+            beanCreator.addPropertyValue("beanClass", ClassUtils.forName(beanClassName, ClassUtils.getDefaultClassLoader()));
         }
         catch (ClassNotFoundException e)
         {
