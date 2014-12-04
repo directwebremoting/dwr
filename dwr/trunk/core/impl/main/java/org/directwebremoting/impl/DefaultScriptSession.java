@@ -210,18 +210,9 @@ public class DefaultScriptSession implements RealScriptSession
     public void setSleeper(Sleeper sleeper)
     {
         invalidateIfNeeded();
-        boolean hasNewData;
-        synchronized (scripts)
-        {
-            hasNewData = (scripts.size() > 0);
-        }
         synchronized (sleeperLock)
         {
             this.sleeper = sleeper;
-            if (hasNewData)
-            {
-                this.sleeper.wakeUpForData();
-            }
         }
     }
 
