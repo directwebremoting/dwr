@@ -102,12 +102,6 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="core/api/lib/jetty-continuation-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-server-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-util-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-http-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-webapp-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-io-7.0.1.v20091125.jar"/>
-	<classpathentry kind="lib" path="core/api/lib/jetty-servlet-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/javax.servlet-api-3.0.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/js.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/shrinksafe.jar"/>
