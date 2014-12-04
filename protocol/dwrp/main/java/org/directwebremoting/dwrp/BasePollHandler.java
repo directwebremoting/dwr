@@ -207,9 +207,15 @@ public class BasePollHandler extends BaseDwrpHandler
             }
         };
 
+        // Flush any queued scripts
+        RealScriptSession.Scripts scripts = scriptSession.getScripts(0);
+        if (scripts.getScripts().size() > 0) {
+            proxiedSleeper.wakeUpForData();
+        }
+
         // Actually go to sleep. This *must* be the last thing in this method to
         // cope with all the methods of affecting Threads.
-        sleeper.enterSleep(onClose, disconnectedTime);
+        proxiedSleeper.enterSleep(onClose, disconnectedTime);
     }
 
     /**

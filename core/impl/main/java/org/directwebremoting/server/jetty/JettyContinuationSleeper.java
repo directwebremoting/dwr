@@ -46,6 +46,9 @@ public class JettyContinuationSleeper extends BaseSleeper
         super(response, scriptSession, conduit);
 
         continuation = ContinuationSupport.getContinuation(request);
+        continuation.setAttribute(ATTRIBUTE_SLEEPER, this);
+        continuation.setTimeout(0);
+        continuation.suspend();
     }
 
     /* (non-Javadoc)
@@ -54,9 +57,7 @@ public class JettyContinuationSleeper extends BaseSleeper
     @Override
     protected void enterSleep()
     {
-        continuation.setAttribute(ATTRIBUTE_SLEEPER, this);
-        continuation.setTimeout(0);
-        continuation.suspend();
+        // NOP
     }
 
     /* (non-Javadoc)
