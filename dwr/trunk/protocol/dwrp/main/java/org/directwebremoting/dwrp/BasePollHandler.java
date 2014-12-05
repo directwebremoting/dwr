@@ -151,7 +151,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // does not support streaming or streaming has not been configured.
         final Sleeper proxiedSleeper;
         if (!canWeHaveFullStreaming) {
-    		final int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
+    		final int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.FALLBACK_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
     		proxiedSleeper = new Sleeper()
             {
                 public void enterSleep(Runnable onClose, int disconnectedTime) throws IOException
@@ -315,7 +315,7 @@ public class BasePollHandler extends BaseDwrpHandler
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicates that we do not do early
      * closing after writes IF the client supports streaming.  If the client
-     * does not support streaming DEFAULT_MAX_WAIT_AFTER_WRITE is used.
+     * does not support streaming FALLBACK_MAX_WAIT_AFTER_WRITE is used.
      * @param maxWaitAfterWrite the maxWaitAfterWrite to set
      */
     public void setMaxWaitAfterWrite(int maxWaitAfterWrite)
@@ -327,9 +327,9 @@ public class BasePollHandler extends BaseDwrpHandler
      * Sometimes with proxies, you need to close the stream all the time to
      * make the flush work. A value of -1 indicates that we do not do early
      * closing after writes IF the client supports streaming.  If the client
-     * does not support streaming DEFAULT_MAX_WAIT_AFTER_WRITE is used.
+     * does not support streaming FALLBACK_MAX_WAIT_AFTER_WRITE is used.
      */
-    protected int maxWaitAfterWrite = ProtocolConstants.DEFAULT_MAX_WAIT_AFTER_WRITE;
+    protected int maxWaitAfterWrite = -1;
 
     /**
      * Do we support streaming for clients that allow it?
