@@ -206,7 +206,8 @@ public interface ProtocolConstants
     public static final String SCRIPT_END_MARKER = "//#DWR-END#";
 
     /**
-     * How long do we wait before closing the connection after a write.
+     * How long do we wait  before closing the connection after a write for clients that
+     * don't support streaming.
      */
-    public static final int DEFAULT_MAX_WAIT_AFTER_WRITE = -1;
+    public static final int FALLBACK_MAX_WAIT_AFTER_WRITE = 500;
 }
