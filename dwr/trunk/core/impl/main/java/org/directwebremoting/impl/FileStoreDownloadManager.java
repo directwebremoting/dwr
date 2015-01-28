@@ -206,7 +206,7 @@ public class FileStoreDownloadManager extends PurgingDownloadManager implements 
     protected String encodeFileNameSegment(final String segment)
     {
         String standardBase64 = new String(Base64.encodeBase64(segment.getBytes()));
-        return standardBase64.replaceAll("+", "-").replaceAll("/", "_");
+        return standardBase64.replaceAll("\\+", "-").replaceAll("/", "_");
     }
 
     /**
