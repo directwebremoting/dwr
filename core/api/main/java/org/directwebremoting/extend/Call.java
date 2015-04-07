@@ -169,10 +169,16 @@ public class Call
             }
 
             // Remove methods where we can't convert the input
-            for (int i = 0; i < methodParamTypes.length; i++)
+            int argIndex = 0;
+            for (int paramIndex = 0; paramIndex < methodParamTypes.length; paramIndex++)
             {
-                Class<?> methodParamType = methodParamTypes[i];
-                InboundVariable param = inctx.getParameter(callNum, i);
+                Class<?> methodParamType = methodParamTypes[paramIndex];
+                if (LocalUtil.isServletClass(methodParamType))
+                {
+                    continue;
+                }
+
+                InboundVariable param = inctx.getParameter(callNum, argIndex);
                 Class<?> inputType = converterManager.getClientDeclaredType(param);
 
                 // If we can't convert this parameter type, ignore the method
@@ -183,7 +189,7 @@ public class Call
                 }
 
                 // Remove methods which declare more non-nullable parameters than were passed
-                if (inputArgCount <= i && methodParamType.isPrimitive())
+                if (inputArgCount <= argIndex && methodParamType.isPrimitive())
                 {
                     it.remove();
                     continue allMethodsLoop;
@@ -195,6 +201,8 @@ public class Call
                     it.remove();
                     continue allMethodsLoop;
                 }
+
+                argIndex++;
             }
         }
 
