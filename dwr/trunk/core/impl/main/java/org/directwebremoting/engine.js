@@ -952,7 +952,10 @@ if (typeof dwr == 'undefined') dwr = {};
           batch.handlers[callId].completed = true;
           if (typeof handlers.callback == "function") {
             dwr.engine.util.logHandlerEx(function() {
-              handlers.callback.apply(handlers.callbackScope, [ reply, handlers.callbackArg ]);
+              if(handlers.callbackArg !== undefined)
+        	    handlers.callback.call(handlers.callbackScope, reply, handlers.callbackArg);
+              else
+                handlers.callback.call(handlers.callbackScope, reply);
             });
           }
         }
@@ -1024,7 +1027,10 @@ if (typeof dwr == 'undefined') dwr = {};
 
       dwr.engine.util.logHandlerEx(function() {
         if (typeof handlers.exceptionHandler == "function") {
-          handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
+          if (handlers.exceptionArg !== undefined)
+            handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex, handlers.exceptionArg);
+          else
+            handlers.exceptionHandler.call(handlers.exceptionScope, ex.message, ex);
         }
         else if (typeof handlers.errorHandler == "function") {
           handlers.errorHandler(ex.message, ex);
@@ -2171,10 +2177,10 @@ if (typeof dwr == 'undefined') dwr = {};
       if (dwr.engine._singleShot) dwr.engine.batch.merge(batch, callData);
       batch.handlers[batch.map.callCount] = {
         callback:callData.callbackHandler || callData.callback,
-        callbackArg:callData.callbackArg || callData.arg || null,
+        callbackArg:callData.callbackArg || callData.arg,
         callbackScope:callData.callbackScope || callData.scope || window,
         exceptionHandler:callData.exceptionHandler,
-        exceptionArg:callData.exceptionArg || callData.arg || null,
+        exceptionArg:callData.exceptionArg || callData.arg,
         exceptionScope:callData.exceptionScope || callData.scope || window,
         errorHandler:callData.errorHandler
       };
