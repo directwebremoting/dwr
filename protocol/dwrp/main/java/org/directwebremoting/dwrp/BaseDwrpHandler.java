@@ -196,13 +196,13 @@ public abstract class BaseDwrpHandler implements Handler
      */
     public void setExtendedCrossDomainSessionSecurity(boolean value)
     {
-        this.crossDomainSessionSecurity = value;
+        this.extendedCrossDomainSessionSecurity = value;
     }
 
     /**
      * Do we perform extended cross-domain session security checks?
      */
-    private final boolean extendedCrossDomainSessionSecurity = true;
+    private boolean extendedCrossDomainSessionSecurity = true;
 
     /**
      * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
