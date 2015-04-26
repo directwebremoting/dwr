@@ -68,7 +68,7 @@ public class BasePollHandler extends BaseDwrpHandler
      * @see org.directwebremoting.Handler#handle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException
+    public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException
     {
         // If you're new to understanding this file, you may wish to skip this
         // step and come back to it later ;-)
@@ -204,6 +204,8 @@ public class BasePollHandler extends BaseDwrpHandler
 
                 // We can't be used as a sleeper for this session any longer
                 scriptSession.clearSleeper(proxiedSleeper);
+
+                updateCsrfState(request, batch);
             }
         };
 
