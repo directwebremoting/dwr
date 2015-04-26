@@ -106,6 +106,10 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             Replies replies = remoter.execute(calls);
             scriptPrefixSent = true; // we can set this here as marshallOutbound will send prefix before throwing any exception
             marshallOutbound(batch, replies, response);
+
+            if (checkCsrf) {
+                updateCsrfState(request, batch);
+            }
         }
         catch (Exception ex)
         {
