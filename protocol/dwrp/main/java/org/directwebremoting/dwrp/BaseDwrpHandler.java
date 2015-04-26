@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.export.System;
 import org.directwebremoting.extend.Handler;
 
 /**
@@ -157,7 +158,7 @@ public abstract class BaseDwrpHandler implements Handler
      */
     private String updateRegisteredDwrSession(HttpSession sess, Batch batch)
     {
-        String registeredDwrSessionId = (String) sess.getAttribute(ATTRIBUTE_DWRSESSIONID);
+        String registeredDwrSessionId = (String) sess.getAttribute(System.ATTRIBUTE_DWRSESSIONID);
         if (registeredDwrSessionId == null)
         {
             // Check again and update while locking out all other threads
@@ -165,11 +166,11 @@ public abstract class BaseDwrpHandler implements Handler
             // write-once design and getAttribute/setAttribute methods are also synchronized!)
             synchronized (this)
             {
-                registeredDwrSessionId = (String) sess.getAttribute(ATTRIBUTE_DWRSESSIONID);
+                registeredDwrSessionId = (String) sess.getAttribute(System.ATTRIBUTE_DWRSESSIONID);
                 if (registeredDwrSessionId == null)
                 {
                     registeredDwrSessionId = batch.getDwrSessionId();
-                    sess.setAttribute(ATTRIBUTE_DWRSESSIONID, registeredDwrSessionId);
+                    sess.setAttribute(System.ATTRIBUTE_DWRSESSIONID, registeredDwrSessionId);
                 }
             }
         }
@@ -216,11 +217,6 @@ public abstract class BaseDwrpHandler implements Handler
      * By default we disable GET, but this hinders old Safaris
      */
     private boolean allowGetForSafariButMakeForgeryEasier = false;
-
-    /**
-     * Session attribute for DWRSESSIONID
-     */
-    public static final String ATTRIBUTE_DWRSESSIONID = "org.directwebremoting.DWRSESSIONID";
 
     /**
      * The log stream

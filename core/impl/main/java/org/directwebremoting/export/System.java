@@ -29,7 +29,6 @@ import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.dwrp.BaseDwrpHandler;
 import org.directwebremoting.event.DefaultMessageEvent;
 import org.directwebremoting.event.MessageEvent;
 import org.directwebremoting.event.MessageListener;
@@ -52,15 +51,15 @@ public class System
     public String generateId()
     {
         WebContext webContext = WebContextFactory.get();
-        
+
         // If the current session already has a set DWRSESSIONID then we return that
         HttpServletRequest request = webContext.getHttpServletRequest();
         HttpSession sess = request.getSession(false);
-        if (sess != null && sess.getAttribute(BaseDwrpHandler.ATTRIBUTE_DWRSESSIONID) != null)
+        if (sess != null && sess.getAttribute(ATTRIBUTE_DWRSESSIONID) != null)
         {
-            return (String) sess.getAttribute(BaseDwrpHandler.ATTRIBUTE_DWRSESSIONID);
+            return (String) sess.getAttribute(ATTRIBUTE_DWRSESSIONID);
         }
-        
+
         // Otherwise generate a fresh ID
         IdGenerator idGenerator = webContext.getContainer().getBean(IdGenerator.class);
         return idGenerator.generate();
@@ -204,6 +203,11 @@ public class System
         protected String subscriptionId;
         protected ScriptSession session;
     }
+
+    /**
+     * Session attribute for DWRSESSIONID
+     */
+    public static final String ATTRIBUTE_DWRSESSIONID = "org.directwebremoting.DWRSESSIONID";
 
     /**
      *
