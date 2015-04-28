@@ -857,12 +857,13 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine._getObject = function(prop) {
     var parts = prop.split(".");
-    var value;
+    var value = undefined;
     var scope = dwr.engine._global;
     while(parts.length > 0) {
       var currprop = parts.shift();
+      if (!scope) return undefined;
       value = scope[currprop];
-      if (parts.length > 0 && value == null) return undefined;
+      if (value && value.tagName && document.getElementById(currprop) == value) return undefined;
       scope = value;
     }
     return value;
@@ -884,7 +885,7 @@ if (typeof dwr == 'undefined') dwr = {};
       }
       else {
         level = scope[currprop];
-        if (level == null) {
+        if (level == null || level.tagName && document.getElementById(currprop) == level) {
           scope[currprop] = level = {};
         }
         scope = level;
