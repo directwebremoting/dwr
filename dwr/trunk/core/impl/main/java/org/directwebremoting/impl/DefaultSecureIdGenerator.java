@@ -15,6 +15,10 @@
  */
 package org.directwebremoting.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -59,6 +63,9 @@ public class DefaultSecureIdGenerator implements IdGenerator
         {
             random = new SecureRandom();
         }
+
+        // Let SecureRandom do its own secure initialization before we add our seed
+        random.nextBytes(new byte[1]);
 
         // Now seed the generator
         reseed();
@@ -124,10 +131,13 @@ public class DefaultSecureIdGenerator implements IdGenerator
             countSinceTimeChange = 0;
         }
 
+        count++;
         countSinceSeed++;
         countSinceTimeChange++;
         lastGenTime = time;
-        return idbuf.toString();
+        String id = idbuf.toString();
+        lastHashCode = System.identityHashCode(id);
+        return id;
     }
 
     /**
@@ -171,14 +181,45 @@ public class DefaultSecureIdGenerator implements IdGenerator
         // Linuxes don't come configured with the driver for the Intel
         // hardware RNG, this usually blocks the whole server...
 
-        // Reseed using nano time.
-        random.setSeed(System.nanoTime());
+        try {
+            // Make up a base for entropy
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            DataOutputStream data = new DataOutputStream(os);
+            data.writeLong(System.nanoTime());
+            byte[] prngOutput = new byte[128];
+            random.nextBytes(prngOutput);
+            data.write(prngOutput);
+            data.write(count);
+            data.write(lastHashCode);
+            os.close();
+            byte[] base = os.toByteArray();
+
+            // Hash and pick out first 128 bits
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(base);
+            byte[] hash128 = new byte[16];
+            System.arraycopy(hash, 0, hash128, 0, 16);
+
+            // Reseed
+            random.setSeed(hash128);
+        }
+        catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        catch(NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
      * The random number source
      */
     protected SecureRandom random = null;
+
+    /**
+     * Number of ids generated since startup
+     */
+    protected int count = 0;
 
     /**
      * Number of ids generated since last seeding of random source
@@ -199,4 +240,9 @@ public class DefaultSecureIdGenerator implements IdGenerator
      * Timestamp from last id generation
      */
     protected long lastGenTime = 0;
+
+    /**
+     * Hashcode from last id generation
+     */
+    protected int lastHashCode = 0;
 }
