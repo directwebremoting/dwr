@@ -110,12 +110,11 @@ public abstract class BaseSleeper implements Sleeper
                 sendBeginStream();
                 opened = true;
             }
+            sendNewScripts();
             if (closed) {
                 sendEndStream();
                 doClose();
-                return;
             }
-            sendNewScripts();
         } catch(Exception ex) {
             if (LocalUtil.getRootCause(ex) instanceof IOException) {
                 log.debug("Poll I/O error", ex);
