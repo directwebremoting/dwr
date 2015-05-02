@@ -30,56 +30,51 @@ import org.directwebremoting.event.ScriptSessionBindingListener;
 public interface ScriptSession
 {
     /**
-     * Returns the object bound with the specified name in this session, or
+     * Returns the object bound with the specified name in this ScriptSession, or
      * <code>null</code> if no object is bound under the name.
      * @param name a string specifying the name of the object
      * @return the object with the specified name
-     * @throws IllegalStateException if the page has been invalidated
      */
     Object getAttribute(String name);
 
     /**
-     * Binds an object to this session, using the name specified.
-     * If an object of the same name is already bound to the session, the
+     * Binds an object to this ScriptSession, using the name specified.
+     * If an object of the same name is already bound to the ScriptSession, the
      * object is replaced.
      * <p>After this method executes, and if the new object implements
      * {@link ScriptSessionBindingListener}, the container calls
      * {@link ScriptSessionBindingListener#valueBound}.
-     * <p>If an object was already bound to this session of this name that
+     * <p>If an object was already bound to this ScriptSession of this name that
      * implements {@link ScriptSessionBindingListener}, its
      * {@link ScriptSessionBindingListener#valueUnbound} method is called.
      * <p>If the value passed in is null, this has the same effect as calling
      * {@link #removeAttribute}.
      * @param name the name to which the object is bound; cannot be null
      * @param value the object to be bound
-     * @throws IllegalStateException if the page has been invalidated
      */
     void setAttribute(String name, Object value);
 
     /**
-     * Removes the object bound with the specified name from this session.
-     * If the session does not have an object bound with the specified name,
+     * Removes the object bound with the specified name from this ScriptSession.
+     * If the ScriptSession does not have an object bound with the specified name,
      * this method does nothing.
      * <p>After this method executes, and if the object implements
      * {@link ScriptSessionBindingListener}, the container calls
      * {@link ScriptSessionBindingListener#valueUnbound}.
-     * @param name the name of the object to remove from this session
-     * @throws IllegalStateException if the page has been invalidated
+     * @param name the name of the object to remove from this ScriptSession
      */
     void removeAttribute(String name);
 
     /**
      * Returns an <code>Enumeration</code> of <code>String</code> objects
-     * containing the names of all the objects bound to this session.
+     * containing the names of all the objects bound to this ScriptSession.
      * @return an <code>Iterator</code> of <code>String</code>s, specifying the
-     *     names of all the objects bound to this session
-     * @throws IllegalStateException if the page has been invalidated
+     *     names of all the objects bound to this ScriptSession
      */
     Iterator<String> getAttributeNames();
 
     /**
-     * Invalidates this session then unbinds any objects bound to it.
-     * @throws IllegalStateException if the page has been invalidated
+     * Invalidates this ScriptSession then unbinds any objects bound to it.
      */
     void invalidate();
 
@@ -104,29 +99,25 @@ public interface ScriptSession
 
     /**
      * Returns a string containing the unique identifier assigned to this
-     * session. The identifier is assigned by the servlet container and is
-     * implementation dependent.
-     * @return a string specifying the identifier assigned to this session
-     * @throws IllegalStateException if the page has been invalidated
+     * ScriptSession. The identifier is assigned by DWR.
+     * @return a string specifying the identifier assigned to this ScriptSession
      */
     String getId();
 
     /**
-     * Returns the time when this session was created, measured in milliseconds
+     * Returns the time when this ScriptSession was created, measured in milliseconds
      * since midnight January 1, 1970 GMT.
-     * @return when was this page created, in milliseconds since 1/1/1970 GMT
-     * @throws IllegalStateException if the page has been invalidated
+     * @return when was this ScriptSession created, in milliseconds since 1/1/1970 GMT
      */
     long getCreationTime();
 
     /**
      * Returns the last time the client sent a request associated with this
-     * session, as the number of milliseconds since 1/1/1970 GMT, and marked by
+     * ScriptSession, as the number of milliseconds since 1/1/1970 GMT, and marked by
      * the time the container received the request.
      * <p>Actions that your application takes, such as getting or setting a
      * value associated with the session, do not affect the access time.
-     * @return when was this page last accessed, in milliseconds since 1/1/1970 GMT
-     * @throws IllegalStateException if the page has been invalidated
+     * @return when was this ScriptSession last accessed, in milliseconds since 1/1/1970 GMT
      */
     long getLastAccessedTime();
 
