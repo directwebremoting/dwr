@@ -308,42 +308,25 @@ public class DefaultContainer extends AbstractContainer implements Container
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.Container#contextDestroyed()
+     * @see org.directwebremoting.Container#destroy()
      */
-    public void contextDestroyed()
+    public synchronized void destroy()
     {
-        contextDestroyed(getBeanNames());
-    }
-
-    public void contextDestroyed(Collection<String> beanNames)
-    {
-        Loggers.STARTUP.debug("ContextDestroyed for container: " + getClass().getSimpleName());
-        for (String beanName : beanNames)
+        if (isDestroyed)
         {
-            Object bean = getBean(beanName);
-            if (bean instanceof UninitializingBean && !(bean instanceof Container))
-            {
-                UninitializingBean scl = (UninitializingBean) bean;
-                Loggers.STARTUP.debug("- For contained bean: " + beanName);
-                scl.contextDestroyed();
-            }
+            return;
         }
+
+        isDestroyed = true;
+        destroy(getBeanNames());
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.Container#servletDestroyed()
+     * @see org.directwebremoting.Container#destroy()
      */
-    public void servletDestroyed()
+    public void destroy(Collection<String> beanNames)
     {
-        servletDestroyed(getBeanNames());
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.Container#servletDestroyed()
-     */
-    public void servletDestroyed(Collection<String> beanNames)
-    {
-        Loggers.STARTUP.debug("ServletDestroyed for container: " + getClass().getSimpleName());
+        Loggers.STARTUP.debug("Destroy for container: " + getClass().getSimpleName());
         for (String beanName : beanNames)
         {
             Object bean = getBean(beanName);
@@ -351,7 +334,7 @@ public class DefaultContainer extends AbstractContainer implements Container
             {
                 UninitializingBean scl = (UninitializingBean) bean;
                 Loggers.STARTUP.debug("- For contained bean: " + beanName);
-                scl.servletDestroyed();
+                scl.destroy();
             }
         }
     }
@@ -360,4 +343,9 @@ public class DefaultContainer extends AbstractContainer implements Container
      * The beans that we know of indexed by type
      */
     protected Map<String, Object> beans = new TreeMap<String, Object>();
+
+    /**
+     * Keep track of whether we have already been destroyed
+     */
+    boolean isDestroyed = false;
 }

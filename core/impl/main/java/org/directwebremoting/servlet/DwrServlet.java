@@ -160,7 +160,7 @@ public class DwrServlet extends HttpServlet
         {
             webContextBuilder.engageThread(container, null, null);
         }
-        container.servletDestroyed();
+        container.destroy();
         if (webContextBuilder != null)
         {
             webContextBuilder.disengageThread();

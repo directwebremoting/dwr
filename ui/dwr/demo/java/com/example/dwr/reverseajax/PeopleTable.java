@@ -24,7 +24,6 @@ import org.directwebremoting.ScriptSessionFilter;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.UninitializingBean;
-import org.directwebremoting.impl.DaemonThreadFactory;
 import org.directwebremoting.ui.dwr.Util;
 
 import com.example.dwr.people.Person;
@@ -47,21 +46,14 @@ public class PeopleTable implements Runnable, UninitializingBean
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     * @see org.directwebremoting.extend.UninitializingBean#destroy()
      */
-    public void contextDestroyed()
+    public void destroy()
     {
         executor.shutdown();
         try {
             executor.awaitTermination(1, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {}
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
-     */
-    public void servletDestroyed()
-    {
     }
 
     public void updateTableDisplay()

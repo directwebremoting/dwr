@@ -68,7 +68,7 @@ public class ThrottlingServerLoadMonitorTest extends ThrottlingServerLoadMonitor
 
     @AfterClass
     public static void stop() {
-        t.contextDestroyed();
+        t.destroy();
     }
 
     /* (non-Javadoc)

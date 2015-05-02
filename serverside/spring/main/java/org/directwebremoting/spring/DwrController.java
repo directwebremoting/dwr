@@ -271,8 +271,7 @@ public class DwrController extends AbstractController implements BeanNameAware, 
         {
             webContextBuilder.engageThread(container, null, null);
         }
-        container.servletDestroyed();
-        container.contextDestroyed();
+        container.destroy();
         if (webContextBuilder != null)
         {
             webContextBuilder.disengageThread();
