@@ -198,32 +198,16 @@ public class DefaultCreatorManager implements CreatorManager, UninitializingBean
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     * @see org.directwebremoting.extend.UninitializingBean#destroy()
      */
-    public void contextDestroyed()
+    public void destroy()
     {
         WebContext webcx = WebContextFactory.get();
         for(Creator c : creators.values()) {
             if (c.getScope().equals(Creator.APPLICATION)) {
                 Object creatorInstance = webcx.getServletContext().getAttribute(c.getJavascript());
                 if (creatorInstance instanceof UninitializingBean) {
-                    ((UninitializingBean) creatorInstance).contextDestroyed();
-                }
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
-     */
-    public void servletDestroyed()
-    {
-        WebContext webcx = WebContextFactory.get();
-        for(Creator c : creators.values()) {
-            if (c.getScope().equals(Creator.APPLICATION)) {
-                Object creatorInstance = webcx.getServletContext().getAttribute(c.getJavascript());
-                if (creatorInstance instanceof UninitializingBean) {
-                    ((UninitializingBean) creatorInstance).servletDestroyed();
+                    ((UninitializingBean) creatorInstance).destroy();
                 }
             }
         }

@@ -40,16 +40,9 @@ public class AutoShutdownScheduledThreadPoolExecutor extends ScheduledThreadPool
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     * @see org.directwebremoting.extend.UninitializingBean#destroy()
      */
-    public void contextDestroyed()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
-     */
-    public void servletDestroyed()
+    public void destroy()
     {
         this.shutdownNow();
     }

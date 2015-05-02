@@ -155,24 +155,12 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
      * @see org.directwebremoting.impl.DefaultContainer#destroy()
      */
     @Override
-    public void contextDestroyed()
+    public void destroy()
     {
         // This override prevents us from trying to poke around in the Spring
         // BeanFactory which gets Spring all confused
         // We're being destroyed, we shouldn't be touching Spring beans
-        super.contextDestroyed(super.getBeanNames());
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.impl.DefaultContainer#destroy()
-     */
-    @Override
-    public void servletDestroyed()
-    {
-        // This override prevents us from trying to poke around in the Spring
-        // BeanFactory which gets Spring all confused
-        // We're being destroyed, we shouldn't be touching Spring beans
-        super.servletDestroyed(super.getBeanNames());
+        super.destroy(super.getBeanNames());
     }
 
     /**

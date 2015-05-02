@@ -65,16 +65,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
+     * @see org.directwebremoting.extend.UninitializingBean#destroy()
      */
-    public void contextDestroyed()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
-     */
-    public void servletDestroyed()
+    public void destroy()
     {
         future.cancel(true);
     }

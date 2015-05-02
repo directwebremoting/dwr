@@ -34,16 +34,9 @@ import org.directwebremoting.extend.WaitController;
 public abstract class AbstractServerLoadMonitor implements ServerLoadMonitor, UninitializingBean
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#servletDestroyed()
+     * @see org.directwebremoting.extend.UninitializingBean#destroy()
      */
-    public void servletDestroyed()
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.extend.UninitializingBean#contextDestroyed()
-     */
-    public void contextDestroyed()
+    public void destroy()
     {
         if (shutdownCalled)
         {

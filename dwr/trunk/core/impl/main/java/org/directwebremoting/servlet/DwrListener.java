@@ -65,7 +65,7 @@ public class DwrListener implements ServletContextListener
             {
                 webContextBuilder.engageThread(container, null, null);
             }
-            container.contextDestroyed();
+            container.destroy();
             if (webContextBuilder != null)
             {
                 webContextBuilder.disengageThread();
