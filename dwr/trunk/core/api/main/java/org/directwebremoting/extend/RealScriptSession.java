@@ -77,6 +77,11 @@ public interface RealScriptSession extends ScriptSession
     void setPage(String page);
 
     /**
+     * Set a new HttpSession id for the ScriptSession
+     */
+    void setHttpSessionId(String httpSessionId);
+
+    /**
      * Data class combining script list with offset.
      * @author Mike Wilson
      */

@@ -17,6 +17,8 @@ package org.directwebremoting.extend;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpSession;
+
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionListener;
 
@@ -56,10 +58,10 @@ public interface ScriptSessionManager
      * or create a new if needed.
      * @param id The id to get a ScriptSession object for
      * @param url The URL including 'http://', up to (but not including) '?' or '#' (or null if not known)
-     * @param httpSessionId The session ID to associate the ScriptSession with
+     * @param httpSession The session to associate the ScriptSession with (if any)
      * @return A ScriptSession to match the ID.
      */
-    RealScriptSession getOrCreateScriptSession(String id, String url, String httpSessionId);
+    RealScriptSession getOrCreateScriptSession(String id, String url, HttpSession httpSession);
 
     /**
      * Accessor for the time (in milliseconds) when unused ScriptSessions will expire
