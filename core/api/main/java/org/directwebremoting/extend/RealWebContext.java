@@ -38,7 +38,6 @@ public interface RealWebContext extends WebContext
      * with the new ID at the earliest possible opportunity.
      * @param sentPage The URL of the current page
      * @param sentScriptId The session id passed in by the browser
-     * @param windowName Reverse Ajax uses window.name to avoid 2 connection limit
      */
-    void checkPageInformation(String sentPage, String sentScriptId, String windowName);
+    void checkPageInformation(String sentPage, String sentScriptId);
 }

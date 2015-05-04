@@ -104,11 +104,6 @@ public interface ProtocolConstants
     public static final String INBOUND_KEY_METHODNAME = "methodName";
 
     /**
-     * Window name is used by reverse ajax to get around the 2 connection limit
-     */
-    public static final String INBOUND_KEY_WINDOWNAME = "windowName";
-
-    /**
      * What prefix do we put to the input parameters
      */
     public static final String INBOUND_KEY_PARAM = "param";

@@ -60,18 +60,6 @@ public interface RealScriptSession extends ScriptSession
     void updateLastAccessedTime();
 
     /**
-     * If the global parameter avoid2ConnectionLimitWithWindowName == true then
-     * we need to keep a track of the names of the windows that connect to us
-     * @param windowName The new name for the window that spawned this Session
-     */
-    void setWindowName(String windowName);
-
-    /**
-     * Accessor for the name attached to this window
-     */
-    String getWindowName();
-
-    /**
      * Set a new page for the ScriptSession (in case of HTML pushState)
      */
     void setPage(String page);

@@ -26,10 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.directwebremoting.Container;
-import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
-import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
@@ -58,18 +55,12 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
 
         this.request = request;
         this.response = response;
-
-        Object value = container.getBean("avoidConnectionLimitWithWindowName");
-        if (value != null)
-        {
-            avoidConnectionLimitWithWindowName = Boolean.parseBoolean(value.toString());
-        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.RealWebContext#checkPageInformation(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void checkPageInformation(final String sentPage, String sentScriptId, String windowName)
+    public void checkPageInformation(final String sentPage, String sentScriptId)
     {
         ScriptSessionManager scriptSessionManager = getScriptSessionManager();
 
@@ -78,17 +69,6 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
 
         this.scriptSession = scriptSessionManager.getOrCreateScriptSession(sentScriptId, sentPage, httpSession);
         this.page = sentPage;
-
-        if (avoidConnectionLimitWithWindowName)
-        {
-            if (windowName == null || "".equals(windowName))
-            {
-                windowName = "DWR-" +  this.getContainer().getBean(IdGenerator.class).generate();
-                ScriptBuffer script = EnginePrivate.getRemoteHandleNewWindowNameScript(windowName);
-                scriptSession.addScript(script);
-            }
-            scriptSession.setWindowName(windowName);
-        }
     }
 
     /* (non-Javadoc)
@@ -195,11 +175,6 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
     {
         return "DefaultWebContext[id=" + simplifyId(scriptSession.getId()) + ", page=" + page + "]";
     }
-
-    /**
-     * We can turn connection limit avoidance off
-     */
-    private boolean avoidConnectionLimitWithWindowName = false;
 
     /**
      * The unique ID (like a session ID) assigned to the current page
