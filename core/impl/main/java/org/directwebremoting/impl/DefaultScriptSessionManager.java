@@ -27,6 +27,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.event.ScriptSessionEvent;
@@ -75,7 +79,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptSessionManager#getScriptSession(java.lang.String)
      */
-    public RealScriptSession getOrCreateScriptSession(String sentScriptId, String page, String httpSessionId)
+    public RealScriptSession getOrCreateScriptSession(String sentScriptId, String page, HttpSession httpSession)
     {
         maybeCheckTimeouts();
         DefaultScriptSession scriptSession;
@@ -111,7 +115,47 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                 }
             }
 
-            associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
+            final String httpSessionId = (httpSession != null ? httpSession.getId() : null);
+
+            // Keep ScriptSession association to its HttpSession (if any)
+            synchronized (scriptSession)
+            {
+                if (scriptSession.getHttpSessionId() != null && !scriptSession.getHttpSessionId().equals(httpSessionId))
+                {
+                    disassociateScriptSessionAndHttpSession(scriptSession, httpSessionId);
+                }
+                if (httpSessionId != null && !httpSessionId.equals(scriptSession.getHttpSessionId()))
+                {
+                    associateScriptSessionAndHttpSession(scriptSession, httpSessionId);
+                }
+            }
+
+            // Listen for HttpSession invalidation to update association to ScriptSession
+            if (httpSession != null)
+            {
+                HttpSessionBindingListener invalidationListener = (HttpSessionBindingListener) httpSession.getAttribute(ATTRIBUTE_INVALIDATIONLISTENER);
+                if (invalidationListener == null)
+                {
+                    synchronized (this)
+                    {
+                        // This is a valid use of DCL as the getAttribute() calls are synchronized
+                        invalidationListener = (HttpSessionBindingListener) httpSession.getAttribute(ATTRIBUTE_INVALIDATIONLISTENER);
+                        if (invalidationListener == null)
+                        {
+                            httpSession.setAttribute(ATTRIBUTE_INVALIDATIONLISTENER, new HttpSessionBindingListener() {
+                                public void valueBound(HttpSessionBindingEvent arg0)
+                                {
+                                    // NOP
+                                }
+                                public void valueUnbound(HttpSessionBindingEvent arg0)
+                                {
+                                    disassociateAllScriptSessionsFromHttpSession(httpSessionId);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
         }
 
         // Maybe we should update the access time of the ScriptSession?
@@ -148,17 +192,115 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     protected void associateScriptSessionAndHttpSession(DefaultScriptSession scriptSession, String httpSessionId)
     {
-        sessionXRef.associate(httpSessionId, scriptSession);
+        if (httpSessionId == null)
+        {
+            return;
+        }
+
+        // We may have to retry as we are (deliberately) not locking the parent map
+        boolean done = false;
+        do {
+            Set<DefaultScriptSession> scriptSessions = httpSessionXref.get(httpSessionId);
+            if (scriptSessions == null)
+            {
+                scriptSessions = new HashSet<DefaultScriptSession>();
+                httpSessionXref.putIfAbsent(httpSessionId, scriptSessions);
+            }
+
+            // We use the lock on the script session set to coordinate both access
+            // to the set AND to lock the map key pointing to it
+            synchronized (scriptSessions)
+            {
+                if (httpSessionXref.get(httpSessionId) != scriptSessions) {
+                    // The key mapping was changed by another thread before we
+                    // managed to lock it.
+                    // Retry by taking another spin in the loop.
+                }
+                else
+                {
+                    // We have a lock on the script session set and we know it is
+                    // mapped by the key, so safe to add the new script session and
+                    // consider us done
+                    scriptSessions.add(scriptSession);
+                    done = true;
+                }
+            }
+        } while(!done);
+
+        // Update field on ScriptSession outside synchronized block to avoid deadlocks
+        scriptSession.setHttpSessionId(httpSessionId);
     }
 
     /**
      * Unlink any http sessions from this script session
-     * @see #associateScriptSessionAndHttpSession(DefaultScriptSession, String)
-     * @param scriptSession The script session to be unlinked
      */
-    protected void disassociateScriptSessionAndHttpSession(DefaultScriptSession scriptSession)
+    protected void disassociateScriptSessionAndHttpSession(DefaultScriptSession scriptSession, String httpSessionId)
     {
-        sessionXRef.disassociate(scriptSession);
+        if (httpSessionId == null)
+        {
+            return;
+        }
+
+        Set<DefaultScriptSession> scriptSessions = httpSessionXref.get(httpSessionId);
+        if (scriptSessions == null)
+        {
+            return;
+        }
+
+        // We use the lock on the script session set to coordinate both access
+        // to the set AND to lock the map key pointing to it
+        synchronized (scriptSessions)
+        {
+            if (!scriptSessions.contains(scriptSession))
+            {
+                return;
+            }
+
+            scriptSessions.remove(scriptSession);
+            if (scriptSessions.size() == 0)
+            {
+                httpSessionXref.remove(httpSessionId);
+            }
+        }
+
+        // Update field on ScriptSession outside synchronized block to avoid deadlocks
+        scriptSession.setHttpSessionId(null);
+    }
+
+    private void disassociateAllScriptSessionsFromHttpSession(String httpSessionId)
+    {
+        if (httpSessionId == null)
+        {
+            return;
+        }
+
+        Set<DefaultScriptSession> scriptSessions = httpSessionXref.get(httpSessionId);
+        if (scriptSessions == null)
+        {
+            return;
+        }
+
+        // We use the lock on the script session set to coordinate both access
+        // to the set AND to lock the map key pointing to it
+        Set<DefaultScriptSession> copy = new HashSet<DefaultScriptSession>();
+        synchronized (scriptSessions)
+        {
+            copy.addAll(scriptSessions);
+            scriptSessions.clear();
+            httpSessionXref.remove(httpSessionId);
+        }
+
+        // Update field on all the ScriptSessions outside synchronized block to avoid deadlocks
+        for(DefaultScriptSession scriptSession : copy)
+        {
+            synchronized (scriptSession)
+            {
+                if (httpSessionId.equals(scriptSession.getHttpSessionId()))
+                {
+                    scriptSession.setHttpSessionId(null);
+                }
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -174,7 +316,20 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      */
     public Collection<ScriptSession> getScriptSessionsByHttpSessionId(String httpSessionId)
     {
-        return sessionXRef.getByKey(httpSessionId);
+        Collection<ScriptSession> reply = new HashSet<ScriptSession>();
+
+        Set<? extends ScriptSession> scriptSessions = httpSessionXref.get(httpSessionId);
+        if (scriptSessions != null)
+        {
+            // We need to lock the set to keep it stable from updates in associate()
+            // and disassociate() while we loop
+            synchronized (scriptSessions)
+            {
+                reply.addAll(scriptSessions);
+            }
+        }
+
+        return reply;
     }
 
     /* (non-Javadoc)
@@ -204,7 +359,10 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         // here of just allowing multiple invalidations.
         sessionMap.remove(scriptSession.getId());
 
-        disassociateScriptSessionAndHttpSession(scriptSession);
+        synchronized (scriptSession)
+        {
+            disassociateScriptSessionAndHttpSession(scriptSession, scriptSession.getHttpSessionId());
+        }
 
         // Are there any risks from doing this outside the locks?
         // The initial analysis is that 'Destroyed' is past tense so you would
@@ -371,143 +529,6 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
         this.executor = executor;
     }
 
-    /**
-     * Simple MultiMap implementation for groups of script sessions. It uses a non-blocking
-     * map on the top level and only performs blocking synchronization on the map values
-     * (sets) to improve concurrency.
-     */
-    private class ScriptSessionMultiMap {
-
-        private final ConcurrentMap<String, Set<String>> map = new ConcurrentHashMap<String, Set<String>>();
-        private final String keyAttr;
-
-        /**
-         * @param keyAttr name of script session attribute to use for saving the key
-         * the script session belongs to
-         */
-        public ScriptSessionMultiMap(String keyAttr)
-        {
-            this.keyAttr = keyAttr;
-        }
-
-        /**
-         * Associate a script session with a key.
-         *
-         * @param key
-         * @param scriptSession
-         */
-        public void associate(String key, ScriptSession scriptSession)
-        {
-            if (key == null)
-            {
-                return;
-            }
-
-            // We may have to retry as we are (deliberately) not locking the parent map
-            boolean done = false;
-            do {
-                Set<String> scriptSessionIds = map.get(key);
-                if (scriptSessionIds == null)
-                {
-                    scriptSessionIds = new HashSet<String>();
-                    map.putIfAbsent(key, scriptSessionIds);
-                }
-
-                // We use the lock on the script session set to coordinate both access
-                // to the set AND to lock the map key pointing to it
-                synchronized (scriptSessionIds)
-                {
-                    if (map.get(key) != scriptSessionIds) {
-                        // The key mapping was changed by another thread before we
-                        // managed to lock it.
-                        // Retry by taking another spin in the loop.
-                    }
-                    else
-                    {
-                        // We have a lock on the script session set and we know it is
-                        // mapped by the key, so safe to add the new script session and
-                        // consider us done
-                        scriptSessionIds.add(scriptSession.getId());
-                        scriptSession.setAttribute(keyAttr, key);
-                        done = true;
-                    }
-                }
-            } while(!done);
-        }
-
-        /**
-         * Remove the association between a script session and its key.
-         *
-         * @param scriptSession
-         */
-        public void disassociate(ScriptSession scriptSession)
-        {
-            Object key = scriptSession.getAttribute(keyAttr);
-            if (key == null)
-            {
-                return;
-            }
-
-            Set<String> scriptSessionIds = map.get(key);
-
-            if (scriptSessionIds == null)
-            {
-                Loggers.SESSION.debug("Warning: No script session ids for key");
-                return;
-            }
-
-            if (!scriptSessionIds.contains(scriptSession.getId()))
-            {
-                Loggers.SESSION.debug("Warning: Script session already removed from key");
-                return;
-            }
-
-            // We use the lock on the script session set to coordinate both access
-            // to the set AND to lock the map key pointing to it
-            synchronized (scriptSessionIds)
-            {
-                scriptSessionIds.remove(scriptSession.getId());
-                if (scriptSessionIds.size() == 0)
-                {
-                    map.remove(key);
-                }
-                scriptSession.setAttribute(keyAttr, null);
-            }
-        }
-
-        /**
-         * Get the script sessions associated with a particular key.
-         *
-         * @param key
-         * @return script sessions associated with key (in a collection that is a copy
-         * of the internal state)
-         */
-        public Collection<ScriptSession> getByKey(String key)
-        {
-            Collection<ScriptSession> reply = new ArrayList<ScriptSession>();
-
-            Set<String> scriptSessionIds = map.get(key);
-            if (scriptSessionIds != null)
-            {
-                // We need to lock the set to keep it stable from updates in associate()
-                // and disassociate() while we loop
-                synchronized (scriptSessionIds)
-                {
-                    for (String scriptSessionId : scriptSessionIds)
-                    {
-                        DefaultScriptSession scriptSession = sessionMap.get(scriptSessionId);
-                        if (scriptSession != null)
-                        {
-                            reply.add(scriptSession);
-                        }
-                    }
-                }
-            }
-
-            return reply;
-        }
-    }
-
    /*
     * Accessor for the ConverterManager that we configure
     * @param converterManager
@@ -541,10 +562,9 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
     protected ScheduledThreadPoolExecutor executor;
 
     /**
-     * Use of this attribute is currently discouraged, we may make this public
-     * in a later release. Until then, it may change or be removed without warning.
+     * HttpSession attribute that stores the invalidation listener
      */
-    public static final String ATTRIBUTE_HTTPSESSIONID = "org.directwebremoting.ScriptSession.HttpSessionId";
+    protected static final String ATTRIBUTE_INVALIDATIONLISTENER = DefaultScriptSessionManager.class.getName() + ".InvalidationListener";
 
     /**
      * By default we check for sessions that need expiring every 30 seconds
@@ -575,8 +595,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
 
     /**
      * Allows us to associate script sessions with http sessions.
-     * The key is an http session id, the value is a set of script session ids
+     * The key is an http session id, the value is a set of script sessions
      */
-    protected final ScriptSessionMultiMap sessionXRef = new ScriptSessionMultiMap(ATTRIBUTE_HTTPSESSIONID);
-
+    protected final ConcurrentMap<String, Set<DefaultScriptSession>> httpSessionXref = new ConcurrentHashMap<String, Set<DefaultScriptSession>>();
 }

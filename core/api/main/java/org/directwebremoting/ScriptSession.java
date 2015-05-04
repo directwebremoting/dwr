@@ -129,4 +129,11 @@ public interface ScriptSession
      * @return The page that this script session is viewing
      */
     String getPage();
+
+    /**
+     * If this ScriptSession's browser session also has a HttpSession then this method
+     * gives access to its id (typically corresponding to the JSESSIONID cookie).
+     * @return the id from an active associated HttpSession if any, otherwise null
+     */
+    String getHttpSessionId();
 }

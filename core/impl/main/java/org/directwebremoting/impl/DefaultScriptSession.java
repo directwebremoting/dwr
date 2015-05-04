@@ -310,6 +310,22 @@ public class DefaultScriptSession implements RealScriptSession
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.extend.RealScriptSession#setHttpSessionId(java.lang.String)
+     */
+    public synchronized void setHttpSessionId(String httpSessionId)
+    {
+        this.httpSessionId = httpSessionId;
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSession#getHttpSessionId()
+     */
+    public synchronized String getHttpSessionId()
+    {
+        return httpSessionId;
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.extend.RealScriptSession#setWindowName(java.lang.String)
      */
     public void setWindowName(String windowName)
@@ -501,6 +517,11 @@ public class DefaultScriptSession implements RealScriptSession
      * The page being viewed.
      */
     protected String page;
+
+    /**
+     * The corresponding HttpSession id (if any)
+     */
+    protected String httpSessionId;
 
     /**
      * We track window names to link script sessions together and to help

@@ -29,10 +29,10 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.extend.EnginePrivate;
+import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
-import org.directwebremoting.extend.IdGenerator;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 /**
@@ -74,19 +74,9 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         ScriptSessionManager scriptSessionManager = getScriptSessionManager();
 
         // Get the httpSessionId if it exists, but don't create one if it doesn't
-        String httpSessionId = null;
         HttpSession httpSession = request.getSession(false);
-        if (httpSession != null)
-        {
-            httpSessionId = httpSession.getId();
-        }
 
-        // Check validity to the script session id. It could be invalid due to
-        // to a server re-start, a timeout, a back-button, just because the user
-        // is new to this page, or because someone is hacking
-        this.scriptSession = scriptSessionManager.getOrCreateScriptSession(sentScriptId, sentPage, httpSessionId);
-
-        // The passed script session id passed the test, use it
+        this.scriptSession = scriptSessionManager.getOrCreateScriptSession(sentScriptId, sentPage, httpSession);
         this.page = sentPage;
 
         if (avoidConnectionLimitWithWindowName)
