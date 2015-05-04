@@ -112,7 +112,6 @@ public class Batch
         documentDomain = extractParameter(ProtocolConstants.INBOUND_KEY_DOCUMENT_DOMAIN, null);
 
         page = LocalUtil.urlDecode(extractParameter(ProtocolConstants.INBOUND_KEY_PAGE, THROW));
-        windowName = extractParameter(ProtocolConstants.INBOUND_KEY_WINDOWNAME, THROW);
     }
 
     /**
@@ -497,19 +496,6 @@ public class Batch
      * The page that the request was sent from
      */
     private String page;
-
-    /**
-     * @return the window name
-     */
-    public String getWindowName()
-    {
-        return windowName;
-    }
-
-    /**
-     * Window name is used by reverse ajax to get around the 2 connection limit
-     */
-    private String windowName;
 
     /**
      * @return the document domain

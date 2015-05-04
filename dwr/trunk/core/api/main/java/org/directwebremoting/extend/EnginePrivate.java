@@ -116,18 +116,6 @@ public class EnginePrivate
     }
 
     /**
-     * Call dwr.engine.remote.handleNewWindowName() in the browser
-     * @param windowName The new window name for the page
-     * @return The script to send to the browser
-     */
-    public static ScriptBuffer getRemoteHandleNewWindowNameScript(String windowName)
-    {
-        ScriptBuffer script = new ScriptBuffer();
-        script.appendCall("dwr.engine.remote.handleNewWindowName", windowName);
-        return script;
-    }
-
-    /**
      * Call dwr.engine.remote.handleServerException() in the browser
      * @param batchId The identifier of the batch that we are handling a response for
      * @param ex The exception from which we make a reply

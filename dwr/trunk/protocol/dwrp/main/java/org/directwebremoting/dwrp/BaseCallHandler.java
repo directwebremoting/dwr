@@ -96,7 +96,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
 
             String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
             RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-            webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
+            webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId());
 
             // Various bits of the CallBatch need to be stashed away places
             storeParsedRequest(request, webContext, batch);

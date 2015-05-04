@@ -112,7 +112,7 @@ public class BasePollHandler extends BaseDwrpHandler
         // Check to see that the page and script session id are valid
         String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
         RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-        webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId(), batch.getWindowName());
+        webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId());
 
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)

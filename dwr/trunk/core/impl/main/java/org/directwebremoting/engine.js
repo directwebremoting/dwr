@@ -1075,17 +1075,6 @@ if (typeof dwr == 'undefined') dwr = {};
     },
 
     /**
-     * Called by the server when we need to set a new window name
-     */
-    handleNewWindowName:function(windowName) {
-      dwr.engine._debug("Setting new window name: " + windowName);
-      if (window.name != null && window.name !== "") {
-        dwr.engine._debug("- Warning: This will override existing name of: " + window.name);
-      }
-      window.name = windowName;
-    },
-
-    /**
      * Called by the server: Reverse ajax should not be used
      * @private
      * @param {Object} ex
@@ -2077,7 +2066,7 @@ if (typeof dwr == 'undefined') dwr = {};
         charsProcessed:0,
         handlers:[],
         isPoll:false,
-        map:{ callCount:0, windowName:window.name },
+        map:{ callCount:0 },
         paramCount:0,
         preHooks:[],
         postHooks:[],
@@ -2117,13 +2106,12 @@ if (typeof dwr == 'undefined') dwr = {};
           }
         }],
         isPoll:true,
-        map:{ windowName:window.name, callCount:1, nextReverseAjaxIndex:dwr.engine._nextReverseAjaxIndex},
+        map:{ callCount:1, nextReverseAjaxIndex:dwr.engine._nextReverseAjaxIndex},
         paramCount:0,
         path:dwr.engine._pathToDwrServlet,
         preHooks:[],
         postHooks:[],
-        timeout:0,
-        windowName:window.name
+        timeout:0
       };
       dwr.engine.batch.populateHeadersAndAttributes(batch);
       return batch;
@@ -2245,7 +2233,6 @@ if (typeof dwr == 'undefined') dwr = {};
       // security details are filled in late so previous batches have completed
       batch.map.page = encodeURIComponent(window.location.pathname + window.location.search);
       batch.map.scriptSessionId = dwr.engine._scriptSessionId;
-      batch.map.windowName = window.name;
 
       for (var i = 0; i < batch.preHooks.length; i++) {
         batch.preHooks[i]();
