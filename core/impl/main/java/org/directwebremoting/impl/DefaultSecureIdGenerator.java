@@ -22,7 +22,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.extend.IdGenerator;
 
 /**
@@ -201,6 +204,7 @@ public class DefaultSecureIdGenerator implements IdGenerator
             System.arraycopy(hash, 0, hash128, 0, 16);
 
             // Reseed
+            log.debug("Reseeding with " + Arrays.toString(hash128));
             random.setSeed(hash128);
         }
         catch(IOException ex) {
@@ -245,4 +249,9 @@ public class DefaultSecureIdGenerator implements IdGenerator
      * Hashcode from last id generation
      */
     protected int lastHashCode = 0;
+
+    /**
+     * The log stream
+     */
+    private static final Log log = LogFactory.getLog(DefaultSecureIdGenerator.class);
 }
