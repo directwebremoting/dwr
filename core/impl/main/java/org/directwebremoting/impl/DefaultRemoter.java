@@ -392,7 +392,7 @@ public class DefaultRemoter implements Remoter
             HttpSession httpSession = webCtx.getSession(false);
             String httpSessionId = (httpSession != null ? httpSession.getId() : null);
             // Null-safe string comparison
-            if (!String.valueOf(httpSessionId).equals(String.valueOf(scriptSession.getHttpSessionId())))
+            if (scriptSession != null && !String.valueOf(httpSessionId).equals(String.valueOf(scriptSession.getHttpSessionId())))
             {
                 // Note: we can do DCL as involved methods are synchronized
                 synchronized (scriptSession)
