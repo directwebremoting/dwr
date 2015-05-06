@@ -109,10 +109,11 @@ public class BasePollHandler extends BaseDwrpHandler
         checkGetAllowed(batch);
         checkNotCsrfAttack(request, batch);
 
-        // Check to see that the page and script session id are valid
+        // Initialize WebContext stuff
         String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
+        final RealScriptSession scriptSession = scriptSessionManager.getOrCreateScriptSession(batch.getScriptSessionId(), normalizedPage, request.getSession(false));
         RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-        webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId());
+        webContext.initialize(normalizedPage, scriptSession);
 
         // We might need to complain that reverse ajax is not enabled.
         if (!activeReverseAjaxEnabled)
@@ -128,7 +129,6 @@ public class BasePollHandler extends BaseDwrpHandler
         // conduits (although if there are more than 2, something is strange)
         // All scripts destined for a page go to a ScriptSession and then out
         // via a ScriptConduit.
-        final RealScriptSession scriptSession = (RealScriptSession) webContext.getScriptSession();
         scriptSession.confirmScripts(batch.getNextReverseAjaxIndex() - 1);
 
         // Create a conduit depending on the type of request (from the URL)

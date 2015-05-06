@@ -20,9 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.AccessControl;
 import org.directwebremoting.extend.Call;
@@ -34,6 +36,7 @@ import org.directwebremoting.extend.Module;
 import org.directwebremoting.extend.ModuleManager;
 import org.directwebremoting.extend.NamedConverter;
 import org.directwebremoting.extend.Property;
+import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
@@ -380,6 +383,26 @@ public class DefaultRemoter implements Remoter
         {
             writeExceptionToAccessLog(ex);
             return new Reply(call.getCallId(), null, ex);
+        }
+        finally
+        {
+            // Update ScriptSession's httpSessionId in case session was created/invalidated while calling into user code
+            WebContext webCtx = WebContextFactory.get();
+            RealScriptSession scriptSession = (RealScriptSession) webCtx.getScriptSession();
+            HttpSession httpSession = webCtx.getSession(false);
+            String httpSessionId = (httpSession != null ? httpSession.getId() : null);
+            // Null-safe string comparison
+            if (!String.valueOf(httpSessionId).equals(String.valueOf(scriptSession.getHttpSessionId())))
+            {
+                // Note: we can do DCL as involved methods are synchronized
+                synchronized (scriptSession)
+                {
+                    if (!String.valueOf(httpSessionId).equals(String.valueOf(scriptSession.getHttpSessionId())))
+                    {
+                        scriptSession.setHttpSessionId(httpSessionId);
+                    }
+                }
+            }
         }
     }
 

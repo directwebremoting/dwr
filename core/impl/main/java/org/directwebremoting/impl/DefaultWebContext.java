@@ -29,7 +29,6 @@ import org.directwebremoting.Container;
 import org.directwebremoting.ScriptSession;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.RealWebContext;
-import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.util.SwallowingHttpServletResponse;
 
 /**
@@ -58,16 +57,11 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.RealWebContext#checkPageInformation(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.directwebremoting.extend.RealWebContext#initialize(java.lang.String, org.directwebremoting.extend.RealScriptSession)
      */
-    public void checkPageInformation(final String sentPage, String sentScriptId)
+    public void initialize(final String sentPage, RealScriptSession scriptSession)
     {
-        ScriptSessionManager scriptSessionManager = getScriptSessionManager();
-
-        // Get the httpSessionId if it exists, but don't create one if it doesn't
-        HttpSession httpSession = request.getSession(false);
-
-        this.scriptSession = scriptSessionManager.getOrCreateScriptSession(sentScriptId, sentPage, httpSession);
+        this.scriptSession = scriptSession;
         this.page = sentPage;
     }
 

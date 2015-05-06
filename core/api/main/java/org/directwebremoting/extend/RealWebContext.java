@@ -29,15 +29,8 @@ public interface RealWebContext extends WebContext
      * <p>This method should be used by anything that parses a batch, and then
      * allows either uses a {@link WebContext} or allows other things to use a
      * WebContext.
-     * <p><strong>Caution<strong> Following this call, the passed
-     * scriptSessionId may be wrong. scriptSessionIds can become invalid due to
-     * server re-start, a timeout, or a back-button.
-     * <p>It seems wrong to throw a security exception, because it could
-     * be totally innocent. So this method will create a new script session and
-     * insert a script into the script session so that the page becomes synced
-     * with the new ID at the earliest possible opportunity.
      * @param sentPage The URL of the current page
-     * @param sentScriptId The session id passed in by the browser
+     * @param scriptSession The active ScriptSession
      */
-    void checkPageInformation(String sentPage, String sentScriptId);
+    void initialize(String sentPage, RealScriptSession scriptSession);
 }

@@ -46,6 +46,7 @@ import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
+import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.impl.AccessLogLevel;
 import org.directwebremoting.impl.ExportUtil;
@@ -95,8 +96,9 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             request.setAttribute(ATTRIBUTE_BATCH, batch);
 
             String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
+            RealScriptSession scriptSession = scriptSessionManager.getOrCreateScriptSession(batch.getScriptSessionId(), normalizedPage, request.getSession(false));
             RealWebContext webContext = (RealWebContext) WebContextFactory.get();
-            webContext.checkPageInformation(normalizedPage, batch.getScriptSessionId());
+            webContext.initialize(normalizedPage, scriptSession);
 
             // Various bits of the CallBatch need to be stashed away places
             storeParsedRequest(request, webContext, batch);
@@ -582,6 +584,20 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
      * How we turn pages into the canonical form.
      */
     protected PageNormalizer pageNormalizer = null;
+
+    /**
+     * Accessor for the ScriptSessionManager that we configure
+     * @param scriptSessionManager
+     */
+    public void setScriptSessionManager(ScriptSessionManager scriptSessionManager)
+    {
+        this.scriptSessionManager = scriptSessionManager;
+    }
+
+    /**
+     * How we handle ScriptSessions
+     */
+    protected ScriptSessionManager scriptSessionManager = null;
 
     /**
      * Accessor for the ConverterManager that we configure
