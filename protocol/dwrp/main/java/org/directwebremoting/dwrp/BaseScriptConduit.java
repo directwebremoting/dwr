@@ -39,8 +39,9 @@ public abstract class BaseScriptConduit implements ScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public BaseScriptConduit(String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public BaseScriptConduit(PrintWriter out, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
+        this.out = out;
         this.instanceId = instanceId;
         this.batchId = batchId;
         this.converterManager = converterManager;
@@ -52,12 +53,12 @@ public abstract class BaseScriptConduit implements ScriptConduit
      * @param timetoNextPoll How long before we tell the browser to come back?
      * @throws IOException When we fail to call endStream()
      */
-    protected void sendPollReply(PrintWriter out, int timetoNextPoll) throws IOException
+    protected void sendPollReply(int timetoNextPoll) throws IOException
     {
-        sendBeginChunk(out);
+        sendBeginChunk();
         ScriptBuffer script = EnginePrivate.getRemoteHandleCallbackScript(batchId, "0", timetoNextPoll);
-        sendScript(out, ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
-        sendEndChunk(out);
+        sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+        sendEndChunk();
     }
 
     /**
@@ -106,6 +107,11 @@ public abstract class BaseScriptConduit implements ScriptConduit
      * How we convert parameters
      */
     protected ConverterManager converterManager = null;
+
+    /**
+     * The response output stream
+     */
+    protected final PrintWriter out;
 
     /**
      * What is the ID of the DWR instance that we are responding to?

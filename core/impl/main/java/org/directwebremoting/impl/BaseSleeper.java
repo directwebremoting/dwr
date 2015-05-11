@@ -134,12 +134,12 @@ public abstract class BaseSleeper implements Sleeper
     private void sendBeginStream()
     {
         response.setContentType(conduit.getOutboundMimeType());
-        conduit.sendBeginStream(out);
+        conduit.sendBeginStream();
     }
 
     private void sendEndStream() throws IOException
     {
-        conduit.sendEndStream(out, disconnectedTime);
+        conduit.sendEndStream(disconnectedTime);
     }
 
     private void sendNewScripts() throws IOException
@@ -147,15 +147,14 @@ public abstract class BaseSleeper implements Sleeper
         RealScriptSession.Scripts scripts = scriptSession.getScripts(nextScriptIndex);
         if (scripts.getScripts().size() > 0) {
             // Send unsent scripts
-            conduit.sendBeginChunk(out);
+            conduit.sendBeginChunk();
             for(int i=0; i<scripts.getScripts().size(); i++) {
                 conduit.sendScript(
-                    out,
                     EnginePrivate.getRemoteHandleReverseAjaxScript(
                         scripts.getScriptIndexOffset() + i,
                         scripts.getScripts().get(i)));
             }
-            conduit.sendEndChunk(out);
+            conduit.sendEndChunk();
 
             // Flush and check errors
             out.flush();

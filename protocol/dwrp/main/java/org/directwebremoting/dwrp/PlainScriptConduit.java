@@ -47,9 +47,9 @@ public class PlainScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public PlainScriptConduit(String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public PlainScriptConduit(PrintWriter out, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(instanceId, batchId, converterManager, jsonOutput);
+        super(out, instanceId, batchId, converterManager, jsonOutput);
     }
 
     /* (non-Javadoc)
@@ -63,14 +63,14 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
      */
-    public void sendBeginStream(PrintWriter out)
+    public void sendBeginStream()
     {
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
      */
-    public void sendBeginChunk(PrintWriter out)
+    public void sendBeginChunk()
     {
         out.println(ProtocolConstants.SCRIPT_START_MARKER);
         out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
@@ -79,7 +79,7 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
      */
-    public void sendScript(PrintWriter out, String script) throws IOException, ConversionException
+    public void sendScript(String script) throws IOException, ConversionException
     {
         if (log.isDebugEnabled()) {
             log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
@@ -90,7 +90,7 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endChunk(java.io.PrintWriter)
      */
-    public void sendEndChunk(PrintWriter out)
+    public void sendEndChunk()
     {
         out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
         out.println(ProtocolConstants.SCRIPT_END_MARKER);
@@ -99,9 +99,9 @@ public class PlainScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
      */
-    public void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException
+    public void sendEndStream(int timetoNextPoll) throws IOException
     {
-        sendPollReply(out, timetoNextPoll);
+        sendPollReply(timetoNextPoll);
     }
 
     /**

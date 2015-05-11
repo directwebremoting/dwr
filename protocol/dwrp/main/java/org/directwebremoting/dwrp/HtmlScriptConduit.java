@@ -40,9 +40,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
      * @param converterManager How we convert objects to script
      * @throws IOException If stream actions fail
      */
-    public HtmlScriptConduit(String instanceId, String batchId, String documentDomain, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain, ConverterManager converterManager, boolean jsonOutput) throws IOException
     {
-        super(instanceId, batchId, converterManager, jsonOutput);
+        super(out, instanceId, batchId, converterManager, jsonOutput);
         this.documentDomain = documentDomain;
     }
 
@@ -57,7 +57,7 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#beginStream(java.io.PrintWriter)
      */
-    public void sendBeginStream(PrintWriter out)
+    public void sendBeginStream()
     {
         out.println("<html><body>");
         out.println("<script type=\"text/javascript\">");
@@ -70,7 +70,7 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
      */
-    public void sendBeginChunk(PrintWriter out)
+    public void sendBeginChunk()
     {
         out.println("<script type=\"text/javascript\">");
         out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
@@ -79,15 +79,15 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#sendScript(java.io.PrintWriter, java.lang.String)
      */
-    public void sendScript(PrintWriter out, String script) throws IOException
+    public void sendScript(String script) throws IOException
     {
         out.println(EnginePrivate.remoteExecute(script));
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#endChunk(java.io.PrintWriter)
+     * @see org.directwebremoting.extend.ScriptConduit#endChunk()
      */
-    public void sendEndChunk(PrintWriter out)
+    public void sendEndChunk()
     {
         out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
         out.println("</script>");
@@ -96,9 +96,9 @@ public class HtmlScriptConduit extends BaseScriptConduit
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
      */
-    public void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException
+    public void sendEndStream(int timetoNextPoll) throws IOException
     {
-        sendPollReply(out, timetoNextPoll);
+        sendPollReply(timetoNextPoll);
         out.println("<script type=\"text/javascript\">");
         out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
         out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
