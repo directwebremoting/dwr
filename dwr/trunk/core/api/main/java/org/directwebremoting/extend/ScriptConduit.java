@@ -16,16 +16,11 @@
 package org.directwebremoting.extend;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletOutputStream;
 
 /**
- * While a Marshaller is processing a request it can register a ScriptConduit
- * with the ScriptSession to say - pass scripts straight to me and bypass the
- * temporary storage area.
- * This interface allows this to happen.
+ * This interface hides the decoration taking place on different poll types.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * @author Mike Wilson
  */
 public interface ScriptConduit
 {
@@ -36,41 +31,32 @@ public interface ScriptConduit
     String getOutboundMimeType();
 
     /**
-     * Called when we are initially setting up the stream. This does not send
-     * any data to the client, just sets it up for data.
+     * Called when we are initially setting up the stream.
      * <p>This method is always called exactly once in the lifetime of a
      * conduit.
      */
-    void sendBeginStream(PrintWriter out);
+    void sendBeginStream();
 
     /**
      * Called before a each set of scripts that are to be sent.
      */
-    void sendBeginChunk(PrintWriter out);
+    void sendBeginChunk();
 
     /**
-     * Add a script to the list bound for remote execution.
-     * <p>It is not an error to refuse to handle the script and return false, it
-     * just indicates that this ScriptConduit did not accept the script.
-     * If the ScriptConduit can no longer function then it should throw an
-     * exception and it will be assumed to be no longer useful.
-     * If you want to implement this method then you will probably be doing
-     * something like calling {@link ServletOutputStream#print(String)} and
-     * passing in the results of calling ScriptBufferUtil.createOutput().
-     * @param script The script to execute
-     * @throws IOException If this conduit is broken and should not be used
+     * Write a script to remote side.
+     * @param script The script to write
      */
-    void sendScript(PrintWriter out, String script) throws IOException;
+    void sendScript(String script) throws IOException;
 
     /**
      * Called after each set of scripts when they have been sent.
      */
-    void sendEndChunk(PrintWriter out);
+    void sendEndChunk();
 
     /**
      * Called when we are shutting the stream down.
      * The poll has finished, get the client to call us back
      * @param timetoNextPoll How long before we tell the browser to come back?
      */
-    void sendEndStream(PrintWriter out, int timetoNextPoll) throws IOException;
+    void sendEndStream(int timetoNextPoll) throws IOException;
 }

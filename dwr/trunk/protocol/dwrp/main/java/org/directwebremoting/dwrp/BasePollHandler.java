@@ -132,7 +132,7 @@ public class BasePollHandler extends BaseDwrpHandler
         scriptSession.confirmScripts(batch.getNextReverseAjaxIndex() - 1);
 
         // Create a conduit depending on the type of request (from the URL)
-        final BaseScriptConduit conduit = createScriptConduit(batch);
+        final BaseScriptConduit conduit = createScriptConduit(response.getWriter(), batch);
 
         // So we're going to go to sleep. How do we wake up?
         final Sleeper sleeper = containerAbstraction.createSleeper(request, response, scriptSession, conduit);
@@ -226,17 +226,17 @@ public class BasePollHandler extends BaseDwrpHandler
      * @return A correctly configured conduit
      * @throws IOException If the response can't be interrogated
      */
-    private BaseScriptConduit createScriptConduit(PollBatch batch) throws IOException
+    private BaseScriptConduit createScriptConduit(PrintWriter out, PollBatch batch) throws IOException
     {
         BaseScriptConduit conduit;
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
         }
         else
         {
-            conduit = new HtmlScriptConduit(batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain(), converterManager, jsonOutput);
+            conduit = new HtmlScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain(), converterManager, jsonOutput);
         }
 
         return conduit;
