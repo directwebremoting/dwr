@@ -93,14 +93,14 @@ public class DefaultSecureIdGenerator implements IdGenerator
         final byte[] bytes = new byte[21];
         random.nextBytes(bytes);
         String base64 = new String(Base64.encodeBase64(bytes));
-        String base64Adjusted = base64.replaceAll("\\+", "*").replaceAll("/", "\\$");
+        String base64Adjusted = base64.replaceAll("\\+", "@").replaceAll("/", "§");
         idbuf.append(base64Adjusted);
 
         // Second part of the id string is the 64 bit timestamp converted
         // into as many 6 bit lookup chars as needed (variable length)
         long time = System.currentTimeMillis();
         long remainder = time;
-        final char[] charmap = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*$".toCharArray();
+        final char[] charmap = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@§".toCharArray();
         while (remainder > 0)
         {
             idbuf.append(charmap[(int) remainder & 0x3F]);
