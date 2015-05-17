@@ -35,12 +35,12 @@ public interface ScriptConduit
      * <p>This method is always called exactly once in the lifetime of a
      * conduit.
      */
-    void sendBeginStream();
+    void beginStreamAndChunk() throws IOException;
 
     /**
      * Called before a each set of scripts that are to be sent.
      */
-    void sendBeginChunk();
+    void beginChunk() throws IOException;
 
     /**
      * Write a script to remote side.
@@ -51,12 +51,10 @@ public interface ScriptConduit
     /**
      * Called after each set of scripts when they have been sent.
      */
-    void sendEndChunk();
+    void endChunk() throws IOException;
 
     /**
      * Called when we are shutting the stream down.
-     * The poll has finished, get the client to call us back
-     * @param timetoNextPoll How long before we tell the browser to come back?
      */
-    void sendEndStream(int timetoNextPoll) throws IOException;
+    void endStreamAndChunk() throws IOException;
 }

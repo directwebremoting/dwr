@@ -15,13 +15,8 @@
  */
 package org.directwebremoting.dwrp;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 
 /**
@@ -35,30 +30,11 @@ public abstract class BaseScriptConduit implements ScriptConduit
 {
     /**
      * Simple ctor
-     * @param batchId The id of the batch that we are responding to
-     * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
      */
-    public BaseScriptConduit(PrintWriter out, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public BaseScriptConduit(PrintWriter out, String instanceId)
     {
         this.out = out;
         this.instanceId = instanceId;
-        this.batchId = batchId;
-        this.converterManager = converterManager;
-        this.jsonOutput = jsonOutput;
-    }
-
-    /**
-     * A poll has finished, get the client to call us back
-     * @param timetoNextPoll How long before we tell the browser to come back?
-     * @throws IOException When we fail to call endStream()
-     */
-    protected void sendPollReply(int timetoNextPoll) throws IOException
-    {
-        sendBeginChunk();
-        ScriptBuffer script = EnginePrivate.getRemoteHandleCallbackScript(batchId, "0", timetoNextPoll);
-        sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
-        sendEndChunk();
     }
 
     /**
@@ -89,11 +65,6 @@ public abstract class BaseScriptConduit implements ScriptConduit
     protected boolean debugScriptOutput = false;
 
     /**
-     * Are we outputting in JSON mode?
-     */
-    protected boolean jsonOutput = false;
-
-    /**
      * When and what should we log? Options are (specified in the DWR servlet's init-params):
      * 1) call (start of call + successful return values).
      * 2) exception (checked) - default for debug.
@@ -104,11 +75,6 @@ public abstract class BaseScriptConduit implements ScriptConduit
     protected String accessLogLevel = null;
 
     /**
-     * How we convert parameters
-     */
-    protected ConverterManager converterManager = null;
-
-    /**
      * The response output stream
      */
     protected final PrintWriter out;
@@ -117,9 +83,4 @@ public abstract class BaseScriptConduit implements ScriptConduit
      * What is the ID of the DWR instance that we are responding to?
      */
     protected final String instanceId;
-
-    /**
-     * What is the ID of the request that we are responding to?
-     */
-    protected final String batchId;
 }

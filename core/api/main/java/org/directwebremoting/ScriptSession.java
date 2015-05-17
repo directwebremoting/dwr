@@ -92,10 +92,24 @@ public interface ScriptSession
 
     /**
      * Add a script to the list waiting for remote execution.
-     * The version automatically wraps the string in a ClientScript object.
      * @param script The script to execute
      */
     void addScript(ScriptBuffer script);
+
+    /**
+     * Add a ScriptRunnable to the list waiting for execution in the ScriptSession
+     * poll request. Execution phase is inside a chunk.
+     * @param runnable
+     */
+    void addRunnable(ScriptRunnable runnable);
+
+    /**
+     * Add a ScriptRunnable to the list waiting for execution in the ScriptSession
+     * poll request. Execution phase is configurable.
+     * @param runnable
+     * @param phase
+     */
+    void addRunnable(ScriptRunnable runnable, ScriptPhase phase);
 
     /**
      * Returns a string containing the unique identifier assigned to this

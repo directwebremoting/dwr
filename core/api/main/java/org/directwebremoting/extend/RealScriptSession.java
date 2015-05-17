@@ -15,8 +15,8 @@
  */
 package org.directwebremoting.extend;
 
-import java.util.List;
-
+import org.directwebremoting.ScriptPhase;
+import org.directwebremoting.ScriptRunnable;
 import org.directwebremoting.ScriptSession;
 
 /**
@@ -40,11 +40,11 @@ public interface RealScriptSession extends ScriptSession
     void clearSleeper(Sleeper sleeper);
 
     /**
-     * Get queued scripts starting from the supplied index.
-     * @param fromScriptIndex start index
-     * @return a Script instance containing the scripts
+     * Get queued script from the supplied index.
+     * @param scriptIndex index
+     * @return a Script instance or null if nothing in queue
      */
-    Scripts getScripts(long fromScriptIndex);
+    Script getScript(long scriptIndex);
 
     /**
      * Confirms that the client has received all scripts up to and including
@@ -70,12 +70,13 @@ public interface RealScriptSession extends ScriptSession
     void setHttpSessionId(String httpSessionId);
 
     /**
-     * Data class combining script list with offset.
+     * Interface for queued script info class.
      * @author Mike Wilson
      */
-    public static interface Scripts
+    public static interface Script
     {
-        long getScriptIndexOffset();
-        List<String> getScripts();
+        long getIndex();
+        ScriptPhase getPhase();
+        ScriptRunnable getRunnable();
     }
 }

@@ -66,7 +66,7 @@ public class EnginePrivate
         {
             buf.append("dwr.engine.transport.iframe.remote.endChunk(window);\r\n");
             buf.append("}\r\n");
-            buf.append("}catch(e){}\r\n");
+            buf.append("}catch(e){}");
         } else {
             buf.append("})();");
         }
@@ -127,7 +127,7 @@ public class EnginePrivate
 
         String output = JavascriptUtil.escapeJavaScript(ex.getMessage());
         String params = "{ name:'" + ex.getClass().getName() + "', message:'" + output + "' }";
-        params += ", '" + batchId + "'";
+        params += ", " + (batchId != null ? "'" + batchId + "'" : "null");
 
         reply.append(ProtocolConstants.SCRIPT_CALL_REPLY).append("\r\n");
         reply.append("dwr.engine.remote.handleBatchException(").append(params).append(");");

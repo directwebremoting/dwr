@@ -68,8 +68,6 @@ public interface Container
      * container.
      * This does not make the object part of the container.
      * @param object The object to inject.
-     * @deprecated
      */
-    @Deprecated
     void initializeBean(Object object);
 }

@@ -21,8 +21,6 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.directwebremoting.ConversionException;
-import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.ProtocolConstants;
 import org.directwebremoting.util.MimeConstants;
@@ -43,17 +41,15 @@ public class PlainScriptConduit extends BaseScriptConduit
 {
     /**
      * Simple ctor
-     * @param batchId The id of the batch that we are responding to
-     * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
      */
-    public PlainScriptConduit(PrintWriter out, String instanceId, String batchId, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public PlainScriptConduit(PrintWriter out, String instanceId, String scriptTagProtection)
     {
-        super(out, instanceId, batchId, converterManager, jsonOutput);
+        super(out, instanceId);
+        this.scriptTagProtection = scriptTagProtection;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseScriptConduit#preStreamSetup()
+     * @see org.directwebremoting.extend.ScriptConduit#getOutboundMimeType()
      */
     public String getOutboundMimeType()
     {
@@ -61,48 +57,66 @@ public class PlainScriptConduit extends BaseScriptConduit
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseScriptConduit#beginStream()
+     * @see org.directwebremoting.extend.ScriptConduit#beginStreamAndChunk()
      */
-    public void sendBeginStream()
+    public void beginStreamAndChunk()
     {
+        if (scriptTagProtection != null)
+        {
+            out.println(scriptTagProtection);
+        }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
+     * @see org.directwebremoting.extend.ScriptConduit#beginChunk()
      */
-    public void sendBeginChunk()
+    public void beginChunk()
     {
-        out.println(ProtocolConstants.SCRIPT_START_MARKER);
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
+        if (!chunkOpen) {
+            out.println(ProtocolConstants.SCRIPT_START_MARKER);
+            out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
+            chunkOpen = true;
+        }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptConduit#addScript(org.directwebremoting.ScriptBuffer)
+     * @see org.directwebremoting.extend.ScriptConduit#sendScript(java.lang.String)
      */
-    public void sendScript(String script) throws IOException, ConversionException
+    public void sendScript(String script)
     {
         if (log.isDebugEnabled()) {
             log.debug("Execution time: " + new Date().toString() + " - Writing to response: " + script);
         }
+        beginChunk();
         out.println(script);
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#endChunk(java.io.PrintWriter)
+     * @see org.directwebremoting.extend.ScriptConduit#endChunk()
      */
-    public void sendEndChunk()
+    public void endChunk()
     {
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
-        out.println(ProtocolConstants.SCRIPT_END_MARKER);
+        if (chunkOpen) {
+            out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
+            out.println(ProtocolConstants.SCRIPT_END_MARKER);
+            chunkOpen = false;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
      */
-    public void sendEndStream(int timetoNextPoll) throws IOException
+    public void endStreamAndChunk() throws IOException
     {
-        sendPollReply(timetoNextPoll);
+        endChunk();
     }
+
+    private final String scriptTagProtection;
+
+    /**
+     * Is a chunk section currently open on the output?
+     */
+    private boolean chunkOpen = false;
 
     /**
      * The log stream

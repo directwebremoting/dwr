@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.Container;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Alarm;
 import org.directwebremoting.extend.ContainerAbstraction;
@@ -39,7 +40,6 @@ import org.directwebremoting.extend.RealWebContext;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.ServerLoadMonitor;
 import org.directwebremoting.extend.Sleeper;
-import org.directwebremoting.impl.PollingServerLoadMonitor;
 import org.directwebremoting.impl.ShutdownAlarm;
 import org.directwebremoting.impl.TimedAlarm;
 import org.directwebremoting.util.BrowserDetect;
@@ -136,6 +136,7 @@ public class BasePollHandler extends BaseDwrpHandler
 
         // So we're going to go to sleep. How do we wake up?
         final Sleeper sleeper = containerAbstraction.createSleeper(request, response, scriptSession, conduit);
+        container.initializeBean(sleeper);
 
         // There are various reasons why we want to wake up and carry on ...
         final List<Alarm> alarms = new ArrayList<Alarm>();
@@ -154,9 +155,9 @@ public class BasePollHandler extends BaseDwrpHandler
     		final int earlyCloseTimeout = (maxWaitAfterWrite == -1) ? ProtocolConstants.FALLBACK_MAX_WAIT_AFTER_WRITE : maxWaitAfterWrite;
     		proxiedSleeper = new Sleeper()
             {
-                public void enterSleep(Runnable onClose, int disconnectedTime) throws IOException
+                public void enterSleep(String batchId, Runnable onClose, int disconnectedTime) throws IOException
                 {
-                    sleeper.enterSleep(onClose, disconnectedTime);
+                    sleeper.enterSleep(batchId, onClose, disconnectedTime);
                 }
                 public void wakeUpForData()
                 {
@@ -210,14 +211,13 @@ public class BasePollHandler extends BaseDwrpHandler
         };
 
         // Flush any queued scripts
-        RealScriptSession.Scripts scripts = scriptSession.getScripts(0);
-        if (scripts.getScripts().size() > 0) {
+        if (scriptSession.getScript(0) != null) {
             proxiedSleeper.wakeUpForData();
         }
 
         // Actually go to sleep. This *must* be the last thing in this method to
         // cope with all the methods of affecting Threads.
-        proxiedSleeper.enterSleep(onClose, disconnectedTime);
+        proxiedSleeper.enterSleep(batch.getBatchId(), onClose, disconnectedTime);
     }
 
     /**
@@ -232,11 +232,11 @@ public class BasePollHandler extends BaseDwrpHandler
 
         if (plain)
         {
-            conduit = new PlainScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), converterManager, jsonOutput);
+            conduit = new PlainScriptConduit(out, batch.getInstanceId(), null);
         }
         else
         {
-            conduit = new HtmlScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain(), converterManager, jsonOutput);
+            conduit = new HtmlScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain());
         }
 
         return conduit;
@@ -266,6 +266,19 @@ public class BasePollHandler extends BaseDwrpHandler
         out.println(EnginePrivate.remoteEndWrapper(batch.getInstanceId(), !plain));
         out.println(ProtocolConstants.SCRIPT_END_MARKER);
     }
+
+    /**
+     * @param container DI container
+     */
+    public void setContainer(Container container)
+    {
+        this.container = container;
+    }
+
+    /**
+     * DI container
+     */
+    protected Container container;
 
     /**
      * @return Are we outputting in JSON mode?
@@ -375,12 +388,6 @@ public class BasePollHandler extends BaseDwrpHandler
      * We need to tell the system that we are waiting so it can load adjust
      */
     protected ServerLoadMonitor serverLoadMonitor = null;
-
-    /**
-     * There is only one polling ServerLoadMonitor, so we're not bothering
-     * with setters for now
-     */
-    protected ServerLoadMonitor pollingServerLoadMonitor = new PollingServerLoadMonitor();
 
     /**
      * Accessor for the DefaultConverterManager that we configure

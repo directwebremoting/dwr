@@ -22,8 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.directwebremoting.ConversionException;
+import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptPhase;
+import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
+import org.directwebremoting.extend.ScriptBufferUtil;
 import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.Sleeper;
 import org.directwebremoting.util.LocalUtil;
@@ -47,8 +52,9 @@ public abstract class BaseSleeper implements Sleeper
      * @see org.directwebremoting.extend.Sleeper#enterSleep(java.lang.Runnable, int)
      */
     @SuppressWarnings("hiding")
-    public final void enterSleep(Runnable onClose, int disconnectedTime) throws IOException
+    public final void enterSleep(String batchId, Runnable onClose, int disconnectedTime)
     {
+        this.batchId = batchId;
         this.onClose = onClose;
         this.disconnectedTime = disconnectedTime;
         enterSleep();
@@ -107,14 +113,21 @@ public abstract class BaseSleeper implements Sleeper
                 }
             }
             if (!opened) {
-                sendBeginStream();
+                beginStreamAndChunk();
                 opened = true;
             }
-            sendNewScripts();
+            sendNewChunkScripts();
+            checkNonChunkScripts();
             if (closed) {
-                sendEndStream();
+                sendPollReply();
+                endStreamAndChunk();
                 doClose();
+            } else {
+                endChunk();
             }
+
+            // If we got here without exceptions then writing was ok so we can update alive timestamp
+            scriptSession.updateLastAccessedTime();
         } catch(Exception ex) {
             if (LocalUtil.getRootCause(ex) instanceof IOException) {
                 log.debug("Poll I/O error", ex);
@@ -123,7 +136,8 @@ public abstract class BaseSleeper implements Sleeper
             }
             closed = true;
             try {
-                sendEndStream();
+                sendPollReply();
+                endStreamAndChunk();
             } catch(Exception ignore) {
                 // Swallow any exception and fall through to attempt to close poll below
             }
@@ -131,45 +145,76 @@ public abstract class BaseSleeper implements Sleeper
         }
     }
 
-    private void sendBeginStream()
+    private void beginStreamAndChunk() throws Exception
     {
         response.setContentType(conduit.getOutboundMimeType());
-        conduit.sendBeginStream();
-    }
-
-    private void sendEndStream() throws IOException
-    {
-        conduit.sendEndStream(disconnectedTime);
-    }
-
-    private void sendNewScripts() throws IOException
-    {
-        RealScriptSession.Scripts scripts = scriptSession.getScripts(nextScriptIndex);
-        if (scripts.getScripts().size() > 0) {
-            // Send unsent scripts
-            conduit.sendBeginChunk();
-            for(int i=0; i<scripts.getScripts().size(); i++) {
-                conduit.sendScript(
-                    EnginePrivate.getRemoteHandleReverseAjaxScript(
-                        scripts.getScriptIndexOffset() + i,
-                        scripts.getScripts().get(i)));
+        while(true) {
+            RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+            if (script != null && script.getPhase() == ScriptPhase.BEGINNING_RESPONSE) {
+                script.getRunnable().run(script.getIndex(), conduit);
+                nextScriptIndex = script.getIndex() + 1;
+            } else {
+                break;
             }
-            conduit.sendEndChunk();
-
-            // Flush and check errors
-            out.flush();
-            if (out.checkError())
-            {
-                throw new IOException("Stream write error");
-            }
-            response.flushBuffer();
-
-            // Advance counter so we don't try to send the same scripts again
-            nextScriptIndex = scripts.getScriptIndexOffset() + scripts.getScripts().size();
-
-            // If we got here without exceptions then writing was ok so we can update alive timestamp
-            scriptSession.updateLastAccessedTime();
         }
+        conduit.beginStreamAndChunk();
+    }
+
+    private void sendNewChunkScripts() throws Exception
+    {
+        // Scripts
+        while(true) {
+            RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+            if (script != null && script.getPhase() == ScriptPhase.IN_CHUNK) {
+                script.getRunnable().run(script.getIndex(), conduit);
+                nextScriptIndex = script.getIndex() + 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private void checkNonChunkScripts()
+    {
+        RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+        if (script != null && script.getPhase() != ScriptPhase.IN_CHUNK) {
+            // Trigger a new poll request without waiting so non-chunk scripts can execute
+            closed = true;
+            disconnectedTime = 0;
+        }
+    }
+
+    private void sendPollReply() throws ConversionException, IOException
+    {
+        ScriptBuffer script = EnginePrivate.getRemoteHandleCallbackScript(batchId, "0", disconnectedTime);
+        conduit.sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+    }
+
+    private void endStreamAndChunk() throws Exception
+    {
+        conduit.endStreamAndChunk();
+        while(true) {
+            RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+            if (script != null && script.getPhase() == ScriptPhase.END_RESPONSE) {
+                script.getRunnable().run(script.getIndex(), conduit);
+                nextScriptIndex = script.getIndex() + 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    private void endChunk() throws IOException
+    {
+        conduit.endChunk();
+
+        // Flush and check errors
+        out.flush();
+        if (out.checkError())
+        {
+            throw new IOException("Stream write error");
+        }
+        response.flushBuffer();
     }
 
     private void doClose()
@@ -179,6 +224,16 @@ public abstract class BaseSleeper implements Sleeper
         {
             onClose.run();
         }
+    }
+
+    public void setConverterManager(ConverterManager converterManager)
+    {
+        this.converterManager = converterManager;
+    }
+
+    public void setJsonOutput(boolean jsonOutput)
+    {
+        this.jsonOutput = jsonOutput;
     }
 
     /**
@@ -193,9 +248,14 @@ public abstract class BaseSleeper implements Sleeper
     private final ScriptConduit conduit;
     private final PrintWriter out;
 
-    // Members set later
+    // Members set in enterSleep
+    private String batchId;
     private Runnable onClose;
     private int disconnectedTime;
+
+    // Injected from container
+    protected ConverterManager converterManager = null;
+    protected boolean jsonOutput = false;
 
     // State manipulated by calls on public API
     private final Object lock = new Object();
