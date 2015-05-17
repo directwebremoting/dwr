@@ -33,10 +33,11 @@ public interface Sleeper extends Serializable
      * 'halt' the current execution in some way.
      * This method should be the last meaningful thing that is done in a
      * poll request to activate the Sleeper's background wait mechanism.
+     * @param batchId The batchId for the poll
      * @param onClose The action to take when {@link #wakeUpToClose()} is called
      * @param disconnectedTime The waiting time to instruct the browser before the next poll
      */
-    void enterSleep(Runnable onClose, int disconnectedTime) throws IOException;
+    void enterSleep(String batchId, Runnable onClose, int disconnectedTime) throws IOException;
 
     /**
      * Wake up to handle new data that arrived in the associated ScriptSession.

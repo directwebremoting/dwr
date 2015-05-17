@@ -57,6 +57,7 @@ public interface ContainerAbstraction
     /**
      * Create a sleeper that is appropriate for the given servlet container
      * @param request The Sleeper will probably need to know about the request
+     * @param response The Sleeper will probably need to know about the response
      * @param scriptSession The Sleeper will probably need to know about the scriptSession
      * @param conduit The Sleeper will probably need to know about the conduit
      * @return A method of sending threads to sleep.

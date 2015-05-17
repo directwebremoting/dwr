@@ -15,22 +15,24 @@
  */
 package org.directwebremoting.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptPhase;
+import org.directwebremoting.ScriptRunnable;
 import org.directwebremoting.event.ScriptSessionBindingEvent;
 import org.directwebremoting.event.ScriptSessionBindingListener;
 import org.directwebremoting.extend.ConverterManager;
+import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
 import org.directwebremoting.extend.ScriptBufferUtil;
+import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.Sleeper;
 
@@ -181,20 +183,46 @@ public class DefaultScriptSession implements RealScriptSession
         return lastAccessedTime;
     }
 
-    /* (non-Javadoc)
-     * @see org.directwebremoting.ScriptSession#addScript(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see org.directwebremoting.ScriptSession#addScript(org.directwebremoting.ScriptBuffer)
      */
-    public void addScript(ScriptBuffer script)
+    public void addScript(final ScriptBuffer script)
+    {
+        addRunnable(new ScriptRunnable()
+        {
+            public void run(long scriptIndex, ScriptConduit scriptConduit) throws Exception
+            {
+                scriptConduit.sendScript(
+                    EnginePrivate.getRemoteHandleReverseAjaxScript(
+                        scriptIndex,
+                        ScriptBufferUtil.createOutput(script, converterManager, jsonOutput)));
+            }
+        });
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSession#addRunnable(org.directwebremoting.ScriptRunnable)
+     */
+    public void addRunnable(ScriptRunnable scriptRunnable)
+    {
+        addRunnable(scriptRunnable, ScriptPhase.IN_CHUNK);
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.ScriptSession#addRunnable(org.directwebremoting.ScriptRunnable, org.directwebremoting.ScriptPhase)
+     */
+    public void addRunnable(final ScriptRunnable scriptRunnable, final ScriptPhase scriptPhase)
     {
         invalidateIfNeeded();
 
-        if (script == null)
+        if (scriptRunnable == null)
         {
             throw new NullPointerException("null script");
         }
         synchronized (this.scripts)
         {
-            scripts.add(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+            scripts.add(new RunnableAndPhase(scriptRunnable, scriptPhase));
         }
         synchronized (sleeperLock)
         {
@@ -233,9 +261,9 @@ public class DefaultScriptSession implements RealScriptSession
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.RealScriptSession#getScripts(long)
+     * @see org.directwebremoting.extend.RealScriptSession#getScript(long)
      */
-    public Scripts getScripts(long fromScriptIndex)
+    public Script getScript(long scriptIndex)
     {
         synchronized (scripts)
         {
@@ -244,24 +272,32 @@ public class DefaultScriptSession implements RealScriptSession
                 throw new IllegalStateException("Confirmed script index must be set before accessing scripts.");
             }
 
-            long startIndex = fromScriptIndex - scriptsOffset;
-            if (startIndex < 0)
+            int listIndex = (int) (scriptIndex - scriptsOffset);
+            if (listIndex < 0)
             {
-                startIndex = 0;
+                listIndex = 0;
             }
-            final List<String> subList = new ArrayList<String>(scripts.subList((int) startIndex, scripts.size()));
-            final long subListOffset = scriptsOffset + startIndex;
-            return new Scripts()
-            {
-                public long getScriptIndexOffset()
+            if (listIndex < scripts.size()) {
+                final RunnableAndPhase script = scripts.get(listIndex);
+                final long resultingScriptIndex = scriptsOffset + listIndex;
+                return new Script()
                 {
-                    return subListOffset;
-                }
-                public List<String> getScripts()
-                {
-                    return subList;
-                }
-            };
+                    public long getIndex()
+                    {
+                        return resultingScriptIndex;
+                    }
+                    public ScriptPhase getPhase()
+                    {
+                        return script.phase;
+                    }
+                    public ScriptRunnable getRunnable()
+                    {
+                        return script.runnable;
+                    }
+                };
+            } else {
+                return null;
+            }
         }
     }
 
@@ -483,7 +519,7 @@ public class DefaultScriptSession implements RealScriptSession
      * The list of waiting scripts.
      * <p>GuardedBy("self") for iteration and compound actions.
      */
-    protected final LinkedList<String> scripts = new LinkedList<String>();
+    protected final LinkedList<RunnableAndPhase> scripts = new LinkedList<RunnableAndPhase>();
 
     /**
      * What is our page session id?
@@ -512,4 +548,17 @@ public class DefaultScriptSession implements RealScriptSession
      * <p>This should not need careful synchronization since it is unchanging
      */
     protected final ScriptSessionManager manager;
+
+    /**
+     * Local data class for script queue.
+     * @author Mike Wilson
+     */
+    protected static class RunnableAndPhase {
+        public RunnableAndPhase(ScriptRunnable runnable, ScriptPhase phase) {
+            this.runnable = runnable;
+            this.phase = phase;
+        }
+        public final ScriptRunnable runnable;
+        public final ScriptPhase phase;
+    }
 }

@@ -18,7 +18,6 @@ package org.directwebremoting.dwrp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.util.MimeConstants;
 
@@ -36,18 +35,16 @@ public class HtmlScriptConduit extends BaseScriptConduit
 {
     /**
      * Simple ctor
-     * @param batchId The id of the batch that we are responding to
-     * @param converterManager How we convert objects to script
-     * @throws IOException If stream actions fail
      */
-    public HtmlScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain, ConverterManager converterManager, boolean jsonOutput) throws IOException
+    public HtmlScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain)
     {
-        super(out, instanceId, batchId, converterManager, jsonOutput);
+        super(out, instanceId);
+        this.batchId = batchId;
         this.documentDomain = documentDomain;
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
+     * @see org.directwebremoting.extend.ScriptConduit#getOutboundMimeType()
      */
     public String getOutboundMimeType()
     {
@@ -55,57 +52,69 @@ public class HtmlScriptConduit extends BaseScriptConduit
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#beginStream(java.io.PrintWriter)
+     * @see org.directwebremoting.extend.ScriptConduit#beginStreamAndChunk()
      */
-    public void sendBeginStream()
+    public void beginStreamAndChunk()
     {
         out.println("<html><body>");
-        out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, documentDomain));
+        beginChunk(true);
         out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
-        out.println("</script>");
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#beginChunk(java.io.PrintWriter)
+     * @see org.directwebremoting.extend.ScriptConduit#beginChunk()
      */
-    public void sendBeginChunk()
+    public void beginChunk()
     {
-        out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
+        beginChunk(false);
+    }
+
+    private void beginChunk(boolean setDocumentDomain)
+    {
+        if (!chunkOpen) {
+            out.println("<script type=\"text/javascript\">");
+            out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, (setDocumentDomain ? documentDomain : null)));
+            chunkOpen = true;
+        }
     }
 
     /* (non-Javadoc)
-     * @see org.directwebremoting.extend.ScriptConduit#sendScript(java.io.PrintWriter, java.lang.String)
+     * @see org.directwebremoting.extend.ScriptConduit#sendScript(java.lang.String)
      */
     public void sendScript(String script) throws IOException
     {
+        beginChunk(false);
         out.println(EnginePrivate.remoteExecute(script));
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endChunk()
      */
-    public void sendEndChunk()
+    public void endChunk()
     {
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
-        out.println("</script>");
+        if (chunkOpen) {
+            out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
+            out.println("</script>");
+            chunkOpen = false;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.ScriptConduit#endStream(java.io.PrintWriter, int)
      */
-    public void sendEndStream(int timetoNextPoll) throws IOException
+    public void endStreamAndChunk() throws IOException
     {
-        sendPollReply(timetoNextPoll);
-        out.println("<script type=\"text/javascript\">");
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, null));
+        beginChunk();
         out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
-        out.println("</script>");
+        endChunk();
         out.println("</body></html>");
     }
 
+    private final String batchId;
     private final String documentDomain;
+
+    /**
+     * Is a chunk section currently open on the output?
+     */
+    private boolean chunkOpen = false;
 }

@@ -15,11 +15,9 @@
  */
 package org.directwebremoting.dwrp;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.util.MimeConstants;
+import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * A Handler standard DWR calls whose replies are NOT HTML wrapped.
@@ -28,49 +26,12 @@ import org.directwebremoting.util.MimeConstants;
 public class PlainCallHandler extends BaseCallHandler
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
+     * @see org.directwebremoting.dwrp.BaseCallHandler#createScriptConduit(java.io.PrintWriter, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    protected String getOutboundMimeType()
+    protected ScriptConduit createScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain)
     {
-        return MimeConstants.MIME_JS;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException
-    {
-        if (!allowScriptTagRemoting)
-        {
-            synchronized (out)
-            {
-                out.println(scriptTagProtection);
-            }
-        }
-        out.println(EnginePrivate.remoteBeginWrapper(instanceId, false, null));
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptSuffix(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException
-    {
-        out.println(EnginePrivate.remoteEndWrapper(instanceId, false));
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendScript(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendScript(PrintWriter out, String script) throws IOException
-    {
-        synchronized (out)
-        {
-            out.println(script);
-        }
+        return new PlainScriptConduit(out, instanceId, (allowScriptTagRemoting ? null : scriptTagProtection));
     }
 
     /**

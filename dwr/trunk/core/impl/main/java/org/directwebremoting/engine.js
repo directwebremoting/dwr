@@ -671,7 +671,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleError = function(batch, ex) {
-    if (dwr.engine._isHeartbeatBatch(batch)) { // Ignore errors that happen while checking for a heartbeat.
+    if (batch && dwr.engine._isHeartbeatBatch(batch)) { // Ignore errors that happen while checking for a heartbeat.
       return;
     }
     var errorHandlers = [];
@@ -797,7 +797,7 @@ if (typeof dwr == 'undefined') dwr = {};
    * @param {Object} ex
    */
   dwr.engine._handleWarning = function(batch, ex) {
-    if (dwr.engine._isHeartbeatBatch(batch)) { // Ignore warnings that happen while checking for a heartbeat.
+    if (batch && dwr.engine._isHeartbeatBatch(batch)) { // Ignore warnings that happen while checking for a heartbeat.
       return;
     }
     ignoreIfUnloading(batch, function() {

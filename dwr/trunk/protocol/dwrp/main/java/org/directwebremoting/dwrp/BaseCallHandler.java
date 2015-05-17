@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
+import org.directwebremoting.ScriptPhase;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
@@ -46,6 +47,7 @@ import org.directwebremoting.extend.Remoter;
 import org.directwebremoting.extend.Replies;
 import org.directwebremoting.extend.Reply;
 import org.directwebremoting.extend.ScriptBufferUtil;
+import org.directwebremoting.extend.ScriptConduit;
 import org.directwebremoting.extend.ScriptSessionManager;
 import org.directwebremoting.extend.SimpleInputStreamFactory;
 import org.directwebremoting.impl.AccessLogLevel;
@@ -72,9 +74,13 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     {
         boolean scriptPrefixSent = false;
 
+        ScriptConduit conduit = null;
         try
         {
             CallBatch batch = new CallBatch(request);
+
+            // Save the batch so marshallException can get at a batch id
+            request.setAttribute(ATTRIBUTE_BATCH, batch);
 
             // Security checks first, once we've parsed the input
             checkGetAllowed(batch);
@@ -92,9 +98,6 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 checkNotCsrfAttack(request, batch);
             }
 
-            // Save the batch so marshallException can get at a batch id
-            request.setAttribute(ATTRIBUTE_BATCH, batch);
-
             String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
             RealScriptSession scriptSession = scriptSessionManager.getOrCreateScriptSession(batch.getScriptSessionId(), normalizedPage, request.getSession(false));
             RealWebContext webContext = (RealWebContext) WebContextFactory.get();
@@ -106,8 +109,27 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             Calls calls = marshallInbound(batch);
 
             Replies replies = remoter.execute(calls);
+
+            // AccessLogLevel.getValue is null safe, it will always return an AccessLogLevel.
+            PrintWriter out;
+            if (debugScriptOutput || AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
+            {
+                // This might be considered evil - altering the program flow
+                // depending on the log status, however DebuggingPrintWriter is
+                // very thin and only about logging
+                DebuggingPrintWriter dpw = new DebuggingPrintWriter("", response.getWriter());
+                dpw.setPrefix("out(" + replies.hashCode() + "): ");
+                out = dpw;
+            }
+            else
+            {
+                out = response.getWriter();
+            }
+
+            conduit = createScriptConduit(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain());
+
             scriptPrefixSent = true; // we can set this here as marshallOutbound will send prefix before throwing any exception
-            marshallOutbound(batch, replies, response);
+            marshallOutbound(batch, replies, response, conduit, out);
 
             if (checkCsrf) {
                 updateCsrfState(request, batch);
@@ -124,7 +146,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 }
             }
 
-            marshallException(request, response, ex, !scriptPrefixSent);
+            marshallException(request, response, conduit, ex, !scriptPrefixSent);
         }
     }
 
@@ -295,7 +317,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     /* (non-Javadoc)
      * @see org.directwebremoting.Marshaller#marshallOutbound(org.directwebremoting.Replies, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public void marshallOutbound(Batch batch, Replies replies, HttpServletResponse response) throws IOException
+    public void marshallOutbound(Batch batch, Replies replies, HttpServletResponse response, ScriptConduit conduit, PrintWriter out) throws Exception
     {
         RealScriptSession scriptSession;
         try
@@ -311,56 +333,61 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             return;
         }
 
-        // Basic setup
-        response.setContentType(getOutboundMimeType());
-        PrintWriter out;
-
-        // AccessLogLevel.getValue is null safe, it will always return an AccessLogLevel.
-        if (debugScriptOutput || AccessLogLevel.getValue(this.accessLogLevel, debug).hierarchy() == 0)
-        {
-            // This might be considered evil - altering the program flow
-            // depending on the log status, however DebuggingPrintWriter is
-            // very thin and only about logging
-            out = new DebuggingPrintWriter("", response.getWriter());
-        }
-        else
-        {
-            out = response.getWriter();
-        }
-
-        // Setup a debugging prefix
-        if (out instanceof DebuggingPrintWriter)
-        {
-            DebuggingPrintWriter dpw = (DebuggingPrintWriter) out;
-            dpw.setPrefix("out(" + replies.hashCode() + "): ");
-        }
-
-        // Send the script prefix (if any)
-        sendOutboundScriptPrefix(out, batch.getInstanceId(), batch.getBatchId(), batch.getDocumentDomain());
-
+        // Will we do passive Reverse Ajax (piggyback) ?
+        boolean passiveReverseAjax = false;
+        long nextScriptIndex = -1;
         if (batch.getNextReverseAjaxIndex() != null)
         {
-            out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
+            passiveReverseAjax = true;
+            nextScriptIndex = batch.getNextReverseAjaxIndex();
+        }
 
-            scriptSession.confirmScripts(batch.getNextReverseAjaxIndex() - 1);
-            RealScriptSession.Scripts scripts = scriptSession.getScripts(batch.getNextReverseAjaxIndex());
-            for(int i=0; i<scripts.getScripts().size(); i++) {
-                sendScript(
-                    out,
-                    EnginePrivate.getRemoteHandleReverseAjaxScript(
-                        scripts.getScriptIndexOffset() + i,
-                        scripts.getScripts().get(i)));
+        // Basic setup
+        response.setContentType(conduit.getOutboundMimeType());
+        if (passiveReverseAjax)
+        {
+            scriptSession.confirmScripts(nextScriptIndex - 1);
+        }
+
+        // Reverse Ajax scripts for beginning of response
+        if (passiveReverseAjax)
+        {
+            while(true) {
+                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+                if (script != null && script.getPhase() == ScriptPhase.BEGINNING_RESPONSE) {
+                    script.getRunnable().run(script.getIndex(), conduit);
+                    nextScriptIndex = script.getIndex() + 1;
+                } else {
+                    break;
+                }
             }
         }
 
-        out.println(ProtocolConstants.SCRIPT_CALL_REPLY);
+        // Send the script prefix (if any)
+        conduit.beginStreamAndChunk();
 
+        // Reverse Ajax scripts in chunk
+        if (passiveReverseAjax)
+        {
+            out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
+            while(true) {
+                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+                if (script != null && script.getPhase() == ScriptPhase.IN_CHUNK) {
+                    script.getRunnable().run(script.getIndex(), conduit);
+                    nextScriptIndex = script.getIndex() + 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // Replies
+        out.println(ProtocolConstants.SCRIPT_CALL_REPLY);
         String batchId = replies.getCalls().getBatchId();
         for (int i = 0; i < replies.getReplyCount(); i++)
         {
             Reply reply = replies.getReply(i);
             String callId = reply.getCallId();
-
             try
             {
                 ScriptBuffer script;
@@ -375,7 +402,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                     Object data = reply.getReply();
                     script = EnginePrivate.getRemoteHandleCallbackScript(batchId, callId, data);
                 }
-                sendScript(out, ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+                conduit.sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
             }
             catch (IOException ex)
             {
@@ -387,7 +414,7 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             catch (ConversionException ex)
             {
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
-                addScriptHandleExceptions(out, script);
+                addScriptHandleExceptions(conduit, script);
                 log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
             }
             catch (Exception ex)
@@ -396,26 +423,36 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // nervous about sending the exception to the client, but we
                 // want to avoid silently dying so we need to do something.
                 ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
-                addScriptHandleExceptions(out, script);
+                addScriptHandleExceptions(conduit, script);
                 log.error("--ConversionException: batchId=" + batchId + " message=" + ex.toString());
             }
         }
+        conduit.endStreamAndChunk();
 
-        sendOutboundScriptSuffix(out, replies.getCalls().getInstanceId(), replies.getCalls().getBatchId());
+        // Reverse Ajax scripts for end of response
+        if (passiveReverseAjax)
+        {
+            while(true) {
+                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+                if (script != null && script.getPhase() == ScriptPhase.END_RESPONSE) {
+                    script.getRunnable().run(script.getIndex(), conduit);
+                    nextScriptIndex = script.getIndex() + 1;
+                } else {
+                    break;
+                }
+            }
+        }
     }
 
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.Marshaller#marshallException(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Exception)
      */
-    public void marshallException(HttpServletRequest request, HttpServletResponse response, Exception ex, boolean sendPrefix) throws IOException
+    public void marshallException(HttpServletRequest request, HttpServletResponse response, ScriptConduit conduit, Exception ex, boolean sendPrefix) throws IOException
     {
-        response.setContentType(getOutboundMimeType());
-        PrintWriter out = response.getWriter();
-        Batch batch = (Batch) request.getAttribute(ATTRIBUTE_BATCH);
-
         String batchId = null;
         String instanceId = "0";
         String documentDomain = null;
+        Batch batch = (Batch) request.getAttribute(ATTRIBUTE_BATCH);
         if (batch != null)
         {
             batchId = batch.getBatchId();
@@ -423,23 +460,31 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             documentDomain = batch.getDocumentDomain();
         }
 
+        PrintWriter out = response.getWriter();
+        if (conduit == null)
+        {
+            conduit = createScriptConduit(out, instanceId, batchId, documentDomain);
+        }
+
+        response.setContentType(conduit.getOutboundMimeType());
+
         if (sendPrefix)
         {
-            sendOutboundScriptPrefix(out, instanceId, batchId, documentDomain);
+            conduit.beginStreamAndChunk();
         }
         String script = EnginePrivate.getRemoteHandleBatchExceptionScript(batchId, ex);
         out.println(script);
-        sendOutboundScriptSuffix(out, instanceId, batchId);
+        conduit.endStreamAndChunk();
     }
 
     /**
      * Marshall a Script without worrying about MarshallExceptions
      */
-    public void addScriptHandleExceptions(PrintWriter out, ScriptBuffer script) throws IOException
+    public void addScriptHandleExceptions(ScriptConduit conduit, ScriptBuffer script) throws IOException
     {
         try
         {
-            sendScript(out, ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+            conduit.sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
         }
         catch (ConversionException ex)
         {
@@ -448,34 +493,14 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     }
 
     /**
-     * Send a script to the browser
-     * @param out The stream to write to
-     * @param script The script to send
-     * @throws IOException If the write fails
+     * Create a suitable ScriptConduit for the transfer mode.
+     * @param out
+     * @param instanceId
+     * @param batchId
+     * @param documentDomain
+     * @return ScriptConduit instance
      */
-    protected abstract void sendScript(PrintWriter out, String script) throws IOException;
-
-    /**
-     * What mime type should we send to the browser for this data?
-     * @return A mime-type
-     */
-    protected abstract String getOutboundMimeType();
-
-    /**
-     * iframe mode starts as HTML, so get into script mode
-     * @param out The stream to write to
-     * @param batchId The batch identifier so we can prepare the environment
-     * @throws IOException If the write fails
-     */
-    protected abstract void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException;
-
-    /**
-     * iframe mode needs to get out of script mode
-     * @param out The stream to write to
-     * @param batchId The batch identifier so we can prepare the environment
-     * @throws IOException If the write fails
-     */
-    protected abstract void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException;
+    protected abstract ScriptConduit createScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain);
 
     /* (non-Javadoc)
      * @see org.directwebremoting.Marshaller#isConvertable(java.lang.Class)

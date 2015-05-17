@@ -15,11 +15,9 @@
  */
 package org.directwebremoting.dwrp;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.directwebremoting.extend.EnginePrivate;
-import org.directwebremoting.util.MimeConstants;
+import org.directwebremoting.extend.ScriptConduit;
 
 /**
  * A Handler standard DWR calls whose replies are HTML wrapped.
@@ -28,51 +26,11 @@ import org.directwebremoting.util.MimeConstants;
 public class HtmlCallHandler extends BaseCallHandler
 {
     /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#getOutboundMimeType()
+     * @see org.directwebremoting.dwrp.BaseCallHandler#createScriptConduit(java.io.PrintWriter, java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
-    protected String getOutboundMimeType()
+    protected ScriptConduit createScriptConduit(PrintWriter out, String instanceId, String batchId, String documentDomain)
     {
-        return MimeConstants.MIME_HTML;
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptPrefix(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendOutboundScriptPrefix(PrintWriter out, String instanceId, String batchId, String documentDomain) throws IOException
-    {
-        synchronized (out)
-        {
-            out.println("<html><body><script type='text/javascript'>");
-            out.println(EnginePrivate.remoteBeginWrapper(instanceId, true, documentDomain));
-            out.println(EnginePrivate.remoteBeginIFrameResponse(batchId, true));
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendOutboundScriptSuffix(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendOutboundScriptSuffix(PrintWriter out, String instanceId, String batchId) throws IOException
-    {
-        synchronized (out)
-        {
-            out.println(EnginePrivate.remoteEndIFrameResponse(batchId, true));
-            out.println(EnginePrivate.remoteEndWrapper(instanceId, true));
-            out.println("</script></body></html>");
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.directwebremoting.dwrp.BaseCallHandler#sendScript(java.io.PrintWriter, java.lang.String)
-     */
-    @Override
-    protected void sendScript(PrintWriter out, String script) throws IOException
-    {
-        synchronized (out)
-        {
-            out.println(EnginePrivate.remoteExecute(script));
-        }
+        return new HtmlScriptConduit(out, instanceId, batchId, documentDomain);
     }
 }
