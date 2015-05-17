@@ -79,7 +79,7 @@ public class DefaultSecureIdGenerator implements IdGenerator
      * Generates an id string guaranteed to be unique for eternity within
      * the scope of the running server, as long as the real-time clock is
      * not adjusted backwards. The generated string consists of alphanumerics
-     * (A-Z, a-z, 0-9) and symbols *, $ and -.
+     * (A-Z, a-z, 0-9) and symbols !, ~ and -.
      * @return A unique id string
      * @see org.directwebremoting.extend.IdGenerator#generate()
      */
@@ -89,18 +89,35 @@ public class DefaultSecureIdGenerator implements IdGenerator
 
         StringBuilder idbuf = new StringBuilder();
 
+        // New cookie RFC 6265 says the following non-alphanumeric chars are allowed
+        // in cookie values: %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E, which
+        // corresponds to:
+        //   !#$%&'()*+-./:<=>?@[]^_`{|}~
+        // We avoid the following as they have special meaning in URLs:
+        //   #%&+?
+        // We avoid the following as we are using them as separators ourselves:
+        //   /-
+        // We avoid these as they were discouraged in older cookie specs:
+        //   ():=@[]{}
+        // We avoid these as they have special meaning in regexps:
+        //   $*.^|
+        // These remain:
+        //   !'<>_`~
+        // And we have chosen these as our two "base64" special chars:
+        //   !~
+
         // Generate 21 random bytes (168 bits) and add as 28 printable 6-bit bytes
         final byte[] bytes = new byte[21];
         random.nextBytes(bytes);
         String base64 = new String(Base64.encodeBase64(bytes));
-        String base64Adjusted = base64.replaceAll("\\+", "@").replaceAll("/", "§");
+        String base64Adjusted = base64.replaceAll("\\+", "!").replaceAll("/", "~");
         idbuf.append(base64Adjusted);
 
         // Second part of the id string is the 64 bit timestamp converted
         // into as many 6 bit lookup chars as needed (variable length)
         long time = System.currentTimeMillis();
         long remainder = time;
-        final char[] charmap = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@§".toCharArray();
+        final char[] charmap = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!~".toCharArray();
         while (remainder > 0)
         {
             idbuf.append(charmap[(int) remainder & 0x3F]);
