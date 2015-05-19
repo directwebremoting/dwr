@@ -294,34 +294,39 @@ public class StartupUtil
     private static void applyParameterShortcuts(DefaultContainer container)
     {
         Object bean = container.getBean("interactivity");
-        if (bean == null)
+        if (bean != null)
         {
-            return;
-        }
-
-        if (bean instanceof String)
-        {
-            String level = (String) bean;
-            if ("stateless".equals(level))
+            if (bean instanceof String)
             {
-                container.addImplementation(ScriptSessionManager.class, TransientScriptSessionManager.class);
-            }
-            else if ("passiveReverseAjax".equals(level))
-            {
-                // The default - do nothing
-            }
-            else if ("activeReverseAjax".equals(level))
-            {
-                container.addParameter("activeReverseAjaxEnabled", "true");
+                String level = (String) bean;
+                if ("stateless".equals(level))
+                {
+                    container.addImplementation(ScriptSessionManager.class, TransientScriptSessionManager.class);
+                }
+                else if ("passiveReverseAjax".equals(level))
+                {
+                    // The default - do nothing
+                }
+                else if ("activeReverseAjax".equals(level))
+                {
+                    container.addParameter("activeReverseAjaxEnabled", "true");
+                }
+                else
+                {
+                    Loggers.STARTUP.error("Illegal value for 'interactivity' parameter of '" + level + "'. Valid values are [stateless|passiveReverseAjax|activeReverseAjax]. Ignoring.");
+                }
             }
             else
             {
-                Loggers.STARTUP.error("Illegal value for 'interactivity' parameter of '" + level + "'. Valid values are [stateless|passiveReverseAjax|activeReverseAjax]. Ignoring.");
+                Loggers.STARTUP.error("Found non-string value for 'interactivity' parameter. Ignoring.");
             }
         }
-        else
+
+        String allowGetForSafariButMakeForgeryEasier = container.getParameter("allowGetForSafariButMakeForgeryEasier");
+        String allowGetButMakeForgeryEasier = container.getParameter("allowGetButMakeForgeryEasier");
+        if (allowGetForSafariButMakeForgeryEasier != null && allowGetButMakeForgeryEasier == null)
         {
-            Loggers.STARTUP.error("Found non-string value for 'interactivity' parameter. Ignoring.");
+            container.addParameter("allowGetButMakeForgeryEasier", allowGetForSafariButMakeForgeryEasier);
         }
     }
 

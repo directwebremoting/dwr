@@ -35,9 +35,9 @@ public abstract class BaseDwrpHandler implements Handler
      */
     protected void checkGetAllowed(Batch batch)
     {
-        if (!allowGetForSafariButMakeForgeryEasier && batch.isGet())
+        if (!allowGetButMakeForgeryEasier && batch.isGet())
         {
-            log.error("GET is disallowed because it makes request forgery easier. See allowGetForSafariButMakeForgeryEasier setting for more details.");
+            log.error("GET is disallowed because it makes request forgery easier. See allowGetButMakeForgeryEasier setting for more details.");
             throw new SecurityException("GET Disallowed");
         }
     }
@@ -206,17 +206,17 @@ public abstract class BaseDwrpHandler implements Handler
     private boolean extendedCrossDomainSessionSecurity = true;
 
     /**
-     * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
+     * @param allowGetButMakeForgeryEasier Do we reduce security to help Safari
      */
-    public void setAllowGetForSafariButMakeForgeryEasier(boolean allowGetForSafariButMakeForgeryEasier)
+    public void setAllowGetButMakeForgeryEasier(boolean allowGetButMakeForgeryEasier)
     {
-        this.allowGetForSafariButMakeForgeryEasier = allowGetForSafariButMakeForgeryEasier;
+        this.allowGetButMakeForgeryEasier = allowGetButMakeForgeryEasier;
     }
 
     /**
      * By default we disable GET, but this hinders old Safaris
      */
-    private boolean allowGetForSafariButMakeForgeryEasier = false;
+    private boolean allowGetButMakeForgeryEasier = false;
 
     /**
      * The log stream

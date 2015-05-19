@@ -75,7 +75,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
         replace.put("${pathToDwrServlet}", pathToDwrServlet);
 
         // Does engine.js do GETs for Safari
-        replace.put("${allowGetForSafariButMakeForgeryEasier}", String.valueOf(allowGetForSafariButMakeForgeryEasier));
+        replace.put("${allowGetButMakeForgeryEasier}", String.valueOf(allowGetButMakeForgeryEasier));
 
         // What is the replacement field we use to tell engine.js what we are
         // using for script tag hack protection
@@ -115,11 +115,11 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     }
 
     /**
-     * @param allowGetForSafariButMakeForgeryEasier Do we reduce security to help Safari
+     * @param allowGetButMakeForgeryEasier Do we reduce security to help Safari
      */
-    public void setAllowGetForSafariButMakeForgeryEasier(boolean allowGetForSafariButMakeForgeryEasier)
+    public void setAllowGetButMakeForgeryEasier(boolean allowGetButMakeForgeryEasier)
     {
-        this.allowGetForSafariButMakeForgeryEasier = allowGetForSafariButMakeForgeryEasier;
+        this.allowGetButMakeForgeryEasier = allowGetButMakeForgeryEasier;
     }
 
     /**
@@ -226,7 +226,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     /**
      * By default we disable GET, but this hinders old Safaris
      */
-    private boolean allowGetForSafariButMakeForgeryEasier = false;
+    private boolean allowGetButMakeForgeryEasier = false;
 
     /**
      * What is the string we use for script tag hack protection

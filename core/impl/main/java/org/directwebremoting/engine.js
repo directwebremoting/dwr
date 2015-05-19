@@ -310,7 +310,7 @@ if (typeof dwr == 'undefined') dwr = {};
   //==============================================================================
 
   /** Is GET enabled for the benefit of Safari? */
-  dwr.engine._allowGetForSafariButMakeForgeryEasier = "${allowGetForSafariButMakeForgeryEasier}";
+  dwr.engine._allowGetButMakeForgeryEasier = "${allowGetButMakeForgeryEasier}";
 
   /** The script prefix to strip in the case of scriptTagProtection. */
   dwr.engine._scriptTagProtection = "${scriptTagProtection}";
@@ -1591,13 +1591,13 @@ if (typeof dwr == 'undefined') dwr = {};
         if (indexSafari >= 0) {
           var version = navigator.userAgent.substring(indexSafari + 7);
           if (parseInt(version, 10) < 400) {
-            if (dwr.engine._allowGetForSafariButMakeForgeryEasier == "true") {
+            if (dwr.engine._allowGetButMakeForgeryEasier == "true") {
               httpMethod = "GET";
             }
             else {
               dwr.engine._handleWarning(batch, {
                 name: "dwr.engine.oldSafari",
-                message: "Safari GET support disabled. See allowGetForSafariButMakeForgeryEasier setting."
+                message: "Safari GET support disabled. See allowGetButMakeForgeryEasier setting."
               });
             }
           }

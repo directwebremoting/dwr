@@ -22,7 +22,7 @@ package org.directwebremoting.guice;
  */
 public enum ParamName
 {
-    ALLOW_GET_FOR_SAFARI                ("allowGetForSafariButMakeForgeryEasier"),
+    ALLOW_GET_FOR_SAFARI                ("allowGetButMakeForgeryEasier"),
     CROSS_DOMAIN_SESSION_SECURITY       ("crossDomainSessionSecurity"),
     ALLOW_SCRIPT_TAG_REMOTING           ("allowScriptTagRemoting"),
     DEBUG                               ("debug"),
