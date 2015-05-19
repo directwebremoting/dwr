@@ -309,7 +309,7 @@ if (typeof dwr == 'undefined') dwr = {};
   // Only private stuff below here
   //==============================================================================
 
-  /** Is GET enabled for the benefit of Safari? */
+  /** Is GET enabled? */
   dwr.engine._allowGetButMakeForgeryEasier = "${allowGetButMakeForgeryEasier}";
 
   /** The script prefix to strip in the case of scriptTagProtection. */
@@ -1587,23 +1587,6 @@ if (typeof dwr == 'undefined') dwr = {};
         }
 
         httpMethod = dwr.engine.transport.xhr.httpMethod;
-
-        // Workaround for Safari 1.x POST bug
-        var indexSafari = navigator.userAgent.indexOf("Safari/");
-        if (indexSafari >= 0) {
-          var version = navigator.userAgent.substring(indexSafari + 7);
-          if (parseInt(version, 10) < 400) {
-            if (dwr.engine._allowGetButMakeForgeryEasier == "true") {
-              httpMethod = "GET";
-            }
-            else {
-              dwr.engine._handleWarning(batch, {
-                name: "dwr.engine.oldSafari",
-                message: "Safari GET support disabled. See allowGetButMakeForgeryEasier setting."
-              });
-            }
-          }
-        }
 
         batch.mode = batch.isPoll ? dwr.engine._ModePlainPoll : dwr.engine._ModePlainCall;
         var request = dwr.engine.batch.constructRequest(batch, httpMethod);

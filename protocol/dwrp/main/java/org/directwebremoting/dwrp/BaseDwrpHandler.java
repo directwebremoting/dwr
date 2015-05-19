@@ -206,7 +206,7 @@ public abstract class BaseDwrpHandler implements Handler
     private boolean extendedCrossDomainSessionSecurity = true;
 
     /**
-     * @param allowGetButMakeForgeryEasier Do we reduce security to help Safari
+     * @param allowGetButMakeForgeryEasier Do we reduce security
      */
     public void setAllowGetButMakeForgeryEasier(boolean allowGetButMakeForgeryEasier)
     {
@@ -214,7 +214,7 @@ public abstract class BaseDwrpHandler implements Handler
     }
 
     /**
-     * By default we disable GET, but this hinders old Safaris
+     * By default we disable GET
      */
     private boolean allowGetButMakeForgeryEasier = false;
 
