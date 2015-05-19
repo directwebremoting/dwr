@@ -93,12 +93,12 @@ public class DefaultSecureIdGeneratorTest
             tokenset.clear();
 
             time1 = System.currentTimeMillis();
-            for(int i = 0; i < 100; i++)
+            for(int i = 0; i < 10; i++)
             {
                 tokenset.add(idGenerator.generate());
             }
             time2 = System.currentTimeMillis();
-        } while(time1 != time2 && attempts < 10);
+        } while(time1 != time2 && attempts < 100);
 
         int countWithoutDash = 0;
         for(String token : tokenset)
@@ -108,6 +108,9 @@ public class DefaultSecureIdGeneratorTest
                 countWithoutDash++;
             }
         }
-        assertTrue("Maximum one token without dash", countWithoutDash <= 1);
+        if (attempts < 100)
+        {
+            assertTrue("Maximum one token without dash", countWithoutDash <= 1);
+        }
     }
 }
