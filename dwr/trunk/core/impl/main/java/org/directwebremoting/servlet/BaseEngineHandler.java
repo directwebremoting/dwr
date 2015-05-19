@@ -74,7 +74,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
         String pathToDwrServlet = remoter.getPathToDwrServlet(contextServletPath);
         replace.put("${pathToDwrServlet}", pathToDwrServlet);
 
-        // Does engine.js do GETs for Safari
+        // Does engine.js do GETs
         replace.put("${allowGetButMakeForgeryEasier}", String.valueOf(allowGetButMakeForgeryEasier));
 
         // What is the replacement field we use to tell engine.js what we are
@@ -115,7 +115,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     }
 
     /**
-     * @param allowGetButMakeForgeryEasier Do we reduce security to help Safari
+     * @param allowGetButMakeForgeryEasier Do we reduce security
      */
     public void setAllowGetButMakeForgeryEasier(boolean allowGetButMakeForgeryEasier)
     {
@@ -224,7 +224,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     private int maxWaitAfterWrite = -1;
 
     /**
-     * By default we disable GET, but this hinders old Safaris
+     * By default we disable GET
      */
     private boolean allowGetButMakeForgeryEasier = false;
 
