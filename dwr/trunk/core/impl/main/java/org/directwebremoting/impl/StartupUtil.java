@@ -17,6 +17,7 @@ package org.directwebremoting.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -753,16 +754,15 @@ public class StartupUtil
      * @param container The container to publish
      * @param servletConfig Source of initParams to dictate publishing and contexts to publish to
      */
-    @SuppressWarnings("unchecked")
     private static void publishContainer(Container container, ServerContext serverContext, ServletConfig servletConfig)
     {
         ServletContext servletContext = servletConfig.getServletContext();
 
         // Push the container into a list that holds all the known containers
-        List<Container> containers = (List<Container>) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
+        SerializableContainerListWrapper containers = (SerializableContainerListWrapper) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
         if (containers == null)
         {
-            containers = new ArrayList<Container>();
+            containers = new SerializableContainerListWrapper();
         }
         containers.add(container);
         servletContext.setAttribute(ATTRIBUTE_CONTAINER_LIST, containers);
@@ -825,15 +825,14 @@ public class StartupUtil
      * @param servletContext The context in which {@link Container}s are stored.
      * @return a list of published {@link Container}s.
      */
-    @SuppressWarnings("unchecked")
     public static List<Container> getAllPublishedContainers(ServletContext servletContext)
     {
         List<Container> reply = new ArrayList<Container>();
 
-        List<Container> containers = (List<Container>) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
+        SerializableContainerListWrapper containers = (SerializableContainerListWrapper) servletContext.getAttribute(ATTRIBUTE_CONTAINER_LIST);
         if (containers != null)
         {
-            reply.addAll(containers);
+            reply.addAll(containers.getAll());
         }
 
         return reply;
@@ -911,4 +910,29 @@ public class StartupUtil
      * distinguish? Things will be a lot harder if there is more than 1.
      */
     private static int foundContexts = 0;
+
+    private static class SerializableContainerListWrapper implements Serializable
+    {
+        transient List<Container> list = null;
+
+        public void add(Container container)
+        {
+            ensureCreated();
+            list.add(container);
+        }
+
+        public Collection<Container> getAll()
+        {
+            ensureCreated();
+            return list;
+        }
+
+        private void ensureCreated()
+        {
+            if (list == null)
+            {
+                list = new ArrayList<Container>();
+            }
+        }
+    }
 }
