@@ -700,7 +700,9 @@ if (typeof dwr == 'undefined') dwr = {};
         if (batch) {
           var textHtmlHandler = batch.textHtmlHandler || batch.globalTextHtmlHandler;
           if (ex.name === "dwr.engine.textHtmlReply" && textHtmlHandler) {
-            textHtmlHandler(ex);
+            dwr.engine.util.logHandlerEx(function() {
+              textHtmlHandler(ex);
+            });
             return;
           }
         }
