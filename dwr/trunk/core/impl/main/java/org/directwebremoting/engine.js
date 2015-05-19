@@ -180,9 +180,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine.defaultErrorHandler = function(message, ex) {
     dwr.engine._debug("Error: " + ex.name + ", " + ex.message, true);
+    if (!message) message = "A server error has occurred.";
     // Ignore NS_ERROR_NOT_AVAILABLE if Mozilla is being narky
     if (message.indexOf("0x80040111") != -1) return;
-    if (message === null || message === "") message = "A server error has occurred.";
     if ("${debug}" == "true") alert(message);
   };
 
@@ -475,6 +475,9 @@ if (typeof dwr == 'undefined') dwr = {};
   
   /** Is this page doing beforeunload processing? */
   dwr.engine._beforeUnloading = false;
+
+  /** A place to temporarily store exception before reporting */
+  dwr.engine._queuedBatchException = null;
 
   /** @private Keep beforeunload flag set during beforeunload processing (including potential
    *  "Are you sure?" popups). */
@@ -1071,7 +1074,11 @@ if (typeof dwr == 'undefined') dwr = {};
     handleBatchException:function(ex, batchId) {
       var batch = dwr.engine._batches[batchId];
       if (ex.message === undefined) ex.message = "";
-      dwr.engine._handleError(batch, ex);
+      if (batch) {
+        dwr.engine._handleError(batch, ex);
+      } else {
+        dwr.engine._queuedBatchException = ex;
+      }
     },
 
     /**
@@ -1851,6 +1858,12 @@ if (typeof dwr == 'undefined') dwr = {};
           if (!batch.loadingStarted) return;
           // Bail out if the batch was completed the normal way 
           if (batch.completed) return;
+          // Check for a queued batch exception
+          if (dwr.engine._queuedBatchException) {
+            dwr.engine._handleError(batch, dwr.engine._queuedBatchException);
+            dwr.engine._queuedBatchException = null;
+            return;
+          }
           // The batch hasn't been completed the normal way, trigger a textHtmlReply error
           try {
             var contentDoc = batch.iframe.contentDocument || batch.iframe.contentWindow.document;
@@ -2344,13 +2357,16 @@ if (typeof dwr == 'undefined') dwr = {};
     validate:function(batch) {
       if (!batch.completed) {
         var repliesReceived = 0;
-          for (var i = 0; i < batch.map.callCount; i++) {
-            if (batch.handlers[i].completed === true) {
-              repliesReceived++;
-            }
+        for (var i = 0; i < batch.map.callCount; i++) {
+          if (batch.handlers[i].completed === true) {
+            repliesReceived++;
+          }
         }
-        if (repliesReceived < batch.map.callCount) {
-            dwr.engine._handleError(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
+        if (repliesReceived == 0 && dwr.engine._queuedBatchException) {
+          dwr.engine._handleError(batch, dwr.engine._queuedBatchException);
+          dwr.engine._queuedBatchException = null;
+        } else if (repliesReceived < batch.map.callCount) {
+          dwr.engine._handleError(batch, { name:"dwr.engine.incompleteReply", message:"Incomplete reply from server" });
         }
       }
     },
