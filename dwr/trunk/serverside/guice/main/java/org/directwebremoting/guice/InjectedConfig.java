@@ -70,7 +70,7 @@ class InjectedConfig
 
     void setParameters()
     {
-        setParameter(ALLOW_GET_FOR_SAFARI,            allowGetForSafariButMakeForgeryEasier);
+        setParameter(ALLOW_GET_FOR_SAFARI,            allowGetButMakeForgeryEasier);
         setParameter(CROSS_DOMAIN_SESSION_SECURITY,   crossDomainSessionSecurity);
         setParameter(ALLOW_SCRIPT_TAG_REMOTING,       allowScriptTagRemoting);
         setParameter(DEBUG,                           debug);
@@ -100,7 +100,7 @@ class InjectedConfig
         setClassesInitParameter();
     }
 
-    @Inject(optional=true) @InitParam(ALLOW_GET_FOR_SAFARI)            Boolean allowGetForSafariButMakeForgeryEasier = null;
+    @Inject(optional=true) @InitParam(ALLOW_GET_FOR_SAFARI)            Boolean allowGetButMakeForgeryEasier = null;
     @Inject(optional=true) @InitParam(CROSS_DOMAIN_SESSION_SECURITY)   Boolean crossDomainSessionSecurity = null;
     @Inject(optional=true) @InitParam(ALLOW_SCRIPT_TAG_REMOTING)       Boolean allowScriptTagRemoting = null;
     @Inject(optional=true) @InitParam(DEBUG)                           Boolean debug = null;
