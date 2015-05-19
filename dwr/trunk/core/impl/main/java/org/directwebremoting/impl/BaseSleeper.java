@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ScriptPhase;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
@@ -148,16 +147,20 @@ public abstract class BaseSleeper implements Sleeper
     private void beginStreamAndChunk() throws Exception
     {
         response.setContentType(conduit.getOutboundMimeType());
-        while(true) {
-            RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-            if (script != null && script.getPhase() == ScriptPhase.BEGINNING_RESPONSE) {
-                script.getRunnable().run(script.getIndex(), conduit);
-                nextScriptIndex = script.getIndex() + 1;
-            } else {
-                break;
-            }
+        // If there is a runnable for beginning of response then run it
+        RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
+        boolean beginningRunnable = false;
+        if (script != null && script.getScript() instanceof Runnable) {
+            ((Runnable) script.getScript()).run();
+            beginningRunnable = true;
         }
+        // Send stream prefix
         conduit.beginStreamAndChunk();
+        // Send confirmation for the runnable to client after stream prefix
+        if (beginningRunnable) {
+            conduit.sendScript(EnginePrivate.getRemoteHandleReverseAjaxScript(script.getIndex(), ""));
+            nextScriptIndex = script.getIndex() + 1;
+        }
     }
 
     private void sendNewChunkScripts() throws Exception
@@ -165,8 +168,8 @@ public abstract class BaseSleeper implements Sleeper
         // Scripts
         while(true) {
             RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-            if (script != null && script.getPhase() == ScriptPhase.IN_CHUNK) {
-                script.getRunnable().run(script.getIndex(), conduit);
+            if (script != null && script.getScript() instanceof String) {
+                conduit.sendScript(EnginePrivate.getRemoteHandleReverseAjaxScript(script.getIndex(), (String) script.getScript()));
                 nextScriptIndex = script.getIndex() + 1;
             } else {
                 break;
@@ -177,7 +180,7 @@ public abstract class BaseSleeper implements Sleeper
     private void checkNonChunkScripts()
     {
         RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-        if (script != null && script.getPhase() != ScriptPhase.IN_CHUNK) {
+        if (script != null && !(script.getScript() instanceof String)) {
             // Trigger a new poll request without waiting so non-chunk scripts can execute
             closed = true;
             disconnectedTime = 0;
@@ -193,15 +196,6 @@ public abstract class BaseSleeper implements Sleeper
     private void endStreamAndChunk() throws Exception
     {
         conduit.endStreamAndChunk();
-        while(true) {
-            RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-            if (script != null && script.getPhase() == ScriptPhase.END_RESPONSE) {
-                script.getRunnable().run(script.getIndex(), conduit);
-                nextScriptIndex = script.getIndex() + 1;
-            } else {
-                break;
-            }
-        }
     }
 
     private void endChunk() throws IOException

@@ -15,8 +15,6 @@
  */
 package org.directwebremoting.extend;
 
-import org.directwebremoting.ScriptPhase;
-import org.directwebremoting.ScriptRunnable;
 import org.directwebremoting.ScriptSession;
 
 /**
@@ -76,7 +74,6 @@ public interface RealScriptSession extends ScriptSession
     public static interface Script
     {
         long getIndex();
-        ScriptPhase getPhase();
-        ScriptRunnable getRunnable();
+        Object getScript();
     }
 }

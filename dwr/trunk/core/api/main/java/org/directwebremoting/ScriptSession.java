@@ -97,19 +97,12 @@ public interface ScriptSession
     void addScript(ScriptBuffer script);
 
     /**
-     * Add a ScriptRunnable to the list waiting for execution in the ScriptSession
-     * poll request. Execution phase is inside a chunk.
+     * Add a Runnable to the waiting list for execution. A new poll request will
+     * be triggered and the runnable will be executed at the beginning of it.
+     * The WebContext may be used to access request details from within the Runnable.
      * @param runnable
      */
-    void addRunnable(ScriptRunnable runnable);
-
-    /**
-     * Add a ScriptRunnable to the list waiting for execution in the ScriptSession
-     * poll request. Execution phase is configurable.
-     * @param runnable
-     * @param phase
-     */
-    void addRunnable(ScriptRunnable runnable, ScriptPhase phase);
+    void addRunnable(Runnable runnable);
 
     /**
      * Returns a string containing the unique identifier assigned to this

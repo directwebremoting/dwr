@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.ScriptPhase;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.extend.Call;
 import org.directwebremoting.extend.Calls;
@@ -349,31 +348,35 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             scriptSession.confirmScripts(nextScriptIndex - 1);
         }
 
-        // Reverse Ajax scripts for beginning of response
+        // If there is a Reverse Ajax runnable for beginning of response then run it
+        boolean beginningRunnable = false;
+        RealScriptSession.Script script = null;
         if (passiveReverseAjax)
         {
-            while(true) {
-                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-                if (script != null && script.getPhase() == ScriptPhase.BEGINNING_RESPONSE) {
-                    script.getRunnable().run(script.getIndex(), conduit);
-                    nextScriptIndex = script.getIndex() + 1;
-                } else {
-                    break;
-                }
+            script = scriptSession.getScript(nextScriptIndex);
+            if (script != null && script.getScript() instanceof Runnable) {
+                ((Runnable) script.getScript()).run();
+                beginningRunnable = true;
             }
         }
 
         // Send the script prefix (if any)
         conduit.beginStreamAndChunk();
 
+        // Send confirmation for the runnable to client after stream prefix
+        if (beginningRunnable) {
+            conduit.sendScript(EnginePrivate.getRemoteHandleReverseAjaxScript(script.getIndex(), ""));
+            nextScriptIndex = script.getIndex() + 1;
+        }
+
         // Reverse Ajax scripts in chunk
         if (passiveReverseAjax)
         {
             out.println(ProtocolConstants.SCRIPT_CALL_INSERT);
             while(true) {
-                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-                if (script != null && script.getPhase() == ScriptPhase.IN_CHUNK) {
-                    script.getRunnable().run(script.getIndex(), conduit);
+                script = scriptSession.getScript(nextScriptIndex);
+                if (script != null && script.getScript() instanceof String) {
+                    conduit.sendScript(EnginePrivate.getRemoteHandleReverseAjaxScript(script.getIndex(), (String) script.getScript()));
                     nextScriptIndex = script.getIndex() + 1;
                 } else {
                     break;
@@ -390,19 +393,19 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             String callId = reply.getCallId();
             try
             {
-                ScriptBuffer script;
+                ScriptBuffer scriptBuf;
                 // The existence of a throwable indicates that something went wrong
                 if (reply.getThrowable() != null)
                 {
                     Throwable ex = reply.getThrowable();
-                    script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
+                    scriptBuf = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
                 }
                 else
                 {
                     Object data = reply.getReply();
-                    script = EnginePrivate.getRemoteHandleCallbackScript(batchId, callId, data);
+                    scriptBuf = EnginePrivate.getRemoteHandleCallbackScript(batchId, callId, data);
                 }
-                conduit.sendScript(ScriptBufferUtil.createOutput(script, converterManager, jsonOutput));
+                conduit.sendScript(ScriptBufferUtil.createOutput(scriptBuf, converterManager, jsonOutput));
             }
             catch (IOException ex)
             {
@@ -413,8 +416,8 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
             }
             catch (ConversionException ex)
             {
-                ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
-                addScriptHandleExceptions(conduit, script);
+                ScriptBuffer scriptBuf = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
+                addScriptHandleExceptions(conduit, scriptBuf);
                 log.warn("--ConversionException: batchId=" + batchId + " class=" + ex.getConversionType().getName(), ex);
             }
             catch (Exception ex)
@@ -422,26 +425,12 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 // This is a bit of a "this can't happen" case so I am a bit
                 // nervous about sending the exception to the client, but we
                 // want to avoid silently dying so we need to do something.
-                ScriptBuffer script = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
-                addScriptHandleExceptions(conduit, script);
+                ScriptBuffer scriptBuf = EnginePrivate.getRemoteHandleExceptionScript(batchId, callId, ex);
+                addScriptHandleExceptions(conduit, scriptBuf);
                 log.error("--ConversionException: batchId=" + batchId + " message=" + ex.toString());
             }
         }
         conduit.endStreamAndChunk();
-
-        // Reverse Ajax scripts for end of response
-        if (passiveReverseAjax)
-        {
-            while(true) {
-                RealScriptSession.Script script = scriptSession.getScript(nextScriptIndex);
-                if (script != null && script.getPhase() == ScriptPhase.END_RESPONSE) {
-                    script.getRunnable().run(script.getIndex(), conduit);
-                    nextScriptIndex = script.getIndex() + 1;
-                } else {
-                    break;
-                }
-            }
-        }
     }
 
     /* (non-Javadoc)
