@@ -1853,9 +1853,18 @@ if (typeof dwr == 'undefined') dwr = {};
         batch.iframe = batch.div1.firstChild;
         batch.document = document;
         batch.iframe.batch = batch;
+        batch.fileInputs = [];
         dwr.engine.util.addEventListener(batch.iframe, "load", function(ev) {
           // Bail out if this is a premature load event (IE) 
           if (!batch.loadingStarted) return;
+          // Put back file inputs
+          while(batch.fileInputs.length > 0) {
+            var entry = batch.fileInputs.pop();
+            entry.original.setAttribute("id", entry.clone.getAttribute("id"));
+            entry.original.setAttribute("name", entry.clone.getAttribute("name"));
+            entry.original.style.display = entry.clone.style.display;
+            entry.clone.parentNode.replaceChild(entry.original, entry.clone);
+          }
           // Bail out if the batch was completed the normal way 
           if (batch.completed) return;
           // Check for a queued batch exception
@@ -1920,13 +1929,16 @@ if (typeof dwr == 'undefined') dwr = {};
             if (typeof value != "function") {
               if (value && value.tagName && value.tagName.toLowerCase() == "input" && value.type && value.type.toLowerCase() == "file") {
                 // Since we can not set the value of a file object, we must post the actual file object
-                // that the user clicked browse on. We will put a clone in it's place.
-                var clone = value.cloneNode(true);
-                value.removeAttribute("id", prop);
+                // that the user clicked browse on. We will put a clone in it's place that we will restore later.
+                // (note that the clone doesn't retain the selected file in most browsers)
+                if (value.parentNode) {
+                  var clone = value.cloneNode(true);
+                  value.parentNode.replaceChild(clone, value);
+                  batch.fileInputs.push({original:value, clone:clone});
+                }
+                value.removeAttribute("id");
                 value.setAttribute("name", prop);
                 value.style.display = "none";
-                value.parentNode.insertBefore(clone, value);
-                value.parentNode.removeChild(value);
                 batch.form.appendChild(value);
               } else {
                 var formInput = batch.document.createElement("input");
