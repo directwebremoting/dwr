@@ -44,6 +44,15 @@ public class UploadDownload
      */
     public BufferedImage uploadFiles(BufferedImage uploadImage, String uploadFile, String color)
     {
+        if (uploadImage == null)
+        {
+            throw new IllegalArgumentException("No image");
+        }
+        if (uploadFile == null)
+        {
+            throw new IllegalArgumentException("No textfile");
+        }
+
         uploadImage = scaleToSize(uploadImage);
         uploadImage = grafitiTextOnImage(uploadImage, uploadFile, color);
 
@@ -136,7 +145,7 @@ public class UploadDownload
     public static Color decodeHtmlColorString(String colorString)
     {
         Color color;
-    
+
         if (colorString.startsWith("#"))
         {
             colorString = colorString.substring(1);
@@ -145,7 +154,7 @@ public class UploadDownload
         {
             colorString = colorString.substring(0, colorString.length() - 1);
         }
-    
+
         int red;
         int green;
         int blue;
@@ -174,7 +183,7 @@ public class UploadDownload
     }
 
     /**
-     * 
+     *
      */
     private static final int CHARS_PER_LINE = 21;
 }
