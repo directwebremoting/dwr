@@ -911,7 +911,13 @@ public class StartupUtil
      */
     private static int foundContexts = 0;
 
-    private static class SerializableContainerListWrapper implements Serializable
+    /**
+     * A small wrapper class to allow our stuff stored on ServletContext to
+     * participate in serialization. Appservers like f ex WebLogic may issue
+     * warnings if things are not serializable even though this is not required.
+     * @author Mike Wilson
+     */
+    public static class SerializableContainerListWrapper implements Serializable
     {
         transient List<Container> list = null;
 
