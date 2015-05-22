@@ -41,6 +41,7 @@
         <th></th>
       	<td>
           <button onclick="downloadPdfFile()">Download</button>
+          <button onclick="showPdfFile()">Show</button>
       	</td>
       </tr>
   	</table>
@@ -50,13 +51,23 @@
   <div id="explainDiv">
 <p>The client code simply gets the value of the input text field and sends it
 to the <code>UploadDownload.downloadPdfFile()</code> server function, and when
-the server replies with a PDF file, we open it for download.</p>
+the server replies with a PDF file, we open it for download:</p>
 <pre>
 function downloadPdfFile() {
   var pdftext = dwr.util.getValue('pdftext');
 
-  UploadDownload.downloadPdfFile(pdftext, function(data) {
-    dwr.engine.openInDownload(data);
+  UploadDownload.downloadPdfFile(pdftext, function(url) {
+    dwr.engine.openInDownload(url);
+  });
+}
+</pre>
+or navigate to show it inline on the page:
+<pre>
+function showPdfFile() {
+  var pdftext = dwr.util.getValue('pdftext');
+
+  UploadDownload.downloadPdfFile(pdftext, function(url) {
+    window.location = url + "?contentDispositionType=inline";
   });
 }
 </pre>
