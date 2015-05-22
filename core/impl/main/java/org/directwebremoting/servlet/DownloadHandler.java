@@ -58,10 +58,21 @@ public class DownloadHandler implements Handler
                 response.setContentLength((int) transfer.getSize());
             }
 
-            String filename = transfer.getFilename();
-            if (filename != null)
+            String defaultType = "attachment";
+            String type = null;
+            String suppliedType = request.getParameter("contentDispositionType");
+            if (suppliedType != null && suppliedType.matches("^[-A-Za-z]+$"))
             {
-                response.setHeader("Content-disposition", "attachment; filename=\"" + filename + "\"");
+                type = suppliedType;
+            }
+
+            String filename = transfer.getFilename();
+
+            if (type != null || filename != null)
+            {
+                response.setHeader("Content-disposition",
+                    (type != null ? type : defaultType)
+                    + (filename != null ? "; filename=\"" + filename + "\"" : ""));
             }
 
             response.setContentType(transfer.getMimeType());
