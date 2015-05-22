@@ -55,11 +55,18 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
-    * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
-    * @param {Function} handler The function to call when we get bored of waiting for a call
-    */
+   * Set a default timeout value for all calls. 0 (the default) turns timeouts off.
+   * @param {Function} handler The function to call when we get bored of waiting for a call
+   */
   dwr.engine.setTimeout = function(timeout) {
     dwr.engine._timeout = timeout;
+  };
+
+  /**
+   * Set a timeout value for Reverse Ajax polls. 0 (the default) turns timeouts off.
+   */
+  dwr.engine.setPollTimeout = function(timeout) {
+    dwr.engine._pollTimeout = timeout;
   };
 
   /**
@@ -391,6 +398,9 @@ if (typeof dwr == 'undefined') dwr = {};
   
   /** The batch that we are using to poll */
   dwr.engine._pollBatch = null;
+
+  /** Maximum time we wait for a poll to return (0 = no timeout) */
+  dwr.engine._pollTimeout = 0;
 
   /** How many milliseconds between internal comet polls */
   dwr.engine._pollCometInterval = 200;
@@ -2121,7 +2131,7 @@ if (typeof dwr == 'undefined') dwr = {};
         path:dwr.engine._pathToDwrServlet,
         preHooks:[],
         postHooks:[],
-        timeout:0
+        timeout:dwr.engine._pollTimeout
       };
       dwr.engine.batch.populateHeadersAndAttributes(batch);
       return batch;
