@@ -34,6 +34,10 @@ public class AmdEngineHandler extends BaseEngineHandler
         // Local variable to capture the DWR namespace
         mod.addContent("var dwr;\n");
 
+        // Local variable to capture dwrConfig
+        mod.addDependency("", "module", "module"); // Use pseudo module in AMD to access configuration
+        mod.addContent("var dwrConfig = module && module.config && module.config();\n");
+
         // Add standard engine.js contents
         mod.addContent("\n");
         mod.addContent("// standard engine.js\n");
