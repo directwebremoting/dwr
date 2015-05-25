@@ -130,6 +130,7 @@ if (typeof dwr == 'undefined') dwr = {};
       // We always want a retry policy when reverse AJAX is enabled.
       if (!dwr.engine._retryIntervals || dwr.engine._retryIntervals.length === 0) { dwr.engine._retryIntervals = dwr.engine._defaultRetryIntervals; }
       dwr.engine._activeReverseAjax = true;
+      if (dwr.engine._initializing) return; // We'll start after init is done
       dwr.engine._poll();
     }
     else {
@@ -159,9 +160,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine.setNotifyServerOnPageLoad = function(notify) {
     dwr.engine._isNotifyServerOnPageLoad = notify;
-    if (notify && dwr.engine._initPhase < 2) {
+    if (notify && !dwr.engine._initializing && !dwr.engine._isNotifyServerOnPageLoadSent) {
       eval("${initCode}");
-      dwr.engine._initPhase = 2;
+      dwr.engine._isNotifyServerOnPageLoadSent = true;
     }
   };
 
@@ -318,7 +319,7 @@ if (typeof dwr == 'undefined') dwr = {};
   //==============================================================================
 
   /** Keep track of page load initialization */
-  dwr.engine._initPhase = 0;
+  dwr.engine._initializing = true;
 
   /** Is GET enabled? */
   dwr.engine._allowGetButMakeForgeryEasier = "${allowGetButMakeForgeryEasier}";
@@ -451,8 +452,9 @@ if (typeof dwr == 'undefined') dwr = {};
   /** Are we notifying the server on page unload? */
   dwr.engine._isNotifyServerOnPageUnload = false;
 
-  /** Are we notifying the server on page load? Passive reverse Ajax users should enable! */
+  /** Are we notifying the server on page load? */
   dwr.engine._isNotifyServerOnPageLoad = false;
+  dwr.engine._isNotifyServerOnPageLoadSent = false;
 
   /** Should the unload call be asynchronous?  If true it may not be called by the browser. */
   dwr.engine._asyncUnload = false;
@@ -600,13 +602,16 @@ if (typeof dwr == 'undefined') dwr = {};
     },
     
     init: function() {
-      dwr.engine._initPhase = 1;
       dwr.engine._initializer.preInit();
       dwr.engine._initializer.loadDwrConfig();
-      // Run page init code as desired by server, if we are notifying the server on page load.
-      if (dwr.engine._isNotifyServerOnPageLoad && dwr.engine._initPhase < 2) {
+      dwr.engine._initializing = false;
+      // Now we can start sending requests
+      if (dwr.engine._isNotifyServerOnPageLoad) {
         eval("${initCode}");
-        dwr.engine._initPhase = 2;
+        dwr.engine._isNotifyServerOnPageLoadSent = true;
+      }
+      if (dwr.engine._activeReverseAjax) {
+        dwr.engine._poll();
       }
     }
   };
