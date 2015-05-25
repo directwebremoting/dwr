@@ -159,8 +159,9 @@ if (typeof dwr == 'undefined') dwr = {};
    */
   dwr.engine.setNotifyServerOnPageLoad = function(notify) {
     dwr.engine._isNotifyServerOnPageLoad = notify;
-    if (notify) {
+    if (notify && dwr.engine._initPhase < 2) {
       eval("${initCode}");
+      dwr.engine._initPhase = 2;
     }
   };
 
@@ -315,6 +316,9 @@ if (typeof dwr == 'undefined') dwr = {};
   //==============================================================================
   // Only private stuff below here
   //==============================================================================
+
+  /** Keep track of page load initialization */
+  dwr.engine._initPhase = 0;
 
   /** Is GET enabled? */
   dwr.engine._allowGetButMakeForgeryEasier = "${allowGetButMakeForgeryEasier}";
@@ -587,9 +591,11 @@ if (typeof dwr == 'undefined') dwr = {};
 
     init: function() {
       dwr.engine._initializer.preInit();
+      dwr.engine._initPhase = 1;
       // Run page init code as desired by server, if we are notifying the server on page load.
       if (dwr.engine._isNotifyServerOnPageLoad) {
         eval("${initCode}");
+        dwr.engine._initPhase = 2;
       }
     }
   };
