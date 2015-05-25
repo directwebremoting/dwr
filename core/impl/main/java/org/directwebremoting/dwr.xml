@@ -89,6 +89,8 @@
     <convert converter="date" match="java.sql.Time"/>
     <convert converter="date" match="java.sql.Timestamp"/>
     <convert converter="date" match="java.util.Calendar"/>
+    <convert converter="jodaLocalDateTime" match="org.joda.time.DateTime"/>
+    <convert converter="jodaLocalDateTime" match="org.joda.time.LocalDateTime"/>
     <convert converter="url" match="java.net.URL"/>
     <convert converter="locale" match="java.util.Locale"/>
     <convert converter="currency" match="java.util.Currency"/>
