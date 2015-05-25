@@ -97,13 +97,13 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
                 checkNotCsrfAttack(request, batch);
             }
 
+            // Various bits of the CallBatch need to be stashed away places
+            storeParsedRequest(request, batch);
+
             String normalizedPage = pageNormalizer.normalizePage(batch.getPage());
             RealScriptSession scriptSession = scriptSessionManager.getOrCreateScriptSession(batch.getScriptSessionId(), normalizedPage, request.getSession(false));
             RealWebContext webContext = (RealWebContext) WebContextFactory.get();
             webContext.initialize(normalizedPage, scriptSession);
-
-            // Various bits of the CallBatch need to be stashed away places
-            storeParsedRequest(request, webContext, batch);
 
             Calls calls = marshallInbound(batch);
 
@@ -269,10 +269,9 @@ public abstract class BaseCallHandler extends BaseDwrpHandler
     /**
      * Build a CallBatch and put it in the request
      * @param request Where we store the parsed data
-     * @param webContext We need to notify others of some of the data we find
      * @param batch The parsed data to store
      */
-    private void storeParsedRequest(HttpServletRequest request, RealWebContext webContext, CallBatch batch) throws IOException
+    private void storeParsedRequest(HttpServletRequest request, CallBatch batch) throws IOException
     {
         // Remaining parameters get put into the request for later consumption
         Map<String, FormField> paramMap = batch.getExtraParameters();
