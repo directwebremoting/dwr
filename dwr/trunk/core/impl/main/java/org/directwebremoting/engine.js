@@ -589,11 +589,22 @@ if (typeof dwr == 'undefined') dwr = {};
       g.dwr._[dwr.engine._instanceId] = dwr;
     },
 
+    loadDwrConfig: function() {
+      if (typeof dwrConfig != "undefined") {
+        for(p in dwrConfig) {
+          var methodName = "set" + p.charAt(0).toUpperCase() + p.substring(1);
+          var setter = dwr.engine[methodName];
+          if (setter) setter(dwrConfig[p]);
+        }
+      }
+    },
+    
     init: function() {
-      dwr.engine._initializer.preInit();
       dwr.engine._initPhase = 1;
+      dwr.engine._initializer.preInit();
+      dwr.engine._initializer.loadDwrConfig();
       // Run page init code as desired by server, if we are notifying the server on page load.
-      if (dwr.engine._isNotifyServerOnPageLoad) {
+      if (dwr.engine._isNotifyServerOnPageLoad && dwr.engine._initPhase < 2) {
         eval("${initCode}");
         dwr.engine._initPhase = 2;
       }
