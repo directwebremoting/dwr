@@ -94,6 +94,14 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   * Set a custom contextPath (typically used when rewriting paths through a web server)
+   * @param {Object} path path
+   */
+  dwr.engine.setOverrideContextPath = function(path) {
+    dwr.engine._overrideContextPath = path;
+  };
+
+  /**
    * Custom headers for all DWR calls
    * @param {Object} headers Object containing name/value pairs for extra headers
    */
@@ -348,8 +356,15 @@ if (typeof dwr == 'undefined') dwr = {};
     return dwr.engine._overridePath || dwr.engine._pathToDwrServlet;
   };
 
-  /** The webapp's context path (used for setting cookie path) */
+  /** The webapp's contextPath */
   dwr.engine._contextPath = "${contextPath}";
+
+  /** Custom contextPath */
+  dwr.engine._overrideContextPath = "${overrideContextPath}";
+
+  dwr.engine._effectiveContextPath = function() {
+    return dwr.engine._overrideContextPath || dwr.engine._contextPath;
+  };
 
   /** Do we use XHR for reverse ajax because we are not streaming? */
   dwr.engine._useStreamingPoll = "${useStreamingPoll}";
@@ -1565,7 +1580,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
     setDwrSession:function(dwrsess) {
       dwr.engine._dwrSessionId = dwrsess;
-      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + (dwr.engine._contextPath !== "" ? dwr.engine._contextPath : "/");
+      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + (dwr.engine._effectiveContextPath() !== "" ? dwr.engine._effectiveContextPath() : "/");
       dwr.engine._scriptSessionId = dwrsess + "/" + dwr.engine._pageId;
     },
 
