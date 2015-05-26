@@ -15,6 +15,8 @@
  */
 package org.directwebremoting.impl;
 
+import java.util.ArrayList;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +39,12 @@ public class DefaultWebContextBuilder implements WebContextBuilder
      */
     public WebContext get()
     {
-        return user.get();
+        ArrayList<WebContext> stack = contextStack.get();
+        if (stack == null || stack.size() == 0)
+        {
+            return null;
+        }
+        return stack.get(stack.size() - 1);
     }
 
     /* (non-Javadoc)
@@ -51,7 +58,7 @@ public class DefaultWebContextBuilder implements WebContextBuilder
             ServletContext servletContext = container.getBean(ServletContext.class);
 
             WebContext ec = new DefaultWebContext(container, request, response, servletConfig, servletContext);
-            user.set(ec);
+            engageThread(ec);
         }
         catch (Exception ex)
         {
@@ -60,21 +67,46 @@ public class DefaultWebContextBuilder implements WebContextBuilder
     }
 
     /* (non-Javadoc)
+     * @see org.directwebremoting.WebContextFactory.WebContextBuilder#engageThread(org.directwebremoting.WebContext)
+     */
+    public void engageThread(WebContext webContext)
+    {
+        ArrayList<WebContext> stack = contextStack.get();
+        if (stack == null)
+        {
+            stack = new ArrayList<WebContext>();
+            contextStack.set(stack);
+        }
+        stack.add(webContext);
+    }
+
+    /* (non-Javadoc)
      * @see org.directwebremoting.WebContextBuilder#unset()
      */
     public void disengageThread()
     {
         // null check for DWR-426 - DefaultWebContextBuilder disengageThread throws null pointer exception.
-        if (null != user)
+        if (contextStack != null)
         {
-            user.set(null);
+            ArrayList<WebContext> stack = contextStack.get();
+            if (stack != null)
+            {
+                if (stack.size() > 0)
+                {
+                    stack.remove(stack.size() - 1);
+                }
+                if (stack.size() == 0)
+                {
+                    contextStack.set(null);
+                }
+            }
         }
     }
 
     /**
-     * The storage of thread based data
+     * The storage of thread based data as a stack
      */
-    private static ThreadLocal<WebContext> user = new ThreadLocal<WebContext>();
+    private static ThreadLocal<ArrayList<WebContext>> contextStack = new ThreadLocal<ArrayList<WebContext>>();
 
     /**
      * The log stream
