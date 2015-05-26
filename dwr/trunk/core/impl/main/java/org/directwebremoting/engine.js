@@ -86,6 +86,14 @@ if (typeof dwr == 'undefined') dwr = {};
   };
 
   /**
+   * Set a custom path to the DWR servlet (may be a full URL for cross-domain usage)
+   * @param {Object} path path or URL
+   */
+  dwr.engine.setOverridePath = function(path) {
+    dwr.engine._overridePath = path;
+  };
+
+  /**
    * Custom headers for all DWR calls
    * @param {Object} headers Object containing name/value pairs for extra headers
    */
@@ -327,17 +335,18 @@ if (typeof dwr == 'undefined') dwr = {};
   /** The script prefix to strip in the case of scriptTagProtection. */
   dwr.engine._scriptTagProtection = "${scriptTagProtection}";
 
-  /** The default path to the DWR servlet
-   *  pathToDwrServlet is aids cross-domain. If pathToDwrServlet
-   *  is defined before engine.js is included pathToDwrServlet will
-   *  be used.
-   */
+  /** The default path to the DWR servlet */
+  dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
+
+  /** Custom path to the DWR servlet */
+  dwr.engine._overridePath = "${overridePath}";
   if (typeof pathToDwrServlet != "undefined") {
-    dwr.engine._pathToDwrServlet = pathToDwrServlet;
+    dwr.engine._overridePath = pathToDwrServlet;
   }
-  else {
-    dwr.engine._pathToDwrServlet = "${pathToDwrServlet}";
-  }
+  
+  dwr.engine._effectivePath = function() {
+    return dwr.engine._overridePath || dwr.engine._pathToDwrServlet;
+  };
 
   /** The webapp's context path (used for setting cookie path) */
   dwr.engine._contextPath = "${contextPath}";
@@ -545,7 +554,6 @@ if (typeof dwr == 'undefined') dwr = {};
         headers:{}, preHooks:[], postHooks:[],
         timeout:dwr.engine._timeout,
         errorHandler:null, globalErrorHandler:dwr.engine._errorHandler, warningHandler:null, textHtmlHandler:null, globalTextHtmlHandler:null,
-        path:dwr.engine._pathToDwrServlet,
         handlers:[{ exceptionHandler:null, callback:null }]
       };
       dwr.engine.transport.send(batch);
@@ -626,7 +634,8 @@ if (typeof dwr == 'undefined') dwr = {};
    *       if this is null, any returned data will be ignored
    * @param args The parameters to passed to the above method
    */
-  dwr.engine._execute = function(path, scriptName, methodName, args) {
+  dwr.engine._execute = function(overridePath, scriptName, methodName, args) {
+    var path = overridePath || dwr.engine._effectivePath();
     dwr.engine._singleShot = false;
     if (dwr.engine._batch == null) {
       dwr.engine.beginBatch();
@@ -774,7 +783,7 @@ if (typeof dwr == 'undefined') dwr = {};
         // We are offline, continue to check for a heartbeat until _retries is > _maxRetries.
         var heartbeatInterval = setInterval(function() {
           if (dwr.engine._maxRetries === -1 || dwr.engine._retries < dwr.engine._maxRetries) {
-            dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'checkHeartbeat', [ function() {
+            dwr.engine._execute(null, '__System', 'checkHeartbeat', [ function() {
               // We found a heartbeat, we are back online!
               clearInterval(heartbeatInterval);
               dwr.engine._poll();
@@ -1444,6 +1453,9 @@ if (typeof dwr == 'undefined') dwr = {};
      * @param {Object} batch
      */
     send:function(batch) {
+      if (batch.path == null) {
+        batch.path = dwr.engine._effectivePath();
+      }
       dwr.engine.transport.updateDwrSessionFromCookie();
       if (!dwr.engine._dwrSessionId) {
         dwr.engine._internalOrdered = true;
@@ -1492,9 +1504,6 @@ if (typeof dwr == 'undefined') dwr = {};
 
       // Work out if we are going cross domain
       var isCrossDomain = false;
-      if (batch.path == null) {
-        batch.path = dwr.engine._pathToDwrServlet;
-      }
       if (batch.path.indexOf("http://") === 0 || batch.path.indexOf("https://") === 0) {
         var dwrShortPath = batch.path.split("/", 3).join("/");
         var hrefShortPath = window.location.href.split("/", 3).join("/");
@@ -2150,7 +2159,6 @@ if (typeof dwr == 'undefined') dwr = {};
         isPoll:true,
         map:{ callCount:1, nextReverseAjaxIndex:dwr.engine._nextReverseAjaxIndex},
         paramCount:0,
-        path:dwr.engine._pathToDwrServlet,
         preHooks:[],
         postHooks:[],
         timeout:dwr.engine._pollTimeout
@@ -2524,7 +2532,7 @@ if (typeof dwr == 'undefined') dwr = {};
      * @param {Object} data The data to publish
      */
     publish:function(topicName, data) {
-      dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'publish', topicName, data, {});
+      dwr.engine._execute(null, '__System', 'publish', topicName, data, {});
     },
 
     /**
@@ -2543,7 +2551,7 @@ if (typeof dwr == 'undefined') dwr = {};
         scope:scope,
         subscriberData:subscriberData
       };
-      dwr.engine._execute(dwr.engine._pathToDwrServlet, '__System', 'subscribe', topicName, subscription, {});
+      dwr.engine._execute(null, '__System', 'subscribe', topicName, subscription, {});
       return subscription;
     },
 
@@ -2643,7 +2651,7 @@ dwr.data = {
     }
     if (!region.query) region.query = {};
 
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewRegion', [ this.storeId, region, this.listener, callbackObj ]);
+    return dwr.engine._execute(null, '__Data', 'viewRegion', [ this.storeId, region, this.listener, callbackObj ]);
   };
 
   /**
@@ -2652,7 +2660,7 @@ dwr.data = {
    * @param {function|object} callbackObj A standard DWR callback object
    */
   dwr.data.Cache.prototype.viewItem = function(itemId, callbackObj) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'viewItem', [ this.storeId, itemId, this.listener, callbackObj ]);
+    return dwr.engine._execute(null, '__Data', 'viewItem', [ this.storeId, itemId, this.listener, callbackObj ]);
   };
 
   /**
@@ -2661,7 +2669,7 @@ dwr.data = {
    */
   dwr.data.Cache.prototype.unsubscribe = function(callbackObj) {
     if (this.listener) {
-      return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'unsubscribe', [ this.storeId, this.listener, callbackObj ]);
+      return dwr.engine._execute(null, '__Data', 'unsubscribe', [ this.storeId, this.listener, callbackObj ]);
     }
   };
 
@@ -2671,7 +2679,7 @@ dwr.data = {
    * @param {function|object} callbackObj A standard DWR callback object
    */
   dwr.data.Cache.prototype.update = function(items, callbackObj) {
-    return dwr.engine._execute(dwr.engine._pathToDwrServlet, '__Data', 'update', [ this.storeId, items, callbackObj ]);
+    return dwr.engine._execute(null, '__Data', 'update', [ this.storeId, items, callbackObj ]);
   };
 
 })();

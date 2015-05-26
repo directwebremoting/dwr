@@ -60,7 +60,6 @@ public class DefaultRemoter implements Remoter
         // "if already defined clauses" as this is not used by all module
         // systems):
         // ( ) <indent><assignVariable> = {};
-        // ( ) <indent><assignVariable>._path = '<pathToDwrServlet>';
         // ( )
         // ( ) <indent>/**
         // ( ) <indent> * @param {<type>} p1 a param
@@ -75,9 +74,7 @@ public class DefaultRemoter implements Remoter
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer
-            .append(indent + assignVariable + " = {};\n")
-            .append(indent + assignVariable + "._path = '" + getPathToDwrServlet(contextServletPath) + "';\n");
+        buffer.append(indent + assignVariable + " = {};\n");
 
         Module module = moduleManager.getModule(scriptName, false);
 
@@ -280,10 +277,6 @@ public class DefaultRemoter implements Remoter
     public String getPathToDwrServlet(String contextServletPath)
     {
         String actualPath = contextServletPath;
-        if (overridePath != null)
-        {
-            actualPath = overridePath;
-        }
 
         if (useAbsolutePath)
         {
@@ -473,15 +466,6 @@ public class DefaultRemoter implements Remoter
     }
 
     /**
-     * If we need to override the default path
-     * @param overridePath The new override path
-     */
-    public void setOverridePath(String overridePath)
-    {
-        this.overridePath = overridePath;
-    }
-
-    /**
      * When and what should we log? Options are (specified in the DWR servlet's init-params):
      * 1) call (start of call + successful return values).
      * 2) exception (checked) - default for debug.
@@ -541,11 +525,6 @@ public class DefaultRemoter implements Remoter
      * The security manager
      */
     protected AccessControl accessControl = null;
-
-    /**
-     * If we need to override the default path
-     */
-    protected String overridePath = null;
 
     /**
      * When and what should we log? Options are (specified in the DWR servlet's init-params):
