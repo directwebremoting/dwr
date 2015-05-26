@@ -277,6 +277,10 @@ public class AnnotationsConfigurator implements Configurator
         Class<? extends Converter> converter = convertAnn.converter();
         String converterClass = converter.getName();
         Map<String, String> params = getParamsMap(convertAnn.params());
+        if (LocalUtil.hasText(convertAnn.javascript()))
+        {
+            params.put("javascript", convertAnn.javascript());
+        }
 
         ConverterManager converterManager = container.getBean(ConverterManager.class);
         String converterName = converterClass.replace(".", "_");
