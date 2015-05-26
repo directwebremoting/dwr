@@ -81,6 +81,14 @@ public class WebContextFactory
         void engageThread(Container container, HttpServletRequest request, HttpServletResponse response);
 
         /**
+         * Make the current thread know what the current request is.
+         * Uses an existing WebContext for example from another thread.
+         * This method is only for use internally to DWR.
+         * @see #disengageThread()
+         */
+        void engageThread(WebContext webContext);
+
+        /**
          * Unset the current ExecutionContext
          * This method is only for use internally to DWR.
          * @see #engageThread(Container, HttpServletRequest, HttpServletResponse)
