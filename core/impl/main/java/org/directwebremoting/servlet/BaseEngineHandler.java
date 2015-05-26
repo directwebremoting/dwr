@@ -76,6 +76,9 @@ public class BaseEngineHandler extends FileJavaScriptHandler
         replace.put("${overridePath}", overridePath);
         replace.put("${overrideContextPath}", overrideContextPath);
 
+        // Cookie config
+        replace.put("${cookieAttributes}", cookieAttributes);
+
         // Does engine.js do GETs
         replace.put("${allowGetButMakeForgeryEasier}", String.valueOf(allowGetButMakeForgeryEasier));
 
@@ -211,6 +214,15 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     }
 
     /**
+     * Extra attributes to append to the DWRSESSIONID cookie (domain, secure, etc)
+     * @param attributeString attribute string according to cookie syntax
+     */
+    public void setCookieAttributes(String attributeString)
+    {
+        this.cookieAttributes = attributeString;
+    }
+
+    /**
      * URL that engine.js makes calls into
      */
     private String plainCallHandlerUrl;
@@ -277,4 +289,9 @@ public class BaseEngineHandler extends FileJavaScriptHandler
      * If we need to override the default contextPath
      */
     protected String overrideContextPath = "";
+
+    /**
+     * Extra attributes to append to the DWRSESSIONID cookie (domain, secure, etc)
+     */
+    protected String cookieAttributes = "";
 }

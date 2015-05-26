@@ -87,7 +87,7 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /**
    * Set a custom path to the DWR servlet (may be a full URL for cross-domain usage)
-   * @param {Object} path path or URL
+   * @param {string} path path or URL
    */
   dwr.engine.setOverridePath = function(path) {
     dwr.engine._overridePath = path;
@@ -95,10 +95,18 @@ if (typeof dwr == 'undefined') dwr = {};
 
   /**
    * Set a custom contextPath (typically used when rewriting paths through a web server)
-   * @param {Object} path path
+   * @param {string} path path
    */
   dwr.engine.setOverrideContextPath = function(path) {
     dwr.engine._overrideContextPath = path;
+  };
+
+  /**
+   * Extra attributes to append to the DWRSESSIONID cookie (domain, secure, etc)
+   * @param {string} attributeString attribute string according to cookie syntax
+   */
+  dwr.engine.setCookieAttributes = function(attributeString) {
+    dwr.engine._cookieAttributes = attributeString;
   };
 
   /**
@@ -365,6 +373,9 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._effectiveContextPath = function() {
     return dwr.engine._overrideContextPath || dwr.engine._contextPath;
   };
+
+  /** Extra attributes to append to the DWRSESSIONID cookie (domain, secure, etc) */
+  dwr.engine._cookieAttributes = "${cookieAttributes}";
 
   /** Do we use XHR for reverse ajax because we are not streaming? */
   dwr.engine._useStreamingPoll = "${useStreamingPoll}";
@@ -1580,7 +1591,14 @@ if (typeof dwr == 'undefined') dwr = {};
 
     setDwrSession:function(dwrsess) {
       dwr.engine._dwrSessionId = dwrsess;
-      document.cookie = "DWRSESSIONID=" + dwrsess + "; path=" + (dwr.engine._effectiveContextPath() !== "" ? dwr.engine._effectiveContextPath() : "/");
+      var attrs = "";
+      if (!dwr.engine._cookieAttributes.match(/^path=/i)) {
+        attrs = "; path=" + (dwr.engine._effectiveContextPath() || "/");
+      }
+      if (dwr.engine._cookieAttributes) {
+        attrs += "; " + dwr.engine._cookieAttributes;
+      }
+      document.cookie = "DWRSESSIONID=" + dwrsess + attrs;
       dwr.engine._scriptSessionId = dwrsess + "/" + dwr.engine._pageId;
     },
 
