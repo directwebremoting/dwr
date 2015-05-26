@@ -36,7 +36,6 @@ public class WebContextFactory
     {
         if (builder == null)
         {
-            log.warn("Missing WebContextBuilder. Is DWR setup properly?");
             return null;
         }
 
