@@ -73,6 +73,7 @@ public class BaseEngineHandler extends FileJavaScriptHandler
         String contextServletPath = contextPath + servletPath;
         String pathToDwrServlet = remoter.getPathToDwrServlet(contextServletPath);
         replace.put("${pathToDwrServlet}", pathToDwrServlet);
+        replace.put("${overridePath}", overridePath);
 
         // Does engine.js do GETs
         replace.put("${allowGetButMakeForgeryEasier}", String.valueOf(allowGetButMakeForgeryEasier));
@@ -191,6 +192,15 @@ public class BaseEngineHandler extends FileJavaScriptHandler
     }
 
     /**
+     * If we need to override the default path
+     * @param overridePath The new override path
+     */
+    public void setOverridePath(String overridePath)
+    {
+        this.overridePath = overridePath;
+    }
+
+    /**
      * URL that engine.js makes calls into
      */
     private String plainCallHandlerUrl;
@@ -247,4 +257,9 @@ public class BaseEngineHandler extends FileJavaScriptHandler
      * Are we supporting streaming?
      */
     private ServerLoadMonitor serverLoadMonitor;
+
+    /**
+     * If we need to override the default path
+     */
+    protected String overridePath = "";
 }
