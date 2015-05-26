@@ -15,6 +15,7 @@
  */
 package org.directwebremoting.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -142,16 +143,7 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
                         invalidationListener = (HttpSessionBindingListener) httpSession.getAttribute(ATTRIBUTE_INVALIDATIONLISTENER);
                         if (invalidationListener == null)
                         {
-                            httpSession.setAttribute(ATTRIBUTE_INVALIDATIONLISTENER, new HttpSessionBindingListener() {
-                                public void valueBound(HttpSessionBindingEvent arg0)
-                                {
-                                    // NOP
-                                }
-                                public void valueUnbound(HttpSessionBindingEvent arg0)
-                                {
-                                    disassociateAllScriptSessionsFromHttpSession(httpSessionId);
-                                }
-                            });
+                            httpSession.setAttribute(ATTRIBUTE_INVALIDATIONLISTENER, new InvalidationListener(this, httpSessionId));
                         }
                     }
                 }
@@ -598,4 +590,30 @@ public class DefaultScriptSessionManager implements ScriptSessionManager, Initia
      * The key is an http session id, the value is a set of script sessions
      */
     protected final ConcurrentMap<String, Set<DefaultScriptSession>> httpSessionXref = new ConcurrentHashMap<String, Set<DefaultScriptSession>>();
+
+    /**
+     * BindingListener used to detect session destroy so we can clean up our ScriptSession cross-reference.
+     * @author Mike Wilson
+     */
+    private static class InvalidationListener implements HttpSessionBindingListener, Serializable
+    {
+        private final transient DefaultScriptSessionManager scriptSessionManager;
+        private final transient String httpSessionId;
+        public InvalidationListener(DefaultScriptSessionManager scriptSessionManager, String httpSessionId)
+        {
+            this.scriptSessionManager = scriptSessionManager;
+            this.httpSessionId = httpSessionId;
+        }
+        public void valueBound(HttpSessionBindingEvent arg0)
+        {
+            // NOP
+        }
+        public void valueUnbound(HttpSessionBindingEvent arg0)
+        {
+            if (scriptSessionManager != null && httpSessionId != null)
+            {
+                scriptSessionManager.disassociateAllScriptSessionsFromHttpSession(httpSessionId);
+            }
+        }
+    }
 }
