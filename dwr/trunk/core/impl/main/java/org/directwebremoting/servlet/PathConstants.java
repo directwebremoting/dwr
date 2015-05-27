@@ -32,6 +32,12 @@ public interface PathConstants
     public static final String PATH_PREFIX = "url:";
 
     /**
+     * When we prime the {@link Container} with ResponseHandlers for {@link Handler}s we use
+     * a prefix so the {@link UrlProcessor} knows what to look for.
+     */
+    public static final String RESPONSE_PREFIX = "response:";
+
+    /**
      * Help page name
      */
     public static final String FILE_HELP = "/help.html";
