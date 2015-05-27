@@ -2,11 +2,17 @@
 RELEASE NOTES
 =============
 
-This file contains partially formed release notes for the 3.0 RC3 version.
+This file contains partially formed release notes for the 3.0 version.
 Many changes will have been properly recorded in the bug tracking system.
 
 Potentially Breaking Changes
 ----------------------------
+
+3.0:
+  * [DWR-645] - Clean up path configuration options
+  * [DWR-642] - Remove legacy packages
+  * [DWR-639] - Simplify destroy event methods
+  * [DWR-511] - Evaluate ServerLoadMonitors, remove unneeded monitors, solidify monitors we want to keep
 
 3.0 RC3:
   * Full streaming is now the default for browsers that support it. 
@@ -25,12 +31,28 @@ Potentially Breaking Changes
 Security fixes
 --------------
 
+3.0:
+  * [DWR-638] - Improve DWRSESSIONID cryptographic strength
+  * [DWR-632] - Improve CSRF protection to handle more scenarios
+
 3.0 RC3:
   * [DWR-620] - Vulnerability when using DOM converters
   * [DWR-619] - Vulnerability when letting users exchange unsanitized HTML
 
 New Features and Improvements
 -----------------------------
+
+3.0:
+  * [DWR-648] - Add support for Cache-Control and Expires header handling
+  * [DWR-647] - Allow customization of DWRSESSIONID cookie
+  * [DWR-644] - Provide a standard way to specify client-side options before DWR loads (dwrConfig)
+  * [DWR-643] - Allow remapping of DWR's effective contextPath (for DWRSESSIONID cookie etc)
+  * [DWR-641] - Offer more access to servlet request from Reverse Ajax
+  * [DWR-636] - Rename allowGetForSafariButMakeForgeryEasier setting
+  * [DWR-628] - Add support for Spring Java configurations
+  * [DWR-587] - add support to > ("Content-Disposition", "inline; filename=")
+  * [DWR-547] - Update class-mapping documentation to mention automatically generated inheritance scripts
+  * [DWR-110] - add name (javascript) attribute to DataTransferObject annotation
 
 3.0 RC3:
   * [DWR-625] - Guaranteed Reverse Ajax delivery in order
@@ -65,8 +87,8 @@ New Features and Improvements
   * [DWR-336] - Allow global filters in Spring using namespace and annotations
   * [DWR-324] - Tweak logging outputs
   * [DWR-171] - Add support for reverse proxies
-  * [DWR-26] - Add support for HttpOnly cookies
-  * [DWR-17] - improve the CSRF handling with something to solve problems with servlet filters that force the HttpSession behind DWR's back
+  * [DWR-26]  - Add support for HttpOnly cookies
+  * [DWR-17]  - improve the CSRF handling with something to solve problems with servlet filters that force the HttpSession behind DWR's back
 
 3.0 RC1:
   * [DWR-295] - improve workaround for IE's buggy getElementById
@@ -94,27 +116,43 @@ New Features and Improvements
   * [DWR-116] - allow more control over how a callback is called
   * [DWR-108] - @Auth annotation only allows single value
   * [DWR-105] - support conversion of java.net.URI as well as java.net.URL
-  * [DWR-97] - Make window close remove script sessions from the server
-  * [DWR-94] - Check that multi-dimensional arrays convert properly
-  * [DWR-92] - DWR should support plain JSON output
-  * [DWR-85] - Allow users of reverse ajax to find the contextPath so they don't need to hard code it
-  * [DWR-79] - Logging output is unhelpful
-  * [DWR-64] - Add an Apache XMLBeans Converter
-  * [DWR-46] - Create a javascript to Java reverse ajax proxy compiler
-  * [DWR-41] - Port DWR to Java5
-  * [DWR-40] - Support JMS
-  * [DWR-38] - Add clustering support through Terracotta
-  * [DWR-34] - Add support for Tomcat async servlets
-  * [DWR-33] - Enhance DWR's output when an error happens
-  * [DWR-32] - Add more agressive inline javascript compression
-  * [DWR-31] - Extend anti-script-tag protection to include reverse ajax scripts
-  * [DWR-25] - File upload: Marshalling javascript file objects
-  * [DWR-24] - Add a converter for images
-  * [DWR-18] - Make engine.js static
-  * [DWR-4] - Allow dwr.war to be unpacked into root webapp
+  * [DWR-97]  - Make window close remove script sessions from the server
+  * [DWR-94]  - Check that multi-dimensional arrays convert properly
+  * [DWR-92]  - DWR should support plain JSON output
+  * [DWR-85]  - Allow users of reverse ajax to find the contextPath so they don't need to hard code it
+  * [DWR-79]  - Logging output is unhelpful
+  * [DWR-64]  - Add an Apache XMLBeans Converter
+  * [DWR-46]  - Create a javascript to Java reverse ajax proxy compiler
+  * [DWR-41]  - Port DWR to Java5
+  * [DWR-40]  - Support JMS
+  * [DWR-38]  - Add clustering support through Terracotta
+  * [DWR-34]  - Add support for Tomcat async servlets
+  * [DWR-33]  - Enhance DWR's output when an error happens
+  * [DWR-32]  - Add more agressive inline javascript compression
+  * [DWR-31]  - Extend anti-script-tag protection to include reverse ajax scripts
+  * [DWR-25]  - File upload: Marshalling javascript file objects
+  * [DWR-24]  - Add a converter for images
+  * [DWR-18]  - Make engine.js static
+  * [DWR-4]   - Allow dwr.war to be unpacked into root webapp
 
 Bugfixes
 --------
+
+3.0:
+  * [DWR-649] - Optimizing proxies are removing meta-data in DWR responses
+  * [DWR-646] - Incoming request attributes should be available to ScriptSessionListener.sessionCreated()
+  * [DWR-640] - Reverse Ajax polling mode broken
+  * [DWR-635] - New callbackArg option causing conflict when delegating functions
+  * [DWR-634] - Auto-filled servlet objects (request, session, etc) in method parameters not matched correctly
+  * [DWR-631] - FileStoreDownloadManager - encodeFileNameSegment
+  * [DWR-629] - DefaultCreatorManager throws NullPointerException during destroy of Spring context
+  * [DWR-627] - IllegalStateException on Jetty 8 and 9
+  * [DWR-614] - org.springframework.util.ClassUtils.forName(className) has been removed in Spring 4.x
+  * [DWR-585] - java.io.NotSerializableException: org.directwebremoting.impl.DefaultContainer
+  * [DWR-554] - Reverse ajax client side timeout is missing
+  * [DWR-396] - Transfering a file using DWR 3.0 disables the "input" events
+  * [DWR-378] - Window.dwr access permission denied
+  * [DWR-352] - Javascript error in engine.js when file input field has no parentNode
 
 3.0 RC3:
   * [DWR-624] - Remove lesser-used or out-of-date features
@@ -262,8 +300,8 @@ Bugfixes
   * [DWR-123] - Detecting server is down during reverse ajax polling
   * [DWR-120] - allowScriptTagRemoting needs to be set to false to work.
   * [DWR-119] - Request Not Aborted on Timeout
-  * [DWR-89] - Cannot configure spring creator using Namespace configuration
-  * [DWR-83] - Possible resource leak in org.directwebremoting.servlet.FileHandler.handle
-  * [DWR-80] - DWR can't find varargs methods
-  * [DWR-22] - forwardToString does not work with Weblogic 8.1
-  * [DWR-12] - H3BeanConverter uses Hibernate 3.2 only feature
+  * [DWR-89]  - Cannot configure spring creator using Namespace configuration
+  * [DWR-83]  - Possible resource leak in org.directwebremoting.servlet.FileHandler.handle
+  * [DWR-80]  - DWR can't find varargs methods
+  * [DWR-22]  - forwardToString does not work with Weblogic 8.1
+  * [DWR-12]  - H3BeanConverter uses Hibernate 3.2 only feature
