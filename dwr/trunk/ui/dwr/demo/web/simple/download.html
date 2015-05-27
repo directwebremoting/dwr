@@ -56,18 +56,20 @@ the server replies with a PDF file, we open it for download:</p>
 function downloadPdfFile() {
   var pdftext = dwr.util.getValue('pdftext');
 
-  UploadDownload.downloadPdfFile(pdftext, function(url) {
-    dwr.engine.openInDownload(url);
+  UploadDownload.downloadPdfFile(pdftext, {
+    callback: function(url) { dwr.engine.openInDownload(url); },
+    async: false // workaround IE7/8's aggressive popup blocker
   });
 }
 </pre>
-or navigate to show it inline on the page:
+or navigate the window to show it inline on the page:
 <pre>
 function showPdfFile() {
   var pdftext = dwr.util.getValue('pdftext');
 
-  UploadDownload.downloadPdfFile(pdftext, function(url) {
-    window.location = url + "?contentDispositionType=inline";
+  UploadDownload.downloadPdfFile(pdftext, {
+    callback: function(url) { window.location = url + "?contentDispositionType=inline"; },
+    async: false // workaround IE7/8's aggressive popup blocker
   });
 }
 </pre>
