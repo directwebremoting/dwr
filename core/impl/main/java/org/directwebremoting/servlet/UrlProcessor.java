@@ -58,6 +58,7 @@ public class UrlProcessor implements Handler, InitializingBean
      */
     public void afterContainerSetup(Container container)
     {
+        // Set up urlMapping
         Collection<String> beanNames = container.getBeanNames();
         for (String name : beanNames)
         {
@@ -81,11 +82,69 @@ public class UrlProcessor implements Handler, InitializingBean
             }
         }
 
-        ServletContext servletContext = container.getBean(ServletContext.class);
+        // Set up responseHandlerMapping
+        for(Handler handler : urlMapping.values())
+        {
+            ResponseHandler responseHandler = findConfiguredResponseHandler(handler.getClass(), container);
+            if (responseHandler == null)
+            {
+                log.warn("Missing ResponseHandler for " + handler.getClass().getName() + ".");
+            }
+            responseHandlerMapping.put(handler, responseHandler);
+        }
 
+        // Find contextPath
+        ServletContext servletContext = container.getBean(ServletContext.class);
         // This will fail (i.e. return null with servlet 2.4, but we patch up
         // in the handle method.
         contextPath = LocalUtil.getProperty(servletContext, "contextPath", String.class);
+    }
+
+    /**
+     * Walk the Handlers inheritance chain to look for a configured ResponseHandler
+     * @param handlerClass
+     * @param container
+     * @return a ResponseHandler or null
+     */
+    private ResponseHandler findConfiguredResponseHandler(Class<?> handlerClass, Container container)
+    {
+        if (handlerClass == null || !Handler.class.isAssignableFrom(handlerClass))
+        {
+            return null;
+        }
+
+        // Try to map a ResponseHandler for the current Handler class
+        String key = PathConstants.RESPONSE_PREFIX + handlerClass.getName();
+        Object bean = container.getBean(key);
+        if (bean != null)
+        {
+            if (bean instanceof ResponseHandler)
+            {
+                return (ResponseHandler) bean;
+            }
+            else
+            {
+                log.error("Ignoring non ResponseHandler for " + key + " (" + bean.getClass().getName() + " is not an instance of " + ResponseHandler.class.getName() + ")");
+            }
+        }
+
+        // Continue looking in parent classes and interfaces
+        ResponseHandler responseHandler;
+        responseHandler = findConfiguredResponseHandler(handlerClass.getSuperclass(), container);
+        if (responseHandler != null)
+        {
+            return responseHandler;
+        }
+        for(Class<?> intfc : handlerClass.getInterfaces())
+        {
+            responseHandler = findConfiguredResponseHandler(intfc, container);
+            if (responseHandler != null)
+            {
+                return responseHandler;
+            }
+        }
+
+        return null;
     }
 
     /* (non-Javadoc)
@@ -123,23 +182,33 @@ public class UrlProcessor implements Handler, InitializingBean
                     if (pathInfo.startsWith(url))
                     {
                         Handler handler = entry.getValue();
-                        handler.handle(request, response);
+                        handle(handler, request, response);
                         return;
                     }
                 }
-                notFoundHandler.handle(request, response);
+                handle(notFoundHandler, request, response);
             }
         }
         catch (SecurityException se) {
             // We don't want to give the client any information about the security error, handle it with a 404.
             log.error("Security Exception: ", se);
-            notFoundHandler.handle(request,response);
+            handle(notFoundHandler, request, response);
         }
         catch (Exception ex)
         {
             exceptionHandler.setException(ex);
-            exceptionHandler.handle(request, response);
+            handle(exceptionHandler, request, response);
         }
+    }
+
+    private void handle(Handler handler, HttpServletRequest request, HttpServletResponse response) throws IOException
+    {
+        ResponseHandler responseHandler = responseHandlerMapping.get(handler);
+        if (responseHandler != null)
+        {
+            responseHandler.handle(handler, request, response);
+        }
+        handler.handle(request, response);
     }
 
     /**
@@ -191,6 +260,11 @@ public class UrlProcessor implements Handler, InitializingBean
      * The mapping of URLs to {@link Handler}s
      */
     protected Map<String, Handler> urlMapping = new HashMap<String, Handler>();
+
+    /**
+     * The mapping of Handlers to ResponseHandlers
+     */
+    protected Map<Handler, ResponseHandler> responseHandlerMapping = new HashMap<Handler, ResponseHandler>();
 
     /**
      * The default if we have no other action (HTTP-404)
