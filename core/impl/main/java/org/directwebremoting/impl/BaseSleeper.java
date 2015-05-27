@@ -24,9 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.ConversionException;
 import org.directwebremoting.ScriptBuffer;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
-import org.directwebremoting.WebContextFactory.WebContextBuilder;
 import org.directwebremoting.extend.ConverterManager;
 import org.directwebremoting.extend.EnginePrivate;
 import org.directwebremoting.extend.RealScriptSession;
@@ -48,7 +45,6 @@ public abstract class BaseSleeper implements Sleeper
         this.conduit = conduit;
 
         out = response.getWriter();
-        webContext = WebContextFactory.get();
     }
 
     /* (non-Javadoc)
@@ -60,7 +56,12 @@ public abstract class BaseSleeper implements Sleeper
         this.batchId = batchId;
         this.onClose = onClose;
         this.disconnectedTime = disconnectedTime;
-        enterSleep();
+        // Send beginStream and execute Runnables in original request thread before sleeping
+        doWork();
+        if (!closed)
+        {
+            enterSleep();
+        }
     }
 
     /**
@@ -156,12 +157,9 @@ public abstract class BaseSleeper implements Sleeper
         boolean beginningRunnable = false;
         if (script != null && script.getScript() instanceof Runnable) {
             try {
-                webContextBuilder.engageThread(webContext);
                 ((Runnable) script.getScript()).run();
             } catch(Exception ex) {
                 log.error("Exception when executing Script Runnable.", ex);
-            } finally {
-                webContextBuilder.disengageThread();
             }
             beginningRunnable = true;
         }
@@ -231,11 +229,6 @@ public abstract class BaseSleeper implements Sleeper
         }
     }
 
-    public void setWebContextBuilder(WebContextBuilder webContextBuilder)
-    {
-        this.webContextBuilder = webContextBuilder;
-    }
-
     public void setConverterManager(ConverterManager converterManager)
     {
         this.converterManager = converterManager;
@@ -257,7 +250,6 @@ public abstract class BaseSleeper implements Sleeper
     private final RealScriptSession scriptSession;
     private final ScriptConduit conduit;
     private final PrintWriter out;
-    private final WebContext webContext;
 
     // Members set in enterSleep
     private String batchId;
@@ -265,7 +257,6 @@ public abstract class BaseSleeper implements Sleeper
     private int disconnectedTime;
 
     // Injected from container
-    protected WebContextBuilder webContextBuilder = null;
     protected ConverterManager converterManager = null;
     protected boolean jsonOutput = false;
 

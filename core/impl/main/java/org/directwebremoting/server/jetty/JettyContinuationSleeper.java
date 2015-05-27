@@ -45,10 +45,9 @@ public class JettyContinuationSleeper extends BaseSleeper
     {
         super(response, scriptSession, conduit);
 
-        continuation = ContinuationSupport.getContinuation(request);
-        continuation.setAttribute(ATTRIBUTE_SLEEPER, this);
-        continuation.setTimeout(0);
-        continuation.suspend();
+        this.request = request;
+
+        workInProgress = true; // block doing work until we officially enter sleep
     }
 
     /* (non-Javadoc)
@@ -57,7 +56,20 @@ public class JettyContinuationSleeper extends BaseSleeper
     @Override
     protected void enterSleep()
     {
-        // NOP
+        continuation = ContinuationSupport.getContinuation(request);
+        continuation.setAttribute(ATTRIBUTE_SLEEPER, this);
+        continuation.setTimeout(0);
+        continuation.suspend();
+
+        synchronized (workLock)
+        {
+            if (queuedWork) {
+                continuation.resume(); // will eventually trigger resumeWork() from a container thread
+            } else {
+                workInProgress = false; // open up for doing new work
+            }
+            queuedWork = false;
+        }
     }
 
     /* (non-Javadoc)
@@ -109,7 +121,9 @@ public class JettyContinuationSleeper extends BaseSleeper
     @Override
     protected void close()
     {
-        continuation.removeAttribute(ATTRIBUTE_SLEEPER);
+        if (continuation != null) {
+            continuation.removeAttribute(ATTRIBUTE_SLEEPER);
+        }
     }
 
     /**
@@ -120,12 +134,11 @@ public class JettyContinuationSleeper extends BaseSleeper
         return (JettyContinuationSleeper) request.getAttribute(ATTRIBUTE_SLEEPER);
     }
 
-    /**
-     * The Jetty continuation object
-     */
-    private final Continuation continuation;
+    // Set at construction
+    private final HttpServletRequest request;
 
     // Internal state
+    private Continuation continuation = null;
     private final Object workLock = new Object();
     private boolean workInProgress = false;
     private boolean queuedWork = false;

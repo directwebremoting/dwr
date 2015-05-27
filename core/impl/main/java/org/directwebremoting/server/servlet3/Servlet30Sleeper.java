@@ -37,9 +37,10 @@ public class Servlet30Sleeper extends BaseSleeper
     public Servlet30Sleeper(HttpServletRequest request, HttpServletResponse response, RealScriptSession scriptSession, ScriptConduit conduit) throws IOException
     {
         super(response, scriptSession, conduit);
+        this.request = request;
+        this.response = response;
 
-        asyncCtx = request.startAsync(request, response);
-        asyncCtx.setTimeout(-1);
+        workInProgress = true; // block doing work until we officially enter sleep
     }
 
     /* (non-Javadoc)
@@ -48,7 +49,22 @@ public class Servlet30Sleeper extends BaseSleeper
     @Override
     protected void enterSleep()
     {
-        // NOP
+        asyncCtx = request.startAsync(request, response);
+        asyncCtx.setTimeout(-1);
+
+        synchronized (workLock)
+        {
+            if (queuedWork) {
+                asyncCtx.start(new Runnable() {
+                    public void run() {
+                        resumeWork();
+                    }
+                });
+            } else {
+                workInProgress = false; // open up for doing new work
+            }
+            queuedWork = false;
+        }
     }
 
     /* (non-Javadoc)
@@ -99,15 +115,17 @@ public class Servlet30Sleeper extends BaseSleeper
     @Override
     protected void close()
     {
-        asyncCtx.complete();
+        if (asyncCtx != null) {
+            asyncCtx.complete();
+        }
     }
 
-    /**
-     * The Servlet 3.0 asynchronous context.
-     */
-    private final AsyncContext asyncCtx;
+    // Set at construction
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
 
     // Internal state
+    private AsyncContext asyncCtx = null;
     private final Object workLock = new Object();
     private boolean workInProgress = false;
     private boolean queuedWork = false;
