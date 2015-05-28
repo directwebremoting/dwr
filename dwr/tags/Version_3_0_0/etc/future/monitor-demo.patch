@@ -1,0 +1,598 @@
+### Eclipse Workspace Patch 1.0
+#P dwr
+Index: demo/org/getahead/dwrdemo/monitor/ScriptView.java
+===================================================================
+RCS file: demo/org/getahead/dwrdemo/monitor/ScriptView.java
+diff -N demo/org/getahead/dwrdemo/monitor/ScriptView.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ demo/org/getahead/dwrdemo/monitor/ScriptView.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,121 @@
++/*
++ * Copyright 2005 Joe Walker
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package org.getahead.dwrdemo.monitor;
++
++import org.directwebremoting.ScriptSession;
++
++/**
++ * @author Joe Walker [joe at getahead dot ltd dot uk]
++ */
++public class ScriptView
++{
++    /**
++     * @param page
++     * @param scriptSession
++     */
++    public ScriptView(String page, ScriptSession scriptSession)
++    {
++        this.page = page;
++        this.scriptSession = scriptSession;
++    }
++
++    /**
++     * @return the scriptSession
++     */
++    ScriptSession getScriptSession()
++    {
++        return scriptSession;
++    }
++
++    /**
++     * @return the id
++     */
++    public int getClientId()
++    {
++        return clientId;
++    }
++
++    /**
++     * @return the page
++     */
++    public String getPage()
++    {
++        return page;
++    }
++
++    /**
++     * @return the verified
++     */
++    public boolean isVerified()
++    {
++        return verified;
++    }
++
++    /**
++     * @param verified the verified to set
++     */
++    public void setVerified(boolean verified)
++    {
++        this.verified = verified;
++    }
++
++    /* (non-Javadoc)
++     * @see java.lang.Object#equals(java.lang.Object)
++     */
++    @Override
++    public boolean equals(Object obj)
++    {
++        if (obj == null)
++        {
++            return false;
++        }
++
++        if (obj == this)
++        {
++            return true;
++        }
++
++        if (!this.getClass().equals(obj.getClass()))
++        {
++            return false;
++        }
++
++        ScriptView that = (ScriptView) obj;
++
++        return this.scriptSession.getId().equals(that.scriptSession.getId());
++    }
++
++    /**
++     * @return Ensure nextClientId is unique
++     */
++    private static int nextClientId()
++    {
++        synchronized (ScriptView.class)
++        {
++            return nextClientId++;
++        }
++    }
++
++    private boolean verified = true;
++
++    private int clientId = nextClientId();
++
++    private static int nextClientId = 0;
++
++    private String page;
++
++    private ScriptSession scriptSession;
++}
+Index: demo/org/getahead/dwrdemo/monitor/MonitoringAjaxFilter.java
+===================================================================
+RCS file: demo/org/getahead/dwrdemo/monitor/MonitoringAjaxFilter.java
+diff -N demo/org/getahead/dwrdemo/monitor/MonitoringAjaxFilter.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ demo/org/getahead/dwrdemo/monitor/MonitoringAjaxFilter.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,48 @@
++/*
++ * Copyright 2005 Joe Walker
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package org.getahead.dwrdemo.monitor;
++
++import java.lang.reflect.Method;
++
++import javax.servlet.ServletContext;
++
++import org.directwebremoting.AjaxFilter;
++import org.directwebremoting.AjaxFilterChain;
++import org.directwebremoting.WebContext;
++import org.directwebremoting.WebContextFactory;
++
++/**
++ * An AjaxFilter that simply tells Control that someone did something.
++ * @author Joe Walker [joe at getahead dot ltd dot uk]
++ */
++public class MonitoringAjaxFilter implements AjaxFilter
++{
++    /* (non-Javadoc)
++     * @see org.directwebremoting.AjaxFilter#doFilter(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], org.directwebremoting.AjaxFilterChain)
++     */
++    public Object doFilter(Object obj, Method method, Object[] params, AjaxFilterChain chain) throws Exception
++    {
++        WebContext webContext = WebContextFactory.get();
++        ServletContext servletContext = webContext.getServletContext();
++        Control published = (Control) servletContext.getAttribute(Control.ATTRIBUTE_CONTROL);
++        if (published != null)
++        {
++            published.takeNote();
++        }
++
++        return chain.doFilter(obj, method, params);
++    }
++}
+Index: web/monitor/index.html
+===================================================================
+RCS file: web/monitor/index.html
+diff -N web/monitor/index.html
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ web/monitor/index.html	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,40 @@
++<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
++<html xmlns="http://www.w3.org/1999/xhtml">
++<head>
++  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
++  <title>Active Reverse Ajax Control: Server</title>
++  <script type='text/javascript' src='../dwr/engine.js'> </script>
++  <script type='text/javascript' src='../dwr/interface/Control.js'> </script>
++  <script type='text/javascript' src='../dwr/util.js'> </script>
++  <script type='text/javascript' src='index.js'> </script>
++  <link rel="stylesheet" type="text/css" href="../generic.css" />
++</head>
++
++<body onload="init();">
++
++<div id="page-title">[
++  <a href="http://getahead.ltd.uk/dwr/">DWR Website</a> |
++  <a href="..">Web Application Index</a>
++]</div>
++
++<h1>Server Session Monitor</h1>
++
++<div id="browserTemplate" style="display:none;">
++  <p>Browser: <span id="ipAddress"></span> using <span id="userAgent"></span></p>
++  <table>
++    <thead>
++      <tr>
++        <th>ID</th>
++        <th>Page</th>
++        <th>Action</th>
++      </tr>
++    </thead>
++    <tbody id="scriptViews">
++    </tbody>
++  </table>
++</div>
++
++<div id="dwr-debug" style="font-size:80%"></div>
++
++</body>
++</html>
+Index: demo/org/getahead/dwrdemo/monitor/Control.java
+===================================================================
+RCS file: demo/org/getahead/dwrdemo/monitor/Control.java
+diff -N demo/org/getahead/dwrdemo/monitor/Control.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ demo/org/getahead/dwrdemo/monitor/Control.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,212 @@
++package org.getahead.dwrdemo.monitor;
++
++import java.util.Collection;
++import java.util.HashMap;
++import java.util.Iterator;
++import java.util.Map;
++import java.util.Timer;
++import java.util.TimerTask;
++
++import javax.servlet.ServletContext;
++import javax.servlet.http.HttpServletRequest;
++
++import org.directwebremoting.ScriptSession;
++import org.directwebremoting.ServerContext;
++import org.directwebremoting.ServerContextFactory;
++import org.directwebremoting.WebContext;
++import org.directwebremoting.WebContextFactory;
++import org.directwebremoting.impl.DefaultScriptSessionManager;
++import org.directwebremoting.proxy.dwr.Util;
++import org.directwebremoting.util.Logger;
++
++/**
++ * @author Joe Walker [joe at getahead dot ltd dot uk]
++ */
++public class Control extends TimerTask
++{
++    /**
++     *
++     */
++    public Control()
++    {
++        ServletContext servletContext = WebContextFactory.get().getServletContext();
++        sctx = ServerContextFactory.get(servletContext);
++
++        WebContext wctx = WebContextFactory.get();
++        contextPath = wctx.getHttpServletRequest().getContextPath();
++
++        Timer timer = new Timer();
++        long delay = 10000;
++        long period = 10000;
++        timer.scheduleAtFixedRate(this, delay, period);
++    }
++
++    /**
++     * Just allows the browser to let the server know we are here
++     */
++    public void includeMe()
++    {
++        log.debug("Included");
++    }
++
++    /**
++     * 
++     */
++    public void takeNote()
++    {
++        log.debug("takeNote");
++
++        synchronized (browsers)
++        {
++            WebContext webContext = WebContextFactory.get();
++            HttpServletRequest request = webContext.getHttpServletRequest();
++            String httpSessionId = request.getRequestedSessionId();
++
++            Browser browser = browsers.get(httpSessionId);
++            if (browser == null)
++            {
++                browser = new Browser(httpSessionId);
++                browsers.put(httpSessionId, browser);
++            }
++
++            browser.setUserAgent(request.getHeader("User-Agent"));
++            browser.setIpAddress(request.getRemoteAddr());
++        }
++    }
++
++    /* (non-Javadoc)
++     * @see java.lang.Runnable#run()
++     */
++    @Override
++    public void run()
++    {
++        synchronized (browsers)
++        {
++            ServletContext servletContext = sctx.getServletContext();
++            Object published = servletContext.getAttribute(ATTRIBUTE_CONTROL);
++            if (published == null)
++            {
++                servletContext.setAttribute(ATTRIBUTE_CONTROL, this);
++            }
++    
++            // For all the browsers on the current page:
++            Collection<ScriptSession> watchers = sctx.getScriptSessionsByPage(contextPath + "/monitor/");
++            if (watchers.size() == 0)
++            {
++                log.debug("Nothing to monitor");
++                return;
++            }
++
++            // First we go through the browsers making the ScriptViews unverified
++            for (Iterator<Browser> bit = browsers.values().iterator(); bit.hasNext();)
++            {
++                Browser browser = bit.next();
++                Map<String, ScriptView> scriptViews = browser.getScriptViews();
++                for (Iterator<ScriptView> sit = scriptViews.values().iterator(); sit.hasNext();)
++                {
++                    ScriptView scriptView = sit.next();
++                    scriptView.setVerified(false);
++                }
++            }
++
++            // Then we go through the known ScriptSessions verifying
++            Collection<ScriptSession> everyone = sctx.getAllScriptSessions();
++            for (Iterator<ScriptSession> it = everyone.iterator(); it.hasNext();)
++            {
++                ScriptSession scriptSession = it.next();
++                String httpSessionId = (String) scriptSession.getAttribute(DefaultScriptSessionManager.ATTRIBUTE_HTTPSESSIONID);
++                String page = (String) scriptSession.getAttribute(DefaultScriptSessionManager.ATTRIBUTE_PAGE);
++
++                Browser browser = browsers.get(httpSessionId);
++                if (browser == null)
++                {
++                    browser = new Browser(httpSessionId);
++                    browsers.put(httpSessionId, browser);
++                }
++
++                ScriptView scriptView = browser.getScriptViews().get(scriptSession.getId());
++                if (scriptView == null)
++                {
++                    scriptView = new ScriptView(page, scriptSession);
++                }
++
++                scriptView.setVerified(true);
++            }
++
++            // And finally remove all the unverified script sessions
++            for (Iterator<Browser> bit = browsers.values().iterator(); bit.hasNext();)
++            {
++                Browser browser = bit.next();
++                Map<String, ScriptView> scriptViews = browser.getScriptViews();
++                for (Iterator<ScriptView> sit = scriptViews.values().iterator(); sit.hasNext();)
++                {
++                    ScriptView scriptView = sit.next();
++                    if (!scriptView.isVerified())
++                    {
++                        sit.remove();
++                    }
++                }
++            }
++
++            // Now paint the UI on all the remote browsers
++            Util util = new Util(watchers);
++            int index = 0;
++            for (Iterator<Browser> bit = browsers.values().iterator(); bit.hasNext();)
++            {
++                Browser browser = bit.next();
++
++                // Clone the node
++                util.removeNode("browserTemplate" + index);
++                util.cloneNode("browserTemplate", "", "" + index);
++                util.setStyle("browserTemplate" + index, "display", "block");
++
++                // Fill out the basic template information
++                util.setValue("ipAddress" + index, browser.getIpAddress());
++                util.setValue("userAgent" + index, browser.getUserAgent());
++
++                // Fill out the table
++                Map<String, ScriptView> scriptViews = browser.getScriptViews();
++                for (Iterator<ScriptView> sit = scriptViews.values().iterator(); sit.hasNext();)
++                {
++                    ScriptView scriptView = sit.next();
++                    String[][] data = new String[][]
++                    {
++                        {
++                            "" + scriptView.getClientId(),
++                            scriptView.getPage(),
++                            "",
++                        }
++                    };
++                    util.addRows("browserTemplate" + index, data);
++                }
++
++                index++;
++            }
++        }
++    }
++
++    /**
++     * Out current list of known browsers
++     */
++    private final Map<String, Browser> browsers = new HashMap<String, Browser>();
++
++    /**
++     * Our key to get hold of ServerContexts
++     */
++    private final ServerContext sctx;
++
++    /**
++     * Where do we sit as a webapp?
++     */
++    private final String contextPath;
++
++    /**
++     * 
++     */
++    public static final String ATTRIBUTE_CONTROL = "org.getahead.dwrdemo.monitor.Control";
++
++    /**
++     * The log stream
++     */
++    protected static final Logger log = Logger.getLogger(Control.class);
++}
+Index: web/monitor/index.js
+===================================================================
+RCS file: web/monitor/index.js
+diff -N web/monitor/index.js
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ web/monitor/index.js	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,6 @@
++
++function init() {
++  dwr.engine.setActiveReverseAjax(true);
++  dwr.engine.setNotifyServerOnPageUnload(true);
++  Control.includeMe();
++}
+Index: demo/org/getahead/dwrdemo/monitor/Browser.java
+===================================================================
+RCS file: demo/org/getahead/dwrdemo/monitor/Browser.java
+diff -N demo/org/getahead/dwrdemo/monitor/Browser.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ demo/org/getahead/dwrdemo/monitor/Browser.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,127 @@
++/*
++ * Copyright 2005 Joe Walker
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package org.getahead.dwrdemo.monitor;
++
++import java.util.HashMap;
++import java.util.Map;
++
++/**
++ * @author Joe Walker [joe at getahead dot ltd dot uk]
++ */
++public class Browser
++{
++    /**
++     * @param httpSessionId
++     */
++    public Browser(String httpSessionId)
++    {
++        this.httpSessionId = httpSessionId;
++    }
++
++    /**
++     * @return the httpSessionId
++     */
++    public String getHttpSessionId()
++    {
++        return httpSessionId;
++    }
++
++    /**
++     * @param userAgent the userAgent to set
++     */
++    void setUserAgent(String userAgent)
++    {
++        this.userAgent = userAgent;
++    }
++
++    /**
++     * @return the userAgent
++     */
++    public String getUserAgent()
++    {
++        return userAgent;
++    }
++
++    /**
++     * @return the scriptViews
++     */
++    public Map<String, ScriptView> getScriptViews()
++    {
++        return scriptViews;
++    }
++
++    /**
++     * @return the ipAddress
++     */
++    public String getIpAddress()
++    {
++        return ipAddress;
++    }
++
++    /**
++     * @param ipAddress the ipAddress to set
++     */
++    public void setIpAddress(String ipAddress)
++    {
++        this.ipAddress = ipAddress;
++    }
++
++    /* (non-Javadoc)
++     * @see java.lang.Object#equals(java.lang.Object)
++     */
++    @Override
++    public boolean equals(Object obj)
++    {
++        if (obj == null)
++        {
++            return false;
++        }
++
++        if (obj == this)
++        {
++            return true;
++        }
++
++        if (!this.getClass().equals(obj.getClass()))
++        {
++            return false;
++        }
++
++        Browser that = (Browser) obj;
++
++        return this.httpSessionId.equals(that.httpSessionId);
++    }
++
++    /**
++     * 
++     */
++    private String ipAddress;
++
++    /**
++     * 
++     */
++    private String httpSessionId;
++
++    /**
++     * 
++     */
++    private String userAgent;
++
++    /**
++     * 
++     */
++    private Map<String, ScriptView> scriptViews = new HashMap<String, ScriptView>();
++}

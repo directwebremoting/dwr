@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+  ~ Copyright (c) 2001-2007, TIBCO Software Inc.
+  ~ Use, modification, and distribution subject to terms of license.
+  --><data jsxid="jsxroot">
+
+	<record jsxid="jsxexecute" jsxtext="Execute" jsxtip="Fires after the user double-clicks this legend.">
+		<record jsxid="this" jsxtext="the object that publishes this event." type="$class$"/>
+    <record jsxid="objEVENT" jsxtext="the browser event that triggers this event." type="jsx3.gui.Event"/>
+		<record jsxid="objSERIES" jsxtext="the Series that is the target of this event if the event occurs on a legend entry and this legend displays series (rather than categories)." type="jsx3.chart.Series"/>
+		<record jsxid="intINDEX" jsxtext="the CDF index of the category that is the target of this event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="int"/>
+		<record jsxid="strRECORDID" jsxtext="the CDF jsxid of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="String"/>
+	</record>
+	
+	<record jsxid="jsxselect" jsxtext="Select" jsxtip="Fires after the user selects this legend.">
+    <record jsxid="this" jsxtext="the object that publishes this event." type="$class$"/>
+    <record jsxid="objEVENT" jsxtext="the browser event that triggers this event." type="jsx3.gui.Event"/>
+		<record jsxid="objSERIES" jsxtext="the Series that is the target of this event if the event occurs on a legend entry and this legend displays series (rather than categories)." type="jsx3.chart.Series"/>
+		<record jsxid="intINDEX" jsxtext="the CDF index of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="int"/>
+		<record jsxid="strRECORDID" jsxtext="the CDF jsxid of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="String"/>
+	</record>
+	
+	<record jsxid="jsxspy" jsxtext="Spyglass" jsxtip="Fires after the user hovers the mouse over this legend and before the spyglass displays. The event script must evaluate to the HTML content to display in the spyglass. Canceling this event prevents the spyglass from displaying." vetoable="1">
+		<record jsxid="this" jsxtext="the object that publishes this event." type="$class$"/>
+    <record jsxid="objEVENT" jsxtext="the browser event that triggers this event." type="jsx3.gui.Event"/>
+		<record jsxid="objSERIES" jsxtext="the Series that is the target of the event if the event occurs on a legend entry and this legend displays series (rather than categories)." type="jsx3.chart.Series"/>
+		<record jsxid="intINDEX" jsxtext="the CDF index of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="int"/>
+		<record jsxid="strRECORDID" jsxtext="the CDF jsxid of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)." type="String"/>
+	</record>
+
+	<record jsxid="jsxmenu" jsxtext="Menu" jsxtip="Fires after the user right-clicks this legend and before the bound context menu displays. Canceling this event prevents the menu from displaying." vetoable="1">
+		<record jsxid="this" jsxtext="the object that publishes this event." type="$class$"/>
+    <record jsxid="objEVENT" jsxtext="the browser event that triggers this event." type="jsx3.gui.Event"/>
+    <record jsxid="objMENU" jsxreturntext="use this field to override the default menu with an instance of &lt;code&gt;jsx3.gui.Menu&lt;/code&gt;" jsxtext="the menu to display." type="jsx3.gui.Menu" vartype="inout"/>
+		<record jsxid="objSERIES" jsxtext="the Series that is the target of the event if the event occurs on a legend entry and this legend displays series (rather than categories)" type="jsx3.chart.Series"/>
+		<record jsxid="intINDEX" jsxtext="the CDF index of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)" type="int"/>
+		<record jsxid="strRECORDID" jsxtext="the CDF jsxid of the category that is the target of the event if the event occurs on a legend entry and this legend displays categories (rather than series)" type="String"/>
+	</record>
+
+	<record always="1" jsxid="jsxdestroy" jsxtext="Destroy" jsxtip="Fires after this legend is removed from the DOM.">
+		<record jsxid="this" jsxtext="the object that publishes this event." type="$class$"/>
+    <record jsxid="objPARENT" jsxtext="the parent of this legend before it is removed from the DOM." type="jsx3.app.Model"/>
+	</record>
+
+</data>
