@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.java.j2seproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
+            <name>dwr</name>
+            <minimum-ant-version>1.6.5</minimum-ant-version>
+            <source-roots>
+                <root id="src.java9.dir" name="Generated"/>
+                <root id="src.java6.dir" name="Spring"/>
+                <root id="src.java7.dir" name="Hibernate"/>
+                <root id="src.java8.dir" name="UI"/>
+                <root id="src.java3.dir" name="Bayeux"/>
+                <root id="src.java4.dir" name="DWRP"/>
+                <root id="src.java5.dir" name="JSON"/>
+                <root id="src.java.dir" name="API"/>
+                <root id="src.java2.dir" name="Implementation"/>
+            </source-roots>
+            <test-roots>
+                <root id="test.java2.dir" name="Spring Tests"/>
+                <root id="test.java.dir" name="Implementation Tests"/>
+                <root id="test.java3.dir" name="Hibernate Tests"/>
+            </test-roots>
+        </data>
+        <spring-data xmlns="http://www.netbeans.org/ns/spring-data/1">
+            <config-files/>
+            <config-file-groups/>
+        </spring-data>
+    </configuration>
+</project>

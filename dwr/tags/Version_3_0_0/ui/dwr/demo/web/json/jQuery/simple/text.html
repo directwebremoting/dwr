@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html><head><title>Simple Text Generation Demo - JSONP</title>
+
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type="text/javascript" src="../jquery-1.3.2.min.js"> </script>
+  <script type="text/javascript" src="../../../dwr/util.js"> </script>
+  <script type="text/javascript" src="text.js"> </script>
+  <script type="text/javascript" src="../../../tabs/tabs.js"> </script>
+  <link rel="stylesheet" type="text/css" href="../../../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../../../generic.css" />
+  <script>
+  function init() {
+	  Tabs.init('tabList', 'tabContents');	  
+  } 
+  </script></head><body onload="init();">
+<div id="page-title">[
+  <a href="http://directwebremoting.org/dwr/">DWR Website</a> |
+  <a href="../../../">Web Application Index</a>
+]</div>
+
+<h1>Dynamically Updating Text - JSONP</h1>
+
+<p>This is a simple demonstration of how to dynamically update a web-page with
+text fetched from a web server.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabid="demoDiv">Demo</a></li>
+  <li><a href="#" tabid="explainDiv">How it works</a></li>
+  <li><a href="#" tabid="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+  <div id="demoDiv">
+    <p>
+      Name:
+      <input id="demoName" value="Joe" type="text" />
+      <input id="demoSend" value="Send" onclick="update()" type="button" />
+      <br />
+      Reply: <span id="demoReply" style="background: rgb(238, 255, 221) none repeat scroll 0%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; padding-left: 4px; padding-right: 4px;">&nbsp;</span>
+    </p>
+  </div>
+
+  <div id="explainDiv">
+    <p>When you click on the "Send" button the browser calls the onclick event,
+    which calls the <code>update()</code> function:</p>
+    
+<pre> function update() {<br />    var name = dwr.util.getValue("demoName");<br />    $.post("../../../dwr/jsonp/Demo/sayHello/" + name, {},<br />	function(data) {<br />	    dwr.util.setValue("demoReply", data.reply);<br />        }, "jsonp"); <br />    }  <br /> }</pre>
+
+    <p><code>dwr.util.getValue()</code> is a utility to get the value of any
+    element, in this case an input field, but it could be a div or a select
+    box.</p>
+
+    <p>The next line is using the <a href="http://docs.jquery.com/Ajax/jQuery.post#urldatacallbacktype" target="new">jQuery post function</a>
+to make an asynchronous call to the server utilizing DWR's JSON
+capabilities. The first parameter is the URL for DWR's JSON service.
+The URL can be broken down as follows:</p><ul><li>../../../dwr/ - The path to the DWR servlet.</li><li>jsonp - Tells DWR to use JSONP.</li><li>Demo - The name of the class you have exposed to DWR.</li><li>sayHello - The name of the method you would like to call on the exposed class</li></ul>The
+third parameter is the callback function and will be invoked when the
+remote call returns. The first parameter of the callback function (in
+this case "data") will contain the data returned from the remote call. <p>The result of the $.post function is that DWR will call  the <code>Demo.sayHello()</code> Java method:</p>
+    
+<pre>public String sayHello(String name) {<br />    return "Hello, " + name;<br />}<br /></pre>
+    
+    <p>When the callback function is reached we call <code>dwr.util.setValue()</code> which is a utility that takes the data you pass in
+    the second parameter and works out how to fit it to go into the HTML element
+    specified by id in the first parameter. This function is one of several neat
+    Javascript utilities that make working with DWR much easier.</p>
+
+    
+    
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>&lt;p&gt;<br />  Name:<br />  &lt;input type="text" id="demoName"/&gt;<br />  &lt;input value="Send" type="button" onclick="update()"/&gt;<br />  &lt;br/&gt;<br />  Reply: &lt;span id="demoReply"&gt;&lt;/span&gt;<br />&lt;/p&gt;<br /></pre>
+
+<h2>Javascript source:</h2>
+<pre>  function update() {<br />      var name = dwr.util.getValue("demoName");<br />      $.post("../../../dwr/jsonp/Demo/sayHello/" + name, { },<br />          function(data) {<br />              dwr.util.setValue("demoReply", data.reply);<br />          }, "jsonp"); <br />      } <br />  }</pre>
+
+<h2>Java source:</h2>
+<pre>package org.getahead.dwrdemo.simpletext;<br /><br />public class Demo {<br />    public String sayHello(String name) {<br />        return "Hello, " + name;<br />    }<br />}<br /></pre>
+<h2>web.xml</h2>
+      <p>Note: In order to enable JSON/JSONP you must
+add the following init-param to your DWR servlet definition in your
+web.xml (This is a snippet and is not a complete web.xml).</p><pre><code>
+   ...
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;
+    &lt;display-name&gt;DWR Servlet&lt;/display-name&gt;
+    &lt;description&gt;Direct Web Remoter Servlet&lt;/description&gt;
+    &lt;servlet-class&gt;org.directwebremoting.servlet.DwrServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+     &lt;param-name&gt;jsonpEnabled&lt;/param-name&gt;
+     &lt;param-value&gt;true&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    ...	
+    </code></pre>
+<h2>dwr.xml</h2>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;!DOCTYPE dwr PUBLIC<br />    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"<br />    "http://getahead.org/dwr/dwr20.dtd"&gt;<br /><br />&lt;dwr&gt;<br />  &lt;allow&gt;<br />    &lt;create creator="new" javascript="Demo"&gt;<br />      &lt;param name="class" value="org.getahead.dwrdemo.simpletext.Demo"/&gt;<br />    &lt;/create&gt;<br />  &lt;/allow&gt;<br />&lt;/dwr&gt;<br /></pre>
+
+  </div>
+
+</div>
+
+</body></html>

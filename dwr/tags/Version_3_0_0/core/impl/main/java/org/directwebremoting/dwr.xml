@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+    "http://getahead.org/dwr/dwr30.dtd">
+
+<dwr>
+
+  <init>
+    <creator id="none" class="org.directwebremoting.create.NullCreator"/>
+    <creator id="new" class="org.directwebremoting.create.NewCreator"/>
+    <creator id="static" class="org.directwebremoting.create.StaticCreator"/>
+    <creator id="pageflow" class="org.directwebremoting.beehive.PageFlowCreator"/>
+    <creator id="spring" class="org.directwebremoting.spring.SpringCreator"/>
+    <creator id="script" class="org.directwebremoting.create.ScriptedCreator"/>
+    <creator id="struts" class="org.directwebremoting.struts.StrutsCreator"/>
+    <!--
+    These are now in the noncla module
+    <creator id="jsf" class="org.directwebremoting.faces.JsfCreator"/>
+    <creator id="jsf2" class="org.directwebremoting.faces.Jsf2Creator"/>
+    <creator id="ejb3" class="org.directwebremoting.create.Ejb3Creator"/>
+    -->
+
+    <converter id="null" class="org.directwebremoting.convert.NullConverter"/>
+    <converter id="enum" class="org.directwebremoting.convert.EnumConverter"/>
+    <converter id="primitive" class="org.directwebremoting.convert.PrimitiveConverter"/>
+    <converter id="bignumber" class="org.directwebremoting.convert.BigNumberConverter"/>
+    <converter id="string" class="org.directwebremoting.convert.StringConverter"/>
+    <converter id="array" class="org.directwebremoting.convert.ArrayConverter"/>
+    <converter id="map" class="org.directwebremoting.convert.MapConverter"/>
+    <converter id="collection" class="org.directwebremoting.convert.CollectionConverter"/>
+    <converter id="date" class="org.directwebremoting.convert.DateConverter"/>
+    <converter id="jodaLocalDateTime" class="org.directwebremoting.convert.LocalDateTimeConverter"/>
+    <converter id="dom" class="org.directwebremoting.convert.DOMConverter"/>
+    <converter id="dom4j" class="org.directwebremoting.convert.DOM4JConverter"/>
+    <converter id="jdom" class="org.directwebremoting.convert.JDOMConverter"/>
+    <converter id="xom" class="org.directwebremoting.convert.XOMConverter"/>
+    <converter id="servlet" class="org.directwebremoting.convert.ServletConverter"/>
+    <converter id="bean" class="org.directwebremoting.convert.BeanConverter"/>
+    <converter id="object" class="org.directwebremoting.convert.ObjectConverter"/>
+    <converter id="hibernate2" class="org.directwebremoting.hibernate.H2BeanConverter"/>
+    <converter id="hibernate3" class="org.directwebremoting.hibernate.H3BeanConverter"/>
+    <converter id="hibernate4" class="org.directwebremoting.hibernate.H4BeanConverter"/>
+    <converter id="url" class="org.directwebremoting.convert.URLConverter"/>
+    <converter id="exception" class="org.directwebremoting.convert.ExceptionConverter"/>
+    <converter id="miniException" class="org.directwebremoting.convert.MinimalistExceptionConverter"/>
+    <converter id="file" class="org.directwebremoting.convert.FileConverter"/>
+    <converter id="context" class="org.directwebremoting.convert.ContextConverter"/>
+    <converter id="stringWrapper" class="org.directwebremoting.convert.StringWrapperConverter"/>
+    <converter id="raw" class="org.directwebremoting.convert.RawConverter"/>
+    <converter id="proxyFunction" class="org.directwebremoting.convert.JavascriptFunctionConverter"/>
+    <converter id="proxyObject" class="org.directwebremoting.convert.JavascriptObjectConverter"/>
+    <converter id="proxyInterface" class="org.directwebremoting.convert.ProxyInterfaceConverter"/>
+    <converter id="locale" class="org.directwebremoting.convert.LocaleConverter"/>
+    <converter id="currency" class="org.directwebremoting.convert.CurrencyConverter"/>
+
+    <converter id="jsx3uri" class="jsx3.net.URIResolverConverter"/>
+    <converter id="jsx3doc" class="jsx3.xml.CdfDocumentConverter"/>
+  </init>
+
+  <allow>
+    <convert converter="null" match="void"/>
+    <convert converter="null" match="java.lang.Void"/>
+
+    <convert converter="miniException" match="java.lang.Throwable"/>
+
+    <convert converter="primitive" match="boolean"/>
+    <convert converter="primitive" match="byte"/>
+    <convert converter="primitive" match="short"/>
+    <convert converter="primitive" match="int"/>
+    <convert converter="primitive" match="long"/>
+    <convert converter="primitive" match="float"/>
+    <convert converter="primitive" match="double"/>
+    <convert converter="primitive" match="char"/>
+    <convert converter="primitive" match="java.lang.Boolean"/>
+    <convert converter="primitive" match="java.lang.Byte"/>
+    <convert converter="primitive" match="java.lang.Short"/>
+    <convert converter="primitive" match="java.lang.Integer"/>
+    <convert converter="primitive" match="java.lang.Long"/>
+    <convert converter="primitive" match="java.lang.Float"/>
+    <convert converter="primitive" match="java.lang.Double"/>
+    <convert converter="primitive" match="java.lang.Character"/>
+
+    <convert converter="bignumber" match="java.math.BigInteger"/>
+    <convert converter="bignumber" match="java.math.BigDecimal"/>
+
+    <convert converter="string" match="java.lang.String"/>
+    <convert converter="date" match="java.util.Date"/>
+    <convert converter="date" match="java.sql.Date"/>
+    <convert converter="date" match="java.sql.Time"/>
+    <convert converter="date" match="java.sql.Timestamp"/>
+    <convert converter="date" match="java.util.Calendar"/>
+    <convert converter="jodaLocalDateTime" match="org.joda.time.DateTime"/>
+    <convert converter="jodaLocalDateTime" match="org.joda.time.LocalDateTime"/>
+    <convert converter="url" match="java.net.URL"/>
+    <convert converter="locale" match="java.util.Locale"/>
+    <convert converter="currency" match="java.util.Currency"/>
+
+    <convert converter="array" match="[Z"/>
+    <convert converter="file" match="[B"/>
+    <convert converter="array" match="[S"/>
+    <convert converter="array" match="[I"/>
+    <convert converter="array" match="[J"/>
+    <convert converter="array" match="[F"/>
+    <convert converter="array" match="[D"/>
+    <convert converter="array" match="[C"/>
+    <convert converter="array" match="[L*"/>
+
+    <!--
+    The catch for the next 2 is that we really mean java.util.Collection<String>
+    and java.util.Map<String, String> but we need to do more work before this
+    syntax is enabled
+    -->
+    <convert converter="collection" match="java.util.Collection"/>
+    <convert converter="map" match="java.util.Map"/>
+
+    <convert converter="dom" match="org.w3c.dom.Node"/>
+    <convert converter="dom" match="org.w3c.dom.Element"/>
+    <convert converter="dom" match="org.w3c.dom.Document"/>
+    <convert converter="dom4j" match="org.dom4j.Document"/>
+    <convert converter="dom4j" match="org.dom4j.Element"/>
+    <convert converter="dom4j" match="org.dom4j.Node"/>
+    <convert converter="jdom" match="org.jdom.Document"/>
+    <convert converter="jdom" match="org.jdom.Element"/>
+    <convert converter="xom" match="nu.xom.Document"/>
+    <convert converter="xom" match="nu.xom.Element"/>
+    <convert converter="xom" match="nu.xom.Node"/>
+
+    <convert converter="servlet" match="javax.servlet.ServletConfig"/>
+    <convert converter="servlet" match="javax.servlet.ServletContext"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpServletRequest"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpServletResponse"/>
+    <convert converter="servlet" match="javax.servlet.http.HttpSession"/>
+
+    <convert converter="file" match="java.io.InputStream"/>
+    <convert converter="file" match="java.awt.image.BufferedImage"/>
+
+    <convert converter="jsx3uri" match="jsx3.net.URIResolver"/>
+    <convert converter="jsx3doc" match="jsx3.xml.CdfDocument"/>
+
+    <convert converter="exception" match="org.directwebremoting.io.DwrConvertedException"/>
+    <convert converter="file" match="org.directwebremoting.io.FileTransfer"/>
+    <convert converter="bean" match="org.directwebremoting.io.Item"/>
+    <convert converter="bean" match="org.directwebremoting.io.ItemUpdate">
+      <param name="constructor" value="String itemId, String attribute, org.directwebremoting.io.RawData newValue"/>
+    </convert>
+    <convert converter="bean" match="org.directwebremoting.io.MatchedItems"/>
+    <convert converter="proxyFunction" match="org.directwebremoting.io.JavascriptFunction"/>
+    <convert converter="proxyObject" match="org.directwebremoting.io.JavascriptObject"/>
+    <convert converter="raw" match="org.directwebremoting.io.RawData"/>
+    <convert converter="bean" match="org.directwebremoting.io.QueryOptions">
+      <param name="constructor" value="boolean deep, boolean ignoreCase" />
+    </convert>
+    <convert converter="bean" match="org.directwebremoting.io.StoreRegion">
+      <param name="constructor" value="int start, int count, java.util.List sort, java.util.Map query, org.directwebremoting.io.QueryOptions queryOptions"/>
+    </convert>
+    <convert converter="proxyInterface" match="org.directwebremoting.io.StoreChangeListener"/>
+    <convert converter="null" match="org.directwebremoting.datasync.StoreProvider"/>
+    <convert converter="bean" match="org.directwebremoting.jsonrpc.io.JsonRpcError"/>
+    <convert converter="bean" match="org.directwebremoting.jsonrpc.io.JsonRpcResponse"/>
+    <convert converter="bean" match="org.directwebremoting.io.SortCriterion">
+      <param name="constructor" value="String attribute, boolean descending"/>
+    </convert>
+    <convert converter="stringWrapper" match="org.directwebremoting.io.StringWrapper"/>
+
+    <!--
+    <convert converter="context" match="org.directwebremoting.io.Context"/>
+    -->
+
+    <create creator="new" javascript="__System" scope="application">
+      <!-- ExportUtil.isSystemClass assumes the name __System -->
+      <param name="class" value="org.directwebremoting.export.System"/>
+      <param name="hidden" value="true"/>
+    </create>
+
+    <create creator="new" javascript="__Data" scope="application">
+      <param name="class" value="org.directwebremoting.export.Data"/>
+      <param name="hidden" value="true"/>
+    </create>
+
+  </allow>
+
+</dwr>

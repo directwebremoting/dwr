@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data jsxnamespace="propsbundle">
+  <locale key="ar">
+    <record jsxid="format.date.long" jsxtext="d MMMM, yyyy"/>
+    <record jsxid="format.time.medium" jsxtext="h:mm:ss a"/>
+    <record jsxid="format.number" jsxtext="#,##0.###;#,##0.###-"/>
+    <record jsxid="format.date.full" jsxtext="EEEE, d MMMM, yyyy"/>
+    <record jsxid="number.zero" jsxtext="٠"/>
+    <record jsxid="format.number.currency" jsxtext="¤ #,##0.00;¤ #,##0.00-"/>
+    <record jsxid="format.time.short" jsxtext="h:mm a"/>
+    <record jsxid="format.date.short" jsxtext="d/M/yyyy"/>
+    <record jsxid="number.grouping" jsxtext="٬"/>
+    <record jsxid="format.date.medium" jsxtext="dd/MM/yyyy"/>
+    <record jsxid="format.time.long" jsxtext="h:mm:ss a"/>
+    <record jsxid="number.percent" jsxtext="٪"/>
+    <record jsxid="number.decimal" jsxtext="٫"/>
+    <record jsxid="format.time.full" jsxtext="z h:mm:ss a"/>
+    <record eval="1" jsxid="date.month.abbrev" jsxtext="['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']"/>
+    <record eval="1" jsxid="date.month" jsxtext="['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']"/>
+    <record eval="1" jsxid="date.month.narrow" jsxtext="['ي','ف','م','أ','و','ن','ل','غ','س','ك','ب','د']"/>
+    <record eval="1" jsxid="date.day.abbrev" jsxtext="['ح','ن','ث','ر','خ','ج','س']"/>
+    <record eval="1" jsxid="date.day" jsxtext="['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']"/>
+    <record eval="1" jsxid="date.day.narrow" jsxtext="['ح','ن','ث','ر','خ','ج','س']"/>
+    <record eval="1" jsxid="date.era" jsxtext="['ق.م','م']"/>
+    <record eval="1" jsxid="time.ampm" jsxtext="['ص','م']"/>
+    <record jsxid="string.lang.ar" jsxtext="العربية"/>
+    <record jsxid="string.lang.da" jsxtext="الدانماركية"/>
+    <record jsxid="string.lang.de" jsxtext="الألمانية"/>
+    <record jsxid="string.lang.el" jsxtext="اليونانية"/>
+    <record jsxid="string.lang.en" jsxtext="الانجليزية"/>
+    <record jsxid="string.lang.es" jsxtext="الأسبانية"/>
+    <record jsxid="string.lang.fr" jsxtext="الفرنسية"/>
+    <record jsxid="string.lang.it" jsxtext="الايطالية"/>
+    <record jsxid="string.lang.ja" jsxtext="اليابانية"/>
+    <record jsxid="string.lang.ko" jsxtext="الكورية"/>
+    <record jsxid="string.lang.pt" jsxtext="البرتغالية"/>
+    <record jsxid="string.lang.ru" jsxtext="الروسية"/>
+    <record jsxid="string.lang.sv" jsxtext="السويدية"/>
+    <record jsxid="string.lang.zh" jsxtext="الصينية"/>
+    <record jsxid="string.terr.AU" jsxtext="أستراليا"/>
+    <record jsxid="string.terr.BR" jsxtext="البرازيل"/>
+    <record jsxid="string.terr.CA" jsxtext="كندا"/>
+    <record jsxid="string.terr.CN" jsxtext="الصين"/>
+    <record jsxid="string.terr.DE" jsxtext="ألمانيا"/>
+    <record jsxid="string.terr.DK" jsxtext="الدانمرك"/>
+    <record jsxid="string.terr.ES" jsxtext="أسبانيا"/>
+    <record jsxid="string.terr.FR" jsxtext="فرنسا"/>
+    <record jsxid="string.terr.GB" jsxtext="المملكة المتحدة"/>
+    <record jsxid="string.terr.GR" jsxtext="اليونان"/>
+    <record jsxid="string.terr.HK" jsxtext="هونج كونج الصينية"/>
+    <record jsxid="string.terr.IT" jsxtext="ايطاليا"/>
+    <record jsxid="string.terr.JP" jsxtext="اليابان"/>
+    <record jsxid="string.terr.KR" jsxtext="كوريا الجنوبية"/>
+    <record jsxid="string.terr.MX" jsxtext="المكسيك"/>
+    <record jsxid="string.terr.NZ" jsxtext="نيوزيلاندا"/>
+    <record jsxid="string.terr.PT" jsxtext="البرتغال"/>
+    <record jsxid="string.terr.RU" jsxtext="روسيا"/>
+    <record jsxid="string.terr.SE" jsxtext="السويد"/>
+    <record jsxid="string.terr.TW" jsxtext="تايوان"/>
+    <record jsxid="string.terr.US" jsxtext="الولايات المتحدة الأمريكية"/>
+    <record eval="1" jsxid="time.24hour" jsxtext="false"/>
+    <record jsxid="format.number.integer" jsxtext="#,##0.###;#,##0"/>
+    <record jsxid="time.sep.hour-min" jsxtext=":"/>
+    <record jsxid="time.sep.min-sec" jsxtext=":"/>
+  </locale>
+</data>

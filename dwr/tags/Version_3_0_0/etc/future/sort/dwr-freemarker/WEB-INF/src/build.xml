@@ -1,0 +1,27 @@
+<project name="dwr-freemarker" basedir="." default="build">
+
+
+  <!-- Classpath for build. -->
+  <path id="classpath">
+    <pathelement path="servlet-api.jar" />
+    <pathelement path="../lib/commons-logging-1.1.jar" />
+    <pathelement path="../lib/dwr-2.0.1.jar" />
+    <pathelement path="../lib/freemarker-2.3.10.jar" />
+  </path>
+
+
+  <!-- The default target.  Compile source, build WAR. -->
+  <target name="build">
+    <delete dir="../classes/com" />
+    <mkdir dir="../classes/com" />
+    <javac srcdir="." destdir="../classes" debug="true"
+     debuglevel="lines,vars,source" deprecation="on">
+      <classpath refid="classpath" />
+    </javac>
+    <copy file="com/omnytex/test.ftl" toFile="../classes/com/omnytex/test.ftl" />
+    <delete file="dwr-freemarker.war" />
+    <jar destfile="dwr-freemarker.war" basedir="../../" />
+  </target>
+
+
+</project>
