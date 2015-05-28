@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2001-2007, TIBCO Software Inc.
+  ~ Use, modification, and distribution subject to terms of license.
+  --><data jsxid="jsxroot">
+  <record jsxid="prefs" type="map">
+    <record jsxid="dom" type="map">
+      <record jsxid="showFocus" type="boolean">false</record>
+      <record jsxid="snapTo" type="boolean">true</record>
+    </record>
+    <record jsxid="builder" type="map">
+      <record jsxid="cachewarn" type="boolean">false</record>
+      <record jsxid="dereferencewarn" type="boolean">false</record>
+      <record jsxid="domfocus" type="boolean">true</record>
+      <record jsxid="snapto" type="string">10</record>
+      <record jsxid="domdeletewarn" type="boolean">false</record>
+    </record>
+  </record>
+  <record jsxid="lastProject" type="string">JSXAPPS/ticketcenter</record>
+  <record jsxid="recentProjects" type="array">
+    <record jsxid="0" type="string">JSXAPPS/ticketcenter</record>
+  </record>
+  <record jsxid="palettes" type="map">
+    <record jsxid="jsx_ide_props_dom" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+      <record jsxid="float" type="boolean">false</record>
+      <record jsxid="quadrant" type="string">q3</record>
+    </record>
+    <record jsxid="jsx_ide_props_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+    </record>
+    <record jsxid="jsx_ide_me_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+      <record jsxid="float" type="boolean">true</record>
+      <record jsxid="dialog" type="map">
+        <record jsxid="left" type="number">527</record>
+        <record jsxid="top" type="number">399</record>
+        <record jsxid="width" type="number">300</record>
+        <record jsxid="height" type="number">300</record>
+      </record>
+    </record>
+    <record jsxid="jsx_ide_attributes_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+    </record>
+    <record jsxid="jsx_ide_xslparams_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+    </record>
+    <record jsxid="jsx_ide_palette_complibs" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+      <record jsxid="float" type="boolean">true</record>
+      <record jsxid="dialog" type="map">
+        <record jsxid="left" type="number">550</record>
+        <record jsxid="top" type="number">363</record>
+        <record jsxid="width" type="number">334</record>
+        <record jsxid="height" type="number">398</record>
+      </record>
+    </record>
+    <record jsxid="jsx_ide_cache_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+      <record jsxid="float" type="boolean">true</record>
+      <record jsxid="dialog" type="map">
+        <record jsxid="left" type="number">169</record>
+        <record jsxid="top" type="number">364</record>
+        <record jsxid="width" type="number">300</record>
+        <record jsxid="height" type="number">300</record>
+      </record>
+    </record>
+    <record jsxid="jsx_ide_resources_contentblock" type="map">
+      <record jsxid="closed" type="boolean">false</record>
+      <record jsxid="float" type="boolean">true</record>
+      <record jsxid="dialog" type="map">
+        <record jsxid="left" type="number">159</record>
+        <record jsxid="top" type="number">457</record>
+        <record jsxid="width" type="number">300</record>
+        <record jsxid="height" type="number">300</record>
+      </record>
+    </record>
+  </record>
+  <record jsxid="projects" type="map">
+    <record jsxid="JSXAPPS/ticketcenter" type="map">
+      <record jsxid="recentFiles" type="array">
+        <record jsxid="0" type="string">main.xml</record>
+        <record jsxid="1" type="string">eventList.xml</record>
+      </record>
+      <record jsxid="openFiles" type="array">
+        <record jsxid="0" type="string">main.xml</record>
+      </record>
+    </record>
+  </record>
+  <record jsxid="window" type="map">
+    <record jsxid="splitters" type="map">
+      <record jsxid="jsx_ide_splitter1" type="string">80%</record>
+      <record jsxid="jsx_ide_splitter2" type="string">0%</record>
+      <record jsxid="jsx_ide_splitter3" type="string">100%</record>
+      <record jsxid="jsx_ide_splitter4" type="string">70.13%</record>
+      <record jsxid="jsx_ide_splitter5" type="string">41.94%</record>
+    </record>
+  </record>
+</data>

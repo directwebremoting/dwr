@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reverse Ajax Table Update</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type='text/javascript' src='../dwr/engine.js'> </script>
+  <script type='text/javascript' src='../dwr/util.js'> </script>
+  <script type='text/javascript' src='../dwr/interface/PeopleTable.js'> </script>
+  <script type='text/javascript' src='../tabs/tabs.js'> </script>
+  <link rel="stylesheet" type="text/css" href="../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../generic.css" />
+  <script>
+      window.onload=function()
+      {
+           dwr.engine.setActiveReverseAjax(true);
+		   dwr.engine.setErrorHandler(errorHandler);
+		   dwr.engine.setPollStatusHandler(updatePollStatus);
+		   dwr.engine.setNotifyServerOnPageUnload(true);
+		   updatePollStatus(true);
+           Tabs.init('tabList', 'tabContents');  
+           PeopleTable.updateTableDisplay(); 
+ 	       addAttributeToScriptSession();    
+      }
+	  
+	  function errorHandler(message, ex) {
+	    dwr.util.setValue("error", "<font color='red'>Cannot connect to server. Initializing retry logic.</font>", {escapeHtml:false});
+	    setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
+	  }
+	  
+	  function updatePollStatus(pollStatus) {
+	  	dwr.util.setValue("pollStatus", pollStatus ? "<font color='green'>Online</font>" : "<font color='red'>Offline</font>", {escapeHtml:false});
+	  }
+	  
+	  function addAttributeToScriptSession() {
+	      PeopleTable.addAttributeToScriptSession();
+	      dwr.util.byId("enable").style.display = 'none';
+	      dwr.util.byId("disable").style.display = 'block';
+	  }
+	  
+	  function removeAttributeToScriptSession() {
+	      PeopleTable.removeAttributeToScriptSession();
+	      dwr.util.byId("enable").style.display = 'block';
+	      dwr.util.byId("disable").style.display = 'none';
+	  }
+  </script>
+</head>
+
+<body>
+<div id="page-title">[
+  <a href="http://directwebremoting.org/dwr/">DWR Website</a> |
+  <a href="..">Web Application Index</a>
+]</div>
+
+<h1>Reverse Ajax Table Update</h1>
+
+<p>Creating a table in a web page is easy, but what about a table controlled by
+the server? This demo shows how to use a separate server side thread to control
+a number of browsers.  When enabled updates will be sent to this pages table every 10 seconds.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabId="demoDiv">Demo</a></li>
+  <li><a href="#" tabId="explainDiv">How it works</a></li>
+  <li><a href="#" tabId="sourceDiv">Source</a></li>  
+</ul>
+
+<div id="tabContents">
+  
+  <div id="demoDiv">
+	<div id="error"></div>
+    <input type="button" id="enable" value="Enable page updates" onclick="addAttributeToScriptSession();"/>
+    <input type="button" id="disable" value="Disable page updates" onclick="removeAttributeToScriptSession();"/>
+    <p>Server status: <span id="pollStatus"></span></p>
+    <table>
+      <thead>
+       <th>Id</th>
+       <th>Name</th>
+       <th>Address</th>
+       <th>Age</th>
+       <th>Is Superhero?</th>
+      </thead>
+      <tbody id="peopleTable"></tbody>
+    </table>    
+  </div>
+    
+  <div id="explainDiv">
+    <p>This example demonstrates reverse AJAX and the ability to filter what pages receive updates.  The filtering is performed by setting an attribute on the ScriptSession.  This is done through the addAttributeToScriptSession() function which is called by the "Enable page updates" button. Please see the commented code on the source tab for detailed implementation details.</p> 
+
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>
+&lt;input type="button" value="Enable page updates" onclick="addAttributeToScriptSession();"/&gt;
+&lt;input type="button" value="Disable page updates" onclick="removeAttributeToScriptSession();"/&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;th>Id&lt;/th&gt;
+      &lt;th>Name&lt;/th&gt;
+      &lt;th>Address&lt;/th&gt;
+      &lt;th>Age&lt;/th&gt;
+      &lt;th>Is Superhero?&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody id="peopleTable">&lt;/tbody&gt;
+  &lt;/table&gt;    
+</pre>
+
+<h2>Javascript source:</h2>
+<pre>
+window.onload=function()
+{
+    dwr.engine.setActiveReverseAjax(true); // Initiate reverse ajax polling
+    dwr.engine.setErrorHandler(errorHandler); // Called when a call and all retry attempts fail
+	dwr.engine.setPollStatusHandler(updatePollStatus); // Optional function to call when the reverse ajax status changes (e.g. online to offline)
+	updatePollStatus(true); // Optional - We are online right now!  Until DWR determines we are not!
+	dwr.engine.setNotifyServerOnPageUnload(true); // Optional - When the page is unloaded, remove this ScriptSession.	
+    Tabs.init('tabList', 'tabContents'); // Initialize the tabs for this display    
+    PeopleTable.updateTableDisplay(); // Make a call to the server to begin updating the table!   
+    addAttributeToScriptSession(); // Make a remote call to the server to add an attribute onto the ScriptSession which will be used in determining what pages receive updates!
+}
+	  
+function errorHandler(message, ex) {
+    dwr.util.setValue("error", "<font color='red'>Cannot connect to server. Initializing retry logic.</font>", {escapeHtml:false});
+    setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
+}
+	  
+function updatePollStatus(pollStatus) {
+    dwr.util.setValue("pollStatus", pollStatus ? "<font color='green'>Online</font>" : "<font color='red'>Offline</font>", {escapeHtml:false});
+}
+
+// Make a remote call to add an attribute on the ScriptSession.
+// Only clients that have this attribute set will receive updates.	  
+function addAttributeToScriptSession() {
+    PeopleTable.addAttributeToScriptSession();
+}
+
+// Make a remote call to remove an attribute from the ScriptSession.
+// Clients that call this will no longer receive updates (unless addAttributeToScriptSession is called again).	  	  
+function removeAttributeToScriptSession() {
+    PeopleTable.removeAttributeToScriptSession();
+}</pre>
+
+<h2>Java source: (please see comments inline)</h2>
+<pre>
+public class PeopleTable implements Runnable
+{
+	/**
+	 * Constructor - Creates a thread pool that runs every 10 seconds.
+	 */
+    public PeopleTable()
+    {
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
+        executor.scheduleAtFixedRate(this, 1, 10, TimeUnit.SECONDS);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void run()
+    {
+        updateTableDisplay();
+    }
+
+    public void updateTableDisplay()
+    {
+        // Get the current page.
+        String page = ServerContextFactory.get().getContextPath() + "/reverseajax/peopleTable.html";
+        // Create a new AttributeScriptSessionFilter which will look for an attribute on the ScriptSession
+        ScriptSessionFilter attributeFilter = new AttributeScriptSessionFilter(SCRIPT_SESSION_ATTR);
+        // Update the page, filters ScriptSessions using attributeFilter.  If the SCRIPT_SESSION_ATTR
+        // has not been set on the ScriptSession the page in question will not receive updates.
+        Browser.withPageFiltered(page, attributeFilter, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                // Creates a new Person bean.
+                Person person = new Person(true);
+                // Creates a multi-dimensional array, containing a row and the rows column data.
+                String[][] data = {
+                    {person.getId(), person.getName(), person.getAddress(), person.getAge()+"", person.isSuperhero()+""}
+                };
+                // Call DWR's util which adds rows into a table.  peopleTable is the id of the tbody and 
+                // data contains the row/column data.  
+                Util.addRows("peopleTable", data);
+            }
+        });
+    }
+	
+	/**
+	 * Called from the client to add an attribute on the ScriptSession.  This
+	 * attribute will be used so that only pages (ScriptSessions) that have 
+	 * set this attribute will be updated.
+	 */
+    public void addAttributeToScriptSession() {
+        ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+        scriptSession.setAttribute(SCRIPT_SESSION_ATTR, true);
+    }
+    
+    /**
+	 * Called from the client to remove an attribute from the ScriptSession.  
+	 * When called from a client that client will no longer receive updates (unless addAttributeToScriptSession)
+	 * is called again.
+	 */
+    public void removeAttributeToScriptSession() {
+        ScriptSession scriptSession = WebContextFactory.get().getScriptSession();
+        scriptSession.removeAttribute(SCRIPT_SESSION_ATTR);
+    }
+    
+    /**
+     * This is the ScriptSessionFilter that will be used to filter out all ScriptSessions
+     * unless they contain the SCRIPT_SESSION_ATTR attribute. 
+     */
+    protected class AttributeScriptSessionFilter implements ScriptSessionFilter
+    {
+        public AttributeScriptSessionFilter(String attributeName)
+        {
+            this.attributeName = attributeName;
+        }
+
+        /* (non-Javadoc)
+         * @see org.directwebremoting.ScriptSessionFilter#match(org.directwebremoting.ScriptSession)
+         */
+        @Override
+        public boolean match(ScriptSession session)
+        {
+            Object check = session.getAttribute(attributeName);
+            return (check != null && check.equals(Boolean.TRUE));
+        }
+
+        private final String attributeName;
+    }
+
+    private final static String SCRIPT_SESSION_ATTR = "SCRIPT_SESSION_ATTR";
+}
+</pre>
+
+  </div>
+
+</div>
+
+</body>
+</html>

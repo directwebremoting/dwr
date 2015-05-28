@@ -1,0 +1,132 @@
+<!--
+  ~ Copyright (c) 2001-2007, TIBCO Software Inc.
+  ~ Use, modification, and distribution subject to terms of license.
+  -->
+
+<html>
+  <head>
+    <title>General Interface(TM) Application Launcher</title>
+    <script type="text/javascript">
+      
+function launchApp() {
+  var shellURL = "file:/Applications/TIBCO/tibco-gi-3.4-pro/shell.html";
+  
+  try {
+    var url = decodeURI(window.location.href);
+    url = url.replace(/\\/g, "/");
+    
+    var appPath = getURIParam(url, "jsxapppath");
+    if (appPath) {
+      if (getURIParam(url, "xhtml") == "true")
+        shellURL = shellURL.replace(".html", ".xhtml");
+
+      url = url.substring(0, url.indexOf("?"));
+      url = url.substring(0, url.lastIndexOf("/") + 1);
+      
+      var relPath = relativizeURI(shellURL.substring(0, shellURL.lastIndexOf("/")), url);
+      window.location.href = shellURL + "?jsxapppath=" + encodeURI(relPath + appPath);
+    } else {
+      window.alert("Error: no application specified.");
+    }
+  } catch (e) {
+    window.alert("Error: " + e.description);
+  }
+}
+
+function getURIParam(url, strParam) {
+  var regex = new RegExp("[\\?&]" + strParam + "=([^&]+)");
+  if (url.match(regex))
+    return RegExp.$1;
+  return null;
+};
+                
+function relativizeURI(from, to) {
+  var regex = /^(\w+):\/\/?\/?/;
+  if (from.match(regex)) {
+    var scheme = RegExp.$1;
+    if (to.match(regex)) {
+      if (scheme == RegExp.$1) {
+        from = from.replace(regex, "");
+        to = to.replace(regex, "");
+      }
+    }
+  }
+  
+  var thisTokens = from.split("/");
+  var thatTokens = to.split("/");
+  
+  var newTokens = [];
+    
+  var i = 0;
+  while (i < thisTokens.length && i < thatTokens.length) {
+    if (thisTokens[i] != thatTokens[i]) break;
+    i++;
+  }
+
+  for (var j = i; j < thisTokens.length; j++)
+    newTokens.push("..");
+    
+  for (var j = i; j < thatTokens.length; j++)
+    newTokens.push(thatTokens[j]);
+    
+  return newTokens.join("/");
+}
+
+function decodeURI(uri) {
+  var length = uri.length;
+  var decoded = new Array(length);
+  var j = 0;
+    
+  for (var i = 0; i < uri.length; i++) {
+    var chr = uri.charAt(i);
+    if (chr == "%") {
+      var octet = uri.substring(i+1, i+3);
+      decoded[j++] = String.fromCharCode(parseInt(octet, 16));
+      i += 2;
+    } else {
+      decoded[j++] = chr;
+    }
+  }
+    
+  return decoded.join("");  
+}
+
+function encodeURI(uri) {
+  var strChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-!.~'()*%";
+  var length = uri.length;
+  var encoded = new Array(length);
+  
+  for (var i = 0; i < length; i++) {
+    var chr = uri.charAt(i);
+    
+    if (strChars.indexOf(chr) < 0) {
+      var code = chr.charCodeAt(0);
+      
+      if (code < 16) {
+        encoded[i] = "%" + "0" + code.toString(16).toUpperCase();
+      } else if (code < 256) {
+        encoded[i] = "%" + code.toString(16).toUpperCase();
+      } else {
+        encoded[i] = chr;
+      }
+    } else {
+      encoded[i] = chr;
+    }
+  }
+  
+  return encoded.join("");    
+}
+      
+    </script>
+  </head>
+  <body onload="launchApp();">
+  
+  <div id="title">
+  
+  </div>
+  <div id="error"> 
+  
+  </div>
+  
+  </body>
+</html>

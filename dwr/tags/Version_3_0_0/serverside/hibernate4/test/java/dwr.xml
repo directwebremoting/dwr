@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"
+    "http://getahead.ltd.uk/dwr/dwr20.dtd" >
+
+<dwr>
+  <init>
+    <converter class="org.directwebremoting.hibernate.H4BeanConverter" id="hibernate4"/>
+	<converter class="org.directwebremoting.convert.BeanConverter" id="bean"/>
+	<converter class="org.directwebremoting.convert.ObjectConverter" id="object"/>
+	<converter class="org.directwebremoting.convert.PrimitiveConverter" id="primitive"/>
+	<converter class="org.directwebremoting.convert.StringConverter" id="string"/>
+	<converter class="org.directwebremoting.convert.CollectionConverter" id="collection" />
+  </init>
+  
+  <allow>
+
+	<filter class="org.directwebremoting.hibernate.H4SessionAjaxFilter"/>
+	
+	<convert converter="collection" match="java.util.Set"/>
+
+	<convert converter="primitive" match="java.lang.Integer"/>
+	<convert converter="string" match="java.lang.String"/>
+
+    <convert converter="bean" match="org.directwebremoting.convert.mapped.BeanEx"/>
+
+    <convert converter="object" match="org.directwebremoting.convert.mapped.ObjectEx"/>
+
+    <convert converter="object" match="org.directwebremoting.convert.mapped.ObjectForceEx">
+      <param name="force" value="true"/>
+    </convert>
+
+    <convert converter="hibernate4" match="org.directwebremoting.convert.mapped.Hibernate4Ex"/>
+    <convert converter="hibernate4" match="org.directwebremoting.convert.mapped.Hibernate4NestEx"/>
+
+    <convert converter="hibernate4" match="org.directwebremoting.convert.mapped.Hibernate4sEx">
+      <param name="assumeSession" value="true"/>
+    </convert>
+    <convert converter="hibernate4" match="org.directwebremoting.convert.mapped.Hibernate4sNestEx">
+      <param name="assumeSession" value="true"/>
+    </convert>
+
+  </allow>
+
+</dwr>

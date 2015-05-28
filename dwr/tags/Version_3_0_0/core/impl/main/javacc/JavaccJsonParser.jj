@@ -1,0 +1,325 @@
+options
+{
+    STATIC = false;
+    UNICODE_INPUT = true;
+    JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(JavaccJsonParser)
+/*
+ * Copyright 2005 Joe Walker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.directwebremoting.json.parse.javacc;
+
+import java.io.Reader;
+import java.io.StringReader;
+
+import org.directwebremoting.json.parse.JsonDecoder;
+import org.directwebremoting.json.parse.JsonParseException;
+import org.directwebremoting.json.parse.JsonParser;
+
+/**
+ * Produced by JavaCC from JavaccJsonParser.jj
+ * @author Joe Walker [joe at getahead dot org]
+ */
+@SuppressWarnings("all")
+public class JavaccJsonParser implements JsonParser
+{
+    /**
+     * This constructor does not create a ready-to-roll parser. One of the
+     * {@link #ReInit} methods should be called first.
+     */
+    public JavaccJsonParser()
+    {
+        this(new StringReader(""));
+    }
+
+    /* (non-Javadoc)
+     * @see org.directwebremoting.json.parse.JsonParser#parse(java.io.Reader, org.directwebremoting.json.parse.JsonDecoder)
+     */
+    public Object parse(Reader reader, JsonDecoder decoder) throws JsonParseException
+    {
+        ReInit(reader);
+        try
+        {
+            top(decoder);
+        }
+        catch (TokenMgrError ex)
+        {
+            throw new JsonParseException(ex.getMessage());
+        }
+        return decoder.getRoot();
+    }
+}
+PARSER_END(JavaccJsonParser)
+
+SKIP:
+{
+    <[" ", "\t", "\n"]>
+}
+
+TOKEN:
+{
+    <E:["e","E"](["+","-"])?> | <DIGITS:["0"-"9"]|["1"-"9"](["0"-"9"])*> | <QUOTE:"\""> : STRING_STATE
+}
+
+<STRING_STATE> MORE:
+{
+    "\\" : ESC_STATE
+}
+
+<STRING_STATE> TOKEN:
+{
+    <ENDQUOTE:<QUOTE>> : DEFAULT | <CHAR:~["\"","\\"]>
+}
+
+<ESC_STATE> TOKEN:
+{
+    <CNTRL_ESC:["\"","\\","/","b","f","n","r","t"]> : STRING_STATE
+}
+
+<ESC_STATE> MORE:
+{
+    "u" : HEX_STATE
+}
+
+<HEX_STATE> TOKEN:
+{
+    <#HEX:["a"-"f","A"-"F","0"-"9"]> | <HEX_ESC:<HEX><HEX><HEX><HEX>> : STRING_STATE
+}
+
+void top(JsonDecoder decoder) throws JsonParseException:
+{
+}
+{
+    ( object(decoder, null) | array(decoder, null) )
+}
+
+public void object(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+    decoder.beginObject(propertyName);
+}
+{
+    "{" [ pair(decoder) ( "," pair(decoder) )* ] "}"
+
+    {
+        decoder.endObject(propertyName);
+    }
+}
+
+void pair(JsonDecoder decoder) throws JsonParseException:
+{
+    String propertyName;
+}
+{
+    propertyName = propertyName()
+    ":" value(decoder, propertyName)
+}
+
+void array(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+    decoder.beginArray(propertyName);
+}
+{
+    "[" [ value(decoder, null) ( "," value(decoder, null) )* ] "]"
+
+    {
+        decoder.endArray(propertyName);
+    }
+}
+
+void value(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+}
+{
+    ( string(decoder, propertyName) | number(decoder, propertyName) | object(decoder, propertyName) | array(decoder, propertyName) | literal(decoder, propertyName) )
+}
+
+void literal(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+}
+{
+    (
+        "true"
+        {
+            decoder.addBoolean(propertyName, true);
+        }
+    )
+    |
+    (
+        "false"
+        {
+            decoder.addBoolean(propertyName, false);
+        }
+    )
+    |
+    (
+        "null"
+        {
+            decoder.addNull(propertyName);
+        }
+    )
+}
+
+void number(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+    String intPart = null;
+    String floatPart = null;
+    String expPart = null;
+}
+{
+    intPart = getIntPart()
+    [ floatPart = getFloatPart() ]
+    [ expPart = getExpPart() ]
+
+    {
+        decoder.addNumber(propertyName, intPart, floatPart, expPart);
+
+        // This is can help to reduce memory consumption
+        intPart = null;
+        floatPart = null;
+        expPart = null;
+    }
+}
+
+String getIntPart() throws JsonParseException:
+{
+    String digits;
+    boolean negative = false;
+}
+{
+    [
+        "-"
+        {
+            negative = true;
+        }
+    ]
+    digits = getDigits()
+    {
+        if (negative)
+        {
+            return "-" + digits;
+        }
+        return digits;
+    }
+}
+
+String getFloatPart() throws JsonParseException:
+{
+    String digits;
+}
+{
+    "."
+    digits = getDigits()
+
+    {
+        return "." + digits;
+    }
+}
+
+String getExpPart() throws JsonParseException:
+{
+    Token t;
+    String digits;
+}
+{
+    t = <E>
+    digits = getDigits()
+
+    {
+        return t.image + digits;
+    }
+}
+
+String getDigits() throws JsonParseException:
+{
+    Token t;
+}
+{
+    t = <DIGITS>
+    {
+        return t.image;
+    }
+}
+
+String propertyName() throws JsonParseException:
+{
+    StringBuilder builder = new StringBuilder();
+}
+{
+    <QUOTE> ( getChar(builder) )* <ENDQUOTE>
+
+    {
+        return builder.toString();
+    }
+}
+
+void string(JsonDecoder decoder, String propertyName) throws JsonParseException:
+{
+    StringBuilder builder = new StringBuilder();
+}
+{
+    <QUOTE> ( getChar(builder) )* <ENDQUOTE>
+
+    {
+        decoder.addString(propertyName, builder.toString());
+    }
+}
+
+void getChar(StringBuilder builder):
+{
+    Token t;
+}
+{
+    ( t = <CHAR> | t = <CNTRL_ESC> | t = <HEX_ESC> )
+
+    {
+        if (t.image.length() < 2)
+        {
+            builder.append(t.image.charAt(0));
+        }
+        else if (t.image.length() < 6)
+        {
+            char c = t.image.charAt(1);
+            switch (c)
+            {
+            case 'b':
+                builder.append((char) 8);
+                break;
+            case 'f':
+                builder.append((char) 12);
+                break;
+            case 'n':
+                builder.append((char) 10);
+                break;
+            case 'r':
+                builder.append((char) 13);
+                break;
+            case 't':
+                builder.append((char) 9);
+                break;
+            default:
+                builder.append(c);
+            }
+        }
+        else
+        {
+            // hex escape code
+            int i = Integer.valueOf(t.image.substring(2, 6), 16).intValue();
+            builder.append((char) i);
+        }
+    }
+}
+
