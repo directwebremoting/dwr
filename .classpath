@@ -68,7 +68,6 @@
 			<attribute name="javadoc_location" value="http://commons.apache.org/collections/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="serverside/hibernate/lib/hsqldb-1.8.7.jar"/>
 	<classpathentry kind="lib" path="serverside/hibernate/lib/jta.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/hibernate/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/hibernate/test/java"/>
@@ -105,10 +104,11 @@
 	<classpathentry kind="lib" path="core/api/lib/javax.servlet-api-3.0.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/js.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/shrinksafe.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="serverside/hibernate/lib/hsqldb-2.3.2.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
