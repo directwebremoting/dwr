@@ -71,9 +71,6 @@
 	<classpathentry kind="lib" path="serverside/hibernate/lib/jta.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/hibernate/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/hibernate/test/java"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-2.5.5.jar" sourcepath=""/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-2.5.2.jar"/>
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="serverside/spring/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/test/classes" path="serverside/spring/test/java"/>
 	<classpathentry kind="lib" path="serverside/struts/lib/struts-1.1.jar">
@@ -110,5 +107,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="serverside/hibernate/lib/hsqldb-2.3.2.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-beans-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-core-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-aop-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/guice/lib/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-context-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-web-4.1.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>

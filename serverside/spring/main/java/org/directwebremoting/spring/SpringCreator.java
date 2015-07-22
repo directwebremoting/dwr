@@ -31,8 +31,8 @@ import org.directwebremoting.extend.Creator;
 import org.directwebremoting.util.LocalUtil;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * A creator that relies on a spring bean factory.
@@ -177,7 +177,6 @@ public class SpringCreator extends AbstractCreator implements Creator
         {
             // Probably on boot time
         }
-
         return request != null ? RequestContextUtils.getWebApplicationContext(request, srvCtx) : WebApplicationContextUtils.getWebApplicationContext(srvCtx);
     }
 
