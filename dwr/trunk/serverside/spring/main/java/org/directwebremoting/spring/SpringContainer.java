@@ -62,7 +62,7 @@ public class SpringContainer extends DefaultContainer implements Container, Bean
         {
             Class<?> clz = ClassUtils.forName(askFor, ClassUtils.getDefaultClassLoader());
 
-            Map<String, Object> beansOfType = ((ListableBeanFactory) beanFactory).getBeansOfType(clz);
+            Map<String, Object> beansOfType = (Map<String, Object>) ((ListableBeanFactory) beanFactory).getBeansOfType(clz);
 
             if (beansOfType.isEmpty())
             {
