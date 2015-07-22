@@ -107,13 +107,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="serverside/hibernate/lib/hsqldb-2.3.2.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-beans-4.1.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-core-4.1.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-4.1.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-aop-4.1.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="serverside/guice/lib/aopalliance-1.0.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-context-4.1.7.RELEASE.jar"/>
-	<classpathentry kind="lib" path="serverside/spring/lib/spring-web-4.1.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="serverside/spring/lib/spring-mock.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-aop-3.2.14.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-beans-3.2.14.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-context-3.2.14.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-core-3.2.14.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-web-3.2.14.RELEASE.jar"/>
+	<classpathentry kind="lib" path="serverside/spring/lib/spring-webmvc-3.2.14.RELEASE.jar"/>
 	<classpathentry kind="output" path="target/eclipse/classes"/>
 </classpath>
