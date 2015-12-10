@@ -142,11 +142,6 @@ public class DefaultCreatorManager implements CreatorManager, UninitializingBean
      */
     public Collection<String> getCreatorNames(boolean includeHidden) throws SecurityException
     {
-        if (!debug)
-        {
-            throw new SecurityException();
-        }
-
         if (includeHidden)
         {
             return Collections.unmodifiableSet(creators.keySet());
