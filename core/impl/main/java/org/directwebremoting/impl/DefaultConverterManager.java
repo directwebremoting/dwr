@@ -84,7 +84,7 @@ public class DefaultConverterManager implements ConverterManager
         Class<?> clazz = converterTypes.get(type);
         if (clazz == null)
         {
-            log.info("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
+            log.debug("Probably not an issue: " + match + " is not available so the " + type + " converter will not load. This is only an problem if you wanted to use it.");
             return;
         }
 
