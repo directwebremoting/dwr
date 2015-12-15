@@ -7,7 +7,14 @@ Many changes will have been properly recorded in the bug tracking system.
 
 Potentially Breaking Changes
 ----------------------------
+For 3.0.1 we have updated Spring to version 3.2.14.  If you are running an older version of Spring it is recommended
+that you update Spring before updating DWR.
 
+3.0.1  
+  * [DWR-650] - DWR calling removed Spring API.
+  * [DWR-651] - Simple Name used for RemoteProxy bean registration in Spring 
+  * [DWR-652] - Some features fail when the init-param "debug" is set to false 
+  
 3.0:
   * [DWR-645] - Clean up path configuration options
   * [DWR-642] - Remove legacy packages
