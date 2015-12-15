@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data jsxnamespace="propsbundle">
+  <locale key="ko">
+    <record jsxid="format.date.long" jsxtext="yyyy'년' M'월' d'일'"/>
+    <record jsxid="format.time.medium" jsxtext="a hh'시' mm'분'"/>
+    <record jsxid="format.date.full" jsxtext="yyyy'년' M'월' d'일' EEEE"/>
+    <record jsxid="format.time.short" jsxtext="a hh'시' mm'분'"/>
+    <record jsxid="format.date.short" jsxtext="yy. MM. dd"/>
+    <record jsxid="format.date.medium" jsxtext="yyyy. MM. dd"/>
+    <record jsxid="format.time.long" jsxtext="a hh'시' mm'분' ss'초'"/>
+    <record jsxid="format.time.full" jsxtext="a hh'시' mm'분' ss'초' z"/>
+    <record eval="1" jsxid="date.month.abbrev" jsxtext="['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']"/>
+    <record eval="1" jsxid="date.month" jsxtext="['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']"/>
+    <record eval="1" jsxid="date.month.narrow" jsxtext="['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']"/>
+    <record eval="1" jsxid="date.day.abbrev" jsxtext="['일','월','화','수','목','금','토']"/>
+    <record eval="1" jsxid="date.day" jsxtext="['일요일','월요일','화요일','수요일','목요일','금요일','토요일']"/>
+    <record eval="1" jsxid="date.day.narrow" jsxtext="['일','월','화','수','목','금','토']"/>
+    <record eval="1" jsxid="date.era.long" jsxtext="['서력기원전','서력기원']"/>
+    <record eval="1" jsxid="date.era" jsxtext="['기원전','서기']"/>
+    <record eval="1" jsxid="time.ampm" jsxtext="['오전','오후']"/>
+    <record jsxid="string.lang.ar" jsxtext="아랍어"/>
+    <record jsxid="string.lang.da" jsxtext="덴마크어"/>
+    <record jsxid="string.lang.de" jsxtext="독일어"/>
+    <record jsxid="string.lang.el" jsxtext="그리스어"/>
+    <record jsxid="string.lang.en" jsxtext="영어"/>
+    <record jsxid="string.lang.es" jsxtext="스페인어"/>
+    <record jsxid="string.lang.fr" jsxtext="프랑스어"/>
+    <record jsxid="string.lang.it" jsxtext="이탈리아어"/>
+    <record jsxid="string.lang.ja" jsxtext="일본어"/>
+    <record jsxid="string.lang.ko" jsxtext="한국어"/>
+    <record jsxid="string.lang.pt" jsxtext="포르투칼어"/>
+    <record jsxid="string.lang.ru" jsxtext="러시아어"/>
+    <record jsxid="string.lang.sv" jsxtext="스웨덴어"/>
+    <record jsxid="string.lang.zh" jsxtext="중국어"/>
+    <record jsxid="string.terr.AU" jsxtext="오스트레일리아"/>
+    <record jsxid="string.terr.BR" jsxtext="브라질"/>
+    <record jsxid="string.terr.CA" jsxtext="캐나다"/>
+    <record jsxid="string.terr.CN" jsxtext="중국"/>
+    <record jsxid="string.terr.DE" jsxtext="독일"/>
+    <record jsxid="string.terr.DK" jsxtext="덴마크"/>
+    <record jsxid="string.terr.ES" jsxtext="스페인"/>
+    <record jsxid="string.terr.FR" jsxtext="프랑스"/>
+    <record jsxid="string.terr.GB" jsxtext="영국"/>
+    <record jsxid="string.terr.GR" jsxtext="그리스"/>
+    <record jsxid="string.terr.HK" jsxtext="홍콩, 중국 특별행정구"/>
+    <record jsxid="string.terr.IT" jsxtext="이탈리아"/>
+    <record jsxid="string.terr.JP" jsxtext="일본"/>
+    <record jsxid="string.terr.KR" jsxtext="대한민국"/>
+    <record jsxid="string.terr.MX" jsxtext="멕시코"/>
+    <record jsxid="string.terr.NZ" jsxtext="뉴질랜드"/>
+    <record jsxid="string.terr.PT" jsxtext="포르트칼"/>
+    <record jsxid="string.terr.RU" jsxtext="러시아"/>
+    <record jsxid="string.terr.SE" jsxtext="스웨덴"/>
+    <record jsxid="string.terr.TW" jsxtext="대만"/>
+    <record jsxid="string.terr.US" jsxtext="미국"/>
+    <record eval="1" jsxid="time.24hour" jsxtext="false"/>
+    <record jsxid="time.sep.hour-min" jsxtext="시 "/>
+    <record jsxid="time.sep.min-sec" jsxtext="분 "/>
+  </locale>
+<locale key="ko_KR">
+    <record eval="1" jsxid="date.firstWeekDay" jsxtext="0"/>
+    <record jsxid="currency.code" jsxtext="KRW"/>
+    <record jsxid="format.time.medium" jsxtext="a h:mm:ss"/>
+    <record jsxid="format.number.currency" jsxtext="¤#,##0.00"/>
+    <record jsxid="format.time.short" jsxtext="a h:mm"/>
+    <record jsxid="string.lang.pt" jsxtext="포르투갈어"/>
+    <record jsxid="string.terr.PT" jsxtext="포르투갈"/>
+    <record eval="1" jsxid="time.24hour" jsxtext="false"/>
+  </locale>
+</data>

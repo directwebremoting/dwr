@@ -1,0 +1,73 @@
+<!-- We do no build with Maven.  This pom is here so we can deploy our artifacts into Maven repos using Ant/Maven. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.directwebremoting</groupId>
+  <artifactId>dwr</artifactId>
+  <packaging>pom</packaging>
+  <version>3.0.1-RELEASE</version>
+  <name>Direct Web Remoting</name>
+  <url>http://directwebremoting.org/dwr/index.html</url>
+  <!-- For the sonatype repo -->
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>6</version>
+  </parent>
+  <!-- Required so that Maven knows where to get the jms.jar http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html -->
+  <repositories>  
+    <repository>
+      <id>repository.jboss.org-public</id>
+      <name>JBoss repository</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+    </repository>
+  </repositories>
+  <developers>
+    <developer>
+      <name>David Marginian</name>
+      <id>david_marginian</id>
+    </developer>
+    <developer>
+      <name>Mike Wison</name>
+      <id>mike_wilson</id>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:http://svn.directwebremoting.org/dwr/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/trunk/</developerConnection>
+    <url>http://svn.directwebremoting.org/dwr/trunk/</url>
+  </scm>
+  <description>
+	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
+	It gets rid of almost all the boiler plate code between the web browser and your Java code.
+  </description>
+  <ciManagement>
+    <system>Bamboo</system>
+    <url>http://ci.directwebremoting.org/bamboo/</url>
+  </ciManagement>  
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://directwebremoting.org/bugs/</url>
+  </issueManagement>   
+  <mailingLists>
+    <mailingList>
+      <name>Users Mailing List</name>
+      <subscribe>sympa@dwr.java.net?subject=subscribe users</subscribe>
+      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe users</unsubscribe>
+      <post>users@dwr.java.net</post>
+      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
+    </mailingList>
+    <mailingList>
+      <name>Users Mailing List</name>
+      <subscribe>sympa@dwr.java.net?subject=subscribe dev</subscribe>
+      <unsubscribe>sympa@dwr.java.net?subject=unsubscribe dev</unsubscribe>
+      <post>dev@dwr.java.net</post>
+      <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
+    </mailingList>
+  </mailingLists>     
+</project>

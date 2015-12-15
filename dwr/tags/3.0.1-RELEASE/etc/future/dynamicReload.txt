@@ -1,0 +1,165 @@
+The details for reloading the DWR configurations are as follows:
+
+As I saw it, there were 2 ways to go about adding a dynamic reloading
+behavior to DWR.  First, one can add behavior in DWRServlet where a thread
+occasionally checks to see if config files' timestamp has changed
+(indicating an update).  Second, one can provide an explicit facility to
+re-invoke the DWRServlet (thus reloading configurations).
+
+For my purpose, the 2nd option was a better fit.  The steps are as follows
+(using option 2).  In coming up with this solution, I needed to address 3
+issues.
+
+1. I needed to be able to access the DWRServlet within another class or
+servlet.
+
+2. I needed a way to cleanup the current DWRServlet instance.
+
+3. I needed to devise a way to explicitly invoke the reloading of the
+DWRServlet.
+
+The first two points required me to update DWR framework code.  I had to
+re-package the dwr.jar with the following changes to DWRServlet.  I suppose
+this would have also worked if DWRServlet was sub-classed and these were
+added to the sub-class (and the sub-class was used as the servlet for the
+application).
+
+- within the init method of the DWRServlet, after all initialization
+processing has taken place, I stored the current instance of DWRServlet in
+ServletContext.  The code snippet for this is pretty simple and looks
+something like the following:
+
+config.getServletContext().setAttribute("DWR_SERVLET", this);
+
+With this change, I now have convenient access to the DWR Servlet instance
+outside of the DWRServlet class or sub-class (consistent with the 1st issue
+mentioned).  <<mention that Struts does this>>
+
+The other change is:
+
+- added a destroy method in the DWRServlet.  The contents of the destroy
+method is as follows:
+
+public void destroy() {
+
+       processor= null;
+
+}
+
+DWR Javadocs indicate that the Processor class handles all of the request
+for DWR.  In addition, it seemed that it also has a handle to all major DWR
+objects related to the configurations.  Therefore, I figured that nullifying
+the Processor class with be enough (in cleaning up current DWR configs).
+With this change, I have convenient way to clean-up DWRServlet and related
+configuration objects (consistent with 2nd issue).
+
+To tie this all together (and consistent with the 3rd issue), I added a
+utility servlet which explicitly invokes the reloading of the DWRServlet.
+The contents of the utility servlet is as follows:
+
+public void service(HttpServletRequest req, HttpServletResponse res)
+               throws ServletException, IOException {
+
+
+       if (null !=
+req.getSession().getServletContext().getAttribute("DWR_SERVLET")) {
+
+               /** retrieve the DWRServlet for servlet context **/
+               DWRServlet dwrServlet =
+                               (DWRServlet) req.getSession().getServletContext().getAttribute(
+                                       "DWR_SERVLET");
+
+               /** call destroy() **/
+               dwrServlet.destroy();
+
+               /** call init() **/
+               dwrServlet.init(dwrServlet.getServletConfig());
+
+
+
+       }
+
+}
+
+This is all to it.  Now, when reloading of DWR configurations is desired,
+one would just have to invoke the utility servlet.  By the way, it should be
+noted that this facility is ONLY for the reloading/re-reading of the DWR
+configuration files and should not be confused with the re-compilation of
+recently updated classes.  The later is typically is a function of
+application servers.
+
+Joe - I have only been using DWR for a month or so (and nowhere near an
+expert).  The solution above seems to work fine for me.  Please verify (to
+ensure no serious side effects) and let me know what you think.
+
+
+Pat.
+
+
+--------------------------------------------------------------------------------
+
+About Dynamic Reconfiguration
+
+A month or so ago someone suggested a simple method of getting synamic reconfig to work and I said I'd take a look.
+
+My opinion is now that reconfiguration is not easy, and probably not worth it for 2.0. The issues are:
+- It's not as simple as layering the new config on top of the old because stuff you remove will still be left behind, and for some things this could be a cause for serious confusion.
+- Re-writing things like the security rules in a running system whilst leaving it always in a secure state is going to require all sorts of locks and checks.
+
+dwr.xml is not a big file, so I don't see that it will change that much. Sure reload would be useful and neat, but the issues above are serious impediments.
+
+Joe.
+
+
+--------------------------------------------------------------------------------
+/*
+ * Copyright 2005 Joe Walker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.ltd.getahead.dwr.impl;
+
+import uk.ltd.getahead.dwr.AccessControl;
+import uk.ltd.getahead.dwr.AjaxFilterManager;
+import uk.ltd.getahead.dwr.Configurator;
+import uk.ltd.getahead.dwr.Container;
+import uk.ltd.getahead.dwr.CreatorManager;
+import uk.ltd.getahead.dwr.dwrp.ConverterManager;
+
+/**
+ * Undoes the work done by any of the standard configurators.
+ * @author Joe Walker [joe at getahead dot ltd dot uk]
+ */
+public class DeConfigurator implements Configurator
+{
+    /* (non-Javadoc)
+     * @see uk.ltd.getahead.dwr.Configurator#configure(uk.ltd.getahead.dwr.Container)
+     */
+    public void configure(Container container)
+    {
+        AccessControl accessControl = (AccessControl) container.getBean(AccessControl.class.getName());
+        accessControl.removeAllRules();
+        accessControl.removeAllRoleRestrictions();
+
+        AjaxFilterManager ajaxFilterManager = (AjaxFilterManager) container.getBean(AjaxFilterManager.class.getName());
+        ajaxFilterManager.removeAllAjaxFilters();
+
+        ConverterManager converterManager = (ConverterManager) container.getBean(ConverterManager.class.getName());
+        converterManager.removeAllConverters();
+        converterManager.removeAllConverterTypes();
+
+        CreatorManager creatorManager = (CreatorManager) container.getBean(CreatorManager.class.getName());
+        creatorManager.removeAllCreators();
+        creatorManager.removeAllCreatorTypes();
+    }
+}
