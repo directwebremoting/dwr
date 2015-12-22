@@ -453,8 +453,8 @@ if (typeof dwr == 'undefined') dwr = {};
   dwr.engine._retryIntervals = [];
 
   /** Used as the default for reverse ajax/polling
-   *  Retry immediately twice with one second intervals between, then go offline.
-   *  Retry every 10 seconds when offline.
+   *  Retry immediately twice first with a one second interval, next with a 3 second interval, then go offline.
+   *  Therafter, retry every 3 seconds.
    */
   dwr.engine._defaultRetryIntervals = [ 1, 3, 3 ];
 
@@ -669,6 +669,10 @@ if (typeof dwr == 'undefined') dwr = {};
     }
 
     var batch = dwr.engine._batch;
+    if (dwr.engine._isHeartbeatBatch(batch)) {
+      // Heartbeats should fail fast.
+      batch.timeout = 750;
+    }
     // All the paths MUST be to the same servlet
     if (batch.path == null) {
       batch.path = path;
