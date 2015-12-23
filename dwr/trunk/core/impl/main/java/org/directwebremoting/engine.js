@@ -669,10 +669,7 @@ if (typeof dwr == 'undefined') dwr = {};
     }
 
     var batch = dwr.engine._batch;
-    if (dwr.engine._isHeartbeatBatch(batch)) {
-      // Heartbeats should fail fast.
-      batch.timeout = 750;
-    }
+
     // All the paths MUST be to the same servlet
     if (batch.path == null) {
       batch.path = path;
@@ -685,6 +682,11 @@ if (typeof dwr == 'undefined') dwr = {};
     }
 
     dwr.engine.batch.addCall(batch, scriptName, methodName, args);
+
+    if (dwr.engine._isHeartbeatBatch(batch)) {
+      // Heartbeats should fail fast.
+      batch.timeout = 750;
+    }
 
     // Now we have finished remembering the call, we increment the call count
     batch.map.callCount++;
