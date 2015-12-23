@@ -222,11 +222,11 @@ public abstract class BaseSleeper implements Sleeper
 
     private void doClose()
     {
-        close();
         if (onClose != null)
         {
             onClose.run();
         }
+        close();
     }
 
     public void setConverterManager(ConverterManager converterManager)
