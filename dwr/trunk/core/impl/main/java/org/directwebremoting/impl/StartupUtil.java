@@ -358,25 +358,46 @@ public class StartupUtil
         	Loggers.STARTUP.debug("A Compressor implemenation is not available. Details: " + ce, ce);
         }
 
-        String abstractionImplNames = container.getParameter(LocalUtil.originalDwrClassName(ContainerAbstraction.class.getName()));
-        Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImplNames);
+        Object value = container.getBean(LocalUtil.originalDwrClassName(ContainerAbstraction.class.getName()));
+        List<Object> abstractionImpls = new ArrayList<Object>();
+        if (value instanceof String)
+        {
+            Collections.addAll(abstractionImpls, ((String) value).replace(",", " ").split(" "));
+        }
+        else
+        {
+            abstractionImpls.add(value);
+        }
+        Loggers.STARTUP.debug("- Selecting a " + ContainerAbstraction.class.getSimpleName() + " from " + abstractionImpls);
 
-        abstractionImplNames = abstractionImplNames.replace(',', ' ');
-        for (String abstractionImplName : abstractionImplNames.split(" "))
+        for (Object abstractionImpl : abstractionImpls)
         {
             try
             {
-                if (abstractionImplName.trim().length() == 0)
+                if (abstractionImpl == null)
                 {
                     continue;
                 }
 
-                Class<ContainerAbstraction> abstractionImpl = (Class<ContainerAbstraction>) LocalUtil.classForName(abstractionImplName);
-                ContainerAbstraction abstraction = abstractionImpl.newInstance();
+                ContainerAbstraction abstraction;
+                if (abstractionImpl instanceof String)
+                {
+                    String abstractionImplName = (String) abstractionImpl;
+                    if (abstractionImplName.trim().length() == 0)
+                    {
+                        continue;
+                    }
+                    Class<ContainerAbstraction> abstractionClass = (Class<ContainerAbstraction>) LocalUtil.classForName(abstractionImplName);
+                    abstraction = abstractionClass.newInstance();                }
+                else
+                {
+                    abstraction = (ContainerAbstraction) abstractionImpl;
+                }
+
                 if (abstraction.isNativeEnvironment(servletConfig))
                 {
-                    Loggers.STARTUP.info("Starting: Using container abstraction " + abstractionImplName);
-                    container.addImplementation(ContainerAbstraction.class, abstractionImpl);
+                    Loggers.STARTUP.info("Starting: Using container abstraction " + abstraction.getClass().getName());
+                    container.addImplementation(ContainerAbstraction.class, abstraction.getClass());
 
                     String loadMonitorImplName = container.getParameter(LocalUtil.originalDwrClassName(ServerLoadMonitor.class.getName()));
                     if (loadMonitorImplName == null)
@@ -390,15 +411,15 @@ public class StartupUtil
             }
             catch (Exception ex)
             {
-                Loggers.STARTUP.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + abstractionImpl + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
             catch (NoClassDefFoundError ex)
             {
-                Loggers.STARTUP.debug("  - Can't use : " + abstractionImplName + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
+                Loggers.STARTUP.debug("  - Can't use : " + abstractionImpl + " to implement " + ContainerAbstraction.class.getName() + ". This is probably not an error unless you were expecting to use it. Reason: " + ex);
             }
         }
 
-        throw new ContainerConfigurationException("None of the configured ContainerAbstractions claims isNativeEnvironment=true. Implementations tested: " + abstractionImplNames);
+        throw new ContainerConfigurationException("None of the configured ContainerAbstractions claims isNativeEnvironment=true. Implementations tested: " + abstractionImpls);
     }
 
     /**
@@ -420,7 +441,14 @@ public class StartupUtil
             Loggers.STARTUP.debug(toResolveString + " is not available. Details: " + ex);
         }
 
-        String implNames = container.getParameter(toResolveString);
+        Object implObjs = container.getBean(toResolveString);
+        if (implObjs == null || ! (implObjs instanceof String))
+        {
+            // Found no value or instance that was already instantiated, do nothing
+            return;
+        }
+
+        String implNames = (String) implObjs;
         Loggers.STARTUP.debug("- Selecting a " + toResolveString + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
@@ -466,13 +494,20 @@ public class StartupUtil
     {
         ScriptSessionManager manager = container.getBean(ScriptSessionManager.class);
 
-        String implNames = container.getParameter(LocalUtil.originalDwrClassName(ScriptSessionListener.class.getName()));
-        if (implNames == null)
+        Object scriptSessionListenerClasses = container.getBean(LocalUtil.originalDwrClassName(ScriptSessionListener.class.getName()));
+        if (scriptSessionListenerClasses == null)
         {
             Loggers.STARTUP.debug("- No implementations of " + ScriptSessionListener.class.getSimpleName() + " to register");
             return;
         }
 
+        if (! (scriptSessionListenerClasses instanceof String))
+        {
+            // Found instance that was already instantiated, do nothing
+            return;
+        }
+
+        String implNames = (String) scriptSessionListenerClasses;
         Loggers.STARTUP.debug("- Creating list of " + ScriptSessionListener.class.getSimpleName() + " from " + implNames);
 
         implNames = implNames.replace(',', ' ');
