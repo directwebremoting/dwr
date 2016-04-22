@@ -73,7 +73,7 @@ public class UrlProcessor implements Handler, InitializingBean
                 }
                 else if (bean instanceof String)
                 {
-                    log.info("Probably not an issue: the " + name + " (" + bean + ") Handler is not available. This is only an problem if you wanted to use it.");
+                    log.debug("Probably not an issue: the " + name + " (" + bean + ") Handler is not available. This is only a problem if you wanted to use it.");
                 }
                 else
                 {
