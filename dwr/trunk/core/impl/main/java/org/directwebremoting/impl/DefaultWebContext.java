@@ -132,7 +132,7 @@ public class DefaultWebContext extends DefaultServerContext implements RealWebCo
         HttpServletRequest realRequest = getHttpServletRequest();
         realRequest.setAttribute(ATTRIBUTE_DWR, Boolean.TRUE);
 
-        getServletContext().getRequestDispatcher(url).forward(realRequest, fakeResponse);
+        getServletContext().getRequestDispatcher(url).include(realRequest, fakeResponse);
 
         return buffer.toString();
     }
