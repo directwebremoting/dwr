@@ -18,6 +18,7 @@ package org.directwebremoting.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -35,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * need to extend that.
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
-public final class SwallowingHttpServletResponse extends HttpServletResponseWrapper implements HttpServletResponse
+public final class SwallowingHttpServletResponse implements HttpServletResponse
 {
     /**
      * Create a new HttpServletResponse that allows you to catch the body
@@ -45,8 +46,6 @@ public final class SwallowingHttpServletResponse extends HttpServletResponseWrap
      */
     public SwallowingHttpServletResponse(HttpServletResponse response, Writer sout, String characterEncoding)
     {
-        super(response);
-
         pout = new PrintWriter(sout);
         outputStream = new WriterOutputStream(sout, characterEncoding);
 
@@ -355,6 +354,69 @@ public final class SwallowingHttpServletResponse extends HttpServletResponseWrap
         status = newStatus;
         errorMessage = newErrorMessage;
         log.warn("Ignoring call to setStatus(" + newStatus + ", " + newErrorMessage + ')');
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#encodeURL(java.lang.String)
+     */
+    @Override
+    public String encodeURL(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#encodeRedirectURL(java.lang.String)
+     */
+    @Override
+    public String encodeRedirectURL(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#encodeUrl(java.lang.String)
+     */
+    @Override
+    public String encodeUrl(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#encodeRedirectUrl(java.lang.String)
+     */
+    @Override
+    public String encodeRedirectUrl(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#getHeader(java.lang.String)
+     */
+    @Override
+    public String getHeader(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#getHeaders(java.lang.String)
+     */
+    @Override
+    public Collection<String> getHeaders(String paramString)
+    {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServletResponse#getHeaderNames()
+     */
+    @Override
+    public Collection<String> getHeaderNames()
+    {
+        return null;
     }
 
     /**
