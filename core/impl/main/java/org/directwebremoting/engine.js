@@ -1786,14 +1786,14 @@ if (typeof dwr == 'undefined') dwr = {};
             }
             dwr.engine._handleError(batch, { name:"dwr.engine.http." + status, message:statusText });
           }
+
+          if (toEval != null) toEval = toEval.replace(dwr.engine._scriptTagProtection, "");
+          dwr.engine._executeScript(toEval);
+          dwr.engine.transport.complete(batch);
+
         } catch (ex2) {
           dwr.engine._handleError(batch, ex2);
         }
-
-        // Outside of the try/catch so errors propagate normally:
-        if (toEval != null) toEval = toEval.replace(dwr.engine._scriptTagProtection, "");
-        dwr.engine._executeScript(toEval);
-        dwr.engine.transport.complete(batch);
       },
 
       /**
