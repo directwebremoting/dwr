@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+    xsi:schemaLocation="
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd"
+               default-lazy-init="false"
+               >
+
+    <!--  AJAX Facades -->
+    <dwr:configuration>
+
+        <dwr:convert type="bean" class="org.directwebremoting.spring.TestIncludesBean"  >
+            <dwr:include method="includedProperty" />
+        </dwr:convert>
+        
+        <dwr:convert type="bean" class="org.directwebremoting.spring.TestExcludesBean"  >
+            <dwr:exclude method="excludedProperty" />
+            <!-- Not applicable for bean converter types
+            <dwr:force value="true" />
+             -->
+        </dwr:convert>
+         
+         <dwr:convert type="bean" class="org.directwebremoting.spring.Check" />
+         
+        <!-- 
+            To make this more explicit. I was thinking of a syntax something like this (not really sure if this is 
+            better though as it just leads to explosion of XML defs...
+            
+            <dwr:signature class="com.example.Check">
+                <dwr:method name="setLotteryResults" >
+                    <dwr:arg index="0" type="List<Integer>" />
+                </dwr:method>
+                .. more methods
+            </dwr:signature>
+            
+            ... more signature definitions
+        -->
+        <dwr:signatures>
+                <![CDATA[ 
+                  import java.util.List;
+                  import org.directwebremoting.spring.Check;
+                  Check.setLotteryResults(List<Integer> nos);
+                  ]]>
+        </dwr:signatures>
+         
+    </dwr:configuration>
+
+</beans>

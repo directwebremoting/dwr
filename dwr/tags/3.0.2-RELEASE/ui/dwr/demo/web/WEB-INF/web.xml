@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC
+    "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app id="dwr">
+
+  <display-name>DWR (Direct Web Remoting)</display-name>
+  <description>A Simple Demo DWR</description>
+
+  <listener>
+    <listener-class>org.directwebremoting.servlet.DwrListener</listener-class>
+  </listener>
+  
+  <servlet>
+    <servlet-name>dwr-invoker</servlet-name>
+    <display-name>DWR Servlet</display-name>
+    <description>Direct Web Remoter Servlet</description>
+    <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+	
+	<init-param>
+     <param-name>fileUploadMaxBytes</param-name>
+     <param-value>25000</param-value>
+    </init-param>
+	
+    <!-- This should NEVER be present in live -->
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  
+	<init-param>
+      <param-name>accessLogLevel</param-name>
+      <param-value>runtimeexception</param-value>
+    </init-param>
+    
+    <!-- Remove this unless you want to use active reverse ajax -->
+    <init-param>
+      <param-name>activeReverseAjaxEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- By default DWR creates application scope objects when they are first
+    used. This creates them when the app-server is started -->
+    <init-param>
+      <param-name>initApplicationScopeCreatorsAtStartup</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- WARNING: allowing JSON-RPC connections bypasses much of the security
+    protection that DWR gives you. Take this out if security is important -->
+    <init-param>
+      <param-name>jsonRpcEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- WARNING: allowing JSONP connections bypasses much of the security
+    protection that DWR gives you. Take this out if security is important -->
+    <init-param>
+      <param-name>jsonpEnabled</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <!-- data: URLs are good for small images, but are slower, and could OOM for
+    larger images. Leave this out (or keep 'false') for anything but small images -->
+    <init-param>
+      <param-name>preferDataUrlSchema</param-name>
+      <param-value>false</param-value>
+    </init-param>
+
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+   
+  <servlet-mapping>
+    <servlet-name>dwr-invoker</servlet-name>
+    <url-pattern>/dwr/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>

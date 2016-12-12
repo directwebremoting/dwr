@@ -1,0 +1,68 @@
+Index: main/java/org/testdwr/plain/Test.java
+===================================================================
+--- main/java/org/testdwr/plain/Test.java	(revision 2559)
++++ main/java/org/testdwr/plain/Test.java	(working copy)
+@@ -82,6 +82,7 @@
+ import org.testdwr.convert.ObjectWithLightClassMapping;
+ import org.testdwr.convert.OnePackage;
+ import org.testdwr.convert.TwoPackages;
++import org.testdwr.convert.VeryDeepBean;
+ import org.testdwr.event.Test2ScriptSessionListener;
+ import org.testdwr.event.TestScriptSessionListener;
+ import org.xml.sax.SAXParseException;
+@@ -837,6 +838,9 @@
+         return lightObj.getClass().getName();
+     }
+ 
++    /**
++     * Tests properties that omit the setter.
++     */
+     public ConcreteIFace readOnlyProperty()
+     {
+         return new ConcreteIFace() {{
+@@ -845,6 +849,14 @@
+         }};
+     }
+ 
++    /**
++     * Tests outbound conversion limits.
++     */
++    public VeryDeepBean depthConversion()
++    {
++        return new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(new VeryDeepBean(null)))))))))))));
++    }
++
+     public void throwMapped() throws MyFancyException
+     {
+         throw new MyFancyException("fancy");
+Index: main/web/testMarshall.js
+===================================================================
+--- main/web/testMarshall.js	(revision 2559)
++++ main/web/testMarshall.js	(working copy)
+@@ -803,4 +803,11 @@
+         assertEqual(data.fieldAbstract, 5.0)
+         assertEqual(data.fieldReadOnly, "readOnly")
+     }));
+-}
++};
++
++window.testMarshallOutboundConversionLimits = function() {
++	Test.depthConversion(createOptions(function(data) {
++	    assertNotNull(data.nextLevel);
++	    assertNull(data.nextLevel.nextLevel.nextLevel.nextLevel.nextLevel.nextLevel);
++	}));
++};
+\ No newline at end of file
+Index: main/web/WEB-INF/dwr.xml
+===================================================================
+--- main/web/WEB-INF/dwr.xml	(revision 2559)
++++ main/web/WEB-INF/dwr.xml	(working copy)
+@@ -38,6 +38,8 @@
+     <convert match="org.testdwr.convert.OnePackage" converter="object" javascript="pkg1.OnePackage"/>
+     <convert match="org.testdwr.convert.TwoPackages" converter="object" javascript="pkg1.pkg2.TwoPackages"/>
+ 
++	<convert match="org.testdwr.convert.VeryDeepBean" converter="bean" javascript="VeryDeepBean"/>
++
+     <convert match="org.testdwr.convert.MyFancyException" converter="exception" javascript="MyFancyException"/>
+     <convert match="org.testdwr.convert.MyFancyExceptionInPackage" converter="exception" javascript="pkg1.MyFancyExceptionInPackage"/>
+ 

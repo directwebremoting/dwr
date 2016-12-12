@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html><head><title>Ajax Search Demo</title>
+
+
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <script type="text/javascript" src="../jquery-1.3.2.min.js"> </script>
+  <script type="text/javascript" src="../jquery.json-1.3.min.js"> </script>
+  <script type="text/javascript" src="../../../dwr/util.js"> </script>
+  <script type="text/javascript" src="../../../tabs/tabs.js"> </script>
+  <script type="text/javascript" src="search.js"> </script>
+  <link rel="stylesheet" type="text/css" href="../../../tabs/tabs.css" />
+  <link rel="stylesheet" type="text/css" href="../../../generic.css" />
+  <style type="text/css">
+  .highlight { color:#F33; }
+  </style></head><body onload="init();">
+<div id="page-title">[
+  <a href="http://directwebremoting.org/dwr/">DWR Website</a> |
+  <a href="../../../">Web Application Index</a>
+]</div>
+
+<h1>Ajax Search Demo</h1>
+
+<p>This demo allows you to filter the data in a table.</p>
+
+<ul id="tabList">
+  <li><a href="#" tabid="demoDiv">Demo</a></li>
+  <li><a href="#" tabid="explainDiv">How it works</a></li>
+  <li><a href="#" tabid="sourceDiv">Source</a></li>
+</ul>
+
+<div id="tabContents">
+
+  <div id="demoDiv">
+
+    <p>Search: <input id="filter" onkeyup="filterChanged();" /></p>
+    <table class="rowed grey" border="1">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody id="peoplebody">
+      </tbody>
+    </table>
+
+  </div>
+
+  <div id="explainDiv">
+    <h2>Search Demo</h2>
+    <p>On each change to the filter field we either call the server function
+    <code>People.getMatchingFromLargeCrowd()</code> to find matches, or, if
+    we have already found a set of matches, we filter that set if this makes
+    sense.</p>
+
+    <p>The server code simply searches the data using a RegEx.</p>
+
+<pre>public List&lt;Person&gt; getMatchingFromLargeCrowd(String filter)<br />{<br />    List&lt;Person&gt; reply = new ArrayList&lt;Person&gt;();<br />    Pattern regex = Pattern.compile(filter, Pattern.CASE_INSENSITIVE);<br />    for (Person person : largeCrowd.values())<br />    {<br />        if (regex.matcher(person.getName()).find())<br />        {<br />            reply.add(person);<br />        }<br />    }<br />    return reply;<br />}<br /></pre>
+
+    <p>Found rows are added to the page using <code>dwr.util.addRows</code>:</p>
+
+<pre>dwr.util.addRows("peoplebody", filtered, [<br />  function(person) { return person.name.replace(pattern, "<span class="highlight">$1</span>"); },<br />  function(person) { return "$" + person.age; },<br />  function(person) { return person.address; }<br />], { escapeHtml:false });<br /></pre>
+
+    <p>We use <code>person.name.replace</code> to highlight the matches.</p>
+
+  </div>
+
+  <div id="sourceDiv">
+
+<h2>HTML source:</h2>
+<pre>&lt;p&gt;Search: &lt;input id="filter" onkeyup="filterChanged();"/&gt;&lt;/p&gt;<br />&lt;table border="1" class="rowed grey"&gt;<br />  &lt;thead&gt;<br />    &lt;tr&gt;<br />      &lt;th&gt;Name&lt;/th&gt;<br />      &lt;th&gt;Age&lt;/th&gt;<br />      &lt;th&gt;Address&lt;/th&gt;<br />    &lt;/tr&gt;<br />  &lt;/thead&gt;<br />  &lt;tbody id="peoplebody"&gt;<br />  &lt;/tbody&gt;<br />&lt;/table&gt;<br /></pre>
+
+<h2>Javascript source:</h2><span style="font-family: monospace;">function init() {<br />
+&nbsp; Tabs.init('tabList', 'tabContents');<br />
+&nbsp; dwr.util.setValue("filter", "");<br />
+&nbsp; addSingleRow("peoplebody", "Please enter a search filter");<br />
+}<br />
+<br />
+var peopleCache = [ ];<br />
+var lastFilter = "";<br />
+<br />
+function fillTable(people) {<br />
+&nbsp; people = people.reply;<br />
+&nbsp; var filter = dwr.util.getValue("filter");<br />
+&nbsp; var pattern = new RegExp("(" + filter + ")", "i");<br />
+&nbsp; var filtered = [];<br />
+&nbsp; for (i = 0; i &lt; people.length; i++) {<br />
+&nbsp;&nbsp;&nbsp; if (pattern.test(people[i].name)) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; filtered.push(people[i]);<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp; }<br />
+&nbsp; dwr.util.removeAllRows("peoplebody");<br />
+&nbsp; if (filtered.length == 0) {<br />
+&nbsp;&nbsp;&nbsp; addSingleRow("peoplebody", "No matches");<br />
+&nbsp; }<br />
+&nbsp; else {<br />
+&nbsp;&nbsp;&nbsp; dwr.util.addRows("peoplebody", filtered, [<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; function(person) { return
+person.name.replace(pattern, "&lt;span
+class='highlight'&gt;$1&lt;/span&gt;"); },<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; function(person) { return person.age; },<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; function(person) { return person.address; }<br />
+&nbsp;&nbsp;&nbsp; ], { escapeHtml:false });<br />
+&nbsp; }<br />
+&nbsp; peopleCache = people;<br />
+}<br />
+<br />
+function filterChanged() {<br />
+&nbsp; var filter = dwr.util.getValue("filter");<br />
+&nbsp; if (filter.length == 0) {<br />
+&nbsp;&nbsp;&nbsp; dwr.util.removeAllRows("peoplebody");<br />
+&nbsp;&nbsp;&nbsp; addSingleRow("peoplebody", "Please enter a search filter");<br />
+&nbsp; }<br />
+&nbsp; else {<br />
+&nbsp;&nbsp;&nbsp; if (filter.charAt(0) == lastFilter.charAt(0)) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var people = {};<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; people.reply = peopleCache;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; fillTable(reply);<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; else {<br />
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; $.post("../../../dwr/jsonp/People/getMatchingFromLargeCrowd/" + filter.charAt(0), { },<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; fillTable, "json");<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp; }<br />
+&nbsp; lastFilter = filter;<br />
+}<br />
+<br />
+function addSingleRow(id, message) {<br />
+&nbsp; dwr.util.addRows(id, [1], [<br />
+&nbsp;&nbsp;&nbsp; function(data) { return message; }<br />
+&nbsp; ], {<br />
+&nbsp;&nbsp;&nbsp; cellCreator:function() {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var td = document.createElement("td");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; td.setAttribute("colspan", 3);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return td;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp; });<br />
+}<br />
+</span>
+<h2>web.xml</h2>
+
+<p>Note: In order to enable JSON/JSONP you must
+add the following init-param to your DWR servlet definition in your
+web.xml (This is a snippet and is not a complete web.xml).</p>
+
+<pre><code><br />   ...<br />  &lt;servlet&gt;<br />    &lt;servlet-name&gt;dwr-invoker&lt;/servlet-name&gt;<br />    &lt;display-name&gt;DWR Servlet&lt;/display-name&gt;<br />    &lt;description&gt;Direct Web Remoter Servlet&lt;/description&gt;<br />    &lt;servlet-class&gt;org.directwebremoting.servlet.DwrServlet&lt;/servlet-class&gt;<br />    &lt;init-param&gt;<br />     &lt;param-name&gt;jsonpEnabled&lt;/param-name&gt;<br />     &lt;param-value&gt;true&lt;/param-value&gt;<br />    &lt;/init-param&gt;<br />    ...	<br />    </code></pre>
+
+<h2>dwr.xml</h2>
+
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;!DOCTYPE dwr PUBLIC<br />    "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN"<br />    "http://getahead.org/dwr/dwr20.dtd"&gt;<br /><br />&lt;dwr&gt;<br />  &lt;allow&gt;<br />    &lt;create creator="new" javascript="People" scope="script"&gt;<br />      &lt;param name="class" value="org.getahead.dwrdemo.people.People"/&gt;<br />    &lt;/create&gt;<br />    &lt;convert match="org.getahead.dwrdemo.people.Person" converter="bean"/&gt;<br />  &lt;/allow&gt;<br />&lt;/dwr&gt;</pre>
+<br />
+</div>
+
+</div>
+
+</body></html>
