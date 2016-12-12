@@ -15,7 +15,7 @@
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="org.directwebremoting" />
 	<property name="artifactId" value="dwr" />
-	<property name="version" value="3.0.2-SNAPSHOT" />
+	<property name="version" value="3.0.2-RELEASE" />
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
@@ -26,7 +26,7 @@
 
 	<!-- defined maven snapshots and staging repository id and url -->
 	<property name="maven-repository-id" value="ossrh" />
-	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />	
+	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
 	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 	<!-- End Properties for Maven -->
 

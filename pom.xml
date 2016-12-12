@@ -4,7 +4,7 @@
   <groupId>org.directwebremoting</groupId>
   <artifactId>dwr</artifactId>
   <packaging>pom</packaging>
-  <version>3.0.2-SNAPSHOT</version>
+  <version>3.0.2-RELEASE</version>
   <name>Direct Web Remoting</name>
   <url>http://directwebremoting.org/dwr/index.html</url>
   <!-- For the sonatype repo -->
@@ -14,7 +14,7 @@
     <version>6</version>
   </parent>
   <!-- Required so that Maven knows where to get the jms.jar http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html -->
-  <repositories>  
+  <repositories>
     <repository>
       <id>repository.jboss.org-public</id>
       <name>JBoss repository</name>
@@ -49,11 +49,11 @@
   <ciManagement>
     <system>Bamboo</system>
     <url>http://ci.directwebremoting.org/bamboo/</url>
-  </ciManagement>  
+  </ciManagement>
   <issueManagement>
     <system>Jira</system>
     <url>http://directwebremoting.org/bugs/</url>
-  </issueManagement>   
+  </issueManagement>
   <mailingLists>
     <mailingList>
       <name>Users Mailing List</name>
@@ -69,5 +69,5 @@
       <post>dev@dwr.java.net</post>
       <archive>http://dwr.2114559.n2.nabble.com/DWR-Users-f2114559.html</archive>
     </mailingList>
-  </mailingLists>     
+  </mailingLists>
 </project>
