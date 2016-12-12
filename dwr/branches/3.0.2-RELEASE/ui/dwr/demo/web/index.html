@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>DWR - Test Home</title>
+  <script type='text/javascript' src='dwr/engine.js'></script>
+  <script type='text/javascript' src='dwr/util.js'></script>
+  <script type='text/javascript' src='dwr/interface/Intro.js'></script>
+  <script>
+    function init() {
+      // This turns off the no-javascript message
+      document.getElementById("start").style.display = "none";
+      // This checks for file: URLs and loading problems
+      if (window.dwr == null || window.dwr.engine == null || window.dwr.util == null) {
+        document.getElementById("file").style.display = "block";
+        return;
+      }
+      dwr.util.useLoadingMessage();
+      // Turn on the generic error div
+      dwr.util.byId("error").style.display = "block";
+      // Load a message from the server
+      Intro.getInsert(load);
+    }
+
+    function load(data) {
+      dwr.util.byId("error").style.display = "none";
+      dwr.util.setValue("reply", data[0], { escapeHtml:false });
+      dwr.util.setValue("version", "(Version " + data[1] + ")");
+      dwr.util.byId("reply").style.display = "block";
+    }
+  </script>
+  <link rel="stylesheet" type="text/css" href="generic.css" />
+</head>
+
+<body onload="init()">
+
+<div id="page-title">[
+  <a href="http://directwebremoting.org/dwr/index.html">DWR Website</a>
+]</div>
+
+<div style="float:right;"><a href="http://directwebremoting.org/dwr/"><img src="logo.gif"/></a></div>
+
+<h1>Welcome to DWR <small id="version"></small></h1>
+
+<p>DWR is an Ajax remoting framework for Java to make it easy for web pages to
+interact with Java classes.</p>
+
+<div id="sidebar">
+  <h2>Internet Links</h2>
+  <ul>
+    <li>The main <a href="http://directwebremoting.org/dwr/index.html"><strong>DWR</strong> website</a>:</li>
+    <ul>
+      <li><a href="http://directwebremoting.org/dwr/introduction/index.html">Overview</a></li>
+      <li><a href="http://directwebremoting.org/dwr/documentation/index.html">Documentation</a></li>
+      <li><a href="http://directwebremoting.org/dwr/download.html">Download</a></li>
+      <li><a href="http://directwebremoting.org/dwr/support.html">Support / Mailing lists</a></li>
+      <li><a href="http://directwebremoting.org/dwr/development/index.html">DWR Development</a></li>
+      <li><a href="http://directwebremoting.org/dwr/server/index.html">Javadoc / Generated Docs</a></li>
+    </ul>    
+  </ul>
+</div>
+
+<div id="body">
+  <h2>Inside this Demo</h2>
+  <p>The generated <a href='dwr/'>configuration / test pages</a> show how DWR is setup.</p>
+  <p>Documented examples of how DWR works:</p>
+  <ul>
+    <li><strong>Getting Started</strong> with DWR:</li>
+    <ul>
+      <li>First steps: Start with <a href="simple/text.html">updating some simple text</a> and then <a href="simple/resource.html">including one page in another</a></li>
+      <li>More visual: <a href="people/edit.html">Editable Table</a> allows a user to edit a table of data, or you can <a href="people/search.html">search similar data</a></li>
+    </ul>
+    <li>Using <strong>JSONP</strong> with jQuery - DWR supports JSONP and JSON-RPC in these demos we integrate jQuery with DWR:</li>
+     <ul>
+      <li>First steps: Start with <a href="json/jQuery/simple/text.html">updating some simple text</a>.</li>
+      <!-- Line below commented until we fix JSON -->
+      <!--<li>More visual: <a href="json/jQuery/people/edit.html">Editable Table</a> allows a user to edit a table of data, or you can <a href="json/jQuery/people/search.html">search similar data</a></li>-->
+      <!-- Uncomment the above line and remove the line below when JSON is fixed -->
+      <li><a href="json/jQuery/people/search.html">Searchable Table</a> allows a user to search a table of data</a>.</li>
+    </ul>
+    <li>Using <strong>Reverse Ajax</strong> to broadcast data:</li>
+    <ul>
+      <li><a href="reverseajax/clock.html">Server-Side Clock</a>: A clock that is updated by the server using Reverse Ajax. Demonstrates access from a non-http thread.</li>
+      <li><a href="reverseajax/peopleTable.html">Table Update</a> A table that is updated by the server using Reverse Ajax.  Demonstrates how to filter a page so that only certain users receive updates (based on an attribute in the ScriptSession).</li> 
+      <li>Chat examples, one with the logic in <a href="reverseajax/javascript-chat.html">JavaScript</a>, and the other with logic in <a href="reverseajax/java-chat.html">Java</a></li>
+    </ul>
+    <li><strong>Binary</strong> file handling:</li>
+    <ul>
+      <li><a href="simple/upload.html">File upload</a> is easy - this example shows image manipulation</li>
+      <li><a href="simple/download.html">Download</a> is just as easy - this time with custom PDF generation</li>
+    </ul>
+    <li>Integration with the <strong>Dojo Toolkit</strong>:</li>
+    <ul>
+      <li>The <a href="json/dojo/simple/text.html">JSON-RPC demo</a> (see above) uses Dojo APIs</li>
+    </ul>    
+  </ul>
+</div>
+
+<div id="check"> </div>
+
+<div id="start">
+  <p><strong>DWR is testing installation ...</strong></p>
+  <p>
+    DWR uses JavaScript to make some initial checks. If you can see this message
+    then either you are a very fast reader, or JavaScript is not working
+    properly in your browser.
+  </p>
+  <p>
+    Since AJAX requires JavaScript, you will need to enable JavaScript in your
+    browser before you can test DWR. Some very old browsers like IE 4.0 have
+    very out of date support for JavaScript and are currently unsupported.
+    Please upgrade your browser.
+  </p>
+</div>
+
+<div id="reply" style="display:none;">
+  <p><strong>DWR is partially working</strong></p>
+  <p>
+    DWR has received test data from the server, however for some reason this
+    data was mangled. Please report this error to the
+    <a href="http://directwebremoting.org/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the JavaScript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+<div id="file" style="display:none;">
+  <p><strong>Missing DWR JavaScript Functions</strong></p>
+  <p>
+    This is a fairly advanced page that tests DWR to check that everything is
+    setup properly for you.
+  </p>
+  <p>
+    It appears that you may be attempting to run DWR outside a servlet container
+    (possibly using a file: URL), or that the servlet engine has failed to load
+    the DWR servlet.
+  </p>
+  <p>
+    The problem is that this page failed to load resources from DWR. You might
+    try visiting the DWR <a href='dwr/'>configuration/test pages</a> to see
+    what happens when you access DWR directly. Pay careful attention to error
+    messages on the app-server console in trying to diagnose what is wrong. 
+  </p>
+  <p>
+    Also there could be an issue with your browser. Try viewing this page in a
+    different browser, particularly try a browser with a JavaScript console.
+    Errors reported in the JavaScript console could help diagnose the problem.
+  </p>
+  <p>
+    If this is not the cause of the problem, please report it to the
+    <a href="http://directwebremoting.org/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the JavaScript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+<div id="error" style="display:none;">
+  <p><strong>DWR is testing installation ...</strong></p>
+  <p>
+    This is a fairly advanced page that tests DWR. If you can see this message
+    for a prolonged period of time then you should check the following:
+  </p>
+  <ul>
+    <li>
+      Can you see the <a href="dwr/">test pages</a>?<br/>
+      If not it is likely that DWR has not deployed in your web server properly;
+      Check the web server console and log files for error messages.
+    </li>
+    <li>
+      If you can see the <a href="dwr/">test pages</a> then DWR is loaded but is
+      something is preventing DWR working. Check your browser JavaScript console
+      for error messages, or see the <a href="http://directwebremoting.org">main
+      DWR website</a> for more information.
+    </li>
+  </ul>
+  <p>
+    If none of these steps fixes the error, please report it to the
+    <a href="http://directwebremoting.org/dwr/support">DWR mailing list</a>, including
+    your browser, server, OS configuration and any error messages that appeared
+    either in the browser (including the JavaScript console if one exists) and
+    the server console log.
+  </p>
+</div>
+
+</body>
+</html>
