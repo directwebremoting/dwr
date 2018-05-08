@@ -1666,7 +1666,7 @@ if (typeof dwr == 'undefined') dwr = {};
           };
         }
 
-        httpMethod = dwr.engine.transport.xhr.httpMethod;
+        var httpMethod = dwr.engine.transport.xhr.httpMethod;
 
         batch.mode = batch.isPoll ? dwr.engine._ModePlainPoll : dwr.engine._ModePlainCall;
         var request = dwr.engine.batch.constructRequest(batch, httpMethod);
