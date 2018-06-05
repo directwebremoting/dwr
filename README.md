@@ -1,7 +1,7 @@
 # DWR - Direct Web Remoting
 
 DWR is a Java library that enables Java on the server and JavaScript in a browser to interact and call each other as simply as possible.
-DWR is Easy Ajax for Java.
+DWR is Easy Ajax for Java. See http://directwebremoting.org.
 
 ## Building DWR
 
