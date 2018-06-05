@@ -130,6 +130,10 @@ public abstract class BaseDwrpHandler implements Handler
         {
             return;
         }
+        if (!request.isRequestedSessionIdValid())
+        {
+            return;
+        }
 
         // Register DWRSESSIONID on the way out in case HttpSession was created/changed
         updateRegisteredDwrSession(sess, batch);
