@@ -189,7 +189,7 @@
 				<fileset dir="${target.root}/lib" includes="**/*.jar" />
 			</classpath>
 			<package name="org.directwebremoting.*" />
-			<footer>Copyright &#168; 2008</footer>
+			<footer>Copyright &#168; 2005 JS Foundation</footer>
 		</javadoc>
 		<!-- Jar docs for Maven release -->
 		<jar jarfile="${dwr-maven-javadoc-jar}">
