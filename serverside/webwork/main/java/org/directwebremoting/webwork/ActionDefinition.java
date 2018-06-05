@@ -1,4 +1,3 @@
-
 package org.directwebremoting.webwork;
 
 /**
