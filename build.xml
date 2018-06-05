@@ -21,7 +21,6 @@
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
 	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
-	<property name="dwr-maven-noncla-jar" value="${dist}/lib/${artifactId}-${version}-noncla.jar" />
 	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 
 	<!-- defined maven snapshots and staging repository id and url -->
@@ -111,12 +110,6 @@
 		</jar>
 		<!-- Copy jar for Maven deploy/release -->
 		<copy file="${target.root}/dwr.jar" tofile="${dwr-maven-jar}" />
-		<build target="${target.root}/classes/noncla" include="${target.root}" modules="noncla/various" />
-		<jar destfile="${target.root}/dwr-noncla.jar" compress="true">
-			<fileset dir="${target.root}/classes/noncla/classes/main" />
-		</jar>
-		<!-- Copy jar for Maven deploy/release -->
-		<copy file="${target.root}/dwr-noncla.jar" tofile="${dwr-maven-noncla-jar}" />
 	</target>
 
 	<!--=======================================================================-->
@@ -181,7 +174,6 @@
 				<pathelement path="${source.root}/core/api/main/java" />
 				<pathelement path="${source.root}/core/impl/main/java" />
 				<pathelement path="${source.root}/core/legacy/main/java" />
-				<pathelement path="${source.root}/noncla/various/main/java" />
 				<pathelement path="${source.root}/protocol/dwrp/main/java" />
 				<pathelement path="${source.root}/protocol/json/main/java" />
 				<pathelement path="${source.root}/serverside/guice/main/java" />
@@ -511,8 +503,8 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Djavadoc=${dwr-maven-javadoc-jar}" />
 			<arg value="-Dsources=${dwr-maven-sources-jar}" />
-			<arg value="-Dfiles=${dwr-maven-noncla-jar},${dwr-maven-jdk14-jar}" />
-			<arg value="-Dclassifiers=noncla,jdk14" />
+			<arg value="-Dfiles=${dwr-maven-jdk14-jar}" />
+			<arg value="-Dclassifiers=jdk14" />
 			<arg value="-Dtypes=jar,jar" />
 		</artifact:mvn>
 	</target>
@@ -549,16 +541,6 @@
 			<arg value="-DpomFile=pom.xml" />
 			<arg value="-Dfile=${dwr-maven-javadoc-jar}" />
 			<arg value="-Dclassifier=javadoc" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-Pgpg" />
-		</artifact:mvn>
-		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-maven-noncla-jar}" />
-			<arg value="-Dclassifier=noncla" />
 			<arg value="-Dpackaging=jar" />
 			<arg value="-Pgpg" />
 		</artifact:mvn>

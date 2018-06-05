@@ -89,9 +89,6 @@
 	<classpathentry kind="src" output="target/eclipse/main/classes" path="ui/dwr/main/java"/>
 	<classpathentry kind="src" output="target/eclipse/demo/classes" path="ui/dwr/demo/java"/>
 	<classpathentry kind="lib" path="core/impl/lib/joda-time-1.6.jar"/>
-	<classpathentry kind="lib" path="noncla/various/lib/myfaces-api-2.0.2.jar"/>
-	<classpathentry kind="lib" path="noncla/various/lib/el-api.jar"/>
-	<classpathentry kind="src" output="target/eclipse/main/classes" path="noncla/various/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="core/api/lib/jetty-continuation-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/javax.servlet-api-3.0.jar"/>
