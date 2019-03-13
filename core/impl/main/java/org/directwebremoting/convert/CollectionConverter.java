@@ -18,7 +18,6 @@ import org.directwebremoting.extend.AbstractConverter;
 import org.directwebremoting.extend.ArrayOutboundVariable;
 import org.directwebremoting.extend.ConvertUtil;
 import org.directwebremoting.extend.ConverterManager;
-import org.directwebremoting.extend.ErrorOutboundVariable;
 import org.directwebremoting.extend.InboundVariable;
 import org.directwebremoting.extend.OutboundContext;
 import org.directwebremoting.extend.OutboundVariable;
@@ -193,17 +192,7 @@ public class CollectionConverter extends AbstractConverter
             Object member = it.next();
             OutboundVariable nested;
 
-            try
-            {
-                nested = converterManager.convertOutbound(member, outctx);
-            }
-            catch (Exception ex)
-            {
-                String errorMessage = "Conversion error for " + data.getClass().getName() + ".";
-                log.warn(errorMessage, ex);
-
-                nested = new ErrorOutboundVariable(errorMessage);
-            }
+            nested = converterManager.convertOutbound(member, outctx);
 
             ovs.add(nested);
         }
