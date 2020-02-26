@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.directwebremoting.spring.BeanCreator;
 import org.directwebremoting.spring.CreatorConfig;
+import org.directwebremoting.spring.LocalClassUtils;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -37,7 +38,7 @@ public class RemoteDecorator extends CreatorParserHelper implements BeanDefiniti
             {
                 throw new FatalBeanException("Unabled to find type for beanName '" + name + "'. " + "Check your bean has a correctly configured parent or provide a class for " + " the bean definition");
             }
-            beanCreator.addPropertyValue("beanClass", ClassUtils.forName(beanClassName, ClassUtils.getDefaultClassLoader()));
+            beanCreator.addPropertyValue("beanClass", LocalClassUtils.forName(beanClassName, ClassUtils.getDefaultClassLoader()));
         }
         catch (ClassNotFoundException e)
         {

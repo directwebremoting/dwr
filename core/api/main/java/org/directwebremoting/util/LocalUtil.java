@@ -1181,8 +1181,19 @@ public final class LocalUtil
         try {
             clazz = Thread.currentThread().getContextClassLoader().loadClass(remappedClassName);
         } catch(ClassNotFoundException ex) {
-            clazz = LocalUtil.class.getClassLoader().loadClass(remappedClassName);
+            // fall through
+        } catch(IllegalArgumentException ex) {
+            // Conform to JDK classloader behaviour where illegal classnames are handled as ClassNotFound
+            // fall through
         }
+
+        try {
+            clazz = LocalUtil.class.getClassLoader().loadClass(remappedClassName);
+        } catch(IllegalArgumentException ex) {
+            // Conform to JDK classloader behaviour where illegal classnames are handled as ClassNotFound
+            throw new ClassNotFoundException(ex.getMessage(), ex);
+        }
+
         return clazz;
     }
 
