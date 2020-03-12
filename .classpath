@@ -92,7 +92,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="core/api/lib/jetty-continuation-7.0.1.v20091125.jar"/>
 	<classpathentry kind="lib" path="core/api/lib/javax.servlet-api-3.0.jar"/>
-	<classpathentry kind="lib" path="core/impl/lib/js.jar"/>
 	<classpathentry kind="lib" path="core/impl/lib/shrinksafe.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>

@@ -11,11 +11,13 @@ import org.directwebremoting.extend.DwrConstants;
 import org.directwebremoting.util.LocalUtil;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@Ignore // Do not include in default run as it needs custom environment setup
 public class YahooJSCompressorTest
 {
     String scriptToCompress = null;
