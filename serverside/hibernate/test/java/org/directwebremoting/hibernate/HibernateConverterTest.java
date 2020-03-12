@@ -26,6 +26,7 @@ import static org.directwebremoting.convert.AllConverterTest.*;
  * @see PrimitiveConverter
  * @author Joe Walker [joe at getahead dot ltd dot uk]
  */
+@Ignore // Do not include in default run as it needs custom environment setup
 public class HibernateConverterTest
 {
     public HibernateConverterTest() throws Exception
