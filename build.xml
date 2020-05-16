@@ -427,7 +427,7 @@
 			<if>
 				<equals arg1="${include}" arg2="" />
 				<then>
-					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+					<javac target="1.6" debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
 						<exclude name="**/package.html" />
 						<exclude name="**/package-info.java" />
 						<sources />
@@ -438,7 +438,7 @@
 					</javac>
 				</then>
 				<else>
-					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+					<javac target="1.6" debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
 						<exclude name="**/package.html" />
 						<exclude name="**/package-info.java" />
 						<sources />
