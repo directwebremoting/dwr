@@ -18,3 +18,5 @@ jobs:
         with:
           name: dist
           path: dist
+      - name: Deploy to Maven OSS
+        run: ant -noinput -buildfile build.xml deploy
