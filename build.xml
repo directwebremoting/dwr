@@ -15,7 +15,7 @@
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="org.directwebremoting" />
 	<property name="artifactId" value="dwr" />
-	<property name="version" value="3.0.2-RELEASE" />
+	<property name="version" value="3.0.3-SNAPSHOT" />
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
 	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
@@ -27,6 +27,8 @@
 	<property name="maven-repository-id" value="ossrh" />
 	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
 	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+	<!-- environment used during CI -->
+	<property environment="env"/>
 	<!-- End Properties for Maven -->
 
 	<target name="init">
@@ -87,14 +89,14 @@
 		This property is passed into this script by CI -->
 	<target name="setVersioning" description="Update dwr-version.properties with build data and CI data.">
 		<if>
-			<isset property="buildNumber" />
+			<isset property="env.GITHUB_RUN_ID" />
 			<then>
 				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
 					<entry key="major" value="${major}" />
 					<entry key="minor" value="${minor}" />
 					<entry key="revision" value="${revision}" />
 					<entry key="title" value="${title}" />
-					<entry key="build.number" value="${buildNumber}" />
+					<entry key="build.number" value="${env.GITHUB_RUN_ID}" />
 				</propertyfile>
 			</then>
 		</if>
