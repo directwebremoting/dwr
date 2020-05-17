@@ -82,19 +82,19 @@
 		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}" />
 	</target>
 
-	<!-- Updates dwr-version.properties with build values from Bamboo
-		Will not be executed unless the bamboo.buildNumber property is set.
-		This property is passed into this script by Bamboo -->
-	<target name="setBambooVersioning" description="Update dwr-version.properties with Bamboo build data.">
+	<!-- Updates dwr-version.properties with build values from CI
+		Will not be executed unless the buildNumber property is set.
+		This property is passed into this script by CI -->
+	<target name="setVersioning" description="Update dwr-version.properties with build data and CI data.">
 		<if>
-			<isset property="bamboo.buildNumber" />
+			<isset property="buildNumber" />
 			<then>
 				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
 					<entry key="major" value="${major}" />
 					<entry key="minor" value="${minor}" />
 					<entry key="revision" value="${revision}" />
 					<entry key="title" value="${title}" />
-					<entry key="bamboo.build.number" value="${bamboo.buildNumber}" />
+					<entry key="build.number" value="${buildNumber}" />
 				</propertyfile>
 			</then>
 		</if>
@@ -103,8 +103,8 @@
 	<!--=======================================================================-->
 	<target name="jar" depends="prepare, source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
-		<!-- Set Bamboo properties in dwr-version.properties -->
-		<antcall target="setBambooVersioning" />
+		<!-- Set version properties in dwr-version.properties -->
+		<antcall target="setVersioning" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main" />
 		</jar>
@@ -488,13 +488,13 @@
 		</delete>
 	</target>
 
-	<!-- Maven Deploy run this from the Bamboo CI machine.
+	<!-- Maven Deploy run this from CI.
 			Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
 		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
 		<!-- we deploy more than one file in one operation so they all get the same SNAPSHOT version at the repository -->
-		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
+		<artifact:mvn fork="true">
 			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
 			<arg value="-Durl=${maven-snapshots-repository-url}" />
 			<arg value="-DrepositoryId=${maven-repository-id}" />
@@ -509,7 +509,7 @@
 		</artifact:mvn>
 	</target>
 
-	<!-- Maven Stage run this from the Bamboo CI machine
+	<!-- Maven Stage run this from CI
 		Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
 		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
