@@ -16,5 +16,5 @@ jobs:
         run: ant -noinput -buildfile build.xml package
       - uses: actions/upload-artifact@v1
         with:
-          name: dwr.jar
-          path: dist/lib/dwr-**.jar
+          name: dist
+          path: dist
