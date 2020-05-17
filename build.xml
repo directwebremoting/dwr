@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <project name="dwr" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
+	<!-- Required for use of the maven ant tasks in CI -->
+	<path id="maven-ant-tasks.classpath" path="build/lib/maven-ant-tasks-2.1.3.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+		 uri="antlib:org.apache.maven.artifact.ant"
+		 classpathref="maven-ant-tasks.classpath" />
+
 	<!-- For terminology, see the readme.txt file alongside this build file -->
 
 	<!--=======================================================================-->
