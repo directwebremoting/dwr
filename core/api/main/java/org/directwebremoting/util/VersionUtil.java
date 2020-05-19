@@ -144,7 +144,7 @@ public class VersionUtil
     private static final String KEY_REVISION = "revision";
     private static int revision;
 
-    private static final String KEY_BUILD = "bamboo.build.number";
+    private static final String KEY_BUILD = "build.number";
     private static int build = -1;
 
     private static final String KEY_TITLE = "title";
