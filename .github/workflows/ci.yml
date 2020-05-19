@@ -14,6 +14,26 @@ jobs:
           java-version: 1.6
       - name: Build with Ant
         run: ant -noinput -buildfile build.xml package
+      - name: Read DWR major/version
+        id: read_dwr_major
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './core/impl/main/dwr-version.properties'
+          property: 'major'
+      - name: Read DWR minor/version
+        id: read_dwr_minor
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './core/impl/main/dwr-version.properties'
+          property: 'minor'
+      - name: Read DWR revision/version
+        id: read_dwr_revision
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './core/impl/main/dwr-version.properties'
+          property: 'revision'
+      - name: Set DWR Version
+        run: echo '::set-env name=DWR_VERSION::${{steps.read_dwr_major.outputs.value}}.${{steps.read_dwr_minor.outputs.value}}.${{steps.read_dwr_revision.outputs.value}}'
       - name: Set up Maven OSS Repository
         uses: actions/setup-java@v1
         with:
