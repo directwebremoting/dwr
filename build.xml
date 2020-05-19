@@ -18,7 +18,6 @@
 	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
 	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
 	<property name="version" value="${major}.${minor}.${revision}" />
-	<property name="env.DWR_VERSION" value="${version}"/>
 	<condition property="label" value="${version}">
 		<equals arg1="${title}" arg2="" />
 	</condition>
