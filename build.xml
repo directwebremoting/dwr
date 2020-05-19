@@ -17,10 +17,12 @@
 
 	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
 	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
-	<condition property="label" value="${major}.${minor}.${revision}">
+	<property name="version" value="${major}.${minor}.${revision}" />
+	<property name="env.DWR_VERSION" value="${version}"/>
+	<condition property="label" value="${version}">
 		<equals arg1="${title}" arg2="" />
 	</condition>
-	<condition property="label" value="${major}.${minor}.${revision}.${title}">
+	<condition property="label" value="${version}.${title}">
 		<not>
 			<equals arg1="${title}" arg2="" />
 		</not>
@@ -31,10 +33,10 @@
 	<property name="artifactId" value="dwr" />
 
 	<!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}.jar" />
-	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-javadoc.jar" />
-	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-sources.jar" />
-	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-jdk14.jar" />
+	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
+	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
+	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
+	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 	<!-- End Properties for Maven -->
 
 	<target name="init">
