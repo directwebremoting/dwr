@@ -5,7 +5,7 @@
   <artifactId>dwr</artifactId>
   <packaging>pom</packaging>
   <!-- Set via CI by calling setVersionInPom in build.xml -->
-  <version>3.0.3-SNAPSHOT</version>
+  <version>{version}</version>
   <name>Direct Web Remoting</name>
   <url>http://directwebremoting.org/dwr/index.html</url>
   <!-- For the sonatype repo -->
