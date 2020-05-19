@@ -38,17 +38,15 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:http://svn.directwebremoting.org/dwr/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.directwebremoting.org/dwr/trunk/</developerConnection>
-    <url>http://svn.directwebremoting.org/dwr/trunk/</url>
+    <url>https://github.com/directwebremoting/dwr/</url>
   </scm>
   <description>
 	DWR is easy Ajax for Java. It makes it simple to call Java code directly from Javascript.
 	It gets rid of almost all the boiler plate code between the web browser and your Java code.
   </description>
   <ciManagement>
-    <system>Bamboo</system>
-    <url>http://ci.directwebremoting.org/bamboo/</url>
+    <system>Github Actions</system>
+    <url>https://github.com/directwebremoting/dwr/actions</url>
   </ciManagement>
   <issueManagement>
     <system>Jira</system>
