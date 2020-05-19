@@ -23,4 +23,4 @@ jobs:
         with:
           java-version: 1.8
       - name: Deploy to Maven OSS
-        run: ant -noinput -buildfile build.xml deploy
+        run: mvn deploy:deploy-file -DgeneratePom=false -DrepositoryId=ossrh -Durl=https://oss.sonatype.org/content/repositories/snapshots/ -Dfile=dist/lib/dwr-3.0.3-SNAPSHOT.jar -DpomFile=pom.xml -Dpackaging=jar -Djavadoc=dist/lib/dwr-3.0.3-SNAPSHOT-javadoc.jar -Dsources=dist/lib/dwr-3.0.3-SNAPSHOT-sources.jar -Dfiles=dist/lib/dwr-3.0.3-SNAPSHOT-jdk14.jar -Dclassifiers=jdk14 -Dtypes=jar,jar
