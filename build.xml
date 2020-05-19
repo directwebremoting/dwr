@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
-<project name="dwr" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-
-	<!-- Required for use of the maven ant tasks in CI -->
-	<path id="maven-ant-tasks.classpath" path="build/lib/maven-ant-tasks-2.1.3.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-		 uri="antlib:org.apache.maven.artifact.ant"
-		 classpathref="maven-ant-tasks.classpath" />
+<project name="dwr" default="package" basedir=".">
 
 	<!-- For terminology, see the readme.txt file alongside this build file -->
 
@@ -13,34 +7,13 @@
 	<!-- File that contains local settings, you may need to edit this -->
 	<property file="build.properties" />
 
+	<!-- environment used during CI -->
+	<property environment="env"/>
+
 	<!-- Properties for Maven Deploy, Stage, Release
 		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
 	<property name="dist" location="dist" />
-
-	<!-- define Maven coordinates -->
-	<property name="groupId" value="org.directwebremoting" />
-	<property name="artifactId" value="dwr" />
-	<property name="version" value="3.0.3-SNAPSHOT" />
-
-	<!-- define artifacts' name, which follows the convention of Maven -->
-	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${version}.jar" />
-	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />
-	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
-	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
-
-	<!-- defined maven snapshots and staging repository id and url -->
-	<property name="maven-repository-id" value="ossrh" />
-	<property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
-	<property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
-	<!-- environment used during CI -->
-	<property environment="env"/>
-	<!-- End Properties for Maven -->
-
-	<target name="init">
-		<mkdir dir="${build}" />
-		<mkdir dir="${dist}/lib" />
-	</target>
 
 	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
 	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
@@ -52,6 +25,22 @@
 			<equals arg1="${title}" arg2="" />
 		</not>
 	</condition>
+
+	<!-- define Maven coordinates -->
+	<property name="groupId" value="org.directwebremoting" />
+	<property name="artifactId" value="dwr" />
+
+	<!-- define artifacts' name, which follows the convention of Maven -->
+	<property name="dwr-maven-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}.jar" />
+	<property name="dwr-maven-javadoc-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-javadoc.jar" />
+	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-sources.jar" />
+	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${major}.${minor}.${revision}-jdk14.jar" />
+	<!-- End Properties for Maven -->
+
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}/lib" />
+	</target>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -90,18 +79,12 @@
 		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}" />
 	</target>
 
-	<!-- Updates dwr-version.properties with build values from CI
-		Will not be executed unless the buildNumber property is set.
-		This property is passed into this script by CI -->
-	<target name="setVersioning" description="Update dwr-version.properties with build data and CI data.">
+	<!-- Updates the build number in dwr-version.properties with the build number from CI -->
+	<target name="setBuildNumber" description="Update dwr-version.properties with CI build number.">
 		<if>
 			<isset property="env.GITHUB_RUN_ID" />
 			<then>
 				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
-					<entry key="major" value="${major}" />
-					<entry key="minor" value="${minor}" />
-					<entry key="revision" value="${revision}" />
-					<entry key="title" value="${title}" />
 					<entry key="build.number" value="${env.GITHUB_RUN_ID}" />
 				</propertyfile>
 			</then>
@@ -112,7 +95,7 @@
 	<target name="jar" depends="prepare, source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
 		<!-- Set version properties in dwr-version.properties -->
-		<antcall target="setVersioning" />
+		<antcall target="setBuildNumber" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main" />
 		</jar>
@@ -435,7 +418,7 @@
 			<if>
 				<equals arg1="${include}" arg2="" />
 				<then>
-					<javac target="1.6" debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
 						<exclude name="**/package.html" />
 						<exclude name="**/package-info.java" />
 						<sources />
@@ -446,7 +429,7 @@
 					</javac>
 				</then>
 				<else>
-					<javac target="1.6" debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
+					<javac debug="on" includes="**/*.java" destdir="${target}/classes/@{tree}" includeantruntime="false">
 						<exclude name="**/package.html" />
 						<exclude name="**/package-info.java" />
 						<sources />
@@ -494,64 +477,6 @@
 				<include name="**/*.DS_Store" />
 			</fileset>
 		</delete>
-	</target>
-
-	<!-- Maven Deploy run this from CI.
-			Make sure to modify the version in the pom.xml to reflect a SNAPSHOT (3.0.0-rc3-SNAPSHOT)
-		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
-	-->
-	<target name="deploy" depends="init, package" description="deploy snapshot version to Maven snapshot repository">
-		<!-- we deploy more than one file in one operation so they all get the same SNAPSHOT version at the repository -->
-		<artifact:mvn fork="true">
-			<arg value="org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy-file" />
-			<arg value="-Durl=${maven-snapshots-repository-url}" />
-			<arg value="-DrepositoryId=${maven-repository-id}" />
-			<arg value="-Dfile=${dwr-maven-jar}" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Djavadoc=${dwr-maven-javadoc-jar}" />
-			<arg value="-Dsources=${dwr-maven-sources-jar}" />
-			<arg value="-Dfiles=${dwr-maven-jdk14-jar}" />
-			<arg value="-Dclassifiers=jdk14" />
-			<arg value="-Dtypes=jar,jar" />
-		</artifact:mvn>
-	</target>
-
-	<!-- Maven Stage run this from CI
-		Before running make sure to update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE (3.0.0-rc3-SNAPSHOT to 3.0.0-rc3)
-		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
-	-->
-	<target name="stage" depends="init, package" description="deploy release version to Maven staging repository">
-		<artifact:mvn fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-maven-jar}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-Pgpg" />
-		</artifact:mvn>
-		<artifact:mvn fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-maven-sources-jar}" />
-			<arg value="-Dclassifier=sources" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-Pgpg" />
-		</artifact:mvn>
-		<artifact:mvn mavenHome="/srv/dwr/maven/apache-maven-3.2.1" fork="true">
-			<arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-			<arg value="-Durl=${maven-staging-repository-url}" />
-			<arg value="-DrepositoryId=${maven-repository-id}" />
-			<arg value="-DpomFile=pom.xml" />
-			<arg value="-Dfile=${dwr-maven-javadoc-jar}" />
-			<arg value="-Dclassifier=javadoc" />
-			<arg value="-Dpackaging=jar" />
-			<arg value="-Pgpg" />
-		</artifact:mvn>
 	</target>
 
 </project>
