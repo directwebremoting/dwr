@@ -81,6 +81,16 @@
 		<copy file="${target.root}/dwr-src.jar" tofile="${dwr-maven-sources-jar}" />
 	</target>
 
+	<!-- Updates the pom.xml with the version -->
+	<target name="setVersionInPom">
+		<if>
+			<isset property="env.GITHUB_RUN_ID" />
+			<then>
+				<replace casesensitive="false" file="pom.xml" token="{version}" value="${version}" />
+			</then>
+		</if>
+	</target>
+
 	<!-- Updates the build number in dwr-version.properties with the build number from CI -->
 	<target name="setBuildNumber" description="Update dwr-version.properties with CI build number.">
 		<if>
@@ -96,7 +106,9 @@
 	<!--=======================================================================-->
 	<target name="jar" depends="prepare, source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
-		<!-- Set version properties in dwr-version.properties -->
+		<!-- Set the version in the pom if a CI run -->
+		<antcall target="setVersionInPom" />
+		<!-- Set the build number if a CI run -->
 		<antcall target="setBuildNumber" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main" />
