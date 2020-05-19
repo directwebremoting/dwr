@@ -33,7 +33,7 @@ jobs:
           path: 'core/impl/main/java/dwr-version.properties'
           property: 'revision'          
       - name: TEST
-        run: echo ${{ steps.read_dwr_minor.outputs.value }}    
+        run: echo value=${{steps.read_dwr_minor.outputs.value}}    
       - name: Set up Maven OSS Repository
         uses: actions/setup-java@v1
         with:
