@@ -18,19 +18,19 @@ jobs:
         id: read_dwr_major
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './core/impl/main/dwr-version.properties'
+          path: 'core/impl/main/java/dwr-version.properties'
           property: 'major'
       - name: Read DWR minor/version
         id: read_dwr_minor
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './core/impl/main/dwr-version.properties'
+          path: 'core/impl/main/java/dwr-version.properties'
           property: 'minor'
       - name: Read DWR revision/version
         id: read_dwr_revision
         uses: christian-draeger/read-properties@1.0.1
         with:
-          path: './core/impl/main/dwr-version.properties'
+          path: 'core/impl/main/java/dwr-version.properties'
           property: 'revision'
       - name: Set up Maven OSS Repository
         uses: actions/setup-java@v1
