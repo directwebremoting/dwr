@@ -5,7 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-16.04
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.6
@@ -45,11 +44,11 @@ jobs:
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-      - name: Publish to Maven OSS        
+      - name: Publish to Maven OSS
+        if: equals(steps.read_dwr_title.outputs.value, "SNAPSHOT")
         run: mvn deploy:deploy-file -DgeneratePom=false -DrepositoryId=ossrh -Durl=https://oss.sonatype.org/content/repositories/snapshots/ -Dfile=dist/lib/dwr-${{env.DWR_VERSION}}.jar -Dtype=jar -DartifactId=dwr -DpomFile=target/pom.xml -Dpackaging=jar -Djavadoc=dist/lib/dwr-${{env.DWR_VERSION}}-javadoc.jar -Dsources=dist/lib/dwr-${{env.DWR_VERSION}}-sources.jar -Dfiles=dist/lib/dwr-${{env.DWR_VERSION}}-jdk14.jar -Dclassifiers=jdk14 -Dtypes=jar
         env:
           MAVEN_USERNAME: ${{secrets.MAVEN_USERNAME}}
           MAVEN_PASSWORD: ${{secrets.MAVEN_PASSWORD}}
           DWR_VERSION: ${{steps.read_dwr_major.outputs.value}}.${{steps.read_dwr_minor.outputs.value}}.${{steps.read_dwr_revision.outputs.value}}-${{steps.read_dwr_title.outputs.value}}
-
           
