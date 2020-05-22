@@ -91,7 +91,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="jar" depends="prepare, source, updateVersionPropertiesWithBuildNumber" description="Create dwr.jar">
+	<target name="jar" depends="prepare, source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
 		<antcall target="setVersionInPom" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
@@ -121,7 +121,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="package" depends="war" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
+	<target name="package" depends="war, updateVersionPropertiesWithBuildNumber" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
 		<!-- Run retroweaver if dwr.jar has changed since we last ran it -->
 		<taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
 			<classpath>
