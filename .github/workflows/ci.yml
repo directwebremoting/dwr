@@ -32,11 +32,11 @@ jobs:
           path: 'core/impl/main/java/dwr-version.properties'
           property: 'revision'
       - name: Read DWR title
-          id: read_dwr_title
-          uses: christian-draeger/read-properties@1.0.1
-          with:
-            path: 'core/impl/main/java/dwr-version.properties'
-            property: 'title'
+        id: read_dwr_title
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: 'core/impl/main/java/dwr-version.properties'
+          property: 'title'
       - name: Set up Maven OSS Repository
         uses: actions/setup-java@v1
         with:
