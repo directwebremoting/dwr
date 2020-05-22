@@ -7,12 +7,6 @@
 	<!-- File that contains local settings, you may need to edit this -->
 	<property file="build.properties" />
 
-	<!-- Get build number from Github CI -->
-	<property environment="envgithub"/>
-	<condition property="build.number">
-		<isset property="envgithub.GITHUB_RUN_ID" />
-	</condition>
-
 	<!-- Properties for Maven Deploy, Stage, Release
 		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
@@ -32,6 +26,21 @@
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 	<!-- End Properties for Maven -->
+
+	<!-- Get build number from Github CI -->
+	<property environment="envgithub"/>
+
+	<!-- Updates version-properties with a build number if this is a CI run -->
+	<target name="updateVersionPropertiesWithBuildNumber">
+		<if>
+			<isset property="envgithub.GITHUB_RUN_ID" />
+			<then>
+				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
+					<entry key="build.number" value="${envgithub.GITHUB_RUN_ID}" />
+				</propertyfile>
+			</then>
+		</if>
+	</target>
 
 	<target name="init">
 		<mkdir dir="${build}" />
@@ -81,25 +90,10 @@
 		<replace casesensitive="false" file="target/pom.xml" token="{version}" value="${version}" />
 	</target>
 
-	<!-- Updates the build number in dwr-version.properties with the build number from CI -->
-	<target name="setBuildNumber" description="Update dwr-version.properties with CI build number.">
-		<if>
-			<isset property="build.number" />
-			<then>
-				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
-					<entry key="build.number" value="${build.number}" />
-				</propertyfile>
-			</then>
-		</if>
-	</target>
-
 	<!--=======================================================================-->
-	<target name="jar" depends="prepare, source" description="Create dwr.jar">
+	<target name="jar" depends="prepare, source, updateVersionPropertiesWithBuildNumber" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
-		<!-- Set the version in the pom if a CI run -->
 		<antcall target="setVersionInPom" />
-		<!-- Set the build number if a CI run -->
-		<antcall target="setBuildNumber" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main" />
 		</jar>
