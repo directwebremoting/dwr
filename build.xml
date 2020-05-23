@@ -7,9 +7,6 @@
 	<!-- File that contains local settings, you may need to edit this -->
 	<property file="build.properties" />
 
-	<!-- environment used during CI -->
-	<property environment="env"/>
-
 	<!-- Properties for Maven Deploy, Stage, Release
 		See: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7c.DeploySnapshotsandStageReleaseswithAnt
 	-->
@@ -17,16 +14,7 @@
 
 	<!-- Version numbers: Duplicates the logic in VersionUtil.loadProperties() -->
 	<property file="${source.root}/core/impl/main/java/dwr-version.properties" />
-	<property name="version" value="${major}.${minor}.${revision}" />
-	<property name="env.DWR_VERSION" value="${version}"/>
-	<condition property="label" value="${version}">
-		<equals arg1="${title}" arg2="" />
-	</condition>
-	<condition property="label" value="${version}.${title}">
-		<not>
-			<equals arg1="${title}" arg2="" />
-		</not>
-	</condition>
+	<property name="version" value="${major}.${minor}.${revision}-${title}" />
 
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="org.directwebremoting" />
@@ -38,6 +26,12 @@
 	<property name="dwr-maven-sources-jar" value="${dist}/lib/${artifactId}-${version}-sources.jar" />
 	<property name="dwr-maven-jdk14-jar" value="${dist}/lib/${artifactId}-${version}-jdk14.jar" />
 	<!-- End Properties for Maven -->
+
+	<!-- Get build number from Github CI -->
+	<property environment="envgithub"/>
+	<condition property="build.number" value="${envgithub.GITHUB_RUN_ID}">
+		<isset property="envgithub.GITHUB_RUN_ID" />
+	</condition>
 
 	<target name="init">
 		<mkdir dir="${build}" />
@@ -83,21 +77,17 @@
 
 	<!-- Updates the pom.xml with the version -->
 	<target name="setVersionInPom">
-		<if>
-			<isset property="env.GITHUB_RUN_ID" />
-			<then>
-				<replace casesensitive="false" file="pom.xml" token="{version}" value="${version}" />
-			</then>
-		</if>
+        <copy file="build/pom.xml" todir="target"/>
+		<replace casesensitive="false" file="target/pom.xml" token="{version}" value="${version}" />
 	</target>
 
 	<!-- Updates the build number in dwr-version.properties with the build number from CI -->
-	<target name="setBuildNumber" description="Update dwr-version.properties with CI build number.">
+	<target name="updateVersionPropertiesWithBuildNumber" description="Update dwr-version.properties with CI build number.">
 		<if>
-			<isset property="env.GITHUB_RUN_ID" />
+			<isset property="build.number" />
 			<then>
 				<propertyfile file="${target.root}/classes/main/dwr-version.properties">
-					<entry key="build.number" value="${env.GITHUB_RUN_ID}" />
+					<entry key="build.number" value="${build.number}" />
 				</propertyfile>
 			</then>
 		</if>
@@ -106,10 +96,8 @@
 	<!--=======================================================================-->
 	<target name="jar" depends="prepare, source" description="Create dwr.jar">
 		<build target="${target.root}" include="" modules="${modules}" />
-		<!-- Set the version in the pom if a CI run -->
 		<antcall target="setVersionInPom" />
-		<!-- Set the build number if a CI run -->
-		<antcall target="setBuildNumber" />
+		<antcall target="updateVersionPropertiesWithBuildNumber" />
 		<jar destfile="${target.root}/dwr.jar" compress="true">
 			<fileset dir="${target.root}/classes/main" />
 		</jar>
@@ -137,7 +125,7 @@
 	</target>
 
 	<!--=======================================================================-->
-	<target name="package" depends="war" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
+	<target name="package" depends="war, updateVersionPropertiesWithBuildNumber" description="Create packaged outputs: dwrdemo.war, dwr-jdk14.jar, and the source .zip">
 		<!-- Run retroweaver if dwr.jar has changed since we last ran it -->
 		<taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
 			<classpath>
@@ -174,7 +162,7 @@
 		</if>
 		<!-- Documentation: Javadoc and DTDDoc -->
 		<mkdir dir="${target.root}/javadoc" />
-		<javadoc access="public" author="true" destdir="${target.root}/javadoc" doctitle="DWR Version ${label}" use="true" splitindex="true" version="true">
+		<javadoc access="public" author="true" destdir="${target.root}/javadoc" doctitle="DWR Version ${version}" use="true" splitindex="true" version="true">
 			<sourcepath>
 				<pathelement path="${source.root}/core/api/main/java" />
 				<pathelement path="${source.root}/core/impl/main/java" />
@@ -210,7 +198,7 @@
 			<exclude name="common/*.dtd" />
 		</DTDDoc>
 		<!-- Source package -->
-		<zip destfile="${target.root}/dwr-${label}-src.zip">
+		<zip destfile="${target.root}/dwr-${version}-src.zip">
 			<fileset dir="${source.root}">
 				<exclude name="target/**" />
 				<exclude name="**/*.iml" />
