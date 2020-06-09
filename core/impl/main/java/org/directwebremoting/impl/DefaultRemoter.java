@@ -1,6 +1,8 @@
 package org.directwebremoting.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -64,6 +66,18 @@ public class DefaultRemoter implements Remoter
         Module module = moduleManager.getModule(scriptName, false);
 
         MethodDeclaration[] methods = module.getMethods();
+        Arrays.sort(methods, new Comparator<MethodDeclaration>()
+        {
+            @Override
+            public int compare(MethodDeclaration m1, MethodDeclaration m2)
+            {
+                int i = m1.getName().compareTo(m2.getName());
+                if (i != 0) {
+                    return i;
+                }
+                return Integer.compare(m1.getParameterTypes().length, m2.getParameterTypes().length);
+            }
+        });
         for (MethodDeclaration method : methods)
         {
             String methodName = method.getName();
