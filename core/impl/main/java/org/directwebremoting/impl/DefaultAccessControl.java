@@ -3,6 +3,7 @@ package org.directwebremoting.impl;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +24,20 @@ import org.directwebremoting.extend.MethodDeclaration;
  */
 public class DefaultAccessControl implements AccessControl
 {
+    private static final Map<String, List<Class<?>[]>> OBJECT_METHODS_CACHE = new HashMap<String, List<Class<?>[]>>();
+
+    static {
+        final Method[] methods = Object.class.getMethods();
+        for (Method m : methods) {
+            List<Class<?>[]> pTypesList = OBJECT_METHODS_CACHE.get(m.getName());
+            if(pTypesList == null) {
+                pTypesList = new ArrayList<Class<?>[]>();
+                OBJECT_METHODS_CACHE.put(m.getName(), pTypesList);
+            }
+            pTypesList.add(m.getParameterTypes());
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.directwebremoting.extend.AccessControl#assertGeneralExecutionIsPossible(java.lang.String, org.directwebremoting.extend.MethodDeclaration)
      */
@@ -216,11 +231,14 @@ public class DefaultAccessControl implements AccessControl
      */
     protected static void assertIsNotOnBaseObject(Method method)
     {
-        try {
-            Method objectMethod = Object.class.getMethod(method.getName(), method.getParameterTypes());
-            throw new SecurityException("Methods defined in java.lang.Object are not accessible (" + objectMethod.getName() + ").");
-        } catch(NoSuchMethodException ex) {
-            // All is well, method not found in Object
+        final List<Class<?>[]> pTypesList = OBJECT_METHODS_CACHE.get(method.getName());
+        if (pTypesList == null) {
+            return;
+        }
+        for (Class<?>[] pTypes : pTypesList) {
+            if (Arrays.equals(pTypes, method.getParameterTypes())) {
+                throw new SecurityException("Methods defined in java.lang.Object are not accessible (" + method.getName() + ").");
+            }
         }
     }
 
