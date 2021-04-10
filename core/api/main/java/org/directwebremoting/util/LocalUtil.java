@@ -1177,9 +1177,8 @@ public final class LocalUtil
         }
 
         String remappedClassName = remappedDwrClassName(className);
-        Class<?> clazz = null;
         try {
-            clazz = Thread.currentThread().getContextClassLoader().loadClass(remappedClassName);
+            return Thread.currentThread().getContextClassLoader().loadClass(remappedClassName);
         } catch(ClassNotFoundException ex) {
             // fall through
         } catch(IllegalArgumentException ex) {
@@ -1188,13 +1187,11 @@ public final class LocalUtil
         }
 
         try {
-            clazz = LocalUtil.class.getClassLoader().loadClass(remappedClassName);
+            return LocalUtil.class.getClassLoader().loadClass(remappedClassName);
         } catch(IllegalArgumentException ex) {
             // Conform to JDK classloader behaviour where illegal classnames are handled as ClassNotFound
             throw new ClassNotFoundException(ex.getMessage(), ex);
         }
-
-        return clazz;
     }
 
     /**
